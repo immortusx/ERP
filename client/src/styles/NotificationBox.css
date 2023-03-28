@@ -1,0 +1,33 @@
+
+
+.notificationBox {
+    background-color: #3e5367;
+    /* height: 50px; */
+    min-width: 300px;
+    position: fixed;
+    bottom: 20px;
+    right: 0;
+    opacity: 1;
+    animation: comeRight .5s ease-out;
+    transition: all 1s ease-out;
+}
+
+.notificationBox h6 {
+    padding: 15px;
+    color: white;
+    margin: 0;
+}
+
+@keyframes comeRight {
+    0% {
+        opacity: 0;
+        /* transform: translate(310px); */
+        width: 0%;
+    }
+    100% {
+        /* transform: translate(0); */
+        /* width: 100%; */
+        opacity: 1;
+        
+    }
+}

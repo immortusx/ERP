@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="194.48" height="64" viewBox="0 0 194.48 64">
+  <defs>
+    <clipPath id="clip-logo">
+      <rect width="194.48" height="64"/>
+    </clipPath>
+  </defs>
+  <g id="logo" clip-path="url(#clip-logo)">
+    <g id="Group_49" data-name="Group 49" transform="translate(-1060 -757.921)">
+      <g id="_5" data-name="5" transform="translate(1122.477 761.195)">
+        <text fill="#ffffff" id="Balkrushna" transform="translate(66 25)" font-size="26" font-family="Roboto-Bold, Roboto"  font-weight="700"><tspan x="-65.882" y="0">Balkrushna</tspan></text>
+        <text fill="#ffffff" id="Technologies" transform="translate(65.683 48.976)" font-size="19" font-family="Poppins-Light, Poppins" font-weight="300" letter-spacing="0.01em"><tspan x="-63.46" y="0">Technologies</tspan></text>
+      </g>
+      <g id="_5-2" data-name="5" transform="translate(1060 757.921)">
+        <path id="Path_72" data-name="Path 72" d="M-5480.2-6405.559h32.2s26.5,8.289,9.24,30.438c20.524,22.25-4.756,33.563-4.756,33.563H-5480.2Z" transform="translate(5480.204 6405.559)" fill="#4285f4"/>
+        <path id="Path_73" data-name="Path 73" d="M-8703.686-6238.911h11.094v11.735h9.747s13.273-.578,15.966-12.7c3.464,21.738-16.736,23.917-16.736,23.917h-20.07Z" transform="translate(8713.741 6256.778)" fill="#fbbc05"/>
+      </g>
+    </g>
+  </g>
+</svg>

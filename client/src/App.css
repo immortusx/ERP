@@ -1,0 +1,102 @@
+
+
+#root {
+  position: relative;
+  min-height: 100vh;
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+
+.myLabel {
+  color: #0000009c;
+}
+
+.myInput:focus {
+  /* border-bottom: 1.5px solid #000000; */
+  box-shadow: 0 0 5px 0px #3e53678a;
+}
+
+.myBtn:hover {
+  text-decoration: underline;
+
+}
+
+.myBtn:focus {
+  outline: 1.5px solid #0000006b !important;
+}
+
+.svgBtn svg {
+  height: 22px;
+  width: 22px;
+  color: white;
+}
+
+.svgBtn {
+  border: none;
+  /* border-radius: 10px; */
+  padding: 0;
+  background-color: transparent;
+  outline: none;
+}
+
+.myBtn {
+  /* border: none; */
+  border: 1.5px solid #3e53678a;
+
+  border-radius: 10px;
+  outline: none;
+}
+
+.myCheckBox {
+  transform: scale(1.2);
+}
+
+.myInput {
+  border: none;
+  border: 1.5px solid #0000006b;
+  border-radius: 5px;
+  padding: 5px 10px;
+  outline: none;
+}
+
+.myImgContainer {
+  height: 50px;
+  width: 50px;
+  background-color: #00000059;
+  border-radius: 50%;
+  overflow: hidden;
+  color: white;
+}
+
+.myH7{
+  font-size: 0.7rem;
+}
+
+.myWhiteTextNoWrap{
+  white-space: nowrap;
+}
+
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}

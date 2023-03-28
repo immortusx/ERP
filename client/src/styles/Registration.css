@@ -1,0 +1,21 @@
+.mainDivRegister {
+    display: flex;
+    justify-content: center;
+    /* align-items: center; */
+    flex-direction: column;
+    width: 100%;
+}
+
+
+.mainDivRegister section {
+    display: flex;
+    /* align-items: center; */
+    flex-direction: column;
+    white-space: nowrap;
+    margin-top: 15px;
+}
+
+.mainDivRegister {
+    border-radius: 10px;
+    box-shadow: 0 0 21px -10px #0000004a;
+}

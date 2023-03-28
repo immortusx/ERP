@@ -1,0 +1,587 @@
+:root {
+    --myTrasnition: all .4s;
+    --myFadeAnimation: fadeShow .3s ease-in-out
+}
+
+.asideNav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 300px;
+    z-index: 996;
+    transition: all 0.3s;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #aab7cf transparent;
+    box-shadow: 0px 0px 20px rgb(1 41 112 / 10%);
+    /* background-color: #fff; */
+    background-color: #3e5367;
+    overflow: visible;
+    height: 100vh;
+    min-height: min-content;
+    transition: var(--myTrasnition);
+}
+
+
+.myTextContainer {
+    height: 40px;
+    width: 40px;
+    background-color: white;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 25px;
+}
+
+
+.asideNav .profileSection {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background-color: #0000008a;
+    position: relative;
+}
+
+.asideNav .headBtn[aria-expanded="true"]::before {
+    transform: rotate(90deg);
+}
+
+.asideNav .headBtn::before {
+    content: url('../assets/svg/chevron-right.svg');
+    height: 20px;
+    width: 20px;
+    background-repeat: no-repeat;
+    transition: transform .35s ease;
+    position: absolute;
+    left: 10px;
+}
+
+
+
+
+.asideNav .headBtn {
+    background-color: transparent;
+    border: none;
+    outline: none;
+    display: flex;
+    align-items: center;
+    color: white;
+}
+
+
+.asideNav ul {
+    /* margin-top: 10px; */
+    list-style: none;
+    padding: 0;
+}
+
+.asideNav .headBtn svg {
+    height: 22px;
+    width: 22px;
+    margin-right: 8px;
+    color: white;
+}
+
+.asideNav .inLi a {
+    text-decoration: none;
+    margin: 5px 30px;
+    padding: 3px 8px;
+    display: flex;
+    color: white;
+}
+
+
+.asideNav .profileSection .logoutSideBar a {
+    color: white;
+}
+
+.asideNav .profileSection .logoutSideBar {
+    position: absolute;
+    left: 100%;
+    bottom: 0;
+    width: 50vw;
+    max-width: 350px;
+    min-width: 260px;
+    opacity: 1;
+    z-index: 1500;
+    padding: 20px;
+    background: #7e8891;
+    animation: var(--myFadeAnimation);
+}
+
+.asideNav .logoDiv img {
+
+    height: 100%;
+}
+
+.asideNav .logoDiv {
+    height: 60px;
+    display: flex;
+    justify-content: start;
+    margin: 20px 0;
+}
+
+.asideNav .inLi a.activeLink {
+    background-color: #00ffff91;
+}
+
+.asideNav .inLi a:hover {
+    cursor: pointer;
+    text-decoration: underline;
+    /* background-color: #00ffff; */
+    /* color: rgb(84, 94, 111); */
+}
+
+.asideNav .inUl {
+    animation: var(--myFadeAnimation);
+
+}
+
+.asideNav .inLi {
+    margin-bottom: 0;
+}
+
+.asideNav .outLi {
+    list-style: none;
+    padding-bottom: 15px;
+}
+
+.asideNav .outerSection {
+
+    padding-left: 30px;
+    padding-right: 30px;
+}
+
+.asideNav .asideMain {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+}
+
+#mainContainer {
+    margin-left: 300px;
+    /* padding: 40px; */
+}
+
+.toggleBtn main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+}
+
+.toggleBtn main svg {
+    height: 15px;
+    width: 15px;
+    stroke-width: 2px;
+    stroke: #00000075;
+
+}
+
+.toggleBtn:hover {
+    box-shadow: inset -5px 0 10px #c5ced1;
+}
+
+/* ********start******** */
+
+
+.toggleSideBar .asideNav {
+    width: 80px !important;
+    box-shadow: none;
+}
+
+
+.toggleSideBar .asideNav .logoDiv {
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.toggleSideBar .asideNav .logoDiv .logoB {
+    display: none;
+}
+
+.toggleSideBar .asideNav .logoDiv .logoT {
+    display: block !important;
+    margin: auto;
+}
+
+.toggleSideBar .asideNav .outLi .show {
+    display: none;
+}
+
+.toggleSideBar .asideNav .outLi:hover .collapse {
+    display: block;
+}
+
+.toggleSideBar .asideNav .outLi:hover svg {
+    color: black;
+}
+
+.toggleSideBar .asideNav .outLi:hover::before {
+    box-shadow: none;
+}
+
+.toggleSideBar .asideNav .outLi:hover {
+    background-color: #00ffff;
+}
+
+.toggleSideBar .asideNav .outLi {
+    cursor: pointer;
+    position: relative;
+    padding-bottom: 0;
+}
+
+.toggleSideBar .asideNav .headBtn {
+    padding: 15px 0;
+    pointer-events: none;
+}
+
+.toggleSideBar .asideNav .inLi a {
+    color: white;
+    margin: 10px 0;
+}
+
+
+
+.toggleSideBar .asideNav .outUl {
+    margin-top: 40px;
+}
+
+.toggleSideBar .asideNav .userNameDis {
+    display: none !important;
+}
+
+.toggleSideBar .asideNav .inUl {
+    position: absolute;
+    left: 100%;
+    top: 0;
+    width: 210px;
+    z-index: 1500;
+    background: #7e8891;
+}
+
+
+.toggleSideBar .asideNav .headBtn {
+    width: 100%;
+    justify-content: center;
+}
+
+.toggleSideBar .asideNav .headBtn::before {
+    content: none;
+}
+
+.toggleSideBar .asideNav .headBtn svg {
+    margin: 0;
+    height: 30px;
+    width: 30px;
+}
+
+.toggleSideBar .asideNav .outUl span {
+    display: none;
+}
+
+.toggleSideBar .asideNav .outerSection {
+    padding-left: 0;
+    padding-right: 0;
+    justify-content: center;
+
+}
+
+.toggleSideBar #mainContainer {
+    margin-left: 80px;
+}
+
+.toggleSideBar .toggleBtn {
+    left: calc(80px - 35px/2);
+}
+
+.toggleSideBar .asideNav .profileSection {
+    display: flex;
+    justify-content: center;
+}
+
+
+.toggleSideBar .toggleBtn main svg {
+    transform: rotate(180deg);
+    /* margin-left: 12px; */
+}
+
+.toggleSideBar .outLi:has(.activeLink)::before {
+    position: absolute;
+    background-color: #00ffff;
+    content: '';
+    left: 0;
+    height: 85%;
+    width: 8%;
+    border-radius: 0 20px 20px 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    box-shadow: 0 0 15px 1px #229b9b;
+}
+
+
+/* *******end****** */
+
+
+.toggleBtn {
+    cursor: pointer;
+    height: 35px;
+    width: 35px;
+    background-color: #f8f9fa;
+    top: 80px;
+    left: calc(300px - 35px/2);
+    position: absolute;
+    z-index: 1000;
+    border-radius: 50%;
+    box-shadow: inset -5px 0 10px #00ffff00;
+    border: none;
+    transition: var(--myTrasnition);
+}
+
+.myCheckToggle input[type="checkbox"] {
+    cursor: pointer;
+    position: relative;
+    width: 40px;
+    height: 20px;
+    appearance: none;
+    background-color: c6c6c6;
+    border-radius: 20px;
+    transition: all .5s;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, .2);
+}
+
+.myCheckToggle input:checked[type="checkbox"] {
+    background-color: #00ffff;
+}
+
+.myCheckToggle input[type="checkbox"]::before {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-radius: 20px;
+    top: 0;
+    left: 0;
+    background-color: #fff;
+    transform: scale(1.15);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, .2);
+    transition: all .3s;
+
+}
+
+.myCheckToggle input:checked[type="checkbox"]::before {
+    left: 20px;
+
+}
+
+
+
+@media (max-width: 992px) {
+
+    #mainContainer {
+        margin-left: 80px;
+    }
+
+    .toggleBtn {
+        left: calc(80px - 35px/2);
+    }
+
+    .toggleBtn main svg {
+        transform: rotate(180deg);
+        /* margin-left: 12px; */
+    }
+
+
+    /* ******start******* */
+
+    .asideNav {
+        width: 80px !important;
+        box-shadow: none;
+    }
+
+
+    .asideNav .logoDiv {
+        margin-top: 20px;
+        margin-bottom: 10px;
+    }
+
+    .asideNav .logoDiv .logoB {
+        display: none;
+    }
+
+    .asideNav .logoDiv .logoT {
+        display: block !important;
+        margin: auto;
+    }
+
+    .asideNav .outLi .show {
+        display: none;
+    }
+
+    .asideNav .outLi:hover .collapse {
+        display: block;
+    }
+
+    .asideNav .outLi:hover svg {
+        color: black;
+    }
+
+    .asideNav .outLi:hover::before {
+        box-shadow: none;
+
+    }
+
+    .asideNav .outLi:hover {
+        background-color: #00ffff;
+    }
+
+    .asideNav .outLi {
+        cursor: pointer;
+        position: relative;
+        padding-bottom: 0;
+    }
+
+    .asideNav .headBtn {
+        padding: 15px 0;
+        pointer-events: none;
+    }
+
+    .asideNav .inLi a {
+        color: white;
+        margin: 10px 0;
+    }
+
+
+
+    .asideNav .outUl {
+        margin-top: 40px;
+    }
+
+    .asideNav .userNameDis {
+        display: none !important;
+    }
+
+    .asideNav .inUl {
+        position: absolute;
+        left: 100%;
+        top: 0;
+        width: 210px;
+        z-index: 1500;
+        background: #7e8891;
+    }
+
+
+    .asideNav .headBtn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .asideNav .headBtn::before {
+        content: none;
+    }
+
+    .asideNav .headBtn svg {
+        margin: 0;
+        height: 30px;
+        width: 30px;
+    }
+
+    .asideNav .outUl span {
+        display: none;
+    }
+
+    .asideNav .outerSection {
+        padding-left: 0;
+        padding-right: 0;
+        justify-content: center;
+
+    }
+
+    #mainContainer {
+        margin-left: 80px;
+    }
+
+    .toggleBtn {
+        left: calc(80px - 35px/2);
+    }
+
+    .asideNav .profileSection {
+        display: flex;
+        justify-content: center;
+    }
+
+
+    .toggleBtn main svg {
+        transform: rotate(180deg);
+        /* margin-left: 12px; */
+    }
+
+    .outLi:has(.activeLink)::before {
+        position: absolute;
+        background-color: #00ffff;
+        content: '';
+        left: 0;
+        height: 85%;
+        width: 8%;
+        border-radius: 0 20px 20px 0;
+        top: 0;
+        bottom: 0;
+        margin: auto;
+        box-shadow: 0 0 15px 1px #229b9b;
+    }
+
+    /* *******end******* */
+
+    /* code that is repeating for responsive */
+
+
+
+
+
+
+
+
+
+
+    .toggleSideBar #mainContainer {
+        margin-left: 0 !important;
+    }
+
+    .toggleSideBar .asideNav {
+        margin-left: -80px !important;
+        box-shadow: none;
+    }
+
+    .toggleSideBar .asideNav .inUl {
+        background-color: red;
+        display: none;
+    }
+
+
+    .toggleSideBar .toggleBtn main svg {
+        transform: rotate(180deg);
+        margin-left: 12px;
+    }
+
+
+}
+
+
+
+/* after deleting 920 responsive */
+
+@keyframes fadeShow {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+
+}

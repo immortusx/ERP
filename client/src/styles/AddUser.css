@@ -1,0 +1,98 @@
+.addUser .selectRole main select option:hover {
+    background-color: #dde3e8;
+}
+
+.addUser .selectRole main select option:checked {
+    /* background-color: #00ffff !important; */
+    /* color: white; */
+    color: rgb(84, 94, 111);
+    outline: 1.5px solid #0000006b !important;
+
+
+}
+
+.addUser .selectRole main select option {
+    /* background-color: red; */
+    cursor: pointer;
+    list-style: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    /* margin-bottom: 2px;
+    margin-right: 5px; */
+    margin: 10px;
+    /* background-color: aliceblue; */
+    font-size: 14px;
+    background-color: #edf1f4;
+}
+
+
+
+.addUser .selectRole main {
+    margin: 0;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    border: 1.5px solid #0000006b;
+    height: 200px;
+    width: 100%;
+    /* min-width: 250px; */
+}
+
+.addUser .selectRole main select {
+    margin: 0;
+    padding: 0;
+    border: none;
+    outline: none;
+    overflow: auto;
+    border-radius: 5px;
+    height: 100%;
+}
+
+
+.addUser section {
+    display: flex;
+    /* align-items: center; */
+    flex-direction: column;
+    white-space: nowrap;
+    margin-top: 15px;
+}
+
+.addUser .select .allBtnsMain {}
+
+.addUser .selectRole .allBtnsMain svg {
+    height: 20px;
+    width: 20px;
+    color: #0000009c;
+}
+
+.addUser .selectRole .arrowBtn {
+    cursor: pointer;
+    border: 1.5px solid #0000006b;
+    border-radius: 5px;
+    padding: 5px 10px;
+}
+
+.addUser .selectRole .arrowBtn.disabledBtn {
+    cursor: auto;
+    pointer-events: none;
+    border-color: #00000026;
+}
+
+.addUser .selectRole .arrowBtn.disabledBtn svg {
+    color: #00000026 !important;
+}
+
+.featureTree ul {
+    padding-left: 0px;
+}
+
+.featureTree ul ul {
+    padding-left: 40px;
+}
+
+.featureTree ul li {
+    margin-bottom: 10px;
+    list-style: none;
+}
