@@ -5,17 +5,4 @@
     border-radius: 10px;
 }
 
-.usersTbl .actionBtn:hover {
-    background-color: white !important;
-}
-.usersTbl .actionBtn {
-    border: none;
-    outline: none;
-    padding: 5px 10px;
-    border-radius: 10px;
-}
 
-.usersTbl .actionBtn svg {
-    height: 18px;
-    width: 18px;
-}

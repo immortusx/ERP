@@ -13,7 +13,6 @@ const initialState = {
 }
 
 export const getFeatureFromDb = createAsyncThunk('getFeatureFromDb/getFeatureSlice', async (userData) => {
-    console.log('in getFeatureSlice', userData)
     const url = `${process.env.REACT_APP_NODE_URL}/api/get-features`
     const config = {
         headers: {

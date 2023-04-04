@@ -17,7 +17,8 @@ const path = require('path');
 var jwt = require('jsonwebtoken');
 const mysql = require('mysql')
 const { hasThePass, compareTheHass } = require('./Auth/Bcrypt')
-const { verifyToken, getTokenWithExp, getToken } = require('./Auth/Jwt')
+const { verifyToken, getTokenWithExp, getToken } = require('./Auth/Jwt');
+const e = require('express');
 // const SqlString = require('mysql/lib/protocol/SqlString');
 app.use(cors());
 
@@ -36,6 +37,172 @@ db.connect(err => {
   }
 })
 
+app.post('/api/edit-role', tokenCheck, async (req, res) => {
+  console.log('>>>>>edit-role');
+  console.log('req.body', req.body);
+  const { description, features, id } = req.body
+  console.log('description, features, id', description, features, id);
+  const urlNew = `UPDATE roles SET description= '${description}' where id='${id}'`
+
+  await db.query(urlNew, async (err, result) => {
+    if (err) {
+      console.log({ isSuccess: false, result: err })
+      res.send({ isSuccess: false, result: 'error' })
+    } else {
+      const newSqlQuery = `delete FROM role_features where role_id = '${id}'`
+      db.query(newSqlQuery, (err, newSqlResult) => {
+        if (err) {
+          console.log({ isSuccess: false, result: err })
+          res.send({ isSuccess: false, result: 'error' })
+        } else {
+          async.forEachOf(features, (item, key, callback) => {
+            console.log('item', item)
+            const sqlQuery = `INSERT INTO role_features (role_id,feature_id) VALUES('${id}','${item}')`;
+            console.log('sqlQuery', sqlQuery);
+            db.query(sqlQuery, (err, resultNew) => {
+              if (err) {
+                console.log('err', err)
+              }
+            })
+            callback();
+          }, (err) => {
+            if (err) {
+              console.log({ isSuccess: true, result: err })
+              res.send({ isSuccess: true, result: 'error' })
+            } else {
+              console.log({ isSuccess: true, result: 'success' })
+              res.send({ isSuccess: true, result: 'success' })
+            }
+          })
+        }
+      })
+
+    }
+  })
+})
+
+app.post('/api/addInquiryCategory', tokenCheck, async (req, res) => {
+  console.log('>>>>>>>addInquiryCategory');
+  const categoriesValue = Object.values(req.body)
+  let str = ''
+  categoriesValue.forEach((i, index) => {
+    if (index == 0) {
+      str += `'${i}'`
+    } else {
+      str += `, '${i}'`
+    }
+  })
+
+  const newSqlQuery = `SELECT * FROM rbac_db.inquiry_category where category_name in (${str})`;
+  db.query(newSqlQuery, (err, newSqlResult) => {
+    if (err) {
+      console.log({ isSuccess: false, result: err })
+      res.send({ isSuccess: false, result: 'error' })
+    } else if (newSqlResult.length > 0) {
+      console.log({ isSuccess: true, result: newSqlQuery })
+      res.send({ isSuccess: true, result: 'categoryExisted' })
+    } else {
+      async.forEachOf(categoriesValue, (item, key, callback) => {
+        const sqlQuery = `INSERT INTO inquiry_category (category_name) VALUES ('${item}')`;
+        db.query(sqlQuery, (err, resultNew) => {
+          if (err) {
+            console.log({ isSuccess: true, result: err })
+            res.send({ isSuccess: true, result: 'error' })
+          }
+        })
+        console.log('item',item)
+        callback();
+      }, (err) => {
+        console.log('callback called')
+        if (err) {
+          console.log({ isSuccess: true, result: err })
+          res.send({ isSuccess: true, result: 'error' })
+        } else {
+          console.log({ isSuccess: true, result: 'success' })
+          res.send({ isSuccess: true, result: 'success' })
+        }
+      })
+    }
+  })
+})
+
+app.get('/api/get-current-fields/:id', tokenCheck, async (req, res) => {
+  console.log('>>>>>>get-current-fields/:id', req.params.id)
+  const newSqlQuery = `SELECT s.* FROM inquiry_category_field as f inner join inquiry_fields as s on f.field_id=s.id WHERE category_id = '${req.params.id}'`
+  db.query(newSqlQuery, (err, newSqlResult) => {
+    if (err) {
+      console.log({ isSuccess: false, result: err })
+      res.send({ isSuccess: false, result: 'error' })
+    } else {
+      console.log({ isSuccess: true, result: newSqlQuery })
+      res.send({ isSuccess: true, result: newSqlResult })
+    }
+  })
+})
+app.post('/api/categoryInsertFields', tokenCheck, async (req, res) => {
+  console.log('>>>>>>>>>categoryInsertFields called')
+  const catID = req.body.id;
+  const fieldsAr = req.body.fields;
+  // const urlNew = `INSERT INTO inquiry_category_field (category_id,field_id) VALUES('${}','')`
+  // await db.query(urlNew, async (err, result) 
+
+  const newSqlQuery = `delete FROM inquiry_category_field  where category_id = '${catID}'`
+  db.query(newSqlQuery, (err, newSqlResult) => {
+    if (err) {
+      console.log({ isSuccess: false, result: err })
+      res.send({ isSuccess: false, result: 'error' })
+    } else {
+      async.forEachOf(fieldsAr, (item, key, callback) => {
+        console.log('item', item)
+        const sqlQuery = `INSERT INTO inquiry_category_field (category_id,field_id) VALUES('${catID}','${item}')`;
+        console.log('sqlQuery', sqlQuery);
+        db.query(sqlQuery, (err, resultNew) => {
+          if (err) {
+            console.log('err', err)
+          }
+        })
+        callback();
+      }, (err) => {
+        if (err) {
+          console.log({ isSuccess: true, result: err })
+          res.send({ isSuccess: true, result: 'error' })
+        } else {
+          console.log({ isSuccess: true, result: 'success' })
+          res.send({ isSuccess: true, result: 'success' })
+        }
+      })
+    }
+  })
+
+})
+app.get('/api/get-categories-fields', tokenCheck, async (req, res) => {
+  console.log('>>>>>>>get-categories-fields');
+  const urlNew = `SELECT * FROM inquiry_fields`
+  await db.query(urlNew, async (err, result) => {
+    if (err) {
+      console.log({ isSuccess: false, result: err })
+      res.send({ isSuccess: false, result: 'error' })
+    } else {
+
+      console.log({ isSuccess: true, result: urlNew })
+      res.send({ isSuccess: true, result: result })
+    }
+  })
+})
+app.get('/api/get-inquiry-categories', tokenCheck, async (req, res) => {
+  console.log('>>>>>>>get-inquiry-categories');
+  const urlNew = `SELECT * FROM inquiry_category`
+  await db.query(urlNew, async (err, result) => {
+    if (err) {
+      console.log({ isSuccess: false, result: err })
+      res.send({ isSuccess: false, result: 'error' })
+    } else {
+
+      console.log({ isSuccess: true, result: urlNew })
+      res.send({ isSuccess: true, result: result })
+    }
+  })
+})
 app.post('/api/add-role', tokenCheck, checkUserPermission('add-role'), async (req, res) => {
   console.log('>>>>>add-role');
   console.log('req.body', req.body);
@@ -70,7 +237,6 @@ app.post('/api/add-role', tokenCheck, checkUserPermission('add-role'), async (re
       }
     }
   })
-
 })
 app.get('/api/get-features', tokenCheck, checkUserPermission('add-role'), async (req, res) => {
   console.log('>>>>>get-features');
@@ -179,6 +345,35 @@ app.get('/api/get-user-list', tokenCheck, checkUserPermission('users'), async (r
         res.send({ isSuccess: true, result: result })
       }
     })
+  })
+})
+app.post('/api/get-roles-features', tokenCheck, async (req, res) => {
+  console.log('>>>>>get-roles-features', req.body.roleId);
+
+
+  const url = `select t.* from rbac_db.roles as f inner join rbac_db.role_features as s on s.role_id= f.id inner join rbac_db.features as t on t.id=s.feature_id where f.id = ${req.body.roleId}`
+  await db.query(url, async (err, result) => {
+    if (err) {
+      console.log({ isSuccess: true, result: err })
+      res.send({ isSuccess: true, result: 'error' })
+    } else {
+      console.log({ isSuccess: true, result: url })
+      res.send({ isSuccess: true, result: result })
+    }
+  })
+})
+app.get('/api/get-roles-to-edit', tokenCheck, async (req, res) => {
+  console.log('>>>>>get-roles');
+
+  const url = `SELECT * from roles where id != 1`
+  await db.query(url, async (err, result) => {
+    if (err) {
+      console.log({ isSuccess: true, result: err })
+      res.send({ isSuccess: true, result: 'error' })
+    } else {
+      console.log({ isSuccess: true, result: url })
+      res.send({ isSuccess: true, result: result })
+    }
   })
 })
 app.get('/api/get-roles', tokenCheck, checkUserPermission('add-user'), async (req, res) => {

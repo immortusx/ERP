@@ -11,7 +11,11 @@ import getFeatureSlice from './slices/getFeatureSlice'
 import addRoleSlice from './slices/addRoleSlice'
 import notificationSlice from './slices/notificationSlice'
 
-import editDataSlice from './slices/editDataSlice'
+import editUserDataSlice from './slices/editUserDataSlice'
+import editRoleDataSlice from './slices/editRoleDataSlice'
+import inquirySlice from './slices/inquirySlice'
+import inquiryFieldSaveSlice from './slices/inquiryFieldSaveSlice'
+import categoryAddSlice from './slices/categoryAddSlice'
 
 export const store = configureStore({
     reducer: {
@@ -25,6 +29,10 @@ export const store = configureStore({
         featuresListState: getFeatureSlice,
         addRoleState: addRoleSlice,
         notificationState: notificationSlice,
-        editUserDataState: editDataSlice,
+        editUserDataState: editUserDataSlice,
+        inquiryState: inquirySlice,
+        editRoleDataState: editRoleDataSlice,
+        inquiryFieldSaveState: inquiryFieldSaveSlice,
+        categoryAddState: categoryAddSlice,
     }
 })  

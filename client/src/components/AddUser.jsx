@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { addUserToDb, clearAddUserState } from '../redux/slices/addUserSlice'
-import { clearEditUserState, clearEditUserData, editUserUpdateToDb } from '../redux/slices/editDataSlice'
+import { clearEditUserState, clearEditUserData, editUserUpdateToDb } from '../redux/slices/editUserDataSlice'
 import '../styles/AddUser.css'
 import Axios from 'axios'
 import { getToPathname } from '@remix-run/router'
@@ -249,27 +249,27 @@ export default function AddUser({ workFor }) {
                         <input type='checkbox' className='myCheckBox inputElement' onChange={(e) => { onChangeHandler(e) }} name="enableUser" />
                         <label className='ms-2 myLabel' htmlFor="">Enable user </label>
                     </main>
-                    <section className='col-12 col-sm-6'>
+                    <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
                         <label className='myLabel' htmlFor="email">First Name </label>
                         <input value={userData.firstName} className='myInput inputElement' autoComplete='false' onChange={(e) => { onChangeHandler(e) }} type="text" name="firstName" />
                     </section>
-                    <section className='col-12 col-sm-6'>
+                    <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
                         <label className='myLabel' htmlFor="email">Last Name</label>
                         <input value={userData.lastName} className='myInput inputElement' autoComplete='false' onChange={(e) => { onChangeHandler(e) }} type="text" name="lastName" />
                     </section>
-                    <section className='col-12'>
+                    <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
                         <label className='myLabel' htmlFor="email">Email address</label>
                         <input value={userData.email} className='myInput inputElement' autoComplete='false' onChange={(e) => { onChangeHandler(e) }} type="text" name="email" />
                     </section>
-                    <section className='col-12'>
+                    <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
                         <label className='myLabel' htmlFor="email">Phone Number</label>
                         <input value={userData.phoneNumber} className='myInput inputElement' autoComplete='false' onChange={(e) => { onChangeHandler(e) }} type="number" name="phoneNumber" />
                     </section>
-                    <section className='col-12'>
+                    <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
                         <label className='myLabel' htmlFor="password">{workFor === 'forAdd' ? 'Password' : 'New password'}</label>
                         <input value={userData.password} className='myInput inputElement' autoComplete='false' onChange={(e) => { onChangeHandler(e) }} type="password" name="password" />
                     </section>
-                    {/* <section className='col-12'>
+                    {/* <section className='d-flex mt-3 flex-column col-12'>
                         <label className='myLabel' htmlFor="password">Confirm Password </label>
                         <input className='inputElement' autoComplete='false' onChange={(e) => { onChangeHandler(e) }} type="password" name="confirmPassword" />
                     </section> */}
@@ -280,7 +280,7 @@ export default function AddUser({ workFor }) {
             <main className='mt-4'>
                 <h5 className='m-0'>{workFor === 'forAdd' ? 'Select roles' : 'Edit roles'}</h5>
                 <div className=' row m-0'>
-                    <section className='selectRole col-12'>
+                    <section className='d-flex mt-3 flex-column selectRole col-12'>
                         <label className='myLabel'>Select one or more roles</label>
                         <div className='d-flex flex-column flex-md-row mt-2'>
                             <main >
@@ -327,12 +327,9 @@ export default function AddUser({ workFor }) {
                             </main>
                         </div>
                     </section>
-                    <section className='flex-column flex-sm-row'>
-                        <button className='col-12 col-sm-3 myBtn py-2' onClick={handleSubmit} type='button'>{workFor === 'forAdd' ? 'Add user' : 'Edit user'}</button>
-
-                        {
-                            workFor != 'forAdd' && <button className='ms-0 ms-sm-3 mt-3 mt-sm-0 col-12 col-sm-3 myBtn py-2' onClick={handleCancel} type='button'>Cancel</button>
-                        }
+                    <section className='d-flex mt-3  flex-column flex-sm-row'>
+                        <button className='col-12 col-sm-5 col-lg-2 myBtn py-2' onClick={handleSubmit} type='button'>{workFor === 'forAdd' ? 'Add user' : 'Edit user'}</button>
+                        <button className='ms-0 ms-sm-3 mt-3 mt-sm-0 col-12 col-sm-5 col-lg-2 myBtn py-2' onClick={handleCancel} type='button'>Cancel</button>
                     </section>
                 </div>
             </main>

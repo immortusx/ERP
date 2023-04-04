@@ -36,13 +36,13 @@ function App() {
   }, [notificationState])
 
 
-  useEffect(() => {
-    if(profileDataState.isSuccess)
-    {
-      console.log('profileDataState', profileDataState)
-    }
+  // useEffect(() => {
+  //   if(profileDataState.isSuccess)
+  //   {
+  //     console.log('profileDataState', profileDataState)
+  //   }
 
-  }, [profileDataState])
+  // }, [profileDataState])
   useEffect(() => {
     dispatch(isAdminExist())
     const token = localStorage.getItem('rbacToken')

@@ -50,15 +50,6 @@
     height: 100%;
 }
 
-
-.addUser section {
-    display: flex;
-    /* align-items: center; */
-    flex-direction: column;
-    white-space: nowrap;
-    margin-top: 15px;
-}
-
 .addUser .select .allBtnsMain {}
 
 .addUser .selectRole .allBtnsMain svg {

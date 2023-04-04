@@ -10,6 +10,7 @@ import AddUser from './AddUser'
 import AddRole from './AddRole'
 import NoAuth from './NoAuth'
 import Profile from './Profile'
+import Inquiry from './Inquiry'
 import Products from './Products'
 import logo from '../assets/svg/logo.svg'
 import logoT from '../assets/svg/logofinal.svg'
@@ -17,6 +18,7 @@ import { clearUserListState } from '../redux/slices/getUserListSlice'
 import { setShowMessage } from '../redux/slices/notificationSlice'
 
 import { useLocation, NavLink, Link, useNavigate, Navigate, BrowserRouter, Route, Routes } from "react-router-dom";
+import InquiryCategories from './InquiryCategories'
 
 const CheckPermission = ({ children, path }) => {
   // console.log('path', path)
@@ -120,6 +122,13 @@ export default function HomeScreen() {
                           </NavLink>
                         </li>
                       }
+                      {
+                        checkTabGrant(['profile']) && <li className='inLi'>
+                          <NavLink className={({ isActive }) => isActive ? 'activeLink' : ''} to="inquiry" >
+                            Inquiry
+                          </NavLink>
+                        </li>
+                      }
                     </ul>
                   </div>
                 </li>
@@ -152,7 +161,7 @@ export default function HomeScreen() {
                 </li>
               }
               {
-                checkTabGrant(['add-role', 'add-user', 'users']) && <li className='outLi'>
+                checkTabGrant(['roles', 'add-role', 'add-user', 'users']) && <li className='outLi'>
                   <button className="headBtn" type="button" data-bs-toggle="collapse" data-bs-target="#admin-collapseOne" aria-expanded="false" aria-controls="admin-collapseOne">
                     {/* <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="headSvg bi bi-house" viewBox="0 0 16 16">
                     <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.707 1.5ZM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5 5 5Z" />
@@ -168,17 +177,9 @@ export default function HomeScreen() {
                     <ul className='inUl'>
                       {
 
-                        checkTabGrant(['add-user']) && <li className='inLi'>
-                          <NavLink className={({ isActive }) => isActive ? 'activeLink' : ''} to="add-user" >
-                            Add user
-                          </NavLink>
-                        </li>
-                      }
-                      {
-
-                        checkTabGrant(['add-role']) && <li className='inLi'>
-                          <NavLink className={({ isActive }) => isActive ? 'activeLink' : ''} to="add-role" >
-                            Add role
+                        checkTabGrant(['roles']) && <li className='inLi'>
+                          <NavLink className={({ isActive }) => isActive ? 'activeLink' : ''} to="roles" >
+                          Roles
                           </NavLink>
                         </li>
                       }
@@ -186,6 +187,13 @@ export default function HomeScreen() {
                         checkTabGrant(['users']) && <li className='inLi'>
                           <NavLink className={({ isActive }) => isActive ? 'activeLink' : ''} to="users" >
                             Users
+                          </NavLink>
+                        </li>
+                      }
+                      {
+                        checkTabGrant(['users']) && <li className='inLi'>
+                          <NavLink className={({ isActive }) => isActive ? 'activeLink' : ''} to="inquiry-categories" >
+                          Inquiry categories
                           </NavLink>
                         </li>
                       }
@@ -239,23 +247,28 @@ export default function HomeScreen() {
 
 
 
-      <main id='mainContainer' className='p-4 p-md-5'>
-        <Routes>
-          <Route path="no-access" element={<NoAuth />} exact />
+      <main id='mainContainer' className=''>
+        <div className='container p-4'>
+          <Routes>
+            <Route path="no-access" element={<NoAuth />} exact />
 
-          <Route path="users" element={<CheckPermission path='users'><Users /></CheckPermission>} exact />
-          <Route path="profile" element={<CheckPermission path='profile'><Profile /></CheckPermission>} exact />
-          <Route path="add-role" element={<CheckPermission path='add-role'><AddRole /></CheckPermission>} exact />
-          <Route path="add-user" element={<CheckPermission path='add-user'><AddUser workFor='forAdd' /></CheckPermission>} exact />
-          <Route path="edit-user" element={<CheckPermission path='edit-user'><AddUser workFor='forEdit' /></CheckPermission>} exact />
-          {/* <Route path='admin'>
+            <Route path="users" element={<CheckPermission path='users'><Users /></CheckPermission>} exact />
+            <Route path="profile" element={<CheckPermission path='profile'><Profile /></CheckPermission>} exact />
+            <Route path="inquiry" element={<CheckPermission path='profile'><Inquiry /></CheckPermission>} exact />
+            <Route path="add-role" element={<CheckPermission path='add-role'><AddRole workFor='addRole' /></CheckPermission>} exact />
+            <Route path="roles" element={<CheckPermission path='roles'><AddRole workFor='roles' /></CheckPermission>} exact />
+            <Route path="add-user" element={<CheckPermission path='add-user'><AddUser workFor='forAdd' /></CheckPermission>} exact />
+            <Route path="edit-user" element={<CheckPermission path='edit-user'><AddUser workFor='forEdit' /></CheckPermission>} exact />
+            <Route path="inquiry-categories" element={<CheckPermission path='users'><InquiryCategories /></CheckPermission>} exact />
+            {/* <Route path='admin'>
           </Route> */}
-          <Route path="products" element={<CheckPermission path='products'><Products /></CheckPermission>} exact />
+            <Route path="products" element={<CheckPermission path='products'><Products /></CheckPermission>} exact />
 
-          <Route path="*" element={<Navigate to="profile" />} />
+            <Route path="*" element={<Navigate to="profile" />} />
 
-        </Routes>
+          </Routes>
 
+        </div>
       </main>
 
     </>
