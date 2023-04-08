@@ -240,6 +240,7 @@ export default function Inquiry() {
         } else {
             setInquiryData(inquiryData => ({ ...inquiryData, [name]: value }))
         }
+
     }
     return (
         <main className='bg-white p-3 rounded'>
@@ -262,7 +263,7 @@ export default function Inquiry() {
             {
 
                 inquiryData.category != '' && currentCategoryData.id != '' && <>
-                    <div className='row mt-3 m-0'>
+                    <div className='row mt-2 m-0'>
                         {
 
                             currentCategoryData.fields.length > 0 ?
@@ -274,12 +275,12 @@ export default function Inquiry() {
                                     }
                                 </> : <h6>There is no selected fields</h6>
                         }
-                        <section className='d-flex pt-3 flex-column flex-sm-row'>
-                            {
+                        {
+                            currentCategoryData.fields.length > 0 && <section className='d-flex pt-3 flex-column flex-sm-row'>
 
-                                currentCategoryData.fields.length > 0 && <button className='col-12 col-sm-5 col-lg-2 myBtn py-2' onClick={handleSubmit} type='button'>Submit </button>
-                            }
-                        </section>
+                                <button className='col-12 col-sm-5 col-lg-2 myBtn py-2' onClick={handleSubmit} type='button'>Submit </button>
+                            </section>
+                        }
                     </div>
                 </>
             }

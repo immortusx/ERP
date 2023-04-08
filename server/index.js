@@ -1,7 +1,6 @@
 const express = require('express')
 const dotenv = require('dotenv')
 const app = express()
-const port = 1022
 const cors = require("cors");
 dotenv.config()
 app.use(express.json());
@@ -93,7 +92,7 @@ app.post('/api/addInquiryCategory', tokenCheck, async (req, res) => {
     }
   })
 
-  const newSqlQuery = `SELECT * FROM rbac_db.inquiry_category where category_name in (${str})`;
+  const newSqlQuery = `SELECT * FROM inquiry_category where category_name in (${str})`;
   db.query(newSqlQuery, (err, newSqlResult) => {
     if (err) {
       console.log({ isSuccess: false, result: err })
@@ -110,7 +109,7 @@ app.post('/api/addInquiryCategory', tokenCheck, async (req, res) => {
             res.send({ isSuccess: true, result: 'error' })
           }
         })
-        console.log('item',item)
+        console.log('item', item)
         callback();
       }, (err) => {
         console.log('callback called')
@@ -254,7 +253,7 @@ app.get('/api/get-features', tokenCheck, checkUserPermission('add-role'), async 
 })
 function checkUserPermission(role) {
   return async (req, res, next) => {
-    const url = `SELECT DISTINCT  t.page, t.index_no , t.feature  FROM rbac_db.user_role as f inner join rbac_db.role_features as s on s.role_id = f.role_id inner join rbac_db.features as t on s.feature_id = t.id  where user_id = ${req.myData.userId}`
+    const url = `SELECT DISTINCT  t.page, t.index_no , t.feature  FROM user_role as f inner join role_features as s on s.role_id = f.role_id inner join features as t on s.feature_id = t.id  where user_id = ${req.myData.userId}`
     let tempAr = [];
     await db.query(url, (err, result) => {
       if (err) {
@@ -301,8 +300,8 @@ app.get('/api/profileData', async (req, res) => {
         res.send({ isSuccess: true, result: 'error' })
       } else {
         tempArr = result
-        // const urlNew = `select (select s.role from rbac_db.roles as s where id=f.role_id )as role from rbac_db.user_role as f where user_id = ${isAuthId.id}`
-        const urlNew = `SELECT DISTINCT  t.page, t.index_no , t.feature  FROM rbac_db.user_role as f inner join rbac_db.role_features as s on s.role_id = f.role_id inner join rbac_db.features as t on s.feature_id = t.id  where user_id = ${isAuthId.id}`
+        // const urlNew = `select (select s.role from roles as s where id=f.role_id )as role from user_role as f where user_id = ${isAuthId.id}`
+        const urlNew = `SELECT DISTINCT  t.page, t.index_no , t.feature  FROM user_role as f inner join role_features as s on s.role_id = f.role_id inner join features as t on s.feature_id = t.id  where user_id = ${isAuthId.id}`
         await db.query(urlNew, (err, resultNew) => {
           if (err) {
             console.log({ isSuccess: false, result: err })
@@ -323,13 +322,13 @@ app.get('/api/profileData', async (req, res) => {
 
 app.get('/api/get-user-list', tokenCheck, checkUserPermission('users'), async (req, res) => {
   console.log('>>>>>get-user-list');
-  const url = `select f.id, f.first_name, f.last_name, f.email,f.is_active,f.phone_number from  rbac_db.users as f;`
+  const url = `select f.id, f.first_name, f.last_name, f.email,f.is_active,f.phone_number from  users as f;`
   await db.query(url, async (err, result) => {
     let tempArr = [];
     tempArr = result
     async.forEachOf(result, (item, key, callback) => {
       result[key].role = [];
-      const urlNew = `select  (select s.role from rbac_db.roles as s where id=f.role_id )as role from rbac_db.user_role as f where user_id =  ${item.id}`
+      const urlNew = `select  (select s.role from roles as s where id=f.role_id )as role from user_role as f where user_id =  ${item.id}`
       db.query(urlNew, (err, resultNew) => {
         resultNew.forEach((eachRole) => {
           result[key].role.push(eachRole.role)
@@ -351,7 +350,7 @@ app.post('/api/get-roles-features', tokenCheck, async (req, res) => {
   console.log('>>>>>get-roles-features', req.body.roleId);
 
 
-  const url = `select t.* from rbac_db.roles as f inner join rbac_db.role_features as s on s.role_id= f.id inner join rbac_db.features as t on t.id=s.feature_id where f.id = ${req.body.roleId}`
+  const url = `select t.* from roles as f inner join role_features as s on s.role_id= f.id inner join features as t on t.id=s.feature_id where f.id = ${req.body.roleId}`
   await db.query(url, async (err, result) => {
     if (err) {
       console.log({ isSuccess: true, result: err })
@@ -548,7 +547,7 @@ app.post('/api/login', async (req, res) => {
           var cdate = moment().format('YYYY-MM-DD H:m:s');
           // const newUrl = `SELECT * FROM users WHERE email ='${req.body.email}'`
           // const newUrl = `UPDATE users SET last_login = '${cdate}' WHERE (id ='${result[0].id}' )`
-          const newUrl = `UPDATE rbac_db.users SET last_login = current_login, current_login = '${cdate}' WHERE id = '${result[0].id}';`
+          const newUrl = `UPDATE users SET last_login = current_login, current_login = '${cdate}' WHERE id = '${result[0].id}';`
 
           db.query(newUrl, async (err, newResult) => {
             if (err) {
@@ -577,11 +576,11 @@ app.post('/api/login', async (req, res) => {
 
 
 app.get('/api', (req, res) => {
-  console.log('welcome to port' + port)
-  res.send('welcome to port ' + port)
+  console.log('welcome to port' + process.env.ENV_PORT)
+  res.send('welcome to port ' + process.env.ENV_PORT)
 })
 
 // app.use("/api/auth",);
-app.listen(port, (req, res) => {
-  console.log('server started in port :', port);
+app.listen(process.env.ENV_PORT, (req, res) => {
+  console.log('server started in PORT :', process.env.ENV_PORT);
 })

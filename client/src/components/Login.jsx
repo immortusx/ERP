@@ -59,10 +59,12 @@ export default function Login() {
                     return
                 } else {
                     dispatch(getProfileData(token))
-                    dispatch(setShowMessage('Welcome to RBAC'))
+                    dispatch(setShowMessage('Welcome to Vehicle Management System'))
                 }
-            } else {
+            } else if(loginState.result.message != 'success') {
                 dispatch(setShowMessage('Credentials are wrong'))
+            }else{
+                dispatch(setShowMessage('Something is wrong'))
             }
             dispatch(clearLoginState())
         } else if (loginState.isError === true) {
@@ -81,11 +83,11 @@ export default function Login() {
     return (
         <main className='container'>
             <div className='min-vh-100 d-flex flex-column align-items-center justify-content-center'>
-                <section className='col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center'>
+                <section className='px-3 col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center'>
 
-                    <h4 className='p-0 m-0'>
-                        <strong>RBAC</strong>
-                    </h4>
+                    <h5 className='text-center p-0 m-0'>
+                        <strong>Vehicle Management System</strong>
+                    </h5>
                     <div className='mainDivRegister mt-3 bg-white p-4'>
                         <h5 className='text-center'>Login</h5>
                         <section>

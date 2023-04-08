@@ -1,14 +1,11 @@
 .addUser .selectRole main select option:hover {
-    background-color: #dde3e8;
+    background-color: #00ffff !important;
 }
 
 .addUser .selectRole main select option:checked {
-    /* background-color: #00ffff !important; */
-    /* color: white; */
+    background-color: #00ffff !important;
     color: rgb(84, 94, 111);
-    outline: 1.5px solid #0000006b !important;
-
-
+    /* outline: 1.5px solid #0000006b !important; */
 }
 
 .addUser .selectRole main select option {
@@ -22,7 +19,7 @@
     margin: 10px;
     /* background-color: aliceblue; */
     font-size: 14px;
-    background-color: #edf1f4;
+    background-color: #edf1f44d;
 }
 
 

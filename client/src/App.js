@@ -92,7 +92,7 @@ function App() {
               {/* <Route path="/" element={<Navigate to='/login' />} exact /> */}
             </> : <>
               <Route path="/registration" element={<Registration />} exact />
-              <Route path="/" element={<Navigate to='/registration' />} exact />
+              <Route path="/*" element={<Navigate to='/registration' />} exact />
             </>
           }
         </Routes>

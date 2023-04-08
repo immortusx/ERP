@@ -9,7 +9,7 @@ export default function Header() {
                     <Link className="p-0 navbar-brand" to="/">
                         {/* <img className='mx-2' style={{ height: '24px', width: '24px' }} src={logo} alt="Logo" /> */}
                         <h4 className='p-0 m-0'>
-                            <strong>RBAC</strong>
+                            <strong>Vehicle Management System</strong>
                         </h4>
                     </Link>
                     {/* <button className="navbar-toggler" type="button" data-bs-toggle="collapse"

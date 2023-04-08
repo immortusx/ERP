@@ -30,7 +30,7 @@
 
 .myBtn:hover {
   text-decoration: underline;
-
+  
 }
 
 .myBtn:focus {
@@ -51,6 +51,10 @@
   outline: none;
 }
 
+.myBtn[disabled] {
+  text-decoration: none;
+  border: 1.5px solid #3e53671f;
+}
 .myBtn {
   /* border: none; */
   border: 1.5px solid #3e53678a;

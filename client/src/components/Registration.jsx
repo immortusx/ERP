@@ -63,9 +63,9 @@ export default function Registration() {
             <div className='min-vh-100 d-flex flex-column align-items-center justify-content-center'>
                 <section className='col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center'>
 
-                    <h4 className='p-0 m-0'>
-                        <strong>RBAC</strong>
-                    </h4>
+                    <h5 className='text-center p-0 m-0'>
+                        <strong>Vehicle Management System</strong>
+                    </h5>
                     <div className='mainDivRegister mt-3 bg-white p-4'>
                         <h5 className='text-center'>Registration</h5>
                         <section>
