@@ -51,6 +51,10 @@
   outline: none;
 }
 
+.myInput[disabled] {
+  text-decoration: none;
+  border: 1.5px solid #3e53671f;
+}
 .myBtn[disabled] {
   text-decoration: none;
   border: 1.5px solid #3e53671f;
@@ -86,6 +90,14 @@ select.myInput {
   border-radius: 50%;
   overflow: hidden;
   color: white;
+}
+.datePicker input{
+  border: none;
+  border: 1.5px solid #0000006b;
+  border-radius: 5px;
+  padding: 5px 10px;
+  outline: none;
+  width: 100%;
 }
 
 .myH7 {

@@ -16,6 +16,8 @@ import editRoleDataSlice from './slices/editRoleDataSlice'
 import inquirySlice from './slices/inquirySlice'
 import inquiryFieldSaveSlice from './slices/inquiryFieldSaveSlice'
 import categoryAddSlice from './slices/categoryAddSlice'
+import setNewInquiryDataSlice from './slices/setNewInquiryDataSlice'
+
 
 export const store = configureStore({
     reducer: {
@@ -34,5 +36,6 @@ export const store = configureStore({
         editRoleDataState: editRoleDataSlice,
         inquiryFieldSaveState: inquiryFieldSaveSlice,
         categoryAddState: categoryAddSlice,
+        setNewInquiryDataState: setNewInquiryDataSlice,
     }
 })  

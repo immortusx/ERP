@@ -255,6 +255,7 @@ export default function HomeScreen() {
             <Route path="users" element={<CheckPermission path='users'><Users /></CheckPermission>} exact />
             <Route path="profile" element={<CheckPermission path='profile'><Profile /></CheckPermission>} exact />
             <Route path="inquiry" element={<CheckPermission path='profile'><Inquiry /></CheckPermission>} exact />
+            <Route path="new-inquiry" element={<CheckPermission path='profile'><Inquiry workFor='newInquiry' /></CheckPermission>} exact />
             <Route path="add-role" element={<CheckPermission path='add-role'><AddRole workFor='addRole' /></CheckPermission>} exact />
             <Route path="roles" element={<CheckPermission path='roles'><AddRole workFor='roles' /></CheckPermission>} exact />
             <Route path="add-user" element={<CheckPermission path='add-user'><AddUser workFor='forAdd' /></CheckPermission>} exact />
