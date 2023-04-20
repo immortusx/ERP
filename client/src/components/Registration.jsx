@@ -61,44 +61,47 @@ export default function Registration() {
     return (
         <main className='container'>
             <div className='min-vh-100 d-flex flex-column align-items-center justify-content-center'>
-                <section className='col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center'>
-
-                    <h5 className='text-center p-0 m-0'>
-                        <strong>Vehicle Management System</strong>
-                    </h5>
-                    <div className='mainDivRegister mt-3 bg-white p-4'>
-                        <h5 className='text-center'>Registration</h5>
-                        <section>
-                            <label htmlFor="firstName">First Name </label>
-                            <input className='myInput' onChange={(e) => { onChangeHandler(e) }} type="text" id='firstName' name="firstName" />
-                        </section>
-                        <section>
-                            <label htmlFor="lastName">Last Name </label>
-                            <input className='myInput' onChange={(e) => { onChangeHandler(e) }} type="text" id='lastName' name="lastName" />
-                        </section>
-                        <section>
-                            <label htmlFor="email">Email </label>
-                            <input className='myInput' onChange={(e) => { onChangeHandler(e) }} type="text" id='email' name="email" />
-                        </section>
-                        <section>
-                            <label htmlFor="password">Password </label>
-                            <input className='myInput' onChange={(e) => { onChangeHandler(e) }} type="password" id='password' name="password" />
-                        </section>
-                        <section>
-                            <label htmlFor="phoneNumber">Phone Number </label>
-                            <input className='myInput' onChange={(e) => { onChangeHandler(e) }} type="number" id='phoneNumber' name="phoneNumber" />
-                        </section>
-                        {/* <section>
+                <div className='container'>
+                    <div className='row justify-content-center'>
+                        <section className='col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center'>
+                            <h5 className='text-center p-0 m-0'>
+                                <strong>Vehicle Management System</strong>
+                            </h5>
+                            <div className='mainDivRegister mt-3 bg-white p-4'>
+                                <h5 className='text-center'>Registration</h5>
+                                <section>
+                                    <label htmlFor="firstName">First Name </label>
+                                    <input className='myInput' onChange={(e) => { onChangeHandler(e) }} type="text" id='firstName' name="firstName" />
+                                </section>
+                                <section>
+                                    <label htmlFor="lastName">Last Name </label>
+                                    <input className='myInput' onChange={(e) => { onChangeHandler(e) }} type="text" id='lastName' name="lastName" />
+                                </section>
+                                <section>
+                                    <label htmlFor="email">Email </label>
+                                    <input className='myInput' onChange={(e) => { onChangeHandler(e) }} type="text" id='email' name="email" />
+                                </section>
+                                <section>
+                                    <label htmlFor="password">Password </label>
+                                    <input className='myInput' onChange={(e) => { onChangeHandler(e) }} type="password" id='password' name="password" />
+                                </section>
+                                <section>
+                                    <label htmlFor="phoneNumber">Phone Number </label>
+                                    <input className='myInput' onChange={(e) => { onChangeHandler(e) }} type="number" id='phoneNumber' name="phoneNumber" />
+                                </section>
+                                {/* <section>
                             <label htmlFor="confirmPassword">Confirm Password </label>
                             <input className='myInput' onChange={(e) => { onChangeHandler(e) }} type="password" id='confirmPassword' name="confirmPassword" />
                         </section> */}
-                        <section>
-                            <button className='myBtn py-1' onClick={handleSubmit} type='button'>Register</button>
+                                <section>
+                                    <button className='myBtn py-1' onClick={handleSubmit} type='button'>Register</button>
+                                </section>
+                            </div>
                         </section>
                     </div>
-                </section>
+                </div>
             </div>
 
-        </main>
+        </main >
     )
 }

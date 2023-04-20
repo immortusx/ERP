@@ -19,6 +19,7 @@ import { setShowMessage } from '../redux/slices/notificationSlice'
 
 import { useLocation, NavLink, Link, useNavigate, Navigate, BrowserRouter, Route, Routes } from "react-router-dom";
 import InquiryCategories from './InquiryCategories'
+import Agency from './Agency'
 
 const CheckPermission = ({ children, path }) => {
   // console.log('path', path)
@@ -161,7 +162,7 @@ export default function HomeScreen() {
                 </li>
               }
               {
-                checkTabGrant(['roles', 'add-role', 'add-user', 'users']) && <li className='outLi'>
+                checkTabGrant(['roles', 'add-role', 'add-user', 'users', 'agency']) && <li className='outLi'>
                   <button className="headBtn" type="button" data-bs-toggle="collapse" data-bs-target="#admin-collapseOne" aria-expanded="false" aria-controls="admin-collapseOne">
                     {/* <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="headSvg bi bi-house" viewBox="0 0 16 16">
                     <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.707 1.5ZM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5 5 5Z" />
@@ -179,7 +180,7 @@ export default function HomeScreen() {
 
                         checkTabGrant(['roles']) && <li className='inLi'>
                           <NavLink className={({ isActive }) => isActive ? 'activeLink' : ''} to="roles" >
-                          Roles
+                            Roles
                           </NavLink>
                         </li>
                       }
@@ -193,7 +194,14 @@ export default function HomeScreen() {
                       {
                         checkTabGrant(['users']) && <li className='inLi'>
                           <NavLink className={({ isActive }) => isActive ? 'activeLink' : ''} to="inquiry-categories" >
-                          Inquiry categories
+                            Inquiry categories
+                          </NavLink>
+                        </li>
+                      }
+                      {
+                        checkTabGrant(['agency']) && <li className='inLi'>
+                          <NavLink className={({ isActive }) => isActive ? 'activeLink' : ''} to="agency" >
+                            Agency
                           </NavLink>
                         </li>
                       }
@@ -229,7 +237,7 @@ export default function HomeScreen() {
                       <div className='myTextContainer'>
                         <span className='text-uppercase'>{profileDataState.isSuccess ? `${profileDataState?.profileData.result.first_name.slice(0, 1)}` : 'A'}</span>
                       </div>
-                      <span className='pt-2 ps-2 text-white myH7'>Last login : {profileDataState.isSuccess && profileDataState?.profileData.result.last_login != null ? getDateTime(profileDataState?.profileData.result.last_login) : 'never'}</span>
+                      <span className='pt-2 ps-2 text-white myH7'>Last login : {profileDataState.isSuccess && profileDataState?.profileData.result.last_login != null ? getDateTime(profileDataState?.profileData.result.last_login) : 'first time logged in'}</span>
                     </div>
                     <div className='mt-3 d-flex justify-content-end'>
                       <button className='myBtn py-1 px-3' onClick={logOutHandler} href="">
@@ -248,19 +256,26 @@ export default function HomeScreen() {
 
 
       <main id='mainContainer' className=''>
-        <div className='container p-4'>
+        <div className='container position-relative p-4'>
           <Routes>
             <Route path="no-access" element={<NoAuth />} exact />
 
             <Route path="users" element={<CheckPermission path='users'><Users /></CheckPermission>} exact />
             <Route path="profile" element={<CheckPermission path='profile'><Profile /></CheckPermission>} exact />
             <Route path="inquiry" element={<CheckPermission path='profile'><Inquiry /></CheckPermission>} exact />
+
             <Route path="new-inquiry" element={<CheckPermission path='profile'><Inquiry workFor='newInquiry' /></CheckPermission>} exact />
+
             <Route path="add-role" element={<CheckPermission path='add-role'><AddRole workFor='addRole' /></CheckPermission>} exact />
             <Route path="roles" element={<CheckPermission path='roles'><AddRole workFor='roles' /></CheckPermission>} exact />
             <Route path="add-user" element={<CheckPermission path='add-user'><AddUser workFor='forAdd' /></CheckPermission>} exact />
             <Route path="edit-user" element={<CheckPermission path='edit-user'><AddUser workFor='forEdit' /></CheckPermission>} exact />
+
             <Route path="inquiry-categories" element={<CheckPermission path='users'><InquiryCategories /></CheckPermission>} exact />
+
+            <Route path="agency" element={<CheckPermission path='agency'><Agency workFor='agency' /></CheckPermission>} exact />
+            <Route path="add-agency" element={<CheckPermission path='agency'><Agency workFor='addAgency' /></CheckPermission>} exact />
+
             {/* <Route path='admin'>
           </Route> */}
             <Route path="products" element={<CheckPermission path='products'><Products /></CheckPermission>} exact />
@@ -270,6 +285,7 @@ export default function HomeScreen() {
           </Routes>
 
         </div>
+        
       </main>
 
     </>

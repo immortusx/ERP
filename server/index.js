@@ -41,60 +41,72 @@ async function getDateInFormate(getDate) {
 
 }
 
-app.get('/api/get-new-inquiry-data', tokenCheck, async (req, res) => {
+app.get('/api/get-new-inquiry-data', async (req, res) => {
   console.log('>>>>>>>>>get-inquiry-data')
+  try {
+    await db.query('SELECT * FROM dealers', async (err, getDealers) => {
+      if (getDealers) {
+        await db.query('SELECT * FROM enquiry_primary_sources', async (err, getPrimarySource) => {
+          if (getPrimarySource) {
+            await db.query('SELECT * FROM manufacturers', async (err, getManufacturers) => {
+              if (getManufacturers) {
+                await db.query('SELECT * FROM district', async (err, getDistrict) => {
+                  if (getManufacturers) {
 
-  const getDealers = () => {
-    return new Promise((resolve, reject) => {
-      db.query('SELECT * FROM dealers', (error, results) => {
-        if (error) {
-          reject(error);
-        } else {
-          resolve(results);
-        }
-      });
-    })
-  }
+                    let mainObj = {
+                      'dealers': getDealers,
+                      'primary_source': getPrimarySource,
+                      'manufacturers': getManufacturers,
+                      'district': getDistrict,
+                    }
+                    console.log({ isSuccess: 'success', result: 'success' })
+                    res.send({ isSuccess: 'success', result: mainObj })
+                  }
+                })
+              }
+            })
+          }
+        })
 
-  const getPrimarySource = () => {
-    return new Promise((resolve, reject) => {
-      db.query('SELECT * FROM enquiry_primary_sources', (error, results) => {
-        if (error) {
-          reject(error);
-        } else {
-          resolve(results);
-        }
-      });
-    })
-  }
-
-  const getManufacturers = () => {
-    return new Promise((resolve, reject) => {
-      db.query('SELECT * FROM manufacturers', (error, results) => {
-        if (error) {
-          reject(error);
-        } else {
-          resolve(results);
-        }
-      });
-    })
-  }
-
-
-  Promise.all([getDealers(), getPrimarySource(), getManufacturers()])
-    .then(([getDealers, getPrimarySource, getManufacturers]) => {
-      let mainObj = {
-        'dealers': getDealers,
-        'primary_source': getPrimarySource,
-        'manufacturers': getManufacturers,
       }
-      console.log({ isSuccess: 'success', result: 'success' })
-      res.send({ isSuccess: 'success', result: mainObj })
     })
-    .catch((error) => {
+
+
+  } catch (err) {
+    console.log({ isSuccess: false, result: err })
+    res.send({ isSuccess: false, result: 'error' })
+  }
+
+
+})
+
+
+
+app.get('/api/get-tehsil/:id', tokenCheck, async (req, res) => {
+  console.log('>>>>>>>>>get-tehsil', req.params)
+  const urlNew = `SELECT * FROM taluka WHERE district_id = (${req.params.id})`
+  await db.query(urlNew, async (err, result) => {
+    if (err) {
       console.log({ isSuccess: false, result: err })
       res.send({ isSuccess: false, result: 'error' })
-    });
+    } else {
+      console.log({ isSuccess: 'success', result: urlNew })
+      res.send({ isSuccess: 'success', result: result })
+    }
+  })
+})
+app.get('/api/get-village/:id', tokenCheck, async (req, res) => {
+  console.log('>>>>>>>>>get-tehsil', req.params)
+  const urlNew = `SELECT * FROM village WHERE taluka_id = (${req.params.id})`
+  await db.query(urlNew, async (err, result) => {
+    if (err) {
+      console.log({ isSuccess: false, result: err })
+      res.send({ isSuccess: false, result: 'error' })
+    } else {
+      console.log({ isSuccess: 'success', result: urlNew })
+      res.send({ isSuccess: 'success', result: result })
+    }
+  })
 })
 app.get('/api/get-model/:id', tokenCheck, async (req, res) => {
   console.log('>>>>>>>>>get-model', req.params)
@@ -138,17 +150,19 @@ app.get('/api/get-source-inquiry/:id', tokenCheck, async (req, res) => {
 app.post('/api/set-new-inquiry-data', tokenCheck, async (req, res) => {
   console.log('>>>>>>>>>set-new-inquiry-data', req.body)
 
-  const fristName = req.body.customerName
+  const fristName = req.body.firstName
+  const lastName = req.body.lastName
   const middleName = req.body.fatherName
-  const lastName = ''
   const phoneNumber = req.body.mobileNumber
-  const email = ''
+  const email = req.body.emailId
   const isActive = 1
   const district = req.body.district
   const taluka = req.body.tehsil
   const block = req.body.block
   const village = req.body.village
 
+  const enquiryTypeId = '1'
+  const visitReason = '1'
   const dealerId = req.body.dealerId
   const dsp = req.body.dsp
   const model = req.body.model
@@ -166,14 +180,12 @@ app.post('/api/set-new-inquiry-data', tokenCheck, async (req, res) => {
       console.log({ isSuccess: false, result: err })
       res.send({ isSuccess: false, result: 'error' })
     } else if (result && result.insertId) {
-      console.log('result', result)
       const insertedId = result.insertId
 
       const newInquiryDate = await getDateInFormate(inquiryDate)
       const newDeliveryDate = await getDateInFormate(deliveryDate)
 
-      const urlNew = `INSERT INTO enquiries (dealer_id, enquiry_type_id, salesperson_id, customer_id, product_id, date, delivery_date, enquiry_source_id, visitReason) VALUES('${dealerId}','1','${dsp}','${insertedId}','${model}','${newInquiryDate}','${newDeliveryDate}','${sourceOfInquiry}','1')`
-      console.log('urlNew', urlNew)
+      const urlNew = `INSERT INTO enquiries (dealer_id, enquiry_type_id, salesperson_id, customer_id, product_id, date, delivery_date, enquiry_source_id, visitReason) VALUES('${dealerId}','${enquiryTypeId}','${dsp}','${insertedId}','${model}','${newInquiryDate}','${newDeliveryDate}','${sourceOfInquiry}','${visitReason}')`
       await db.query(urlNew, async (err, result) => {
         if (err) {
           console.log({ isSuccess: false, result: err })
@@ -189,9 +201,7 @@ app.post('/api/set-new-inquiry-data', tokenCheck, async (req, res) => {
 })
 app.post('/api/edit-role', tokenCheck, async (req, res) => {
   console.log('>>>>>edit-role');
-  console.log('req.body', req.body);
   const { description, features, id } = req.body
-  console.log('description, features, id', description, features, id);
   const urlNew = `UPDATE roles SET description = '${description}' where id = '${id}'`
 
   await db.query(urlNew, async (err, result) => {
@@ -206,12 +216,11 @@ app.post('/api/edit-role', tokenCheck, async (req, res) => {
           res.send({ isSuccess: false, result: 'error' })
         } else {
           async.forEachOf(features, (item, key, callback) => {
-            console.log('item', item)
             const sqlQuery = `INSERT INTO role_features(role_id, feature_id) VALUES('${id}', '${item}')`;
-            console.log('sqlQuery', sqlQuery);
             db.query(sqlQuery, (err, resultNew) => {
               if (err) {
-                console.log('err', err)
+                console.log({ isSuccess: true, result: err })
+                res.send({ isSuccess: true, result: 'error' })
               }
             })
             callback();
@@ -260,10 +269,8 @@ app.post('/api/addInquiryCategory', tokenCheck, async (req, res) => {
             res.send({ isSuccess: true, result: 'error' })
           }
         })
-        console.log('item', item)
         callback();
       }, (err) => {
-        console.log('callback called')
         if (err) {
           console.log({ isSuccess: true, result: err })
           res.send({ isSuccess: true, result: 'error' })
@@ -303,12 +310,11 @@ app.post('/api/categoryInsertFields', tokenCheck, async (req, res) => {
       res.send({ isSuccess: false, result: 'error' })
     } else {
       async.forEachOf(fieldsAr, (item, key, callback) => {
-        console.log('item', item)
         const sqlQuery = `INSERT INTO inquiry_category_field(category_id, field_id) VALUES('${catID}', '${item}')`;
-        console.log('sqlQuery', sqlQuery);
         db.query(sqlQuery, (err, resultNew) => {
           if (err) {
-            console.log('err', err)
+            console.log({ isSuccess: true, result: err })
+            res.send({ isSuccess: true, result: 'error' })
           }
         })
         callback();
@@ -355,7 +361,6 @@ app.get('/api/get-inquiry-categories', tokenCheck, async (req, res) => {
 })
 app.post('/api/add-role', tokenCheck, checkUserPermission('add-role'), async (req, res) => {
   console.log('>>>>>add-role');
-  console.log('req.body', req.body);
   const { roleName, roleDescription, checkedFeatures } = req.body
   const urlNew = `INSERT INTO roles(role, active, description) VALUES('${roleName}', 1, '${roleDescription}'); `
   await db.query(urlNew, async (err, result) => {
@@ -363,14 +368,13 @@ app.post('/api/add-role', tokenCheck, checkUserPermission('add-role'), async (re
       console.log({ isSuccess: false, result: 'error' })
       res.send({ isSuccess: false, result: 'error' })
     } else {
-      console.log('result', result.insertId)
       if (result.insertId) {
         async.forEachOf(checkedFeatures, (item, key, callback) => {
           const sqlQuery = `INSERT INTO role_features(role_id, feature_id) VALUES('${result.insertId}', '${item}')`;
-          console.log('sqlQuery', sqlQuery);
           db.query(sqlQuery, (err, resultNew) => {
             if (err) {
-              console.log('err', err)
+              console.log({ isSuccess: true, result: err })
+              res.send({ isSuccess: true, result: 'error' })
             }
           })
           callback();
@@ -404,13 +408,13 @@ app.get('/api/get-features', tokenCheck, checkUserPermission('add-role'), async 
 })
 function checkUserPermission(role) {
   return async (req, res, next) => {
-    const url = `SELECT DISTINCT  t.page, t.index_no, t.feature  FROM user_role as f inner join role_features as s on s.role_id = f.role_id inner join features as t on s.feature_id = t.id  where user_id = ${req.myData.userId} `
+    const url = `SELECT DISTINCT  t.page, t.index_no, t.feature  FROM dealer_department_user f inner join role_features as s on s.role_id = f.role_id inner join features as t on s.feature_id = t.id  where user_id = ${req.myData.userId} and dealer_id = (select dealer_id from dealer_department_user where user_id = ${req.myData.userId}  limit 1)`
     let tempAr = [];
     await db.query(url, (err, result) => {
       if (err) {
-        console.log('err', err)
-      }
-      if (result && result.length > 0) {
+        console.log({ isSuccess: false, result: 'error' });
+        return res.send({ isSuccess: false, result: 'error' })
+      } else if (result && result.length > 0) {
         result.forEach((i) => {
           tempAr.push(i.feature)
         })
@@ -451,17 +455,26 @@ app.get('/api/profileData', async (req, res) => {
         res.send({ isSuccess: true, result: 'error' })
       } else {
         tempArr = result
-        // const urlNew = `select(select s.role from roles as s where id = f.role_id) as role from user_role as f where user_id = ${ isAuthId.id } `
-        const urlNew = `SELECT DISTINCT  t.page, t.index_no, t.feature  FROM user_role as f inner join role_features as s on s.role_id = f.role_id inner join features as t on s.feature_id = t.id  where user_id = ${isAuthId.id} `
-        await db.query(urlNew, (err, resultNew) => {
-          if (err) {
-            console.log({ isSuccess: false, result: err })
-            res.send({ isSuccess: false, result: 'error' })
+        // after adding role to dealer_department_user table
+        const sqlQuery = `SELECT role_id from dealer_department_user where user_id = '${isAuthId.id}' and dealer_id = (select dealer_id from dealer_department_user where user_id = '${isAuthId.id}' limit 1)`
+
+        await db.query(sqlQuery, async (err, checkRole) => {
+          let urlNew = ''
+          if (checkRole.length > 0 && checkRole[0].role_id === 1) {
+            urlNew = `SELECT DISTINCT  page, index_no, feature  FROM  features`
           } else {
-            result[0].role = resultNew
-            console.log({ isSuccess: true, result: urlNew })
-            res.send({ isSuccess: true, result: result[0] })
+            urlNew = `SELECT DISTINCT  t.page, t.index_no, t.feature  FROM dealer_department_user as f inner join role_features as s on s.role_id = f.role_id inner join features as t on s.feature_id = t.id  where user_id  = ${isAuthId.id} and dealer_id = (select dealer_id from dealer_department_user where user_id = ${isAuthId.id} limit 1)`
           }
+          await db.query(urlNew, (err, resultNew) => {
+            if (err) {
+              console.log({ isSuccess: false, result: err })
+              res.send({ isSuccess: false, result: 'error' })
+            } else {
+              result[0].role = resultNew
+              console.log({ isSuccess: true, result: urlNew })
+              res.send({ isSuccess: true, result: result[0] })
+            }
+          })
         })
       }
     })
@@ -471,30 +484,83 @@ app.get('/api/profileData', async (req, res) => {
   }
 })
 
+app.get('/api/get-agency-data', async (req, res) => {
+  console.log('>>>>>get-agency-data');
+  const url = `SELECT * FROM dealers; `
+  await db.query(url, async (err, getDealers) => {
+    if (err) {
+      console.log({ isSuccess: false, result: err })
+      res.send({ isSuccess: false, result: 'err ' })
+    } else {
+      const newUrl = `SELECT * FROM users where id != 20  ; `
+      await db.query(newUrl, async (err, getUsers) => {
+        if (err) {
+          console.log({ isSuccess: false, result: err })
+          res.send({ isSuccess: false, result: 'err ' })
+        } else {
+          const myObj = {
+            users: getUsers,
+            dealers: getDealers,
+          }
+          console.log({ isSuccess: true, result: url })
+          res.send({ isSuccess: true, result: myObj })
+        }
+
+      })
+    }
+  })
+})
+
 app.get('/api/get-user-list', tokenCheck, checkUserPermission('users'), async (req, res) => {
   console.log('>>>>>get-user-list');
-  const url = `select f.id, f.first_name, f.last_name, f.email, f.is_active, f.phone_number from  users as f; `
+  const url = `select f.id, f.first_name, f.last_name, f.email, f.is_active, f.phone_number from  users as f where id != 20 ; `
   await db.query(url, async (err, result) => {
-    let tempArr = [];
-    tempArr = result
-    async.forEachOf(result, (item, key, callback) => {
-      result[key].role = [];
-      const urlNew = `select(select s.role from roles as s where id = f.role_id) as role from user_role as f where user_id = ${item.id} `
-      db.query(urlNew, (err, resultNew) => {
-        resultNew.forEach((eachRole) => {
-          result[key].role.push(eachRole.role)
+    if (err) {
+      console.log({ isSuccess: false, result: err })
+      res.send({ isSuccess: false, result: 'error' })
+    } else {
+      console.log({ isSuccess: true, result: url })
+      res.send({ isSuccess: true, result: result })
+    }
+
+  })
+})
+app.get('/api/get-user_details/:id', tokenCheck, async (req, res) => {
+  const userId = req.params.id
+  const urlNew = `select distinct s.id from dealer_department_user as f inner join dealers as s on s.id = f.dealer_id where user_id= ${userId} `
+  db.query(urlNew, async (err, dealerIdResult) => {
+    if (err) {
+      console.log({ isSuccess: false, result: err })
+      res.send({ isSuccess: false, result: 'error' })
+    } else if (dealerIdResult.length > 0) {
+      let dealerRole = {}
+      await dealerIdResult.forEach(async (dealer, indexDealer, a2) => {
+        const dealerId = dealer.id
+        const getRoleUrl = `select role_id from dealer_department_user where user_id =${userId} and dealer_id = ${dealerId} `
+        let rolesAr = []
+        await db.query(getRoleUrl, async (err, rolesResult) => {
+          if (err) {
+            console.log({ isSuccess: false, result: err })
+            res.send({ isSuccess: false, result: 'error' })
+          } else {
+            await rolesResult.forEach(async (rolesData, indexRole, a3) => {
+              let newId = rolesData.role_id
+              await rolesAr.push(newId)
+              if (indexDealer == a2.length - 1 && indexRole == a3.length - 1) {
+                console.log({ isSuccess: true, result: urlNew })
+                res.send({ isSuccess: true, result: dealerRole })
+
+              }
+            })
+          }
         })
-        callback()
+        dealerRole[dealer.id] = rolesAr
       })
-    }, (err) => {
-      if (err) {
-        console.log({ isSuccess: true, result: err })
-        res.send({ isSuccess: true, result: 'error' })
-      } else {
-        console.log({ isSuccess: true, result: url })
-        res.send({ isSuccess: true, result: result })
-      }
-    })
+    } else {
+      console.log({ isSuccess: false, result: 'emptyDealer' })
+      res.send({ isSuccess: false, result: 'emptyDealer' })
+
+    }
   })
 })
 app.post('/api/get-roles-features', tokenCheck, async (req, res) => {
@@ -526,26 +592,38 @@ app.get('/api/get-roles-to-edit', tokenCheck, async (req, res) => {
     }
   })
 })
-app.get('/api/get-roles', tokenCheck, checkUserPermission('add-user'), async (req, res) => {
-  console.log('>>>>>get-roles');
+app.get('/api/data-user-create', tokenCheck, checkUserPermission('add-user'), async (req, res) => {
+  console.log('>>>>>data-user-create');
 
   const url = `SELECT * from roles where id != 1 and active = 1`
-  await db.query(url, async (err, result) => {
+  await db.query(url, async (err, roles) => {
     if (err) {
       console.log({ isSuccess: true, result: err })
       res.send({ isSuccess: true, result: 'error' })
     } else {
-      console.log({ isSuccess: true, result: url })
-      res.send({ isSuccess: true, result: result })
+      const newUrl = `SELECT * from dealers`
+      await db.query(newUrl, async (err, dealers) => {
+        if (err) {
+          console.log({ isSuccess: true, result: err })
+          res.send({ isSuccess: true, result: 'error' })
+        } else {
+          const newObj = {
+            roles: roles,
+            dealers: dealers,
+          }
+          console.log({ isSuccess: true, result: newUrl })
+          res.send({ isSuccess: true, result: newObj })
+        }
+      })
+
     }
   })
 })
 app.get('/api/adminExist', async (req, res) => {
   console.log('>>>>>adminExist');
 
-  const url = `SELECT * from user_role where role_id = 1`
+  const url = `SELECT * from dealer_department_user where role_id = 1`
   await db.query(url, async (err, result) => {
-    console.log('result in adminExist', result.length)
     if (err) {
       console.log({ isSuccess: true, result: err })
       res.send({ isSuccess: true, result: 'error' })
@@ -563,35 +641,41 @@ app.get('/api/adminExist', async (req, res) => {
 app.post('/api/edit-user', tokenCheck, checkUserPermission('edit-user'), async (req, res) => {
   console.log('>>>>>edit-user');
 
-  const roleArr = req.body.role;
+  const dealerRole = req.body.dealerRole;
+  const departmentId = 1;
+  const userId = req.body.id;
   const hassPass = await hasThePass(req.body.password)
   // const url = `INSERT INTO users(first_name, last_name, email, password, phone_number) VALUES('${req.body.firstName}', '${req.body.lastName}', '${req.body.email}', '${hassPass}', '${req.body.phoneNumber}')`
   let addNewValue = '';
+
   if (req.body.password !== '') {
     addNewValue = `, password = '${hassPass}'`
   }
   const url = `UPDATE users SET first_name = '${req.body.firstName}', last_name = '${req.body.lastName}', email = '${req.body.email}', phone_number = '${req.body.phoneNumber}' ${addNewValue} WHERE(id = '${req.body.id}'); `
-  console.log('url', url);
   await db.query(url, async (err, result) => {
     if (err) {
       console.log({ isSuccess: false, result: err })
       res.send({ isSuccess: false, result: 'error' })
     } else {
 
-      const newSqlQuery = `delete FROM user_role where user_id = '${req.body.id}'`
+      // const newSqlQuery = `delete FROM user_role where user_id = '${req.body.id}'`
+      const newSqlQuery = `delete FROM dealer_department_user where user_id = '${req.body.id}'`
       db.query(newSqlQuery, (err, newSqlResult) => {
         if (err) {
           console.log({ isSuccess: false, result: err })
           res.send({ isSuccess: false, result: 'error' })
         } else {
-          async.forEachOf(roleArr, (element, key, callback) => {
-            const sqlQuery = `INSERT INTO user_role(user_id, role_id) VALUES('${req.body.id}', '${element}')`
-            db.query(sqlQuery, (err, newResult) => {
-              if (err) {
-                console.log({ isSuccess: false, result: err })
-                res.send({ isSuccess: false, result: 'error' })
-              }
-            })
+          async.forEachOf(Object.keys(dealerRole), (dealerId, key, callback) => {
+            const rolesAr = dealerRole[dealerId]
+            rolesAr.forEach(async (roleId) => {
+              const sqlQuery = `INSERT INTO dealer_department_user(dealer_id, department_id,user_id,role_id) VALUES('${dealerId}','${departmentId}','${userId}','${roleId}')`
+              await db.query(sqlQuery, (err, newResult) => {
+                if (err) {
+                  console.log({ isSuccess: false, result: err })
+                  res.send({ isSuccess: false, result: 'error' })
+                }
+              })
+            });
             callback()
           }, (err) => {
             if (err) {
@@ -611,9 +695,17 @@ app.post('/api/edit-user', tokenCheck, checkUserPermission('edit-user'), async (
 app.post('/api/addUser', tokenCheck, checkUserPermission('add-user'), async (req, res) => {
   console.log('>>>>>addUser');
 
-  console.log('in addUser', req.body)
+
   const roleArr = req.body.role;
-  const hassPass = await hasThePass(req.body.password)
+  const firstName = req.body.firstName
+  const lastName = req.body.lastName
+  const email = req.body.email
+  const password = req.body.password
+  const phoneNumber = req.body.phoneNumber
+  const dealerRole = req.body.dealerRole
+  const departmentId = 1
+
+  const hassPass = await hasThePass(password)
 
   const newUrl = `SELECT * FROM users where email = '${req.body.email}'; `
   await db.query(newUrl, async (err, newResult) => {
@@ -621,20 +713,25 @@ app.post('/api/addUser', tokenCheck, checkUserPermission('add-user'), async (req
       console.log({ isSuccess: false, result: err })
       res.send({ isSuccess: false, result: 'error' })
     } else if (newResult.length === 0) {
-      const url = `INSERT INTO users(first_name, last_name, email, password, phone_number) VALUES('${req.body.firstName}', '${req.body.lastName}', '${req.body.email}', '${hassPass}', '${req.body.phoneNumber}')`
+      const url = `INSERT INTO users(first_name, last_name, email, password, phone_number) VALUES('${firstName}', '${lastName}', '${email}', '${hassPass}', '${phoneNumber}')`
       await db.query(url, async (err, result) => {
         if (err) {
           console.log({ isSuccess: false, result: err })
           res.send({ isSuccess: false, result: 'error' })
         } else {
-          async.forEachOf(roleArr, (element, key, callback) => {
-            const sqlQuery = `INSERT INTO user_role(user_id, role_id) VALUES('${result.insertId}', '${element}')`
-            db.query(sqlQuery, (err, newResult) => {
-              if (err) {
-                console.log({ isSuccess: false, result: err })
-                res.send({ isSuccess: false, result: 'error' })
-              }
-            })
+          const userId = result.insertId
+
+          async.forEachOf(Object.keys(dealerRole), (dealerId, key, callback) => {
+            const rolesAr = dealerRole[dealerId]
+            rolesAr.forEach(async (roleId) => {
+              const sqlQuery = `INSERT INTO dealer_department_user(dealer_id, department_id,user_id,role_id) VALUES('${dealerId}','${departmentId}','${userId}','${roleId}')`
+              await db.query(sqlQuery, (err, newResult) => {
+                if (err) {
+                  console.log({ isSuccess: false, result: err })
+                  res.send({ isSuccess: false, result: 'error' })
+                }
+              })
+            });
             callback()
           }, (err) => {
             if (err) {
@@ -652,7 +749,6 @@ app.post('/api/addUser', tokenCheck, checkUserPermission('add-user'), async (req
       res.send({ isSuccess: false, result: 'alreadyExist' })
     }
   })
-
 })
 
 app.post('/api/adminRegister', async (req, res) => {
@@ -665,8 +761,7 @@ app.post('/api/adminRegister', async (req, res) => {
       console.log({ isSuccess: false, result: err })
       res.send({ isSuccess: false, result: 'error' })
     } else {
-      console.log('result in adminRegister', result.insertId);
-      const sqlQuery = `INSERT INTO user_role(user_id, role_id) VALUES('${result.insertId}', 1)`
+      const sqlQuery = `INSERT INTO dealer_department_user(dealer_id,department_id,user_id, role_id) VALUES(1,1,'${result.insertId}', 1)`
       await db.query(sqlQuery, (err, result) => {
         if (err) {
           console.log({ isSuccess: false, result: err })
@@ -689,7 +784,6 @@ app.post('/api/login', async (req, res) => {
     }
     else if (result.length > 0) {
       const comparisionResult = await compareTheHass(req.body.password, result[0].password)
-      console.log('comparisionResult', comparisionResult);
       if (comparisionResult) {
         if (result[0].is_active == 1) {
           const tokenData = { id: result[0].id };
@@ -702,10 +796,10 @@ app.post('/api/login', async (req, res) => {
 
           db.query(newUrl, async (err, newResult) => {
             if (err) {
-              console.log('err', err)
+              res.send({ isSuccess: true, message: 'error', result: [] })
+              console.log({ isSuccess: true, message: 'error', result: err })
             }
           })
-
           res.send({ isSuccess: true, message: 'success', result: tokenIs })
           console.log({ isSuccess: true, message: 'success', result: tokenIs })
         } else {

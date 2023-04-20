@@ -320,7 +320,6 @@ export default function AddRole({ workFor }) {
 
                     <section className='d-flex flex-column flex-sm-row'>
                         <button className='col-12 col-sm-5 col-lg-2 myBtn py-2' onClick={handleSubmit} type='button'>{workFor === 'addRole' ? 'Create role' : 'Edit role'} </button>
-
                         <button className='ms-0 ms-sm-3 mt-3 mt-sm-0 col-12 col-sm-5 col-lg-2 myBtn py-2' onClick={handlCancel} type='button'>Cancel </button>
 
                     </section>

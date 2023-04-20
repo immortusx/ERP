@@ -30,7 +30,7 @@
 
 .myBtn:hover {
   text-decoration: underline;
-  
+
 }
 
 .myBtn:focus {
@@ -55,10 +55,12 @@
   text-decoration: none;
   border: 1.5px solid #3e53671f;
 }
+
 .myBtn[disabled] {
   text-decoration: none;
   border: 1.5px solid #3e53671f;
 }
+
 .myBtn {
   /* border: none; */
   border: 1.5px solid #3e53678a;
@@ -91,7 +93,8 @@ select.myInput {
   overflow: hidden;
   color: white;
 }
-.datePicker input{
+
+.datePicker input {
   border: none;
   border: 1.5px solid #0000006b;
   border-radius: 5px;
@@ -102,6 +105,11 @@ select.myInput {
 
 .myH7 {
   font-size: 0.7rem;
+}
+.myTag{
+  background-color: #edf1f4 !important;
+  border-radius: 5px;
+  padding: 3px 5px;
 }
 
 .myWhiteTextNoWrap {
@@ -132,9 +140,96 @@ select.myInput {
   list-style: none;
 }
 
+.myCursonPointer {
+  cursor: pointer;
+}
+
 .myEventStop {
   pointer-events: none;
 }
+
+
+/* swapSelection UI start */
+.swapSelection main ul li:hover {
+  background-color: #00ffff !important;
+}
+
+.swapSelection main ul li.checked {
+  background-color: #00ffff !important;
+  /* color: rgb(84, 94, 111); */
+  /* outline: 1.5px solid #0000006b !important; */
+}
+
+.swapSelection main ul li {
+  /* background-color: red; */
+  cursor: pointer;
+  list-style: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  
+  /* margin-bottom: 2px;
+  margin-right: 5px; */
+  margin: 10px;
+  /* background-color: aliceblue; */
+  font-size: 14px;
+  background-color: #edf1f44d;
+}
+
+.swapSelection main {
+  margin: 0;
+  padding: 10px;
+  border-radius: 5px;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  border: 1.5px solid #0000006b;
+  height: 200px;
+  width: 100%;
+  /* min-width: 250px; */
+}
+
+.swapSelection main ul {
+  margin: 0;
+  padding: 0;
+  border: none;
+  outline: none;
+  overflow: auto;
+  border-radius: 5px;
+  height: 100%;
+}
+
+.addUser .select .allBtnsMain {}
+
+.swapSelection .allBtnsMain svg {
+  height: 20px;
+  width: 20px;
+  color: #0000009c;
+}
+
+.swapSelection .arrowBtn {
+  cursor: pointer;
+  border: 1.5px solid #0000006b;
+  border-radius: 5px;
+  padding: 5px 10px;
+}
+
+.swapSelection .arrowBtn.disabledBtn {
+  cursor: auto;
+  pointer-events: none;
+  border-color: #00000026;
+}
+
+.swapSelection .arrowBtn.disabledBtn svg {
+  color: #00000026 !important;
+}
+
+/* swapSelection UI end */
+.myTableSection {
+  height: 250px;
+  overflow: auto;
+}
+
+
 
 @keyframes App-logo-spin {
   from {

@@ -8,8 +8,10 @@ import "react-datepicker/dist/react-datepicker.css";
 
 import { setInquiryDb, clearInquiryState } from '../redux/slices/inquirySlice'
 import { setNewInquiryDataDb, clearNewInquiryState } from '../redux/slices/setNewInquiryDataSlice'
+import { setShowMessage } from '../redux/slices/notificationSlice'
 
 import { useMemo } from 'react';
+import { it } from 'date-fns/locale';
 export default function Inquiry({ workFor }) {
     const dispatch = useDispatch()
     const navigate = useNavigate()
@@ -25,6 +27,7 @@ export default function Inquiry({ workFor }) {
         category: '',
         firstName: '',
         lastName: '',
+        emailId: '',
         state: '',
         city: '',
         district: '',
@@ -40,7 +43,8 @@ export default function Inquiry({ workFor }) {
     const [newInquiryData, setNewInquiryData] = useState({
         dealerId: '',
         dsp: '',
-        customerName: '',
+        firstName: '',
+        lastName: '',
         fatherName: '',
         mobileNumber: '',
         district: '',
@@ -53,7 +57,7 @@ export default function Inquiry({ workFor }) {
         inquiryPrimarySource: '',
         sourceOfInquiry: '',
         inquiryDate: new Date(),
-        deliveryDate: new Date(),
+        deliveryDate: '',
         cuustomerCategory: '',
         modeOfFinance: '',
         bank: '',
@@ -63,31 +67,14 @@ export default function Inquiry({ workFor }) {
     const [newInquiryList, setNewInquiryList] = useState({
         listDealer: [],
         listDsp: [],
-        listDistrict: [
-            { id: 1, name: 'Ahemdabad' },
-            { id: 2, name: 'Vadodara' },
-        ],
-        listTehsil: [
-            { id: 1, name: 'Dholka', district: 'Ahemdabad' },
-            { id: 2, name: 'Dhandhuka', district: 'Ahemdabad' },
-            { id: 3, name: 'Sanand', district: 'Ahemdabad' },
-            { id: 4, name: 'Savli', district: 'Vadodara' },
-            { id: 5, name: 'Dabhoi', district: 'Vadodara' },
-            { id: 6, name: 'Padra', district: 'Vadodara' },
-
-        ],
+        listDistrict: [],
+        listTehsil: [],
         listBlock: [
             { id: '11' },
             { id: '22' },
             { id: '33' },
         ],
-        listVillage: [
-            { id: 1, name: 'Ambada', district: 'Padra' },
-            { id: 2, name: 'Amreli', district: 'Dholka' },
-            { id: 3, name: 'Badarkha', district: 'Dholka' },
-            { id: 4, name: 'Bhumli', district: 'Dholka' },
-
-        ],
+        listVillage: [],
         listSsp: [],
         listMake: [],
         listModel: [],
@@ -103,13 +90,68 @@ export default function Inquiry({ workFor }) {
             { id: 1, name: 'State Bank Of India' },
             { id: 2, name: 'Bank Of Baroda' },
         ],
-
     })
+    function clearStateAndInp() {
+        setNewInquiryData({
+            dealerId: '',
+            dsp: '',
+            firstName: '',
+            lastName: '',
+            fatherName: '',
+            mobileNumber: '',
+            district: '',
+            tehsil: '',
+            block: '',
+            village: '',
+            ssp: '',
+            make: '',
+            model: '',
+            inquiryPrimarySource: '',
+            sourceOfInquiry: '',
+            inquiryDate: new Date(),
+            deliveryDate:'',
+            cuustomerCategory: '',
+            modeOfFinance: '',
+            bank: '',
+            oldTractorOwned: "0",
+        })
+
+        const inpClr = document.getElementsByClassName('inpClr')
+        Array.from(inpClr).forEach(i => {
+            console.log('inpClr ', i, i.value, i.type)
+            if (i.type === 'select-one') {
+                i.value = 0
+            } else if (i.type === 'text') {
+                i.value = ''
+            }
+        })
+    }
     function saveBtnCalled() {
         console.log('newInquiryList', newInquiryList)
-        console.log('newInquiryData', newInquiryData)        
-        
-        dispatch(setNewInquiryDataDb(newInquiryData))
+        console.log('newInquiryData', newInquiryData)
+        if (
+            newInquiryData.dealerId &&
+            newInquiryData.dsp &&
+            newInquiryData.firstName &&
+            newInquiryData.lastName &&
+            newInquiryData.fatherName &&
+            newInquiryData.mobileNumber &&
+            newInquiryData.district &&
+            newInquiryData.tehsil &&
+            newInquiryData.block &&
+            newInquiryData.village &&
+            newInquiryData.make &&
+            newInquiryData.model &&
+            newInquiryData.inquiryPrimarySource &&
+            newInquiryData.sourceOfInquiry &&
+            newInquiryData.inquiryDate 
+            ){
+
+                dispatch(setNewInquiryDataDb(newInquiryData))
+            }
+            else{
+            dispatch(setShowMessage('Please fill mandatory fields'))
+        }
     }
     function clearState() {
         setCurrentCategoryData({
@@ -136,6 +178,13 @@ export default function Inquiry({ workFor }) {
 
     useEffect(() => {
         console.log('setNewInquiryDataState', setNewInquiryDataState)
+        if (setNewInquiryDataState.isSuccess) {
+            if (setNewInquiryDataState.data.isSuccess) {
+                dispatch(clearNewInquiryState())
+                clearStateAndInp()
+                dispatch(setShowMessage('Inquiry is registered'))
+            }
+        }
     }, [setNewInquiryDataState])
 
     async function getInquiryCategories() {
@@ -168,10 +217,11 @@ export default function Inquiry({ workFor }) {
                     // setCategoriesList(response.data.result)
                     console.log(response.data.result)
 
-                    const { dealers, manufacturers, primary_source } = response.data.result
+                    const { dealers, manufacturers, primary_source, district } = response.data.result
                     setNewInquiryList(newInquiryList => ({ ...newInquiryList, ['listDealer']: dealers }))
                     setNewInquiryList(newInquiryList => ({ ...newInquiryList, ['listMake']: manufacturers }))
                     setNewInquiryList(newInquiryList => ({ ...newInquiryList, ['listPrimarySource']: primary_source }))
+                    setNewInquiryList(newInquiryList => ({ ...newInquiryList, ['listDistrict']: district }))
                 }
             }
 
@@ -227,6 +277,42 @@ export default function Inquiry({ workFor }) {
                     console.log(response.data.result)
 
                     setNewInquiryList(newInquiryList => ({ ...newInquiryList, ['listSourceOfInquiry']: response.data.result }))
+                }
+            }
+
+        })
+    }
+    async function getTehsilList(id) {
+        const url = `${process.env.REACT_APP_NODE_URL}/api/get-tehsil/${id}`;
+        const config = {
+            headers: {
+                token: localStorage.getItem('rbacToken')
+            }
+        };
+        await axios.get(url, config).then((response) => {
+            if (response.data) {
+                if (response.data.isSuccess) {
+                    console.log('response.data', response.data)
+                    console.log(response.data.result)
+                    setNewInquiryList(newInquiryList => ({ ...newInquiryList, ['listTehsil']: response.data.result }))
+                }
+            }
+
+        })
+    }
+    async function getVillageList(id) {
+        const url = `${process.env.REACT_APP_NODE_URL}/api/get-village/${id}`;
+        const config = {
+            headers: {
+                token: localStorage.getItem('rbacToken')
+            }
+        };
+        await axios.get(url, config).then((response) => {
+            if (response.data) {
+                if (response.data.isSuccess) {
+                    console.log('response.data', response.data)
+                    console.log(response.data.result)
+                    setNewInquiryList(newInquiryList => ({ ...newInquiryList, ['listVillage']: response.data.result }))
                 }
             }
 
@@ -405,22 +491,22 @@ export default function Inquiry({ workFor }) {
         console.log('in changeHandlerNewInquiry <<name>>:', name, ', <<value>>:', value);
         if (value === '' || value === 0) {
         } else {
+            setNewInquiryData(newInquiryData => ({ ...newInquiryData, [name]: value }))
             switch (name) {
                 case 'dealerId':
-                    setNewInquiryData(newInquiryData => ({ ...newInquiryData, [name]: value }))
                     getDspList(value)
                     break;
                 case 'make':
-                    setNewInquiryData(newInquiryData => ({ ...newInquiryData, [name]: value }))
                     getModelList(value)
                     break;
                 case 'inquiryPrimarySource':
-                    setNewInquiryData(newInquiryData => ({ ...newInquiryData, [name]: value }))
                     getSourceOfInquiryList(value)
                     break;
-                default:
-                    setNewInquiryData(newInquiryData => ({ ...newInquiryData, [name]: value }))
-
+                case 'district':
+                    getTehsilList(value)
+                    break;
+                case 'tehsil':
+                    getVillageList(value)
                     break;
             }
 
@@ -506,8 +592,8 @@ export default function Inquiry({ workFor }) {
                 workFor === 'newInquiry' && <>
                     <div className='row mt-2 m-0'>
                         <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
-                            <label className='myLabel' htmlFor="email">Select Dealer</label>
-                            <select onChange={changeHandlerNewInquiry} className='myInput' name="dealerId">
+                            <label className='myLabel' htmlFor="email">Select Dealer *</label>
+                            <select onChange={changeHandlerNewInquiry} className='myInput inpClr' name="dealerId">
                                 <option value='0' className='myLabel'>select</option>
                                 {
                                     newInquiryList.listDealer && newInquiryList.listDealer.length > 0 && newInquiryList.listDealer.map((i, index) => {
@@ -517,8 +603,8 @@ export default function Inquiry({ workFor }) {
                             </select>
                         </section>
                         <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
-                            <label className='myLabel' htmlFor="email">Select DSP</label>
-                            <select onChange={changeHandlerNewInquiry} className='myInput' name="dsp">
+                            <label className='myLabel' htmlFor="email">Select DSP *</label>
+                            <select onChange={changeHandlerNewInquiry} className='myInput inpClr' name="dsp">
                                 <option value='0' className='myLabel'>select</option>
                                 {
                                     newInquiryList.listDsp && newInquiryList.listDsp.length > 0 && newInquiryList.listDsp.map((i, index) => {
@@ -528,42 +614,50 @@ export default function Inquiry({ workFor }) {
                             </select>
                         </section>
                         <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
-                            <label className='myLabel' htmlFor="email">Customer Name</label>
-                            <input onChange={changeHandlerNewInquiry} className='myInput inputElement' autoComplete='false' type="text" name="customerName" />
+                            <label className='myLabel' htmlFor="email">First Name *</label>
+                            <input onChange={changeHandlerNewInquiry} className='inpClr myInput inputElement' autoComplete='false' type="text" name="firstName" />
                         </section>
                         <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
-                            <label className='myLabel' htmlFor="email">Father Name</label>
-                            <input onChange={changeHandlerNewInquiry} className='myInput inputElement' autoComplete='false' type="text" name="fatherName" />
+                            <label className='myLabel' htmlFor="email">Last Name *</label>
+                            <input onChange={changeHandlerNewInquiry} className='inpClr myInput inputElement' autoComplete='false' type="text" name="lastName" />
                         </section>
                         <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
-                            <label className='myLabel' htmlFor="email">Mobile Number</label>
-                            <input onChange={changeHandlerNewInquiry} className='myInput inputElement' autoComplete='false' type="text" name="mobileNumber" />
+                            <label className='myLabel' htmlFor="email">Father Name *</label>
+                            <input onChange={changeHandlerNewInquiry} className='inpClr myInput inputElement' autoComplete='false' type="text" name="fatherName" />
                         </section>
                         <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
-                            <label className='myLabel' htmlFor="email">Select District</label>
-                            <select onChange={changeHandlerNewInquiry} className='myInput' name="district">
+                            <label className='myLabel' htmlFor="email">Email *</label>
+                            <input onChange={changeHandlerNewInquiry} className='inpClr myInput inputElement' autoComplete='false' type="text" name="emailId" />
+                        </section>
+                        <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
+                            <label className='myLabel' htmlFor="email">Mobile Number *</label>
+                            <input onChange={changeHandlerNewInquiry} className='inpClr myInput inputElement' autoComplete='false' type="text" name="mobileNumber" />
+                        </section>
+                        <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
+                            <label className='myLabel' htmlFor="email">Select District *</label>
+                            <select onChange={changeHandlerNewInquiry} className='inpClr myInput' name="district">
                                 <option value='0' className='myLabel'>select</option>
                                 {
                                     newInquiryList.listDistrict && newInquiryList.listDistrict.length > 0 && newInquiryList.listDistrict.map((i, index) => {
-                                        return <option key={index} value={i.name} className='myLabel'>{i.name}</option>
+                                        return <option key={index} value={i.id} className='myLabel'>{i.name}</option>
                                     })
                                 }
                             </select>
                         </section>
                         <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
-                            <label className='myLabel' htmlFor="email">Select Tehsil</label>
-                            <select onChange={changeHandlerNewInquiry} className='myInput' name="tehsil">
+                            <label className='myLabel' htmlFor="email">Select Tehsil *</label>
+                            <select onChange={changeHandlerNewInquiry} className='inpClr myInput' name="tehsil">
                                 <option value='0' className='myLabel'>select</option>
                                 {
                                     newInquiryList.listTehsil && newInquiryList.listTehsil.length > 0 && newInquiryList.listTehsil.map((i, index) => {
-                                        return <option key={index} value={i.name} className='myLabel'>{i.name}</option>
+                                        return <option key={index} value={i.id} className='myLabel'>{i.name}</option>
                                     })
                                 }
                             </select>
                         </section>
                         <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
-                            <label className='myLabel' htmlFor="email">Select Block</label>
-                            <select onChange={changeHandlerNewInquiry} className='myInput' name="block">
+                            <label className='myLabel' htmlFor="email">Select Block *</label>
+                            <select onChange={changeHandlerNewInquiry} className='inpClr myInput' name="block">
                                 <option value='0' className='myLabel' >select</option>
                                 {
                                     newInquiryList.listBlock && newInquiryList.listBlock.length > 0 && newInquiryList.listBlock.map((i, index) => {
@@ -573,19 +667,19 @@ export default function Inquiry({ workFor }) {
                             </select>
                         </section>
                         <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
-                            <label className='myLabe    l' htmlFor="email">Select Village</label>
-                            <select onChange={changeHandlerNewInquiry} className='myInput' name="village">
+                            <label className='myLabe    l' htmlFor="email">Select Village *</label>
+                            <select onChange={changeHandlerNewInquiry} className='inpClr myInput' name="village">
                                 <option value='0' className='myLabel' >select</option>
                                 {
                                     newInquiryList.listVillage && newInquiryList.listVillage.length > 0 && newInquiryList.listVillage.map((i, index) => {
-                                        return <option key={index} value={i.name} className='myLabel'>{i.name}</option>
+                                        return <option key={index} value={i.id} className='myLabel'>{i.name}</option>
                                     })
                                 }
                             </select>
                         </section>
                         <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
                             <label className='myLabel' htmlFor="email">Select SSP</label>
-                            <select onChange={changeHandlerNewInquiry} className='myInput' name="ssp">
+                            <select onChange={changeHandlerNewInquiry} className='inpClr myInput' name="ssp">
                                 <option value='0' className='myLabel' >select</option>
                                 {
                                     newInquiryList.listSsp && newInquiryList.listSsp.length > 0 && newInquiryList.listSsp.map((i, index) => {
@@ -595,8 +689,8 @@ export default function Inquiry({ workFor }) {
                             </select>
                         </section>
                         <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
-                            <label className='myLabel' htmlFor="email">Select Make</label>
-                            <select onChange={changeHandlerNewInquiry} className='myInput' name="make">
+                            <label className='myLabel' htmlFor="email">Select Make *</label>
+                            <select onChange={changeHandlerNewInquiry} className='inpClr myInput' name="make">
                                 <option value='0' className='myLabel' >select</option>
                                 {
                                     newInquiryList.listMake && newInquiryList.listMake.length > 0 && newInquiryList.listMake.map((i, index) => {
@@ -606,8 +700,8 @@ export default function Inquiry({ workFor }) {
                             </select>
                         </section>
                         <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
-                            <label className='myLabel' htmlFor="email">Select Model</label>
-                            <select onChange={changeHandlerNewInquiry} className='myInput' name="model">
+                            <label className='myLabel' htmlFor="email">Select Model *</label>
+                            <select onChange={changeHandlerNewInquiry} className='inpClr myInput' name="model">
                                 <option value='0' className='myLabel' >select</option>
                                 {
                                     newInquiryList.listModel && newInquiryList.listModel.length > 0 && newInquiryList.listModel.map((i, index) => {
@@ -617,8 +711,8 @@ export default function Inquiry({ workFor }) {
                             </select>
                         </section>
                         <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
-                            <label className='myLabel' htmlFor="email">Inquiry Primary Source</label>
-                            <select onChange={changeHandlerNewInquiry} className='myInput' name="inquiryPrimarySource">
+                            <label className='myLabel' htmlFor="email">Inquiry Primary Source *</label>
+                            <select onChange={changeHandlerNewInquiry} className='inpClr myInput' name="inquiryPrimarySource">
                                 <option value='0' className='myLabel' >select</option>
                                 {
                                     newInquiryList.listPrimarySource && newInquiryList.listPrimarySource.length > 0 && newInquiryList.listPrimarySource.map((i, index) => {
@@ -628,8 +722,8 @@ export default function Inquiry({ workFor }) {
                             </select>
                         </section>
                         <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
-                            <label className='myLabel' htmlFor="email">Select Source Of Inquiry</label>
-                            <select onChange={changeHandlerNewInquiry} className='myInput' name="sourceOfInquiry">
+                            <label className='myLabel' htmlFor="email">Select Source Of Inquiry *</label>
+                            <select onChange={changeHandlerNewInquiry} className='inpClr myInput' name="sourceOfInquiry">
                                 <option value='0' className='myLabel' >select</option>
                                 {
                                     newInquiryList.listSourceOfInquiry && newInquiryList.listSourceOfInquiry.length > 0 && newInquiryList.listSourceOfInquiry.map((i, index) => {
@@ -639,7 +733,7 @@ export default function Inquiry({ workFor }) {
                             </select>
                         </section>
                         <section className='datePicker d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
-                            <label className='myLabel' htmlFor="email">InquiryDate</label>
+                            <label className='myLabel' htmlFor="email">InquiryDate *</label>
                             <DatePicker selected={newInquiryData.inquiryDate} onChange={(date) => setNewInquiryData(newInquiryData => ({ ...newInquiryData, ['inquiryDate']: date }))} />
                         </section>
                         <section className='datePicker d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
@@ -649,7 +743,7 @@ export default function Inquiry({ workFor }) {
 
                         <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
                             <label className='myLabel' htmlFor="email">Select Customer Category</label>
-                            <select onChange={changeHandlerNewInquiry} className='myInput' name="cuustomerCategory">
+                            <select onChange={changeHandlerNewInquiry} className='inpClr myInput' name="cuustomerCategory">
                                 <option value='0' className='myLabel' >select</option>
                                 {
                                     newInquiryList.listCustomerCategory && newInquiryList.listCustomerCategory.length > 0 && newInquiryList.listCustomerCategory.map((i, index) => {
@@ -659,8 +753,8 @@ export default function Inquiry({ workFor }) {
                             </select>
                         </section>
                         <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
-                            <label className='myLabel' htmlFor="email">Select Mode Of Finance</label>
-                            <select onChange={changeHandlerNewInquiry} className='myInput' name="modeOfFinance">
+                            <label className='myLabel' htmlFor="email">Select Mode Of Finance </label>
+                            <select onChange={changeHandlerNewInquiry} className='inpClr myInput' name="modeOfFinance">
                                 <option value='0' className='myLabel' >select</option>
                                 {
                                     newInquiryList.listModeOfFinance && newInquiryList.listModeOfFinance.length > 0 && newInquiryList.listModeOfFinance.map((i, index) => {
@@ -670,8 +764,8 @@ export default function Inquiry({ workFor }) {
                             </select>
                         </section>
                         <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
-                            <label className='myLabel' htmlFor="email">Select Bank</label>
-                            <select onChange={changeHandlerNewInquiry} className='myInput' name="bank">
+                            <label className='myLabel' htmlFor="email">Select Bank </label>
+                            <select onChange={changeHandlerNewInquiry} className='inpClr myInput' name="bank">
                                 <option value='0' className='myLabel' >select</option>
                                 {
                                     newInquiryList.listBank && newInquiryList.listBank.length > 0 && newInquiryList.listBank.map((i, index) => {
@@ -683,7 +777,7 @@ export default function Inquiry({ workFor }) {
                         <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
                             <label className='ms-1 myLabel' htmlFor="email">Old Tractor Owned </label>
                             <div className='d-flex'>
-                                <input value='1' onChange={changeHandlerNewInquiry} type="radio" id="html" name="oldTractorOwned" />
+                                <input value='0' onChange={changeHandlerNewInquiry} type="radio" id="html" name="oldTractorOwned" />
                                 <label className='ms-1 myLabel' htmlFor="email">Yes</label>
                                 <input defaultChecked value='0' onChange={changeHandlerNewInquiry} className='ms-3' type="radio" id="css" name="oldTractorOwned" />
                                 <label className='ms-1 myLabel' htmlFor="email">No</label>

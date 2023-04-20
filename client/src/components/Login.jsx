@@ -61,9 +61,9 @@ export default function Login() {
                     dispatch(getProfileData(token))
                     dispatch(setShowMessage('Welcome to Vehicle Management System'))
                 }
-            } else if(loginState.result.message != 'success') {
+            } else if (loginState.result.message != 'success') {
                 dispatch(setShowMessage('Credentials are wrong'))
-            }else{
+            } else {
                 dispatch(setShowMessage('Something is wrong'))
             }
             dispatch(clearLoginState())
@@ -82,31 +82,37 @@ export default function Login() {
 
     return (
         <main className='container'>
+            {/* section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4 */}
             <div className='min-vh-100 d-flex flex-column align-items-center justify-content-center'>
-                <section className='px-3 col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center'>
+                <div className='container'>
+                    <div className='row justify-content-center'>
+                        <section className='px-3 col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center'>
 
-                    <h5 className='text-center p-0 m-0'>
-                        <strong>Vehicle Management System</strong>
-                    </h5>
-                    <div className='mainDivRegister mt-3 bg-white p-4'>
-                        <h5 className='text-center'>Login</h5>
-                        <section>
-                            <label htmlFor="email">Email </label>
-                            <input className='myInput' onChange={(e) => { onChangeHandler(e) }} type="text" id='email' name="email" />
-                        </section>
-                        <section>
-                            <label htmlFor="password">Password </label>
-                            <input className='myInput' onChange={(e) => { onChangeHandler(e) }} type="password" id='password' name="password" />
-                        </section>
-                        {/* <section>
+                            <h5 className='text-center p-0 m-0'>
+                                <strong>Vehicle Management System</strong>
+                            </h5>
+                            <div className='mainDivRegister mt-3 bg-white p-4'>
+                                <h5 className='text-center'>Login</h5>
+                                <section>
+                                    <label htmlFor="email">Email </label>
+                                    <input className='myInput' onChange={(e) => { onChangeHandler(e) }} type="text" id='email' name="email" />
+                                </section>
+                                <section>
+                                    <label htmlFor="password">Password </label>
+                                    <input className='myInput' onChange={(e) => { onChangeHandler(e) }} type="password" id='password' name="password" />
+                                </section>
+                                {/* <section>
                             <label htmlFor="confirmPassword">Confirm Password </label>
                             <input className='myInput' onChange={(e) => { onChangeHandler(e) }} type="password" id='confirmPassword' name="confirmPassword" />
                         </section> */}
-                        <section>
-                            <button className='myBtn py-1' onClick={handleSubmit} type='button'>Log in</button>
+                                <section>
+                                    <button className='myBtn py-1' onClick={handleSubmit} type='button'>Log in</button>
+                                </section>
+                            </div>
                         </section>
                     </div>
-                </section>
+                </div>
+
             </div>
 
         </main>
