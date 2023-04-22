@@ -13,10 +13,10 @@ import notificationSlice from './slices/notificationSlice'
 
 import editUserDataSlice from './slices/editUserDataSlice'
 import editRoleDataSlice from './slices/editRoleDataSlice'
-import inquirySlice from './slices/inquirySlice'
-import inquiryFieldSaveSlice from './slices/inquiryFieldSaveSlice'
+import enquirySlice from './slices/enquirySlice'
+import enquiryFieldSaveSlice from './slices/enquiryFieldSaveSlice'
 import categoryAddSlice from './slices/categoryAddSlice'
-import setNewInquiryDataSlice from './slices/setNewInquiryDataSlice'
+import setNewEnquiryDataSlice from './slices/setNewEnquiryDataSlice'
 
 
 export const store = configureStore({
@@ -32,10 +32,10 @@ export const store = configureStore({
         addRoleState: addRoleSlice,
         notificationState: notificationSlice,
         editUserDataState: editUserDataSlice,
-        inquiryState: inquirySlice,
+        enquiryState: enquirySlice,
         editRoleDataState: editRoleDataSlice,
-        inquiryFieldSaveState: inquiryFieldSaveSlice,
+        enquiryFieldSaveState: enquiryFieldSaveSlice,
         categoryAddState: categoryAddSlice,
-        setNewInquiryDataState: setNewInquiryDataSlice,
+        setNewEnquiryDataState: setNewEnquiryDataSlice,
     }
 })  

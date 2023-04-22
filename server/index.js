@@ -16,7 +16,7 @@ const path = require('path');
 var jwt = require('jsonwebtoken');
 const mysql = require('mysql')
 const { hasThePass, compareTheHass } = require('./Auth/Bcrypt')
-const { verifyToken, getTokenWithExp, getToken } = require('./Auth/Jwt');
+const { verifyToken, getToken } = require('./Auth/Jwt');
 
 app.use(cors());
 
@@ -41,10 +41,10 @@ async function getDateInFormate(getDate) {
 
 }
 
-app.get('/api/get-new-inquiry-data', async (req, res) => {
-  console.log('>>>>>>>>>get-inquiry-data')
+app.get('/api/get-new-enquiry-data', tokenCheck, async (req, res) => {
+  console.log('>>>>>>>>>get-enquiry-data')
   try {
-    await db.query('SELECT * FROM dealers', async (err, getDealers) => {
+    await db.query(`SELECT * FROM dealers where id = ${req.myData.dealerId}`, async (err, getDealers) => {
       if (getDealers) {
         await db.query('SELECT * FROM enquiry_primary_sources', async (err, getPrimarySource) => {
           if (getPrimarySource) {
@@ -134,8 +134,8 @@ app.get('/api/get-dsp/:id', tokenCheck, async (req, res) => {
     }
   })
 })
-app.get('/api/get-source-inquiry/:id', tokenCheck, async (req, res) => {
-  console.log('>>>>>>>>>get-source-inquiry', req.params)
+app.get('/api/get-source-enquiry/:id', tokenCheck, async (req, res) => {
+  console.log('>>>>>>>>>get-source-enquiry', req.params)
   const urlNew = `select * from  enquiry_sources where primary_source_id = ${req.params.id}`
   await db.query(urlNew, async (err, result) => {
     if (err) {
@@ -147,8 +147,8 @@ app.get('/api/get-source-inquiry/:id', tokenCheck, async (req, res) => {
     }
   })
 })
-app.post('/api/set-new-inquiry-data', tokenCheck, async (req, res) => {
-  console.log('>>>>>>>>>set-new-inquiry-data', req.body)
+app.post('/api/set-new-enquiry-data', tokenCheck, async (req, res) => {
+  console.log('>>>>>>>>>set-new-enquiry-data', req.body)
 
   const fristName = req.body.firstName
   const lastName = req.body.lastName
@@ -166,9 +166,9 @@ app.post('/api/set-new-inquiry-data', tokenCheck, async (req, res) => {
   const dealerId = req.body.dealerId
   const dsp = req.body.dsp
   const model = req.body.model
-  const inquiryDate = req.body.inquiryDate
+  const enquiryDate = req.body.enquiryDate
   const deliveryDate = req.body.deliveryDate
-  const sourceOfInquiry = req.body.sourceOfInquiry
+  const sourceOfEnquiry = req.body.sourceOfEnquiry
 
   const url = `INSERT INTO customers (first_name, middle_name, last_name, phone_number, email, is_active, district, taluka, block, village) VALUES ('${fristName}','${middleName}','${lastName}','${phoneNumber}','${email}','${isActive}','${district}','${taluka}','${block}','${village}')`;
 
@@ -182,10 +182,10 @@ app.post('/api/set-new-inquiry-data', tokenCheck, async (req, res) => {
     } else if (result && result.insertId) {
       const insertedId = result.insertId
 
-      const newInquiryDate = await getDateInFormate(inquiryDate)
+      const newEnquiryDate = await getDateInFormate(enquiryDate)
       const newDeliveryDate = await getDateInFormate(deliveryDate)
 
-      const urlNew = `INSERT INTO enquiries (dealer_id, enquiry_type_id, salesperson_id, customer_id, product_id, date, delivery_date, enquiry_source_id, visitReason) VALUES('${dealerId}','${enquiryTypeId}','${dsp}','${insertedId}','${model}','${newInquiryDate}','${newDeliveryDate}','${sourceOfInquiry}','${visitReason}')`
+      const urlNew = `INSERT INTO enquiries (dealer_id, enquiry_type_id, salesperson_id, customer_id, product_id, date, delivery_date, enquiry_source_id, visitReason) VALUES('${dealerId}','${enquiryTypeId}','${dsp}','${insertedId}','${model}','${newEnquiryDate}','${newDeliveryDate}','${sourceOfEnquiry}','${visitReason}')`
       await db.query(urlNew, async (err, result) => {
         if (err) {
           console.log({ isSuccess: false, result: err })
@@ -240,8 +240,8 @@ app.post('/api/edit-role', tokenCheck, async (req, res) => {
   })
 })
 
-app.post('/api/addInquiryCategory', tokenCheck, async (req, res) => {
-  console.log('>>>>>>>addInquiryCategory');
+app.post('/api/addEnquiryCategory', tokenCheck, async (req, res) => {
+  console.log('>>>>>>>addEnquiryCategory');
   const categoriesValue = Object.values(req.body)
   let str = ''
   categoriesValue.forEach((i, index) => {
@@ -252,7 +252,7 @@ app.post('/api/addInquiryCategory', tokenCheck, async (req, res) => {
     }
   })
 
-  const newSqlQuery = `SELECT * FROM inquiry_category where category_name in (${str})`;
+  const newSqlQuery = `SELECT * FROM enquiry_category where category_name in (${str})`;
   db.query(newSqlQuery, (err, newSqlResult) => {
     if (err) {
       console.log({ isSuccess: false, result: err })
@@ -262,7 +262,7 @@ app.post('/api/addInquiryCategory', tokenCheck, async (req, res) => {
       res.send({ isSuccess: true, result: 'categoryExisted' })
     } else {
       async.forEachOf(categoriesValue, (item, key, callback) => {
-        const sqlQuery = `INSERT INTO inquiry_category(category_name) VALUES('${item}')`;
+        const sqlQuery = `INSERT INTO enquiry_category(category_name) VALUES('${item}')`;
         db.query(sqlQuery, (err, resultNew) => {
           if (err) {
             console.log({ isSuccess: true, result: err })
@@ -285,7 +285,7 @@ app.post('/api/addInquiryCategory', tokenCheck, async (req, res) => {
 
 app.get('/api/get-current-fields/:id', tokenCheck, async (req, res) => {
   console.log('>>>>>>get-current-fields/:id', req.params.id)
-  const newSqlQuery = `SELECT s.* FROM inquiry_category_field as f inner join inquiry_fields as s on f.field_id = s.id WHERE category_id = '${req.params.id}'`
+  const newSqlQuery = `SELECT s.* FROM enquiry_category_field as f inner join enquiry_fields as s on f.field_id = s.id WHERE category_id = '${req.params.id}'`
   db.query(newSqlQuery, (err, newSqlResult) => {
     if (err) {
       console.log({ isSuccess: false, result: err })
@@ -300,17 +300,17 @@ app.post('/api/categoryInsertFields', tokenCheck, async (req, res) => {
   console.log('>>>>>>>>>categoryInsertFields called')
   const catID = req.body.id;
   const fieldsAr = req.body.fields;
-  // const urlNew = `INSERT INTO inquiry_category_field(category_id, field_id) VALUES('${}', '')`
+  // const urlNew = `INSERT INTO enquiry_category_field(category_id, field_id) VALUES('${}', '')`
   // await db.query(urlNew, async (err, result) 
 
-  const newSqlQuery = `delete FROM inquiry_category_field  where category_id = '${catID}'`
+  const newSqlQuery = `delete FROM enquiry_category_field  where category_id = '${catID}'`
   db.query(newSqlQuery, (err, newSqlResult) => {
     if (err) {
       console.log({ isSuccess: false, result: err })
       res.send({ isSuccess: false, result: 'error' })
     } else {
       async.forEachOf(fieldsAr, (item, key, callback) => {
-        const sqlQuery = `INSERT INTO inquiry_category_field(category_id, field_id) VALUES('${catID}', '${item}')`;
+        const sqlQuery = `INSERT INTO enquiry_category_field(category_id, field_id) VALUES('${catID}', '${item}')`;
         db.query(sqlQuery, (err, resultNew) => {
           if (err) {
             console.log({ isSuccess: true, result: err })
@@ -333,7 +333,7 @@ app.post('/api/categoryInsertFields', tokenCheck, async (req, res) => {
 })
 app.get('/api/get-categories-fields', tokenCheck, async (req, res) => {
   console.log('>>>>>>>get-categories-fields');
-  const urlNew = `SELECT * FROM inquiry_fields`
+  const urlNew = `SELECT * FROM enquiry_fields`
   await db.query(urlNew, async (err, result) => {
     if (err) {
       console.log({ isSuccess: false, result: err })
@@ -345,9 +345,9 @@ app.get('/api/get-categories-fields', tokenCheck, async (req, res) => {
     }
   })
 })
-app.get('/api/get-inquiry-categories', tokenCheck, async (req, res) => {
-  console.log('>>>>>>>get-inquiry-categories');
-  const urlNew = `SELECT * FROM inquiry_category`
+app.get('/api/get-enquiry-categories', tokenCheck, async (req, res) => {
+  console.log('>>>>>>>get-enquiry-categories');
+  const urlNew = `SELECT * FROM enquiry_category`
   await db.query(urlNew, async (err, result) => {
     if (err) {
       console.log({ isSuccess: false, result: err })
@@ -408,7 +408,9 @@ app.get('/api/get-features', tokenCheck, checkUserPermission('add-role'), async 
 })
 function checkUserPermission(role) {
   return async (req, res, next) => {
-    const url = `SELECT DISTINCT  t.page, t.index_no, t.feature  FROM dealer_department_user f inner join role_features as s on s.role_id = f.role_id inner join features as t on s.feature_id = t.id  where user_id = ${req.myData.userId} and dealer_id = (select dealer_id from dealer_department_user where user_id = ${req.myData.userId}  limit 1)`
+    const userId = req.myData.userId
+    const dealerId = req.myData.dealerId
+    const url = `SELECT DISTINCT  t.page, t.index_no, t.feature  FROM dealer_department_user f inner join role_features as s on s.role_id = f.role_id inner join features as t on s.feature_id = t.id  where user_id = ${userId} and dealer_id = ${dealerId}`
     let tempAr = [];
     await db.query(url, (err, result) => {
       if (err) {
@@ -433,7 +435,8 @@ async function tokenCheck(req, res, next) {
   const isAuthId = await verifyToken(currentToken)
   if (isAuthId && isAuthId.id) {
     req.myData = {
-      userId: isAuthId.id
+      userId: isAuthId.id,
+      dealerId: isAuthId.dealerId
     }
     console.log('User id in tokenCheck', isAuthId.id);
     return next()
@@ -442,46 +445,40 @@ async function tokenCheck(req, res, next) {
     return res.send({ isSuccess: false, result: 'auth failed' })
   }
 }
-app.get('/api/profileData', async (req, res) => {
-  console.log('>>>>>profileData');
-  let currentToken = req.headers.token
-  const isAuthId = await verifyToken(currentToken)
-  if (isAuthId.id) {
-    const url = `SELECT email, first_name, last_name, last_login from users where id = ${isAuthId.id} `
-    await db.query(url, async (err, result) => {
-      if (err) {
+app.get('/api/profileData', tokenCheck, async (req, res) => {
+  console.log('>>>>>profileData', req.myData);
+  const url = `SELECT email, first_name, last_name, last_login from users where id = ${req.myData.userId}`
+  await db.query(url, async (err, result) => {
+    if (err) {
 
-        console.log({ isSuccess: true, result: err })
-        res.send({ isSuccess: true, result: 'error' })
-      } else {
-        tempArr = result
-        // after adding role to dealer_department_user table
-        const sqlQuery = `SELECT role_id from dealer_department_user where user_id = '${isAuthId.id}' and dealer_id = (select dealer_id from dealer_department_user where user_id = '${isAuthId.id}' limit 1)`
+      console.log({ isSuccess: true, result: err })
+      res.send({ isSuccess: true, result: 'error' })
+    } else {
+      tempArr = result
+      // after adding role to dealer_department_user table
+      const sqlQuery = `SELECT role_id from dealer_department_user where user_id = '${req.myData.userId}' and dealer_id = ${req.myData.dealerId}`
 
-        await db.query(sqlQuery, async (err, checkRole) => {
-          let urlNew = ''
-          if (checkRole.length > 0 && checkRole[0].role_id === 1) {
-            urlNew = `SELECT DISTINCT  page, index_no, feature  FROM  features`
+      await db.query(sqlQuery, async (err, checkRole) => {
+        let urlNew = ''
+        if (checkRole.length > 0 && checkRole[0].role_id === 1) {
+          urlNew = `SELECT DISTINCT page, index_no, feature  FROM  features`
+        } else {
+          urlNew = `SELECT DISTINCT  t.page, t.index_no, t.feature  FROM dealer_department_user as f inner join role_features as s on s.role_id = f.role_id inner join features as t on s.feature_id = t.id  where user_id  = ${req.myData.userId}`
+        }
+        await db.query(urlNew, (err, resultNew) => {
+          if (err) {
+            console.log({ isSuccess: false, result: err })
+            res.send({ isSuccess: false, result: 'error' })
           } else {
-            urlNew = `SELECT DISTINCT  t.page, t.index_no, t.feature  FROM dealer_department_user as f inner join role_features as s on s.role_id = f.role_id inner join features as t on s.feature_id = t.id  where user_id  = ${isAuthId.id} and dealer_id = (select dealer_id from dealer_department_user where user_id = ${isAuthId.id} limit 1)`
+            result[0].role = resultNew
+            console.log({ isSuccess: true, result: urlNew })
+            res.send({ isSuccess: true, result: result[0] })
           }
-          await db.query(urlNew, (err, resultNew) => {
-            if (err) {
-              console.log({ isSuccess: false, result: err })
-              res.send({ isSuccess: false, result: 'error' })
-            } else {
-              result[0].role = resultNew
-              console.log({ isSuccess: true, result: urlNew })
-              res.send({ isSuccess: true, result: result[0] })
-            }
-          })
         })
-      }
-    })
-  } else {
-    console.log({ isSuccess: true, result: 'noAuth' })
-    res.send({ isSuccess: true, result: 'noAuth' })
-  }
+      })
+    }
+  })
+
 })
 
 app.get('/api/get-agency-data', async (req, res) => {
@@ -513,7 +510,10 @@ app.get('/api/get-agency-data', async (req, res) => {
 
 app.get('/api/get-user-list', tokenCheck, checkUserPermission('users'), async (req, res) => {
   console.log('>>>>>get-user-list');
-  const url = `select f.id, f.first_name, f.last_name, f.email, f.is_active, f.phone_number from  users as f where id != 20 ; `
+  // query for getting user list according dealers
+  const url = `SELECT distinct f.id, f.first_name, f.last_name, f.email, f.is_active, f.phone_number  FROM users as f inner join dealer_department_user as s on s.user_id = f.id  inner join dealers as t on s.dealer_id = t.id where s.dealer_id = ${req.myData.dealerId} and f.id not in(20, ${req.myData.userId})`
+
+  // const url = `select f.id, f.first_name, f.last_name, f.email, f.is_active, f.phone_number from  users as f where id != 20 ; `
   await db.query(url, async (err, result) => {
     if (err) {
       console.log({ isSuccess: false, result: err })
@@ -525,7 +525,7 @@ app.get('/api/get-user-list', tokenCheck, checkUserPermission('users'), async (r
 
   })
 })
-app.get('/api/get-user_details/:id', tokenCheck, async (req, res) => {
+app.get('/api/get-user-details/:id', async (req, res) => {
   const userId = req.params.id
   const urlNew = `select distinct s.id from dealer_department_user as f inner join dealers as s on s.id = f.dealer_id where user_id= ${userId} `
   db.query(urlNew, async (err, dealerIdResult) => {
@@ -592,6 +592,48 @@ app.get('/api/get-roles-to-edit', tokenCheck, async (req, res) => {
     }
   })
 })
+app.get('/api/example-data', async (req, res) => {
+
+  const url = `
+  SELECT 
+  u.*, 
+  CONCAT(
+    
+    GROUP_CONCAT(
+      distinct CONCAT(
+        '{"dealer_id":', d.dealer_id,' ,"roles":"', (
+        select CONCAT(
+    '[',
+    GROUP_CONCAT(
+    distinct CONCAT(
+    role_id
+      ) SEPARATOR ','
+    ),
+    ']'
+  ) AS role from dealer_department_user where dealer_id = d.dealer_id and user_id = d.user_id
+        ), '" }'
+      )
+       ORDER BY d.dealer_id ASC
+      SEPARATOR ','
+    )
+  ) AS dealers
+FROM 
+  users u
+  INNER JOIN dealer_department_user d ON d.user_id = u.id
+  WHERE 
+  u.id = 71
+GROUP BY 
+  u.id;
+  `
+  await db.query(url, async (err, roles) => {
+
+    console.log({ isSuccess: true, result: err })
+    console.log('vroles.dealers', roles[0].dealers)
+    console.log('JSON.stringify(roles[0].dealers)', JSON.parse(roles[0].dealers))
+    res.send({ isSuccess: true, result: roles })
+  })
+
+})
 app.get('/api/data-user-create', tokenCheck, checkUserPermission('add-user'), async (req, res) => {
   console.log('>>>>>data-user-create');
 
@@ -601,7 +643,7 @@ app.get('/api/data-user-create', tokenCheck, checkUserPermission('add-user'), as
       console.log({ isSuccess: true, result: err })
       res.send({ isSuccess: true, result: 'error' })
     } else {
-      const newUrl = `SELECT * from dealers`
+      const newUrl = `SELECT * from dealers where id =${req.myData.dealerId}`
       await db.query(newUrl, async (err, dealers) => {
         if (err) {
           console.log({ isSuccess: true, result: err })
@@ -658,7 +700,6 @@ app.post('/api/edit-user', tokenCheck, checkUserPermission('edit-user'), async (
       res.send({ isSuccess: false, result: 'error' })
     } else {
 
-      // const newSqlQuery = `delete FROM user_role where user_id = '${req.body.id}'`
       const newSqlQuery = `delete FROM dealer_department_user where user_id = '${req.body.id}'`
       db.query(newSqlQuery, (err, newSqlResult) => {
         if (err) {
@@ -786,22 +827,38 @@ app.post('/api/login', async (req, res) => {
       const comparisionResult = await compareTheHass(req.body.password, result[0].password)
       if (comparisionResult) {
         if (result[0].is_active == 1) {
-          const tokenData = { id: result[0].id };
-          const tokenIs = await getToken(tokenData)
 
           var cdate = moment().format('YYYY-MM-DD H:m:s');
           // const newUrl = `SELECT * FROM users WHERE email = '${req.body.email}'`
           // const newUrl = `UPDATE users SET last_login = '${cdate}' WHERE(id = '${result[0].id}')`
           const newUrl = `UPDATE users SET last_login = current_login, current_login = '${cdate}' WHERE id = '${result[0].id}'; `
-
           db.query(newUrl, async (err, newResult) => {
             if (err) {
               res.send({ isSuccess: true, message: 'error', result: [] })
               console.log({ isSuccess: true, message: 'error', result: err })
+            } else {
+              const dealerUrl = `select distinct s.id , s.name from dealer_department_user as f inner join dealers as s on s.id = f.dealer_id where f.user_id ='${result[0].id}'; `
+              db.query(dealerUrl, async (err, dealerResult) => {
+                if (err) {
+                  res.send({ isSuccess: true, message: 'error', result: [] })
+                  console.log({ isSuccess: true, message: 'error', result: err })
+                } else if (dealerResult.length > 0) {
+                  const tokenData = {
+                    id: result[0].id,
+                    dealerId: dealerResult[0].id
+                  };
+                  const tokenIs = await getToken(tokenData)
+                  res.send({ isSuccess: true, message: 'success', result: { dealerResult, tokenIs } })
+                  console.log({ isSuccess: true, message: 'success', result: { dealerResult, tokenIs } })
+                } else {
+
+                  res.send({ isSuccess: true, message: 'wrong', result: [] })
+                  console.log({ isSuccess: true, message: 'wrong', result: [] })
+                }
+              })
+
             }
           })
-          res.send({ isSuccess: true, message: 'success', result: tokenIs })
-          console.log({ isSuccess: true, message: 'success', result: tokenIs })
         } else {
           res.send({ isSuccess: true, message: 'deactivate', result: [] })
           console.log({ isSuccess: true, message: 'deactivate', result: [] })

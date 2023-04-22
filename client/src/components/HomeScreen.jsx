@@ -9,16 +9,18 @@ import Users from './Users'
 import AddUser from './AddUser'
 import AddRole from './AddRole'
 import NoAuth from './NoAuth'
+import Sales from './Sales'
+import Manage from './Manage'
 import Profile from './Profile'
-import Inquiry from './Inquiry'
+import Enquiry from './Enquiry'
 import Products from './Products'
 import logo from '../assets/svg/logo.svg'
 import logoT from '../assets/svg/logofinal.svg'
 import { clearUserListState } from '../redux/slices/getUserListSlice'
 import { setShowMessage } from '../redux/slices/notificationSlice'
 
-import { useLocation, NavLink, Link, useNavigate, Navigate, BrowserRouter, Route, Routes } from "react-router-dom";
-import InquiryCategories from './InquiryCategories'
+import { useLocation, NavLink, Link, useNavigate, Navigate, BrowserRouter, Route, Routes, json } from "react-router-dom";
+import EnquiryCategories from './EnquiryCategories'
 import Agency from './Agency'
 
 const CheckPermission = ({ children, path }) => {
@@ -34,7 +36,12 @@ const CheckPermission = ({ children, path }) => {
 export default function HomeScreen() {
   const dispatch = useDispatch()
   const location = useLocation()
+  const [bottomDivState, setBottomDivState] = useState(false)
+  const bottomDiv = useRef()
+
   const [userPermissions, setUserPermissions] = useState([])
+  const [currentDealer, setCurrentDealer] = useState({})
+
   const adminAsideRef = useRef()
   const toggleBtnRef = useRef()
   const navigate = useNavigate();
@@ -47,6 +54,21 @@ export default function HomeScreen() {
       collapse[0].parentElement.parentElement.parentElement.classList.add('show')
     }
   }, [])
+  useEffect(() => {
+    if (bottomDivState) {
+      let handler = (event) => {
+        if (!bottomDiv.current.contains(event.target)) {
+          setBottomDivState(false)
+        }
+      }
+      document.addEventListener('mousedown', handler)
+      return () => {
+
+        document.removeEventListener('mousedown', handler)
+      }
+    }
+  }, [bottomDivState])
+
   useEffect(() => {
     document.getElementsByTagName('body')[0].style.backgroundColor = '#edf1f4'
   }, [])
@@ -62,16 +84,12 @@ export default function HomeScreen() {
     return success
   }, [])
   function logOutHandler() {
-    localStorage.removeItem('rbacToken')
-    localStorage.removeItem('rolesArray')
+    localStorage.clear()
     dispatch(setTokkenSlice(false))
     dispatch(clearUserListState())
     dispatch(clearAuthSliceState())
     dispatch(clearProfileData())
     navigate('/login')
-  }
-  function cancelBtn() {
-    document.getElementById('asideProfilTab').click()
   }
   function getDateTime(time) {
     const data = new Date(time)
@@ -87,6 +105,11 @@ export default function HomeScreen() {
       document.getElementById('root').classList.add('toggleSideBar')
     }
   }
+  useEffect(() => {
+    let jsonData = localStorage.getItem('byDealer')
+    let byDealer = JSON.parse(jsonData)
+    setCurrentDealer(byDealer)
+  }, [])
   return (
     <>
       <aside ref={adminAsideRef} className='asideNav'>
@@ -125,8 +148,8 @@ export default function HomeScreen() {
                       }
                       {
                         checkTabGrant(['profile']) && <li className='inLi'>
-                          <NavLink className={({ isActive }) => isActive ? 'activeLink' : ''} to="inquiry" >
-                            Inquiry
+                          <NavLink className={({ isActive }) => isActive ? 'activeLink' : ''} to="enquiry" >
+                            Enquiry
                           </NavLink>
                         </li>
                       }
@@ -135,7 +158,7 @@ export default function HomeScreen() {
                 </li>
               }
               {
-                checkTabGrant(['products']) && <li className='outLi'>
+                checkTabGrant(['products', 'sales']) && <li className='outLi'>
                   <button className="headBtn" type="button" data-bs-toggle="collapse" data-bs-target="#service-collapseOne" aria-expanded="false" aria-controls="service-collapseOne">
                     {/* <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="headSvg bi bi-house" viewBox="0 0 16 16">
                     <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.707 1.5ZM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5 5 5Z" />
@@ -154,6 +177,37 @@ export default function HomeScreen() {
                         checkTabGrant(['products']) && <li className='inLi'>
                           <NavLink className={({ isActive }) => isActive ? 'activeLink' : ''} to="products" >
                             Products
+                          </NavLink>
+                        </li>
+                      }
+                      {
+                        checkTabGrant(['sales']) && <li className='inLi'>
+                          <NavLink className={({ isActive }) => isActive ? 'activeLink' : ''} to="sales" >
+                            Sales
+                          </NavLink>
+                        </li>
+                      }
+                    </ul>
+                  </div>
+                </li>
+              }
+              {
+                checkTabGrant(['manage']) && <li className='outLi'>
+                  <button className="headBtn" type="button" data-bs-toggle="collapse" data-bs-target="#manage-collapseOne" aria-expanded="false" aria-controls="manage-collapseOne">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="bi bi-diagram-3-fill" viewBox="0 0 16 16">
+                      <path fill-rule="evenodd" d="M6 3.5A1.5 1.5 0 0 1 7.5 2h1A1.5 1.5 0 0 1 10 3.5v1A1.5 1.5 0 0 1 8.5 6v1H14a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-1 0V8h-5v.5a.5.5 0 0 1-1 0V8h-5v.5a.5.5 0 0 1-1 0v-1A.5.5 0 0 1 2 7h5.5V6A1.5 1.5 0 0 1 6 4.5v-1zm-6 8A1.5 1.5 0 0 1 1.5 10h1A1.5 1.5 0 0 1 4 11.5v1A1.5 1.5 0 0 1 2.5 14h-1A1.5 1.5 0 0 1 0 12.5v-1zm6 0A1.5 1.5 0 0 1 7.5 10h1a1.5 1.5 0 0 1 1.5 1.5v1A1.5 1.5 0 0 1 8.5 14h-1A1.5 1.5 0 0 1 6 12.5v-1zm6 0a1.5 1.5 0 0 1 1.5-1.5h1a1.5 1.5 0 0 1 1.5 1.5v1a1.5 1.5 0 0 1-1.5 1.5h-1a1.5 1.5 0 0 1-1.5-1.5v-1z" />
+                    </svg>
+                    <span>
+                      Management
+                    </span>
+                  </button>
+                  <div id="manage-collapseOne" data-bs-parent="#accordionExample" className="accordion-collapse collapse">
+                    <ul className='inUl'>
+                      {
+
+                        checkTabGrant(['manage']) && <li className='inLi'>
+                          <NavLink className={({ isActive }) => isActive ? 'activeLink' : ''} to="manage" >
+                            Manage
                           </NavLink>
                         </li>
                       }
@@ -193,8 +247,8 @@ export default function HomeScreen() {
                       }
                       {
                         checkTabGrant(['users']) && <li className='inLi'>
-                          <NavLink className={({ isActive }) => isActive ? 'activeLink' : ''} to="inquiry-categories" >
-                            Inquiry categories
+                          <NavLink className={({ isActive }) => isActive ? 'activeLink' : ''} to="enquiry-categories" >
+                            Enquiry categories
                           </NavLink>
                         </li>
                       }
@@ -214,7 +268,7 @@ export default function HomeScreen() {
           </section>
           <div className='mb-3'>
             <section className='profileSection outerSection'>
-              <div id='asideProfilTab' type="button" data-bs-toggle="collapse" aria-expanded="false" data-bs-target="#logOutDiv" className='d-flex flex-row'>
+              <div onClick={() => { bottomDivState ? setBottomDivState(false) : setBottomDivState(true) }} id='asideProfilTab' type="button" className='d-flex flex-row'>
                 <div className='myTextContainer'>
                   <span className='text-uppercase'>{profileDataState.isSuccess ? `${profileDataState?.profileData.result.first_name.slice(0, 1)}` : 'A'}</span>
                 </div>
@@ -222,16 +276,18 @@ export default function HomeScreen() {
                   <h6 className='m-0 text-uppercase text-white'>{profileDataState.isSuccess ? `${profileDataState?.profileData.result.first_name} ${profileDataState?.profileData.result.last_name}` : 'User'}</h6>
                 </div>
               </div>
-              <div id='logOutDiv' className='collapse' >
-                <div className='logoutSideBar '>
+              {
+                bottomDivState && <div ref={bottomDiv} className='logoutSideBar'>
                   <div className='d-flex justify-content-between'>
-                    <h5 className='text-white'>{profileDataState.isSuccess ? `${profileDataState?.profileData.result.email}` : 'abc@gmail.com'}</h5>
-                    <button onClick={cancelBtn} className='svgBtn'>
+                    <h6 className='text-white'>Email : {profileDataState.isSuccess && `${profileDataState?.profileData.result.email}`}</h6>
+                    <button onClick={() => { setBottomDivState(false) }} className='svgBtn'>
                       <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" className="bi bi-x-lg" viewBox="0 0 16 16">
                         <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" />
                       </svg>
                     </button>
                   </div>
+                  <h6 className='text-white mt-2'>Current dealer : {currentDealer && currentDealer.name}</h6>
+
                   <div className='mt-3 d-flex flex-column'>
                     <div className='d-flex flex-wrap align-items-center border-bottom pb-2'>
                       <div className='myTextContainer'>
@@ -246,7 +302,7 @@ export default function HomeScreen() {
                     </div>
                   </div>
                 </div>
-              </div>
+              }
             </section>
           </div>
         </main>
@@ -262,16 +318,20 @@ export default function HomeScreen() {
 
             <Route path="users" element={<CheckPermission path='users'><Users /></CheckPermission>} exact />
             <Route path="profile" element={<CheckPermission path='profile'><Profile /></CheckPermission>} exact />
-            <Route path="inquiry" element={<CheckPermission path='profile'><Inquiry /></CheckPermission>} exact />
+            <Route path="enquiry" element={<CheckPermission path='profile'><Enquiry /></CheckPermission>} exact />
+            <Route path="new-enquiry" element={<CheckPermission path='profile'><Enquiry workFor='newEnquiry' /></CheckPermission>} exact />
 
-            <Route path="new-inquiry" element={<CheckPermission path='profile'><Inquiry workFor='newInquiry' /></CheckPermission>} exact />
+            <Route path="sales" element={<CheckPermission path='sales'><Sales /></CheckPermission>} exact />
+
+            <Route path="manage" element={<CheckPermission path='manage'><Manage /></CheckPermission>} exact />
+
 
             <Route path="add-role" element={<CheckPermission path='add-role'><AddRole workFor='addRole' /></CheckPermission>} exact />
             <Route path="roles" element={<CheckPermission path='roles'><AddRole workFor='roles' /></CheckPermission>} exact />
             <Route path="add-user" element={<CheckPermission path='add-user'><AddUser workFor='forAdd' /></CheckPermission>} exact />
             <Route path="edit-user" element={<CheckPermission path='edit-user'><AddUser workFor='forEdit' /></CheckPermission>} exact />
 
-            <Route path="inquiry-categories" element={<CheckPermission path='users'><InquiryCategories /></CheckPermission>} exact />
+            <Route path="enquiry-categories" element={<CheckPermission path='users'><EnquiryCategories /></CheckPermission>} exact />
 
             <Route path="agency" element={<CheckPermission path='agency'><Agency workFor='agency' /></CheckPermission>} exact />
             <Route path="add-agency" element={<CheckPermission path='agency'><Agency workFor='addAgency' /></CheckPermission>} exact />
@@ -285,7 +345,7 @@ export default function HomeScreen() {
           </Routes>
 
         </div>
-        
+
       </main>
 
     </>

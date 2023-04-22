@@ -228,6 +228,9 @@ select.myInput {
   height: 250px;
   overflow: auto;
 }
+.myDTableCaption {
+  display: table-caption;
+}
 
 
 

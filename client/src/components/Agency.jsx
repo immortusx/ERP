@@ -9,6 +9,8 @@ import { setShowMessage } from '../redux/slices/notificationSlice'
 import { useNavigate } from 'react-router-dom'
 import '../styles/Agency.css'
 
+import SwapSection from './SwapSection'
+
 export default function Agency({ workFor }) {
     const [dealerList, setDealersList] = useState([])
     const [usersList, setUsersList] = useState([])
@@ -86,6 +88,14 @@ export default function Agency({ workFor }) {
         // selectInp.current.value = 0
         // rightArrowBtn.current.classList.add('disabledBtn')
     }
+    function callBackFun(checkId) {
+        console.log('callBackFun',checkId)
+
+    }
+    function callBackLeft(checkId) {
+        console.log('callBackLeft',checkId)
+
+    }
     function selectChangeCall(e) {
         if (e.target.selectedOptions.length > 0) {
             if (e.target.name === 'selectRole') {
@@ -138,54 +148,21 @@ export default function Agency({ workFor }) {
                             </tbody>
                         </table>
                     </section>
-                    <div className=' row m-0'>
-                        <section className='d-flex mt-1 flex-column swapSelection col-12'>
-                            <label className='myLabel'>Users</label>
-                            <div className='d-flex flex-column flex-md-row mt-2'>
-                                <main >
-                                    <label className='pb-2' >User List ({usersList && usersList.length > 0 ? usersList.length : 0})</label>
-                                    <select name='selectRole' onChange={(e) => selectChangeCall(e)} ref={selectionListRef} className='inputElement' multiple>
 
-                                        {
-                                            usersList && usersList.length > 0 && usersList.map((item, index) => {
-                                                return <option className='col text-uppercase' key={index} value={item.id}>{item.first_name} {item.last_name} - {item.email}</option>
-                                            })
-                                        }
-                                    </select>
-                                </main>
-
-                                <div className='d-flex flex-row flex-md-column justify-content-around allBtnsMain m-3'>
-                                    <div ref={rightArrowBtn} className='arrowBtn disabledBtn' name='rightDiv' onClick={rightClick}>
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="bi bi-arrow-right" viewBox="0 0 16 16">
-                                            <path fillRule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" />
-                                        </svg>
-                                    </div>
-                                    <div ref={leftArrowBtn} className='arrowBtn disabledBtn' onClick={leftClick}>
-
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-left" viewBox="0 0 16 16">
-                                            <path fillRule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z" />
-                                        </svg>
-                                    </div>
-                                </div>
-
-                                <main >
-                                    <label className='pb-2' >Selected Users ({userData && userData.length > 0 ? userData.length : 0})</label>
-
-                                    <select onChange={(e) => selectChangeCall(e)} ref={selectedListRef} className='inputElement' name='selectedRole' multiple>
-                                        {
-                                            userData.map((item, index) => {
-                                                return <option className='text-uppercase' key={index} >{item}</option>
-                                            })
-                                        }
-                                    </select>
-                                </main>
+                        <main className='mt-3'>
+                            <div className=''>
+                                <section className='d-flex flex-column col-12'>
+                                    <label className='myLabel'>Users</label>
+                                    <SwapSection workFor='users' selectedData={userData} setSelectedData={setUserData} callBackFun={callBackFun} callBackLeft={callBackLeft} selectionData={usersList} />
+                                    {/* <SwapSection /> */}
+                                </section>
                             </div>
-                        </section>
+                        </main>
+
                         <section className='d-flex mt-3  flex-column flex-sm-row'>
                             <button onClick={submitClicked} className='col-12 col-sm-5 col-lg-2 myBtn py-2' type='button'>Submit</button>
                             <button onClick={cancelClicked} className='ms-0 ms-sm-3 mt-3 mt-sm-0 col-12 col-sm-5 col-lg-2 myBtn py-2' type='button'>Cancel</button>
                         </section>
-                    </div>
                 </div>
             </main>
         </div >

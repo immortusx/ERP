@@ -50,46 +50,34 @@ export default function AddUser({ workFor }) {
     }, [editUserSliceState])
 
     function handleSubmit() {
-        console.log('dealerRoles', dealerRoles)
-        console.log('editUserData', editUserData)
         console.log('userData', userData)
+        console.log('dealerRoles', dealerRoles)
         const fN = userData.firstName;
         const lN = userData.lastName;
         const email = userData.email;
         const pass = userData.password;
         const pN = userData.phoneNumber;
-        console.log('dealerRoles', dealerRoles, Object.keys(dealerRoles).length > 0)
 
-        if (workFor != 'forAdd') {
-            if (fN.length > 0 &&
-                lN.length > 0 &&
-                email.length > 0 &&
-                pN.length > 0 &&
-                Object.keys(dealerRoles).length > 0) {
+        if (fN.length > 0 &&
+            lN.length > 0 &&
+            email.length > 0 &&
+            pN.length > 0 &&
+            (workFor === 'forAdd' ? pass.length > 0 : true) &&
+            Object.keys(dealerRoles).length > 0) {
+            userData['dealerRole'] = dealerRoles
+            if (workFor === 'forEdit') {
                 userData['id'] = editUserData.id
-                userData['dealerRole'] = dealerRoles
                 dispatch(editUserUpdateToDb(userData))
             } else {
-                dispatch(setShowMessage('All field must be field'))
-            }
-
-        } else {
-            if (fN.length > 0 &&
-                lN.length > 0 &&
-                email.length > 0 &&
-                pass.length > 0 &&
-                pN.length > 0 &&
-                Object.keys(dealerRoles).length > 0) {
-                userData['dealerRole'] = dealerRoles
                 dispatch(addUserToDb(userData))
-            } else {
-                dispatch(setShowMessage('Please fill all the field'))
             }
-
+        } else {
+            dispatch(setShowMessage('All field must be field'))
         }
+
     }
     async function getUserDealerRole(id) {
-        const url = `${process.env.REACT_APP_NODE_URL}/api/get-user_details/${id}`;
+        const url = `${process.env.REACT_APP_NODE_URL}/api/get-user-details/${id}`;
         const config = {
             headers: {
                 token: localStorage.getItem('rbacToken')
@@ -97,7 +85,6 @@ export default function AddUser({ workFor }) {
         };
         await Axios.get(url, config).then((response) => {
             if (response.data?.isSuccess) {
-                console.log('getUserDealerRole response.data', response.data)
                 setDealerRoles(response.data.result)
             }
         })
@@ -118,7 +105,6 @@ export default function AddUser({ workFor }) {
                     navigate('/home/users')
                 }, 1000)
             } else {
-                console.log('editUserData', editUserData)
                 setUserData({
                     firstName: editUserData.first_name,
                     lastName: editUserData.last_name,
@@ -194,7 +180,6 @@ export default function AddUser({ workFor }) {
                 i.classList.remove('checked')
             })
             leftArrowBtn.current.classList.remove('disabledBtn')
-            console.log(side, item)
         }
         e.currentTarget.classList.add('checked')
     }
@@ -202,11 +187,8 @@ export default function AddUser({ workFor }) {
     function editDealerRole() {
 
         const itemList = selectedInp.current
-        console.log('itemList', itemList)
         const selectedItems = itemList.getElementsByClassName('checked');
-        console.log('selectedItems', selectedItems)
         const checkId = selectedItems[0].value
-        console.log('checkId', checkId)
         setDealerId(checkId)
         setPopUpScreen(true)
     }
@@ -231,11 +213,9 @@ export default function AddUser({ workFor }) {
         const selectedItems = itemList.getElementsByClassName('checked');
         const checkId = selectedItems[0].value
         let newResult = Array.from(dealerRoles).filter((item) => {
-            console.log('dealerRoles', item, dealerRoles[item])
             return item != checkId
         })
         let tempObj = { ...dealerRoles }
-        console.log('tempObj', tempObj)
         delete tempObj[checkId]
         setDealerRoles(tempObj)
 
@@ -254,11 +234,18 @@ export default function AddUser({ workFor }) {
         setUserData({ ...userData, [name]: value })
     }
 
+    function callBackLeft(checkId) {
+        const tempAr = dealerRoles[dealerId]
+        const newAr = tempAr.filter(i => { return i != checkId })
+        if (Object.keys(dealerRoles).length == 1 && Object.values(dealerRoles)[0].length == 1) {
+            setDealerRoles({})
+        } else {
+
+            setDealerRoles(dealerRoles => ({ ...dealerRoles, [dealerId]: newAr }))
+        }
+    }
     function callBackFun(checkId) {
-        console.log('callBackFun and dealerId', checkId, dealerId)
-        console.log('dealerRoles', dealerRoles)
         const tempAr = [];
-        console.log('dealerRoles[dealerId]', dealerRoles[dealerId])
         if (dealerRoles[dealerId] != undefined) {
             if (dealerRoles[dealerId] && !dealerRoles[dealerId].includes(checkId)) {
                 dealerRoles[dealerId].forEach(i => {
@@ -274,8 +261,9 @@ export default function AddUser({ workFor }) {
     }
 
     const showSelectedData = useMemo(() => {
-
-        console.log('dealerRoles', dealerRoles)
+        console.log('dealerRoles', dealerRoles);
+        console.log('dealers', dealers);
+        console.log('roles', roles);
         let tempAr = []
         if (Object.keys(dealerRoles).length > 0) {
 
@@ -284,17 +272,19 @@ export default function AddUser({ workFor }) {
                 let findDealer = dealers.find(i => {
                     return i.id == item
                 })
-                tempObj['dealer'] = findDealer
-                let tempArNested = []
-                dealerRoles[item].forEach(i => {
-                    let result = roles.find(roleItem => {
-                        console.log('roleItem', roleItem)
-                        return i == roleItem.id
+                console.log('findDealer', findDealer);
+                if (findDealer) {
+                    tempObj['dealer'] = findDealer
+                    let tempArNested = []
+                    dealerRoles[item].forEach(i => {
+                        let result = roles.find(roleItem => {
+                            return i == roleItem.id
+                        })
+                        tempArNested.push(result)
                     })
-                    tempArNested.push(result)
-                })
-                tempObj['role'] = tempArNested
-                tempAr.push(tempObj)
+                    tempObj['role'] = tempArNested
+                    tempAr.push(tempObj)
+                }
             })
         }
         console.log('tempAr', tempAr)
@@ -414,7 +404,7 @@ export default function AddUser({ workFor }) {
                         <div className=' row m-0'>
                             <section className='d-flex mt-3 flex-column col-12'>
                                 <label className='myLabel'>Select one or more roles</label>
-                                <SwapSection currentId={dealerId} selectedData={dealerRoles} setSelectedData={setDealerRoles} callBackFun={callBackFun} selectionData={roles} />
+                                <SwapSection workFor='roles' currentId={dealerId} selectedData={dealerRoles} setSelectedData={setDealerRoles} callBackLeft={callBackLeft} callBackFun={callBackFun} selectionData={roles} />
                             </section>
                             <section className='d-flex mt-3  flex-column flex-sm-row'>
                                 <button onClick={confirmClicked} className='col-12 col-sm-5 col-lg-2 myBtn py-2' type='button'>Done</button>

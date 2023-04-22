@@ -7,6 +7,8 @@ const initialState = {
         isError: false,
         isFetching: false,
         profileData: '',
+        currentDealer: {},
+        allDealers: [],
     },
 
 }
@@ -31,6 +33,9 @@ const profileSlice = createSlice({
             state.profile.isSuccess = false;
             state.profile.isFetching = false;
             state.profile.profileData = '';
+            state.profile.currentDealer = {};
+            state.profile.allDealers = [];
+
             return state;
         },
     },
@@ -39,6 +44,7 @@ const profileSlice = createSlice({
             state.profile.isFetching = true;
         })
         builder.addCase(getProfileData.fulfilled, (state, action) => {
+            console.log('state, action', state, action);
             state.profile.isFetching = false;
             state.profile.isSuccess = true;
             state.profile.profileData = action.payload;

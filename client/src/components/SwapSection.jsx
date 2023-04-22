@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useEffect, useRef } from 'react'
 
-export default function SwapSection({ selectionData, callBackFun, currentId, selectedData, setSelectedData }) {
+export default function SwapSection({ selectionData, callBackFun,callBackLeft, currentId, selectedData, setSelectedData, workFor }) {
     const selectInp = useRef()
     const selectedInp = useRef()
     const leftArrowBtn = useRef()
@@ -10,7 +10,7 @@ export default function SwapSection({ selectionData, callBackFun, currentId, sel
     const getNameOfSelection = useMemo((id) => {
         const resultAr = [];
 
-        if (selectedData[currentId] != undefined) {
+        if (selectedData && selectedData[currentId] != undefined) {
             Array.from(selectedData[currentId]).forEach((item) => {
                 const result = selectionData.find(i => {
                     return i.id == item
@@ -51,21 +51,13 @@ export default function SwapSection({ selectionData, callBackFun, currentId, sel
     }
 
     function leftClick() {
-        console.log('selectedData', selectedData)
-        console.log('currentId', currentId)
-
         const itemList = selectedInp.current
 
         const selectedItems = itemList.getElementsByClassName('checked');
 
-        console.log('selectedItems', selectedItems);
         const checkId = selectedItems[0].value
-        console.log('checkId', checkId);
-        const tempAr = selectedData[currentId]
-        const newAr = tempAr.filter(i => { return i != checkId })
-        console.log('tempAr', tempAr.filter(i => { return i != checkId }));
 
-        setSelectedData(selectedData => ({ ...selectedData, [currentId]: newAr }))
+        callBackLeft(checkId)
 
         selectedInp.current.value = 0
         leftArrowBtn.current.classList.add('disabledBtn')
@@ -78,11 +70,11 @@ export default function SwapSection({ selectionData, callBackFun, currentId, sel
     return (
         <div className='swapSelection d-flex flex-column flex-md-row mt-2'>
             <main>
-                <label className='pb-2' >Available Roles ({selectionData && selectionData.length > 0 ? selectionData.length : 0})</label>
+                <label className='pb-2' >Available {workFor} ({selectionData && selectionData.length > 0 ? selectionData.length : 0})</label>
                 <ul ref={selectInp} name='selectRole' className='inputElement'>
                     {
-                        selectionData.length > 0 && selectionData.map((item, index) => {
-                            return <li onClick={(event) => { makeSelected(event, 'rightSide', item) }} className='text-uppercase' key={index} value={item.id}>{item.name || item?.role}</li>
+                        selectionData && selectionData.length > 0 && selectionData.map((item, index) => {
+                            return <li onClick={(event) => { makeSelected(event, 'rightSide', item) }} className='text-uppercase' key={index} value={item.id}>{workFor === 'roles' ? item?.role : item?.first_name}</li>
                         })
                     }
                 </ul>
@@ -102,7 +94,7 @@ export default function SwapSection({ selectionData, callBackFun, currentId, sel
             </div>
 
             <main >
-                <label className='pb-2' >Selected ({selectedData[currentId] && selectedData[currentId].length > 0 ? selectedData[currentId].length : 0})</label>
+                <label className='pb-2' >Selected ({selectedData && selectedData[currentId] && selectedData[currentId].length > 0 ? selectedData[currentId].length : 0})</label>
                 <ul ref={selectedInp} className='inputElement' name='selectedRole'>
                     {
                         getNameOfSelection.map((item, index) => {

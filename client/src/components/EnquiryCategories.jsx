@@ -3,11 +3,11 @@ import React from 'react'
 import { useState } from 'react';
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { inquiryFieldSaveDB, clearAdminState } from '../redux/slices/inquiryFieldSaveSlice'
+import { enquiryFieldSaveDB, clearAdminState } from '../redux/slices/enquiryFieldSaveSlice'
 import { categoryAddToDB, clearCategoryAddState } from '../redux/slices/categoryAddSlice'
 import { setShowMessage } from '../redux/slices/notificationSlice'
 
-export default function InquiryCategories() {
+export default function EnquiryCategories() {
 
     const [allFields, setAllFields] = useState([])
     const [categoriesList, setCategoriesList] = useState([])
@@ -18,7 +18,7 @@ export default function InquiryCategories() {
     const [newCategory, setNewCategory] = useState({
     })
     const dispatch = useDispatch()
-    const inquiryFieldSaveState = useSelector(state => state.inquiryFieldSaveState.inquiryFieldSaveState)
+    const enquiryFieldSaveState = useSelector(state => state.enquiryFieldSaveState.enquiryFieldSaveState)
     const categoryAddState = useSelector(state => state.categoryAddState.categoryAddSliceState)
 
 
@@ -39,8 +39,8 @@ export default function InquiryCategories() {
 
     }
     useEffect(() => {
-        if (inquiryFieldSaveState.isSuccess) {
-            if (inquiryFieldSaveState.result.isSuccess) {
+        if (enquiryFieldSaveState.isSuccess) {
+            if (enquiryFieldSaveState.result.isSuccess) {
                 dispatch(setShowMessage('Data is saved'))
                 dispatch(clearAdminState())
                 // clearInputsAndState()
@@ -50,7 +50,7 @@ export default function InquiryCategories() {
                 dispatch(setShowMessage('Something is wrong'))
             }
         }
-    }, [inquiryFieldSaveState])
+    }, [enquiryFieldSaveState])
     useEffect(() => {
         console.log('categoryAddState', categoryAddState)
 
@@ -96,9 +96,9 @@ export default function InquiryCategories() {
             getFieldCurrentCategories(idIs)
         }
     }
-    async function getInquiryCategories() {
-        console.log('>>>>>>getInquiryCategories');
-        const url = `${process.env.REACT_APP_NODE_URL}/api/get-inquiry-categories`;
+    async function getEnquiryCategories() {
+        console.log('>>>>>>getEnquiryCategories');
+        const url = `${process.env.REACT_APP_NODE_URL}/api/get-enquiry-categories`;
         const config = {
             headers: {
                 token: localStorage.getItem('rbacToken')
@@ -114,7 +114,7 @@ export default function InquiryCategories() {
         })
     }
     useEffect(() => {
-        getInquiryCategories()
+        getEnquiryCategories()
     }, [])
 
     function editBtnClicked() {
@@ -134,7 +134,7 @@ export default function InquiryCategories() {
         console.log('allFields', allFields);
         console.log('currentCategoryData', currentCategoryData);
         console.log('zcsdc', currentCategoryData.fields.find(i => { return i.field_name == 'First Name' }) != undefined);
-        dispatch(inquiryFieldSaveDB(sendObj))
+        dispatch(enquiryFieldSaveDB(sendObj))
 
     }
     function cancelBtn() {
@@ -192,7 +192,7 @@ export default function InquiryCategories() {
     return (
         <main className='bg-white p-3 rounded'>
             <h5 className='m-0'>
-                Inquiry categories
+                Enquiry categories
             </h5>
             <div className='mt-3'>
                 <div className=''>
