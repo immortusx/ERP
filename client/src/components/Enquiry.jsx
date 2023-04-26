@@ -189,7 +189,7 @@ export default function Enquiry({ workFor }) {
 
     async function getEnquiryCategories() {
         console.log('>>>>>>getEnquiryCategories');
-        const url = `${process.env.REACT_APP_NODE_URL}/api/get-enquiry-categories`;
+        const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/get-enquiry-categories`;
         const config = {
             headers: {
                 token: localStorage.getItem('rbacToken')
@@ -205,7 +205,7 @@ export default function Enquiry({ workFor }) {
         })
     }
     async function getDealers() {
-        const url = `${process.env.REACT_APP_NODE_URL}/api/get-new-enquiry-data`;
+        const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/enquiry-data`;
         const config = {
             headers: {
                 token: localStorage.getItem('rbacToken')
@@ -228,7 +228,7 @@ export default function Enquiry({ workFor }) {
         })
     }
     async function getDspList(id) {
-        const url = `${process.env.REACT_APP_NODE_URL}/api/get-dsp/${id}`;
+        const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/get-dsp/${id}`;
         const config = {
             headers: {
                 token: localStorage.getItem('rbacToken')
@@ -246,7 +246,7 @@ export default function Enquiry({ workFor }) {
         })
     }
     async function getModelList(id) {
-        const url = `${process.env.REACT_APP_NODE_URL}/api/get-model/${id}`;
+        const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/get-model/${id}`;
         const config = {
             headers: {
                 token: localStorage.getItem('rbacToken')
@@ -264,7 +264,7 @@ export default function Enquiry({ workFor }) {
         })
     }
     async function getSourceOfEnquiryList(id) {
-        const url = `${process.env.REACT_APP_NODE_URL}/api/get-source-enquiry/${id}`;
+        const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/get-source-enquiry/${id}`;
         const config = {
             headers: {
                 token: localStorage.getItem('rbacToken')
@@ -283,7 +283,7 @@ export default function Enquiry({ workFor }) {
         })
     }
     async function getTehsilList(id) {
-        const url = `${process.env.REACT_APP_NODE_URL}/api/get-tehsil/${id}`;
+        const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/get-tehsil/${id}`;
         const config = {
             headers: {
                 token: localStorage.getItem('rbacToken')
@@ -301,7 +301,7 @@ export default function Enquiry({ workFor }) {
         })
     }
     async function getVillageList(id) {
-        const url = `${process.env.REACT_APP_NODE_URL}/api/get-village/${id}`;
+        const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/get-village/${id}`;
         const config = {
             headers: {
                 token: localStorage.getItem('rbacToken')
@@ -332,7 +332,7 @@ export default function Enquiry({ workFor }) {
         navigate('/home/enquiry')
     }
     async function getFieldCurrentCategories(id) {
-        const url = `${process.env.REACT_APP_NODE_URL}/api/get-current-fields/${id}`;
+        const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/get-current-fields/${id}`;
         const config = {
             headers: {
                 token: localStorage.getItem('rbacToken')

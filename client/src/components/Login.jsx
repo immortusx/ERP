@@ -37,7 +37,7 @@ export default function Login() {
     useEffect(() => {
         if (profileDataState.isSuccess && profileDataState.profileData.isSuccess) {
             const rolesArray = [];
-            Array.from(profileDataState.profileData.result.role).filter(i => {
+            Array.from(profileDataState.profileData.result.features).filter(i => {
                 rolesArray.push(i.feature)
             })
             localStorage.setItem('rolesArray', rolesArray)

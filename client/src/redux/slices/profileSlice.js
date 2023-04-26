@@ -19,7 +19,7 @@ export const getProfileData = createAsyncThunk('profileSlice', async (token) => 
             token: token
         }
     };
-    const url = `${process.env.REACT_APP_NODE_URL}/api/profileData`
+    const url = `${process.env.REACT_APP_NODE_URL}/api/users/profile-data`
     return await Axios.get(url, config).then((response) => {
         return response.data
     })

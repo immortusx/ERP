@@ -19,7 +19,7 @@ export const addUserToDb = createAsyncThunk('addUserToDb/addUserSlice', async (u
         }
     };
     console.log('in addUserSlice', userData)
-    const url = `${process.env.REACT_APP_NODE_URL}/api/addUser`
+    const url = `${process.env.REACT_APP_NODE_URL}/api/users/add-user`
     return await Axios.post(url, userData,config).then((response) => {
         return response.data
     })

@@ -18,7 +18,7 @@ export const categoryAddToDB = createAsyncThunk('categoryAddToDB/categoryAddSlic
             token: localStorage.getItem('rbacToken')
         }
     };
-    const url = `${process.env.REACT_APP_NODE_URL}/api/addEnquiryCategory`
+    const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/add-enquiry-category`
     return await Axios.post(url, data, config).then((response) => {
         console.log('response.data', response.data)
         return response.data

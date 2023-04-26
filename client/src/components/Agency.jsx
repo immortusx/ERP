@@ -1,11 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
-import { getFeatureFromDb } from '../redux/slices/getFeatureSlice'
-import { addRoleToDb, clearAddRoleState } from '../redux/slices/addRoleSlice'
-import { editRoleToDb, clearEditRoleState } from '../redux/slices/editRoleDataSlice'
 import axios from 'axios'
-import { getToPathname } from '@remix-run/router'
-import { setShowMessage } from '../redux/slices/notificationSlice'
 import { useNavigate } from 'react-router-dom'
 import '../styles/Agency.css'
 
@@ -30,7 +24,7 @@ export default function Agency({ workFor }) {
     function rightClick() { }
 
     async function getDealerList() {
-        const url = `${process.env.REACT_APP_NODE_URL}/api/get-agency-data`;
+        const url = `${process.env.REACT_APP_NODE_URL}/api/agency/get-agency-data`;
         const config = {
             headers: {
                 token: localStorage.getItem('rbacToken')

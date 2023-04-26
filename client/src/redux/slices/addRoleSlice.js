@@ -14,7 +14,7 @@ const initialState = {
 
 export const addRoleToDb = createAsyncThunk('addRoleToDb/addRoleSlice', async (data) => {
     console.log('in addRoleSlice', data)
-    const url = `${process.env.REACT_APP_NODE_URL}/api/add-role`
+    const url = `${process.env.REACT_APP_NODE_URL}/api/roles/add-role`
     const config = {
         headers: {
             token: localStorage.getItem('rbacToken')

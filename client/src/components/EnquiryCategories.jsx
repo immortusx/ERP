@@ -57,7 +57,7 @@ export default function EnquiryCategories() {
     }, [categoryAddState])
 
     async function getCategoriesField() {
-        const url = `${process.env.REACT_APP_NODE_URL}/api/get-categories-fields`;
+        const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/get-categories-fields`;
         const config = {
             headers: {
                 token: localStorage.getItem('rbacToken')
@@ -72,7 +72,7 @@ export default function EnquiryCategories() {
         })
     }
     async function getFieldCurrentCategories(id) {
-        const url = `${process.env.REACT_APP_NODE_URL}/api/get-current-fields/${id}`;
+        const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/get-current-fields/${id}`;
         const config = {
             headers: {
                 token: localStorage.getItem('rbacToken')
@@ -98,7 +98,7 @@ export default function EnquiryCategories() {
     }
     async function getEnquiryCategories() {
         console.log('>>>>>>getEnquiryCategories');
-        const url = `${process.env.REACT_APP_NODE_URL}/api/get-enquiry-categories`;
+        const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/get-enquiry-categories`;
         const config = {
             headers: {
                 token: localStorage.getItem('rbacToken')

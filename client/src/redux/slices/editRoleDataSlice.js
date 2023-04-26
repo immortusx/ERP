@@ -21,7 +21,7 @@ export const editRoleToDb = createAsyncThunk('editRoleToDb/editRoleDataSlice', a
         }
     };
     console.log('in editRoleToDb',myData)
-    const url = `${process.env.REACT_APP_NODE_URL}/api/edit-role`
+    const url = `${process.env.REACT_APP_NODE_URL}/api/roles/edit-role`
     return await Axios.post(url, myData,config).then((response) => {
         return response.data
     }) 

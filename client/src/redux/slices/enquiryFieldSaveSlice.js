@@ -18,7 +18,7 @@ export const enquiryFieldSaveDB = createAsyncThunk('enquiryFieldSaveDB/enquiryFi
             token: localStorage.getItem('rbacToken')
         }
     };
-    const url = `${process.env.REACT_APP_NODE_URL}/api/categoryInsertFields`
+    const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/category-insert-fields`
     return await Axios.post(url, data, config).then((response) => {
         console.log('response.data', response.data)
         return response.data

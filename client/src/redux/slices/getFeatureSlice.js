@@ -13,7 +13,7 @@ const initialState = {
 }
 
 export const getFeatureFromDb = createAsyncThunk('getFeatureFromDb/getFeatureSlice', async (userData) => {
-    const url = `${process.env.REACT_APP_NODE_URL}/api/get-features`
+    const url = `${process.env.REACT_APP_NODE_URL}/api/roles/get-features`
     const config = {
         headers: {
             token: localStorage.getItem('rbacToken')

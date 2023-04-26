@@ -17,7 +17,7 @@ export const getUserListFromDb = createAsyncThunk('getUserListFromDb/getUserList
             token: localStorage.getItem('rbacToken')
         }
     };
-    const url = `${process.env.REACT_APP_NODE_URL}/api/get-user-list`
+    const url = `${process.env.REACT_APP_NODE_URL}/api/users/get-user-list`
     return await Axios.get(url, config).then((response) => {
         return response.data
     })

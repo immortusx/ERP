@@ -12,7 +12,7 @@ const initialState = {
 }
 
 export const isAdminExist = createAsyncThunk('isAdminExist/AdminSlice', async () => {
-    const url = `${process.env.REACT_APP_NODE_URL}/api/adminExist`
+    const url = `${process.env.REACT_APP_NODE_URL}/api/login/is-admin-exist`
     return await Axios.get(url).then((response) => {
         return response.data
     })

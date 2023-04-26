@@ -12,7 +12,7 @@ const initialState = {
 }
 
 export const getRegisterAdmin = createAsyncThunk('getRegisterAdmin/getRegisterSlice', async (data) => {
-  const url = `${process.env.REACT_APP_NODE_URL}/api/adminRegister`
+  const url = `${process.env.REACT_APP_NODE_URL}/api/login/admin-registration`
   return await Axios.post(url, data).then((response) => {
     return response.data
   }

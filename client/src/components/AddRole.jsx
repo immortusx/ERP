@@ -140,7 +140,7 @@ export default function AddRole({ workFor }) {
     }
 
     async function getRoles() {
-        const url = `${process.env.REACT_APP_NODE_URL}/api/get-roles-to-edit`;
+        const url = `${process.env.REACT_APP_NODE_URL}/api/roles/get-roles-to-edit`;
         const config = {
             headers: {
                 token: localStorage.getItem('rbacToken')
@@ -154,7 +154,7 @@ export default function AddRole({ workFor }) {
         })
     }
     async function getRoleFeatures(roleId) {
-        const url = `${process.env.REACT_APP_NODE_URL}/api/get-roles-features`;
+        const url = `${process.env.REACT_APP_NODE_URL}/api/roles/get-roles-features`;
         const config = {
             headers: {
                 token: localStorage.getItem('rbacToken')

@@ -24,7 +24,7 @@ export const editUserUpdateToDb = createAsyncThunk('editUserUpdateToDb/editUserS
             token: localStorage.getItem('rbacToken')
         }
     };
-    const url = `${process.env.REACT_APP_NODE_URL}/api/edit-user`
+    const url = `${process.env.REACT_APP_NODE_URL}/api/users/edit-user`
     return await Axios.post(url, userData,config).then((response) => {
         return response.data
     })

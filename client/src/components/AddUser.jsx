@@ -77,7 +77,7 @@ export default function AddUser({ workFor }) {
 
     }
     async function getUserDealerRole(id) {
-        const url = `${process.env.REACT_APP_NODE_URL}/api/get-user-details/${id}`;
+        const url = `${process.env.REACT_APP_NODE_URL}/api/users/get-user-details/${id}`;
         const config = {
             headers: {
                 token: localStorage.getItem('rbacToken')
@@ -137,7 +137,7 @@ export default function AddUser({ workFor }) {
         })
     }
     async function getRolesFromDb() {
-        const url = `${process.env.REACT_APP_NODE_URL}/api/data-user-create`;
+        const url = `${process.env.REACT_APP_NODE_URL}/api/users/data-user-create`;
         const config = {
             headers: {
                 token: localStorage.getItem('rbacToken')
