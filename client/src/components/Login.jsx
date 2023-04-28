@@ -2,16 +2,14 @@ import React, { useState, useEffect } from 'react'
 import '../styles/Registration.css'
 import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { setTokkenSlice } from '../redux/slices/authSlice'
 import { getLoginUser, clearLoginState } from '../redux/slices/getLoginSlice'
-import { getProfileData } from '../redux/slices/profileSlice'
+import { getProfileData, clearProfileDataSliceState } from '../redux/slices/profileSlice'
 import { setShowMessage } from '../redux/slices/notificationSlice'
 
 
 export default function Login() {
     const dispatch = useDispatch()
     const loginState = useSelector(state => state.getLoginSlice.loginState)
-    const tokkenState = useSelector(state => state.setTokkenSlice.tokkenState)
     const profileDataState = useSelector(state => state.profileData.profile)
 
 
@@ -27,41 +25,45 @@ export default function Login() {
             setLoginData(registerData => ({ ...loginData, 'password': e.target.value }))
         }
     }
-    // useEffect(() => {
-    //     if (tokkenState) {
-    //         navigate('/home')
-    //     }
-    // }, [tokkenState])
+
 
 
     useEffect(() => {
-        if (profileDataState.isSuccess && profileDataState.profileData.isSuccess) {
+        if (profileDataState.isSuccess && profileDataState.currentUserData.isSuccess) {
+            console.log('must call in $$$$$$$$$$$$$$$$$ login page', profileDataState)
+
             const rolesArray = [];
-            Array.from(profileDataState.profileData.result.features).filter(i => {
+            Array.from(profileDataState.currentUserData.result.features).filter(i => {
                 rolesArray.push(i.feature)
             })
+            console.log('profileDataState.currentUserData', profileDataState.currentUserData)
+
             localStorage.setItem('rolesArray', rolesArray)
-            if (tokkenState) {
+
+            let rbacToken = localStorage.getItem('rbacToken')
+            if (rbacToken) {
                 navigate('/home')
             }
+            dispatch(clearProfileDataSliceState())
+
         }
     }, [profileDataState])
 
 
     useEffect(() => {
-        console.log('loginState.result', loginState.result);
         if (loginState.isSuccess === true) {
             if (loginState.result.message == 'success') {
                 // taking first dealer for login 
-                
-                localStorage.setItem('byDealer', JSON.stringify(loginState.result.result.dealerResult[0]))
+
+                localStorage.setItem('dealersList', JSON.stringify(loginState.result.result.dealerResult))
                 localStorage.setItem('rbacToken', loginState.result.result.tokenIs)
-                dispatch(setTokkenSlice(true))
+                localStorage.setItem('currentDealerId', loginState.result.result.currentDealer)
                 // navigate('/home')
                 const token = localStorage.getItem('rbacToken')
                 if (!token) {
                     return
                 } else {
+                    console.log('second call ************')
                     dispatch(getProfileData(token))
                     dispatch(setShowMessage('Welcome to Vehicle Management System'))
                 }

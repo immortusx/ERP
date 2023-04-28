@@ -6,7 +6,7 @@ const initialState = {
 }
 
 const notificationSlice = createSlice({
-    name: 'AuthSlice',
+    name: 'notificationSli',
     initialState,
     reducers: {
         setShowMessage: (state, action) => {

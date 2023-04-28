@@ -51,6 +51,7 @@ router.get('/get-user-details/:id', tokenCheck, async (req, res) => {
   const userId = req.params.id
   const urlNew = `call user_details_dealers_roles( ${userId}) `
   db.query(urlNew, async (err, result) => {
+    console.log('result[0][0].dealersRole ***********',result[0][0].dealersRole)
     let data = JSON.parse(result[0][0].dealersRole)
     console.log('result[0]', data)
     if (err) {
@@ -62,34 +63,30 @@ router.get('/get-user-details/:id', tokenCheck, async (req, res) => {
     }
   })
 })
-router.get('/data-user-create', tokenCheck, checkUserPermission('add-user'), async (req, res) => {
-  console.log('>>>>>data-user-create');
-
-  const url = `SELECT * from roles where id != 1 and active = 1`
+router.get('/roles-list', async (req, res) => {
+  console.log('>>>>>role-list');
+  const url = `call get_role_list()`
   await db.query(url, async (err, roles) => {
     if (err) {
       console.log({ isSuccess: true, result: err })
       res.send({ isSuccess: true, result: 'error' })
     } else {
-      let newUrl = '';
-      if (req.myData.isSuperAdmin) {
-        newUrl = `SELECT * from dealers;`
-      } else {
-        newUrl = `SELECT * from dealers where id =${req.myData.dealerId}`
-      }
-      await db.query(newUrl, async (err, dealers) => {
-        if (err) {
-          console.log({ isSuccess: true, result: err })
-          res.send({ isSuccess: true, result: 'error' })
-        } else {
-          const newObj = {
-            roles: roles,
-            dealers: dealers,
-          }
-          console.log({ isSuccess: true, result: newUrl })
-          res.send({ isSuccess: true, result: newObj })
-        }
-      })
+      console.log({ isSuccess: true, result: url })
+      res.send({ isSuccess: true, result: roles[0] })
+
+    }
+  })
+})
+router.get('/dealers-list', tokenCheck, async (req, res) => {
+  console.log('>>>>>dealers-list');
+  const url = `call get_dealer_list(${req.myData.dealerId}, ${req.myData.isSuperAdmin});`
+  await db.query(url, async (err, dealers) => {
+    if (err) {
+      console.log({ isSuccess: true, result: err })
+      res.send({ isSuccess: true, result: 'error' })
+    } else {
+      console.log({ isSuccess: true, result: url })
+      res.send({ isSuccess: true, result: dealers[0] })
 
     }
   })

@@ -3,7 +3,7 @@ import React from 'react'
 import { useState } from 'react';
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { enquiryFieldSaveDB, clearAdminState } from '../redux/slices/enquiryFieldSaveSlice'
+import { enquiryFieldSaveDB, clearEnquiryFieldSaveState } from '../redux/slices/enquiryFieldSaveSlice'
 import { categoryAddToDB, clearCategoryAddState } from '../redux/slices/categoryAddSlice'
 import { setShowMessage } from '../redux/slices/notificationSlice'
 
@@ -42,7 +42,7 @@ export default function EnquiryCategories() {
         if (enquiryFieldSaveState.isSuccess) {
             if (enquiryFieldSaveState.result.isSuccess) {
                 dispatch(setShowMessage('Data is saved'))
-                dispatch(clearAdminState())
+                dispatch(clearEnquiryFieldSaveState())
                 // clearInputsAndState()
                 setAllFields([])
 

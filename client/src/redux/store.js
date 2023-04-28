@@ -5,7 +5,6 @@ import addUserSlice from './slices/addUserSlice'
 import getUserListSlice from './slices/getUserListSlice'
 
 import profileDataSlice from './slices/profileSlice'
-import setTokkenSlice from './slices/authSlice'
 import AdminSlice from './slices/adminSlice'
 import getFeatureSlice from './slices/getFeatureSlice'
 import addRoleSlice from './slices/addRoleSlice'
@@ -17,11 +16,11 @@ import enquirySlice from './slices/enquirySlice'
 import enquiryFieldSaveSlice from './slices/enquiryFieldSaveSlice'
 import categoryAddSlice from './slices/categoryAddSlice'
 import setNewEnquiryDataSlice from './slices/setNewEnquiryDataSlice'
+import tokenDealerChangeSlice from './slices/tokenDealerChangeSlice'
 
 
 export const store = configureStore({
     reducer: {
-        setTokkenSlice: setTokkenSlice,
         getRegisterSlice: getRegisterSlice,
         getLoginSlice: getLoginSlice,
         AdminSlice: AdminSlice,
@@ -37,5 +36,6 @@ export const store = configureStore({
         enquiryFieldSaveState: enquiryFieldSaveSlice,
         categoryAddState: categoryAddSlice,
         setNewEnquiryDataState: setNewEnquiryDataSlice,
+        tokenDealerChangeState: tokenDealerChangeSlice,
     }
 })  

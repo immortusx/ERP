@@ -61,6 +61,26 @@
   border: 1.5px solid #3e53671f;
 }
 
+.mySelectBox {
+  padding: 10px 16px;
+  border: 1.5px solid #3e53678a;
+  border-radius: 10px;
+  outline: none;
+}
+.mySelectBox {
+  cursor: pointer;
+  min-width: 220px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: #fff url('./assets/svg/caret-down-fill.svg') no-repeat;
+  background-position: calc(100% - 8px) center;
+}
+
+.mySelectBox::-ms-expand {
+  display: none;
+}
+
 .myBtn {
   /* border: none; */
   border: 1.5px solid #3e53678a;

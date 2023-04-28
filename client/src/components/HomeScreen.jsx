@@ -1,8 +1,8 @@
 import React, { useRef, useState, useEffect, useMemo, useCallback } from 'react'
 import '../styles/HomeScreen.css'
 import { useSelector, useDispatch } from 'react-redux'
-import { setTokkenSlice, clearAuthSliceState } from '../redux/slices/authSlice'
-import { clearProfileData } from '../redux/slices/profileSlice'
+import { clearProfileDataSliceState, clearCurrentUserData } from '../redux/slices/profileSlice'
+import { getProfileData } from '../redux/slices/profileSlice'
 
 import Header from './Header'
 import Users from './Users'
@@ -18,6 +18,7 @@ import logo from '../assets/svg/logo.svg'
 import logoT from '../assets/svg/logofinal.svg'
 import { clearUserListState } from '../redux/slices/getUserListSlice'
 import { setShowMessage } from '../redux/slices/notificationSlice'
+import { tokenDealerChangeDb, clearTokenDealerChangeState } from '../redux/slices/tokenDealerChangeSlice'
 
 import { useLocation, NavLink, Link, useNavigate, Navigate, BrowserRouter, Route, Routes, json } from "react-router-dom";
 import EnquiryCategories from './EnquiryCategories'
@@ -40,12 +41,13 @@ export default function HomeScreen() {
   const bottomDiv = useRef()
 
   const [userPermissions, setUserPermissions] = useState([])
-  const [currentDealer, setCurrentDealer] = useState({})
+  const [currentDealer, setCurrentDealer] = useState([])
 
   const adminAsideRef = useRef()
   const toggleBtnRef = useRef()
   const navigate = useNavigate();
   const profileDataState = useSelector(state => state.profileData.profile)
+  const allState = useSelector(state => state)
 
   useEffect(() => {
     const collapse = document.getElementsByClassName('activeLink')
@@ -85,10 +87,9 @@ export default function HomeScreen() {
   }, [])
   function logOutHandler() {
     localStorage.clear()
-    dispatch(setTokkenSlice(false))
     dispatch(clearUserListState())
-    dispatch(clearAuthSliceState())
-    dispatch(clearProfileData())
+    dispatch(clearProfileDataSliceState())
+    dispatch(clearCurrentUserData())
     navigate('/login')
   }
   function getDateTime(time) {
@@ -98,6 +99,12 @@ export default function HomeScreen() {
     return `${newDate} ${newTime}`
   }
 
+  function dealerListChange(e) {
+    console.log('dealerListChange', e.target.value)
+    let selectedDealerId = e.target.value
+    // dispatch(tokenDealerChangeDb(selectedDealerId))
+
+  }
   function toggleHandler() {
     if (document.getElementById('root').classList.contains('toggleSideBar')) {
       document.getElementById('root').classList.remove('toggleSideBar')
@@ -106,9 +113,11 @@ export default function HomeScreen() {
     }
   }
   useEffect(() => {
-    let jsonData = localStorage.getItem('byDealer')
-    let byDealer = JSON.parse(jsonData)
-    setCurrentDealer(byDealer)
+    let jsonData = localStorage.getItem('dealersList')
+    let dealersList = JSON.parse(jsonData)
+    console.log('dealersList', dealersList)
+    // set here dealersList
+    setCurrentDealer(dealersList)
   }, [])
   return (
     <>
@@ -195,7 +204,7 @@ export default function HomeScreen() {
                 checkTabGrant(['manage']) && <li className='outLi'>
                   <button className="headBtn" type="button" data-bs-toggle="collapse" data-bs-target="#manage-collapseOne" aria-expanded="false" aria-controls="manage-collapseOne">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="bi bi-diagram-3-fill" viewBox="0 0 16 16">
-                      <path fill-rule="evenodd" d="M6 3.5A1.5 1.5 0 0 1 7.5 2h1A1.5 1.5 0 0 1 10 3.5v1A1.5 1.5 0 0 1 8.5 6v1H14a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-1 0V8h-5v.5a.5.5 0 0 1-1 0V8h-5v.5a.5.5 0 0 1-1 0v-1A.5.5 0 0 1 2 7h5.5V6A1.5 1.5 0 0 1 6 4.5v-1zm-6 8A1.5 1.5 0 0 1 1.5 10h1A1.5 1.5 0 0 1 4 11.5v1A1.5 1.5 0 0 1 2.5 14h-1A1.5 1.5 0 0 1 0 12.5v-1zm6 0A1.5 1.5 0 0 1 7.5 10h1a1.5 1.5 0 0 1 1.5 1.5v1A1.5 1.5 0 0 1 8.5 14h-1A1.5 1.5 0 0 1 6 12.5v-1zm6 0a1.5 1.5 0 0 1 1.5-1.5h1a1.5 1.5 0 0 1 1.5 1.5v1a1.5 1.5 0 0 1-1.5 1.5h-1a1.5 1.5 0 0 1-1.5-1.5v-1z" />
+                      <path fillRule="evenodd" d="M6 3.5A1.5 1.5 0 0 1 7.5 2h1A1.5 1.5 0 0 1 10 3.5v1A1.5 1.5 0 0 1 8.5 6v1H14a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-1 0V8h-5v.5a.5.5 0 0 1-1 0V8h-5v.5a.5.5 0 0 1-1 0v-1A.5.5 0 0 1 2 7h5.5V6A1.5 1.5 0 0 1 6 4.5v-1zm-6 8A1.5 1.5 0 0 1 1.5 10h1A1.5 1.5 0 0 1 4 11.5v1A1.5 1.5 0 0 1 2.5 14h-1A1.5 1.5 0 0 1 0 12.5v-1zm6 0A1.5 1.5 0 0 1 7.5 10h1a1.5 1.5 0 0 1 1.5 1.5v1A1.5 1.5 0 0 1 8.5 14h-1A1.5 1.5 0 0 1 6 12.5v-1zm6 0a1.5 1.5 0 0 1 1.5-1.5h1a1.5 1.5 0 0 1 1.5 1.5v1a1.5 1.5 0 0 1-1.5 1.5h-1a1.5 1.5 0 0 1-1.5-1.5v-1z" />
                     </svg>
                     <span>
                       Management
@@ -270,30 +279,41 @@ export default function HomeScreen() {
             <section className='profileSection outerSection'>
               <div onClick={() => { bottomDivState ? setBottomDivState(false) : setBottomDivState(true) }} id='asideProfilTab' type="button" className='d-flex flex-row'>
                 <div className='myTextContainer'>
-                  <span className='text-uppercase'>{profileDataState.isSuccess ? `${profileDataState?.profileData.result.first_name.slice(0, 1)}` : 'A'}</span>
+                  <span className='text-uppercase'>{profileDataState.isSuccess ? `${profileDataState?.currentUserData?.result?.first_name.slice(0, 1)}` : 'A'}</span>
                 </div>
                 <div className='userNameDis ps-2 d-flex align-items-center '>
-                  <h6 className='m-0 text-uppercase text-white'>{profileDataState.isSuccess ? `${profileDataState?.profileData.result.first_name} ${profileDataState?.profileData.result.last_name}` : 'User'}</h6>
+                  <h6 className='m-0 text-uppercase text-white'>{profileDataState.isSuccess ? `${profileDataState?.currentUserData.result.first_name} ${profileDataState?.currentUserData.result.last_name}` : 'User'}</h6>
                 </div>
               </div>
               {
                 bottomDivState && <div ref={bottomDiv} className='logoutSideBar'>
                   <div className='d-flex justify-content-between'>
-                    <h6 className='text-white'>Email : {profileDataState.isSuccess && `${profileDataState?.profileData.result.email}`}</h6>
+                    <button onClick={() => {
+                      console.log('know me called')
+                      console.log('allState', allState)
+
+                    }}>Know me</button>
+                    <h6 className='text-white'>Email : {profileDataState.isSuccess && `${profileDataState?.currentUserData.result.email}`}</h6>
                     <button onClick={() => { setBottomDivState(false) }} className='svgBtn'>
                       <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" className="bi bi-x-lg" viewBox="0 0 16 16">
                         <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" />
                       </svg>
                     </button>
                   </div>
-                  <h6 className='text-white mt-2'>Current dealer : {currentDealer && currentDealer.name}</h6>
-
+                  <h6 className='text-white mt-2'>Current dealer :
+                    <select defaultValue={localStorage.getItem('currentDealerId')} onChange={dealerListChange} className='mt-2 mySelectBox' name="" id="">
+                      <option value='0'>select dealer</option>
+                      {currentDealer && currentDealer.length > 0 && currentDealer.map((dealer, index) => {
+                        return <option key={index} value={dealer.id}>{dealer.name}</option>
+                      })}
+                    </select>
+                  </h6>
                   <div className='mt-3 d-flex flex-column'>
                     <div className='d-flex flex-wrap align-items-center border-bottom pb-2'>
                       <div className='myTextContainer'>
-                        <span className='text-uppercase'>{profileDataState.isSuccess ? `${profileDataState?.profileData.result.first_name.slice(0, 1)}` : 'A'}</span>
+                        <span className='text-uppercase'>{profileDataState.isSuccess ? `${profileDataState?.currentUserData?.result?.first_name.slice(0, 1)}` : 'A'}</span>
                       </div>
-                      <span className='pt-2 ps-2 text-white myH7'>Last login : {profileDataState.isSuccess && profileDataState?.profileData.result.last_login != null ? getDateTime(profileDataState?.profileData.result.last_login) : 'first time logged in'}</span>
+                      <span className='pt-2 ps-2 text-white myH7'>Last login : {profileDataState.isSuccess && profileDataState?.currentUserData.result.last_login != null ? getDateTime(profileDataState?.currentUserData.result.last_login) : 'first time logged in'}</span>
                     </div>
                     <div className='mt-3 d-flex justify-content-end'>
                       <button className='myBtn py-1 px-3' onClick={logOutHandler} href="">

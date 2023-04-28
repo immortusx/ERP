@@ -24,35 +24,7 @@ app.use('/api/login', require('./Routes/loginRoutes'))
 app.use('/api/roles', require('./Routes/rolesRoutes'))
 app.use('/api/agency', require('./Routes/agencyRoutes'))
 
-app.get('/api/example2', async (req, res) => {
-  let url = `select * from features where id = 1`
-  await db.query(url, (err, result) => {
-    if (err) {
-      console.log('err', err)
-    }
-    console.log('result **************', result[0].id)
 
-    // res.send(result)
-  })
-})
-app.get('/api/example', async (req, res) => {
-  let url = `call profile_data(6,20,false)`
-  await db.query(url, (err, result) => {
-    if (err) {
-      console.log('err', err)
-    }
-    console.log('result',result[0][0])
-    let features = JSON.parse(result[0][0].features)
-    let obj = {
-      email: result[0][0].email,
-      firstName: result[0][0].first_name,
-      lastName: result[0][0].last_name,
-      lastLogin: result[0][0].last_login,
-      features: features,
-    }
-    res.send(obj)
-  })
-})
 app.get('/api', (req, res) => {
   console.log({
     'status': 'success',

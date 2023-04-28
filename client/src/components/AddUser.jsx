@@ -137,7 +137,7 @@ export default function AddUser({ workFor }) {
         })
     }
     async function getRolesFromDb() {
-        const url = `${process.env.REACT_APP_NODE_URL}/api/users/data-user-create`;
+        const url = `${process.env.REACT_APP_NODE_URL}/api/users/roles-list`;
         const config = {
             headers: {
                 token: localStorage.getItem('rbacToken')
@@ -145,8 +145,22 @@ export default function AddUser({ workFor }) {
         };
         await Axios.get(url, config).then((response) => {
             if (response.data?.isSuccess) {
-                setRoles(response.data.result.roles)
-                setDealers(response.data.result.dealers)
+
+                setRoles(response.data.result)
+            }
+        })
+    }
+    async function getDealersFromDb() {
+        const url = `${process.env.REACT_APP_NODE_URL}/api/users/dealers-list`;
+        const config = {
+            headers: {
+                token: localStorage.getItem('rbacToken')
+            }
+        };
+        await Axios.get(url, config).then((response) => {
+            if (response.data?.isSuccess) {
+
+                setDealers(response.data.result)
             }
         })
     }
@@ -165,7 +179,9 @@ export default function AddUser({ workFor }) {
         }
     }, [addUserState])
     useEffect(() => {
+        getDealersFromDb()
         getRolesFromDb()
+
     }, [])
 
 
@@ -260,10 +276,21 @@ export default function AddUser({ workFor }) {
         }
     }
 
+    const connectedDealer = useMemo(() => {
+        let tempCounter = 0;
+        Object.keys(dealerRoles).forEach((item, index) => {
+            let findDealer = dealers.find(i => {
+                return i.id == item
+            })
+            console.log('findDealer', findDealer)
+            if (findDealer) {
+                tempCounter++
+            }
+        })
+        return tempCounter
+
+    }, [dealerRoles])
     const showSelectedData = useMemo(() => {
-        console.log('dealerRoles', dealerRoles);
-        console.log('dealers', dealers);
-        console.log('roles', roles);
         let tempAr = []
         if (Object.keys(dealerRoles).length > 0) {
 
@@ -272,7 +299,6 @@ export default function AddUser({ workFor }) {
                 let findDealer = dealers.find(i => {
                     return i.id == item
                 })
-                console.log('findDealer', findDealer);
                 if (findDealer) {
                     tempObj['dealer'] = findDealer
                     let tempArNested = []
@@ -287,7 +313,6 @@ export default function AddUser({ workFor }) {
                 }
             })
         }
-        console.log('tempAr', tempAr)
         return tempAr
 
     }, [dealerRoles])
@@ -365,7 +390,7 @@ export default function AddUser({ workFor }) {
                                     </div>
                                 </div>
                                 <main >
-                                    <label className='pb-2' >Selected ({dealerRoles ? Object.keys(dealerRoles).length : 0})</label>
+                                    <label className='pb-2' >Selected ({dealerRoles && Object.keys(dealerRoles).length ? connectedDealer : 0})</label>
 
                                     <ul ref={selectedInp} className='inputElement' name='selectedRole'>
                                         {

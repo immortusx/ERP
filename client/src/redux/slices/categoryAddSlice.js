@@ -51,6 +51,6 @@ const categoryAddSlice = createSlice({
         })
     }
 })
-export const { clearAdminState, clearCategoryAddState } = categoryAddSlice.actions;
+export const { clearCategoryAddState } = categoryAddSlice.actions;
 export default categoryAddSlice.reducer
 

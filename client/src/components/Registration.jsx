@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import '../styles/Registration.css'
 import { useSelector, useDispatch } from 'react-redux'
-// import { adminIsSet, setTokkenSlice } from '../../../redux/slices/AuthSlice'
-import { adminIsSet, setTokkenSlice } from '../redux/slices/authSlice'
 import { getRegisterAdmin, clearRegisterState } from '../redux/slices/getRegisterSlice'
 
 import { useNavigate } from 'react-router-dom'
@@ -40,7 +38,6 @@ export default function Registration() {
         if (registerState.message.result === 'success') {
             localStorage.setItem('isAdminRegister', true)
             dispatch(setShowMessage('Registered successfully'))
-            dispatch(adminIsSet(true))
             dispatch(clearRegisterState())
             navigate('/login')
         }

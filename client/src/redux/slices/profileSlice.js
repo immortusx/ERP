@@ -6,9 +6,8 @@ const initialState = {
         isSuccess: false,
         isError: false,
         isFetching: false,
-        profileData: '',
-        currentDealer: {},
-        allDealers: [],
+        currentUserData: '',
+
     },
 
 }
@@ -28,13 +27,14 @@ const profileSlice = createSlice({
     name: 'profile',
     initialState,
     reducers: {
-        clearProfileData: (state) => {
+        clearProfileDataSliceState: (state) => {
             state.profile.isError = false;
             state.profile.isSuccess = false;
             state.profile.isFetching = false;
-            state.profile.profileData = '';
-            state.profile.currentDealer = {};
-            state.profile.allDealers = [];
+            return state;
+        },
+        clearCurrentUserData: (state) => {
+            state.profile.currentUserData = '';
 
             return state;
         },
@@ -44,10 +44,9 @@ const profileSlice = createSlice({
             state.profile.isFetching = true;
         })
         builder.addCase(getProfileData.fulfilled, (state, action) => {
-            console.log('state, action', state, action);
             state.profile.isFetching = false;
             state.profile.isSuccess = true;
-            state.profile.profileData = action.payload;
+            state.profile.currentUserData = action.payload;
         })
         builder.addCase(getProfileData.rejected, (state, action) => {
             state.profile.isFetching = false;
@@ -55,6 +54,6 @@ const profileSlice = createSlice({
         })
     }
 })
-export const { clearProfileData } = profileSlice.actions;
+export const { clearProfileDataSliceState, clearCurrentUserData } = profileSlice.actions;
 export default profileSlice.reducer
 

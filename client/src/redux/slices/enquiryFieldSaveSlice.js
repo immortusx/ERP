@@ -28,7 +28,7 @@ const enquiryFieldSaveSlice = createSlice({
     name: 'enquiryFieldSaveState',
     initialState,
     reducers: {
-        clearAdminState: (state) => {
+        clearEnquiryFieldSaveState: (state) => {
             state.enquiryFieldSaveState.isError = false;
             state.enquiryFieldSaveState.isSuccess = false;
             state.enquiryFieldSaveState.isFetching = false;
@@ -51,6 +51,6 @@ const enquiryFieldSaveSlice = createSlice({
         })
     }
 })
-export const { clearAdminState } = enquiryFieldSaveSlice.actions;
+export const { clearEnquiryFieldSaveState } = enquiryFieldSaveSlice.actions;
 export default enquiryFieldSaveSlice.reducer
 

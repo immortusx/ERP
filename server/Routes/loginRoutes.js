@@ -54,6 +54,17 @@ router.get('/is-admin-exist', async (req, res) => {
     }
   })
 })
+router.post('/dealer-token-change', tokenCheck, async (req, res) => {
+  console.log('>>>>>>>dealer-token-change')
+  console.log('req.myData', req.myData, req.body.id)
+  const tokenData = {
+    id: req.myData.userId,
+    dealerId: req.body.id
+  };
+  const tokenIs = await getToken(tokenData)
+  res.send({ isSuccess: true, message: 'success', result: tokenIs })
+  console.log({ isSuccess: true, message: 'success', result: tokenIs })
+})
 router.post('/', async (req, res) => {
   console.log('>>>>>login');
   const url = `SELECT * FROM users WHERE email = '${req.body.email}'`
@@ -82,13 +93,15 @@ router.post('/', async (req, res) => {
                   res.send({ isSuccess: true, message: 'error', result: [] })
                   console.log({ isSuccess: true, message: 'error', result: err })
                 } else if (dealerResult.length > 0) {
+                  console.log('dealerResult ************', dealerResult)
+                  let currentDealer = dealerResult[0].id
                   const tokenData = {
                     id: result[0].id,
-                    dealerId: dealerResult[0].id
+                    dealerId: currentDealer
                   };
                   const tokenIs = await getToken(tokenData)
-                  res.send({ isSuccess: true, message: 'success', result: { dealerResult, tokenIs } })
-                  console.log({ isSuccess: true, message: 'success', result: { dealerResult, tokenIs } })
+                  res.send({ isSuccess: true, message: 'success', result: { dealerResult, tokenIs, currentDealer } })
+                  console.log({ isSuccess: true, message: 'success', result: { dealerResult, tokenIs, currentDealer } })
                 } else {
 
                   res.send({ isSuccess: true, message: 'wrong', result: [] })
