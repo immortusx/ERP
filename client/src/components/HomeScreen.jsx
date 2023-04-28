@@ -1,8 +1,6 @@
 import React, { useRef, useState, useEffect, useMemo, useCallback } from 'react'
+
 import '../styles/HomeScreen.css'
-import { useSelector, useDispatch } from 'react-redux'
-import { clearProfileDataSliceState, clearCurrentUserData } from '../redux/slices/profileSlice'
-import { getProfileData } from '../redux/slices/profileSlice'
 
 import Header from './Header'
 import Users from './Users'
@@ -16,17 +14,19 @@ import Enquiry from './Enquiry'
 import Products from './Products'
 import logo from '../assets/svg/logo.svg'
 import logoT from '../assets/svg/logofinal.svg'
+
+import { useSelector, useDispatch } from 'react-redux'
+import { getProfileData, clearCurrentUserData, clearProfileDataSliceState } from '../redux/slices/profileSlice'
+
 import { clearUserListState } from '../redux/slices/getUserListSlice'
 import { setShowMessage } from '../redux/slices/notificationSlice'
-import { tokenDealerChangeDb, clearTokenDealerChangeState } from '../redux/slices/tokenDealerChangeSlice'
+import { tokenDealerChangeDb, clearTokenDealerState } from '../redux/slices/tokenDealerChangeSlice'
 
 import { useLocation, NavLink, Link, useNavigate, Navigate, BrowserRouter, Route, Routes, json } from "react-router-dom";
 import EnquiryCategories from './EnquiryCategories'
 import Agency from './Agency'
 
 const CheckPermission = ({ children, path }) => {
-  // console.log('path', path)
-  // console.log('checkList.includes(path)', checkList.includes(path));
   // return checkList.includes(path) ? children : <Navigate to="../no-access" />
   // return checkList.includes(path) ? children : <h3>No access</h3>
   const rolesArray = localStorage.getItem('rolesArray')
@@ -37,17 +37,38 @@ const CheckPermission = ({ children, path }) => {
 export default function HomeScreen() {
   const dispatch = useDispatch()
   const location = useLocation()
-  const [bottomDivState, setBottomDivState] = useState(false)
-  const bottomDiv = useRef()
+  const navigate = useNavigate();
 
+  const bottomDiv = useRef()
+  const adminAsideRef = useRef()
+  const toggleBtnRef = useRef()
+
+  const [bottomDivState, setBottomDivState] = useState(false)
   const [userPermissions, setUserPermissions] = useState([])
   const [currentDealer, setCurrentDealer] = useState([])
 
-  const adminAsideRef = useRef()
-  const toggleBtnRef = useRef()
-  const navigate = useNavigate();
   const profileDataState = useSelector(state => state.profileData.profile)
   const allState = useSelector(state => state)
+  const tokenDealerState = useSelector(state => state.tokenDealerChangeState.tokenDealerState)
+
+
+
+  useEffect(() => {
+    if (tokenDealerState.isSuccess) {
+      if (tokenDealerState.data.isSuccess) {
+        localStorage.setItem('rbacToken', tokenDealerState.data.result)
+
+        // dispatch(getProfileData(tokenDealerState.data.result))
+        dispatch(clearTokenDealerState())
+        navigate('/home')
+
+        window.location.reload()
+
+      }
+    }
+
+  }, [tokenDealerState])
+
 
   useEffect(() => {
     const collapse = document.getElementsByClassName('activeLink')
@@ -56,6 +77,34 @@ export default function HomeScreen() {
       collapse[0].parentElement.parentElement.parentElement.classList.add('show')
     }
   }, [])
+
+  useEffect(() => {
+    // for showing loading 
+
+    // let root = document.getElementById('root')
+    // if (profileDataState.isFetching) {
+    //   console.log('root  *****', root)
+    //   dispatch(setShowMessage('please wait...'))
+    //   // root.classList.add('bg-dark')
+    // } else if (!profileDataState.isFetching) {
+    //   dispatch(setShowMessage(''))
+    //   // root.classList.remove('bg-dark')
+    // }
+  }, [profileDataState])
+  useEffect(() => {
+    if (profileDataState.isSuccess && profileDataState.currentUserData.isSuccess) {
+      const rolesArray = [];
+      Array.from(profileDataState.currentUserData.result.features).filter(i => {
+        rolesArray.push(i.feature)
+      })
+      localStorage.setItem('rolesArray', rolesArray)
+      localStorage.setItem('userData', JSON.stringify(profileDataState.currentUserData.result))
+      dispatch(clearProfileDataSliceState())
+      navigate('/home')
+
+    }
+  }, [profileDataState])
+
   useEffect(() => {
     if (bottomDivState) {
       let handler = (event) => {
@@ -75,6 +124,7 @@ export default function HomeScreen() {
     document.getElementsByTagName('body')[0].style.backgroundColor = '#edf1f4'
   }, [])
   const checkTabGrant = useCallback((pathAr) => {
+
     let success = false;
     const rolesArray = localStorage.getItem('rolesArray')
     const checkList = rolesArray.split(',')
@@ -90,6 +140,9 @@ export default function HomeScreen() {
     dispatch(clearUserListState())
     dispatch(clearProfileDataSliceState())
     dispatch(clearCurrentUserData())
+    dispatch(clearCurrentUserData())
+    dispatch(clearProfileDataSliceState())
+
     navigate('/login')
   }
   function getDateTime(time) {
@@ -100,9 +153,9 @@ export default function HomeScreen() {
   }
 
   function dealerListChange(e) {
-    console.log('dealerListChange', e.target.value)
     let selectedDealerId = e.target.value
-    // dispatch(tokenDealerChangeDb(selectedDealerId))
+    localStorage.setItem('currentDealerId', selectedDealerId)
+    dispatch(tokenDealerChangeDb(selectedDealerId))
 
   }
   function toggleHandler() {
@@ -115,7 +168,6 @@ export default function HomeScreen() {
   useEffect(() => {
     let jsonData = localStorage.getItem('dealersList')
     let dealersList = JSON.parse(jsonData)
-    console.log('dealersList', dealersList)
     // set here dealersList
     setCurrentDealer(dealersList)
   }, [])
@@ -279,21 +331,16 @@ export default function HomeScreen() {
             <section className='profileSection outerSection'>
               <div onClick={() => { bottomDivState ? setBottomDivState(false) : setBottomDivState(true) }} id='asideProfilTab' type="button" className='d-flex flex-row'>
                 <div className='myTextContainer'>
-                  <span className='text-uppercase'>{profileDataState.isSuccess ? `${profileDataState?.currentUserData?.result?.first_name.slice(0, 1)}` : 'A'}</span>
+                  <span className='text-uppercase'>{Object.keys(profileDataState.currentUserData).length ? `${profileDataState?.currentUserData?.result?.first_name.slice(0, 1)}` : 'A'}</span>
                 </div>
                 <div className='userNameDis ps-2 d-flex align-items-center '>
-                  <h6 className='m-0 text-uppercase text-white'>{profileDataState.isSuccess ? `${profileDataState?.currentUserData.result.first_name} ${profileDataState?.currentUserData.result.last_name}` : 'User'}</h6>
+                  <h6 className='m-0 text-uppercase text-white'>{Object.keys(profileDataState.currentUserData).length ? `${profileDataState?.currentUserData.result.first_name} ${profileDataState?.currentUserData.result.last_name}` : 'User'}</h6>
                 </div>
               </div>
               {
                 bottomDivState && <div ref={bottomDiv} className='logoutSideBar'>
                   <div className='d-flex justify-content-between'>
-                    <button onClick={() => {
-                      console.log('know me called')
-                      console.log('allState', allState)
-
-                    }}>Know me</button>
-                    <h6 className='text-white'>Email : {profileDataState.isSuccess && `${profileDataState?.currentUserData.result.email}`}</h6>
+                    <h6 className='text-white'>Email : {Object.keys(profileDataState.currentUserData).length > 0 && `${profileDataState?.currentUserData.result.email}`}</h6>
                     <button onClick={() => { setBottomDivState(false) }} className='svgBtn'>
                       <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" className="bi bi-x-lg" viewBox="0 0 16 16">
                         <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" />
@@ -302,7 +349,6 @@ export default function HomeScreen() {
                   </div>
                   <h6 className='text-white mt-2'>Current dealer :
                     <select defaultValue={localStorage.getItem('currentDealerId')} onChange={dealerListChange} className='mt-2 mySelectBox' name="" id="">
-                      <option value='0'>select dealer</option>
                       {currentDealer && currentDealer.length > 0 && currentDealer.map((dealer, index) => {
                         return <option key={index} value={dealer.id}>{dealer.name}</option>
                       })}
@@ -311,9 +357,9 @@ export default function HomeScreen() {
                   <div className='mt-3 d-flex flex-column'>
                     <div className='d-flex flex-wrap align-items-center border-bottom pb-2'>
                       <div className='myTextContainer'>
-                        <span className='text-uppercase'>{profileDataState.isSuccess ? `${profileDataState?.currentUserData?.result?.first_name.slice(0, 1)}` : 'A'}</span>
+                        <span className='text-uppercase'>{Object.keys(profileDataState.currentUserData).length > 0 ? `${profileDataState?.currentUserData?.result?.first_name.slice(0, 1)}` : 'A'}</span>
                       </div>
-                      <span className='pt-2 ps-2 text-white myH7'>Last login : {profileDataState.isSuccess && profileDataState?.currentUserData.result.last_login != null ? getDateTime(profileDataState?.currentUserData.result.last_login) : 'first time logged in'}</span>
+                      <span className='pt-2 ps-2 text-white myH7'>Last login : {Object.keys(profileDataState.currentUserData).length > 0 && profileDataState?.currentUserData.result.last_login != null ? getDateTime(profileDataState?.currentUserData.result.last_login) : 'first time logged in'}</span>
                     </div>
                     <div className='mt-3 d-flex justify-content-end'>
                       <button className='myBtn py-1 px-3' onClick={logOutHandler} href="">

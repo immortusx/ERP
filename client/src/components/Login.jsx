@@ -30,22 +30,15 @@ export default function Login() {
 
     useEffect(() => {
         if (profileDataState.isSuccess && profileDataState.currentUserData.isSuccess) {
-            console.log('must call in $$$$$$$$$$$$$$$$$ login page', profileDataState)
-
             const rolesArray = [];
             Array.from(profileDataState.currentUserData.result.features).filter(i => {
                 rolesArray.push(i.feature)
             })
-            console.log('profileDataState.currentUserData', profileDataState.currentUserData)
-
             localStorage.setItem('rolesArray', rolesArray)
+            localStorage.setItem('userData', JSON.stringify(profileDataState.currentUserData.result))
 
-            let rbacToken = localStorage.getItem('rbacToken')
-            if (rbacToken) {
-                navigate('/home')
-            }
             dispatch(clearProfileDataSliceState())
-
+            navigate('/home')
         }
     }, [profileDataState])
 
@@ -63,7 +56,6 @@ export default function Login() {
                 if (!token) {
                     return
                 } else {
-                    console.log('second call ************')
                     dispatch(getProfileData(token))
                     dispatch(setShowMessage('Welcome to Vehicle Management System'))
                 }

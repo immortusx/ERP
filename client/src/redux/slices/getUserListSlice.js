@@ -30,7 +30,7 @@ const getUserListSlice = createSlice({
             state.userListState.isError = false;
             state.userListState.isSuccess = false;
             state.userListState.isFetching = false;
-            state.userListState.messalistge = [];
+            state.userListState.list = [];
             return state;
         },
     },

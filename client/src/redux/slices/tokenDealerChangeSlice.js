@@ -14,13 +14,11 @@ const initialState = {
 
 
 export const tokenDealerChangeDb = createAsyncThunk('tokenDealerChangeDb/tokenDealerChangeSlice', async (myData) => {
-    console.log('calleddd');
     const config = {
         headers: {
             token: localStorage.getItem('rbacToken')
         }
     };
-    console.log('in tokenDealerChangeDb', myData)
     const url = `${process.env.REACT_APP_NODE_URL}/api/login/dealer-token-change`
     return await Axios.post(url, { id: myData }, config).then((response) => {
         return response.data
