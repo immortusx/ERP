@@ -51,7 +51,6 @@ export default function Login() {
                 localStorage.setItem('dealersList', JSON.stringify(loginState.result.result.dealerResult))
                 localStorage.setItem('rbacToken', loginState.result.result.tokenIs)
                 localStorage.setItem('currentDealerId', loginState.result.result.currentDealer)
-                // navigate('/home')
                 const token = localStorage.getItem('rbacToken')
                 if (!token) {
                     return

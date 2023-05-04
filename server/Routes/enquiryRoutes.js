@@ -11,7 +11,14 @@ const router = express.Router();
 router.get('/enquiry-data', tokenCheck, async (req, res) => {
   console.log('>>>>>>>>>get-enquiry-data')
   try {
-    await db.query(`SELECT * FROM dealers where id = ${req.myData.dealerId}`, async (err, getDealers) => {
+    let url = '';
+    if (req.myData.isSuperAdmin) {
+      url = `SELECT * FROM dealers `
+    } else {
+      url = `SELECT * FROM dealers where id = ${req.myData.dealerId}`
+
+    }
+    await db.query(url, async (err, getDealers) => {
       if (getDealers) {
         await db.query('SELECT * FROM enquiry_primary_sources', async (err, getPrimarySource) => {
           if (getPrimarySource) {
@@ -85,9 +92,27 @@ router.get('/get-model/:id', tokenCheck, async (req, res) => {
     }
   })
 })
+router.get('/get-enquiries', tokenCheck, async (req, res) => {
+  console.log('>>>>>>>>>get-enquiries', req.myData)
+  let dealerId = req.myData.dealerId
+  let isSuperAdmin = req.myData.isSuperAdmin;
+  let userId = req.myData.userId
+  const urlNew = `CALL sp_get_enquiries_list(${dealerId},${isSuperAdmin})`
+  await db.query(urlNew, async (err, result) => {
+    if (err) {
+      console.log({ isSuccess: false, result: err })
+      res.send({ isSuccess: false, result: 'error' })
+    } else {
+      console.log({ isSuccess: 'success', result: urlNew })
+      res.send({ isSuccess: 'success', result: result[0] })
+    }
+  })
+})
 router.get('/get-dsp/:id', tokenCheck, async (req, res) => {
   console.log('>>>>>>>>>get-dsp', req.params)
-  const urlNew = `CALL get_dsp_list(${req.params.id})`
+  let dealerId = req.params.id
+  let userId = req.myData.userId
+  const urlNew = `CALL sp_get_dsp_list(${dealerId},${userId})`
   await db.query(urlNew, async (err, result) => {
     if (err) {
       console.log({ isSuccess: false, result: err })
@@ -111,6 +136,7 @@ router.get('/get-source-enquiry/:id', tokenCheck, async (req, res) => {
     }
   })
 })
+
 router.post('/set-new-enquiry-data', tokenCheck, async (req, res) => {
   console.log('>>>>>>>>>set-new-enquiry-data', req.body)
 

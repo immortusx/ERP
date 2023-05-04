@@ -1,8 +1,9 @@
-
-.usersTbl .tab-content {
+.myTbl .tab-content {
     background-color: white;
     padding: 10px;
     border-radius: 10px;
 }
 
-
+.myTbl td {
+    padding: 10px  !important;
+}

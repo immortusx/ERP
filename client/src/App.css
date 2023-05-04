@@ -67,6 +67,7 @@
   border-radius: 10px;
   outline: none;
 }
+
 .mySelectBox {
   cursor: pointer;
   min-width: 220px;
@@ -126,7 +127,8 @@ select.myInput {
 .myH7 {
   font-size: 0.7rem;
 }
-.myTag{
+
+.myTag {
   background-color: #edf1f4 !important;
   border-radius: 5px;
   padding: 3px 5px;
@@ -186,7 +188,7 @@ select.myInput {
   list-style: none;
   padding: 5px 10px;
   border-radius: 5px;
-  
+
   /* margin-bottom: 2px;
   margin-right: 5px; */
   margin: 10px;
@@ -248,9 +250,11 @@ select.myInput {
   height: 250px;
   overflow: auto;
 }
+
 .myDTableCaption {
   display: table-caption;
 }
+
 
 
 

@@ -57,7 +57,7 @@ export default function Enquiry({ workFor }) {
         enquiryPrimarySource: '',
         sourceOfEnquiry: '',
         enquiryDate: new Date(),
-        deliveryDate: '',
+        deliveryDate: new Date(),
         cuustomerCategory: '',
         modeOfFinance: '',
         bank: '',
@@ -109,7 +109,7 @@ export default function Enquiry({ workFor }) {
             enquiryPrimarySource: '',
             sourceOfEnquiry: '',
             enquiryDate: new Date(),
-            deliveryDate:'',
+            deliveryDate: new Date(),
             cuustomerCategory: '',
             modeOfFinance: '',
             bank: '',
@@ -144,12 +144,11 @@ export default function Enquiry({ workFor }) {
             newEnquiryData.model &&
             newEnquiryData.enquiryPrimarySource &&
             newEnquiryData.sourceOfEnquiry &&
-            newEnquiryData.enquiryDate 
-            ){
-
-                dispatch(setNewEnquiryDataDb(newEnquiryData))
-            }
-            else{
+            newEnquiryData.enquiryDate
+        ) {
+            dispatch(setNewEnquiryDataDb(newEnquiryData))
+        }
+        else {
             dispatch(setShowMessage('Please fill mandatory fields'))
         }
     }
@@ -489,9 +488,10 @@ export default function Enquiry({ workFor }) {
         const name = e.target.name
         const value = e.target.value
         console.log('in changeHandlerNewEnquiry <<name>>:', name, ', <<value>>:', value);
+        setNewEnquiryData(newEnquiryData => ({ ...newEnquiryData, [name]: value }))
         if (value === '' || value === 0) {
         } else {
-            setNewEnquiryData(newEnquiryData => ({ ...newEnquiryData, [name]: value }))
+            // setNewEnquiryData(newEnquiryData => ({ ...newEnquiryData, [name]: value }))
             switch (name) {
                 case 'dealerId':
                     getDspList(value)

@@ -8,6 +8,8 @@ import { getToPathname } from '@remix-run/router'
 import { setShowMessage } from '../redux/slices/notificationSlice'
 import { useNavigate } from 'react-router-dom'
 
+import Checkbox from '@mui/material/Checkbox'
+
 import SwapSection from './SwapSection'
 
 export default function AddUser({ workFor }) {
@@ -370,7 +372,14 @@ export default function AddUser({ workFor }) {
                                     <ul ref={selectInp} name='selectRole' className='inputElement'>
                                         {
                                             dealers.length > 0 && dealers.map((item, index) => {
-                                                return <li onClick={(event) => { makeSelected(event, 'rightSide', item) }} className='text-uppercase' key={index} value={item.id}>{item.name}</li>
+                                                return <li onClick={(event) => { makeSelected(event, 'rightSide', item) }} className='text-uppercase' key={index} value={item.id}>
+                                                    <div className='d-flex align-items-center'>
+                                                        {/* <input type='checkbox' className='m-2 myCheckBox inputElement' onChange={(e) => { onChangeHandler(e) }} name="enableUser" /> */}
+                                                        <p className='ms-1'>
+                                                            {item.name}
+                                                        </p>
+                                                    </div>
+                                                </li>
                                             })
                                         }
                                     </ul>

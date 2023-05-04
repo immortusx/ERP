@@ -7,6 +7,7 @@ import Users from './Users'
 import AddUser from './AddUser'
 import AddRole from './AddRole'
 import NoAuth from './NoAuth'
+import EnquiryList from './EnquiryList'
 import Sales from './Sales'
 import Manage from './Manage'
 import Profile from './Profile'
@@ -31,6 +32,8 @@ const CheckPermission = ({ children, path }) => {
   // return checkList.includes(path) ? children : <h3>No access</h3>
   const rolesArray = localStorage.getItem('rolesArray')
   const checkList = rolesArray.split(',')
+  // console.log('path', path)
+  // console.log('checkList.includes(path)', checkList.includes(path));
   return checkList.includes(path) ? children : <NoAuth></NoAuth>
 }
 
@@ -60,6 +63,7 @@ export default function HomeScreen() {
 
         // dispatch(getProfileData(tokenDealerState.data.result))
         dispatch(clearTokenDealerState())
+        console.log('please redirect to home')
         navigate('/home')
 
         window.location.reload()
@@ -78,20 +82,9 @@ export default function HomeScreen() {
     }
   }, [])
 
-  useEffect(() => {
-    // for showing loading 
 
-    // let root = document.getElementById('root')
-    // if (profileDataState.isFetching) {
-    //   console.log('root  *****', root)
-    //   dispatch(setShowMessage('please wait...'))
-    //   // root.classList.add('bg-dark')
-    // } else if (!profileDataState.isFetching) {
-    //   dispatch(setShowMessage(''))
-    //   // root.classList.remove('bg-dark')
-    // }
-  }, [profileDataState])
   useEffect(() => {
+    console.log('profileDataState', profileDataState)
     if (profileDataState.isSuccess && profileDataState.currentUserData.isSuccess) {
       const rolesArray = [];
       Array.from(profileDataState.currentUserData.result.features).filter(i => {
@@ -100,8 +93,9 @@ export default function HomeScreen() {
       localStorage.setItem('rolesArray', rolesArray)
       localStorage.setItem('userData', JSON.stringify(profileDataState.currentUserData.result))
       dispatch(clearProfileDataSliceState())
-      navigate('/home')
-
+      // navigate('/home')
+    } else if (profileDataState.isError) {
+      dispatch(setShowMessage('Server is temporarily unavailable'))
     }
   }, [profileDataState])
 
@@ -211,6 +205,13 @@ export default function HomeScreen() {
                         checkTabGrant(['profile']) && <li className='inLi'>
                           <NavLink className={({ isActive }) => isActive ? 'activeLink' : ''} to="enquiry" >
                             Enquiry
+                          </NavLink>
+                        </li>
+                      }
+                      {
+                        checkTabGrant(['profile']) && <li className='inLi'>
+                          <NavLink className={({ isActive }) => isActive ? 'activeLink' : ''} to="enquiryies" >
+                            Enquiryies
                           </NavLink>
                         </li>
                       }
@@ -386,6 +387,7 @@ export default function HomeScreen() {
             <Route path="profile" element={<CheckPermission path='profile'><Profile /></CheckPermission>} exact />
             <Route path="enquiry" element={<CheckPermission path='profile'><Enquiry /></CheckPermission>} exact />
             <Route path="new-enquiry" element={<CheckPermission path='profile'><Enquiry workFor='newEnquiry' /></CheckPermission>} exact />
+            <Route path="enquiryies" element={<CheckPermission path='profile'><EnquiryList /></CheckPermission>} exact />
 
             <Route path="sales" element={<CheckPermission path='sales'><Sales /></CheckPermission>} exact />
 

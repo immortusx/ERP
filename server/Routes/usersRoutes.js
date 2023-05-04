@@ -14,7 +14,7 @@ const router = express.Router();
 
 router.get('/profile-data', tokenCheck, async (req, res) => {
   console.log('>>>>>profileData', req.myData);
-  const url = `call profile_data( ${req.myData.dealerId},  ${req.myData.userId},  ${req.myData.isSuperAdmin});`
+  const url = `call sp_profile_data( ${req.myData.dealerId},  ${req.myData.userId},  ${req.myData.isSuperAdmin});`
   await db.query(url, async (err, result) => {
     console.log('result ******* ', result[0])
     if (err) {
@@ -36,7 +36,7 @@ router.get('/profile-data', tokenCheck, async (req, res) => {
 })
 router.get('/get-user-list', tokenCheck, checkUserPermission('users'), async (req, res) => {
   console.log('>>>>>get-user-list');
-  let url = `call get_user_list(${req.myData.userId}, ${req.myData.dealerId}, ${req.myData.isSuperAdmin});`
+  let url = `call sp_get_user_list(${req.myData.userId}, ${req.myData.dealerId}, ${req.myData.isSuperAdmin});`
   await db.query(url, async (err, result) => {
     if (err) {
       console.log({ isSuccess: false, result: err })
@@ -49,7 +49,7 @@ router.get('/get-user-list', tokenCheck, checkUserPermission('users'), async (re
 })
 router.get('/get-user-details/:id', tokenCheck, async (req, res) => {
   const userId = req.params.id
-  const urlNew = `call user_details_dealers_roles( ${userId}) `
+  const urlNew = `call sp_user_details_dealers_roles( ${userId}) `
   db.query(urlNew, async (err, result) => {
     console.log('result[0][0].dealersRole ***********',result[0][0].dealersRole)
     let data = JSON.parse(result[0][0].dealersRole)
@@ -65,7 +65,7 @@ router.get('/get-user-details/:id', tokenCheck, async (req, res) => {
 })
 router.get('/roles-list', async (req, res) => {
   console.log('>>>>>role-list');
-  const url = `call get_role_list()`
+  const url = `call sp_get_role_list()`
   await db.query(url, async (err, roles) => {
     if (err) {
       console.log({ isSuccess: true, result: err })
@@ -79,7 +79,7 @@ router.get('/roles-list', async (req, res) => {
 })
 router.get('/dealers-list', tokenCheck, async (req, res) => {
   console.log('>>>>>dealers-list');
-  const url = `call get_dealer_list(${req.myData.dealerId}, ${req.myData.isSuperAdmin});`
+  const url = `call sp_get_dealer_list(${req.myData.dealerId}, ${req.myData.isSuperAdmin});`
   await db.query(url, async (err, dealers) => {
     if (err) {
       console.log({ isSuccess: true, result: err })
