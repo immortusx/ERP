@@ -94,6 +94,8 @@ export default function AddRole({ workFor }) {
             if (addRoleState.message.isSuccess) {
                 dispatch(setShowMessage('Role is created'))
                 clearInpHook()
+                clearAddRoleState()
+                navigate('/home/roles')
             } else {
                 dispatch(setShowMessage('Something is wrong'))
             }

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Apr 26, 2023 at 06:16 AM
+-- Generation Time: May 10, 2023 at 12:06 PM
 -- Server version: 10.2.43-MariaDB
 -- PHP Version: 7.2.30
 
@@ -20,8 +20,134 @@ SET time_zone = "+00:00";
 --
 -- Database: `vehical_crm_db`
 --
-CREATE DATABASE IF NOT EXISTS `vehical_crm_db` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
-USE `vehical_crm_db`;
+
+DELIMITER $$
+--
+-- Procedures
+--
+CREATE DEFINER=`balkrush1`@`%` PROCEDURE `example` (IN `data` TEXT)  BEGIN 
+SELECT JSON_EXTRACT(data, '$.firstname')as first_name, JSON_EXTRACT(data, '$.lastname') as last_name ,JSON_EXTRACT(data, '$.roles') as roles;
+
+
+
+END$$
+
+CREATE DEFINER=`balkrush1`@`%` PROCEDURE `sp_get_dealer_list` (IN `dealerId` INT(11), IN `isAdmin` BOOLEAN)  BEGIN
+IF (isAdmin = true) THEN
+	SELECT * from dealers;
+ELSE
+	SELECT * from dealers where id = dealerId;
+END IF;
+
+END$$
+
+CREATE DEFINER=`balkrush1`@`%` PROCEDURE `sp_get_dsp_list` (IN `dealerId` INT, IN `userId` INT)  BEGIN
+SELECT distinct  s.id, s.first_name, s.last_name  FROM dealer_department_user as f inner join users as s on  s.id = f.user_id and s.is_active = 1 where dealer_id = dealerId and user_id not in (20,userId);
+END$$
+
+CREATE DEFINER=`balkrush1`@`%` PROCEDURE `sp_get_enquiries_list` (IN `dealerId` INT, IN `isAdmin` BOOLEAN)  BEGIN
+IF (isAdmin = TRUE) then
+	select s.first_name , s.last_name, s.phone_number, s.email ,(select name from products where id = product_id) as product ,concat(fo.first_name ,' ', fo.last_name) as sales_person ,f.date,f.delivery_date,(select name from district where id = s.district) as district ,(select name from taluka where id = s.taluka) as taluka ,(select name from village where id = s.village) as village ,(select name from enquiry_sources where id = f.enquiry_source_id)as enquiry_source from enquiries as f inner join customers as s on s.id = f.customer_id  inner join dealers as t on f.dealer_id = t.id inner join users as fo on fo.id = f.salesperson_id;
+ELSE 
+	select s.first_name , s.last_name, s.phone_number, s.email ,(select name from products where id = product_id) as product ,concat(fo.first_name ,' ', fo.last_name) as sales_person ,f.date,f.delivery_date,(select name from district where id = s.district) as district ,(select name from taluka where id = s.taluka) as taluka ,(select name from village where id = s.village) as village ,(select name from enquiry_sources where id = f.enquiry_source_id)as enquiry_source from enquiries as f inner join customers as s on s.id = f.customer_id  inner join dealers as t on f.dealer_id = t.id inner join users as fo on fo.id = f.salesperson_id where f.dealer_id = dealerId;
+END IF;
+END$$
+
+CREATE DEFINER=`balkrush1`@`%` PROCEDURE `sp_get_role_list` ()  BEGIN
+	SELECT * from roles where id != 1 and active = 1;
+END$$
+
+CREATE DEFINER=`balkrush1`@`%` PROCEDURE `sp_get_user_list` (IN `userId` INT(11), IN `dealerId` INT(11), IN `isAdmin` BOOLEAN)  BEGIN
+IF (isAdmin = TRUE) then
+	SELECT distinct f.id, f.first_name, f.last_name, f.email, f.is_active, f.phone_number  FROM users as f  where f.id not in(userId);
+ELSE
+    SELECT distinct f.id, f.first_name, f.last_name, f.email, f.is_active, f.phone_number  FROM users as f inner join dealer_department_user as s on s.user_id = f.id  inner join dealers as t on s.dealer_id = t.id where s.dealer_id = dealerId and f.id not in((select user_id from dealer_department_user where role_id  =1), userId);
+END IF;	
+END$$
+
+CREATE DEFINER=`balkrush1`@`%` PROCEDURE `sp_profile_data` (IN `dealerId` INT(11), IN `userId` INT(11), IN `isAdmin` BOOLEAN)  BEGIN 
+IF (isAdmin = FALSE) THEN
+	SELECT distinct email, first_name, last_name, last_login ,CONCAT('[', GROUP_CONCAT(
+    distinct CONCAT(
+      '{ "page": ', t.page, ', "index_no": "', t.index_no, '", "feature": "', t.feature, '", "label": "', label, '"}'
+    )
+  ), ']') AS features
+  FROM dealer_department_user as f inner join role_features as s on s.role_id = f.role_id inner join features as t on s.feature_id = t.id  inner join users as fo on fo.id = f.user_id where f.user_id  = userId  and f.dealer_id = dealerId;
+ELSE
+    SELECT distinct email, first_name, last_name, last_login ,(select distinct CONCAT('[', GROUP_CONCAT(
+    distinct CONCAT(
+      '{ "page": ', page, ', "index_no": "', index_no, '", "feature": "', feature, '", "label": "', label, '"}'
+    )
+  ), ']') from features) AS features
+  FROM users where id  = 20;
+  end IF;
+END$$
+
+CREATE DEFINER=`balkrush1`@`%` PROCEDURE `sp_user_details_dealers_roles` (IN `userId` INT(11))  BEGIN
+
+SELECT 
+  concat('{',
+    GROUP_CONCAT(
+      distinct CONCAT(
+       '"', d.dealer_id ,'" :' , (
+        select CONCAT(
+    '[',
+    GROUP_CONCAT(
+    distinct CONCAT(
+    role_id
+      ) SEPARATOR ','
+    ),
+    ']'
+  ) AS role from dealer_department_user where dealer_id = d.dealer_id and user_id = d.user_id
+        )
+      )
+       ORDER BY d.dealer_id ASC
+      SEPARATOR ','
+    ),'}'
+  ) AS dealersRole
+FROM 
+  users u
+  INNER JOIN dealer_department_user d ON d.user_id = u.id
+WHERE 
+  u.id = userId
+GROUP BY 
+  u.id;
+
+END$$
+
+CREATE DEFINER=`balkrush1`@`%` PROCEDURE `user_details_dealers_roles` (IN `userId` INT(11))  BEGIN
+
+SELECT 
+  concat('{',
+    GROUP_CONCAT(
+      distinct CONCAT(
+       '"', d.dealer_id ,'" :' , (
+        select CONCAT(
+    '[',
+    GROUP_CONCAT(
+    distinct CONCAT(
+    role_id
+      ) SEPARATOR ','
+    ),
+    ']'
+  ) AS role from dealer_department_user where dealer_id = d.dealer_id and user_id = d.user_id
+        )
+      )
+       ORDER BY d.dealer_id ASC
+      SEPARATOR ','
+    ),'}'
+  ) AS dealersRole
+FROM 
+  users u
+  INNER JOIN dealer_department_user d ON d.user_id = u.id
+WHERE 
+  u.id = userId
+GROUP BY 
+  u.id;
+
+END$$
+
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -48,17 +174,30 @@ CREATE TABLE `customers` (
 --
 
 INSERT INTO `customers` (`id`, `first_name`, `middle_name`, `last_name`, `phone_number`, `email`, `is_active`, `district`, `taluka`, `block`, `village`) VALUES
-(66, 'Aniruddh', 'b', 'dave', '98373678', 'AniruddhDave@gmail.com', 1, 'vadodara', 'vadodara', '1', 'padra'),
-(67, 'Virendrasinh', 'n', 'Jadeja', '823838338', 'Virendrasinh@gmail.com', 1, 'aravalli', 'meghraj', '2', NULL),
-(68, '	Kantibhai ', 'k', 'Kharadi', '28839389', '	KantibhaiKharadi@gmail.com', 1, 'surat', 'surat', '1', NULL),
-(69, 'Aniketbhai', 'p', 'Thakar', '928498289', 'Aniketbhai.Thakar@gmail.com', 1, 'navsari', 'navsari', '3', NULL),
-(70, '	Praveen', 'k', 'patel', '937487488', '	Praveenbhai@gmail.com', 1, 'vadodara', 'padra', '4', 'dabhoi'),
-(71, '	Dinesh ', 't', 'barot', '912738738', '	Dinesh2022@gmail.com', 1, 'ahemdabad', 'daskori', '3', NULL),
-(83, 'kevel', 'deshmukh', '', '98327387', '', 1, 'Ahemdabad', 'Sanand', '33', 'Badarkha'),
-(84, 'harshil', 'naresh bhai', 'raval', '9283839', 'harshil@123', 1, 'Ahemdabad', 'Dholka', '11', 'Ambada'),
+(66, 'Aniruddh', 'b', 'dave', '98373678', 'AniruddhDave@gmail.com', 1, '1', '2', '11', '2'),
+(67, 'Virendrasinh', 'n', 'Jadeja', '823838338', 'Virendrasinh@gmail.com', 1, '1', '2', '11', '2'),
+(68, '	Kantibhai ', 'k', 'Kharadi', '28839389', '	KantibhaiKharadi@gmail.com', 1, '1', '2', '11', '2'),
+(69, 'Aniketbhai', 'p', 'Thakar', '928498289', 'Aniketbhai.Thakar@gmail.com', 1, '1', '2', '11', '2'),
+(70, '	Praveen', 'k', 'patel', '937487488', '	Praveenbhai@gmail.com', 1, '1', '2', '11', '2'),
+(71, '	Dinesh ', 't', 'barot', '912738738', '	Dinesh2022@gmail.com', 1, '1', '2', '11', '2'),
+(83, 'kevel', 'deshmukh', '', '98327387', '', 1, '1', '2', '11', '2'),
+(84, 'harshil', 'naresh bhai', 'raval', '9283839', 'harshil@123', 1, '1', '2', '11', '2'),
 (86, 'sunil', 'keshav', 'dutt', '38889298', 'sunil@123', 1, '1', '2', '11', '2'),
-(87, 'kailash', 'kantibhai', 'dave', '923839', 'keshav@123', 1, '1', '2', '22', '2'),
-(88, 'jjjj', 'jjjj', 'jjjj', '4932093', 'jjjj@123', 1, '1', '2', '11', '1');
+(87, 'kailash', 'kantibhai', 'dave', '923839', 'keshav@123', 1, '1', '2', '11', '2'),
+(88, 'jjjj', 'jjjj', 'jjjj', '4932093', 'jjjj@123', 1, '1', '2', '11', '2'),
+(89, 'mukesh', 'g', 'm', '1234567890', 'm@a.com', 1, '1', '2', '11', '2'),
+(90, 'mukesh', 'g', 'm', '1234567890', 'm@a.com', 1, '1', '2', '11', '3'),
+(91, 'dinesh', 'm', 'rajput', '9378478', 'dinesh@12', 1, '1', '2', '11', '2'),
+(92, 'dinesh', 'm', 'rajput', '9378478', 'dinesh@12', 1, '1', '2', '11', '2'),
+(93, 'dinesh', 'm', 'rajput', '9378478', 'dinesh@12', 1, '1', '2', '11', '2'),
+(94, 'keyur', 'k', 'parmar', '83839', 'keyur@123', 1, '1', '2', '22', '11'),
+(95, 'keyur', 'k', 'parmar', '83839', 'keyur@123', 1, '1', '2', '22', '11'),
+(96, 'keyur', 'k', 'parmar', '83839', 'keyur@123', 1, '1', '2', '22', '11'),
+(97, 'laukesh', 'm', 'koli', '939389', 'moli@123', 1, '1', '2', '11', '1'),
+(98, 'mehul', 'j', 'aarya', '233', 'meul@123', 1, '1', '2', '11', '12'),
+(100, 'susil', 'punit bhai', 'makwana', '932839', 'susil@123', 1, '1', '2', '11', '1'),
+(101, 'lalo', 'k', 'desai', '99228', 'lalo@123', 1, '1', '2', '11', '1'),
+(102, 'rakesh', 'k', 'lal', '94383832', 'rakesh@123', 1, '1', '2', '22', '7');
 
 -- --------------------------------------------------------
 
@@ -108,7 +247,6 @@ CREATE TABLE `dealer_department_user` (
 
 INSERT INTO `dealer_department_user` (`id`, `dealer_id`, `department_id`, `user_id`, `role_id`) VALUES
 (3, 1, 1, 62, 2),
-(4, 2, 1, 64, 2),
 (5, 3, 1, 65, 2),
 (11, 5, 1, 68, 2),
 (12, 5, 1, 68, 25),
@@ -126,15 +264,28 @@ INSERT INTO `dealer_department_user` (`id`, `dealer_id`, `department_id`, `user_
 (37, 5, 1, 72, 4),
 (39, 2, 1, 63, 3),
 (41, 3, 1, 67, 5),
-(42, 2, 1, 66, 4),
 (45, 2, 1, 60, 3),
-(46, 6, 1, 75, 2),
 (47, 2, 1, 71, 4),
 (48, 5, 1, 71, 25),
 (49, 5, 1, 71, 5),
 (50, 6, 1, 71, 3),
 (51, 6, 1, 71, 25),
-(52, 2, 1, 74, 25);
+(52, 2, 1, 74, 25),
+(56, 3, 1, 76, 25),
+(57, 4, 1, 76, 2),
+(60, 5, 1, 64, 4),
+(61, 1, 1, 66, 2),
+(62, 5, 1, 66, 4),
+(63, 1, 1, 77, 5),
+(64, 1, 1, 77, 25),
+(65, 1, 1, 77, 2),
+(66, 1, 1, 78, 2),
+(68, 2, 1, 79, 2),
+(69, 2, 1, 79, 4),
+(70, 2, 1, 79, 25),
+(71, 5, 1, 79, 25),
+(72, 2, 1, 75, 2),
+(73, 6, 1, 75, 2);
 
 -- --------------------------------------------------------
 
@@ -232,7 +383,13 @@ INSERT INTO `enquiries` (`id`, `dealer_id`, `enquiry_type_id`, `salesperson_id`,
 (4, 1, 1, 60, 84, 1, '2023-04-13 05:58:55', '2023-04-13 05:58:55', 26, '1'),
 (5, 2, 1, 64, 86, 5, '2023-04-15 11:06:59', '2023-04-28 11:06:59', 32, '1'),
 (6, 2, 1, 64, 87, 5, '2023-04-13 11:29:58', '2023-04-13 11:29:58', 29, '1'),
-(7, 1, 1, 62, 88, 1, '2023-04-13 13:08:17', '2023-04-16 18:30:00', 25, '1');
+(7, 1, 1, 62, 88, 1, '2023-04-13 13:08:17', '2023-04-16 18:30:00', 25, '1'),
+(8, 1, 1, 77, 93, 2, '2023-05-20 05:37:05', '2023-05-16 18:30:00', 25, '1'),
+(9, 1, 1, 62, 97, 3, '2023-05-02 06:02:54', '2023-05-02 06:02:54', 29, '1'),
+(10, 1, 1, 61, 98, 3, '2023-05-11 06:06:10', '2023-05-27 06:06:10', 29, '1'),
+(11, 5, 1, 68, 100, 5, '2023-05-03 07:24:31', '2023-08-25 07:24:31', 27, '1'),
+(12, 6, 1, 61, 101, 1, '2023-04-05 09:00:23', '2023-05-07 09:00:23', 25, '1'),
+(13, 2, 1, 70, 102, 5, '2023-05-09 12:50:07', '2023-05-09 12:50:07', 27, '1');
 
 -- --------------------------------------------------------
 
@@ -497,7 +654,7 @@ INSERT INTO `products` (`id`, `name`, `manufacturer_id`) VALUES
 (5, 'SONALIKA gt 20 Tractors', 2),
 (6, 'Force BALWAN 450', 3),
 (7, 'Force SANMAN 6000', 3),
-(8, 'Force ABHUMAN ', 3);
+(8, 'Force ABHIMAN ', 3);
 
 -- --------------------------------------------------------
 
@@ -522,7 +679,8 @@ INSERT INTO `roles` (`id`, `role`, `active`, `description`) VALUES
 (3, 'user', '1', 'okay'),
 (4, 'manager', '1', 'managaer can show product and show users'),
 (5, 'editor', '1', 'null'),
-(25, 'sales', '1', 'sales can show profile, products, and sales page');
+(25, 'sales', '1', 'sales can show profile, products, and sales page'),
+(28, 'service_er', '1', 'they can edit.');
 
 -- --------------------------------------------------------
 
@@ -557,12 +715,6 @@ INSERT INTO `role_features` (`id`, `role_id`, `feature_id`) VALUES
 (89, 5, 1),
 (90, 5, 7),
 (91, 5, 8),
-(92, 4, 5),
-(93, 4, 1),
-(94, 4, 2),
-(95, 4, 4),
-(96, 4, 3),
-(97, 4, 12),
 (101, 2, 2),
 (102, 2, 3),
 (103, 2, 4),
@@ -575,7 +727,13 @@ INSERT INTO `role_features` (`id`, `role_id`, `feature_id`) VALUES
 (110, 2, 12),
 (111, 3, 2),
 (112, 3, 1),
-(113, 3, 5);
+(113, 3, 5),
+(114, 4, 5),
+(115, 4, 2),
+(116, 4, 12),
+(120, 28, 4),
+(121, 28, 12),
+(122, 28, 2);
 
 -- --------------------------------------------------------
 
@@ -629,23 +787,27 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `first_name`, `last_name`, `email`, `password`, `is_active`, `phone_number`, `last_login`, `current_login`) VALUES
-(20, 'admin', 'admin', 'admin@123', '$2b$10$fotQWIMxEDM7NEQut5bYnun1rfpWQj9JJt/d/qZniQwCXsbtxBva2', 1, '7272727', '2023-04-26 10:59:23', '2023-04-26 11:03:02'),
+(20, 'admin', 'admin', 'admin@123', '$2b$10$fotQWIMxEDM7NEQut5bYnun1rfpWQj9JJt/d/qZniQwCXsbtxBva2', 1, '7272727', '2023-05-07 09:05:49', '2023-05-09 12:45:34'),
 (60, 'harshil', 'dave', 'harshil@123', '$2b$10$.2sfB9x23hOZffgcSXWKLO7f1I1oC.3x9/1ky0MJZgjWmu9Lzcnfm', 1, '11111', '2023-04-13 18:19:29', '2023-04-21 15:23:53'),
 (61, 'kartik', 'dave', 'kartik@gmail.com', '$2b$10$.2sfB9x23hOZffgcSXWKLO7f1I1oC.3x9/1ky0MJZgjWmu9Lzcnfm', 1, '39839', '2023-03-30 12:53:40', '2023-04-03 11:50:49'),
-(62, 'karan', 'thakkar', 'karan@123', '$2b$10$5id0ZHa/MKD.cXLiEVomYe0V2ENY0zZRtv8cQ1lmXahpv9MH3Iu/.', 1, '32938', '2023-04-24 15:41:44', '2023-04-24 16:45:09'),
+(62, 'karan', 'thakkar', 'karan@123', '$2b$10$5id0ZHa/MKD.cXLiEVomYe0V2ENY0zZRtv8cQ1lmXahpv9MH3Iu/.', 1, '32938', '2023-05-01 05:25:22', '2023-05-02 04:44:28'),
 (63, 'urvish', 'vaghela', 'urvish@gmail.com', '$2b$10$.2sfB9x23hOZffgcSXWKLO7f1I1oC.3x9/1ky0MJZgjWmu9Lzcnfm', 1, '34893823728', '2023-04-04 12:03:38', '2023-04-04 12:10:50'),
-(64, 'kiran', 'shah', 'kiran@gmail.com', '$2b$10$.2sfB9x23hOZffgcSXWKLO7f1I1oC.3x9/1ky0MJZgjWmu9Lzcnfm', 1, '8888', '2023-04-14 12:45:15', '2023-04-24 15:52:51'),
-(65, 'dev', 'patel', 'dev@gmail.com', '$2b$10$.2sfB9x23hOZffgcSXWKLO7f1I1oC.3x9/1ky0MJZgjWmu9Lzcnfm', 1, '98763525', NULL, '2023-04-14 12:45:31'),
-(66, 'mukesh', 'patel', 'mukesh@gmail.com', '$2b$10$PGtPS9UZL6hKYgOm9YQcy.BSDmUoJjH.Zb3mf81hR4FbKLiu6ZHge', 1, '938394982', '2023-04-13 17:50:51', '2023-04-13 18:20:22'),
+(64, 'kiran', 'dave', 'kiran@gmail.com', '$2b$10$.2sfB9x23hOZffgcSXWKLO7f1I1oC.3x9/1ky0MJZgjWmu9Lzcnfm', 1, '8888', '2023-04-14 12:45:15', '2023-04-24 15:52:51'),
+(65, 'dev', 'patel', 'dev@gmail.com', '$2b$10$.2sfB9x23hOZffgcSXWKLO7f1I1oC.3x9/1ky0MJZgjWmu9Lzcnfm', 1, '98763525', '2023-04-14 12:45:31', '2023-05-02 04:44:43'),
+(66, 'mukesh', 'patel', 'mukesh@gmail.com', '$2b$10$PGtPS9UZL6hKYgOm9YQcy.BSDmUoJjH.Zb3mf81hR4FbKLiu6ZHge', 1, '938394982', '2023-04-28 14:13:46', '2023-04-28 14:13:52'),
 (67, 'abhijit', 'shah', 'abhijit@123', '$2b$10$QmfmDPRjTSja1g86sqPHBuU0myvv/hh8zohn.hJaB2cGkt92uAJUi', 1, '98274748', NULL, NULL),
 (68, 'abhimanyu', 'dave', 'abhimanyu@123', '$2b$10$.RqpItyOs/a7.ghGMvKqU.if60GEKsELHXUM.vMvClPsZX64In9CK', 1, '123', NULL, NULL),
 (69, 'laxman', 'veer', 'laxman@123', '$2b$10$zx8snctd92SteS6v9GeSOugaw6PDxDPaGdCjGF8o0xT5Ckl85WL0W', 1, '938382', NULL, '2023-04-19 12:49:01'),
 (70, 'kamlesh', 'bharwad', 'kamlesh@123', '$2b$10$KhPughqh9oJrWcZE4ORnXe4bZb2mIeanmEj.29aZwpXlmxpMLo05G', 1, '123', '2023-04-20 15:55:58', '2023-04-20 16:00:08'),
-(71, 'bhavesh ', 'koli', 'bhavesh@123', '$2b$10$XM/sxdGRtswahsijFarltezF3P3Sxl2IpO1W06upRlAk7cYYuKumu', 1, '123', '2023-04-26 10:37:28', '2023-04-26 11:03:38'),
-(72, 'kevel', 'ahe', 'kevel@123', '$2b$10$5id0ZHa/MKD.cXLiEVomYe0V2ENY0zZRtv8cQ1lmXahpv9MH3Iu/.', 1, '123', '2023-04-24 15:12:06', '2023-04-24 15:23:32'),
+(71, 'bhavesh ', 'koli', 'bhavesh@123', '$2b$10$XM/sxdGRtswahsijFarltezF3P3Sxl2IpO1W06upRlAk7cYYuKumu', 1, '123', '2023-05-09 12:36:28', '2023-05-09 13:17:40'),
+(72, 'kevel', 'ahe', 'kevel@123', '$2b$10$5id0ZHa/MKD.cXLiEVomYe0V2ENY0zZRtv8cQ1lmXahpv9MH3Iu/.', 1, '123', '2023-05-02 17:51:03', '2023-05-08 07:27:17'),
 (73, 'raffu', 'manek', 'raffu@123', '$2b$10$7rA8j3rlaXvKw5BAQk6o3eQtegCvQBhZvcGfSYWZfh7g2xaM/I1/i', 1, '123', '2023-04-21 12:58:13', '2023-04-21 16:20:38'),
-(74, 'shruuti', 'patel', 'shruti@123', '$2b$10$fP1qgqvaSEJo2ztdsFCreeziwQRSpAFQMctAbpz7URWWimcvJCbze', 1, '213232', '2023-04-21 15:32:54', '2023-04-21 15:36:10'),
-(75, 'umesh', 'barot', 'umesh@123', '$2b$10$LQ1/Lc./OPW/pu8cGALmIuINMG7pYNuCCIkDSGo0e55/qGAm7lOoK', 1, '123', '2023-04-24 15:54:34', '2023-04-24 16:09:05');
+(74, 'shruuti', 'patel', 'shruti@123', '$2b$10$fP1qgqvaSEJo2ztdsFCreeziwQRSpAFQMctAbpz7URWWimcvJCbze', 1, '213232', '2023-04-28 17:41:53', '2023-04-28 13:39:13'),
+(75, 'umesh', 'barot', 'umesh@123', '$2b$10$LQ1/Lc./OPW/pu8cGALmIuINMG7pYNuCCIkDSGo0e55/qGAm7lOoK', 1, '1233223', '2023-04-28 16:57:51', '2023-04-28 17:42:12'),
+(76, 'tirth', 'vyas', 'tirth@123', '$2b$10$KpDFOyvLW7Ye8j7wT6OsUO3S8CEI81/TF5aYaC3EkoaCa3O8QP1/q', 1, '123', '2023-05-02 04:45:25', '2023-05-02 04:46:28'),
+(77, 'yogesh', 'p', 'y@a.com', '$2b$10$oxEI2JIbTzsdRSEUA.k8Ae3bWHEumpDEnmWxUHS3kRRzFFpDahVQK', 1, '1234567890', NULL, NULL),
+(78, 'laxmi', 'chaudhri', 'laxmi@123', '$2b$10$.wELREJc3zc2OcHCwsRfPeMYoCduHd3ObPJMUoUQM3xJSsx6Fd34O', 1, '2398', '2023-05-04 06:23:35', '2023-05-04 12:43:56'),
+(79, 'ravi', 'desai', 'ravi@123', '$2b$10$rWoO3RQZ3YRVaqh7YfZgVeLDluC00bI74Uun.dy.slGRfrpHB.Uj.', 1, '9827478', '2023-05-09 12:36:08', '2023-05-09 12:48:48');
 
 -- --------------------------------------------------------
 
@@ -853,13 +1015,13 @@ ALTER TABLE `village`
 -- AUTO_INCREMENT for table `customers`
 --
 ALTER TABLE `customers`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=89;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=103;
 
 --
 -- AUTO_INCREMENT for table `dealer_department_user`
 --
 ALTER TABLE `dealer_department_user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=74;
 
 --
 -- AUTO_INCREMENT for table `departments`
@@ -877,7 +1039,7 @@ ALTER TABLE `district`
 -- AUTO_INCREMENT for table `enquiries`
 --
 ALTER TABLE `enquiries`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `enquiry_category`
@@ -943,13 +1105,13 @@ ALTER TABLE `products`
 -- AUTO_INCREMENT for table `roles`
 --
 ALTER TABLE `roles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT for table `role_features`
 --
 ALTER TABLE `role_features`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=114;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=123;
 
 --
 -- AUTO_INCREMENT for table `taluka`
@@ -961,7 +1123,7 @@ ALTER TABLE `taluka`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=76;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=80;
 
 --
 -- AUTO_INCREMENT for table `village`

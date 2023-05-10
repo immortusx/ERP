@@ -172,6 +172,7 @@ export default function AddUser({ workFor }) {
                 dispatch(setShowMessage('User is created'))
                 clearInpHook()
                 dispatch(clearAddUserState())
+                navigate('/home/users')
             } else if (addUserState.message.result === 'alreadyExist') {
                 dispatch(setShowMessage('Please use a different email to continue!'))
                 dispatch(clearAddUserState())

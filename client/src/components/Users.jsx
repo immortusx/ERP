@@ -28,7 +28,7 @@ export default function Users() {
       field: 'rowNumber',
       headerAlign: 'center',
       align: 'center',
-      headerName: 'Id',
+      headerName: 'No',
       minWidth: 80,
       flex: 1,
 
