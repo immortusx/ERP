@@ -1,0 +1,38 @@
+.master {
+    ul {
+        li {
+            main:hover {
+                cursor: pointer;
+
+                span {
+                    position: relative;
+                }
+
+                span::before {
+                    content: '';
+                    width: 100%;
+                    display: block;
+                    height: 1.5px;
+                    position: absolute;
+                    bottom: -1px;
+                    left: 0;
+                    right: 0;
+                    animation: withOpen .5s ease;
+                    background: #3e5367;
+                }
+            }
+        }
+    }
+}
+
+@keyframes withOpen {
+    0% {
+        background-color: white;
+        width: 0px;
+    }
+
+    100% {
+        width: 100%;
+        background: #3e5367;
+    }
+}

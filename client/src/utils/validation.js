@@ -1,0 +1,11 @@
+export const validFirstName = new RegExp(/^[\w+ ]{3,}$/);
+export const validLastName = new RegExp(/^[\w+ ]{3,}$/);
+export const validUserName = new RegExp(/^[\w+ ]{3,}$/);
+// export const validEmail = new RegExp(/^([a-zA-Z0-9]+)@([a-z]+)\.([a-zA-Z]+){2,7}$/);
+export const validEmail = new RegExp(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/);
+export const validPassword = new RegExp(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*.])(?=.{8,})/);
+// export const validPassword = new RegExp(/^[a-zA-Z0-9.@$!%*?&]{8,}$/);
+// export const validSponsor = new RegExp(/^[a-zA-Z0-9]{2,}$/);
+// export const validFullName = new RegExp(/^[a-zA-Z\s]+$/);
+// export const validMobileNumber = new RegExp('^[0-9]{10}$');
+// export const validDefault = new RegExp(/^[\S+]{2,}$/);

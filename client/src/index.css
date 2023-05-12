@@ -1,0 +1,21 @@
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background-color: #edf1f4 !important;
+
+}
+
+/* code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+} */
+.MuiButtonBase-root {
+  color: rgba(0,0,0,0.87)!important;
+  font-family: 'Poppins' !important;
+
+}
+
+p {
+  margin-top: 0;
+  margin-bottom: 0;
+}

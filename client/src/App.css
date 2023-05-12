@@ -1,0 +1,309 @@
+#root {
+  position: relative;
+  min-height: 100vh;
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+hr {
+  margin: 15px 0 !important;
+  /* border: 0; */
+  border-top: 1px solid rgba(224, 224, 224, 1);
+  opacity: 1;
+}
+
+.myBorder {
+  border: 1px solid rgba(224, 224, 224, 1);
+}
+
+
+
+.hoverText:hover {
+  color: #000000 !important;
+}
+
+
+
+.myBtnRight svg {
+  width: 14px;
+  stroke: #3e5367;
+  color: #3e5367;
+}
+
+.myBtnRight {
+  display: flex;
+  height: 30px;
+  width: 30px;
+  min-height: 30px;
+  min-width: 30px;
+  background-color: #00ffff;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+
+}
+
+.myLabel {
+  color: #0000009c;
+}
+
+.myInput:focus {
+  /* border-bottom: 1.5px solid #000000; */
+  box-shadow: 0 0 5px 0px #3e53678a;
+}
+
+.myBtn:hover {
+  text-decoration: underline;
+
+}
+
+.myBtn:focus {
+  outline: 1.5px solid #0000006b !important;
+}
+
+.svgBtn svg {
+  height: 22px;
+  width: 22px;
+  color: white;
+}
+
+.svgBtn {
+  border: none;
+  /* border-radius: 10px; */
+  padding: 0;
+  background-color: transparent;
+  outline: none;
+}
+
+.myInput[disabled] {
+  text-decoration: none;
+  border: 1.5px solid #3e53671f;
+}
+
+.myBtn[disabled] {
+  text-decoration: none;
+  border: 1.5px solid #3e53671f;
+}
+
+.mySelectBox {
+  padding: 10px 16px;
+  border: 1.5px solid #3e53678a;
+  border-radius: 10px;
+  outline: none;
+}
+
+.mySelectBox {
+  cursor: pointer;
+  min-width: 220px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: #fff url('./assets/svg/caret-down-fill.svg') no-repeat;
+  background-position: calc(100% - 8px) center;
+}
+
+.mySelectBox::-ms-expand {
+  display: none;
+}
+
+.myBtn {
+  /* border: none; */
+  border: 1.5px solid #3e53678a;
+
+  border-radius: 10px;
+  outline: none;
+}
+
+.myCheckBox {
+  transform: scale(1.2);
+}
+
+select.myInput {
+  cursor: pointer;
+}
+
+.myInput {
+  border: none;
+  border: 1.5px solid #0000006b;
+  border-radius: 5px;
+  padding: 5px 10px;
+  outline: none;
+}
+
+.myImgContainer {
+  height: 50px;
+  width: 50px;
+  background-color: #00000059;
+  border-radius: 50%;
+  overflow: hidden;
+  color: white;
+}
+
+.datePicker input {
+  border: none;
+  border: 1.5px solid #0000006b;
+  border-radius: 5px;
+  padding: 5px 10px;
+  outline: none;
+  width: 100%;
+}
+
+.myH9 {
+  font-size: 0.9rem;
+}
+.myH7 {
+  font-size: 0.7rem;
+}
+
+.myTag {
+  background-color: #edf1f4 !important;
+  border-radius: 5px;
+  padding: 3px 5px;
+}
+
+.myWhiteTextNoWrap {
+  white-space: nowrap;
+}
+
+
+
+.myActionBtn:hover {
+  background-color: white !important;
+}
+
+.myActionBtn {
+  border: none;
+  outline: none;
+  padding: 5px 10px;
+  border-radius: 10px;
+}
+
+.myActionBtn svg {
+  height: 18px;
+  width: 18px;
+}
+
+.myUl {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.myCursonPointer {
+  cursor: pointer;
+}
+
+.myEventStop {
+  pointer-events: none;
+}
+
+
+/* swapSelection UI start */
+.swapSelection main ul li:hover {
+  background-color: #00ffff !important;
+}
+
+.swapSelection main ul li.checked {
+  background-color: #00ffff !important;
+  /* color: rgb(84, 94, 111); */
+  /* outline: 1.5px solid #0000006b !important; */
+}
+
+.swapSelection main ul li {
+  /* background-color: red; */
+  cursor: pointer;
+  list-style: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+
+  /* margin-bottom: 2px;
+  margin-right: 5px; */
+  margin: 10px;
+  /* background-color: aliceblue; */
+  font-size: 14px;
+  background-color: #edf1f44d;
+}
+
+.swapSelection main {
+  margin: 0;
+  padding: 10px;
+  border-radius: 5px;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  border: 1.5px solid #0000006b;
+  height: 200px;
+  width: 100%;
+  /* min-width: 250px; */
+}
+
+.swapSelection main ul {
+  margin: 0;
+  padding: 0;
+  border: none;
+  outline: none;
+  overflow: auto;
+  border-radius: 5px;
+  height: 100%;
+}
+
+.addUser .select .allBtnsMain {}
+
+.swapSelection .allBtnsMain svg {
+  height: 20px;
+  width: 20px;
+  color: #0000009c;
+}
+
+.swapSelection .arrowBtn {
+  cursor: pointer;
+  border: 1.5px solid #0000006b;
+  border-radius: 5px;
+  padding: 5px 10px;
+}
+
+.swapSelection .arrowBtn.disabledBtn {
+  cursor: auto;
+  pointer-events: none;
+  border-color: #00000026;
+}
+
+.swapSelection .arrowBtn.disabledBtn svg {
+  color: #00000026 !important;
+}
+
+/* swapSelection UI end */
+.myTableSection {
+  height: 250px;
+  overflow: auto;
+}
+
+.myDTableCaption {
+  display: table-caption;
+}
+
+
+
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}

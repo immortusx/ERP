@@ -1,0 +1,36 @@
+.featureTree ul {
+    padding-left: 0px;
+}
+
+.featureTree ul ul {
+    padding-left: 40px;
+}
+
+.featureTree ul li {
+    margin-bottom: 10px;
+    list-style: none;
+}
+
+body:has(.popUpScreen) {
+    height: 100vh;
+    overflow: hidden;
+}
+
+.container:has(.popUpScreen) .addUser {
+    filter: blur(2px);
+}
+
+.popUpScreen {
+    align-items: center;
+    display: flex;
+    height: 100vh;
+    inset: 0;
+    justify-content: center;
+    position: absolute;
+}
+
+.popUpScreen>main {
+    background-color: white;
+    border-radius: 10px;
+    border: 1.5px solid #0000001c;
+}
