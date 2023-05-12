@@ -21,6 +21,7 @@ router.get('/profile-data', tokenCheck, async (req, res) => {
       console.log({ isSuccess: false, result: err })
       res.send({ isSuccess: false, result: 'error' })
     } else {
+      console.log('result[0]', result[0])
       let features = JSON.parse(result[0][0].features)
       let newObj = {
         email: result[0][0].email,
@@ -51,7 +52,7 @@ router.get('/get-user-details/:id', tokenCheck, async (req, res) => {
   const userId = req.params.id
   const urlNew = `call sp_user_details_dealers_roles( ${userId}) `
   db.query(urlNew, async (err, result) => {
-    console.log('result[0][0].dealersRole ***********',result[0][0].dealersRole)
+    console.log('result[0][0].dealersRole ***********', result[0][0].dealersRole)
     let data = JSON.parse(result[0][0].dealersRole)
     console.log('result[0]', data)
     if (err) {

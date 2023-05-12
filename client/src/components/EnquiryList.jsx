@@ -209,7 +209,11 @@ export default function EnquiryList() {
                     pagination: { paginationModel: { pageSize: 10 } },
                 }}
                 components={{
-                    Toolbar: GridToolbar
+                    Toolbar: GridToolbar,
+                    NoRowsOverlay: () => (
+                        <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <span>There is no Enquiry with current branch</span>
+                        </div>)
                 }}
                 componentsProps={{
                     toolbar: {

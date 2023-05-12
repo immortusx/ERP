@@ -5,8 +5,8 @@ const { db } = require("../Database/dbConfig");
 const router = express.Router();
 
 
-router.get('/get-agency-data', async (req, res) => {
-  console.log('>>>>>get-agency-data');
+router.get('/get-branch-data', async (req, res) => {
+  console.log('>>>>>get-branch-data');
   const url = `SELECT * FROM dealers; `
   await db.query(url, async (err, getDealers) => {
     if (err) {

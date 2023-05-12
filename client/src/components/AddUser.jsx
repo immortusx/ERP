@@ -363,10 +363,10 @@ export default function AddUser({ workFor }) {
                     </div>
                 </main>
                 <main className='mt-4'>
-                    <h5 className='m-0'>{workFor === 'forAdd' ? 'Select agency' : 'Edit agency'}</h5>
+                    <h5 className='m-0'>{workFor === 'forAdd' ? 'Select branch' : 'Edit branch'}</h5>
                     <div className=' row m-0'>
                         <section className='d-flex mt-3 flex-column  col-12'>
-                            <label className='myLabel'>Select one or more agency</label>
+                            <label className='myLabel'>Select one or more branch</label>
                             <div className='swapSelection d-flex flex-column flex-md-row mt-2'>
                                 <main >
                                     <label className='pb-2' >Available dealers ({dealers && dealers.length > 0 ? dealers.length : 0})</label>

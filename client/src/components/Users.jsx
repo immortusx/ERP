@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
 import { getUserListFromDb, clearUserListState } from '../redux/slices/getUserListSlice'
 import { setEditUserData } from '../redux/slices/editUserDataSlice'
+import { useSelector, useDispatch } from 'react-redux'
 
 import Checkbox from '@mui/material/Checkbox'
 import CheckIcon from '@mui/icons-material/Check';
@@ -179,7 +179,11 @@ export default function Users() {
               pagination: { paginationModel: { pageSize: 10 } },
             }}
             components={{
-              Toolbar: GridToolbar
+              Toolbar: GridToolbar,
+                NoRowsOverlay: () => (
+                <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <span>There is no Users with current branch</span>
+                </div>)
             }}
             componentsProps={{
               toolbar: {

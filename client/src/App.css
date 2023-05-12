@@ -18,6 +18,43 @@
   color: #61dafb;
 }
 
+hr {
+  margin: 15px 0 !important;
+  /* border: 0; */
+  border-top: 1px solid rgba(224, 224, 224, 1);
+  opacity: 1;
+}
+
+.myBorder {
+  border: 1px solid rgba(224, 224, 224, 1);
+}
+
+
+
+.hoverText:hover {
+  color: #000000 !important;
+}
+
+
+
+.myBtnRight svg {
+  width: 14px;
+  stroke: #3e5367;
+  color: #3e5367;
+}
+
+.myBtnRight {
+  display: flex;
+  height: 30px;
+  width: 30px;
+  min-height: 30px;
+  min-width: 30px;
+  background-color: #00ffff;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+
+}
 
 .myLabel {
   color: #0000009c;
@@ -124,6 +161,9 @@ select.myInput {
   width: 100%;
 }
 
+.myH9 {
+  font-size: 0.9rem;
+}
 .myH7 {
   font-size: 0.7rem;
 }

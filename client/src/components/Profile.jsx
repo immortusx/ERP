@@ -87,7 +87,7 @@ export default function Profile() {
         <>
             <div>Profile</div>
 
-            <div style={{ height: '90vh', width: '100%' }}>
+            {/* <div style={{ height: '90vh', width: '100%' }}>
                 <DataGrid
 
                     rows={rows}
@@ -110,7 +110,7 @@ export default function Profile() {
                     rowSelection={false}
                     autoPageSize={false}
                 />
-            </div>
+            </div> */}
 
         </>
     )

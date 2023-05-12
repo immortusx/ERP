@@ -3,7 +3,7 @@ import HomeScreen from './components/HomeScreen'
 import Registration from './components/Registration'
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import './App.css';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
 import Login from './components/Login';
 import NotificationBox from './components/NotificationBox';
@@ -43,13 +43,24 @@ function App() {
   }, [])
 
 
-  function checkAdminExist() {
+  const checkAdminExist = useMemo(() => {
+
+    console.log('adminExist', adminExist)
     if (adminExist?.result.result) {
       return true
     } else {
       return false
     }
-  }
+
+  }, [adminExist])
+  // function checkAdminExist() {
+  //   console.log('adminExist', adminExist)
+  //   if (adminExist?.result.result) {
+  //     return true
+  //   } else {
+  //     return false
+  //   }
+  // }
 
 
   useEffect(() => {

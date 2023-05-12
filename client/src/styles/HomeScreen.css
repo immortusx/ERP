@@ -8,14 +8,13 @@
     top: 0;
     left: 0;
     bottom: 0;
-    width: 300px;
+    width: 260px;
     z-index: 996;
     transition: all 0.3s;
     overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: #aab7cf transparent;
     box-shadow: 0px 0px 20px rgb(1 41 112 / 10%);
-    /* background-color: #fff; */
     background-color: #3e5367;
     overflow: visible;
     height: 100vh;
@@ -162,7 +161,7 @@
 }
 
 #mainContainer {
-    margin-left: 300px;
+    margin-left: 260px;
     /* padding: 40px; */
 }
 
@@ -334,7 +333,7 @@
     width: 35px;
     background-color: #f8f9fa;
     top: 80px;
-    left: calc(300px - 35px/2);
+    left: calc(260px - 35px/2);
     position: absolute;
     z-index: 1000;
     border-radius: 50%;

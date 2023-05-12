@@ -182,6 +182,7 @@ export default function Enquiry({ workFor }) {
                 dispatch(clearNewEnquiryState())
                 clearStateAndInp()
                 dispatch(setShowMessage('Enquiry is registered'))
+                navigate('/home/enquiryies')
             }
         }
     }, [setNewEnquiryDataState])
@@ -328,7 +329,7 @@ export default function Enquiry({ workFor }) {
         getEnquiryCategories()
     }, [])
     function cancelHandler() {
-        navigate('/home/enquiry')
+        navigate('/home/enquiryies')
     }
     async function getFieldCurrentCategories(id) {
         const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/get-current-fields/${id}`;

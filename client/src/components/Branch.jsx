@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
-import '../styles/Agency.css'
+import '../styles/Branch.css'
 
 import SwapSection from './SwapSection'
 
-export default function Agency({ workFor }) {
+export default function Branch({ workFor }) {
     const [dealerList, setDealersList] = useState([])
     const [usersList, setUsersList] = useState([])
     const [userData, setUserData] = useState([])
@@ -24,7 +24,7 @@ export default function Agency({ workFor }) {
     function rightClick() { }
 
     async function getDealerList() {
-        const url = `${process.env.REACT_APP_NODE_URL}/api/agency/get-agency-data`;
+        const url = `${process.env.REACT_APP_NODE_URL}/api/branch/get-branch-data`;
         const config = {
             headers: {
                 token: localStorage.getItem('rbacToken')
@@ -55,14 +55,14 @@ export default function Agency({ workFor }) {
         console.log('submitClicked called', branchid)
 
     }
-    function selectAgency(e, data) {
+    function selectBranch(e, data) {
         const inpCheckBox = document.getElementsByClassName('inpCheckBox')
         Array.from(inpCheckBox).forEach(i => {
             i.checked = false
         })
         e.currentTarget.firstChild.firstChild.checked = true
         console.log('e.currentTarget', e.currentTarget.firstChild.firstChild)
-        console.log('selectAgency', e.currentTarget.classList)
+        console.log('selectBranch', e.currentTarget.classList)
         console.log('data', data)
     }
     function rightClick() {
@@ -103,35 +103,35 @@ export default function Agency({ workFor }) {
     return (
         <div className='bg-white rounded p-3'>
             <main>
-                <h5 className='m-0'>Agency</h5>
+                <h5 className='m-0'>Branch</h5>
 
                 <div className=' row mt-3 m-0'>
                     <div className='  d-flex align-items-end justify-content-end'>
-                        <div onClick={() => { navigate('/home/add-agency') }} className='d-flex align-items-center' type='button'>
+                        <div onClick={() => { navigate('/home/add-branch') }} className='d-flex align-items-center' type='button'>
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-plus-circle" viewBox="0 0 16 16">
                                 <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
                                 <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
                             </svg>
                             <h6 className='m-0 ps-1'>
-                                New agency
+                                New branch
                             </h6>
                         </div>
 
                     </div>
                     <section className='myTableSection mt-3'>
-                        <table className="agencyTableList table table-hover text-center myWhiteTextNoWrap">
+                        <table className="branchTableList table table-hover text-center myWhiteTextNoWrap">
                             <thead className='text-start'>
                                 <tr>
                                     <th scope="col"></th>
                                     <th scope="col">No</th>
-                                    <th scope="col">Agency Name</th>
+                                    <th scope="col">Branch Name</th>
                                     <th scope="col">Email Id</th>
                                 </tr>
                             </thead>
                             <tbody className='text-start'>
                                 {
                                     dealerList.length > 0 && dealerList.map((data, index) => {
-                                        return <tr id={`tr${index}`} className='myCursonPointer' onClick={(e) => { selectAgency(e, data) }} key={index}>
+                                        return <tr id={`tr${index}`} className='myCursonPointer' onClick={(e) => { selectBranch(e, data) }} key={index}>
                                             <td><input className='inpCheckBox' type="checkbox" /></td>
                                             <td>{index + 1}</td>
                                             <td>{data.name}</td>

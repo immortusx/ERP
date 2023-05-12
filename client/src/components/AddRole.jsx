@@ -213,7 +213,7 @@ export default function AddRole({ workFor }) {
 
 
     return (
-        <div className='addUser bg-white rounded p-3'>
+        <div className='addUser myBorder bg-white rounded p-3'>
             <main>
                 <h5 className='m-0'>
                     {

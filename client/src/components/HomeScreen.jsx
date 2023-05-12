@@ -13,6 +13,8 @@ import Manage from './Manage'
 import Profile from './Profile'
 import Enquiry from './Enquiry'
 import Products from './Products'
+import Master from './Master'
+
 import logo from '../assets/svg/logo.svg'
 import logoT from '../assets/svg/logofinal.svg'
 
@@ -25,7 +27,8 @@ import { tokenDealerChangeDb, clearTokenDealerState } from '../redux/slices/toke
 
 import { useLocation, NavLink, Link, useNavigate, Navigate, BrowserRouter, Route, Routes, json } from "react-router-dom";
 import EnquiryCategories from './EnquiryCategories'
-import Agency from './Agency'
+import Branch from './Branch'
+import State_list from './State_list'
 
 const CheckPermission = ({ children, path }) => {
   // return checkList.includes(path) ? children : <Navigate to="../no-access" />
@@ -201,17 +204,34 @@ export default function HomeScreen() {
                           </NavLink>
                         </li>
                       }
-                      {
+                      {/* {
                         checkTabGrant(['profile']) && <li className='inLi'>
                           <NavLink className={({ isActive }) => isActive ? 'activeLink' : ''} to="enquiry" >
                             Enquiry
                           </NavLink>
                         </li>
-                      }
+                      } */}
+
+                    </ul>
+                  </div>
+                </li>
+              }
+              {
+                checkTabGrant(['profile']) && <li className='outLi'>
+                  <button className="headBtn" type="button" data-bs-toggle="collapse" data-bs-target="#sale-collapse" aria-expanded="false" aria-controls="sale-collapse">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="bi bi-graph-up-arrow" viewBox="0 0 16 16">
+                      <path fill-rule="evenodd" d="M0 0h1v15h15v1H0V0Zm10 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V4.9l-3.613 4.417a.5.5 0 0 1-.74.037L7.06 6.767l-3.656 5.027a.5.5 0 0 1-.808-.588l4-5.5a.5.5 0 0 1 .758-.06l2.609 2.61L13.445 4H10.5a.5.5 0 0 1-.5-.5Z" />
+                    </svg>
+                    <span>
+                      Sale
+                    </span>
+                  </button>
+                  <div id="sale-collapse" data-bs-parent="#accordionExample" className="accordion-collapse collapse" >
+                    <ul className='inUl'>
                       {
                         checkTabGrant(['profile']) && <li className='inLi'>
                           <NavLink className={({ isActive }) => isActive ? 'activeLink' : ''} to="enquiryies" >
-                            Enquiryies
+                            Enquiry
                           </NavLink>
                         </li>
                       }
@@ -278,7 +298,7 @@ export default function HomeScreen() {
                 </li>
               }
               {
-                checkTabGrant(['roles', 'add-role', 'add-user', 'users', 'agency']) && <li className='outLi'>
+                checkTabGrant(['roles', 'add-role', 'add-user', 'users', 'branch']) && <li className='outLi'>
                   <button className="headBtn" type="button" data-bs-toggle="collapse" data-bs-target="#admin-collapseOne" aria-expanded="false" aria-controls="admin-collapseOne">
                     {/* <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="headSvg bi bi-house" viewBox="0 0 16 16">
                     <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.707 1.5ZM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5 5 5Z" />
@@ -315,12 +335,38 @@ export default function HomeScreen() {
                         </li>
                       }
                       {
-                        checkTabGrant(['agency']) && <li className='inLi'>
-                          <NavLink className={({ isActive }) => isActive ? 'activeLink' : ''} to="agency" >
-                            Agency
+                        checkTabGrant(['branch']) && <li className='inLi'>
+                          <NavLink className={({ isActive }) => isActive ? 'activeLink' : ''} to="branch" >
+                            Branch
                           </NavLink>
                         </li>
                       }
+                    </ul>
+                  </div>
+                </li>
+              }
+              {
+                checkTabGrant(['profile']) && <li className='outLi'>
+                  <button className="headBtn" type="button" data-bs-toggle="collapse" data-bs-target="#master-collapse" aria-expanded="false" aria-controls="master-collapse">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="bi bi-pencil-square" viewBox="0 0 16 16">
+                      <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                      <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
+                    </svg>
+                    <span>
+                      Master
+                    </span>
+                  </button>
+                  <div id="master-collapse" data-bs-parent="#accordionExample" className="accordion-collapse collapse" >
+                    <ul className='inUl'>
+                      {
+
+                        checkTabGrant(['profile']) && <li className='inLi'>
+                          <NavLink className={({ isActive }) => isActive ? 'activeLink' : ''} to="master" >
+                            Master
+                          </NavLink>
+                        </li>
+                      }
+
                     </ul>
                   </div>
                 </li>
@@ -348,7 +394,7 @@ export default function HomeScreen() {
                       </svg>
                     </button>
                   </div>
-                  <h6 className='text-white mt-2'>Current dealer :
+                  <h6 className='text-white mt-2'>Current branch :
                     <select defaultValue={localStorage.getItem('currentDealerId')} onChange={dealerListChange} className='mt-2 mySelectBox' name="" id="">
                       {currentDealer && currentDealer.length > 0 && currentDealer.map((dealer, index) => {
                         return <option key={index} value={dealer.id}>{dealer.name}</option>
@@ -389,6 +435,9 @@ export default function HomeScreen() {
             <Route path="new-enquiry" element={<CheckPermission path='profile'><Enquiry workFor='newEnquiry' /></CheckPermission>} exact />
             <Route path="enquiryies" element={<CheckPermission path='profile'><EnquiryList /></CheckPermission>} exact />
 
+            <Route path="master" element={<CheckPermission path='profile'><Master /></CheckPermission>} exact />
+            <Route path="state-list" element={<CheckPermission path='profile'><State_list /></CheckPermission>} exact />
+
             <Route path="sales" element={<CheckPermission path='sales'><Sales /></CheckPermission>} exact />
 
             <Route path="manage" element={<CheckPermission path='manage'><Manage /></CheckPermission>} exact />
@@ -401,8 +450,8 @@ export default function HomeScreen() {
 
             <Route path="enquiry-categories" element={<CheckPermission path='users'><EnquiryCategories /></CheckPermission>} exact />
 
-            <Route path="agency" element={<CheckPermission path='agency'><Agency workFor='agency' /></CheckPermission>} exact />
-            <Route path="add-agency" element={<CheckPermission path='agency'><Agency workFor='addAgency' /></CheckPermission>} exact />
+            <Route path="branch" element={<CheckPermission path='branch'><Branch workFor='branch' /></CheckPermission>} exact />
+            <Route path="add-branch" element={<CheckPermission path='branch'><Branch workFor='addBranch' /></CheckPermission>} exact />
 
             {/* <Route path='admin'>
           </Route> */}

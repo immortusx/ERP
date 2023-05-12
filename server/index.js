@@ -22,7 +22,7 @@ app.use('/api/users', require('./Routes/usersRoutes'))
 app.use('/api/enquiry', require('./Routes/enquiryRoutes'))
 app.use('/api/login', require('./Routes/loginRoutes'))
 app.use('/api/roles', require('./Routes/rolesRoutes'))
-app.use('/api/agency', require('./Routes/agencyRoutes'))
+app.use('/api/branch', require('./Routes/branchRoutes'))
 
 
 app.get('/api', (req, res) => {
