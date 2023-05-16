@@ -20,6 +20,7 @@ app.use(cors());
 
 app.use('/api/users', require('./Routes/usersRoutes'))
 app.use('/api/master', require('./Routes/Master/State/stateRouter'))
+app.use('/api/master', require('./Routes/Master/District/districtRouter'))
 app.use('/api/enquiry', require('./Routes/enquiryRoutes'))
 app.use('/api/login', require('./Routes/loginRoutes'))
 app.use('/api/roles', require('./Routes/rolesRoutes'))

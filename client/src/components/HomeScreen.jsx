@@ -29,6 +29,7 @@ import { useLocation, NavLink, Link, useNavigate, Navigate, BrowserRouter, Route
 import EnquiryCategories from './EnquiryCategories'
 import Branch from './Branch'
 import State_list from './Master/State/State_list'
+import District_list from './Master/District/District_list'
 
 const CheckPermission = ({ children, path }) => {
   // return checkList.includes(path) ? children : <Navigate to="../no-access" />
@@ -437,6 +438,7 @@ export default function HomeScreen() {
 
             <Route path="master" element={<CheckPermission path='profile'><Master /></CheckPermission>} exact />
             <Route path="state-list" element={<CheckPermission path='profile'><State_list /></CheckPermission>} exact />
+            <Route path="district-list" element={<CheckPermission path='profile'><District_list /></CheckPermission>} exact />
 
             <Route path="sales" element={<CheckPermission path='sales'><Sales /></CheckPermission>} exact />
 
