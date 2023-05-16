@@ -28,7 +28,7 @@ import { tokenDealerChangeDb, clearTokenDealerState } from '../redux/slices/toke
 import { useLocation, NavLink, Link, useNavigate, Navigate, BrowserRouter, Route, Routes, json } from "react-router-dom";
 import EnquiryCategories from './EnquiryCategories'
 import Branch from './Branch'
-import State_list from './State_list'
+import State_list from './Master/State/State_list'
 
 const CheckPermission = ({ children, path }) => {
   // return checkList.includes(path) ? children : <Navigate to="../no-access" />
