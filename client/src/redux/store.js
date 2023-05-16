@@ -18,6 +18,7 @@ import categoryAddSlice from './slices/categoryAddSlice'
 import setNewEnquiryDataSlice from './slices/setNewEnquiryDataSlice'
 import tokenDealerChangeSlice from './slices/tokenDealerChangeSlice'
 import addStateSlice from './slices/Master/State/addStateSlice';
+import addDistrictSlice from './slices/Master/District/addDistrictSlice';
 
 export const store = configureStore({
     reducer: {
@@ -38,5 +39,6 @@ export const store = configureStore({
         setNewEnquiryDataState: setNewEnquiryDataSlice,
         tokenDealerChangeState: tokenDealerChangeSlice,
         addStateSlice:addStateSlice,
+        addDistrictSlice:addDistrictSlice,
     }
 })  
