@@ -9,20 +9,24 @@ const { db } = require("../../../Database/dbConfig");
 
 const router = express.Router();
 
-router.get('/get-features', tokenCheck, checkUserPermission('roles'), async (req, res) => {
-    console.log('>>>>>get-features');
-    const urlNew = `SELECT * FROM features; `
-    await db.query(urlNew, (err, result) => {
-        if (err) {
-            console.log({ isSuccess: false, result: 'error' })
-            res.send({ isSuccess: false, result: 'error' })
-        } else {
-            console.log({ isSuccess: true, result: result })
-            res.send({ isSuccess: true, result: result })
-        }
-    })
-
+// ====get state API===
+router.get('/get-allsate', tokenCheck, async (req, res) => {
+  console.log('>>>>>/get-allsate'); 
+  try{
+    await db.query("SELECT * FROM state", (err, allStates) => {
+      if (err) {
+          console.log({ isSuccess: false, result: 'error' })
+          res.send({ isSuccess: false, result: 'error' })
+      } else {
+          console.log({ isSuccess: true, result: allStates })
+          res.status(200).send({ isSuccess: true, result: allStates })
+      }
+    })      
+  }catch(e){
+    console.log(e);
+  }
 })
+
 router.post('/add-state', tokenCheck, async (req, res) => {
   console.log('>>>>>/add-state');
   const { stateName, stateDiscription } = req.body
@@ -119,16 +123,7 @@ router.get('/get-roles-to-edit', tokenCheck, async (req, res) => {
     })
 })
 
-// ====get state API===
-router.get('/get-state', tokenCheck, async (req, res) => {
-  console.log('>>>>>/get-state'); 
-try{
-  const allStates = await db.query("SELECT * FROM `state`")
-     res.status(200).send({ isSuccess: faltruese, result: allStates })
-}catch(e){
-  console.log(e);
-}
-  })
+
 
 
 module.exports = router;
