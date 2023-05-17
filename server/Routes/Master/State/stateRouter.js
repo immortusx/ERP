@@ -134,4 +134,16 @@ router.get('/get-roles-to-edit', tokenCheck, async (req, res) => {
     })
 })
 
+// ====get state API===
+router.get('/get-state', tokenCheck, async (req, res) => {
+  console.log('>>>>>/get-state'); 
+try{
+  const allStates = await db.query("SELECT * FROM `state`")
+     res.status(200).send({ isSuccess: faltruese, result: allStates })
+}catch(e){
+  console.log(e);
+}
+  })
+
+
 module.exports = router;

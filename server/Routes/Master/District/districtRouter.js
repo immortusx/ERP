@@ -23,54 +23,85 @@ router.get('/get-features', tokenCheck, checkUserPermission('roles'), async (req
     })
 
 })
+// router.post('/add-district', tokenCheck, async (req, res) => {
+//     console.log('>>>>>/add-district');
+//     const { districtName, stateName } = req.body
+//     console.log(districtName, stateName);
+    
+//     const newUrl = `SELECT * FROM users where email = '${req.body.email}'; `
+//   await db.query(newUrl, async (err, newResult) => {
+//     if (err) {
+//       console.log({ isSuccess: false, result: err })
+//       res.send({ isSuccess: false, result: 'error' })
+//     } else if (newResult.length === 0) {
+//       const url = `INSERT INTO users(first_name, last_name, email, password, phone_number) VALUES('${firstName}', '${lastName}', '${email}', '${hassPass}', '${phoneNumber}')`
+//       await db.query(url, async (err, result) => {
+//         if (err) {
+//           console.log({ isSuccess: false, result: err })
+//           res.send({ isSuccess: false, result: 'error' })
+//         } else {
+//           const userId = result.insertId
+
+//           async.forEachOf(Object.keys(dealerRole), (dealerId, key, callback) => {
+//             const rolesAr = dealerRole[dealerId]
+//             rolesAr.forEach(async (roleId) => {
+//               const sqlQuery = `INSERT INTO dealer_department_user(dealer_id, department_id,user_id,role_id) VALUES('${dealerId}','${departmentId}','${userId}','${roleId}')`
+//               await db.query(sqlQuery, (err, newResult) => {
+//                 if (err) {
+//                   console.log({ isSuccess: false, result: err })
+//                   res.send({ isSuccess: false, result: 'error' })
+//                 }
+//               })
+//             });
+//             callback()
+//           }, (err) => {
+//             if (err) {
+//               console.log({ isSuccess: false, result: err })
+//               res.send({ isSuccess: false, result: 'error' })
+//             } else {
+//               console.log({ isSuccess: true, result: 'success' })
+//               res.send({ isSuccess: true, result: 'success' })
+//             }
+//           })
+//         }
+//       })
+//     } else {
+//       console.log({ isSuccess: false, result: 'alreadyExist' })
+//       res.send({ isSuccess: false, result: 'alreadyExist' })
+//     }
+//   })
+// })
 router.post('/add-district', tokenCheck, async (req, res) => {
     console.log('>>>>>/add-district');
-    const { districtName, districtDiscription } = req.body
-    console.log(districtName, districtDiscription);
-    
-    const newUrl = `SELECT * FROM users where email = '${req.body.email}'; `
-  await db.query(newUrl, async (err, newResult) => {
-    if (err) {
-      console.log({ isSuccess: false, result: err })
-      res.send({ isSuccess: false, result: 'error' })
-    } else if (newResult.length === 0) {
-      const url = `INSERT INTO users(first_name, last_name, email, password, phone_number) VALUES('${firstName}', '${lastName}', '${email}', '${hassPass}', '${phoneNumber}')`
-      await db.query(url, async (err, result) => {
-        if (err) {
-          console.log({ isSuccess: false, result: err })
-          res.send({ isSuccess: false, result: 'error' })
-        } else {
-          const userId = result.insertId
-
-          async.forEachOf(Object.keys(dealerRole), (dealerId, key, callback) => {
-            const rolesAr = dealerRole[dealerId]
-            rolesAr.forEach(async (roleId) => {
-              const sqlQuery = `INSERT INTO dealer_department_user(dealer_id, department_id,user_id,role_id) VALUES('${dealerId}','${departmentId}','${userId}','${roleId}')`
-              await db.query(sqlQuery, (err, newResult) => {
-                if (err) {
-                  console.log({ isSuccess: false, result: err })
-                  res.send({ isSuccess: false, result: 'error' })
-                }
-              })
-            });
-            callback()
-          }, (err) => {
-            if (err) {
-              console.log({ isSuccess: false, result: err })
-              res.send({ isSuccess: false, result: 'error' })
-            } else {
-              console.log({ isSuccess: true, result: 'success' })
-              res.send({ isSuccess: true, result: 'success' })
-            }
-          })
-        }
-      })
-    } else {
-      console.log({ isSuccess: false, result: 'alreadyExist' })
-      res.send({ isSuccess: false, result: 'alreadyExist' })
-    }
+    const { DistrictName, StateName  } = req.body
+    console.log(DistrictName, StateName );
+    var districtNamespace = DistrictName.trim(' ');
+    const firstLetter = districtNamespace.charAt(0).toUpperCase();
+    var capitalFirstLetter=firstLetter + districtNamespace.slice(1);
+  console.log(capitalFirstLetter)
+    const newUrl = "SELECT * FROM district where name ='"+ capitalFirstLetter + "'";
+    await db.query(newUrl, async (err, newResult) => {
+      if (err) {
+        console.log({ isSuccess: false, result: err })
+        res.send({ isSuccess: false, result: 'error' })
+      } else if (newResult.length === 0) {
+        const url = `INSERT INTO district(name,state_id,is_active) VALUES('${capitalFirstLetter}', '${StateName}', 1)`
+        await db.query(url, async (err, result) => {
+          if (err) {
+            console.log({ isSuccess: false, result: err })
+            res.send({ isSuccess: false, result: 'error' })
+          } else {
+            console.log({ isSuccess: true, result: 'success' })
+            res.send({ isSuccess: true, result: 'success' })
+          }
+        })
+      } else {
+        console.log(newResult)
+        console.log({ isSuccess: false, result: 'alreadyExist' })
+        res.send({ isSuccess: false, result: 'alreadyExist' })
+      }
+    })
   })
-})
 router.post('/add-role', tokenCheck, checkUserPermission('add-role'), async (req, res) => {
     console.log('>>>>>add-role');
     const { roleName, roleDescription, checkedFeatures } = req.body
