@@ -7,24 +7,72 @@ import ClearIcon from '@mui/icons-material/Clear';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { addDistrictToDb, clearAddDistrict } from '../../../redux/slices/Master/District/addDistrictSlice'
+import { addDistrictToDb, clearaddDistrict } from '../../../redux/slices/Master/District/addDistrictSlice'
 import { setShowMessage } from '../../../redux/slices/notificationSlice'
+import Modal from 'react-bootstrap/Modal';
+import Button from 'react-bootstrap/Button';
 
+const axios = require('axios');
 
 export default function District_list() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const [stateOptions,setStatateOptions] = useState([])
+    const [stateOptions, setStatateOptions] = useState([])
+    //const [isModalOpen, setIsModalOpen] = useState(false);
+    const [modalShow, setModalShow] = React.useState(false);
     const addDistrict = useSelector(state => state.addDistrictSlice.addDistrict);
-
+    // console.log(addDistrict,"addDistrictaddDistrictaddDistrict")
     const [districtData, setDistrictData] = useState({
         DistrictName: '',
         StateName: ''
     })
+    const handleClose = () => {
+        setModalShow(false);
+    }
+    const handleShow = () => {
+        setModalShow(true);
+    }
+    useEffect(() => {
 
-useEffect(()=>{
-//getState();
-},[])
+
+        //getState();
+    }, [])
+    useEffect(() => {
+        if (addDistrict.isSuccess) {
+            if (addDistrict.message.result === 'success') {
+                dispatch(setShowMessage('District is Added'))
+                clearInpHook()
+                dispatch(clearaddDistrict())
+                setModalShow(false);
+            } else if (addDistrict.message.result === 'alreadyExist') {
+                dispatch(setShowMessage('District is already Exists!'))
+                dispatch(clearaddDistrict())
+            } else {
+                dispatch(setShowMessage('Something is wrong!'))
+            }
+        }
+    }, [addDistrict])
+
+
+    function clearInpHook() {
+        setDistrictData({
+            DistrictName: '',
+            StateName: ''
+        })
+    }
+
+
+    const getState = async () => {
+        axios.get(`${process.env.REACT_APP_NODE_URL}/api/master/get-state`)
+            .then(response => {
+                console.log(response.data);
+                //setStatateOptions(response.data)
+            })
+            .catch(error => {
+
+                console.error(error);
+            });
+    }
 
     function onChangeHandler(e) {
         const name = e.target.name;
@@ -33,7 +81,7 @@ useEffect(()=>{
     }
 
     function handleSubmit() {
-        console.log('districtData', districtData)
+        //console.log('districtData', districtData)
 
         const dName = districtData.DistrictName;
         const dsName = districtData.StateName;
@@ -149,13 +197,21 @@ useEffect(()=>{
                     <div className='d-flex align-items-center' type='button'>
 
                         <h6 className='m-0 ps-1'>
-                            <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#districtModal" data-bs-whatever="@mdo">
+                            {/* <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#districtModal" data-bs-whatever="@mdo">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-plus-circle" viewBox="0 0 16 16">
+                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
+                                </svg>&nbsp;
+                                Add District
+                            </button> */}
+                            <button type="button" className="btn btn-primary" onClick={handleShow}>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-plus-circle" viewBox="0 0 16 16">
                                     <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
                                     <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
                                 </svg>&nbsp;
                                 Add District
                             </button>
+
                         </h6>
                     </div>
                 </div>
@@ -194,11 +250,54 @@ useEffect(()=>{
                 </div>
             </div>
 
+            {/* new modal */}
+            <Modal show={modalShow} onHide={handleClose}>
+                <Modal.Header closeButton>
+                    <h5 className="modal-title" id="districtModalLabel">ADD District</h5>
+                </Modal.Header>
+                <Modal.Body>
+                    <div className="">
+                        <div className="mb-3">
+                            <label htmlFor="select" className="col-form-label">State Name:</label>
+                            <select class="form-control" name="StateName" id="select" onChange={(e) => { onChangeHandler(e) }}>
+                                <option value="">Select State</option>
+                                <option value="1">GUJARAT </option>
+                                <option value="2">Maharashtra </option>
+                                <option value="3">Rajasthan </option>
+                                {/* {stateOptions.map((option) => (
+                                     <option key={option.value} value={option.value}>
+                                       {option.label}
+                                     </option>
+                                    ))}   */}
+                            </select>
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="recipient-name" className="col-form-label">District Name:</label>
+                            <input type="text" className="form-control" id="recipient-name" name="DistrictName" value={districtData.DistrictName} onChange={(e) => { onChangeHandler(e) }} />
+                        </div>
+                        {/* <div className="mb-3">
+                            <label htmlFor="message-text" className="col-form-label">District Discription:</label>
+                            <textarea className="form-control" id="message-text" name="stateName"  value={districtData.stateName} onChange={(e) => { onChangeHandler(e) }}></textarea>
+                        </div> */}
 
+                    </div>
+
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleClose}>
+                        Close
+                    </Button>
+                    <Button variant="primary" onClick={handleSubmit}>
+                        Save
+                    </Button>
+                </Modal.Footer>
+
+            </Modal>
+            {/* new modal end*/}
 
 
             {/* Modal District */}
-            <div className="modal fade" id="districtModal" tabIndex="-1" aria-labelledby="districtModalLabel" aria-hidden="true">
+            {/* <div className="modal fade" id="districtModal" tabIndex="-1" aria-labelledby="districtModalLabel" aria-hidden="true">          
                 <div className="modal-dialog">
                     <div className="modal-content">
                         <div className="modal-header">
@@ -213,16 +312,14 @@ useEffect(()=>{
                                     <option value="1">GUJARAT </option>
                                     <option value="2">Maharashtra </option>
                                     <option value="3">Rajasthan </option>
+                                 
                                 </select>
                             </div>
                             <div className="mb-3">
                                 <label htmlFor="recipient-name" className="col-form-label">District Name:</label>
                                 <input type="text" className="form-control" id="recipient-name" name="DistrictName" value={districtData.DistrictName} onChange={(e) => { onChangeHandler(e) }} />
                             </div>
-                            {/* <div className="mb-3">
-                            <label htmlFor="message-text" className="col-form-label">District Discription:</label>
-                            <textarea className="form-control" id="message-text" name="stateName"  value={districtData.stateName} onChange={(e) => { onChangeHandler(e) }}></textarea>
-                        </div> */}
+                          
 
                         </div>
                         <div className="modal-footer">
@@ -231,7 +328,7 @@ useEffect(()=>{
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> */}
         </>
     )
 }
