@@ -13,9 +13,10 @@ import { setShowMessage } from '../../../redux/slices/notificationSlice'
 export default function State_list() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const addState = useSelector(state => state.addStateSlice.addState);
-
+    const { addStateSlice } = useSelector(state => state.addStateSlice)
     const [stateData, setStateData] = useState({
         stateName: '',
         stateDiscription: ''
@@ -44,13 +45,29 @@ export default function State_list() {
         } else {
             dispatch(setShowMessage('All Field Must be Required.'))
         }
-
     }
 
     function handleCancel() {
-        console.log('stateDatahandleCancel', stateData)
+        console.log('stateDatahandleCancel', stateData);
+        setIsModalOpen(false);
         setStateData({  stateName: '',  stateDiscription: '' })
     }
+
+    useEffect(() => {
+        if (addState.isSuccess) {
+            if (addState.message.result === 'success') {
+                dispatch(setShowMessage('State Save Successfully!'))                
+                dispatch(clearAddState())               
+                setIsModalOpen(false);
+                navigate('/home/state-list')
+            } else if (addState.message.result === 'alreadyExist') {
+                dispatch(setShowMessage('Please Enter Other State Name!'))
+                dispatch(clearAddState())
+            } else {
+                dispatch(setShowMessage('Something is wrong!'))
+            }
+        }
+    }, [addState])
 
     const rowData = {
 
@@ -193,6 +210,7 @@ export default function State_list() {
 
 
             {/* Modal State */}
+            {isModalOpen && (
             <div className="modal fade" id="stateModal" tabIndex="-1" aria-labelledby="stateModalLabel" aria-hidden="true">
                 <div className="modal-dialog">
                     <div className="modal-content">
@@ -219,6 +237,7 @@ export default function State_list() {
                     </div>
                 </div>
             </div>
+             )}
         </>
     )
 }
