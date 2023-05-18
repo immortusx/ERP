@@ -12,7 +12,7 @@ export const getAllStateAction = async () => {
   try {
     const response = await Axios.get(url, config);
     if (response.data?.isSuccess) {
-      console.log(response.data.result, "qwertyuio sate");
+      console.log(response.data.result, "all sate");
       return response.data; 
     }
     return null
@@ -22,8 +22,9 @@ export const getAllStateAction = async () => {
   }
 }
 
-export const editeStateAction = async () => {
-  const url = `${process.env.REACT_APP_NODE_URL}/api/master/get-allsate`;
+
+export const getStateById = async (state_id) => {
+  const url = `${process.env.REACT_APP_NODE_URL}/api/master/get-statebyid/${state_id}`;
   const config = {
     headers: {
       token: localStorage.getItem('rbacToken')
@@ -33,8 +34,7 @@ export const editeStateAction = async () => {
   try {
     const response = await Axios.get(url, config);
     if (response.data?.isSuccess) {
-      console.log(response.data, "qwertyuio sate");
-      return response.data; 
+      return response.data.result; 
     }
     return null
   } catch (error) {
@@ -43,3 +43,24 @@ export const editeStateAction = async () => {
   }
 }
 
+
+export const editeStateAction = async (sData) => {
+  const url = `${process.env.REACT_APP_NODE_URL}/api/master/edit-satebyId`;
+  const config = {
+    headers: {
+      token: localStorage.getItem('rbacToken')
+    }
+  };
+
+  try {
+    const response = await Axios.post(url, sData, config); // Send sData as the request payload
+    if (response.data?.isSuccess) {
+      console.log(response.data, "qwertyuio sate");
+      return response.data; 
+    }
+    return null;
+  } catch (error) {
+    console.error(error);
+    return null; 
+  }
+};
