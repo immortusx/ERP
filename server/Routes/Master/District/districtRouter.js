@@ -23,6 +23,23 @@ router.get('/get-features', tokenCheck, checkUserPermission('roles'), async (req
     })
 
 })
+// =====get District=====
+router.get('/get-alldistrict', tokenCheck, async (req, res) => {
+    console.log('>>>>>/get-allsate'); 
+    try{
+      await db.query("SELECT * from district dt left join state st on st.state_id =dt.state_id", (err, allDistrict) => {
+        if (err) {
+            console.log({ isSuccess: false, result: 'error' })
+            res.send({ isSuccess: false, result: 'error' })
+        } else {
+            console.log({ isSuccess: true, result: allDistrict })
+            res.status(200).send({ isSuccess: true, result: allDistrict })
+        }
+      })      
+    }catch(e){
+      console.log(e);
+    }
+  })
 // router.post('/add-district', tokenCheck, async (req, res) => {
 //     console.log('>>>>>/add-district');
 //     const { districtName, stateName } = req.body
