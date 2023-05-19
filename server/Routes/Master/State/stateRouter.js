@@ -9,16 +9,15 @@ const { db } = require("../../../Database/dbConfig");
 
 const router = express.Router();
 
-// ====get state API===
+// ====get All state === //
 router.get('/get-allsate', tokenCheck, async (req, res) => {
   console.log('>>>>>/get-allsate'); 
   try{
-    await db.query("SELECT * FROM state", (err, allStates) => {
+    await db.query("SELECT * FROM state where is_active = 1", (err, allStates) => {
       if (err) {
           console.log({ isSuccess: false, result: 'error' })
           res.send({ isSuccess: false, result: 'error' })
       } else {
-          console.log({ isSuccess: true, result: allStates })
           res.status(200).send({ isSuccess: true, result: allStates })
       }
     })      
@@ -27,6 +26,7 @@ router.get('/get-allsate', tokenCheck, async (req, res) => {
   }
 })
 
+// ===== Add State === //
 router.post('/add-state', tokenCheck, async (req, res) => {
   console.log('>>>>>/add-state');
   const { stateName, stateDiscription } = req.body
@@ -34,8 +34,8 @@ router.post('/add-state', tokenCheck, async (req, res) => {
   var stateNamespace = stateName.trim(' ');
   const firstLetter = stateNamespace.charAt(0).toUpperCase();
   var capitalFirstLetter=firstLetter + stateNamespace.slice(1);
-console.log(capitalFirstLetter)
-  const newUrl = "SELECT * FROM state where state_name ='"+ capitalFirstLetter + "'";
+
+  const newUrl = "SELECT * FROM state where where is_active = 1 and state_name ='"+ capitalFirstLetter + "'";
   await db.query(newUrl, async (err, newResult) => {
     if (err) {
       console.log({ isSuccess: false, result: err })
@@ -57,6 +57,65 @@ console.log(capitalFirstLetter)
       res.send({ isSuccess: false, result: 'alreadyExist' })
     }
   })
+})
+
+
+// ====get state By Id === //
+router.get('/get-statebyid/:id', tokenCheck, async (req, res) => {
+  console.log('>>>>>/get-sateById'); 
+  try{
+    const stateById = req.params.id
+    console.log(stateById)
+    await db.query("SELECT * FROM state where is_active = 1 and state_id=" + stateById, (err, StatesIdData) => {
+      if (err) {
+          console.log({ isSuccess: false, result: 'error' })
+          res.send({ isSuccess: false, result: 'error' })
+      } else {
+          console.log({ isSuccess: true, result: StatesIdData })
+          res.status(200).send({ isSuccess: true, result: StatesIdData })
+      }
+    })      
+  }catch(e){
+    console.log(e);
+  }
+})
+
+// ==== edit state data By Id === //
+router.post('/edit-satebyId', tokenCheck, async (req, res) => {
+  console.log('>>>>>/edit-sateById'); 
+  try{
+    const { stateName, stateDiscription, state_id } = req.body
+    
+
+    var stateNamespace = stateName.trim(' ');
+    const firstLetter = stateNamespace.charAt(0).toUpperCase();
+    var capitalFirstLetter=firstLetter + stateNamespace.slice(1);
+    const newUrl = "SELECT * FROM state where is_active = 1 and state_id=" + state_id;
+    await db.query(newUrl, async (err, newResult) => {
+      if (err) {
+        console.log({ isSuccess: false, result: err })
+        res.send({ isSuccess: false, result: 'error' })
+      } else if (newResult.length === 1) {
+        console.log(stateName, stateDiscription, state_id,capitalFirstLetter)
+        const editurl = "UPDATE vehical_crm_db.state SET state_name='"+ capitalFirstLetter +"', description='"+ stateDiscription +"' WHERE state_id="+ state_id;
+        await db.query(editurl, async (err, result) => {
+          if (err) {
+            console.log({ isSuccess: false, result: err })
+            res.send({ isSuccess: false, result: 'error' })
+          } else {
+            console.log({ isSuccess: true, result: 'updatesuccess' })
+            res.send({ isSuccess: true, result: 'updatesuccess' })
+          }
+        })
+      } else {
+        console.log(newResult)
+        console.log({ isSuccess: false, result: 'notExist' })
+        res.send({ isSuccess: false, result: 'notExist' })
+      }
+    })    
+  }catch(e){
+    console.log(e);
+  }
 })
 
 
@@ -93,6 +152,9 @@ router.post('/add-role', tokenCheck, checkUserPermission('add-role'), async (req
         }
     })
 })
+
+
+
 router.post('/get-roles-features', tokenCheck, async (req, res) => {
     console.log('>>>>>get-roles-features', req.body.roleId);
 
