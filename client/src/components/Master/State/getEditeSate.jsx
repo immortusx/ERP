@@ -53,7 +53,28 @@ export const editeStateAction = async (sData) => {
   };
 
   try {
-    const response = await Axios.post(url, sData, config); // Send sData as the request payload
+    const response = await Axios.post(url, sData, config); 
+    if (response.data?.isSuccess) {
+      return response.data; 
+    }
+    return null;
+  } catch (error) {
+    console.error(error);
+    return null; 
+  }
+};
+
+
+export const deleteStateAction = async (sData) => {
+  const url = `${process.env.REACT_APP_NODE_URL}/api/master/delete-satebyId`;
+  const config = {
+    headers: {
+      token: localStorage.getItem('rbacToken')
+    }
+  };
+
+  try {
+    const response = await Axios.post(url, sData, config);
     if (response.data?.isSuccess) {
       console.log(response.data, "qwertyuio sate");
       return response.data; 
