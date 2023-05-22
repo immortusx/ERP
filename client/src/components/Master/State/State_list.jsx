@@ -9,7 +9,8 @@ import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { addStateToDb, clearAddState } from '../../../redux/slices/Master/State/addStateSlice'
 import { setShowMessage } from '../../../redux/slices/notificationSlice'
 import { Modal, Button } from 'react-bootstrap';
-import {getAllStateAction, getStateById, editeStateAction} from './getEditeSate'
+import {getAllStateAction, getStateById, editeStateAction,deleteStateAction} from './getEditeSate'
+import AlertDeleteModal from '../../AlertDelete/AlertDeleteModal';
 
 export default function State_list() {
     const dispatch = useDispatch();
@@ -17,6 +18,12 @@ export default function State_list() {
     const [allStateDate, setAllStateDate] = useState([]);
     const [editStateById, setEditStateById] = useState('');
     const [modalShow, setModalShow] = React.useState(false);
+
+    //---- Delete Modal Variable -----//
+    const [type, setType] = useState(null);
+    const [id, setId] = useState(null);
+    const [displayConfirmationModal, setDisplayConfirmationModal] = useState(false);
+    const [deleteMessage, setDeleteMessage] = useState(null);
 
     const addState = useSelector(state => state.addStateSlice.addState);
     const { addStateSlice } = useSelector(state => state.addStateSlice)
@@ -86,9 +93,35 @@ export default function State_list() {
         });
         
     }
-    const deleteStateAlert=() =>{
+    const deleteStateAlert=(ev) =>{
         //setModalShow(true);
+        setType('state_delete');
+        setId(ev.state_id);
+        setDeleteMessage(`Are You Sure You Want To Delete The State '${ev.state_name}'?`);
+        setDisplayConfirmationModal(true);
     }
+
+    // Hide the Deletemodal
+    const hideConfirmationModal = () => {
+        setDisplayConfirmationModal(false);
+    };
+    const submitDelete = (type, id) => { 
+        console.log(type,'StateDeleteId: ',id) 
+        stateData['state_id'] = id;
+        deleteStateAction(stateData).then((data) => {
+            console.log('state Update getStateActionIdData:', data); 
+            if(data.result === "deletesuccess"){
+                getAllStateAction().then((data) => { setAllStateDate(data.result)});                
+                clearInpHook();
+                setDisplayConfirmationModal(false);
+                dispatch(setShowMessage('State Data Delete Successfully!')); 
+            }else {
+                dispatch(setShowMessage('Something is wrong!'))
+            }                
+        }).catch((error) => {
+            console.error('Error in getAllStateAction:', error);
+        }); 
+    };
 
     useEffect(() => {
         if (addState.isSuccess) {
@@ -255,7 +288,7 @@ export default function State_list() {
             </div>
 
 
-
+            <AlertDeleteModal showModal={displayConfirmationModal} confirmModal={submitDelete} hideModal={hideConfirmationModal} type={type} id={id} message={deleteMessage}  />
             {/* state modal */}
             <Modal show={modalShow} onHide={handleClose}>
                 <Modal.Header closeButton>
