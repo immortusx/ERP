@@ -25,9 +25,9 @@ router.get('/get-features', tokenCheck, checkUserPermission('roles'), async (req
 })
 // =====get District=====
 router.get('/get-alldistrict', tokenCheck, async (req, res) => {
-    console.log('>>>>>/get-allsate'); 
+    console.log('>>>>>/get-all district'); 
     try{
-      await db.query("SELECT * from district dt left join state st on st.state_id =dt.state_id", (err, allDistrict) => {
+      await db.query("SELECT * from district dt left join state st on st.state_id =dt.state_id where dt.is_active = 1", (err, allDistrict) => {
         if (err) {
             console.log({ isSuccess: false, result: 'error' })
             res.send({ isSuccess: false, result: 'error' })
@@ -96,7 +96,7 @@ router.post('/add-district', tokenCheck, async (req, res) => {
     const firstLetter = districtNamespace.charAt(0).toUpperCase();
     var capitalFirstLetter=firstLetter + districtNamespace.slice(1);
   console.log(capitalFirstLetter)
-    const newUrl = "SELECT * FROM district where name ='"+ capitalFirstLetter + "'";
+    const newUrl = "SELECT * FROM district where isActive = 1 and name ='"+ capitalFirstLetter + "'";
     await db.query(newUrl, async (err, newResult) => {
       if (err) {
         console.log({ isSuccess: false, result: err })
@@ -119,6 +119,67 @@ router.post('/add-district', tokenCheck, async (req, res) => {
       }
     })
   })
+
+// ====get district By Id === //
+router.get('/get-districtbyid/:id', tokenCheck, async (req, res) => {
+  console.log('>>>>>/get-districtbyid'); 
+  try{
+    const districtById = req.params.id
+    console.log(districtById)
+    await db.query("SELECT * FROM district where is_active = 1 and id=" + districtById, (err, DistrictsIdData) => {
+      if (err) {
+          console.log({ isSuccess: false, result: 'error' })
+          res.send({ isSuccess: false, result: 'error' })
+      } else {
+          console.log({ isSuccess: true, result: DistrictsIdData })
+          res.status(200).send({ isSuccess: true, result: DistrictsIdData })
+      }
+    })      
+  }catch(e){
+    console.log(e);
+  }
+})
+
+// ==== edit state data By Id === //
+router.post('/edit-districtbyId', tokenCheck, async (req, res) => {
+  console.log('>>>>>/edit-districtbyId'); 
+  try{
+    console.log(req.body,"req.body in edit-districtbyId")
+    const { DistrictName, StateName,id } = req.body
+   // console.log(districtName,"districtName in edit-districtbyId")
+
+var   districtNameSpace = DistrictName.trim(' ');
+    const firstLetter = districtNameSpace.charAt(0).toUpperCase();
+    var capitalFirstLetter=firstLetter + districtNameSpace.slice(1);
+    const newUrl = "SELECT * FROM district where is_active = 1 and id=" + id;
+    await db.query(newUrl, async (err, newResult) => {
+      if (err) {
+        console.log({ isSuccess: false, result: err })
+        res.send({ isSuccess: false, result: 'error' })
+      } else if (newResult.length === 1) {
+       // console.log(stateName, stateDiscription, state_id,capitalFirstLetter)
+        const editurl = "UPDATE vehical_crm_db.district SET name='"+ capitalFirstLetter +"', state_id='"+ StateName +"' WHERE id="+ id;
+        await db.query(editurl, async (err, result) => {
+          if (err) {
+            console.log({ isSuccess: false, result: err })
+            res.send({ isSuccess: false, result: 'error' })
+          } else {
+            console.log({ isSuccess: true, result: 'updatesuccess' })
+            res.send({ isSuccess: true, result: 'updatesuccess' })
+          }
+        })
+      } else {
+        console.log(newResult)
+        console.log({ isSuccess: false, result: 'notExist' })
+        res.send({ isSuccess: false, result: 'notExist' })
+      }
+    })    
+  }catch(e){
+    console.log(e);
+  }
+})
+
+  
 router.post('/add-role', tokenCheck, checkUserPermission('add-role'), async (req, res) => {
     console.log('>>>>>add-role');
     const { roleName, roleDescription, checkedFeatures } = req.body

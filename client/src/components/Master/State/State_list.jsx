@@ -130,6 +130,10 @@ export default function State_list() {
                 clearInpHook()               
                 dispatch(clearAddState())              
                 setModalShow(false);
+                getAllStateAction().then((data) => {
+                    setAllStateDate(data.result)
+                })
+
             } else if (addState.message.result === 'alreadyExist') {
                 dispatch(setShowMessage('Please Enter Other State Name!'))
                 dispatch(clearAddState())

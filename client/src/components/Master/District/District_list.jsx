@@ -11,8 +11,10 @@ import { addDistrictToDb, clearaddDistrict } from '../../../redux/slices/Master/
 import { setShowMessage } from '../../../redux/slices/notificationSlice'
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
-import {getAllDistrictAction, editeDistrictAction} from './getEditDistrict'
+//import {getAllDistrictAction, editeDistrictAction} from './getEditDistrict'
+import {getAllDistrictAction, getDistrictById, editeDistrictAction} from './getEditDistrict'
 import {getAllStateAction, editeStateAction} from '../State/getEditeSate'
+
 const axios = require('axios');
 
 export default function District_list() {
@@ -22,6 +24,7 @@ export default function District_list() {
     //const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalShow, setModalShow] = React.useState(false);
     const [allDistrictDate, setAllDistrictDate] = useState([]);
+    const [editDistrictById, setEditDistrictById] = useState('');
     const addDistrict = useSelector(state => state.addDistrictSlice.addDistrict);
      console.log(stateOptions,"stateOptionsstateOptionsstateOptions")
     const [districtData, setDistrictData] = useState({
@@ -41,6 +44,11 @@ export default function District_list() {
         }).catch((error) => {
             console.error('Error in getAllStateAction:', error);
         });
+         getAllDistrictAction().then((data) => {
+            setAllDistrictDate(data.result)
+        }).catch((error) => {
+            console.error('Error in getAllDistrictAction:', error);
+        });
        
 
       
@@ -52,6 +60,10 @@ export default function District_list() {
                 clearInpHook()
                 dispatch(clearaddDistrict())
                 setModalShow(false);
+                getAllDistrictAction().then((data) => {
+                    console.log('Response from getAllDistrictAction:', data.result);
+                    setAllDistrictDate(data.result)
+                })
             } else if (addDistrict.message.result === 'alreadyExist') {
                 dispatch(setShowMessage('District is already Exists!'))
                 dispatch(clearaddDistrict())
@@ -67,6 +79,7 @@ export default function District_list() {
             DistrictName: '',
             StateName: ''
         })
+        setEditDistrictById('');
     }
 
 
@@ -89,7 +102,7 @@ export default function District_list() {
     }
 
     function handleSubmit() {
-        //console.log('districtData', districtData)
+        console.log('districtData', districtData)
 
         const dName = districtData.DistrictName;
         const dsName = districtData.StateName;
@@ -100,8 +113,26 @@ export default function District_list() {
             //     userData['id'] = editUserData.id
             //     dispatch(editUserUpdateToDb(userData))
             // } else {
+                if (editDistrictById != '') {
+                    console.log('Update getDistrictActionIdData: ', editDistrictById);
+                    districtData['id'] = editDistrictById;
+                   // console.log('UpdatedistrictData', districtData)
+                   editeDistrictAction(districtData).then((data) => {
+                        console.log('state Update getDistrictActionIdData:', data); 
+                        if(data.result === "updatesuccess"){
+                            getAllDistrictAction().then((data) => { setAllDistrictDate(data.result)});
+                            setModalShow(false);
+                            clearInpHook();
+                            dispatch(setShowMessage('State Data Update Successfully!')); 
+                        }else {
+                            dispatch(setShowMessage('Something is wrong!'))
+                        }                
+                    }).catch((error) => {
+                        console.error('Error in getAllDistrictAction:', error);
+                    });
+                }else{
             dispatch(addDistrictToDb(districtData))
-            //}
+            }
         } else {
             dispatch(setShowMessage('All Field Must be Required.'))
         }
@@ -111,6 +142,25 @@ export default function District_list() {
     function handleCancel() {
         console.log('districtDatahandleCancel', districtData)
         setDistrictData({ DistrictName: '', StateName: '' })
+    }
+    const editeDistrictModal=(ev) =>{
+        console.log(ev,'zzzzzzzzzzzzzz')
+       // console.log(ev.state_id,'state_id s12345')
+        getDistrictById(ev.id).then((data) => {
+            console.log('Response from getDistrictActionIdData:', data);
+          
+            setDistrictData({ DistrictName: data[0].name,
+                 StateName: data[0].state_id
+                })
+            setEditDistrictById(data[0].id)
+            setModalShow(true);
+        }).catch((error) => {
+            console.error('Error in getAllDistrictAction:', error);
+        });
+        
+    }
+    const deleteDistrictAlert=() =>{
+        //setModalShow(true);
     }
 
     const columns = [
@@ -173,13 +223,13 @@ export default function District_list() {
             renderCell: (params) => (
                 <div>
                     {/* <button onClick={() => { editActionCall(params.row) }} className='myActionBtn m-1'> */}
-                    <button className='myActionBtn m-1' onClick={() => { editeDistrictAction(params.row) }}>
+                    <button className='myActionBtn m-1' onClick={() => { editeDistrictModal(params.row) }}>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="bi bi-pencil-square" viewBox="0 0 16 16">
                             <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
                             <path fillRule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
                         </svg>
                     </button>
-                    <button className='myActionBtn m-1' onClick={() => { deleteDistrictActino(params.row) }}>
+                    <button className='myActionBtn m-1' onClick={() => { deleteDistrictAlert(params.row) }}>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="bi bi-trash3" viewBox="0 0 16 16">
                             <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5ZM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0H11Zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5h9.916Zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5Z" />
                         </svg>
@@ -190,15 +240,7 @@ export default function District_list() {
     ];
     const rowsData = allDistrictDate.map((item, index) => ({ ...item, rowNumber: index + 1 }));
     
-    useEffect(() => {
-        getAllDistrictAction().then((data) => {
-            console.log('Response from getAllDistrictAction:', data.result);
-            setAllDistrictDate(data.result)
-        }).catch((error) => {
-            console.error('Error in getAllDistrictAction:', error);
-        });
-       
-    }, [])
+  
  const deleteDistrictActino=() =>{
         //setModalShow(true);
     }
