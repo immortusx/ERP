@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import Axios from 'axios';
 
-export const getAllDistrictAction = async () => {
-  const url = `${process.env.REACT_APP_NODE_URL}/api/master/get-alldistrict`;
+export const getAllTalukaAction = async () => {
+  const url = `${process.env.REACT_APP_NODE_URL}/api/master/get-allTaluka`;
   const config = {
     headers: {
       token: localStorage.getItem('rbacToken')
@@ -12,7 +12,7 @@ export const getAllDistrictAction = async () => {
   try {
     const response = await Axios.get(url, config);
     if (response.data?.isSuccess) {
-      console.log(response.data.result, "qwertyuio sate");
+      console.log(response.data.result, "qwertyuio Talukaaa");
       return response.data; 
     }
     return null
@@ -22,8 +22,8 @@ export const getAllDistrictAction = async () => {
   }
 }
 
-export const getDistrictById = async (district_id) => {
-  const url = `${process.env.REACT_APP_NODE_URL}/api/master/get-districtbyid/${district_id}`;
+export const getTalukaById = async (Taluka_id) => {
+  const url = `${process.env.REACT_APP_NODE_URL}/api/master/get-Talukabyid/${Taluka_id}`;
   const config = {
     headers: {
       token: localStorage.getItem('rbacToken')
@@ -33,7 +33,7 @@ export const getDistrictById = async (district_id) => {
   try {
     const response = await Axios.get(url, config);
     if (response.data?.isSuccess) {
-      console.log(response.data, "qwertyuio sate");
+      console.log(response.data, "qwertyuio talukaiddd111111");
       return response.data.result; 
     }
     return null
@@ -42,8 +42,8 @@ export const getDistrictById = async (district_id) => {
     return null; 
   }
 }
-export const editeDistrictAction = async (dData) => {
-  const url = `${process.env.REACT_APP_NODE_URL}/api/master/edit-districtbyId`;
+export const editeTalukaAction = async (dData) => {
+  const url = `${process.env.REACT_APP_NODE_URL}/api/master/edit-TalukabyId`;
   const config = {
     headers: {
       token: localStorage.getItem('rbacToken')
@@ -53,7 +53,7 @@ export const editeDistrictAction = async (dData) => {
   try {
     const response = await Axios.post(url, dData, config); // Send sData as the request payload
     if (response.data?.isSuccess) {
-      console.log(response.data, "qwertyuio district");
+      console.log(response.data, "qwertyuio Taluka");
       return response.data; 
     }
     return null;
@@ -63,8 +63,8 @@ export const editeDistrictAction = async (dData) => {
   }
 };
 
-export const deleteDistrictAction = async (dData) => {
-  const url = `${process.env.REACT_APP_NODE_URL}/api/master/delete-districtbyId`;
+export const deleteTalukaAction = async (dData) => {
+  const url = `${process.env.REACT_APP_NODE_URL}/api/master/delete-TalukabyId`;
   const config = {
     headers: {
       token: localStorage.getItem('rbacToken')
@@ -74,7 +74,7 @@ export const deleteDistrictAction = async (dData) => {
   try {
     const response = await Axios.post(url, dData, config);
     if (response.data?.isSuccess) {
-      console.log(response.data, "qwertyuio district");
+      console.log(response.data, "qwertyuio Taluka");
       return response.data; 
     }
     return null;
@@ -83,24 +83,3 @@ export const deleteDistrictAction = async (dData) => {
     return null; 
   }
 };
-
-export const getDistrictByStateId = async (state_id) => {
-  const url = `${process.env.REACT_APP_NODE_URL}/api/master/get-districtbyStateid/${state_id}`;
-  const config = {
-    headers: {
-      token: localStorage.getItem('rbacToken')
-    }
-  };
-
-  try {
-    const response = await Axios.get(url, config);
-    if (response.data?.isSuccess) {
-      console.log(response.data, "qwertyuio district of state");
-      return response.data.result; 
-    }
-    return null
-  } catch (error) {
-    console.error(error);
-    return null; 
-  }
-}
