@@ -35,7 +35,7 @@ router.post('/add-state', tokenCheck, async (req, res) => {
   const firstLetter = stateNamespace.charAt(0).toUpperCase();
   var capitalFirstLetter=firstLetter + stateNamespace.slice(1);
 
-  const newUrl = "SELECT * FROM state where where is_active = 1 and state_name ='"+ capitalFirstLetter + "'";
+  const newUrl = "SELECT * FROM state  where is_active = 1 and state_name ='"+ capitalFirstLetter + "'";
   await db.query(newUrl, async (err, newResult) => {
     if (err) {
       console.log({ isSuccess: false, result: err })
