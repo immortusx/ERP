@@ -96,7 +96,7 @@ router.post('/add-district', tokenCheck, async (req, res) => {
     const firstLetter = districtNamespace.charAt(0).toUpperCase();
     var capitalFirstLetter=firstLetter + districtNamespace.slice(1);
   console.log(capitalFirstLetter)
-    const newUrl = "SELECT * FROM district where isActive = 1 and name ='"+ capitalFirstLetter + "'";
+    const newUrl = "SELECT * FROM district where is_active = 1 and name ='"+ capitalFirstLetter + "'";
     await db.query(newUrl, async (err, newResult) => {
       if (err) {
         console.log({ isSuccess: false, result: err })
@@ -140,13 +140,30 @@ router.get('/get-districtbyid/:id', tokenCheck, async (req, res) => {
   }
 })
 
+// ========getDistrictbyStateIs======
+router.get('/get-districtbyStateid/:id', tokenCheck, async (req, res) => {
+  console.log('>>>>>/get-districtbyStateid'); 
+  try{
+    const districtByStateId = req.params.id
+    console.log(districtByStateId)
+    await db.query("SELECT * FROM district where is_active = 1 and state_id=" + districtByStateId, (err, districtByStateIdData) => {
+      if (err) {
+          console.log({ isSuccess: false, result: 'error' })
+          res.send({ isSuccess: false, result: 'error' })
+      } else {
+          console.log({ isSuccess: true, result: districtByStateIdData })
+          res.status(200).send({ isSuccess: true, result: districtByStateIdData })
+      }
+    })      
+  }catch(e){
+    console.log(e);
+  }
+})
 // ==== edit state data By Id === //
 router.post('/edit-districtbyId', tokenCheck, async (req, res) => {
   console.log('>>>>>/edit-districtbyId'); 
-  try{
-    console.log(req.body,"req.body in edit-districtbyId")
+  try{   
     const { DistrictName, StateName,id } = req.body
-   // console.log(districtName,"districtName in edit-districtbyId")
 
 var   districtNameSpace = DistrictName.trim(' ');
     const firstLetter = districtNameSpace.charAt(0).toUpperCase();
@@ -158,13 +175,13 @@ var   districtNameSpace = DistrictName.trim(' ');
         res.send({ isSuccess: false, result: 'error' })
       } else if (newResult.length === 1) {
        // console.log(stateName, stateDiscription, state_id,capitalFirstLetter)
-        const editurl = "UPDATE vehical_crm_db.district SET name='"+ capitalFirstLetter +"', state_id='"+ StateName +"' WHERE id="+ id;
+        const editurl = "UPDATE district SET name='"+ capitalFirstLetter +"', state_id='"+ StateName +"' WHERE id="+ id;
         await db.query(editurl, async (err, result) => {
           if (err) {
             console.log({ isSuccess: false, result: err })
             res.send({ isSuccess: false, result: 'error' })
           } else {
-            console.log({ isSuccess: true, result: 'updatesuccess' })
+          
             res.send({ isSuccess: true, result: 'updatesuccess' })
           }
         })
@@ -194,7 +211,40 @@ router.get('/get-alldistrictbystateid/:id', tokenCheck, async (req, res) => {
           console.log({ isSuccess: true, result: DistrictsIdData })
           res.status(200).send({ isSuccess: true, result: DistrictsIdData })
       }
-    })      
+    })  
+  }catch(e){
+    console.log(e);
+  }
+})      
+// ==== Delete district data By Id === //
+router.post('/delete-districtbyId', tokenCheck, async (req, res) => {
+  console.log('>>>>>/delete-districtbyId'); 
+  try{
+    const { DistrictName, StateName,id } = req.body
+    
+    const newUrl = "SELECT * FROM district where is_active = 1 and id=" + id;
+    await db.query(newUrl, async (err, newResult) => {
+      if (err) {
+        console.log({ isSuccess: false, result: err })
+        res.send({ isSuccess: false, result: 'error' })
+      } else if (newResult.length === 1) {
+     
+        const editurl = "UPDATE district SET is_active = 0 WHERE id="+ id;
+        await db.query(editurl, async (err, result) => {
+          if (err) {
+            console.log({ isSuccess: false, result: err })
+            res.send({ isSuccess: false, result: 'error' })
+          } else {
+           
+            res.send({ isSuccess: true, result: 'deletesuccess' })
+          }
+        })
+      } else {
+        console.log(newResult)
+        console.log({ isSuccess: false, result: 'notExist' })
+        res.send({ isSuccess: false, result: 'notExist' })
+      }
+    })    
   }catch(e){
     console.log(e);
   }
