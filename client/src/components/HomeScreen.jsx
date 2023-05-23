@@ -65,6 +65,7 @@ export default function HomeScreen() {
       if (tokenDealerState.data.isSuccess) {
         localStorage.setItem('rbacToken', tokenDealerState.data.result)
 
+        console.log('tokenDealerState &&&&&&&&&&&&&&', tokenDealerState)
         // dispatch(getProfileData(tokenDealerState.data.result))
         dispatch(clearTokenDealerState())
         console.log('please redirect to home')
