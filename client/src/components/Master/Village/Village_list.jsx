@@ -10,7 +10,7 @@ import { addStateToDb, clearAddState } from '../../../redux/slices/Master/State/
 import { setShowMessage } from '../../../redux/slices/notificationSlice'
 import { Modal, Button } from 'react-bootstrap';
 import {getAllStateAction, getStateById, editeStateAction,deleteStateAction} from './getEditeVillage'
-import {getAllDistrictByStateId} from '../District/getEditDistrict'
+// import {getAllDistrictByStateId} from '../District/getEditDistrict'
 import AlertDeleteModal from '../../AlertDelete/AlertDeleteModal';
 
 export default function Village_list() {
@@ -43,11 +43,11 @@ export default function Village_list() {
         switch(name){
             case 'state_id':
                 setVillageData({ ...villageData, [name]: value });
-                getAllDistrictByStateId(value).then((data) => {
-                    setDistrictOptions(data.result)
-                }).catch((error) => {
-                    console.error('Error in getAllStateAction:', error);
-                });
+                // getAllDistrictByStateId(value).then((data) => {
+                //     setDistrictOptions(data.result)
+                // }).catch((error) => {
+                //     console.error('Error in getAllStateAction:', error);
+                // });
                 break;
             case 'district_id':
                 setVillageData({ ...villageData, [name]: value })
