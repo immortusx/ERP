@@ -30,11 +30,8 @@ import EnquiryCategories from './EnquiryCategories'
 import Branch from './Branch'
 import State_list from './Master/State/State_list'
 import District_list from './Master/District/District_list'
-<<<<<<< HEAD
 import Village_list from './Master/Village/Village_list'
-=======
 import Taluka_list from './Master/Taluka/Taluka_list'
->>>>>>> master
 
 const CheckPermission = ({ children, path }) => {
   // return checkList.includes(path) ? children : <Navigate to="../no-access" />
