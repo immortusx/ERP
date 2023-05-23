@@ -63,3 +63,24 @@ export const editeDistrictAction = async (dData) => {
   }
 };
 
+//get All District By StateId//
+export const getAllDistrictByStateId = async (state_id) => {
+  const url = `${process.env.REACT_APP_NODE_URL}/api/master/get-alldistrictbystateid/${state_id}`;
+  const config = {
+    headers: {
+      token: localStorage.getItem('rbacToken')
+    }
+  };
+
+  try {
+    const response = await Axios.get(url, config);
+    if (response.data?.isSuccess) {
+      console.log(response.data.result, "qwertyuio sate");
+      return response.data; 
+    }
+    return null
+  } catch (error) {
+    console.error(error);
+    return null; 
+  }
+}

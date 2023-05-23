@@ -180,67 +180,24 @@ var   districtNameSpace = DistrictName.trim(' ');
 })
 
   
-router.post('/add-role', tokenCheck, checkUserPermission('add-role'), async (req, res) => {
-    console.log('>>>>>add-role');
-    const { roleName, roleDescription, checkedFeatures } = req.body
-    const urlNew = `INSERT INTO roles(role, active, description) VALUES('${roleName}', 1, '${roleDescription}'); `
-    await db.query(urlNew, async (err, result) => {
-        if (err) {
-            console.log({ isSuccess: false, result: 'error' })
-            res.send({ isSuccess: false, result: 'error' })
-        } else {
-            if (result.insertId) {
-                async.forEachOf(checkedFeatures, (item, key, callback) => {
-                    const sqlQuery = `INSERT INTO role_features(role_id, feature_id) VALUES('${result.insertId}', '${item}')`;
-                    db.query(sqlQuery, (err, resultNew) => {
-                        if (err) {
-                            console.log({ isSuccess: true, result: err })
-                            res.send({ isSuccess: true, result: 'error' })
-                        }
-                    })
-                    callback();
-                }, (err) => {
-                    if (err) {
-                        console.log({ isSuccess: true, result: err })
-                        res.send({ isSuccess: true, result: 'error' })
-                    } else {
-                        console.log({ isSuccess: true, result: 'success' })
-                        res.send({ isSuccess: true, result: 'success' })
-                    }
-                })
-
-            }
-        }
-    })
-})
-router.post('/get-roles-features', tokenCheck, async (req, res) => {
-    console.log('>>>>>get-roles-features', req.body.roleId);
-
-
-    const url = `select t.* from roles as f inner join role_features as s on s.role_id = f.id inner join features as t on t.id = s.feature_id where f.id = ${req.body.roleId} `
-    await db.query(url, async (err, result) => {
-        if (err) {
-            console.log({ isSuccess: true, result: err })
-            res.send({ isSuccess: true, result: 'error' })
-        } else {
-            console.log({ isSuccess: true, result: url })
-            res.send({ isSuccess: true, result: result })
-        }
-    })
-})
-router.get('/get-roles-to-edit', tokenCheck, async (req, res) => {
-    console.log('>>>>>get-roles');
-
-    const url = `SELECT * from roles where id != 1`
-    await db.query(url, async (err, result) => {
-        if (err) {
-            console.log({ isSuccess: true, result: err })
-            res.send({ isSuccess: true, result: 'error' })
-        } else {
-            console.log({ isSuccess: true, result: url })
-            res.send({ isSuccess: true, result: result })
-        }
-    })
+// ====get-all district by stateid === //
+router.get('/get-alldistrictbystateid/:id', tokenCheck, async (req, res) => {
+  console.log('>>>>>/get-alldistrictbystateid'); 
+  try{
+    const stateById = req.params.id
+    console.log(stateById)
+    await db.query("SELECT id as district_id,name as district_name,state_id,is_active FROM district where is_active = 1 and state_id=" + stateById, (err, DistrictsIdData) => {
+      if (err) {
+          console.log({ isSuccess: false, result: 'error' })
+          res.send({ isSuccess: false, result: 'error' })
+      } else {
+          console.log({ isSuccess: true, result: DistrictsIdData })
+          res.status(200).send({ isSuccess: true, result: DistrictsIdData })
+      }
+    })      
+  }catch(e){
+    console.log(e);
+  }
 })
 
 module.exports = router;
