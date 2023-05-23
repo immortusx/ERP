@@ -95,6 +95,8 @@ export const getDistrictByStateId = async (state_id) => {
   try {
     const response = await Axios.get(url, config);
     if (response.data?.isSuccess) {
+      console.log(response.data.result, "qwertyuio sate");
+      return response.data; 
       console.log(response.data, "qwertyuio district of state");
       return response.data.result; 
     }
@@ -104,3 +106,4 @@ export const getDistrictByStateId = async (state_id) => {
     return null; 
   }
 }
+

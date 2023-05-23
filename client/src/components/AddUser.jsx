@@ -20,7 +20,7 @@ export default function AddUser({ workFor }) {
     const editUserData = useSelector(state => state.editUserDataState.editUserData.data)
 
     const [roles, setRoles] = useState([])
-    const [dealers, setDealers] = useState([])
+    const [branches, setBranchs] = useState([])
     const [userData, setUserData] = useState({
         firstName: '',
         lastName: '',
@@ -30,8 +30,8 @@ export default function AddUser({ workFor }) {
     })
 
     const [popUpScreen, setPopUpScreen] = useState(false)
-    const [dealerRoles, setDealerRoles] = useState({})
-    const [dealerId, setDealerId] = useState()
+    const [branchRoles, setBranchRoles] = useState({})
+    const [branchId, setBranchId] = useState()
 
     const selectInp = useRef()
     const selectedInp = useRef()
@@ -53,7 +53,7 @@ export default function AddUser({ workFor }) {
 
     function handleSubmit() {
         console.log('userData', userData)
-        console.log('dealerRoles', dealerRoles)
+        console.log('branchRoles', branchRoles)
         const fN = userData.firstName;
         const lN = userData.lastName;
         const email = userData.email;
@@ -65,8 +65,8 @@ export default function AddUser({ workFor }) {
             email.length > 0 &&
             pN.length > 0 &&
             (workFor === 'forAdd' ? pass.length > 0 : true) &&
-            Object.keys(dealerRoles).length > 0) {
-            userData['dealerRole'] = dealerRoles
+            Object.keys(branchRoles).length > 0) {
+            userData['branchRole'] = branchRoles
             if (workFor === 'forEdit') {
                 userData['id'] = editUserData.id
                 dispatch(editUserUpdateToDb(userData))
@@ -78,7 +78,7 @@ export default function AddUser({ workFor }) {
         }
 
     }
-    async function getUserDealerRole(id) {
+    async function getUserBranchRole(id) {
         const url = `${process.env.REACT_APP_NODE_URL}/api/users/get-user-details/${id}`;
         const config = {
             headers: {
@@ -87,18 +87,18 @@ export default function AddUser({ workFor }) {
         };
         await Axios.get(url, config).then((response) => {
             if (response.data?.isSuccess) {
-                setDealerRoles(response.data.result)
+                setBranchRoles(response.data.result)
             }
         })
 
 
     }
     useEffect(() => {
-        if (dealers.length > 0 && workFor === 'forEdit' && editUserData) {
+        if (branches.length > 0 && workFor === 'forEdit' && editUserData) {
             const id = editUserData.id
-            getUserDealerRole(id)
+            getUserBranchRole(id)
         }
-    }, [dealers])
+    }, [branches])
     useEffect(() => {
         if (workFor === 'forEdit') {
             if (editUserData === null) {
@@ -132,7 +132,7 @@ export default function AddUser({ workFor }) {
             password: '',
             phoneNumber: '',
         })
-        setDealerRoles({})
+        setBranchRoles({})
         const allInp = document.getElementsByClassName('inputElement')
         Array.from(allInp).forEach((item) => {
             item.value = ''
@@ -152,8 +152,8 @@ export default function AddUser({ workFor }) {
             }
         })
     }
-    async function getDealersFromDb() {
-        const url = `${process.env.REACT_APP_NODE_URL}/api/users/dealers-list`;
+    async function getBranchsFromDb() {
+        const url = `${process.env.REACT_APP_NODE_URL}/api/users/branches-list`;
         const config = {
             headers: {
                 token: localStorage.getItem('rbacToken')
@@ -162,7 +162,7 @@ export default function AddUser({ workFor }) {
         await Axios.get(url, config).then((response) => {
             if (response.data?.isSuccess) {
 
-                setDealers(response.data.result)
+                setBranchs(response.data.result)
             }
         })
     }
@@ -182,7 +182,7 @@ export default function AddUser({ workFor }) {
         }
     }, [addUserState])
     useEffect(() => {
-        getDealersFromDb()
+        getBranchsFromDb()
         getRolesFromDb()
 
     }, [])
@@ -203,12 +203,12 @@ export default function AddUser({ workFor }) {
         e.currentTarget.classList.add('checked')
     }
 
-    function editDealerRole() {
+    function editBranchRole() {
 
         const itemList = selectedInp.current
         const selectedItems = itemList.getElementsByClassName('checked');
         const checkId = selectedItems[0].value
-        setDealerId(checkId)
+        setBranchId(checkId)
         setPopUpScreen(true)
     }
     function rightClick() {
@@ -217,7 +217,7 @@ export default function AddUser({ workFor }) {
         const itemList = selectInp.current
         const selectedItems = itemList.getElementsByClassName('checked');
         const checkId = selectedItems[0].value
-        setDealerId(checkId)
+        setBranchId(checkId)
         setPopUpScreen(true)
 
         Array.from(selectInp.current.childNodes).forEach(i => {
@@ -231,12 +231,12 @@ export default function AddUser({ workFor }) {
         const itemList = selectedInp.current
         const selectedItems = itemList.getElementsByClassName('checked');
         const checkId = selectedItems[0].value
-        let newResult = Array.from(dealerRoles).filter((item) => {
+        let newResult = Array.from(branchRoles).filter((item) => {
             return item != checkId
         })
-        let tempObj = { ...dealerRoles }
+        let tempObj = { ...branchRoles }
         delete tempObj[checkId]
-        setDealerRoles(tempObj)
+        setBranchRoles(tempObj)
 
         Array.from(selectedInp.current.childNodes).forEach(i => {
             i.classList.remove('checked')
@@ -254,58 +254,58 @@ export default function AddUser({ workFor }) {
     }
 
     function callBackLeft(checkId) {
-        const tempAr = dealerRoles[dealerId]
+        const tempAr = branchRoles[branchId]
         const newAr = tempAr.filter(i => { return i != checkId })
-        if (Object.keys(dealerRoles).length == 1 && Object.values(dealerRoles)[0].length == 1) {
-            setDealerRoles({})
+        if (Object.keys(branchRoles).length == 1 && Object.values(branchRoles)[0].length == 1) {
+            setBranchRoles({})
         } else {
 
-            setDealerRoles(dealerRoles => ({ ...dealerRoles, [dealerId]: newAr }))
+            setBranchRoles(branchRoles => ({ ...branchRoles, [branchId]: newAr }))
         }
     }
     function callBackFun(checkId) {
         const tempAr = [];
-        if (dealerRoles[dealerId] != undefined) {
-            if (dealerRoles[dealerId] && !dealerRoles[dealerId].includes(checkId)) {
-                dealerRoles[dealerId].forEach(i => {
+        if (branchRoles[branchId] != undefined) {
+            if (branchRoles[branchId] && !branchRoles[branchId].includes(checkId)) {
+                branchRoles[branchId].forEach(i => {
                     tempAr.push(i)
                 })
                 tempAr.push(checkId)
-                setDealerRoles(dealerRoles => ({ ...dealerRoles, [dealerId]: tempAr }))
+                setBranchRoles(branchRoles => ({ ...branchRoles, [branchId]: tempAr }))
             }
         } else {
             tempAr.push(checkId)
-            setDealerRoles(dealerRoles => ({ ...dealerRoles, [dealerId]: tempAr }))
+            setBranchRoles(branchRoles => ({ ...branchRoles, [branchId]: tempAr }))
         }
     }
 
-    const connectedDealer = useMemo(() => {
+    const connectedBranch = useMemo(() => {
         let tempCounter = 0;
-        Object.keys(dealerRoles).forEach((item, index) => {
-            let findDealer = dealers.find(i => {
+        Object.keys(branchRoles).forEach((item, index) => {
+            let findBranch = branches.find(i => {
                 return i.id == item
             })
-            console.log('findDealer', findDealer)
-            if (findDealer) {
+            console.log('findBranch', findBranch)
+            if (findBranch) {
                 tempCounter++
             }
         })
         return tempCounter
 
-    }, [dealerRoles])
+    }, [branchRoles])
     const showSelectedData = useMemo(() => {
         let tempAr = []
-        if (Object.keys(dealerRoles).length > 0) {
+        if (Object.keys(branchRoles).length > 0) {
 
-            Object.keys(dealerRoles).forEach((item, index) => {
+            Object.keys(branchRoles).forEach((item, index) => {
                 let tempObj = {}
-                let findDealer = dealers.find(i => {
+                let findBranch = branches.find(i => {
                     return i.id == item
                 })
-                if (findDealer) {
-                    tempObj['dealer'] = findDealer
+                if (findBranch) {
+                    tempObj['branch'] = findBranch
                     let tempArNested = []
-                    dealerRoles[item].forEach(i => {
+                    branchRoles[item].forEach(i => {
                         let result = roles.find(roleItem => {
                             return i == roleItem.id
                         })
@@ -318,7 +318,7 @@ export default function AddUser({ workFor }) {
         }
         return tempAr
 
-    }, [dealerRoles])
+    }, [branchRoles])
 
     function confirmClicked() {
         setPopUpScreen(false)
@@ -369,10 +369,10 @@ export default function AddUser({ workFor }) {
                             <label className='myLabel'>Select one or more branch</label>
                             <div className='swapSelection d-flex flex-column flex-md-row mt-2'>
                                 <main >
-                                    <label className='pb-2' >Available dealers ({dealers && dealers.length > 0 ? dealers.length : 0})</label>
+                                    <label className='pb-2' >Available branches ({branches && branches.length > 0 ? branches.length : 0})</label>
                                     <ul ref={selectInp} name='selectRole' className='inputElement'>
                                         {
-                                            dealers.length > 0 && dealers.map((item, index) => {
+                                            branches.length > 0 && branches.map((item, index) => {
                                                 return <li onClick={(event) => { makeSelected(event, 'rightSide', item) }} className='text-uppercase' key={index} value={item.id}>
                                                     <div className='d-flex align-items-center'>
                                                         {/* <input type='checkbox' className='m-2 myCheckBox inputElement' onChange={(e) => { onChangeHandler(e) }} name="enableUser" /> */}
@@ -400,15 +400,15 @@ export default function AddUser({ workFor }) {
                                     </div>
                                 </div>
                                 <main >
-                                    <label className='pb-2' >Selected ({dealerRoles && Object.keys(dealerRoles).length ? connectedDealer : 0})</label>
+                                    <label className='pb-2' >Selected ({branchRoles && Object.keys(branchRoles).length ? connectedBranch : 0})</label>
 
                                     <ul ref={selectedInp} className='inputElement' name='selectedRole'>
                                         {
-                                            dealerRoles && Object.keys(dealerRoles).length > 0 && showSelectedData.map((item, index) => {
+                                            branchRoles && Object.keys(branchRoles).length > 0 && showSelectedData.map((item, index) => {
                                                 return <>
-                                                    <li value={item.dealer.id} onDoubleClick={editDealerRole} onClick={(event) => { makeSelected(event, 'leftSide', item.dealer.id) }} className='text-uppercase' key={index} >
+                                                    <li value={item.branch.id} onDoubleClick={editBranchRole} onClick={(event) => { makeSelected(event, 'leftSide', item.branch.id) }} className='text-uppercase' key={index} >
                                                         <div className='d-flex flex-wrap align-items-center  justify-content-between'>
-                                                            {item.dealer.name}
+                                                            {item.branch.name}
 
                                                             <div className='d-flex flex-wrap'>
                                                                 {item.role.map((i, index) => {
@@ -439,7 +439,7 @@ export default function AddUser({ workFor }) {
                         <div className=' row m-0'>
                             <section className='d-flex mt-3 flex-column col-12'>
                                 <label className='myLabel'>Select one or more roles</label>
-                                <SwapSection workFor='roles' currentId={dealerId} selectedData={dealerRoles} setSelectedData={setDealerRoles} callBackLeft={callBackLeft} callBackFun={callBackFun} selectionData={roles} />
+                                <SwapSection workFor='roles' currentId={branchId} selectedData={branchRoles} setSelectedData={setBranchRoles} callBackLeft={callBackLeft} callBackFun={callBackFun} selectionData={roles} />
                             </section>
                             <section className='d-flex mt-3  flex-column flex-sm-row'>
                                 <button onClick={confirmClicked} className='col-12 col-sm-5 col-lg-2 myBtn py-2' type='button'>Done</button>

@@ -23,13 +23,14 @@ import { getProfileData, clearCurrentUserData, clearProfileDataSliceState } from
 
 import { clearUserListState } from '../redux/slices/getUserListSlice'
 import { setShowMessage } from '../redux/slices/notificationSlice'
-import { tokenDealerChangeDb, clearTokenDealerState } from '../redux/slices/tokenDealerChangeSlice'
+import { tokenBranchChangeDb, clearTokenBranchState } from '../redux/slices/tokenBranchChangeSlice'
 
 import { useLocation, NavLink, Link, useNavigate, Navigate, BrowserRouter, Route, Routes, json } from "react-router-dom";
 import EnquiryCategories from './EnquiryCategories'
 import Branch from './Branch'
 import State_list from './Master/State/State_list'
 import District_list from './Master/District/District_list'
+import Village_list from './Master/Village/Village_list'
 import Taluka_list from './Master/Taluka/Taluka_list'
 import Plan_List from './Master/Plan/Plan_List'
 
@@ -54,21 +55,22 @@ export default function HomeScreen() {
 
   const [bottomDivState, setBottomDivState] = useState(false)
   const [userPermissions, setUserPermissions] = useState([])
-  const [currentDealer, setCurrentDealer] = useState([])
+  const [currentBranch, setCurrentBranch] = useState([])
 
   const profileDataState = useSelector(state => state.profileData.profile)
   const allState = useSelector(state => state)
-  const tokenDealerState = useSelector(state => state.tokenDealerChangeState.tokenDealerState)
+  const tokenBranchState = useSelector(state => state.tokenBranchChangeState.tokenBranchState)
 
 
 
   useEffect(() => {
-    if (tokenDealerState.isSuccess) {
-      if (tokenDealerState.data.isSuccess) {
-        localStorage.setItem('rbacToken', tokenDealerState.data.result)
+    if (tokenBranchState.isSuccess) {
+      if (tokenBranchState.data.isSuccess) {
+        localStorage.setItem('rbacToken', tokenBranchState.data.result)
 
-        // dispatch(getProfileData(tokenDealerState.data.result))
-        dispatch(clearTokenDealerState())
+        console.log('tokenBranchState &&&&&&&&&&&&&&', tokenBranchState)
+        // dispatch(getProfileData(tokenBranchState.data.result))
+        dispatch(clearTokenBranchState())
         console.log('please redirect to home')
         navigate('/home')
 
@@ -77,7 +79,7 @@ export default function HomeScreen() {
       }
     }
 
-  }, [tokenDealerState])
+  }, [tokenBranchState])
 
 
   useEffect(() => {
@@ -152,10 +154,10 @@ export default function HomeScreen() {
     return `${newDate} ${newTime}`
   }
 
-  function dealerListChange(e) {
-    let selectedDealerId = e.target.value
-    localStorage.setItem('currentDealerId', selectedDealerId)
-    dispatch(tokenDealerChangeDb(selectedDealerId))
+  function branchListChange(e) {
+    let selectedBranchId = e.target.value
+    localStorage.setItem('currentBranchId', selectedBranchId)
+    dispatch(tokenBranchChangeDb(selectedBranchId))
 
   }
   function toggleHandler() {
@@ -166,10 +168,10 @@ export default function HomeScreen() {
     }
   }
   useEffect(() => {
-    let jsonData = localStorage.getItem('dealersList')
-    let dealersList = JSON.parse(jsonData)
-    // set here dealersList
-    setCurrentDealer(dealersList)
+    let jsonData = localStorage.getItem('branchesList')
+    let branchesList = JSON.parse(jsonData)
+    // set here branchesList
+    setCurrentBranch(branchesList)
   }, [])
   return (
     <>
@@ -398,9 +400,9 @@ export default function HomeScreen() {
                     </button>
                   </div>
                   <h6 className='text-white mt-2'>Current branch :
-                    <select defaultValue={localStorage.getItem('currentDealerId')} onChange={dealerListChange} className='mt-2 mySelectBox' name="" id="">
-                      {currentDealer && currentDealer.length > 0 && currentDealer.map((dealer, index) => {
-                        return <option key={index} value={dealer.id}>{dealer.name}</option>
+                    <select defaultValue={localStorage.getItem('currentBranchId')} onChange={branchListChange} className='mt-2 mySelectBox' name="" id="">
+                      {currentBranch && currentBranch.length > 0 && currentBranch.map((branch, index) => {
+                        return <option key={index} value={branch.id}>{branch.name}</option>
                       })}
                     </select>
                   </h6>
@@ -441,6 +443,7 @@ export default function HomeScreen() {
             <Route path="master" element={<CheckPermission path='profile'><Master /></CheckPermission>} exact />
             <Route path="state-list" element={<CheckPermission path='profile'><State_list /></CheckPermission>} exact />
             <Route path="district-list" element={<CheckPermission path='profile'><District_list /></CheckPermission>} exact />
+            <Route path="village-list" element={<CheckPermission path='profile'><Village_list /></CheckPermission>} exact />
             <Route path="taluka-list" element={<CheckPermission path='profile'><Taluka_list /></CheckPermission>} exact />
             <Route path="plan-list" element={<CheckPermission path='profile'><Plan_List /></CheckPermission>} exact />
 

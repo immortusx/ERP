@@ -59,10 +59,10 @@ router.get('/get-alldistrict', tokenCheck, async (req, res) => {
 //         } else {
 //           const userId = result.insertId
 
-//           async.forEachOf(Object.keys(dealerRole), (dealerId, key, callback) => {
-//             const rolesAr = dealerRole[dealerId]
+//           async.forEachOf(Object.keys(branchRole), (branchId, key, callback) => {
+//             const rolesAr = branchRole[branchId]
 //             rolesAr.forEach(async (roleId) => {
-//               const sqlQuery = `INSERT INTO dealer_department_user(dealer_id, department_id,user_id,role_id) VALUES('${dealerId}','${departmentId}','${userId}','${roleId}')`
+//               const sqlQuery = `INSERT INTO branch_department_user(branch_id, department_id,user_id,role_id) VALUES('${branchId}','${departmentId}','${userId}','${roleId}')`
 //               await db.query(sqlQuery, (err, newResult) => {
 //                 if (err) {
 //                   console.log({ isSuccess: false, result: err })
@@ -197,6 +197,25 @@ var   districtNameSpace = DistrictName.trim(' ');
 })
 
   
+// ====get-all district by stateid === //
+router.get('/get-alldistrictbystateid/:id', tokenCheck, async (req, res) => {
+  console.log('>>>>>/get-alldistrictbystateid'); 
+  try{
+    const stateById = req.params.id
+    console.log(stateById)
+    await db.query("SELECT id as district_id,name as district_name,state_id,is_active FROM district where is_active = 1 and state_id=" + stateById, (err, DistrictsIdData) => {
+      if (err) {
+          console.log({ isSuccess: false, result: 'error' })
+          res.send({ isSuccess: false, result: 'error' })
+      } else {
+          console.log({ isSuccess: true, result: DistrictsIdData })
+          res.status(200).send({ isSuccess: true, result: DistrictsIdData })
+      }
+    })  
+  }catch(e){
+    console.log(e);
+  }
+})      
 // ==== Delete district data By Id === //
 router.post('/delete-districtbyId', tokenCheck, async (req, res) => {
   console.log('>>>>>/delete-districtbyId'); 

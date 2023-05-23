@@ -97,7 +97,8 @@ export default function Taluka_list() {
     }
 
 
-  
+  console.log(TalukaData.DistrictName,"TalukaData.DistrictNameTalukaData.DistrictNameTalukaData.DistrictName")
+  console.log(TalukaData.StateName,"TalukaData.StateNameTalukaData.StateNameTalukaData.StateName")
     
     function onChangeHandlerForState(e) {
         const name = e.target.name;
@@ -168,6 +169,12 @@ export default function Taluka_list() {
                  StateName: data[0].state_id,
                  DistrictName :data[0].district_id
                 })
+                getDistrictByStateId( data[0].state_id).then((data) => {
+                    // console.log(data,"getDistrictByStateIdgetDistrictByStateIdgetDistrictByStateId")
+                    setDistrictOptions(data)
+                 }).catch((error) => {
+                     console.error('Error in setDistrictOptions:', error);
+                 });
             setEditTalukaById(data[0].id)
             setModalShow(true);
         }).catch((error) => {
@@ -367,7 +374,7 @@ export default function Taluka_list() {
                     <div className="">
                         <div className="mb-3">
                             <label htmlFor="select" className="col-form-label">State Name:</label>
-                            <select class="form-control" name="StateName" id="select" value={6} onChange={(e) => { onChangeHandlerForState(e) }}>
+                            <select className="form-control" name="StateName" id="select" value={TalukaData.StateName} onChange={(e) => { onChangeHandlerForState(e) }}>
                                 <option value="">Select State</option>
                                 {/* <option value="1">GUJARAT </option>
                                 <option value="2">Maharashtra </option>
@@ -381,7 +388,7 @@ export default function Taluka_list() {
                         </div>
                         <div className="mb-3">
                             <label htmlFor="select" className="col-form-label">District Name:</label>
-                            <select class="form-control" name="DistrictName" id="select" value={TalukaData.DistrictName} onChange={(e) => { onChangeHandlerDistrict(e) }}>
+                            <select className="form-control" name="DistrictName" id="select" value={TalukaData.DistrictName} onChange={(e) => { onChangeHandlerDistrict(e) }}>
                                 <option value="">Select District</option>
                                 {districtOptions.map((option) => (
                                      <option key={option.id} value={option.id}>
@@ -426,7 +433,7 @@ export default function Taluka_list() {
                         <div className="modal-body">
                             <div className="mb-3">
                                 <label htmlFor="select" className="col-form-label">State Name:</label>
-                                <select class="form-control" name="StateName" id="select" onChange={(e) => { onChangeHandler(e) }}>
+                                <select className="form-control" name="StateName" id="select" onChange={(e) => { onChangeHandler(e) }}>
                                     <option value="">Select State</option>
                                     <option value="1">GUJARAT </option>
                                     <option value="2">Maharashtra </option>
