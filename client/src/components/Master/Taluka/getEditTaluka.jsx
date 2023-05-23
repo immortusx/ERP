@@ -42,7 +42,7 @@ export const getTalukaById = async (Taluka_id) => {
     return null; 
   }
 }
-export const editeTalukaAction = async (dData) => {
+export const editeTalukaAction = async (tData) => {
   const url = `${process.env.REACT_APP_NODE_URL}/api/master/edit-TalukabyId`;
   const config = {
     headers: {
@@ -51,7 +51,7 @@ export const editeTalukaAction = async (dData) => {
   };
 
   try {
-    const response = await Axios.post(url, dData, config); // Send sData as the request payload
+    const response = await Axios.post(url, tData, config); // Send sData as the request payload
     if (response.data?.isSuccess) {
       console.log(response.data, "qwertyuio Taluka");
       return response.data; 
