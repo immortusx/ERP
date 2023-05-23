@@ -197,6 +197,25 @@ var   districtNameSpace = DistrictName.trim(' ');
 })
 
   
+// ====get-all district by stateid === //
+router.get('/get-alldistrictbystateid/:id', tokenCheck, async (req, res) => {
+  console.log('>>>>>/get-alldistrictbystateid'); 
+  try{
+    const stateById = req.params.id
+    console.log(stateById)
+    await db.query("SELECT id as district_id,name as district_name,state_id,is_active FROM district where is_active = 1 and state_id=" + stateById, (err, DistrictsIdData) => {
+      if (err) {
+          console.log({ isSuccess: false, result: 'error' })
+          res.send({ isSuccess: false, result: 'error' })
+      } else {
+          console.log({ isSuccess: true, result: DistrictsIdData })
+          res.status(200).send({ isSuccess: true, result: DistrictsIdData })
+      }
+    })  
+  }catch(e){
+    console.log(e);
+  }
+})      
 // ==== Delete district data By Id === //
 router.post('/delete-districtbyId', tokenCheck, async (req, res) => {
   console.log('>>>>>/delete-districtbyId'); 
