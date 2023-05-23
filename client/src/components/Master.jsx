@@ -111,7 +111,7 @@ export default function Master() {
                                         <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708z" />
                                     </svg>
                                 </div>
-                                <span className='ms-2'>Dealer</span>
+                                <span className='ms-2'>Branch</span>
                             </main>
                         </li>
                         <li className='col-12 col-sm-4 col-md-3  d-flex align-items-center p-2'>

@@ -7,13 +7,13 @@ async function tokenCheck(req, res, next) {
     const isAuthId = await verifyToken(currentToken)
     if (isAuthId && isAuthId.id) {
 
-        const url = `select CONCAT('[',GROUP_CONCAT(role_id),']') as roles_array  from  users as f inner join dealer_department_user s on s.user_id = f.id  where f.id = ${isAuthId.id}`
+        const url = `select CONCAT('[',GROUP_CONCAT(role_id),']') as roles_array  from  users as f inner join branch_department_user s on s.user_id = f.id  where f.id = ${isAuthId.id}`
         console.log('url', url);
         await db.query(url, async (err, result) => {
             const tempAr = result[0].roles_array
             req.myData = {
                 userId: isAuthId.id,
-                dealerId: isAuthId.dealerId
+                branchId: isAuthId.branchId
             }
             if (tempAr.includes(1)) {
                 req.myData.isSuperAdmin = true

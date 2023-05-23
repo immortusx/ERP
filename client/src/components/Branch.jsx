@@ -13,7 +13,7 @@ import moment from 'moment'
 
 
 export default function Branch({ workFor }) {
-    const [dealerList, setDealersList] = useState([])
+    const [branchList, setBranchsList] = useState([])
     const [usersList, setUsersList] = useState([])
     const [userData, setUserData] = useState([])
 
@@ -117,7 +117,7 @@ export default function Branch({ workFor }) {
         }
     ];
 
-    async function getDealerList() {
+    async function getBranchList() {
         const url = `${process.env.REACT_APP_NODE_URL}/api/branch/get-branch-data`;
         const config = {
             headers: {
@@ -127,14 +127,14 @@ export default function Branch({ workFor }) {
         await axios.get(url, config).then((response) => {
             if (response.data && response.data.isSuccess) {
                 console.log('response', response.data.result)
-                setDealersList(response.data.result.dealers)
+                setBranchsList(response.data.result.branches)
                 setUsersList(response.data.result.users)
             }
         })
 
     }
     useEffect(() => {
-        getDealerList()
+        getBranchList()
     }, [])
     useEffect(() => {
         console.log('workFor', workFor)
@@ -188,9 +188,9 @@ export default function Branch({ workFor }) {
 
     }
     useEffect(() => {
-        console.log('dealerList', dealerList)
-    }, [dealerList])
-    const rowsData = dealerList.map((item, index) => ({ ...item, rowNumber: index + 1 }));
+        console.log('branchList', branchList)
+    }, [branchList])
+    const rowsData = branchList.map((item, index) => ({ ...item, rowNumber: index + 1 }));
     function changeHandler() {
 
     }
@@ -234,7 +234,7 @@ export default function Branch({ workFor }) {
                             </thead>
                             <tbody className='text-start'>
                                 {
-                                    dealerList.length > 0 && dealerList.map((data, index) => {
+                                    branchList.length > 0 && branchList.map((data, index) => {
                                         return <tr id={`tr${index}`} className='myCursonPointer' onClick={(e) => { selectBranch(e, data) }} key={index}>
                                             <td><input className='inpCheckBox' type="checkbox" /></td>
                                             <td>{index + 1}</td>
@@ -270,7 +270,7 @@ export default function Branch({ workFor }) {
                                 style={{ fontFamily: 'Poppins', padding: 5, backgroundColor: 'white', }}
                                 pageSizeOptions={[5, 10, 25]}
                                 initialState={{
-                                    ...dealerList.initialState,
+                                    ...branchList.initialState,
                                     pagination: { paginationModel: { pageSize: 10 } },
                                 }}
                                 components={{
@@ -304,10 +304,10 @@ export default function Branch({ workFor }) {
                                 </section>
                                 <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
                                     <label className='myLabel' htmlFor="email">Select State *</label>
-                                    <select onChange={changeHandler} className='myInput inpClr' name="dealerId">
+                                    <select onChange={changeHandler} className='myInput inpClr' name="branchId">
                                         <option value='0' className='myLabel'>select</option>
                                         {
-                                            // newEnquiryList.listDealer && newEnquiryList.listDealer.length > 0 && newEnquiryList.listDealer.map((i, index) => {
+                                            // newEnquiryList.listBranch && newEnquiryList.listBranch.length > 0 && newEnquiryList.listBranch.map((i, index) => {
                                             //     return <option key={index} value={i.id} className='myLabel'>{i.name}</option>
                                             // })
                                         }
@@ -315,10 +315,10 @@ export default function Branch({ workFor }) {
                                 </section>
                                 <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
                                     <label className='myLabel' htmlFor="email">Select City *</label>
-                                    <select onChange={changeHandler} className='myInput inpClr' name="dealerId">
+                                    <select onChange={changeHandler} className='myInput inpClr' name="branchId">
                                         <option value='0' className='myLabel'>select</option>
                                         {
-                                            // newEnquiryList.listDealer && newEnquiryList.listDealer.length > 0 && newEnquiryList.listDealer.map((i, index) => {
+                                            // newEnquiryList.listBranch && newEnquiryList.listBranch.length > 0 && newEnquiryList.listBranch.map((i, index) => {
                                             //     return <option key={index} value={i.id} className='myLabel'>{i.name}</option>
                                             // })
                                         }
@@ -326,10 +326,10 @@ export default function Branch({ workFor }) {
                                 </section>
                                 <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
                                     <label className='myLabel' htmlFor="email">Select District *</label>
-                                    <select onChange={changeHandler} className='myInput inpClr' name="dealerId">
+                                    <select onChange={changeHandler} className='myInput inpClr' name="branchId">
                                         <option value='0' className='myLabel'>select</option>
                                         {
-                                            // newEnquiryList.listDealer && newEnquiryList.listDealer.length > 0 && newEnquiryList.listDealer.map((i, index) => {
+                                            // newEnquiryList.listBranch && newEnquiryList.listBranch.length > 0 && newEnquiryList.listBranch.map((i, index) => {
                                             //     return <option key={index} value={i.id} className='myLabel'>{i.name}</option>
                                             // })
                                         }
