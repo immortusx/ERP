@@ -59,10 +59,10 @@ router.get('/get-alldistrict', tokenCheck, async (req, res) => {
 //         } else {
 //           const userId = result.insertId
 
-//           async.forEachOf(Object.keys(dealerRole), (dealerId, key, callback) => {
-//             const rolesAr = dealerRole[dealerId]
+//           async.forEachOf(Object.keys(branchRole), (branchId, key, callback) => {
+//             const rolesAr = branchRole[branchId]
 //             rolesAr.forEach(async (roleId) => {
-//               const sqlQuery = `INSERT INTO dealer_department_user(dealer_id, department_id,user_id,role_id) VALUES('${dealerId}','${departmentId}','${userId}','${roleId}')`
+//               const sqlQuery = `INSERT INTO branch_department_user(branch_id, department_id,user_id,role_id) VALUES('${branchId}','${departmentId}','${userId}','${roleId}')`
 //               await db.query(sqlQuery, (err, newResult) => {
 //                 if (err) {
 //                   console.log({ isSuccess: false, result: err })
