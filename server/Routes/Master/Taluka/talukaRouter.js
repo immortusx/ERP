@@ -81,7 +81,10 @@ router.get('/get-Talukabyid/:id', tokenCheck, async (req, res) => {
   try{
     const TalukaById = req.params.id
     console.log(TalukaById)
-    await db.query("SELECT * FROM taluka where is_active = 1 and id=" + TalukaById, (err, TalukasIdData) => {
+    // await db.query("SELECT * FROM taluka where is_active = 1 and id=" + TalukaById, (err, TalukasIdData) => {
+    await db.query(`SELECT tt.*,dt.name as DistrictName from taluka tt 
+    left join (select id,name from district )  dt on 
+    tt.district_id = dt.id where tt.is_active = 1 and tt.id=` + TalukaById, (err, TalukasIdData) => {
       if (err) {
           console.log({ isSuccess: false, result: 'error' })
           res.send({ isSuccess: false, result: 'error' })
@@ -99,19 +102,20 @@ router.get('/get-Talukabyid/:id', tokenCheck, async (req, res) => {
 router.post('/edit-TalukabyId', tokenCheck, async (req, res) => {
   console.log('>>>>>/edit-TalukabyId'); 
   try{   
-    const { TalukaName, StateName,id } = req.body
+    const { TalukaName, StateName,DistrictName,id } = req.body
+    
 
 var   TalukaNameSpace = TalukaName.trim(' ');
     const firstLetter = TalukaNameSpace.charAt(0).toUpperCase();
     var capitalFirstLetter=firstLetter + TalukaNameSpace.slice(1);
-    const newUrl = "SELECT * FROM Taluka where is_active = 1 and id=" + id;
+    const newUrl = "SELECT * FROM taluka where is_active = 1 and id=" + id;
     await db.query(newUrl, async (err, newResult) => {
       if (err) {
         console.log({ isSuccess: false, result: err })
         res.send({ isSuccess: false, result: 'error' })
       } else if (newResult.length === 1) {
        // console.log(stateName, stateDiscription, state_id,capitalFirstLetter)
-        const editurl = "UPDATE Taluka SET name='"+ capitalFirstLetter +"', state_id='"+ StateName +"' WHERE id="+ id;
+        const editurl = "UPDATE taluka SET name='"+ capitalFirstLetter +"', state_id='"+ StateName +"',district_id ='"+DistrictName+"' WHERE id="+ id;
         await db.query(editurl, async (err, result) => {
           if (err) {
             console.log({ isSuccess: false, result: err })
@@ -137,16 +141,16 @@ var   TalukaNameSpace = TalukaName.trim(' ');
 router.post('/delete-TalukabyId', tokenCheck, async (req, res) => {
   console.log('>>>>>/delete-TalukabyId'); 
   try{
-    const { TalukaName, StateName,id } = req.body
+    const { TalukaName, StateName,DistrictName,id } = req.body
     
-    const newUrl = "SELECT * FROM Taluka where is_active = 1 and id=" + id;
+    const newUrl = "SELECT * FROM taluka where is_active = 1 and id=" + id;
     await db.query(newUrl, async (err, newResult) => {
       if (err) {
         console.log({ isSuccess: false, result: err })
         res.send({ isSuccess: false, result: 'error' })
       } else if (newResult.length === 1) {
      
-        const editurl = "UPDATE Taluka SET is_active = 0 WHERE id="+ id;
+        const editurl = "UPDATE taluka SET is_active = 0 WHERE id="+ id;
         await db.query(editurl, async (err, result) => {
           if (err) {
             console.log({ isSuccess: false, result: err })
