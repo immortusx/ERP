@@ -6,11 +6,13 @@ import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { addStateToDb, clearAddState } from '../../../redux/slices/Master/State/addStateSlice'
+import { addVillageToDb, clearaddVillage } from '../../../redux/slices/Master/Village/addVillageSlice'
 import { setShowMessage } from '../../../redux/slices/notificationSlice'
 import { Modal, Button } from 'react-bootstrap';
-import {getAllStateAction, getStateById, editeStateAction,deleteStateAction} from './getEditeVillage'
-import {getAllDistrictByStateId} from '../District/getEditDistrict'
+import {getAllVillageAction, editeVillageAction} from './getEditeVillage'
+import {getAllStateAction, getStateById,} from '../State/getEditeSate'
+import {getDistrictByStateId} from '../District/getEditDistrict'
+import {getTalukaByDistrictId} from '../Taluka/getEditTaluka'
 import AlertDeleteModal from '../../AlertDelete/AlertDeleteModal';
 
 export default function Village_list() {
@@ -19,42 +21,60 @@ export default function Village_list() {
     const [allStateDate, setAllStateDate] = useState([]);
     const [stateOptions, setStatateOptions] = useState([]);
     const [districtOptions, setDistrictOptions] = useState([]);
-    const [editStateById, setEditStateById] = useState('');
+    const [talukaOptions, setTalukaOptions] = useState([]);
+    const [editTalukaById, seteditTalukaById] = useState('');
     const [modalShow, setModalShow] = React.useState(false);
-
+    const [allVillageDate, setAllVillageDate] = useState([]);
     //---- Delete Modal Variable -----//
     const [type, setType] = useState(null);
     const [id, setId] = useState(null);
     const [displayConfirmationModal, setDisplayConfirmationModal] = useState(false);
     const [deleteMessage, setDeleteMessage] = useState(null);
 
-    const addState = useSelector(state => state.addStateSlice.addState);
-    const { addStateSlice } = useSelector(state => state.addStateSlice)
+    const addVillage = useSelector(state => state.addVillageSlice.addVillage);
     const [villageData, setVillageData] = useState({
         state_id:'',       
         district_id:'',        
         taluka_id:'',        
         villageName:''
     })
-
+    useEffect(() => {
+        if (addVillage.isSuccess) {
+            if (addVillage.message.result === 'success') {
+                dispatch(setShowMessage('Village is Added'))
+                clearInpHook()
+                dispatch(clearaddVillage())
+                setModalShow(false);
+                getAllVillageAction().then((data) => {
+                    console.log('Response from getAllVillageAction:', data.result);
+                    setAllVillageDate(data.result)
+                })
+            } else if (addVillage.message.result === 'alreadyExist') {
+                dispatch(setShowMessage('Taluka is already Exists!'))
+                dispatch(clearaddVillage())
+            } else {
+                dispatch(setShowMessage('Something is wrong!'))
+            }
+        }
+    }, [addVillage])
     function onChangeHandler(e) {
         const name = e.target.name;
         const value = e.target.value;
         switch(name){
             case 'state_id':
                 setVillageData({ ...villageData, [name]: value });
-                getAllDistrictByStateId(value).then((data) => {
+                getDistrictByStateId(value).then((data) => {
                     setDistrictOptions(data.result)
                 }).catch((error) => {
-                    console.error('Error in getAllStateAction:', error);
+                    console.error('Error in getAllDistrictAction:', error);
                 });
                 break;
             case 'district_id':
                 setVillageData({ ...villageData, [name]: value })
-                getAllStateAction().then((data) => {
-                    setStatateOptions(data.result)
+                getTalukaByDistrictId(value).then((data) => {
+                    setTalukaOptions(data.result)
                 }).catch((error) => {
-                    console.error('Error in getAllStateAction:', error);
+                    console.error('Error in getAllVillageAction:', error);
                 });
                 break;
             case 'taluka_id':
@@ -66,7 +86,7 @@ export default function Village_list() {
                
         }       
         console.log(villageData,'village onchange',name)
-        console.log(districtOptions)
+       // console.log(districtOptions)
     }
 
     const handleClose = () => {
@@ -77,30 +97,32 @@ export default function Village_list() {
         setModalShow(true);
     }
     function handleSubmit() {
-       
-        const sName = villageData.state_id;
-        const sDiscr = villageData.villageName;
+       console.log(villageData,"villageDatavillageDatavillageData")
+        const vName = villageData.villageName;
+        const vDiscr = villageData.district_id;
+        const vTaluka = villageData.taluka_id;
+        const vstate = villageData.state_id;
 
-        if (sName.length > 0 && sDiscr.length > 0) {
-            if (editStateById != '') {
+        if (vName.length > 0 && vDiscr.length > 0 && vTaluka.length > 0 && vstate.length > 0) {
+            if (editTalukaById != '') {
                 
-                villageData['state_id'] = editStateById;
+                villageData['id'] = editTalukaById;
                 
-                editeStateAction(villageData).then((data) => {
-                    console.log('state Update getStateActionIdData:', data); 
+                editeVillageAction(villageData).then((data) => {
+                    console.log('village Update getvillageActionIdData:', data); 
                     if(data.result === "updatesuccess"){
-                        getAllStateAction().then((data) => { setAllStateDate(data.result)});
+                        getAllVillageAction().then((data) => { setAllVillageDate(data.result)});
                         setModalShow(false);
                         clearInpHook();
-                        dispatch(setShowMessage('State Data Update Successfully!')); 
+                        dispatch(setShowMessage('village Data Update Successfully!')); 
                     }else {
                         dispatch(setShowMessage('Something is wrong!'))
                     }                
                 }).catch((error) => {
-                    console.error('Error in updateStateAction:', error);
+                    console.error('Error in updateVillageAction:', error);
                 });
             } else {
-                dispatch(addStateToDb(villageData))
+                dispatch(addVillageToDb(villageData))
             }
         } else {
             dispatch(setShowMessage('All Field Must be Required.'))
@@ -113,7 +135,7 @@ export default function Village_list() {
                 state_id: data[0].state_name,
                 villageName: data[0].description
             })
-            setEditStateById(data[0].state_id)
+            seteditTalukaById(data[0].state_id)
             setModalShow(true);
         }).catch((error) => {
             console.error('Error in editStateAction:', error);
@@ -172,7 +194,7 @@ export default function Village_list() {
             taluka_id:'',        
             villageName:''
         })
-        setEditStateById('');
+        seteditTalukaById('');
     }
 
    
@@ -188,25 +210,47 @@ export default function Village_list() {
 
         },
         {
-            field: 'state_name',
+            field: 'Village Name',
             headerAlign: 'center',
             align: 'center',
-            headerName: 'State Name',
+            headerName: 'Village Name',
             minWidth: 100,
             flex: 1,
             valueGetter: (params) => {
-                return `${params.row.state_name ? params.row.state_name : '-'}`
+                return `${params.row.name ? params.row.name : '-'}`
             }
         },
         {
-            field: 'description',
+            field: 'Taluka Name',
+            headerAlign: 'center',
+            align: 'center',
+            headerName: 'Taluka Name',
+            minWidth: 100,
+            flex: 1,
+            valueGetter: (params) => {
+                return `${params.row.name ? params.row.name : '-'}`
+            }
+        },
+        {
+            field: 'District Name',
             headerAlign: 'left',
             align: 'left',
-            headerName: 'State Discription',
+            headerName: 'District Name',
             minWidth: 150,
             flex: 1,           
             valueGetter: (params) => {
-                return `${params.row.description ? params.row.description : '-'}`
+                return `${params.row.DistrictName ? params.row.DistrictName : '-'}`
+            }
+        },
+        {
+            field: 'State Name',
+            headerAlign: 'left',
+            align: 'left',
+            headerName: 'State Name',
+            minWidth: 150,
+            flex: 1,           
+            valueGetter: (params) => {
+                return `${params.row.state_name ? params.row.state_name : '-'}`
             }
         },     
         {
@@ -252,7 +296,7 @@ export default function Village_list() {
             ),
         }
     ];
-    const rowsData = allStateDate.map((item, index) => ({ ...item, rowNumber: index + 1 }));
+    const rowsData = allVillageDate.map((item, index) => ({ ...item, rowNumber: index + 1 }));
     
     useEffect(() => {
         getAllStateAction().then((data) => {
@@ -275,7 +319,7 @@ export default function Village_list() {
                                     <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
                                     <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
                                 </svg>&nbsp;
-                                Add state
+                                Add Village
                             </button>
                         </h6>
                     </div>
@@ -339,20 +383,20 @@ export default function Village_list() {
                             <label htmlFor="selectdistrict" className="col-form-label">District Name:</label>
                             <select class="form-control" name="district_id" id="selectdistrict" onChange={(e) => { onChangeHandler(e) }}>
                                 <option value="">Select District</option>                                
-                                {/* {districtOptions.map((option) => (
-                                     <option key={option.state_id} value={option.state_id}>
-                                       {option.state_name}
+                                {districtOptions.map((option) => (
+                                     <option key={option.id} value={option.id}>
+                                       {option.name}
                                      </option>
-                                    ))}   */}
+                                    ))}  
                             </select>
                         </div>
                         <div className="mb-3">
                             <label htmlFor="selecttaluka" className="col-form-label">Taluka Name:</label>
                             <select class="form-control" name="taluka_id" id="selecttaluka" onChange={(e) => { onChangeHandler(e) }}>
                                 <option value="">Select Taluka</option>                                
-                                {stateOptions.map((option) => (
-                                     <option key={option.state_id} value={option.state_id}>
-                                       {option.state_name}
+                                {talukaOptions.map((option) => (
+                                     <option key={option.id} value={option.id}>
+                                       {option.name}
                                      </option>
                                     ))}  
                             </select>

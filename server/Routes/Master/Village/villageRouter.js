@@ -23,19 +23,20 @@ router.get('/get-features', tokenCheck, checkUserPermission('roles'), async (req
     })
 
 })
-// =====get Taluka=====
-router.get('/get-allTaluka', tokenCheck, async (req, res) => {
-    console.log('>>>>>/get-all Taluka'); 
+// =====get Village=====
+router.get('/get-allVillage', tokenCheck, async (req, res) => {
+    console.log('>>>>>/get-all Village'); 
     try{
-      await db.query(`select tt.*,dt.name as DistrictName,st.state_name from taluka tt 
-      left join  (select id,name from district) dt on dt.id = tt.district_id
-      left join (select state_id,state_name from state) st on st.state_id = tt.state_id where tt.is_active = 1`, (err, allTaluka) => {
+      await db.query(`select vt.*,dt.name as DistrictName,st.state_name as stateName,tt.name as TalukaName from village vt 
+      left join (select id,name from taluka) tt on tt.id = vt.taluka_id
+      left join  (select id,name from district) dt on dt.id = vt.district_id
+      left join (select state_id,state_name from state) st on st.state_id = vt.state_id where vt.is_active = 1`, (err, allVillage) => {
         if (err) {
             console.log({ isSuccess: false, result: 'error' })
             res.send({ isSuccess: false, result: 'error' })
         } else {
-            console.log({ isSuccess: true, result: allTaluka })
-            res.status(200).send({ isSuccess: true, result: allTaluka })
+            console.log({ isSuccess: true, result: allVillage })
+            res.status(200).send({ isSuccess: true, result: allVillage })
         }
       })      
     }catch(e){
@@ -43,21 +44,21 @@ router.get('/get-allTaluka', tokenCheck, async (req, res) => {
     }
   })
 
-router.post('/add-Taluka', tokenCheck, async (req, res) => {
-    console.log('>>>>>/add-Taluka');
-    const { TalukaName, StateName,DistrictName  } = req.body
-    console.log(TalukaName, StateName,DistrictName);
-    var TalukaNamespace = TalukaName.trim(' ');
-    const firstLetter = TalukaNamespace.charAt(0).toUpperCase();
-    var capitalFirstLetter=firstLetter + TalukaNamespace.slice(1);
+router.post('/add-Village', tokenCheck, async (req, res) => {
+    console.log('>>>>>/add-Village');
+    const { villageName,taluka_id, state_id,district_id  } = req.body
+    console.log(villageName,taluka_id, state_id,district_id );
+    var VillageNamespace = villageName.trim(' ');
+    const firstLetter = VillageNamespace.charAt(0).toUpperCase();
+    var capitalFirstLetter=firstLetter + VillageNamespace.slice(1);
   console.log(capitalFirstLetter)
-    const newUrl = "SELECT * FROM taluka where is_active = 1 and name ='"+ capitalFirstLetter + "'";
+    const newUrl = "SELECT * FROM village where is_active = 1 and name ='"+ capitalFirstLetter + "'";
     await db.query(newUrl, async (err, newResult) => {
       if (err) {
         console.log({ isSuccess: false, result: err })
         res.send({ isSuccess: false, result: 'error' })
       } else if (newResult.length === 0) {
-        const url = `INSERT INTO taluka(name,district_id,state_id,is_active) VALUES('${capitalFirstLetter}','${DistrictName}', '${StateName}', 1)`
+        const url = `INSERT INTO village(name,taluka_id,district_id,state_id,is_active) VALUES('${capitalFirstLetter}','${taluka_id}','${district_id}','${state_id}', 1)`
         await db.query(url, async (err, result) => {
           if (err) {
             console.log({ isSuccess: false, result: err })
@@ -75,22 +76,22 @@ router.post('/add-Taluka', tokenCheck, async (req, res) => {
     })
   })
 
-// ====get Taluka By Id === //
-router.get('/get-Talukabyid/:id', tokenCheck, async (req, res) => {
-  console.log('>>>>>/get-Talukabyid'); 
+// ====get Village By Id === //
+router.get('/get-Villagebyid/:id', tokenCheck, async (req, res) => {
+  console.log('>>>>>/get-Villagebyid'); 
   try{
-    const TalukaById = req.params.id
-    console.log(TalukaById)
-    // await db.query("SELECT * FROM taluka where is_active = 1 and id=" + TalukaById, (err, TalukasIdData) => {
-    await db.query(`SELECT tt.*,dt.name as DistrictName from taluka tt 
+    const VillageById = req.params.id
+    console.log(VillageById)
+    // await db.query("SELECT * FROM Village where is_active = 1 and id=" + VillageById, (err, VillagesIdData) => {
+    await db.query(`SELECT tt.*,dt.name as DistrictName from Village tt 
     left join (select id,name from district )  dt on 
-    tt.district_id = dt.id where tt.is_active = 1 and tt.id=` + TalukaById, (err, TalukasIdData) => {
+    tt.district_id = dt.id where tt.is_active = 1 and tt.id=` + VillageById, (err, VillagesIdData) => {
       if (err) {
           console.log({ isSuccess: false, result: 'error' })
           res.send({ isSuccess: false, result: 'error' })
       } else {
-          console.log({ isSuccess: true, result: TalukasIdData })
-          res.status(200).send({ isSuccess: true, result: TalukasIdData })
+          console.log({ isSuccess: true, result: VillagesIdData })
+          res.status(200).send({ isSuccess: true, result: VillagesIdData })
       }
     })      
   }catch(e){
@@ -99,23 +100,23 @@ router.get('/get-Talukabyid/:id', tokenCheck, async (req, res) => {
 })
 
 // ==== edit state data By Id === //
-router.post('/edit-TalukabyId', tokenCheck, async (req, res) => {
-  console.log('>>>>>/edit-TalukabyId'); 
+router.post('/edit-VillagebyId', tokenCheck, async (req, res) => {
+  console.log('>>>>>/edit-VillagebyId'); 
   try{   
-    const { TalukaName, StateName,DistrictName,id } = req.body
+    const { VillageName, StateName,DistrictName,id } = req.body
     
 
-var   TalukaNameSpace = TalukaName.trim(' ');
-    const firstLetter = TalukaNameSpace.charAt(0).toUpperCase();
-    var capitalFirstLetter=firstLetter + TalukaNameSpace.slice(1);
-    const newUrl = "SELECT * FROM taluka where is_active = 1 and id=" + id;
+var   VillageNameSpace = VillageName.trim(' ');
+    const firstLetter = VillageNameSpace.charAt(0).toUpperCase();
+    var capitalFirstLetter=firstLetter + VillageNameSpace.slice(1);
+    const newUrl = "SELECT * FROM Village where is_active = 1 and id=" + id;
     await db.query(newUrl, async (err, newResult) => {
       if (err) {
         console.log({ isSuccess: false, result: err })
         res.send({ isSuccess: false, result: 'error' })
       } else if (newResult.length === 1) {
        // console.log(stateName, stateDiscription, state_id,capitalFirstLetter)
-        const editurl = "UPDATE taluka SET name='"+ capitalFirstLetter +"', state_id='"+ StateName +"',district_id ='"+DistrictName+"' WHERE id="+ id;
+        const editurl = "UPDATE Village SET name='"+ capitalFirstLetter +"', state_id='"+ StateName +"',district_id ='"+DistrictName+"' WHERE id="+ id;
         await db.query(editurl, async (err, result) => {
           if (err) {
             console.log({ isSuccess: false, result: err })
@@ -137,20 +138,20 @@ var   TalukaNameSpace = TalukaName.trim(' ');
 })
 
   
-// ==== Delete Taluka data By Id === //
-router.post('/delete-TalukabyId', tokenCheck, async (req, res) => {
-  console.log('>>>>>/delete-TalukabyId'); 
+// ==== Delete Village data By Id === //
+router.post('/delete-VillagebyId', tokenCheck, async (req, res) => {
+  console.log('>>>>>/delete-VillagebyId'); 
   try{
-    const { TalukaName, StateName,DistrictName,id } = req.body
+    const { VillageName, StateName,DistrictName,id } = req.body
     
-    const newUrl = "SELECT * FROM taluka where is_active = 1 and id=" + id;
+    const newUrl = "SELECT * FROM Village where is_active = 1 and id=" + id;
     await db.query(newUrl, async (err, newResult) => {
       if (err) {
         console.log({ isSuccess: false, result: err })
         res.send({ isSuccess: false, result: 'error' })
       } else if (newResult.length === 1) {
      
-        const editurl = "UPDATE taluka SET is_active = 0 WHERE id="+ id;
+        const editurl = "UPDATE Village SET is_active = 0 WHERE id="+ id;
         await db.query(editurl, async (err, result) => {
           if (err) {
             console.log({ isSuccess: false, result: err })
@@ -170,19 +171,19 @@ router.post('/delete-TalukabyId', tokenCheck, async (req, res) => {
     console.log(e);
   }
 })
-// ========getTalukabyDistrictId======
-router.get('/get-talukabydistrictid/:id', tokenCheck, async (req, res) => {
-    console.log('>>>>>/get-talukabydistrictid'); 
+// ========getVillagebyDistrictId======
+router.get('/get-Villagebydistrictid/:id', tokenCheck, async (req, res) => {
+    console.log('>>>>>/get-Villagebydistrictid'); 
     try{
-      const talukaByDistrictid = req.params.id
-      console.log(talukaByDistrictid)
-      await db.query("SELECT * FROM taluka where is_active = 1 and district_id=" + talukaByDistrictid, (err, talukaByDistrictidData) => {
+      const VillageByDistrictid = req.params.id
+      console.log(VillageByDistrictid)
+      await db.query("SELECT * FROM Village where is_active = 1 and district_id=" + VillageByDistrictid, (err, VillageByDistrictidData) => {
         if (err) {
             console.log({ isSuccess: false, result: 'error' })
             res.send({ isSuccess: false, result: 'error' })
         } else {
-            console.log({ isSuccess: true, result: talukaByDistrictidData })
-            res.status(200).send({ isSuccess: true, result: talukaByDistrictidData })
+            console.log({ isSuccess: true, result: VillageByDistrictidData })
+            res.status(200).send({ isSuccess: true, result: VillageByDistrictidData })
         }
       })      
     }catch(e){

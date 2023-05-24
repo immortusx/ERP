@@ -20,6 +20,7 @@ import tokenDealerChangeSlice from './slices/tokenDealerChangeSlice'
 import addStateSlice from './slices/Master/State/addStateSlice';
 import addDistrictSlice from './slices/Master/District/addDistrictSlice';
 import addTalukaSlice from './slices/Master/Taluka/addTalukaSlice';
+import addVillageSlice from './slices/Master/Village/addVillageSlice';
 
 export const store = configureStore({
     reducer: {
@@ -42,5 +43,6 @@ export const store = configureStore({
         addStateSlice:addStateSlice,
         addDistrictSlice:addDistrictSlice,
         addTalukaSlice:addTalukaSlice,
+        addVillageSlice:addVillageSlice,
     }
 })  

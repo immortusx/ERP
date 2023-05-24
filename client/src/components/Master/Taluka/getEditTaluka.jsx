@@ -83,3 +83,26 @@ export const deleteTalukaAction = async (dData) => {
     return null; 
   }
 };
+
+export const getTalukaByDistrictId = async (district_id) => {
+    const url = `${process.env.REACT_APP_NODE_URL}/api/master/get-talukabydistrictid/${district_id}`;
+    const config = {
+      headers: {
+        token: localStorage.getItem('rbacToken')
+      }
+    };
+  
+    try {
+      const response = await Axios.get(url, config);
+      if (response.data?.isSuccess) {
+        console.log(response.data.result, "qwertyuio distrct");
+        return response.data; 
+        console.log(response.data, "qwertyuio district of state");
+        return response.data.result; 
+      }
+      return null
+    } catch (error) {
+      console.error(error);
+      return null; 
+    }
+  }
