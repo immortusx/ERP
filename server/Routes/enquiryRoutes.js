@@ -13,13 +13,13 @@ router.get('/enquiry-data', tokenCheck, async (req, res) => {
   try {
     let url = '';
     if (req.myData.isSuperAdmin) {
-      url = `SELECT * FROM dealers `
+      url = `SELECT * FROM branches `
     } else {
-      url = `SELECT * FROM dealers where id = ${req.myData.dealerId}`
+      url = `SELECT * FROM branches where id = ${req.myData.branchId}`
 
     }
-    await db.query(url, async (err, getDealers) => {
-      if (getDealers) {
+    await db.query(url, async (err, getBranchs) => {
+      if (getBranchs) {
         await db.query('SELECT * FROM enquiry_primary_sources', async (err, getPrimarySource) => {
           if (getPrimarySource) {
             await db.query('SELECT * FROM manufacturers', async (err, getManufacturers) => {
@@ -28,7 +28,7 @@ router.get('/enquiry-data', tokenCheck, async (req, res) => {
                   if (getManufacturers) {
 
                     let mainObj = {
-                      'dealers': getDealers,
+                      'branches': getBranchs,
                       'primary_source': getPrimarySource,
                       'manufacturers': getManufacturers,
                       'district': getDistrict,
@@ -94,10 +94,10 @@ router.get('/get-model/:id', tokenCheck, async (req, res) => {
 })
 router.get('/get-enquiries', tokenCheck, async (req, res) => {
   console.log('>>>>>>>>>get-enquiries', req.myData)
-  let dealerId = req.myData.dealerId
+  let branchId = req.myData.branchId
   let isSuperAdmin = req.myData.isSuperAdmin;
   let userId = req.myData.userId
-  const urlNew = `CALL sp_get_enquiries_list(${dealerId},${isSuperAdmin})`
+  const urlNew = `CALL sp_get_enquiries_list(${branchId},${isSuperAdmin})`
   await db.query(urlNew, async (err, result) => {
     if (err) {
       console.log({ isSuccess: false, result: err })
@@ -110,9 +110,9 @@ router.get('/get-enquiries', tokenCheck, async (req, res) => {
 })
 router.get('/get-dsp/:id', tokenCheck, async (req, res) => {
   console.log('>>>>>>>>>get-dsp', req.params)
-  let dealerId = req.params.id
+  let branchId = req.params.id
   let userId = req.myData.userId
-  const urlNew = `CALL sp_get_dsp_list(${dealerId},${userId})`
+  const urlNew = `CALL sp_get_dsp_list(${branchId},${userId})`
   await db.query(urlNew, async (err, result) => {
     if (err) {
       console.log({ isSuccess: false, result: err })
@@ -153,7 +153,7 @@ router.post('/set-new-enquiry-data', tokenCheck, async (req, res) => {
 
   const enquiryTypeId = '1'
   const visitReason = '1'
-  const dealerId = req.body.dealerId
+  const branchId = req.body.branchId
   const dsp = req.body.dsp
   const model = req.body.model
   const enquiryDate = req.body.enquiryDate
@@ -175,7 +175,7 @@ router.post('/set-new-enquiry-data', tokenCheck, async (req, res) => {
       const newEnquiryDate = await getDateInFormate(enquiryDate)
       const newDeliveryDate = await getDateInFormate(deliveryDate)
 
-      const urlNew = `INSERT INTO enquiries (dealer_id, enquiry_type_id, salesperson_id, customer_id, product_id, date, delivery_date, enquiry_source_id, visitReason) VALUES('${dealerId}','${enquiryTypeId}','${dsp}','${insertedId}','${model}','${newEnquiryDate}','${newDeliveryDate}','${sourceOfEnquiry}','${visitReason}')`
+      const urlNew = `INSERT INTO enquiries (branch_id, enquiry_type_id, salesperson_id, customer_id, product_id, date, delivery_date, enquiry_source_id, visitReason) VALUES('${branchId}','${enquiryTypeId}','${dsp}','${insertedId}','${model}','${newEnquiryDate}','${newDeliveryDate}','${sourceOfEnquiry}','${visitReason}')`
       await db.query(urlNew, async (err, result) => {
         if (err) {
           console.log({ isSuccess: false, result: err })

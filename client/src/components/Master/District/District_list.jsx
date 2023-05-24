@@ -108,7 +108,7 @@ export default function District_list() {
         const dsName = districtData.StateName;
 
         if (dName.length > 0 && dsName.length > 0) {
-            // userData['dealerRole'] = dealerRoles
+            // userData['branchRole'] = branchRoles
             // if (workFor === 'forEdit') {
             //     userData['id'] = editUserData.id
             //     dispatch(editUserUpdateToDb(userData))
