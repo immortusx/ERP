@@ -63,3 +63,47 @@ export const editeDistrictAction = async (dData) => {
   }
 };
 
+export const deleteDistrictAction = async (dData) => {
+  const url = `${process.env.REACT_APP_NODE_URL}/api/master/delete-districtbyId`;
+  const config = {
+    headers: {
+      token: localStorage.getItem('rbacToken')
+    }
+  };
+
+  try {
+    const response = await Axios.post(url, dData, config);
+    if (response.data?.isSuccess) {
+      console.log(response.data, "qwertyuio district");
+      return response.data; 
+    }
+    return null;
+  } catch (error) {
+    console.error(error);
+    return null; 
+  }
+};
+
+export const getDistrictByStateId = async (state_id) => {
+  const url = `${process.env.REACT_APP_NODE_URL}/api/master/get-districtbyStateid/${state_id}`;
+  const config = {
+    headers: {
+      token: localStorage.getItem('rbacToken')
+    }
+  };
+
+  try {
+    const response = await Axios.get(url, config);
+    if (response.data?.isSuccess) {
+      console.log(response.data.result, "qwertyuio sate");
+      return response.data; 
+      console.log(response.data, "qwertyuio district of state");
+      return response.data.result; 
+    }
+    return null
+  } catch (error) {
+    console.error(error);
+    return null; 
+  }
+}
+

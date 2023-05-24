@@ -7,37 +7,40 @@ import ClearIcon from '@mui/icons-material/Clear';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { addDistrictToDb, clearaddDistrict } from '../../../redux/slices/Master/District/addDistrictSlice'
+import { addTalukaToDb, clearaddTaluka } from '../../../redux/slices/Master/Taluka/addTalukaSlice'
 import { setShowMessage } from '../../../redux/slices/notificationSlice'
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
-//import {getAllDistrictAction, editeDistrictAction} from './getEditDistrict'
-import {getAllDistrictAction, getDistrictById, editeDistrictAction,deleteDistrictAction} from './getEditDistrict'
+//import {getAllTalukaAction, editeTalukaAction} from './getEditTaluka'
+import {getAllTalukaAction, getTalukaById, editeTalukaAction,deleteTalukaAction} from './getEditTaluka'
 import {getAllStateAction, editeStateAction} from '../State/getEditeSate'
+import {getDistrictByStateId} from '../District/getEditDistrict'
 import AlertDeleteModal from '../../AlertDelete/AlertDeleteModal';
 
 const axios = require('axios');
 
-export default function District_list() {
+export default function Taluka_list() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [stateOptions, setStatateOptions] = useState([])
+    const [districtOptions, setDistrictOptions] = useState([])
     //const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalShow, setModalShow] = React.useState(false);
-    const [allDistrictDate, setAllDistrictDate] = useState([]);
-    const [editDistrictById, setEditDistrictById] = useState('');
-    const addDistrict = useSelector(state => state.addDistrictSlice.addDistrict);
+    const [allTalukaDate, setAllTalukaDate] = useState([]);
+    const [editTalukaById, setEditTalukaById] = useState('');
+    const addTaluka = useSelector(state => state.addTalukaSlice.addTaluka);
 
   //---- Delete Modal Variable -----//
   const [type, setType] = useState(null);
   const [id, setId] = useState(null);
   const [displayConfirmationModal, setDisplayConfirmationModal] = useState(false);
   const [deleteMessage, setDeleteMessage] = useState(null);
+  
 
-
-    const [districtData, setDistrictData] = useState({
-        DistrictName: '',
-        StateName: ''
+    const [TalukaData, setTalukaData] = useState({
+        TalukaName: '',
+        StateName: '',
+        DistrictName:''
     })
     const handleClose = () => {
         setModalShow(false);
@@ -52,83 +55,90 @@ export default function District_list() {
         }).catch((error) => {
             console.error('Error in getAllStateAction:', error);
         });
-         getAllDistrictAction().then((data) => {
-            setAllDistrictDate(data.result)
+
+         getAllTalukaAction().then((data) => {
+            console.log(data,"All talukaaaaaaaaaaaaa")
+            setAllTalukaDate(data.result)
         }).catch((error) => {
-            console.error('Error in getAllDistrictAction:', error);
+            console.error('Error in getAllTalukaAction:', error);
         });
        
 
       
     }, [])
     useEffect(() => {
-        if (addDistrict.isSuccess) {
-            if (addDistrict.message.result === 'success') {
-                dispatch(setShowMessage('District is Added'))
+        if (addTaluka.isSuccess) {
+            if (addTaluka.message.result === 'success') {
+                dispatch(setShowMessage('Taluka is Added'))
                 clearInpHook()
-                dispatch(clearaddDistrict())
+                dispatch(clearaddTaluka())
                 setModalShow(false);
-                getAllDistrictAction().then((data) => {
-                    console.log('Response from getAllDistrictAction:', data.result);
-                    setAllDistrictDate(data.result)
+                getAllTalukaAction().then((data) => {
+                    console.log('Response from getAllTalukaAction:', data.result);
+                    setAllTalukaDate(data.result)
                 })
-            } else if (addDistrict.message.result === 'alreadyExist') {
-                dispatch(setShowMessage('District is already Exists!'))
-                dispatch(clearaddDistrict())
+            } else if (addTaluka.message.result === 'alreadyExist') {
+                dispatch(setShowMessage('Taluka is already Exists!'))
+                dispatch(clearaddTaluka())
             } else {
                 dispatch(setShowMessage('Something is wrong!'))
             }
         }
-    }, [addDistrict])
+    }, [addTaluka])
 
 
     function clearInpHook() {
-        setDistrictData({
-            DistrictName: '',
-            StateName: ''
+        setTalukaData({
+            TalukaName: '',
+            StateName: '',
+            DistrictName:''
         })
-        setEditDistrictById('');
+        setEditTalukaById('');
     }
 
 
-    // const getState = async () => {
-    //     axios.get(`${process.env.REACT_APP_NODE_URL}/api/master/get-allsate`)
-    //         .then(response => {
-    //             console.log(response.data);
-    //             setStatateOptions(response.result)
-    //         })
-    //         .catch(error => {
-
-    //             console.error(error);
-    //         });
-    // }
-
-    function onChangeHandler(e) {
+  console.log(TalukaData.DistrictName,"TalukaData.DistrictNameTalukaData.DistrictNameTalukaData.DistrictName")
+  console.log(TalukaData.StateName,"TalukaData.StateNameTalukaData.StateNameTalukaData.StateName")
+    
+    function onChangeHandlerForState(e) {
         const name = e.target.name;
         const value = e.target.value;
-        setDistrictData({ ...districtData, [name]: value })
+        setTalukaData({ ...TalukaData, [name]: value })
+        getDistrictByStateId(e.target.value).then((data) => {
+           // console.log(data,"getDistrictByStateIdgetDistrictByStateIdgetDistrictByStateId")
+           setDistrictOptions(data)
+        }).catch((error) => {
+            console.error('Error in setDistrictOptions:', error);
+        });
+    }
+    function onChangeHandlerDistrict(e) {
+        const name = e.target.name;
+        const value = e.target.value;
+        setTalukaData({ ...TalukaData, [name]: value })
+    }
+    function onChangeHandlerTaluka(e) {
+        const name = e.target.name;
+        const value = e.target.value;
+        setTalukaData({ ...TalukaData, [name]: value })
     }
 
     function handleSubmit() {
-        console.log('districtData', districtData)
+        console.log('TalukaData', TalukaData)
 
-        const dName = districtData.DistrictName;
-        const dsName = districtData.StateName;
+        const tName = TalukaData.TalukaName;
+        const tdName = TalukaData.DistrictName;
+        const tsName = TalukaData.StateName;
 
-        if (dName.length > 0 && dsName !== '') {
-            // userData['dealerRole'] = dealerRoles
-            // if (workFor === 'forEdit') {
-            //     userData['id'] = editUserData.id
-            //     dispatch(editUserUpdateToDb(userData))
-            // } else {
-                if (editDistrictById != '') {
-                    console.log('Update getDistrictActionIdData: ', editDistrictById);
-                    districtData['id'] = editDistrictById;
-                   // console.log('UpdatedistrictData', districtData)
-                   editeDistrictAction(districtData).then((data) => {
-                        console.log('state Update getDistrictActionIdData:', data); 
+        if (tName.length > 0 && tdName !== '' &&tsName !=='') {
+           
+                if (editTalukaById != '') {
+                    console.log('Update getTalukaActionIdData: ', editTalukaById);
+                    TalukaData['id'] = editTalukaById;
+                   // console.log('UpdateTalukaData', TalukaData)
+                   editeTalukaAction(TalukaData).then((data) => {
+                        console.log('state Update getTalukaActionIdData:', data); 
                         if(data.result === "updatesuccess"){
-                            getAllDistrictAction().then((data) => { setAllDistrictDate(data.result)});
+                            getAllTalukaAction().then((data) => { setAllTalukaDate(data.result)});
                             setModalShow(false);
                             clearInpHook();
                             dispatch(setShowMessage('State Data Update Successfully!')); 
@@ -136,10 +146,10 @@ export default function District_list() {
                             dispatch(setShowMessage('Something is wrong!'))
                         }                
                     }).catch((error) => {
-                        console.error('Error in getAllDistrictAction:', error);
+                        console.error('Error in getAllTalukaAction:', error);
                     });
                 }else{
-            dispatch(addDistrictToDb(districtData))
+            dispatch(addTalukaToDb(TalukaData))
             }
         } else {
             dispatch(setShowMessage('All Field Must be Required.'))
@@ -148,27 +158,34 @@ export default function District_list() {
     }
 
     function handleCancel() {
-        console.log('districtDatahandleCancel', districtData)
-        setDistrictData({ DistrictName: '', StateName: '' })
+        console.log('TalukaDatahandleCancel', TalukaData)
+        setTalukaData({ TalukaName: '', StateName: '' })
     }
-    const editeDistrictModal=(ev) =>{
-        getDistrictById(ev.id).then((data) => {
-            console.log('Response from getDistrictActionIdData:', data);
+    const editeTalukaModal=(ev) =>{
+        getTalukaById(ev.id).then((data) => {
+            console.log('Response from getTalukaActionIdData:', data);
           
-            setDistrictData({ DistrictName: data[0].name,
-                 StateName: data[0].state_id
+            setTalukaData({ TalukaName: data[0].name,
+                 StateName: data[0].state_id,
+                 DistrictName :data[0].district_id
                 })
-            setEditDistrictById(data[0].id)
+                getDistrictByStateId( data[0].state_id).then((data) => {
+                    // console.log(data,"getDistrictByStateIdgetDistrictByStateIdgetDistrictByStateId")
+                    setDistrictOptions(data)
+                 }).catch((error) => {
+                     console.error('Error in setDistrictOptions:', error);
+                 });
+            setEditTalukaById(data[0].id)
             setModalShow(true);
         }).catch((error) => {
-            console.error('Error in getAllDistrictAction:', error);
+            console.error('Error in getAllTalukaAction:', error);
         });
         
     }
-    const deleteDistrictAlert=(ev) =>{
-        setType('district_delete');
+    const deleteTalukaAlert=(ev) =>{
+        setType('Taluka_delete');
         setId(ev.id);
-        setDeleteMessage(`Are You Sure You Want To Delete The District '${ev.name}'?`);
+        setDeleteMessage(`Are You Sure You Want To Delete The Taluka '${ev.name}'?`);
         setDisplayConfirmationModal(true);
     }
 
@@ -176,20 +193,20 @@ export default function District_list() {
         setDisplayConfirmationModal(false);
     };
     const submitDelete = (type, id) => { 
-        console.log(type,'DistrictDeleteId: ',id) 
-        districtData['id'] = id;
-        deleteDistrictAction(districtData).then((data) => {
-            console.log('district Update getDistrictActionIdData:', data); 
+        console.log(type,'TalukaDeleteId: ',id) 
+        TalukaData['id'] = id;
+        deleteTalukaAction(TalukaData).then((data) => {
+            console.log('Taluka Update getTalukaActionIdData:', data); 
             if(data.result === "deletesuccess"){
-                getAllDistrictAction().then((data) => { setAllDistrictDate(data.result)});                
+                getAllTalukaAction().then((data) => { setAllTalukaDate(data.result)});                
                 clearInpHook();
                 setDisplayConfirmationModal(false);
-                dispatch(setShowMessage('District Data Delete Successfully!')); 
+                dispatch(setShowMessage('Taluka Data Delete Successfully!')); 
             }else {
                 dispatch(setShowMessage('Something is wrong!'))
             }                
         }).catch((error) => {
-            console.error('Error in getAllDistrictAction:', error);
+            console.error('Error in getAllTalukaAction:', error);
         }); 
     };
 
@@ -204,14 +221,25 @@ export default function District_list() {
 
         },
         {
-            field: 'District Name',
+            field: 'Taluka Name',
             headerAlign: 'center',
             align: 'center',
-            headerName: 'District Name',
+            headerName: 'Taluka Name',
             minWidth: 100,
             flex: 1,
             valueGetter: (params) => {
                 return `${params.row.name ? params.row.name : '-'}`
+            }
+        },
+        {
+            field: 'District Name',
+            headerAlign: 'left',
+            align: 'left',
+            headerName: 'District Name',
+            minWidth: 150,
+            flex: 1,           
+            valueGetter: (params) => {
+                return `${params.row.DistrictName ? params.row.DistrictName : '-'}`
             }
         },
         {
@@ -253,13 +281,13 @@ export default function District_list() {
             renderCell: (params) => (
                 <div>
                     {/* <button onClick={() => { editActionCall(params.row) }} className='myActionBtn m-1'> */}
-                    <button className='myActionBtn m-1' onClick={() => { editeDistrictModal(params.row) }}>
+                    <button className='myActionBtn m-1' onClick={() => { editeTalukaModal(params.row) }}>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="bi bi-pencil-square" viewBox="0 0 16 16">
                             <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
                             <path fillRule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
                         </svg>
                     </button>
-                    <button className='myActionBtn m-1' onClick={() => { deleteDistrictAlert(params.row) }}>
+                    <button className='myActionBtn m-1' onClick={() => { deleteTalukaAlert(params.row) }}>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="bi bi-trash3" viewBox="0 0 16 16">
                             <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5ZM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0H11Zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5h9.916Zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5Z" />
                         </svg>
@@ -268,10 +296,10 @@ export default function District_list() {
             ),
         }
     ];
-    const rowsData = allDistrictDate.map((item, index) => ({ ...item, rowNumber: index + 1 }));
+    const rowsData = allTalukaDate.map((item, index) => ({ ...item, rowNumber: index + 1 }));
     
   
- const deleteDistrictActino=() =>{
+ const deleteTalukaActino=() =>{
         //setModalShow(true);
     }
 
@@ -283,19 +311,19 @@ export default function District_list() {
                     <div className='d-flex align-items-center' type='button'>
 
                         <h6 className='m-0 ps-1'>
-                            {/* <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#districtModal" data-bs-whatever="@mdo">
+                            {/* <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#TalukaModal" data-bs-whatever="@mdo">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-plus-circle" viewBox="0 0 16 16">
                                     <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
                                     <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
                                 </svg>&nbsp;
-                                Add District
+                                Add Taluka
                             </button> */}
                             <button type="button" className="btn btn-primary" onClick={handleShow}>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-plus-circle" viewBox="0 0 16 16">
                                     <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
                                     <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
                                 </svg>&nbsp;
-                                Add District
+                                Add Taluka
                             </button>
 
                         </h6>
@@ -340,13 +368,13 @@ export default function District_list() {
             {/* new modal */}
             <Modal show={modalShow} onHide={handleClose}>
                 <Modal.Header closeButton>
-                    <h5 className="modal-title" id="districtModalLabel">ADD District</h5>
+                    <h5 className="modal-title" id="TalukaModalLabel">ADD Taluka</h5>
                 </Modal.Header>
                 <Modal.Body>
                     <div className="">
                         <div className="mb-3">
                             <label htmlFor="select" className="col-form-label">State Name:</label>
-                            <select class="form-control" name="StateName" id="select" value={districtData.StateName} onChange={(e) => { onChangeHandler(e) }}>
+                            <select className="form-control" name="StateName" id="select" value={TalukaData.StateName} onChange={(e) => { onChangeHandlerForState(e) }}>
                                 <option value="">Select State</option>
                                 {/* <option value="1">GUJARAT </option>
                                 <option value="2">Maharashtra </option>
@@ -359,12 +387,23 @@ export default function District_list() {
                             </select>
                         </div>
                         <div className="mb-3">
-                            <label htmlFor="recipient-name" className="col-form-label">District Name:</label>
-                            <input type="text" className="form-control" id="recipient-name" name="DistrictName" value={districtData.DistrictName} onChange={(e) => { onChangeHandler(e) }} />
+                            <label htmlFor="select" className="col-form-label">District Name:</label>
+                            <select className="form-control" name="DistrictName" id="select" value={TalukaData.DistrictName} onChange={(e) => { onChangeHandlerDistrict(e) }}>
+                                <option value="">Select District</option>
+                                {districtOptions.map((option) => (
+                                     <option key={option.id} value={option.id}>
+                                       {option.name}
+                                     </option>
+                                    ))}  
+                            </select>
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="recipient-name" className="col-form-label">Taluka Name:</label>
+                            <input type="text" className="form-control" id="recipient-name" name="TalukaName" value={TalukaData.TalukaName} onChange={(e) => { onChangeHandlerTaluka(e) }} />
                         </div>
                         {/* <div className="mb-3">
-                            <label htmlFor="message-text" className="col-form-label">District Discription:</label>
-                            <textarea className="form-control" id="message-text" name="stateName"  value={districtData.stateName} onChange={(e) => { onChangeHandler(e) }}></textarea>
+                            <label htmlFor="message-text" className="col-form-label">Taluka Discription:</label>
+                            <textarea className="form-control" id="message-text" name="stateName"  value={TalukaData.stateName} onChange={(e) => { onChangeHandler(e) }}></textarea>
                         </div> */}
 
                     </div>
@@ -383,18 +422,18 @@ export default function District_list() {
             {/* new modal end*/}
 
 
-            {/* Modal District */}
-            {/* <div className="modal fade" id="districtModal" tabIndex="-1" aria-labelledby="districtModalLabel" aria-hidden="true">          
+            {/* Modal Taluka */}
+            {/* <div className="modal fade" id="TalukaModal" tabIndex="-1" aria-labelledby="TalukaModalLabel" aria-hidden="true">          
                 <div className="modal-dialog">
                     <div className="modal-content">
                         <div className="modal-header">
-                            <h5 className="modal-title" id="districtModalLabel">ADD District</h5>
+                            <h5 className="modal-title" id="TalukaModalLabel">ADD Taluka</h5>
                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div className="modal-body">
                             <div className="mb-3">
                                 <label htmlFor="select" className="col-form-label">State Name:</label>
-                                <select class="form-control" name="StateName" id="select" onChange={(e) => { onChangeHandler(e) }}>
+                                <select className="form-control" name="StateName" id="select" onChange={(e) => { onChangeHandler(e) }}>
                                     <option value="">Select State</option>
                                     <option value="1">GUJARAT </option>
                                     <option value="2">Maharashtra </option>
@@ -403,8 +442,8 @@ export default function District_list() {
                                 </select>
                             </div>
                             <div className="mb-3">
-                                <label htmlFor="recipient-name" className="col-form-label">District Name:</label>
-                                <input type="text" className="form-control" id="recipient-name" name="DistrictName" value={districtData.DistrictName} onChange={(e) => { onChangeHandler(e) }} />
+                                <label htmlFor="recipient-name" className="col-form-label">Taluka Name:</label>
+                                <input type="text" className="form-control" id="recipient-name" name="TalukaName" value={TalukaData.TalukaName} onChange={(e) => { onChangeHandler(e) }} />
                             </div>
                           
 

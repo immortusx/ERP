@@ -19,6 +19,7 @@ import setNewEnquiryDataSlice from './slices/setNewEnquiryDataSlice'
 import tokenBranchChangeSlice from './slices/tokenBranchChangeSlice'
 import addStateSlice from './slices/Master/State/addStateSlice';
 import addDistrictSlice from './slices/Master/District/addDistrictSlice';
+import addTalukaSlice from './slices/Master/Taluka/addTalukaSlice';
 
 export const store = configureStore({
     reducer: {
@@ -40,5 +41,6 @@ export const store = configureStore({
         tokenBranchChangeState: tokenBranchChangeSlice,
         addStateSlice:addStateSlice,
         addDistrictSlice:addDistrictSlice,
+        addTalukaSlice:addTalukaSlice,
     }
 })  

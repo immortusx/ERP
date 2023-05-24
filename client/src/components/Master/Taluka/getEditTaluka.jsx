@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import Axios from 'axios';
 
-export const getAllStateAction = async () => {
-  const url = `${process.env.REACT_APP_NODE_URL}/api/master/get-allsate`;
+export const getAllTalukaAction = async () => {
+  const url = `${process.env.REACT_APP_NODE_URL}/api/master/get-allTaluka`;
   const config = {
     headers: {
       token: localStorage.getItem('rbacToken')
@@ -12,7 +12,7 @@ export const getAllStateAction = async () => {
   try {
     const response = await Axios.get(url, config);
     if (response.data?.isSuccess) {
-      console.log(response.data.result, "all sate");
+      console.log(response.data.result, "qwertyuio Talukaaa");
       return response.data; 
     }
     return null
@@ -22,9 +22,8 @@ export const getAllStateAction = async () => {
   }
 }
 
-
-export const getStateById = async (state_id) => {
-  const url = `${process.env.REACT_APP_NODE_URL}/api/master/get-statebyid/${state_id}`;
+export const getTalukaById = async (Taluka_id) => {
+  const url = `${process.env.REACT_APP_NODE_URL}/api/master/get-Talukabyid/${Taluka_id}`;
   const config = {
     headers: {
       token: localStorage.getItem('rbacToken')
@@ -34,6 +33,7 @@ export const getStateById = async (state_id) => {
   try {
     const response = await Axios.get(url, config);
     if (response.data?.isSuccess) {
+      console.log(response.data, "qwertyuio talukaiddd111111");
       return response.data.result; 
     }
     return null
@@ -42,10 +42,8 @@ export const getStateById = async (state_id) => {
     return null; 
   }
 }
-
-
-export const editeStateAction = async (sData) => {
-  const url = `${process.env.REACT_APP_NODE_URL}/api/master/edit-satebyId`;
+export const editeTalukaAction = async (tData) => {
+  const url = `${process.env.REACT_APP_NODE_URL}/api/master/edit-TalukabyId`;
   const config = {
     headers: {
       token: localStorage.getItem('rbacToken')
@@ -53,8 +51,9 @@ export const editeStateAction = async (sData) => {
   };
 
   try {
-    const response = await Axios.post(url, sData, config); 
+    const response = await Axios.post(url, tData, config); // Send sData as the request payload
     if (response.data?.isSuccess) {
+      console.log(response.data, "qwertyuio Taluka");
       return response.data; 
     }
     return null;
@@ -64,9 +63,8 @@ export const editeStateAction = async (sData) => {
   }
 };
 
-
-export const deleteStateAction = async (sData) => {
-  const url = `${process.env.REACT_APP_NODE_URL}/api/master/delete-satebyId`;
+export const deleteTalukaAction = async (dData) => {
+  const url = `${process.env.REACT_APP_NODE_URL}/api/master/delete-TalukabyId`;
   const config = {
     headers: {
       token: localStorage.getItem('rbacToken')
@@ -74,8 +72,9 @@ export const deleteStateAction = async (sData) => {
   };
 
   try {
-    const response = await Axios.post(url, sData, config);
+    const response = await Axios.post(url, dData, config);
     if (response.data?.isSuccess) {
+      console.log(response.data, "qwertyuio Taluka");
       return response.data; 
     }
     return null;
