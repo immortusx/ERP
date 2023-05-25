@@ -9,7 +9,7 @@ import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { addVillageToDb, clearaddVillage } from '../../../redux/slices/Master/Village/addVillageSlice'
 import { setShowMessage } from '../../../redux/slices/notificationSlice'
 import { Modal, Button } from 'react-bootstrap';
-import {getAllVillageAction, editeVillageAction} from './getEditeVillage'
+import {getAllVillageAction, editeVillageAction,getVillageById,deleteVillageAction} from './getEditeVillage'
 import {getAllStateAction, getStateById,} from '../State/getEditeSate'
 import {getDistrictByStateId} from '../District/getEditDistrict'
 import {getTalukaByDistrictId} from '../Taluka/getEditTaluka'
@@ -22,7 +22,7 @@ export default function Village_list() {
     const [stateOptions, setStatateOptions] = useState([]);
     const [districtOptions, setDistrictOptions] = useState([]);
     const [talukaOptions, setTalukaOptions] = useState([]);
-    const [editTalukaById, seteditTalukaById] = useState('');
+    const [editVillageById, seteditVillageById] = useState('');
     const [modalShow, setModalShow] = React.useState(false);
     const [allVillageDate, setAllVillageDate] = useState([]);
     //---- Delete Modal Variable -----//
@@ -33,9 +33,9 @@ export default function Village_list() {
 
     const addVillage = useSelector(state => state.addVillageSlice.addVillage);
     const [villageData, setVillageData] = useState({
-        state_id:'',       
-        district_id:'',        
-        taluka_id:'',        
+        StateName:'',       
+        DistrictName:'',        
+        TalukaName:'',        
         villageName:''
     })
     useEffect(() => {
@@ -61,7 +61,7 @@ export default function Village_list() {
         const name = e.target.name;
         const value = e.target.value;
         switch(name){
-            case 'state_id':
+            case 'StateName':
                 setVillageData({ ...villageData, [name]: value });
                 getDistrictByStateId(value).then((data) => {
                     setDistrictOptions(data.result)
@@ -69,7 +69,7 @@ export default function Village_list() {
                     console.error('Error in getAllDistrictAction:', error);
                 });
                 break;
-            case 'district_id':
+            case 'DistrictName':
                 setVillageData({ ...villageData, [name]: value })
                 getTalukaByDistrictId(value).then((data) => {
                     setTalukaOptions(data.result)
@@ -77,7 +77,7 @@ export default function Village_list() {
                     console.error('Error in getAllVillageAction:', error);
                 });
                 break;
-            case 'taluka_id':
+            case 'TalukaName':
                 setVillageData({ ...villageData, [name]: value });                
                 break;
             default :
@@ -99,14 +99,14 @@ export default function Village_list() {
     function handleSubmit() {
        console.log(villageData,"villageDatavillageDatavillageData")
         const vName = villageData.villageName;
-        const vDiscr = villageData.district_id;
-        const vTaluka = villageData.taluka_id;
-        const vstate = villageData.state_id;
-
-        if (vName.length > 0 && vDiscr.length > 0 && vTaluka.length > 0 && vstate.length > 0) {
-            if (editTalukaById != '') {
+        const vDiscr = villageData.DistrictName;
+        const vTaluka = villageData.TalukaName;
+        const vstate = villageData.StateName;
+       
+        if (vName.length > 0 && vDiscr !== '',vTaluka !== '',vstate !=='' ) {
+            if (editVillageById != '') {
                 
-                villageData['id'] = editTalukaById;
+                villageData['id'] = editVillageById;
                 
                 editeVillageAction(villageData).then((data) => {
                     console.log('village Update getvillageActionIdData:', data); 
@@ -129,72 +129,71 @@ export default function Village_list() {
         }
     }
 
-    const editeStateModal=(ev) =>{
-        getStateById(ev.state_id).then((data) => {            
+    const editeVillageModal=(ev) =>{
+        getVillageById(ev.id).then((data) => {    
+            console.log(data,"data in vilage edit!!!!!!!!!!!!!!!!!")        
             setVillageData({
-                state_id: data[0].state_name,
-                villageName: data[0].description
+                villageName:data[0].name,
+                TalukaName: data[0].taluka_id,
+                StateName: data[0].state_id,
+                DistrictName :data[0].district_id
             })
-            seteditTalukaById(data[0].state_id)
+            getDistrictByStateId( data[0].state_id).then((data) => {
+                // console.log(data,"getDistrictByStateIdgetDistrictByStateIdgetDistrictByStateId")
+                setDistrictOptions(data.result)
+             }).catch((error) => {
+                 console.error('Error in setDistrictOptions:', error);
+             });
+             getTalukaByDistrictId( data[0].district_id).then((data) => {
+                // console.log(data,"getDistrictByStateIdgetDistrictByStateIdgetDistrictByStateId")
+                setTalukaOptions(data.result)
+             }).catch((error) => {
+                 console.error('Error in setTalukaOptions:', error);
+             });
+            seteditVillageById(data[0].id)
             setModalShow(true);
         }).catch((error) => {
             console.error('Error in editStateAction:', error);
         });        
     }
-    const deleteStateAlert=(ev) =>{
+    const submitDelete = (type, id) => { 
+        console.log(type,'villageDeleteid: ',id) 
+        villageData['id'] = id;
+        deleteVillageAction(villageData).then((data) => {
+            //console.log('Taluka Update getTalukaActionIdData:', data); 
+            if(data.result === "deletesuccess"){
+                getAllVillageAction().then((data) => { setAllVillageDate(data.result)});                
+                clearInpHook();
+                setDisplayConfirmationModal(false);
+                dispatch(setShowMessage('Village Data Delete Successfully!')); 
+            }else {
+                dispatch(setShowMessage('Something is wrong!'))
+            }                
+        }).catch((error) => {
+            console.error('Error in getAllVillageAction:', error);
+        }); 
+    };
+    const deleteVillageAlert=(ev) =>{
         //setModalShow(true);
-        setType('state_delete');
-        setId(ev.state_id);
-        setDeleteMessage(`Are You Sure You Want To Delete The State '${ev.state_name}'?`);
+        setType('village_delete');
+        setId(ev.id);
+        setDeleteMessage(`Are You Sure You Want To Delete The Village '${ev.name}'?`);
         setDisplayConfirmationModal(true);
     }
 
-    // Hide the Deletemodal
-    // const hideConfirmationModal = () => {
-    //     setDisplayConfirmationModal(false);
-    // };
-    // const submitDelete = (type, id) => { 
     
-    //     villageData['state_id'] = id;
-    //     deleteStateAction(villageData).then((data) => {
-             
-    //         if(data.result === "deletesuccess"){
-    //             getAllStateAction().then((data) => { setAllStateDate(data.result)});                
-    //             clearInpHook();
-    //             setDisplayConfirmationModal(false);
-    //             dispatch(setShowMessage('State Data Delete Successfully!')); 
-    //         }else {
-    //             dispatch(setShowMessage('Something is wrong!'))
-    //         }                
-    //     }).catch((error) => {
-    //         console.error('Error in DeleteStateAction:', error);
-    //     }); 
-    // };
 
-    // useEffect(() => {
-    //     if (addState.isSuccess) {
-    //         if (addState.message.result === 'success') {
-    //             dispatch(setShowMessage('State Save Successfully!')) 
-    //             clearInpHook()               
-    //             dispatch(clearAddState())              
-    //             setModalShow(false);
-    //         } else if (addState.message.result === 'alreadyExist') {
-    //             dispatch(setShowMessage('Please Enter Other State Name!'))
-    //             dispatch(clearAddState())
-    //         } else {
-    //             dispatch(setShowMessage('Something is wrong!'))
-    //         }
-    //     }
-    // }, [addState])
-
+    const hideConfirmationModal = () => {
+        setDisplayConfirmationModal(false);
+    };
     function clearInpHook() {
         setVillageData({
-            state_id:'',       
-            district_id:'',        
-            taluka_id:'',        
+            StateName:'',       
+            DistrictName:'',        
+            TalukaName:'',        
             villageName:''
         })
-        seteditTalukaById('');
+        seteditVillageById('');
     }
 
    
@@ -228,7 +227,7 @@ export default function Village_list() {
             minWidth: 100,
             flex: 1,
             valueGetter: (params) => {
-                return `${params.row.name ? params.row.name : '-'}`
+                return `${params.row.name ? params.row.TalukaName : '-'}`
             }
         },
         {
@@ -250,7 +249,7 @@ export default function Village_list() {
             minWidth: 150,
             flex: 1,           
             valueGetter: (params) => {
-                return `${params.row.state_name ? params.row.state_name : '-'}`
+                return `${params.row.stateName ? params.row.stateName : '-'}`
             }
         },     
         {
@@ -281,13 +280,13 @@ export default function Village_list() {
             renderCell: (params) => (
                 <div>
                     {/* <button onClick={() => { editActionCall(params.row) }} className='myActionBtn m-1'> */}
-                    <button className='myActionBtn m-1' onClick={() => { editeStateModal(params.row) }}>
+                    <button className='myActionBtn m-1' onClick={() => { editeVillageModal(params.row) }}>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="bi bi-pencil-square" viewBox="0 0 16 16">
                             <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
                             <path fillRule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
                         </svg>
                     </button>
-                    <button className='myActionBtn m-1' onClick={() => { deleteStateAlert(params.row) }}>
+                    <button className='myActionBtn m-1' onClick={() => { deleteVillageAlert(params.row) }}>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="bi bi-trash3" viewBox="0 0 16 16">
                             <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5ZM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0H11Zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5h9.916Zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5Z" />
                         </svg>
@@ -304,6 +303,14 @@ export default function Village_list() {
         }).catch((error) => {
             console.error('Error in getAllStateAction:', error);
         });
+
+        getAllVillageAction().then((data) => {
+            console.log(data,"All villageeeee")
+            setAllVillageDate(data.result)
+        }).catch((error) => {
+            console.error('Error in getAllVillageAction:', error);
+        });
+       
        
     }, [])
     return (
@@ -360,7 +367,7 @@ export default function Village_list() {
             </div>
 
 
-            {/* <AlertDeleteModal showModal={displayConfirmationModal} confirmModal={submitDelete} hideModal={hideConfirmationModal} type={type} id={id} message={deleteMessage}  /> */}
+            <AlertDeleteModal showModal={displayConfirmationModal} confirmModal={submitDelete} hideModal={hideConfirmationModal} type={type} id={id} message={deleteMessage}  />
             {/* village modal */}
             <Modal show={modalShow} onHide={handleClose}>
                 <Modal.Header closeButton>
@@ -369,8 +376,8 @@ export default function Village_list() {
                 <Modal.Body>
                     <div className="">
                         <div className="mb-3">
-                            <label htmlFor="selectstate" className="col-form-label">State Name:</label>
-                            <select class="form-control" name="state_id" id="selectstate" onChange={(e) => { onChangeHandler(e) }}>
+                            <label htmlFor="selectstate" className="col-form-label">State Name:</label> 
+                            <select class="form-control" name="StateName" id="selectstate" value={villageData.StateName} onChange={(e) => { onChangeHandler(e) }}>
                                 <option value="">Select State</option>                                
                                 {stateOptions.map((option) => (
                                      <option key={option.state_id} value={option.state_id}>
@@ -381,7 +388,7 @@ export default function Village_list() {
                         </div>
                         <div className="mb-3">
                             <label htmlFor="selectdistrict" className="col-form-label">District Name:</label>
-                            <select class="form-control" name="district_id" id="selectdistrict" onChange={(e) => { onChangeHandler(e) }}>
+                            <select class="form-control" name="DistrictName" id="selectdistrict" value={villageData.DistrictName} onChange={(e) => { onChangeHandler(e) }}>
                                 <option value="">Select District</option>                                
                                 {districtOptions.map((option) => (
                                      <option key={option.id} value={option.id}>
@@ -392,7 +399,7 @@ export default function Village_list() {
                         </div>
                         <div className="mb-3">
                             <label htmlFor="selecttaluka" className="col-form-label">Taluka Name:</label>
-                            <select class="form-control" name="taluka_id" id="selecttaluka" onChange={(e) => { onChangeHandler(e) }}>
+                            <select class="form-control" name="TalukaName" id="selecttaluka" value={villageData.TalukaName} onChange={(e) => { onChangeHandler(e) }}>
                                 <option value="">Select Taluka</option>                                
                                 {talukaOptions.map((option) => (
                                      <option key={option.id} value={option.id}>
