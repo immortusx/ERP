@@ -20,6 +20,10 @@ import Switch from '@mui/material/Switch';
 export default function Branch({ workFor }) {
     const dispatch = useDispatch()
     const [branchList, setBranchsList] = useState([])
+    const [talukaList, setTalukaList] = useState([])
+    const [villageList, setVillageList] = useState([])
+    const [stateList, setStateList] = useState([])
+    const [districtList, setDistrictList] = useState([])
     const [branchData, setBranchData] = useState({
         address: "",
         code: "",
@@ -28,7 +32,11 @@ export default function Branch({ workFor }) {
         email: "",
         firmName: "",
         gstNumber: "",
-        mobileNumber: ""
+        mobileNumber: "",
+        state: "",
+        district: "",
+        taluka: "",
+        village: "",
 
     })
     const [checked, setChecked] = useState(true);
@@ -168,6 +176,66 @@ export default function Branch({ workFor }) {
     useEffect(() => {
         getBranchList()
     }, [])
+    async function getStateList() {
+        const url = `${process.env.REACT_APP_NODE_URL}/api/get-state-list`;
+        const config = {
+            headers: {
+                token: localStorage.getItem('rbacToken')
+            }
+        };
+        await axios.get(url, config).then((response) => {
+            if (response.data.isSuccess) {
+                setStateList(response.data.result)
+            }
+        })
+
+    }
+    async function getTalukaByDistrict(id) {
+        const url = `${process.env.REACT_APP_NODE_URL}/api/get-taluka-list/${id}`;
+        const config = {
+            headers: {
+                token: localStorage.getItem('rbacToken')
+            }
+        };
+        await axios.get(url, config).then((response) => {
+            if (response.data.isSuccess) {
+                setTalukaList(response.data.result)
+            }
+        })
+    }
+    async function getDistrictByState(id) {
+        const url = `${process.env.REACT_APP_NODE_URL}/api/get-district-list/${id}`;
+        const config = {
+            headers: {
+                token: localStorage.getItem('rbacToken')
+            }
+        };
+        await axios.get(url, config).then((response) => {
+            if (response.data.isSuccess) {
+                setDistrictList(response.data.result)
+            }
+        })
+    }
+    async function getVillageByTaluka(id) {
+        const url = `${process.env.REACT_APP_NODE_URL}/api/get-village-list/${id}`;
+        const config = {
+            headers: {
+                token: localStorage.getItem('rbacToken')
+            }
+        };
+        await axios.get(url, config).then((response) => {
+            if (response.data.isSuccess) {
+                setVillageList(response.data.result)
+
+                // setBranchsList(response.data.result)
+            }
+        })
+    }
+    useEffect(() => {
+        if (workFor !== 'branch') {
+            getStateList()
+        }
+    }, [workFor])
 
     function selectBranch(e, data) {
         const inpCheckBox = document.getElementsByClassName('inpCheckBox')
@@ -182,6 +250,7 @@ export default function Branch({ workFor }) {
 
     }
     function editActionCall(data) {
+        console.log('data ********', data)
         navigate('/home/edit-branch')
         setBranchData({
             id: data.id,
@@ -192,9 +261,17 @@ export default function Branch({ workFor }) {
             email: data.email_id,
             firmName: data.name,
             gstNumber: data.gst_number,
-            mobileNumber: data.mobile_number
+            mobileNumber: data.mobile_number,
+            state: data.state,
+            district: data.district,
+            taluka: data.taluka,
+            village: data.village,
         })
+        getDistrictByState(data.state)
+        getTalukaByDistrict(data.district)
+        getVillageByTaluka(data.taluka)
     }
+
     function clearState() {
         setBranchData({
             address: "",
@@ -204,8 +281,16 @@ export default function Branch({ workFor }) {
             email: "",
             firmName: "",
             gstNumber: "",
-            mobileNumber: ""
+            mobileNumber: "",
+            state: "",
+            district: "",
+            taluka: "",
+            village: "",
         })
+        setStateList([])
+        setDistrictList([])
+        setTalukaList([])
+        setVillageList([])
         const inpClr = document.getElementsByClassName('inpClr')
         Array.from(inpClr).forEach(i => {
             if (i.type === 'select-one') {
@@ -305,6 +390,7 @@ export default function Branch({ workFor }) {
                 saveToDb(data)
 
             } else {
+                console.log('data', data)
                 editToDb(data)
             }
 
@@ -316,6 +402,19 @@ export default function Branch({ workFor }) {
     function changeHandler(e) {
         const name = e.target.name
         const value = e.target.value
+        // console.log('name,value', name, value)
+
+        switch (name) {
+            case 'state':
+                getDistrictByState(value)
+                break;
+            case 'district':
+                getTalukaByDistrict(value)
+                break;
+            case 'taluka':
+                getVillageByTaluka(value)
+                break;
+        }
         setBranchData((branchData) => ({ ...branchData, [name]: value }))
 
     }
@@ -328,6 +427,7 @@ export default function Branch({ workFor }) {
         navigate('/home/branch')
 
     }
+
 
     return (
         <div className='bg-white rounded p-3'>
@@ -399,34 +499,45 @@ export default function Branch({ workFor }) {
                                 </section>
                                 <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
                                     <label className='myLabel' htmlFor="email">Select State </label>
-                                    <select onChange={changeHandler} className='myInput inpClr' name="state">
+                                    <select defaultValue={branchData.state} onChange={changeHandler} className='myInput inpClr' name="state">
                                         <option value='0' className='myLabel'>select</option>
                                         {
-                                            // newEnquiryList.listBranch && newEnquiryList.listBranch.length > 0 && newEnquiryList.listBranch.map((i, index) => {
-                                            //     return <option key={index} value={i.id} className='myLabel'>{i.name}</option>
-                                            // })
-                                        }
-                                    </select>
-                                </section>
-                                <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
-                                    <label className='myLabel' htmlFor="email">Select City </label>
-                                    <select onChange={changeHandler} className='myInput inpClr' name="city">
-                                        <option value='0' className='myLabel'>select</option>
-                                        {
-                                            // newEnquiryList.listBranch && newEnquiryList.listBranch.length > 0 && newEnquiryList.listBranch.map((i, index) => {
-                                            //     return <option key={index} value={i.id} className='myLabel'>{i.name}</option>
-                                            // })
+                                            stateList && stateList.length > 0 && stateList.map((i, index) => {
+                                                return <option selected={branchData.state == i.state_id ? true : false} key={index} value={i.state_id} className='myLabel'>{i.state_name}</option>
+                                            })
                                         }
                                     </select>
                                 </section>
                                 <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
                                     <label className='myLabel' htmlFor="email">Select District </label>
-                                    <select onChange={changeHandler} className='myInput inpClr' name="district">
+                                    <select defaultValue={branchData.district} onChange={changeHandler} className='myInput inpClr' name="district">
                                         <option value='0' className='myLabel'>select</option>
                                         {
-                                            // newEnquiryList.listBranch && newEnquiryList.listBranch.length > 0 && newEnquiryList.listBranch.map((i, index) => {
-                                            //     return <option key={index} value={i.id} className='myLabel'>{i.name}</option>
-                                            // })
+                                            districtList && districtList.length > 0 && districtList.map((i, index) => {
+                                                return <option selected={branchData.district == i.id ? true : false} key={index} value={i.id} className='myLabel'>{i.name}</option>
+                                            })
+                                        }
+                                    </select>
+                                </section>
+                                <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
+                                    <label className='myLabel' htmlFor="email">Select Taluka </label>
+                                    <select defaultValue={branchData.taluka} onChange={changeHandler} className='myInput inpClr' name="taluka">
+                                        <option value='0' className='myLabel'>select</option>
+                                        {
+                                            talukaList && talukaList.length > 0 && talukaList.map((i, index) => {
+                                                return <option selected={branchData.taluka == i.id ? true : false} key={index} value={i.id} className='myLabel'>{i.name}</option>
+                                            })
+                                        }
+                                    </select>
+                                </section>
+                                <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
+                                    <label className='myLabel' htmlFor="email">Select Village </label>
+                                    <select onChange={changeHandler} className='myInput inpClr' name="village">
+                                        <option value='0' className='myLabel'>select</option>
+                                        {
+                                            villageList && villageList.length > 0 && villageList.map((i, index) => {
+                                                return <option selected={branchData.village == i.id ? true : false} key={index} value={i.id} className='myLabel'>{i.name}</option>
+                                            })
                                         }
                                     </select>
                                 </section>
