@@ -165,6 +165,7 @@ select.myInput {
 .myH9 {
   font-size: 0.9rem;
 }
+
 .myH7 {
   font-size: 0.7rem;
 }
@@ -296,8 +297,40 @@ select.myInput {
   display: table-caption;
 }
 
+.breadcrumbs {
+  max-width: 1200px;
+  margin: 10px auto;
+}
 
+.breadcrumbs>* {
+  display: inline-block;
+  margin-right: 0.8px;
+}
 
+.breadcrumbs .crumb::after {
+  content: '>';
+  padding-left: 5px;
+}
+
+.breadcrumbs .crumb:last-child::after {
+  display: none;
+}
+
+.breadcrumbs .crumb a {
+  color: #282c34;
+}
+
+#breadcrumbs a {
+  list-style: none;
+  text-decoration: none;
+  text-transform: uppercase;
+  padding-left: 5px;
+  font-size: 15px;
+}
+
+#breadcrumbs a:hover{
+  color: #77aaf7;
+}
 
 @keyframes App-logo-spin {
   from {
