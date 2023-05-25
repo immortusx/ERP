@@ -41,8 +41,8 @@ const CheckPermission = ({ children, path }) => {
   // return checkList.includes(path) ? children : <h3>No access</h3>
   const rolesArray = localStorage.getItem('rolesArray')
   const checkList = rolesArray.split(',')
-  console.log('path', path)
-  console.log('children', window.location.pathname)
+  // console.log('path', path)
+  // console.log('children', window.location.pathname)
   // console.log('checkList.includes(path)', checkList.includes(path));
   return checkList.includes(path) ? children : <NoAuth></NoAuth>
 }
@@ -436,6 +436,7 @@ export default function HomeScreen() {
         <div className='container position-relative p-4'>
           <BreadCrumb/>
           <Routes>
+            
             <Route path="no-access" element={<NoAuth />} exact />
 
             <Route path="users" element={<CheckPermission path='users'><Users /></CheckPermission>} exact />
