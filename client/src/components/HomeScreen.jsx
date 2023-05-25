@@ -38,7 +38,8 @@ const CheckPermission = ({ children, path }) => {
   // return checkList.includes(path) ? children : <h3>No access</h3>
   const rolesArray = localStorage.getItem('rolesArray')
   const checkList = rolesArray.split(',')
-  // console.log('path', path)
+  console.log('path', path)
+  console.log('children', window.location.pathname)
   // console.log('checkList.includes(path)', checkList.includes(path));
   return checkList.includes(path) ? children : <NoAuth></NoAuth>
 }
@@ -459,6 +460,7 @@ export default function HomeScreen() {
 
             <Route path="branch" element={<CheckPermission path='branch'><Branch workFor='branch' /></CheckPermission>} exact />
             <Route path="add-branch" element={<CheckPermission path='branch'><Branch workFor='addBranch' /></CheckPermission>} exact />
+            <Route path="edit-branch" element={<CheckPermission path='branch'><Branch workFor='editBranch' /></CheckPermission>} exact />
 
             {/* <Route path='admin'>
           </Route> */}

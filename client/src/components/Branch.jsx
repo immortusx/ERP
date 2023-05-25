@@ -11,15 +11,35 @@ import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import SwapSection from './SwapSection'
 import moment from 'moment'
 
+import { useSelector, useDispatch } from 'react-redux'
+
+import { setShowMessage } from '../redux/slices/notificationSlice'
+import Switch from '@mui/material/Switch';
+
 
 export default function Branch({ workFor }) {
+    const dispatch = useDispatch()
     const [branchList, setBranchsList] = useState([])
-    const [usersList, setUsersList] = useState([])
-    const [userData, setUserData] = useState([])
+    const [branchData, setBranchData] = useState({
+        address: "",
+        code: "",
+        contactPerson: "",
+        description: "",
+        email: "",
+        firmName: "",
+        gstNumber: "",
+        mobileNumber: ""
+
+    })
+    const [checked, setChecked] = useState(true);
 
     const navigate = useNavigate()
 
-
+    useEffect(() => {
+        if (workFor === 'addBranch') {
+            clearState()
+        }
+    }, [workFor])
 
     function getDateInFormat(data) {
         let momentData = moment(data)
@@ -55,7 +75,20 @@ export default function Branch({ workFor }) {
 
         },
         {
-            field: 'address', headerName: 'Address', minWidth: 300, flex: 1,
+            field: 'is_active',
+            headerName: 'Active',
+            headerAlign: 'left',
+            align: 'left',
+            type: 'number',
+            minWidth: 80,
+            flex: 1,
+            renderCell: (params) => (
+                params.row.is_active ? <CheckIcon /> : <ClearIcon />
+            ),
+
+        },
+        {
+            field: 'address', headerName: 'Address', minWidth: 250, flex: 1,
             valueGetter: (params) => {
                 return `${params.row.address ? params.row.address : '-'}`
             }
@@ -107,7 +140,8 @@ export default function Branch({ workFor }) {
                             <path fillRule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
                         </svg>
                     </button>
-                    <button className='myActionBtn m-1'>
+
+                    <button disabled onClick={() => { deletActionCall(params.row) }} className='myActionBtn m-1'>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="bi bi-trash3" viewBox="0 0 16 16">
                             <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5ZM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0H11Zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5h9.916Zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5Z" />
                         </svg>
@@ -126,9 +160,7 @@ export default function Branch({ workFor }) {
         };
         await axios.get(url, config).then((response) => {
             if (response.data && response.data.isSuccess) {
-                console.log('response', response.data.result)
-                setBranchsList(response.data.result.branches)
-                setUsersList(response.data.result.users)
+                setBranchsList(response.data.result)
             }
         })
 
@@ -136,80 +168,176 @@ export default function Branch({ workFor }) {
     useEffect(() => {
         getBranchList()
     }, [])
-    useEffect(() => {
-        console.log('workFor', workFor)
-    }, [workFor])
-    const [branchid, setBranchid] = useState([1, 2, 3])
-    function cancelClicked() {
-        console.log('cancelClicked called', branchid)
 
-
-    }
-    function submitClicked() {
-        console.log('submitClicked called', branchid)
-
-    }
     function selectBranch(e, data) {
         const inpCheckBox = document.getElementsByClassName('inpCheckBox')
         Array.from(inpCheckBox).forEach(i => {
             i.checked = false
         })
         e.currentTarget.firstChild.firstChild.checked = true
-        console.log('e.currentTarget', e.currentTarget.firstChild.firstChild)
-        console.log('selectBranch', e.currentTarget.classList)
-        console.log('data', data)
     }
-    function rightClick() {
-        // let tempAr = []
-        // Array.from(userData.role).forEach(ids => {
-        //     tempAr.push(ids)
-        // })
-        // Array.from(selectInp.current.selectedOptions).forEach(element => {
-        //     const doesExist = userData.role.find(idExist => {
-        //         return idExist == element.value
-        //     })
-        //     if (doesExist === undefined) {
-        //         tempAr.push(parseInt(element.value))
-        //     }
-        // });
-        // setUserData(userData => ({ ...userData, role: tempAr }))
-        // selectInp.current.value = 0
-        // rightArrowBtn.current.classList.add('disabledBtn')
-    }
-    function callBackFun(checkId) {
-        console.log('callBackFun', checkId)
+
+    function deletActionCall(data) {
+        deleteRecordFromDb(data.id)
 
     }
-    function callBackLeft(checkId) {
-        console.log('callBackLeft', checkId)
+    function editActionCall(data) {
+        navigate('/home/edit-branch')
+        setBranchData({
+            id: data.id,
+            address: data.address,
+            code: data.code,
+            contactPerson: data.contact_person,
+            description: data.description,
+            email: data.email_id,
+            firmName: data.name,
+            gstNumber: data.gst_number,
+            mobileNumber: data.mobile_number
+        })
+    }
+    function clearState() {
+        setBranchData({
+            address: "",
+            code: "",
+            contactPerson: "",
+            description: "",
+            email: "",
+            firmName: "",
+            gstNumber: "",
+            mobileNumber: ""
+        })
+        const inpClr = document.getElementsByClassName('inpClr')
+        Array.from(inpClr).forEach(i => {
+            if (i.type === 'select-one') {
+                i.value = 0
+            } else if (i.type === 'text') {
+                i.value = ''
+            } else {
+                i.value = ''
+
+            }
+        })
 
     }
-    function editActionCall(e) {
+    async function deleteRecordFromDb(id) {
+        const url = `${process.env.REACT_APP_NODE_URL}/api/branch/delete-branch/${id}`;
+        const config = {
+            headers: {
+                token: localStorage.getItem('rbacToken')
+            }
+        };
+        await axios.get(url, config).then((response) => {
+            if (response.data) {
+                if (response.data.isSuccess) {
+                    if (response.data.result === 'success') {
+                        dispatch(setShowMessage('Branch is deactivated'))
+                        clearState()
+                        navigate('/home/branch')
+                        getBranchList()
+                    } else {
+                        dispatch(setShowMessage('Something is wrong'))
+                    }
+                }
+            }
 
+        })
     }
-    useEffect(() => {
-        console.log('branchList', branchList)
-    }, [branchList])
+    async function saveToDb(data) {
+        const url = `${process.env.REACT_APP_NODE_URL}/api/branch/add-new-branch`;
+        const config = {
+            headers: {
+                token: localStorage.getItem('rbacToken')
+            }
+        };
+
+        await axios.post(url, data, config).then((response) => {
+            if (response.data) {
+                if (response.data.isSuccess) {
+                    if (response.data.result === 'success') {
+                        dispatch(setShowMessage('New branch is created'))
+                        clearState()
+                        navigate('/home/branch')
+                        getBranchList()
+                    } else {
+                        dispatch(setShowMessage('Something is wrong'))
+                    }
+                }
+            }
+
+        })
+    }
+    async function editToDb(data) {
+        const url = `${process.env.REACT_APP_NODE_URL}/api/branch/edit-branch-details`;
+        const config = {
+            headers: {
+                token: localStorage.getItem('rbacToken')
+            }
+        };
+
+        await axios.post(url, data, config).then((response) => {
+            if (response.data) {
+                if (response.data.isSuccess) {
+                    if (response.data.result === 'success') {
+                        dispatch(setShowMessage('Branch is updated'))
+                        clearState()
+                        navigate('/home/branch')
+                        getBranchList()
+                    } else {
+                        dispatch(setShowMessage('Something is wrong'))
+                    }
+                }
+            }
+
+        })
+    }
+    async function saveTheNewBranch(data) {
+        if (
+            branchData.address.length > 0 &&
+            branchData.code.length > 0 &&
+            branchData.contactPerson.length > 0 &&
+            branchData.description.length > 0 &&
+            branchData.email.length > 0 &&
+            branchData.firmName.length > 0 &&
+            branchData.gstNumber.length > 0 &&
+            branchData.mobileNumber.length > 0
+        ) {
+            if (workFor == 'addBranch') {
+                saveToDb(data)
+
+            } else {
+                editToDb(data)
+            }
+
+        } else {
+            dispatch(setShowMessage('Please fill all the marked field'))
+        }
+    }
     const rowsData = branchList.map((item, index) => ({ ...item, rowNumber: index + 1 }));
-    function changeHandler() {
+    function changeHandler(e) {
+        const name = e.target.name
+        const value = e.target.value
+        setBranchData((branchData) => ({ ...branchData, [name]: value }))
 
     }
     function saveBtnCalled() {
-
+        console.log('branchData', branchData)
+        console.log('branchList', branchList)
+        saveTheNewBranch(branchData)
     }
     function cancelHandler() {
+        navigate('/home/branch')
 
     }
 
     return (
         <div className='bg-white rounded p-3'>
             <main>
-                <h5 className='m-0'>{workFor === 'addBranch' ? 'New Branch' : 'Branch'}</h5>
+                <h5 className='m-0'>{workFor === 'branch' ? 'Branch' : workFor === 'addBranch' ? 'New Branch' : 'Edit Branch'}</h5>
 
                 <div className='row m-0'>
                     {
 
-                        workFor !== 'addBranch' && <div className='mb-3  d-flex align-items-end justify-content-end'>
+                        workFor === 'branch' && <div className='mb-3  d-flex align-items-end justify-content-end'>
                             <div onClick={() => { navigate('/home/add-branch') }} className='d-flex align-items-center' type='button'>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-plus-circle" viewBox="0 0 16 16">
                                     <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
@@ -222,44 +350,11 @@ export default function Branch({ workFor }) {
 
                         </div>
                     }
-                    {/* <section className='myTableSection mt-3'>
-                        <table className="branchTableList table table-hover text-center myWhiteTextNoWrap">
-                            <thead className='text-start'>
-                                <tr>
-                                    <th scope="col"></th>
-                                    <th scope="col">No</th>
-                                    <th scope="col">Branch Name</th>
-                                    <th scope="col">Email Id</th>
-                                </tr>
-                            </thead>
-                            <tbody className='text-start'>
-                                {
-                                    branchList.length > 0 && branchList.map((data, index) => {
-                                        return <tr id={`tr${index}`} className='myCursonPointer' onClick={(e) => { selectBranch(e, data) }} key={index}>
-                                            <td><input className='inpCheckBox' type="checkbox" /></td>
-                                            <td>{index + 1}</td>
-                                            <td>{data.name}</td>
-                                            <td>{data.email_id}</td>
-                                        </tr>
-                                    })
-                                }
-                            </tbody>
-                        </table>
-                    </section> */}
-
-                    {/* <main className='mt-3'>
-                        <div className=''>
-                            <section className='d-flex flex-column col-12'>
-                                <label className='myLabel'>Users</label>
-                                <SwapSection workFor='users' selectedData={userData} setSelectedData={setUserData} callBackFun={callBackFun} callBackLeft={callBackLeft} selectionData={usersList} />
-                            </section>
-                        </div>
-                    </main> */}
 
                     {
 
 
-                        workFor !== 'addBranch' && <div style={{ height: '85vh', width: '100%' }}>
+                        workFor === 'branch' && <div style={{ height: '85vh', width: '100%' }}>
                             <DataGrid
                                 rows={rowsData}
                                 columns={columns}
@@ -292,19 +387,19 @@ export default function Branch({ workFor }) {
                         </div>
                     }
                     {
-                        workFor === 'addBranch' && <>
+                        workFor !== 'branch' && <>
                             <div className='row mt-2 m-0'>
                                 <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
-                                    <label className='myLabel' htmlFor="email">First Name *</label>
-                                    <input onChange={changeHandler} className='inpClr myInput inputElement' autoComplete='false' type="text" name="firstName" />
+                                    <label className='myLabel' htmlFor="email">Firm Name </label>
+                                    <input defaultValue={branchData.firmName} onChange={changeHandler} className='inpClr myInput inputElement' autoComplete='false' type="text" name="firmName" />
                                 </section>
                                 <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
                                     <label className='myLabel' htmlFor="email">G.S.T Number *</label>
-                                    <input onChange={changeHandler} className='inpClr myInput inputElement' autoComplete='false' type="text" name="firstName" />
+                                    <input defaultValue={branchData.gstNumber} onChange={changeHandler} className='inpClr myInput inputElement' autoComplete='false' type="text" name="gstNumber" />
                                 </section>
                                 <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
-                                    <label className='myLabel' htmlFor="email">Select State *</label>
-                                    <select onChange={changeHandler} className='myInput inpClr' name="branchId">
+                                    <label className='myLabel' htmlFor="email">Select State </label>
+                                    <select onChange={changeHandler} className='myInput inpClr' name="state">
                                         <option value='0' className='myLabel'>select</option>
                                         {
                                             // newEnquiryList.listBranch && newEnquiryList.listBranch.length > 0 && newEnquiryList.listBranch.map((i, index) => {
@@ -314,8 +409,8 @@ export default function Branch({ workFor }) {
                                     </select>
                                 </section>
                                 <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
-                                    <label className='myLabel' htmlFor="email">Select City *</label>
-                                    <select onChange={changeHandler} className='myInput inpClr' name="branchId">
+                                    <label className='myLabel' htmlFor="email">Select City </label>
+                                    <select onChange={changeHandler} className='myInput inpClr' name="city">
                                         <option value='0' className='myLabel'>select</option>
                                         {
                                             // newEnquiryList.listBranch && newEnquiryList.listBranch.length > 0 && newEnquiryList.listBranch.map((i, index) => {
@@ -325,8 +420,8 @@ export default function Branch({ workFor }) {
                                     </select>
                                 </section>
                                 <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
-                                    <label className='myLabel' htmlFor="email">Select District *</label>
-                                    <select onChange={changeHandler} className='myInput inpClr' name="branchId">
+                                    <label className='myLabel' htmlFor="email">Select District </label>
+                                    <select onChange={changeHandler} className='myInput inpClr' name="district">
                                         <option value='0' className='myLabel'>select</option>
                                         {
                                             // newEnquiryList.listBranch && newEnquiryList.listBranch.length > 0 && newEnquiryList.listBranch.map((i, index) => {
@@ -336,24 +431,28 @@ export default function Branch({ workFor }) {
                                     </select>
                                 </section>
                                 <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
-                                    <label className='myLabel' htmlFor="email">Contact Person *</label>
-                                    <input onChange={changeHandler} className='inpClr myInput inputElement' autoComplete='false' type="text" name="firstName" />
+                                    <label className='myLabel' htmlFor="email">Contact Person </label>
+                                    <input defaultValue={branchData.contactPerson} onChange={changeHandler} className='inpClr myInput inputElement' autoComplete='false' type="text" name="contactPerson" />
                                 </section>
-                                <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-3'>
+                                <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
                                     <label className='myLabel' htmlFor="email">Mobile Number *</label>
-                                    <input onChange={changeHandler} className='inpClr myInput inputElement' autoComplete='false' type="text" name="firstName" />
+                                    <input defaultValue={branchData.mobileNumber} onChange={changeHandler} className='inpClr myInput inputElement' autoComplete='false' type="text" name="mobileNumber" />
                                 </section>
-                                <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-3'>
+                                <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
                                     <label className='myLabel' htmlFor="email">Email *</label>
-                                    <input onChange={changeHandler} className='inpClr myInput inputElement' autoComplete='false' type="text" name="firstName" />
+                                    <input defaultValue={branchData.email} onChange={changeHandler} className='inpClr myInput inputElement' autoComplete='false' type="text" name="email" />
                                 </section>
-                                <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-3'>
+                                <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
+                                    <label className='myLabel' htmlFor="email">Code *</label>
+                                    <input defaultValue={branchData.code} onChange={changeHandler} className='inpClr myInput inputElement' autoComplete='false' type="text" name="code" />
+                                </section>
+                                <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
                                     <label className='myLabel' htmlFor="email">Branch Address *</label>
-                                    <textarea onChange={changeHandler} className='inpClr myInput inputElement' rows='3' autoComplete='false' type="text" name="firstName" />
+                                    <textarea defaultValue={branchData.address} onChange={changeHandler} className='inpClr myInput inputElement' rows='3' autoComplete='false' type="text" name="address" />
                                 </section>
-                                <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-3'>
-                                    <label className='myLabel' htmlFor="email">Description *</label>
-                                    <textarea onChange={changeHandler} className='inpClr myInput inputElement' rows='3' autoComplete='false' type="text" name="firstName" />
+                                <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
+                                    <label className='myLabel' htmlFor="email">Description</label>
+                                    <textarea defaultValue={branchData.description} onChange={changeHandler} className='inpClr myInput inputElement' rows='3' autoComplete='false' type="text" name="description" />
                                 </section>
                                 <section className='d-flex pt-3 flex-column flex-sm-row'>
                                     <button className='col-12 col-sm-3 col-lg-2 myBtn py-2' onClick={saveBtnCalled} type='button'>Save</button>

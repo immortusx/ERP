@@ -121,7 +121,7 @@ hr {
 
 .myBtn {
   /* border: none; */
-  border: 1.5px solid #3e53678a;
+  border: 1.5px solid #d8d6de;
 
   border-radius: 10px;
   outline: none;
@@ -137,10 +137,11 @@ select.myInput {
 
 .myInput {
   border: none;
-  border: 1.5px solid #0000006b;
+  border: 1.5px solid #d8d6de;
   border-radius: 5px;
-  padding: 5px 10px;
+  padding: 5px 15px;
   outline: none;
+  color: #5f5f5f !important;
 }
 
 .myImgContainer {

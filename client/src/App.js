@@ -12,8 +12,9 @@ import { getProfileData } from './redux/slices/profileSlice'
 import { setShowMessage } from './redux/slices/notificationSlice'
 
 
-// hello ji
+
 const PublicRoute = (({ children }) => {
+
   const rbacToken = localStorage.getItem('rbacToken')
   return rbacToken && rbacToken.length > 0 ? children : <Navigate to="/" />;
 })
@@ -30,7 +31,6 @@ function App() {
       }, 3000)
     }
   }, [notificationState])
-
 
   useEffect(() => {
     dispatch(isAdminExist())
