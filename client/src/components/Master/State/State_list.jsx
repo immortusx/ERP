@@ -238,6 +238,9 @@ export default function State_list() {
         });
        
     }, [])
+    useEffect(()=> {
+        console.log(rowsData,'rowdata');
+    },[allStateDate])
     return (
         <>
             <div className=''>
