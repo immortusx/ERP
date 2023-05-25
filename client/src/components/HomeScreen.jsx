@@ -34,6 +34,7 @@ import Village_list from './Master/Village/Village_list'
 import Taluka_list from './Master/Taluka/Taluka_list'
 import Plan_List from './Master/Plan/Part_List'
 import Part_List from './Master/Plan/Part_List'
+import BreadCrumb from './BreadCrumb/BreadCrumb'
 
 const CheckPermission = ({ children, path }) => {
   // return checkList.includes(path) ? children : <Navigate to="../no-access" />
@@ -433,6 +434,7 @@ export default function HomeScreen() {
 
       <main id='mainContainer' className=''>
         <div className='container position-relative p-4'>
+          <BreadCrumb/>
           <Routes>
             <Route path="no-access" element={<NoAuth />} exact />
 
