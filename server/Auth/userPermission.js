@@ -8,7 +8,7 @@ function checkUserPermission(role) {
     const branchId = req.myData.branchId
     let url = '';
     if (req.myData.isSuperAdmin) {
-      url = `SELECT page, index_no, feature  FROM features`; 
+      url = `SELECT page, index_no, feature  FROM features`;
     } else {
       url = `SELECT DISTINCT  t.page, t.index_no, t.feature  FROM branch_department_user f inner join role_features as s on s.role_id = f.role_id inner join features as t on s.feature_id = t.id  where user_id = ${userId} and branch_id = ${branchId}`
     }

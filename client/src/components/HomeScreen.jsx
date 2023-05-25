@@ -32,7 +32,8 @@ import State_list from './Master/State/State_list'
 import District_list from './Master/District/District_list'
 import Village_list from './Master/Village/Village_list'
 import Taluka_list from './Master/Taluka/Taluka_list'
-import Plan_List from './Master/Plan/Plan_List'
+import Plan_List from './Master/Plan/Part_List'
+import Part_List from './Master/Plan/Part_List'
 
 const CheckPermission = ({ children, path }) => {
   // return checkList.includes(path) ? children : <Navigate to="../no-access" />
@@ -445,7 +446,7 @@ export default function HomeScreen() {
             <Route path="district-list" element={<CheckPermission path='profile'><District_list /></CheckPermission>} exact />
             <Route path="village-list" element={<CheckPermission path='profile'><Village_list /></CheckPermission>} exact />
             <Route path="taluka-list" element={<CheckPermission path='profile'><Taluka_list /></CheckPermission>} exact />
-            <Route path="plan-list" element={<CheckPermission path='profile'><Plan_List /></CheckPermission>} exact />
+            <Route path="part-list" element={<CheckPermission path='profile'><Part_List/></CheckPermission>} exact />
 
             <Route path="sales" element={<CheckPermission path='sales'><Sales /></CheckPermission>} exact />
 
