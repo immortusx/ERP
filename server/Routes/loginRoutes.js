@@ -24,7 +24,7 @@ router.post('/admin-registration', async (req, res) => {
       console.log({ isSuccess: false, result: err })
       res.send({ isSuccess: false, result: 'error' })
     } else {
-      const sqlQuery = `INSERT INTO dealer_department_user(dealer_id,department_id,user_id, role_id) VALUES(1,1,'${result.insertId}', 1)`
+      const sqlQuery = `INSERT INTO branch_department_user(branch_id,department_id,user_id, role_id) VALUES(1,1,'${result.insertId}', 1)`
       await db.query(sqlQuery, (err, result) => {
         if (err) {
           console.log({ isSuccess: false, result: err })
@@ -40,7 +40,7 @@ router.post('/admin-registration', async (req, res) => {
 router.get('/is-admin-exist', async (req, res) => {
   console.log('>>>>>adminExist');
 
-  const url = `SELECT * from dealer_department_user where role_id = 1`
+  const url = `SELECT * from branch_department_user where role_id = 1`
   await db.query(url, async (err, result) => {
     if (err) {
       console.log({ isSuccess: true, result: err })
@@ -54,12 +54,12 @@ router.get('/is-admin-exist', async (req, res) => {
     }
   })
 })
-router.post('/dealer-token-change', tokenCheck, async (req, res) => {
-  console.log('>>>>>>>dealer-token-change')
+router.post('/branch-token-change', tokenCheck, async (req, res) => {
+  console.log('>>>>>>>branch-token-change')
   console.log('req.myData', req.myData, req.body.id)
   const tokenData = {
     id: req.myData.userId,
-    dealerId: req.body.id
+    branchId: req.body.id
   };
   const tokenIs = await getToken(tokenData)
   res.send({ isSuccess: true, message: 'success', result: tokenIs })
@@ -87,21 +87,21 @@ router.post('/', async (req, res) => {
               res.send({ isSuccess: true, message: 'error', result: [] })
               console.log({ isSuccess: true, message: 'error', result: err })
             } else {
-              const dealerUrl = `select distinct s.id , s.name from dealer_department_user as f inner join dealers as s on s.id = f.dealer_id where f.user_id ='${result[0].id}'; `
-              db.query(dealerUrl, async (err, dealerResult) => {
+              const branchUrl = `select distinct s.id , s.name from branch_department_user as f inner join branches as s on s.id = f.branch_id where f.user_id ='${result[0].id}'; `
+              db.query(branchUrl, async (err, branchResult) => {
                 if (err) {
                   res.send({ isSuccess: true, message: 'error', result: [] })
                   console.log({ isSuccess: true, message: 'error', result: err })
-                } else if (dealerResult.length > 0) {
-                  console.log('dealerResult ************', dealerResult)
-                  let currentDealer = dealerResult[0].id
+                } else if (branchResult.length > 0) {
+                  console.log('branchResult ************', branchResult)
+                  let currentBranch = branchResult[0].id
                   const tokenData = {
                     id: result[0].id,
-                    dealerId: currentDealer
+                    branchId: currentBranch
                   };
                   const tokenIs = await getToken(tokenData)
-                  res.send({ isSuccess: true, message: 'success', result: { dealerResult, tokenIs, currentDealer } })
-                  console.log({ isSuccess: true, message: 'success', result: { dealerResult, tokenIs, currentDealer } })
+                  res.send({ isSuccess: true, message: 'success', result: { branchResult, tokenIs, currentBranch } })
+                  console.log({ isSuccess: true, message: 'success', result: { branchResult, tokenIs, currentBranch } })
                 } else {
 
                   res.send({ isSuccess: true, message: 'wrong', result: [] })

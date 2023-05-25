@@ -1,9 +1,9 @@
 var jwt = require("jsonwebtoken");
 const privateKey = "-4'[]v,k[]\2647ff8965=-3[//?(*";
 
-const getToken = async ({ id, dealerId }) => {
+const getToken = async ({ id, branchId }) => {
   try {
-    const token = await jwt.sign({ id, dealerId }, privateKey);
+    const token = await jwt.sign({ id, branchId }, privateKey);
     return token
   } catch (e) {
     console.log(e);

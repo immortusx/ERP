@@ -16,7 +16,7 @@ import enquirySlice from './slices/enquirySlice'
 import enquiryFieldSaveSlice from './slices/enquiryFieldSaveSlice'
 import categoryAddSlice from './slices/categoryAddSlice'
 import setNewEnquiryDataSlice from './slices/setNewEnquiryDataSlice'
-import tokenDealerChangeSlice from './slices/tokenDealerChangeSlice'
+import tokenBranchChangeSlice from './slices/tokenBranchChangeSlice'
 import addStateSlice from './slices/Master/State/addStateSlice';
 import addDistrictSlice from './slices/Master/District/addDistrictSlice';
 import addTalukaSlice from './slices/Master/Taluka/addTalukaSlice';
@@ -39,7 +39,7 @@ export const store = configureStore({
         enquiryFieldSaveState: enquiryFieldSaveSlice,
         categoryAddState: categoryAddSlice,
         setNewEnquiryDataState: setNewEnquiryDataSlice,
-        tokenDealerChangeState: tokenDealerChangeSlice,
+        tokenBranchChangeState: tokenBranchChangeSlice,
         addStateSlice:addStateSlice,
         addDistrictSlice:addDistrictSlice,
         addTalukaSlice:addTalukaSlice,

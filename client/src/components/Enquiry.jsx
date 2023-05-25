@@ -41,7 +41,7 @@ export default function Enquiry({ workFor }) {
         modelYear: '',
     })
     const [newEnquiryData, setNewEnquiryData] = useState({
-        dealerId: '',
+        branchId: '',
         dsp: '',
         firstName: '',
         lastName: '',
@@ -65,7 +65,7 @@ export default function Enquiry({ workFor }) {
     })
 
     const [newEnquiryList, setNewEnquiryList] = useState({
-        listDealer: [],
+        listBranch: [],
         listDsp: [],
         listDistrict: [],
         listTehsil: [],
@@ -93,7 +93,7 @@ export default function Enquiry({ workFor }) {
     })
     function clearStateAndInp() {
         setNewEnquiryData({
-            dealerId: '',
+            branchId: '',
             dsp: '',
             firstName: '',
             lastName: '',
@@ -130,7 +130,7 @@ export default function Enquiry({ workFor }) {
         console.log('newEnquiryList', newEnquiryList)
         console.log('newEnquiryData', newEnquiryData)
         if (
-            newEnquiryData.dealerId &&
+            newEnquiryData.branchId &&
             newEnquiryData.dsp &&
             newEnquiryData.firstName &&
             newEnquiryData.lastName &&
@@ -204,7 +204,7 @@ export default function Enquiry({ workFor }) {
             }
         })
     }
-    async function getDealers() {
+    async function getBranchs() {
         const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/enquiry-data`;
         const config = {
             headers: {
@@ -217,8 +217,8 @@ export default function Enquiry({ workFor }) {
                     // setCategoriesList(response.data.result)
                     console.log(response.data.result)
 
-                    const { dealers, manufacturers, primary_source, district } = response.data.result
-                    setNewEnquiryList(newEnquiryList => ({ ...newEnquiryList, ['listDealer']: dealers }))
+                    const { branches, manufacturers, primary_source, district } = response.data.result
+                    setNewEnquiryList(newEnquiryList => ({ ...newEnquiryList, ['listBranch']: branches }))
                     setNewEnquiryList(newEnquiryList => ({ ...newEnquiryList, ['listMake']: manufacturers }))
                     setNewEnquiryList(newEnquiryList => ({ ...newEnquiryList, ['listPrimarySource']: primary_source }))
                     setNewEnquiryList(newEnquiryList => ({ ...newEnquiryList, ['listDistrict']: district }))
@@ -320,7 +320,7 @@ export default function Enquiry({ workFor }) {
     }
     useEffect(() => {
         if (workFor === 'newEnquiry') {
-            getDealers()
+            getBranchs()
         }
         return
     }, [workFor])
@@ -494,7 +494,7 @@ export default function Enquiry({ workFor }) {
         } else {
             // setNewEnquiryData(newEnquiryData => ({ ...newEnquiryData, [name]: value }))
             switch (name) {
-                case 'dealerId':
+                case 'branchId':
                     getDspList(value)
                     break;
                 case 'make':
@@ -593,11 +593,11 @@ export default function Enquiry({ workFor }) {
                 workFor === 'newEnquiry' && <>
                     <div className='row mt-2 m-0'>
                         <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
-                            <label className='myLabel' htmlFor="email">Select Dealer *</label>
-                            <select onChange={changeHandlerNewEnquiry} className='myInput inpClr' name="dealerId">
+                            <label className='myLabel' htmlFor="email">Select Branch *</label>
+                            <select onChange={changeHandlerNewEnquiry} className='myInput inpClr' name="branchId">
                                 <option value='0' className='myLabel'>select</option>
                                 {
-                                    newEnquiryList.listDealer && newEnquiryList.listDealer.length > 0 && newEnquiryList.listDealer.map((i, index) => {
+                                    newEnquiryList.listBranch && newEnquiryList.listBranch.length > 0 && newEnquiryList.listBranch.map((i, index) => {
                                         return <option key={index} value={i.id} className='myLabel'>{i.name}</option>
                                     })
                                 }
