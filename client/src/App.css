@@ -261,9 +261,6 @@ select.myInput {
   border-radius: 5px;
   height: 100%;
 }
-
-.addUser .select .allBtnsMain {}
-
 .swapSelection .allBtnsMain svg {
   height: 20px;
   width: 20px;
@@ -308,7 +305,7 @@ select.myInput {
 }
 
 .breadcrumbs .crumb::after {
-  content: '>';
+  content: url('./assets//svg/chevron-right-new.svg');
   padding-left: 5px;
 }
 
@@ -323,13 +320,24 @@ select.myInput {
 #breadcrumbs a {
   list-style: none;
   text-decoration: none;
-  text-transform: uppercase;
+  text-transform: capitalize;
   padding-left: 5px;
   font-size: 15px;
 }
 
 #breadcrumbs a:hover{
   color: #77aaf7;
+}
+
+.crumb-link {
+  text-decoration: none;
+  color: inherit;
+  text-transform: capitalize;
+}
+
+.crumb-link:hover {
+  color: #77aaf7;
+  text-decoration: underline;
 }
 
 @keyframes App-logo-spin {

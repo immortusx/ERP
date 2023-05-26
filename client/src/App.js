@@ -25,6 +25,7 @@ function App() {
   const adminExist = useSelector(state => state.AdminSlice.adminExist)
   const notificationState = useSelector(state => state.notificationState.message)
   const allState = useSelector(state => state)
+  const [loading, setLoading] = useState(true)
   useEffect(() => {
     if (notificationState.length > 0) {
       setTimeout(() => {
@@ -86,7 +87,7 @@ function App() {
             // adminExist?.result.result == true ?
             checkAdminExist ? <>
               <Route path="/login" element={<Login />} exact />
-              <Route path="/home/*" element={<PublicRoute > <HomeScreen /></PublicRoute>} />
+              <Route path="/*" element={<PublicRoute > <HomeScreen /></PublicRoute>} />
               <Route path="/*" element={<Navigate to='/login' />} exact />
               {/* <Route path="/" element={<Navigate to='/login' />} exact /> */}
             </> : <>
