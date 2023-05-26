@@ -21,6 +21,7 @@ import addStateSlice from './slices/Master/State/addStateSlice';
 import addDistrictSlice from './slices/Master/District/addDistrictSlice';
 import addTalukaSlice from './slices/Master/Taluka/addTalukaSlice';
 import addVillageSlice from './slices/Master/Village/addVillageSlice';
+import addManufacturerSlice from './slices/Master/Manufacturer/addManufacturerSlice';
 
 export const store = configureStore({
     reducer: {
@@ -44,5 +45,6 @@ export const store = configureStore({
         addDistrictSlice:addDistrictSlice,
         addTalukaSlice:addTalukaSlice,
         addVillageSlice:addVillageSlice,
+        addManufacturerSlice:addManufacturerSlice,
     }
 })  
