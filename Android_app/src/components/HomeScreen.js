@@ -1,30 +1,55 @@
-import { StyleSheet, Text, View } from "react-native";
-import React from "react";
+import { StyleSheet, Text, View,TouchableOpacity } from "react-native";
+import React,{useState} from "react";
 import { useNavigation } from "@react-navigation/native";
-import { AntDesign } from "@expo/vector-icons";
-import { MaterialIcons } from "@expo/vector-icons";
+import { AntDesign,MaterialIcons } from '@expo/vector-icons';
 import { Entypo } from "@expo/vector-icons";
-import { Menu, Pressable } from "native-base";
+import {  Menu,Pressable,Icon,Box } from "native-base";
 const HomeScreen = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  // Function to handle the icon toggle
+  const handleIconPress = () => {
+    setIsMenuOpen(!isMenuOpen);
+    console.log("opencdcdfd")
+  };
+
+  const handleCloseMenu = () => {
+    setIsMenuOpen(false);
+    console.log("closecdffg")
+  };
+
   const navigation = useNavigation();
+const pressProfile=()=>{
+  navigation.navigate("profile");
+}
 const pressEnquiry=()=>{
   navigation.navigate("Enquiry");
 }
+const pressMster=()=>{
+  navigation.navigate("master");
+}
+const pressProduct=()=>{
+  navigation.navigate("products");
+}
+const pressSales=()=>{
+  navigation.navigate("sales");
+}
+const pressManage=()=>{
+  navigation.navigate("manage");
+}
 
   return (
-    <View>
+    <Box>
       <Menu
         mt="10"
+        isOpen={isMenuOpen}
+        onOpen={handleIconPress}
+        onClose={handleCloseMenu}
         trigger={(triggerProps) => {
           return (
-            <Pressable {...triggerProps}>
-              <AntDesign
-                style={styles.icon}
-                name="indent-left"
-                size={24}
-                color="white"
-              />
-            </Pressable>
+            <TouchableOpacity onPress={handleIconPress} {...triggerProps}>
+            <Icon as={AntDesign} name={isMenuOpen ?'caretup':'caretdown'} size={5} style={{ color: 'white', marginRight:5 }}  />
+            </TouchableOpacity>
           );
         }}
       >
@@ -32,66 +57,68 @@ const pressEnquiry=()=>{
           mt="5"
           trigger={(triggerProps) => {
             return (
-              <Pressable {...triggerProps} style={styles.menu}>
-                <MaterialIcons
-                  style={styles.icon}
-                  name="dashboard"
-                  size={24}
-                  color="green"
-                />
+              <Pressable {...triggerProps} style={styles.menu}>    
+              <Icon as={MaterialIcons} name="dashboard"  size={5} style={styles.icon}  />
                 <Text>Home</Text>
               </Pressable>
             );
           }}
         >
           <Menu.Item>
-            <Text>Profile</Text>
+            <Text onPress={pressProfile}>Profile</Text>
           </Menu.Item>
-          <Menu.Item>
-            <Text onPress={pressEnquiry}>Enqiury</Text>
-          </Menu.Item>
+         
         </Menu>
         <Menu
           mt="5"
           trigger={(triggerProps) => {
             return (
               <Pressable {...triggerProps} style={styles.menu}>
-                <AntDesign
-                  style={styles.icon}
-                  name="team"
-                  size={20}
-                  color="black"
-                />
+              <Icon as={MaterialIcons} name="dashboard"  size={5} style={styles.icon}  />
+                
+                <Text>Sale</Text>
+              </Pressable>
+            );
+          }}
+        >
+         
+          <Menu.Item>
+            <Text onPress={pressEnquiry}>Enqiury</Text>
+          </Menu.Item>
+        </Menu>
+      
+        <Menu
+          mt="5"
+          trigger={(triggerProps) => {
+            return (
+              <Pressable {...triggerProps} style={styles.menu}>
+              <Icon as={AntDesign} name="team"  size={5}  style={styles.icon}  /> 
                 <Text>Service</Text>
               </Pressable>
             );
           }}
         >
-          <Menu.Item>
-            <Text>Product</Text>
+        <Menu.Item>
+            <Text onPress={pressProduct}>Products</Text>
           </Menu.Item>
-          <Menu.Item>
-            <Text>Sales</Text>
+        <Menu.Item>
+            <Text onPress={pressSales}>Sales</Text>
           </Menu.Item>
+          
         </Menu>
         <Menu
           mt="5"
           trigger={(triggerProps) => {
             return (
               <Pressable {...triggerProps} style={styles.menu}>
-                <Entypo
-                  style={styles.icon}
-                  name="arrow-with-circle-up"
-                  size={24}
-                  color="green"
-                />
+              <Icon as={Entypo}  name="arrow-with-circle-up"  size={5} style={styles.icon}  />
                 <Text>Management</Text>
               </Pressable>
             );
           }}
         >
           <Menu.Item>
-            <Text>Manage</Text>
+            <Text onPress={pressManage}>Manage</Text>
           </Menu.Item>
         </Menu>
         <Menu
@@ -99,12 +126,7 @@ const pressEnquiry=()=>{
           trigger={(triggerProps) => {
             return (
               <Pressable {...triggerProps} style={styles.menu}>
-                <Entypo
-                  style={styles.icon}
-                  name="arrow-with-circle-up"
-                  size={24}
-                  color="red"
-                />
+              <Icon as={Entypo}  name="arrow-with-circle-up"  size={5} style={styles.icon}  />
                 <Text>Administration</Text>
               </Pressable>
             );
@@ -123,8 +145,24 @@ const pressEnquiry=()=>{
             <Text>Agency</Text>
           </Menu.Item>
         </Menu>
+        <Menu
+          mt="5"
+          trigger={(triggerProps) => {
+            return (
+              <Pressable {...triggerProps} style={styles.menu}>
+              <Icon as={Entypo}  name="arrow-with-circle-up"  size={5} style={styles.icon}  />
+                <Text>Master</Text>
+              </Pressable>
+            );
+          }}
+        >
+          <Menu.Item>
+            <Text onPress={pressMster}>Master</Text>
+          </Menu.Item>
+        
+        </Menu>
       </Menu>
-    </View>
+    </Box>
   );
 };
 
@@ -133,10 +171,11 @@ export default HomeScreen;
 const styles = StyleSheet.create({
   menu: {
     paddingHorizontal:20,
-    marginBottom: 10,
+    marginBottom: 15,
     flexDirection: "row",
   },
   icon: {
     marginRight: 10,
+    color: 'red'
   },
 });

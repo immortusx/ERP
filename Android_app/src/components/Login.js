@@ -16,51 +16,49 @@ const Login = () => {
   const [show, setShow] = React.useState(false);
 
   const navigation = useNavigation();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [Email, setEmail] = useState("");
+  const [Password, setPassword] = useState("");
   const [error, setError] = useState({ field: "", message: "" });
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const isValidEmail = emailRegex.test(email);
+  const isValidEmail = emailRegex.test(Email);
 
   const validPassword = /^\d{8}$/;
-  const isValidPassword = validPassword.test(password);
+  const isValidPassword = validPassword.test(Password);
   
   const handleClick = () => setShow(!show)
 
   const onsubmit = () => {
-    // let error = { field: "", message: "" };
-    // if (!isValidEmail) {
-    //   error.field = "Email";
-    //   error.message = "Please enter  valid Email!";
-    //   setError(error);
-    // } else if (!isValidPassword) {
-    //   error.field = "Password";
-    //   error.message = "Please enter correct password!";
-    //   setError(error);
-    // } 
-    // else {
-    //   navigation.navigate("main");
-    // }
-    //  else {
+    let error = { field: "", message: "" };
+    if (!isValidEmail) {
+      error.field = "Email";
+      error.message = "Please enter  valid Email!";
+      setError(error);
+    } else if (!isValidPassword) {
+      error.field = "Password";
+      error.message = "Please enter correct password!";
+      setError(error);
+    }else {
       axios
         .post("https://crm.balkrushna.com/api/login", {
-          email,
-          password,
+          Email,
+          Password,
         })
         .then((response) => {
           if (response.data.message) {
-            // console.log(response.data)
+            console.log("login fail")
+            alert("Login failed");
+          } else {
             navigation.navigate("main");
             alert("user successfully Logged In");
-          } else {
-            alert("Login failed");
+            console.log(response.data)
           }
         })
         .catch((error) => "Error", error.message);
       setEmail(""), setPassword(""), setError("");
-    // }
+    }
   };
+  
   return (
     <SafeAreaView style={styles.safeview}>
    <View>
@@ -74,10 +72,10 @@ const Login = () => {
           placeholder="Email"
           size="lg"
           placeholderTextColor="black"
-          value={email}
+          value={Email}
           onChangeText={(value) => setEmail(value)}
         />
-        {error.field === "email" && (
+        {error.field === "Email" && (
           <Text style={styles.error}>{error.message}</Text>
         )}
       </Box>
@@ -89,13 +87,13 @@ const Login = () => {
           size="lg"
           onChangeText={(value) => setPassword(value)}
           placeholderTextColor="black"
-          value={password}
+          value={Password}
           InputRightElement={<Button size="lg"  onPress={handleClick}>
             {show ? <Ionicons name="md-eye-sharp" size={24} color="black" /> : <Ionicons name="md-eye-off-sharp" size={24} color="black" /> }
         
           </Button>} placeholder="Password"  />
 
-        {error.field === "password" && (
+        {error.field === "Password" && (
           <Text style={styles.error}>{error.message}</Text>
         )}
       </Box>

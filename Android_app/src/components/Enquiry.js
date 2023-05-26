@@ -1,256 +1,157 @@
-import { SafeAreaView, StyleSheet, View,Text,ScrollView } from "react-native";
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { Dropdown } from "react-native-element-dropdown";
+import { SafeAreaView, StyleSheet, View, ScrollView } from "react-native";
+import { FontAwesome,Octicons,MaterialCommunityIcons } from "@expo/vector-icons";
 import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { Button, Box,HStack,Pressable,Input } from "native-base";
+import { DataTable } from "react-native-paper";
+import { Icon,Text, HStack, Pressable, VStack, StatusBar, Divider } from "native-base";
+
+const numberOfItemsPerPageList = [2, 3, 4];
+const items = [
+  {
+    key: 1,
+    name: "Page 1",
+  },
+  {
+    key: 2,
+    name: "Page 2",
+  },
+  {
+    key: 3,
+    name: "Page 3",
+  },
+];
 const Enquiry = () => {
+  const [page, setPage] = React.useState(0);
+  const [numberOfItemsPerPage, onItemsPerPageChange] = React.useState(
+    numberOfItemsPerPageList[0]
+  );
+  const from = page * numberOfItemsPerPage;
+  const to = Math.min((page + 1) * numberOfItemsPerPage, items.length);
+
+  React.useEffect(() => {
+    setPage(0);
+  }, [numberOfItemsPerPage]);
+
   const navigation = useNavigation();
-  const onclick = () => {
-    navigation.navigate("form");
+  const pressnewEnquiry = () => {
+    navigation.navigate("newenquiry");
   };
- const pressnewEnquiry = () =>{
-  navigation.navigate("form");
- }
-  const [value, setValue] = useState(null);
-  const [value2, setValue2] = useState(null);
-  const [value3, setValue3] = useState(null);
-  const data = [
-    { label: "Ahemdabad", value: "Ahemdabad" },
-    { label: "Vdodra", value: "Vdodra" },
-    { label: "Surat", value: "Surat" },
-  ];
-  const data2 = [
-    { label: "Select Category", value: "Select Category" },
-    { label: "NEW TRACTOR INQUIRY", value: "NEW TRACTOR INQUIRY" },
-    { label: "OLD TRACTOR INQUIRY", value: "OLD TRACTOR INQUIRY" },
-  ];
-  const data3 = [
-    { label: "Karjan", value: "Karjan" },
-    { label: "Dubai", value: "Dubai" },
-  ];
+
   return (
-    <SafeAreaView style={styles.content}>
-    <View>
-    <Pressable onPress={pressnewEnquiry}>
-    <HStack mt="5" justifyContent="flex-end">
-    <MaterialCommunityIcons name="plus-circle-outline" size={24} color="black" />
-    <Text>
-    New Enqiury
-    </Text>
-    </HStack>
-    </Pressable>
-    </View>
-    <View mt="50">
-    <Text style={styles.textstyle}>
-    Select Category
-    </Text>
-          <Box style={styles.viewinput}>
-          <Dropdown
-          style={styles.input}
-          data={data2}
-          labelField="label"
-          valueField="value"
-          placeholder="Select Category"
-          value={value2}
-          onChange={(item) => {
-            setValue2(item.value);
-            onChange={}
-          }}
-          />
-          </Box>
-          <Box alignItems="center">
-          <Button px="8" mt="3" style={styles.btn}  onPress={onclick}>
-          Next
-          </Button>
-          </Box>
-          
-          </View>
-          <ScrollView>
-          <View>
-          <Text style={styles.textstyle}>
-          Select city
-          </Text>
-                <Box style={styles.viewinput}>
-                <Dropdown
-                style={styles.input}
-                data={data}
-                labelField="label"
-                valueField="value"
-                placeholder="Select city"
-                value={value}
-                onChange={(item) => {
-                  setValue(item.value);
-                }}
-                />
-                </Box>
-                </View>
-                <View>
-                <Text style={styles.textstyle}>
-          Select taluko
-          </Text>
-                <Box style={styles.viewinput}>
-                <Dropdown
-                style={styles.input}
-                data={data3}
-                labelField="label"
-                valueField="value"
-                placeholder="Select taluko"
-                value={value3}
-                onChange={(item) => {
-                  setValue3(item.value);
-                }}
-                />
-                  </Box>
-                </View>
-                <View>
-               
-                <Text style={styles.textstyle} >
-                Mobile No
-                </Text>
-                <Box style={styles.viewinput}>
-                <Input
-                
-                placeholder="Mobile Number"
-              
-                />
-                  </Box>
-                </View>
-                <View> 
-                <Text style={styles.textstyle} >
-               First name
-                </Text>
-                <Box style={styles.viewinput}>
-                <Input
-                
-                placeholder=" First name"
-              
-                />
-                  </Box>
-                </View>
-                <View>
-                <Text style={styles.textstyle}>
-          Select State
-          </Text>
-                <Box style={styles.viewinput}>
-                <Dropdown
-                style={styles.input}
-                data={data3}
-                labelField="label"
-                valueField="value"
-                placeholder="Select State"
-                value={value3}
-                onChange={(item) => {
-                  setValue3(item.value);
-                }}
-                />
-                  </Box>
-                </View>
-                <View> 
-                <Text style={styles.textstyle} >
-               Last name
-                </Text>
-                <Box style={styles.viewinput}>
-                <Input
-                
-                placeholder= "Last name"
-              
-                />
-                  </Box>
-                </View>
-                <View>
-                <Text style={styles.textstyle}>
-          Select district
-          </Text>
-                <Box style={styles.viewinput}>
-                <Dropdown
-                style={styles.input}
-                data={data3}
-                labelField="label"
-                valueField="value"
-                placeholder="Select district"
-                value={value3}
-                onChange={(item) => {
-                  setValue3(item.value);
-                }}
-                />
-                  </Box>
-                </View>
-                <View>
-                <Text style={styles.textstyle}>
-          Select village
-          </Text>
-                <Box style={styles.viewinput}>
-                <Dropdown
-                style={styles.input}
-                data={data3}
-                labelField="label"
-                valueField="value"
-                placeholder="Select village"
-                value={value3}
-                onChange={(item) => {
-                  setValue3(item.value);
-                }}
-                />
-                  </Box>
-                </View>
-                <View> 
-                <Text style={styles.textstyle} >
-               WhatsApp number
-                </Text>
-                <Box style={styles.viewinput}>
-                <Input
-                
-                placeholder="WhatsApp number"
-              
-                />
-                  </Box>
-                </View><View> 
-                <Text style={styles.textstyle} >
-              Visit reason
-                </Text>
-                <Box style={styles.viewinput}>
-                <Input
-                
-                placeholder="Visit reason"
-              
-                />
-                  </Box>
-                </View>
-                </ScrollView>
-                </SafeAreaView>
-          );
+   
+      <SafeAreaView style={styles.content}>
+        <View>
+          <Pressable onPress={pressnewEnquiry}>
+            <HStack mt="5" mb="5" justifyContent="flex-end">
+            <Icon as={MaterialCommunityIcons} size="5" name="plus-circle-outline"  style={[styles.icon,{ color: 'black' }]}  />    
+              <Text>Add Enqiury</Text>
+            </HStack>
+          </Pressable>
+        </View>
+        <View style={styles.enquirycontent}>
+          <StatusBar />
+          <HStack
+            px="1"
+            py="3"
+            justifyContent="space-between"
+            alignItems="center"
+          >
+            <HStack alignItems="center" marginRight={2}>
+              <Octicons
+                name="columns"
+                size={20}
+                color="black"
+                marginRight={2}
+              />
+              <Text fontSize={13} >
+                COLUMNS
+              </Text>
+            </HStack>
+            <HStack alignItems="center" marginRight={2}>
+              <Octicons name="filter" size={20} color="black" marginRight={2} />
+              <Text fontSize={13} >
+                FILTERS
+              </Text>
+            </HStack>
+            <HStack alignItems="center" marginRight={2}>
+              <FontAwesome
+                name="bars"
+                size={20}
+                color="black"
+                marginRight={2}
+              />
+              <Text fontSize={13} >
+                DENSITY
+              </Text>
+            </HStack>
+            <HStack alignItems="center" marginRight={2}>
+              <MaterialCommunityIcons
+                name="export-variant"
+                size={20}
+                color="black"
+                marginRight={2}
+              />
+              <Text fontSize={13} >
+                EXPORT
+              </Text>
+            </HStack>
+          </HStack>
+          <DataTable>
+          <DataTable.Header>
+          <DataTable.Title>No</DataTable.Title>
+          <DataTable.Title>First Name</DataTable.Title>
+          <DataTable.Title>Last Name</DataTable.Title>
+          <DataTable.Title>Phone Number</DataTable.Title>
+          <DataTable.Title>Email</DataTable.Title>
+          <DataTable.Title>Product</DataTable.Title>
+          </DataTable.Header>
+            <VStack alignItems="center">
+              <Text style={styles.enquirytext}>
+                There is no Enquiry with current branch
+              </Text>
+            </VStack>
+            <Divider/>
+            <DataTable.Pagination
+              page={page}
+              numberOfPages={Math.ceil(items.length / numberOfItemsPerPage)}
+              onPageChange={(page) => setPage(page)}
+              label={`${from + 1}-${to} of ${items.length}`}
+              showFastPaginationControls
+              numberOfItemsPerPageList={numberOfItemsPerPageList}
+              numberOfItemsPerPage={numberOfItemsPerPage}
+              onItemsPerPageChange={onItemsPerPageChange}
+              selectPageDropdownLabel={"Rows per page"}
+            />
+            </DataTable>
+        </View>
+      </SafeAreaView>
+  );
 };
 
 export default Enquiry;
 
 const styles = StyleSheet.create({
-  textstyle:{
-    marginLeft:10,
+  enquirycontent: {
+    borderRadius: 10,
+    paddingHorizontal: 5,
+    paddingTop: 10,
+    backgroundColor: "#fff",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   content: {
     flex: 1,
     backgroundColor: "white",
     paddingHorizontal: 20,
   },
-  viewinput: {
-    margin: 10,
-    borderColor: "black",
-    borderRadius: 5,
-    borderWidth: 1,
+
+  enquirytext: {
+    marginVertical:150,
   },
-  input: {
-    paddingVertical: 10,
-    paddingHorizontal: 10,
-  },
-  btn:{
-    backgroundColor:"grey",
-    color:'white',
-    borderRadius:5,
-    borderWidth:1,
-    borderColor:'black',
-      }
-  
 });
-
-
