@@ -13,7 +13,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 
 
 
-export default function AddRole({ workFor }) {
+export default function Roles({ workFor }) {
     const [featuresList, setFeaturesList] = useState([])
     const [showRolesList, setShowRolesList] = useState([])
     const [currentRole, setCurrentRole] = useState({
@@ -97,10 +97,9 @@ export default function AddRole({ workFor }) {
         if (addRoleState.isSuccess) {
             if (addRoleState.message.isSuccess) {
                 dispatch(setShowMessage('Role is created'))
-                dispatch(clearAddRoleState())
-                navigate('/administration/roles')
                 clearInpHook()
                 clearAddRoleState()
+                navigate('/home/roles')
             } else {
                 dispatch(setShowMessage('Something is wrong'))
             }
@@ -213,10 +212,9 @@ export default function AddRole({ workFor }) {
     }
     function handlCancel() {
         console.log('handlCancel');
-        navigate('/administration/roles')
+        navigate('/home/roles')
         clearInpHook()
     }
-
 
     const columns = [
         {
@@ -250,6 +248,20 @@ export default function AddRole({ workFor }) {
                 return `${params.row.description ? params.row.description : '-'}`
             }
         },
+        {
+            field: 'is_active',
+            headerName: 'Active',
+            headerAlign: 'center',
+            align: 'center',
+            type: 'number',
+            minWidth: 90,
+            flex: 1,
+            renderCell: (params) => (
+                params.row.active === '1' ? <CheckIcon style={{ color: 'green' }} /> : <ClearIcon style={{ color: 'red' }} />
+            ),
+
+        },
+
 
         {
             field: 'actions',
@@ -267,7 +279,7 @@ export default function AddRole({ workFor }) {
                 <div>
                     {/* <button onClick={() => { editActionCall(params.row) }} className='myActionBtn m-1'> */}
                     <button className='myActionBtn m-1'
-                    // onClick={() => { editeStateModal(params.row) }}
+                        onClick={() => { editeStateModal(params.row) }}
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="bi bi-pencil-square" viewBox="0 0 16 16">
                             <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
@@ -285,13 +297,16 @@ export default function AddRole({ workFor }) {
             ),
         }
     ];
+    const editeStateModal = (data) => {
+        console.log(data);
+        navigate('/administration/roles/editrole')
+    }
     return (
         <div className='addUser myBorder bg-white rounded p-3'>
             <div className=' row mt-3 m-0'>
                 {
-
                     workFor === 'roles' && <div className='  d-flex align-items-end justify-content-end'>
-                        <div onClick={() => { navigate('/administration/roles') }} className='d-flex align-items-center' type='button'>
+                        <div onClick={() => { navigate('/administration/roles/addrole') }} className='d-flex align-items-center' type='button'>
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-plus-circle" viewBox="0 0 16 16">
                                 <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
                                 <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
@@ -302,7 +317,7 @@ export default function AddRole({ workFor }) {
                         </div>
                     </div>
                 }
-                {/* <div className='mt-2' style={{ height: '85vh', width: '100%' }}>
+                <div className='mt-4' style={{ height: '85vh', width: '100%' }}>
                     <DataGrid
                         rows={showRolesList}
                         columns={columns}
@@ -332,111 +347,8 @@ export default function AddRole({ workFor }) {
                         rowSelection={false}
                         autoPageSize={false}
                     />
-                </div> */}
+                </div>
             </div>
-            <main>
-                <div className=' row mt-3 m-0'>
-
-                    <h5 className='m-0'>
-                        {
-                            workFor === 'addRole' ? 'Create role' : 'Edit role'
-                        }
-                    </h5>
-
-
-                    {
-                        workFor === 'roles' ? <section className='d-flex  flex-column col-12 col-lg-5'>
-                            <label className='myLabel' htmlFor="email">Select role</label>
-                            <select onChange={handleSelectRole} className='myInput' name="selectRole">
-                                <option value='0' className='myLabel' selected>select role</option>
-                                {
-                                    showRolesList && showRolesList.length > 0 && showRolesList.map((item, index) => {
-                                        return <option key={index} value={item.id}>{item.role}</option>
-                                    })
-                                }
-                            </select>
-                        </section>
-                            : <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
-                                <label className='myLabel' htmlFor="email">Role name</label>
-                                <input className='myInput inputElement' autoComplete='false' onChange={(e) => { onChangeHandler(e) }} type="text" name="roleName" />
-                            </section>
-                    }
-
-                </div>
-                <div className=' row m-0'>
-                    <section className='d-flex mt-3 flex-column col-12'>
-                        <label className='myLabel' htmlFor="email">Role description</label>
-                        <textarea rows='5' value={featureData.roleDescription} className='myInput inputElement' autoComplete='false' onChange={(e) => { onChangeHandler(e) }} type="text" name="roleDescription" />
-                    </section>
-
-                    <section className='d-flex mt-3 flex-column featureTree'>
-                        {/* prototype of tree structure */}
-                        {/* <ul>
-                            <li>
-                                <label className='myLabel fw-bold' htmlFor="email">USERS</label>
-                                <div>
-                                    <input type='checkbox' className='myCheckBox inputElement' onChange={(e) => { onChangeHandler(e) }} name="enableUser" />
-                                    <label className='ms-2 myLabel' htmlFor="">1.1</label>
-                                </div>
-                            </li>
-                            <li>
-                                <label className='myLabel fw-bold' htmlFor="email">Profile</label>
-                                <div>
-                                    <input type='checkbox' className='myCheckBox inputElement' onChange={(e) => { onChangeHandler(e) }} name="enableUser" />
-                                    <label className='ms-2 myLabel' htmlFor="">2.1</label>
-                                </div>
-                            </li>
-                            <ul>
-                                <li>
-                                    <div>
-                                        <input type='checkbox' className='myCheckBox inputElement' onChange={(e) => { onChangeHandler(e) }} name="enableUser" />
-                                        <label className='ms-2 myLabel' htmlFor="">2.1.1</label>
-                                    </div>
-                                </li>
-                                <ul>
-                                    <li>
-                                        <div>
-                                            <input type='checkbox' className='myCheckBox inputElement' onChange={(e) => { onChangeHandler(e) }} name="enableUser" />
-                                            <label className='ms-2 myLab el' htmlFor="">2.1.1.1 </label>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </ul>
-                            <li>
-                                <label className='myLabel fw-bold' htmlFor="email">Products</label>
-                                <div>
-                                    <input type='checkbox' className='myCheckBox inputElement' onChange={(e) => { onChangeHandler(e) }} name="enableUser" />
-                                    <label className='ms-2 myLabel' htmlFor="">3.1</label>
-                                </div>
-                            </li>
-                        </ul> */}
-
-                        <ul className='mt-3 m-0'>
-                            {
-                                featuresList && featuresList.length > 0 && featuresList.map((data, index) => {
-
-                                    return <li key={index}>
-                                        {/* <label className='myLabel fw-bold' htmlFor="email"></label> */}
-                                        <div className='pb-3 d-flex align-items-center'>
-                                            <input type='checkbox' className='myCheckBox inputElement' onChange={(e) => { onChangeHandler(e, data.id) }} name={`${data.feature}Inp`} />
-                                            <label className='ms-2 myLabel' htmlFor="">{data.label}</label>
-                                        </div>
-                                    </li>
-                                })
-                            }
-                        </ul>
-                    </section>
-
-                    <section className='d-flex flex-column flex-sm-row'>
-                        <button className='col-12 col-sm-5 col-lg-2 myBtn py-2' onClick={handleSubmit} type='button'>{workFor === 'addRole' ? 'Create role' : 'Edit role'} </button>
-                        <button className='ms-0 ms-sm-3 mt-3 mt-sm-0 col-12 col-sm-5 col-lg-2 myBtn py-2' onClick={handlCancel} type='button'>Cancel </button>
-
-                    </section>
-
-                </div>
-
-
-            </main>
         </div >
     )
 }

@@ -35,6 +35,7 @@ import Taluka_list from './Master/Taluka/Taluka_list'
 import Plan_List from './Master/Plan/Part_List'
 import Part_List from './Master/Plan/Part_List'
 import BreadCrumb from './BreadCrumb/BreadCrumb'
+import Roles from './Roles'
 
 const CheckPermission = ({ children, path }) => {
   // return checkList.includes(path) ? children : <Navigate to="../no-access" />
@@ -456,8 +457,9 @@ export default function HomeScreen() {
             <Route path="management/manage" element={<CheckPermission path='manage'><Manage /></CheckPermission>} exact />
 
 
-            <Route path="administration/roles" element={<CheckPermission path='roles'><AddRole workFor='roles' /></CheckPermission>} exact />
+            <Route path="administration/roles" element={<CheckPermission path='roles'><Roles workFor='roles' /></CheckPermission>} exact />
             <Route path="administration/roles/addrole" element={<CheckPermission path='add-role'><AddRole workFor='addRole' /></CheckPermission>} exact />
+            <Route path="administration/roles/editrole" element={<CheckPermission path='add-role'><AddRole workFor='forEdit' /></CheckPermission>} exact />
             
             <Route path="administration/users" element={<CheckPermission path='users'><Users /></CheckPermission>} exact />
             <Route path="administration/users/adduser" element={<CheckPermission path='add-user'><AddUser workFor='forAdd' /></CheckPermission>} exact />
