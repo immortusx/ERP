@@ -9,13 +9,13 @@ const { db } = require("../../../Database/dbConfig");
 
 const router = express.Router();
 
-// ====get All state === //
-router.get('/get-allsate', tokenCheck, async (req, res) => {
-  console.log('>>>>>/get-allsate'); 
+// ====get All Manufacturer === //
+router.get('/get-allmanufacturer', tokenCheck, async (req, res) => {
+  console.log('>>>>>/get-allmanufacturer'); 
   try{
-    await db.query("SELECT * FROM state where is_active = 1", (err, allStates) => {
+    await db.query("SELECT id as manufacturerId, name as manufacturerName, description as manufacturerDescription, isActive FROM manufacturers", (err, allStates) => {
       if (err) {
-          console.log({ isSuccess: false, result: 'error' })
+          console.log({ isSuccess: false, result: err })
           res.send({ isSuccess: false, result: 'error' })
       } else {
           res.status(200).send({ isSuccess: true, result: allStates })
@@ -26,7 +26,7 @@ router.get('/get-allsate', tokenCheck, async (req, res) => {
   }
 })
 
-// ===== Add State === //
+// ===== Add Manufacturer === //
 router.post('/add-manufacturer', tokenCheck, async (req, res) => {
   console.log('>>>>>/add-manufacturer');
   const { menufacturerName, menufacturerDiscription } = req.body
@@ -35,7 +35,7 @@ router.post('/add-manufacturer', tokenCheck, async (req, res) => {
   const firstLetter = mfacturerNamespace.charAt(0).toUpperCase();
   var capitalFirstLetter=firstLetter + mfacturerNamespace.slice(1);
 
-  const newUrl = "SELECT * FROM `manufacturers` WHERE isActive = 1 and name ='"+ capitalFirstLetter + "'";
+  const newUrl = "SELECT * FROM manufacturers WHERE isActive = 1 and name ='"+ capitalFirstLetter + "'";
   await db.query(newUrl, async (err, newResult) => {
     if (err) {
       console.log({ isSuccess: false, result: err })
@@ -60,19 +60,18 @@ router.post('/add-manufacturer', tokenCheck, async (req, res) => {
 })
 
 
-// ====get state By Id === //
-router.get('/get-statebyid/:id', tokenCheck, async (req, res) => {
-  console.log('>>>>>/get-sateById'); 
+// ====get Manufacturer By Id === //
+router.get('/get-manufacturerbyid/:id', tokenCheck, async (req, res) => {
+  console.log('>>>>>/get-manufacturerbyid'); 
   try{
-    const stateById = req.params.id
-    console.log(stateById)
-    await db.query("SELECT * FROM state where is_active = 1 and state_id=" + stateById, (err, StatesIdData) => {
+    const manucaturerById = req.params.id
+    console.log(manucaturerById)
+    await db.query("SELECT id as manufacturerId, name as manufacturerName, description as manufacturerDescription, isActive FROM manufacturers where isActive = 1 and id=" + manucaturerById, (err, MfacturerIdData) => {
       if (err) {
-          console.log({ isSuccess: false, result: 'error' })
-          res.send({ isSuccess: false, result: 'error' })
-      } else {
-          
-          res.status(200).send({ isSuccess: true, result: StatesIdData })
+        console.log({ isSuccess: false, result: 'error' })
+        res.send({ isSuccess: false, result: 'error' })
+      } else {          
+        res.status(200).send({ isSuccess: true, result: MfacturerIdData })
       }
     })      
   }catch(e){
@@ -80,24 +79,23 @@ router.get('/get-statebyid/:id', tokenCheck, async (req, res) => {
   }
 })
 
-// ==== Edit state data By Id === //
-router.post('/edit-satebyId', tokenCheck, async (req, res) => {
-  console.log('>>>>>/edit-sateById'); 
+// ==== Edit Manufacturer data By Id === //
+router.post('/edit-manufacturerbyId', tokenCheck, async (req, res) => {
+  console.log('>>>>>/edit-manufacturerbyId'); 
   try{
-    const { stateName, stateDiscription, state_id } = req.body
-    
+    const { menufacturerName, menufacturerDiscription,manufacturerId } = req.body
+  console.log(menufacturerName, menufacturerDiscription);
+  var mfacturerNamespace = menufacturerName.trim(' ');
+  const firstLetter = mfacturerNamespace.charAt(0).toUpperCase();
+  var capitalFirstLetter=firstLetter + mfacturerNamespace.slice(1);
 
-    var stateNamespace = stateName.trim(' ');
-    const firstLetter = stateNamespace.charAt(0).toUpperCase();
-    var capitalFirstLetter=firstLetter + stateNamespace.slice(1);
-    const newUrl = "SELECT * FROM state where is_active = 1 and state_id=" + state_id;
+    const newUrl = "SELECT * FROM manufacturers where isActive=1 and id=" + manufacturerId;
     await db.query(newUrl, async (err, newResult) => {
       if (err) {
         console.log({ isSuccess: false, result: err })
         res.send({ isSuccess: false, result: 'error' })
       } else if (newResult.length === 1) {
-        console.log(stateName, stateDiscription, state_id,capitalFirstLetter)
-        const editurl = "UPDATE state SET state_name='"+ capitalFirstLetter +"', description='"+ stateDiscription +"' WHERE state_id="+ state_id;
+        const editurl = "UPDATE manufacturers SET name='"+ capitalFirstLetter +"', description='"+ menufacturerDiscription +"' WHERE id="+ manufacturerId;
         await db.query(editurl, async (err, result) => {
           if (err) {
             console.log({ isSuccess: false, result: err })
@@ -118,20 +116,20 @@ router.post('/edit-satebyId', tokenCheck, async (req, res) => {
   }
 })
 
-// ==== Delete state data By Id === //
-router.post('/delete-satebyId', tokenCheck, async (req, res) => {
-  console.log('>>>>>/delete-satebyId'); 
+// ==== Delete Manufacturer data By Id === //
+router.post('/delete-manufacturerbyId', tokenCheck, async (req, res) => {
+  console.log('>>>>>/delete-manufacturerbyId'); 
   try{
-    const { stateName, stateDiscription, state_id } = req.body
+    const { menufacturerName, menufacturerDiscription,manufacturerId } = req.body
     
-    const newUrl = "SELECT * FROM state where is_active = 1 and state_id=" + state_id;
+    const newUrl = "SELECT * FROM manufacturers where isActive = 1 and id=" + manufacturerId;
     await db.query(newUrl, async (err, newResult) => {
       if (err) {
         console.log({ isSuccess: false, result: err })
         res.send({ isSuccess: false, result: 'error' })
       } else if (newResult.length === 1) {
      
-        const editurl = "UPDATE state SET is_active = 0 WHERE state_id="+ state_id;
+        const editurl = "UPDATE manufacturers SET isActive = 0 WHERE id="+ manufacturerId;
         await db.query(editurl, async (err, result) => {
           if (err) {
             console.log({ isSuccess: false, result: err })

@@ -5,18 +5,19 @@ import Checkbox from '@mui/material/Checkbox'
 import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate  } from 'react-router-dom';
 import { addManufacturerToDb, clearAddManufacturer } from '../../../redux/slices/Master/Manufacturer/addManufacturerSlice'
 import { setShowMessage } from '../../../redux/slices/notificationSlice'
 import { Modal, Button } from 'react-bootstrap';
-import {getAllStateAction, getStateById, editeStateAction,deleteStateAction} from './getEditeManufacturer'
+import {getAllManufacturerAction, getManufacturerById, editeManufacturerAction,deleteManufacturerAction} from './getEditeManufacturer'
 import AlertDeleteModal from '../../AlertDelete/AlertDeleteModal';
 
 export default function Manufacturer_list() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const [allStateDate, setAllStateDate] = useState([]);
-    const [editStateById, setEditStateById] = useState('');
+
+    const [allMfacturerData, setAllMfacturerData] = useState([]);
+    const [editMaFacturerById, setEditMaFacturerById] = useState('');
     const [modalShow, setModalShow] = React.useState(false);
 
     //---- Delete Modal Variable -----//
@@ -52,17 +53,17 @@ export default function Manufacturer_list() {
         const mDiscr = menufacturerData.menufacturerDiscription;
 
         if (mName.length > 0 && mDiscr.length > 0) {
-            if (editStateById != '') {
+            if (editMaFacturerById != '') {
                 
-                menufacturerData['state_id'] = editStateById;
+                menufacturerData['manufacturerId'] = editMaFacturerById;
                 
-                editeStateAction(menufacturerData).then((data) => {
+                editeManufacturerAction(menufacturerData).then((data) => {
                     console.log('state Update getStateActionIdData:', data); 
                     if(data.result === "updatesuccess"){
-                        getAllStateAction().then((data) => { setAllStateDate(data.result)});
+                        getAllManufacturerAction().then((data) => { setAllMfacturerData(data.result)});
                         setModalShow(false);
                         clearInpHook();
-                        dispatch(setShowMessage('State Data Update Successfully!')); 
+                        dispatch(setShowMessage('Manufacturer Data Update Successfully!')); 
                     }else {
                         dispatch(setShowMessage('Something is wrong!'))
                     }                
@@ -78,12 +79,12 @@ export default function Manufacturer_list() {
     }
 
     const editeStateModal=(ev) =>{
-        getStateById(ev.state_id).then((data) => {            
+        getManufacturerById(ev.manufacturerId).then((data) => {            
             Manufacturer({
-                menufacturerName: data[0].state_name,
-                menufacturerDiscription: data[0].description
+                menufacturerName: data[0].manufacturerName,
+                menufacturerDiscription: data[0].manufacturerDescription
             })
-            setEditStateById(data[0].state_id)
+            setEditMaFacturerById(data[0].manufacturerId)
             setModalShow(true);
         }).catch((error) => {
             console.error('Error in editStateAction:', error);
@@ -92,9 +93,9 @@ export default function Manufacturer_list() {
     }
     const deleteStateAlert=(ev) =>{
         //setModalShow(true);
-        setType('state_delete');
-        setId(ev.state_id);
-        setDeleteMessage(`Are You Sure You Want To Delete The State '${ev.state_name}'?`);
+        setType('manufacturer_delete');
+        setId(ev.manufacturerId);
+        setDeleteMessage(`Are You Sure You Want To Delete The Manufacturer '${ev.manufacturerName}'?`);
         setDisplayConfirmationModal(true);
     }
 
@@ -104,14 +105,14 @@ export default function Manufacturer_list() {
     };
     const submitDelete = (type, id) => { 
     
-        menufacturerData['state_id'] = id;
-        deleteStateAction(menufacturerData).then((data) => {
+        menufacturerData['manufacturerId'] = id;
+        deleteManufacturerAction(menufacturerData).then((data) => {
              
             if(data.result === "deletesuccess"){
-                getAllStateAction().then((data) => { setAllStateDate(data.result)});                
+                getAllManufacturerAction().then((data) => { setAllMfacturerData(data.result)});                
                 clearInpHook();
                 setDisplayConfirmationModal(false);
-                dispatch(setShowMessage('State Data Delete Successfully!')); 
+                dispatch(setShowMessage('Manufacturer Data Delete Successfully!')); 
             }else {
                 dispatch(setShowMessage('Something is wrong!'))
             }                
@@ -120,15 +121,16 @@ export default function Manufacturer_list() {
         }); 
     };
 
+
     useEffect(() => {
         if (addmfacturer.isSuccess) {
             if (addmfacturer.message.result === 'success') {
-                dispatch(setShowMessage('State Save Successfully!')) 
+                dispatch(setShowMessage('Manufacturer Save Successfully!')) 
                 clearInpHook()               
                 dispatch(clearAddManufacturer())              
                 setModalShow(false);
             } else if (addmfacturer.message.result === 'alreadyExist') {
-                dispatch(setShowMessage('Please Enter Other State Name!'))
+                dispatch(setShowMessage('Please Enter Other Manufacturer Name!'))
                 dispatch(clearAddManufacturer())
             } else {
                 dispatch(setShowMessage('Something is wrong!'))
@@ -141,10 +143,13 @@ export default function Manufacturer_list() {
             menufacturerName: '',
             menufacturerDiscription: ''
         })
-        setEditStateById('');
+        setEditMaFacturerById('');
     }
 
-   
+    const redirectaddmodal = (rmdata)=>{
+        console.log(rmdata.row,'qwertyuio********************')
+        navigate('/home/manufacturer-modal', { state: { rowData: rmdata.row } });
+    }
    
     const columns = [
         {
@@ -157,29 +162,41 @@ export default function Manufacturer_list() {
 
         },
         {
-            field: 'state_name',
+            field: 'manufacturerName',
             headerAlign: 'center',
             align: 'center',
             headerName: 'Manufacturer Name',
             minWidth: 100,
             flex: 1,
             valueGetter: (params) => {
-                return `${params.row.state_name ? params.row.state_name : '-'}`
+                return `${params.row.manufacturerName ? params.row.manufacturerName : '-'}`
             }
         },
         {
-            field: 'description',
+            field: 'manufacturerDescription',
             headerAlign: 'left',
             align: 'left',
-            headerName: 'State Discription',
+            headerName: 'Manufacturer Discription',
             minWidth: 150,
             flex: 1,           
             valueGetter: (params) => {
-                return `${params.row.description ? params.row.description : '-'}`
-            }
+                return `${params.row.manufacturerDescription ? params.row.manufacturerDescription : '-'}`
+            },
+            renderCell: (params) => {
+                const handleClick = () => {
+                  // Handle the click event here
+                  console.log('Clicked on:', params.row.manufacturerName);
+                };
+          
+                return (
+                  <div onClick={handleClick}>
+                    {params.value}
+                  </div>
+                );
+            },
         },     
         {
-            field: 'is_active',
+            field: 'isActive',
             headerName: 'Active',
             headerAlign: 'left',
             align: 'left',
@@ -187,7 +204,7 @@ export default function Manufacturer_list() {
             minWidth: 80,
             flex: 1,
             renderCell: (params) => (
-                params.row.is_active ? <CheckIcon /> : <ClearIcon />
+                params.row.isActive ? <CheckIcon /> : <ClearIcon />
             ),
 
         },
@@ -221,11 +238,11 @@ export default function Manufacturer_list() {
             ),
         }
     ];
-    const rowsData = allStateDate.map((item, index) => ({ ...item, rowNumber: index + 1 }));
+    const rowsData = allMfacturerData.map((item, index) => ({ ...item, rowNumber: index + 1 }));
     
     useEffect(() => {
-        getAllStateAction().then((data) => {
-            setAllStateDate(data.result)
+        getAllManufacturerAction().then((data) => {
+            setAllMfacturerData(data.result)
         }).catch((error) => {
             console.error('Error in getAllStateAction:', error);
         });
@@ -262,7 +279,7 @@ export default function Manufacturer_list() {
                         style={{ fontFamily: 'Poppins', padding: 5, backgroundColor: 'white', }}
                         pageSizeOptions={[5, 10, 25]}
                         initialState={{
-                             ...allStateDate.initialState,
+                             ...allMfacturerData.initialState,
                             pagination: { paginationModel: { pageSize: 10 } },
                         }}
                         components={{
@@ -280,6 +297,9 @@ export default function Manufacturer_list() {
                         }}
                         rowSelection={false}
                         autoPageSize={false}
+                        onCellClick={(params, event) => {
+                            redirectaddmodal(params);
+                        }}
                     />
                 </div>
             </div>

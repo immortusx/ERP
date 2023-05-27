@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import Axios from 'axios';
 
-export const getAllStateAction = async () => {
-  const url = `${process.env.REACT_APP_NODE_URL}/api/master/get-allsate`;
+export const getAllManufacturerAction = async () => {
+  const url = `${process.env.REACT_APP_NODE_URL}/api/master/get-allmanufacturer`;
   const config = {
     headers: {
       token: localStorage.getItem('rbacToken')
@@ -23,8 +23,8 @@ export const getAllStateAction = async () => {
 }
 
 
-export const getStateById = async (state_id) => {
-  const url = `${process.env.REACT_APP_NODE_URL}/api/master/get-statebyid/${state_id}`;
+export const getManufacturerById = async (manufacturerId) => {
+  const url = `${process.env.REACT_APP_NODE_URL}/api/master/get-manufacturerbyid/${manufacturerId}`;
   const config = {
     headers: {
       token: localStorage.getItem('rbacToken')
@@ -44,8 +44,8 @@ export const getStateById = async (state_id) => {
 }
 
 
-export const editeStateAction = async (sData) => {
-  const url = `${process.env.REACT_APP_NODE_URL}/api/master/edit-satebyId`;
+export const editeManufacturerAction = async (mData) => {
+  const url = `${process.env.REACT_APP_NODE_URL}/api/master/edit-manufacturerbyId`;
   const config = {
     headers: {
       token: localStorage.getItem('rbacToken')
@@ -53,7 +53,7 @@ export const editeStateAction = async (sData) => {
   };
 
   try {
-    const response = await Axios.post(url, sData, config); 
+    const response = await Axios.post(url, mData, config); 
     if (response.data?.isSuccess) {
       return response.data; 
     }
@@ -65,8 +65,8 @@ export const editeStateAction = async (sData) => {
 };
 
 
-export const deleteStateAction = async (sData) => {
-  const url = `${process.env.REACT_APP_NODE_URL}/api/master/delete-satebyId`;
+export const deleteManufacturerAction = async (mData) => {
+  const url = `${process.env.REACT_APP_NODE_URL}/api/master/delete-manufacturerbyId`;
   const config = {
     headers: {
       token: localStorage.getItem('rbacToken')
@@ -74,7 +74,7 @@ export const deleteStateAction = async (sData) => {
   };
 
   try {
-    const response = await Axios.post(url, sData, config);
+    const response = await Axios.post(url, mData, config);
     if (response.data?.isSuccess) {
       return response.data; 
     }
