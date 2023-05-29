@@ -16,6 +16,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 export default function Roles({ workFor }) {
     const [featuresList, setFeaturesList] = useState([])
     const [showRolesList, setShowRolesList] = useState([])
+    const [tableEditData, setTableEditData] = useState([]);
     const [currentRole, setCurrentRole] = useState({
         role: null,
         features: null,
@@ -298,8 +299,8 @@ export default function Roles({ workFor }) {
         }
     ];
     const editeStateModal = (data) => {
-        console.log(data);
-        navigate('/administration/roles/editrole')
+        // setTableEditData(data);
+        navigate('/administration/roles/editrole', {state: data})
     }
     return (
         <div className='addUser myBorder bg-white rounded p-3'>

@@ -440,7 +440,7 @@ export default function HomeScreen() {
             
             <Route path="no-access" element={<NoAuth />} exact />
 
-            <Route path="home/profile" element={<CheckPermission path='profile'><Profile /></CheckPermission>} exact />
+            <Route path="profile" element={<CheckPermission path='profile'><Profile /></CheckPermission>} exact />
             <Route path="enquiry" element={<CheckPermission path='profile'><Enquiry /></CheckPermission>} exact />
             <Route path="sale/enquiryies/newenquiry" element={<CheckPermission path='profile'><Enquiry workFor='newEnquiry' /></CheckPermission>} exact />
             <Route path="sale/enquiryies" element={<CheckPermission path='profile'><EnquiryList /></CheckPermission>} exact />
@@ -457,6 +457,7 @@ export default function HomeScreen() {
             <Route path="management/manage" element={<CheckPermission path='manage'><Manage /></CheckPermission>} exact />
 
 
+            <Route path="administration/*" element={<Navigate to='/administration/roles' />} exact />
             <Route path="administration/roles" element={<CheckPermission path='roles'><Roles workFor='roles' /></CheckPermission>} exact />
             <Route path="administration/roles/addrole" element={<CheckPermission path='add-role'><AddRole workFor='addRole' /></CheckPermission>} exact />
             <Route path="administration/roles/editrole" element={<CheckPermission path='add-role'><AddRole workFor='forEdit' /></CheckPermission>} exact />
