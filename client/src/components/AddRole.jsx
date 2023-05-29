@@ -6,10 +6,16 @@ import { editRoleToDb, clearEditRoleState } from '../redux/slices/editRoleDataSl
 import Axios from 'axios'
 import { getToPathname } from '@remix-run/router'
 import { setShowMessage } from '../redux/slices/notificationSlice'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { DataGrid, GridToolbar } from '@mui/x-data-grid';
+import CheckIcon from '@mui/icons-material/Check';
+import ClearIcon from '@mui/icons-material/Clear';
+
 
 
 export default function AddRole({ workFor }) {
+    const location = useLocation();
+    const tableEditData = location.state
     const [featuresList, setFeaturesList] = useState([])
     const [showRolesList, setShowRolesList] = useState([])
     const [currentRole, setCurrentRole] = useState({
@@ -28,6 +34,16 @@ export default function AddRole({ workFor }) {
     const featuresState = useSelector(state => state.featuresListState.featuresState)
     const addRoleState = useSelector(state => state.addRoleState.addRoleState)
     const editRoleState = useSelector(state => state.editRoleDataState.editRoleSliceState)
+
+    useEffect(() => {
+        if (workFor === "forEdit") {
+            setFeatureData({
+                roleName: tableEditData.role,
+                roleDescription: tableEditData.description,
+                checkedFeatures: [],
+            })
+        }
+    }, [workFor])
 
     useEffect(() => {
         console.log('editRoleState', editRoleState);
@@ -58,12 +74,12 @@ export default function AddRole({ workFor }) {
     }
 
     useEffect(() => {
-        if (workFor === 'roles') {
+        if (workFor === 'forEdit') {
             clearInpHook()
             if (currentRole.role !== null) {
                 setFeatureData({
-                    roleName: '',
-                    roleDescription: currentRole.role.description,
+                    roleName: tableEditData.role,
+                    roleDescription: tableEditData.description,
                     checkedFeatures: [],
                 })
             }
@@ -71,7 +87,7 @@ export default function AddRole({ workFor }) {
                 console.log('currentRole.features', currentRole.features)
                 let tempAr = [];
                 currentRole.features.forEach((target) => {
-                    console.log('getElementsByName', document.getElementsByName(`${target.feature}Inp`)[0]);
+                    // console.log('getElementsByName', document.getElementsByName(`${target.feature}Inp`)[0]);
                     document.getElementsByName(`${target.feature}Inp`)[0].checked = true
                     tempAr.push(target.id)
                 })
@@ -84,8 +100,7 @@ export default function AddRole({ workFor }) {
 
     useEffect(() => {
         clearInpHook()
-
-        if (workFor === 'roles') {
+        if (workFor === 'forEdit') {
             getRoles()
         }
     }, [workFor])
@@ -93,9 +108,10 @@ export default function AddRole({ workFor }) {
         if (addRoleState.isSuccess) {
             if (addRoleState.message.isSuccess) {
                 dispatch(setShowMessage('Role is created'))
+                dispatch(clearAddRoleState())
+                navigate('/administration/roles')
                 clearInpHook()
                 clearAddRoleState()
-                navigate('/home/roles')
             } else {
                 dispatch(setShowMessage('Something is wrong'))
             }
@@ -107,12 +123,9 @@ export default function AddRole({ workFor }) {
             if (featuresState.data.isSuccess) {
                 setFeaturesList(featuresState.data.result)
             }
-
         }
     }, [featuresState])
-    // useEffect(() => {
-    //     featuresList
-    // }, [])
+
     useEffect(() => {
         dispatch(getFeatureFromDb())
     }, [])
@@ -151,7 +164,7 @@ export default function AddRole({ workFor }) {
         await Axios.get(url, config).then((response) => {
             if (response.data?.isSuccess) {
                 setShowRolesList(response.data.result)
-                console.log('get-roles-to-edit result', response.data.result);
+                console.log('get-roles-to-edit result>', response.data.result);
             }
         })
     }
@@ -179,74 +192,99 @@ export default function AddRole({ workFor }) {
                 dispatch(setShowMessage('Please fill all the field'))
             }
         } else {
-            if (currentRole.role != null) {
-
-                console.log('workFor', workFor);
-                let myData = {
-                    description: featureData.roleDescription,
-                    features: featureData.checkedFeatures,
-                    id: currentRole.role.id,
+            if (workFor === 'forEdit') {
+                console.log("editnow")
+                console.log(currentRole,'current')
+                console.log(featureData.roleDescription)
+                console.log(featureData.checkedFeatures)
+                console.log(tableEditData.id)
+                if (currentRole != null) {
+                    let myData = {
+                        description: featureData.roleDescription,
+                        features: featureData.checkedFeatures,
+                        id: tableEditData.id,
+                    }
+                    dispatch(editRoleToDb(myData))
                 }
-                dispatch(editRoleToDb(myData))
             }
 
+
         }
     }
-    function handleSelectRole(e) {
-        console.log('handleSelectRole', e.target.selectedOptions[0].value);
+    function handleSelectRole() {
+        // console.log('handleSelectRole', e.target.selectedOptions[0].value);
         clearInpHook()
-        if (e.target.selectedOptions[0].value == 0) {
-            console.log('******handle if 0 selected******')
-        } else {
-            let tempObj = showRolesList.find((item) => {
-                return item.id == e.target.selectedOptions[0].value
-            })
-            setCurrentRole(currentRole => ({ ...currentRole, role: tempObj }))
-            getRoleFeatures(e.target.selectedOptions[0].value)
-        }
+        let tempObj = showRolesList.find((item) => {
+            return item.id == tableEditData.id
+        })
+        setCurrentRole(currentRole => ({ ...currentRole, role: tempObj }))
+        getRoleFeatures(tableEditData.id)
+
     }
     function handlCancel() {
-        console.log('handlCancel');
-        navigate('/home/roles')
+        // console.log(featureData.roleDescription);
+        navigate('/administration/roles')
         clearInpHook()
     }
+
+    const getEdit = () => {
+        if (workFor === 'forEdit') {
+            setFeatureData({
+                roleName: tableEditData.role,
+                roleDescription: tableEditData.description,
+                checkedFeatures: [],
+            })
+        }
+
+    }
+    useEffect(() => {
+        if (workFor === 'forEdit') {
+            getEdit();
+            handleSelectRole()
+        }
+    }, [])
 
 
     return (
         <div className='addUser myBorder bg-white rounded p-3'>
-            <main>
-                <h5 className='m-0'>
-                    {
-                        workFor === 'addRole' ? 'Create role' : 'Roles'
-                    }
-                </h5>
+            <div className=' row mt-3 m-0'>
+                {
 
-                <div className=' row mt-3 m-0'>
-                    {
-
-                        workFor === 'roles' && <div className='  d-flex align-items-end justify-content-end'>
-                            <div onClick={() => { navigate('/administration/roles/addrole') }} className='d-flex align-items-center' type='button'>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-plus-circle" viewBox="0 0 16 16">
-                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
-                                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
-                                </svg>
-                                <h6 className='m-0 ps-1'>
-                                    Add role
-                                </h6>
-                            </div>
+                    workFor === 'roles' && <div className='  d-flex align-items-end justify-content-end'>
+                        <div onClick={() => { navigate('/administration/roles') }} className='d-flex align-items-center' type='button'>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-plus-circle" viewBox="0 0 16 16">
+                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
+                            </svg>
+                            <h6 className='m-0 ps-1'>
+                                Add role
+                            </h6>
                         </div>
-                    }
+                    </div>
+                }
+            </div>
+            <main>
+                <div className=' row mt-3 m-0'>
+
+                    <h5 className='m-0'>
+                        {
+                            workFor === 'addRole' ? 'Create role' : 'Edit role'
+                        }
+                    </h5>
+
+
                     {
-                        workFor === 'roles' ? <section className='d-flex  flex-column col-12 col-lg-5'>
+                        workFor === 'forEdit' ? <section className='d-flex  flex-column col-12 col-lg-5'>
                             <label className='myLabel' htmlFor="email">Select role</label>
-                            <select onChange={handleSelectRole} className='myInput' name="selectRole">
+                            {/* <select className='myInput' name="selectRole">
                                 <option value='0' className='myLabel' selected>select role</option>
                                 {
                                     showRolesList && showRolesList.length > 0 && showRolesList.map((item, index) => {
                                         return <option key={index} value={item.id}>{item.role}</option>
                                     })
                                 }
-                            </select>
+                            </select> */}
+                            <input disabled className='myInput' name="selectRole" value={featureData.roleName} />
                         </section>
                             : <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
                                 <label className='myLabel' htmlFor="email">Role name</label>
@@ -319,7 +357,6 @@ export default function AddRole({ workFor }) {
                         </ul>
                     </section>
 
-
                     <section className='d-flex flex-column flex-sm-row'>
                         <button className='col-12 col-sm-5 col-lg-2 myBtn py-2' onClick={handleSubmit} type='button'>{workFor === 'addRole' ? 'Create role' : 'Edit role'} </button>
                         <button className='ms-0 ms-sm-3 mt-3 mt-sm-0 col-12 col-sm-5 col-lg-2 myBtn py-2' onClick={handlCancel} type='button'>Cancel </button>
@@ -327,6 +364,8 @@ export default function AddRole({ workFor }) {
                     </section>
 
                 </div>
+
+
             </main>
         </div >
     )
