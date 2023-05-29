@@ -148,7 +148,7 @@ export default function Manufacturer_list() {
 
     const redirectaddmodal = (rmdata)=>{
         console.log(rmdata.row,'qwertyuio********************')
-        navigate('/home/manufacturer-modal', { state: { rowData: rmdata.row } });
+        navigate('/configuration/manufacturer-modal', { state: { rowData: rmdata.row } });
     }
    
     const columns = [
