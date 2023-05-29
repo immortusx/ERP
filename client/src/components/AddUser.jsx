@@ -104,7 +104,7 @@ export default function AddUser({ workFor }) {
             if (editUserData === null) {
                 dispatch(setShowMessage('Please select a user'))
                 setTimeout(() => {
-                    navigate('/home/users')
+                    navigate('/administration/users')
                 }, 1000)
             } else {
                 setUserData({
@@ -172,7 +172,7 @@ export default function AddUser({ workFor }) {
                 dispatch(setShowMessage('User is created'))
                 clearInpHook()
                 dispatch(clearAddUserState())
-                navigate('/home/users')
+                navigate('/administration/users')
             } else if (addUserState.message.result === 'alreadyExist') {
                 dispatch(setShowMessage('Please use a different email to continue!'))
                 dispatch(clearAddUserState())
@@ -245,7 +245,7 @@ export default function AddUser({ workFor }) {
     }
 
     function handleCancel() {
-        navigate('/home/users')
+        navigate('/administration/users')
     }
     function onChangeHandler(e) {
         const name = e.target.name;

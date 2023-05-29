@@ -37,6 +37,7 @@ import Part_List from './Master/Plan/Part_List'
 import BreadCrumb from './BreadCrumb/BreadCrumb'
 import Manufacturer_list from './Master/Manufacturer/Manufacturer_list';
 import Manufacturer_modal from './Master/Manufacturer/Manufacturer_modal';
+import Roles from './Roles'
 
 const CheckPermission = ({ children, path }) => {
   // return checkList.includes(path) ? children : <Navigate to="../no-access" />
@@ -240,7 +241,7 @@ export default function HomeScreen() {
                     <ul className='inUl'>
                       {
                         checkTabGrant(['profile']) && <li className='inLi'>
-                          <NavLink className={({ isActive }) => isActive ? 'activeLink' : ''} to="enquiryies" >
+                          <NavLink className={({ isActive }) => isActive ? 'activeLink' : ''} to="sale/enquiryies" >
                             Enquiry
                           </NavLink>
                         </li>
@@ -267,14 +268,14 @@ export default function HomeScreen() {
                       {
 
                         checkTabGrant(['products']) && <li className='inLi'>
-                          <NavLink className={({ isActive }) => isActive ? 'activeLink' : ''} to="products" >
+                          <NavLink className={({ isActive }) => isActive ? 'activeLink' : ''} to="service/products" >
                             Products
                           </NavLink>
                         </li>
                       }
                       {
                         checkTabGrant(['sales']) && <li className='inLi'>
-                          <NavLink className={({ isActive }) => isActive ? 'activeLink' : ''} to="sales" >
+                          <NavLink className={({ isActive }) => isActive ? 'activeLink' : ''} to="service/sales" >
                             Sales
                           </NavLink>
                         </li>
@@ -298,7 +299,7 @@ export default function HomeScreen() {
                       {
 
                         checkTabGrant(['manage']) && <li className='inLi'>
-                          <NavLink className={({ isActive }) => isActive ? 'activeLink' : ''} to="manage" >
+                          <NavLink className={({ isActive }) => isActive ? 'activeLink' : ''} to="management/manage" >
                             Manage
                           </NavLink>
                         </li>
@@ -325,21 +326,21 @@ export default function HomeScreen() {
                       {
 
                         checkTabGrant(['roles']) && <li className='inLi'>
-                          <NavLink className={({ isActive }) => isActive ? 'activeLink' : ''} to="roles" >
+                          <NavLink className={({ isActive }) => isActive ? 'activeLink' : ''} to="administration/roles" >
                             Roles
                           </NavLink>
                         </li>
                       }
                       {
                         checkTabGrant(['users']) && <li className='inLi'>
-                          <NavLink className={({ isActive }) => isActive ? 'activeLink' : ''} to="users" >
+                          <NavLink className={({ isActive }) => isActive ? 'activeLink' : ''} to="administration/users" >
                             Users
                           </NavLink>
                         </li>
                       }
                       {
                         checkTabGrant(['users']) && <li className='inLi'>
-                          <NavLink className={({ isActive }) => isActive ? 'activeLink' : ''} to="enquiry-categories" >
+                          <NavLink className={({ isActive }) => isActive ? 'activeLink' : ''} to="administration/enquirycategories" >
                             Enquiry categories
                           </NavLink>
                         </li>
@@ -363,7 +364,7 @@ export default function HomeScreen() {
                       <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
                     </svg>
                     <span>
-                      Master
+                    Configuration
                     </span>
                   </button>
                   <div id="master-collapse" data-bs-parent="#accordionExample" className="accordion-collapse collapse" >
@@ -371,8 +372,8 @@ export default function HomeScreen() {
                       {
 
                         checkTabGrant(['profile']) && <li className='inLi'>
-                          <NavLink className={({ isActive }) => isActive ? 'activeLink' : ''} to="master" >
-                            Master
+                          <NavLink className={({ isActive }) => isActive ? 'activeLink' : ''} to="configuration" >
+                          Configuration
                           </NavLink>
                         </li>
                       }
@@ -441,11 +442,10 @@ export default function HomeScreen() {
             
             <Route path="no-access" element={<NoAuth />} exact />
 
-            <Route path="users" element={<CheckPermission path='users'><Users /></CheckPermission>} exact />
             <Route path="profile" element={<CheckPermission path='profile'><Profile /></CheckPermission>} exact />
             <Route path="enquiry" element={<CheckPermission path='profile'><Enquiry /></CheckPermission>} exact />
-            <Route path="new-enquiry" element={<CheckPermission path='profile'><Enquiry workFor='newEnquiry' /></CheckPermission>} exact />
-            <Route path="enquiryies" element={<CheckPermission path='profile'><EnquiryList /></CheckPermission>} exact />
+            <Route path="sale/enquiryies/newenquiry" element={<CheckPermission path='profile'><Enquiry workFor='newEnquiry' /></CheckPermission>} exact />
+            <Route path="sale/enquiryies" element={<CheckPermission path='profile'><EnquiryList /></CheckPermission>} exact />
 
             <Route path="master" element={<CheckPermission path='profile'><Master /></CheckPermission>} exact />
             <Route path="state-list" element={<CheckPermission path='profile'><State_list /></CheckPermission>} exact />
@@ -455,18 +455,28 @@ export default function HomeScreen() {
             <Route path="part-list" element={<CheckPermission path='profile'><Part_List/></CheckPermission>} exact />
             <Route path="manufacturer-list" element={<CheckPermission path='profile'><Manufacturer_list/></CheckPermission>} exact />
             <Route path="manufacturer-modal" element={<CheckPermission path="profile"><Manufacturer_modal /></CheckPermission>} exact/>
+            <Route path="configuration" element={<CheckPermission path='profile'><Master /></CheckPermission>} exact />
+            <Route path="configuration/state" element={<CheckPermission path='profile'><State_list /></CheckPermission>} exact />
+            <Route path="configuration/district" element={<CheckPermission path='profile'><District_list /></CheckPermission>} exact />
+            <Route path="configuration/village" element={<CheckPermission path='profile'><Village_list /></CheckPermission>} exact />
+            <Route path="configuration/taluka" element={<CheckPermission path='profile'><Taluka_list /></CheckPermission>} exact />
+            <Route path="configuration/part-list" element={<CheckPermission path='profile'><Part_List/></CheckPermission>} exact />
 
-            <Route path="sales" element={<CheckPermission path='sales'><Sales /></CheckPermission>} exact />
+            <Route path="service/sales" element={<CheckPermission path='sales'><Sales /></CheckPermission>} exact />
 
-            <Route path="manage" element={<CheckPermission path='manage'><Manage /></CheckPermission>} exact />
+            <Route path="management/manage" element={<CheckPermission path='manage'><Manage /></CheckPermission>} exact />
 
 
-            <Route path="add-role" element={<CheckPermission path='add-role'><AddRole workFor='addRole' /></CheckPermission>} exact />
-            <Route path="roles" element={<CheckPermission path='roles'><AddRole workFor='roles' /></CheckPermission>} exact />
-            <Route path="add-user" element={<CheckPermission path='add-user'><AddUser workFor='forAdd' /></CheckPermission>} exact />
-            <Route path="edit-user" element={<CheckPermission path='edit-user'><AddUser workFor='forEdit' /></CheckPermission>} exact />
+            <Route path="administration/*" element={<Navigate to='/administration/roles' />} exact />
+            <Route path="administration/roles" element={<CheckPermission path='roles'><Roles workFor='roles' /></CheckPermission>} exact />
+            <Route path="administration/roles/addrole" element={<CheckPermission path='add-role'><AddRole workFor='addRole' /></CheckPermission>} exact />
+            <Route path="administration/roles/editrole" element={<CheckPermission path='add-role'><AddRole workFor='forEdit' /></CheckPermission>} exact />
+            
+            <Route path="administration/users" element={<CheckPermission path='users'><Users /></CheckPermission>} exact />
+            <Route path="administration/users/adduser" element={<CheckPermission path='add-user'><AddUser workFor='forAdd' /></CheckPermission>} exact />
+            <Route path="administration/users/edituser" element={<CheckPermission path='edit-user'><AddUser workFor='forEdit' /></CheckPermission>} exact />
 
-            <Route path="enquiry-categories" element={<CheckPermission path='users'><EnquiryCategories /></CheckPermission>} exact />
+            <Route path="administration/enquirycategories" element={<CheckPermission path='users'><EnquiryCategories /></CheckPermission>} exact />
 
             <Route path="branch" element={<CheckPermission path='branch'><Branch workFor='branch' /></CheckPermission>} exact />
             <Route path="add-branch" element={<CheckPermission path='branch'><Branch workFor='addBranch' /></CheckPermission>} exact />
@@ -474,9 +484,9 @@ export default function HomeScreen() {
 
             {/* <Route path='admin'>
           </Route> */}
-            <Route path="products" element={<CheckPermission path='products'><Products /></CheckPermission>} exact />
+            <Route path="service/products" element={<CheckPermission path='products'><Products /></CheckPermission>} exact />
 
-            <Route path="*" element={<Navigate to="profile" />} />
+            <Route path="*" element={<Navigate to="/home/profile" />} />
 
           </Routes>
 

@@ -24,7 +24,7 @@ export default function Master() {
                     <ul className='row m-0 px-2'>
                         <li className='col-12 col-sm-4 col-md-3  d-flex align-items-center p-2'>
                             <main onClick={() => {
-                                navigate('/home/state-list')
+                                navigate('/configuration/state')
                             }} className='d-flex align-items-center'>
                                 <div className='myBtnRight'>
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="bi bi-chevron-double-right" viewBox="0 0 16 16">
@@ -37,7 +37,7 @@ export default function Master() {
                         </li>
                         <li className='col-12 col-sm-4 col-md-3  d-flex align-items-center p-2'>
                             <main onClick={() => {
-                                navigate('/home/district-list')
+                                navigate('/configuration/district')
                             }}  className='d-flex align-items-center'>
                                 <div className='myBtnRight'>
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="bi bi-chevron-double-right" viewBox="0 0 16 16">
@@ -50,7 +50,7 @@ export default function Master() {
                         </li>
                         <li className='col-12 col-sm-4 col-md-3  d-flex align-items-center p-2'>
                             <main onClick={() => {
-                                navigate('/home/taluka-list')
+                                navigate('/configuration/taluka')
                             }}  className='d-flex align-items-center'>
                                 <div className='myBtnRight'>
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="bi bi-chevron-double-right" viewBox="0 0 16 16">
@@ -63,7 +63,7 @@ export default function Master() {
                         </li>
                         <li className='col-12 col-sm-4 col-md-3  d-flex align-items-center p-2'>
                             <main onClick={() => {
-                                navigate('/home/village-list')
+                                navigate('/configuration/village')
                             }} className='d-flex align-items-center'>
                                 <div className='myBtnRight'>
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="bi bi-chevron-double-right" viewBox="0 0 16 16">
@@ -142,7 +142,7 @@ export default function Master() {
                     <ul className='row m-0 px-2'>
                         <li className='col-12 col-sm-4 col-md-3  d-flex align-items-center p-2'>
                             <main onClick={() => {
-                                navigate('/home/part-list')
+                                navigate('/configuration/part-list')
                             }} className='d-flex align-items-center'>
                                 <div className='myBtnRight'>
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="bi bi-chevron-double-right" viewBox="0 0 16 16">
