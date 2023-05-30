@@ -35,6 +35,8 @@ import Taluka_list from './Master/Taluka/Taluka_list'
 import Plan_List from './Master/Plan/Part_List'
 import Part_List from './Master/Plan/Part_List'
 import BreadCrumb from './BreadCrumb/BreadCrumb'
+import Manufacturer_list from './Master/Manufacturer/Manufacturer_list';
+import Manufacturer_modal from './Master/Manufacturer/Manufacturer_modal';
 import Roles from './Roles'
 import Tax from './Master/Tax/Tax'
 
@@ -446,6 +448,14 @@ export default function HomeScreen() {
             <Route path="sale/enquiryies/newenquiry" element={<CheckPermission path='profile'><Enquiry workFor='newEnquiry' /></CheckPermission>} exact />
             <Route path="sale/enquiryies" element={<CheckPermission path='profile'><EnquiryList /></CheckPermission>} exact />
 
+            <Route path="master" element={<CheckPermission path='profile'><Master /></CheckPermission>} exact />
+            <Route path="state-list" element={<CheckPermission path='profile'><State_list /></CheckPermission>} exact />
+            <Route path="district-list" element={<CheckPermission path='profile'><District_list /></CheckPermission>} exact />
+            <Route path="village-list" element={<CheckPermission path='profile'><Village_list /></CheckPermission>} exact />
+            <Route path="taluka-list" element={<CheckPermission path='profile'><Taluka_list /></CheckPermission>} exact />
+            <Route path="part-list" element={<CheckPermission path='profile'><Part_List/></CheckPermission>} exact />
+            <Route path="configuration/manufacturer-list" element={<CheckPermission path='profile'><Manufacturer_list/></CheckPermission>} exact />
+            <Route path="configuration/manufacturer-modal" element={<CheckPermission path="profile"><Manufacturer_modal /></CheckPermission>} exact/>
             <Route path="configuration" element={<CheckPermission path='profile'><Master /></CheckPermission>} exact />
             <Route path="configuration/state" element={<CheckPermission path='profile'><State_list /></CheckPermission>} exact />
             <Route path="configuration/district" element={<CheckPermission path='profile'><District_list /></CheckPermission>} exact />

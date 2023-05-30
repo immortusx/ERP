@@ -19,3 +19,8 @@ p {
   margin-top: 0;
   margin-bottom: 0;
 }
+
+.reactivemanufacturer {
+  border: none;
+  background: #fff;
+}
