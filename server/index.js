@@ -24,6 +24,7 @@ app.use('/api/master', require('./Routes/Master/District/districtRouter'))
 app.use('/api/master', require('./Routes/Master/Taluka/talukaRouter'))
 app.use('/api/master', require('./Routes/Master/Parts/partsRouter'));
 app.use('/api/master', require('./Routes/Master/Village/villageRouter'))
+app.use('/api/master', require('./Routes/Master/Tax/taxRoutes'));
 app.use('/api/enquiry', require('./Routes/enquiryRoutes'))
 app.use('/api/login', require('./Routes/loginRoutes'))
 app.use('/api/roles', require('./Routes/rolesRoutes'))
