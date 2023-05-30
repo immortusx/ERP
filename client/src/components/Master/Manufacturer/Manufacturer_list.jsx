@@ -148,7 +148,7 @@ export default function Manufacturer_list() {
 
     const redirectaddmodal = (rmdata)=>{
         console.log(rmdata.row,'qwertyuio********************')
-        navigate('/configuration/manufacturer-modal', { state: { rowData: rmdata.row } });
+       navigate('/configuration/manufacturer-modal', { state: { rowData: rmdata.row } });
     }
    
     const columns = [
@@ -167,10 +167,14 @@ export default function Manufacturer_list() {
             align: 'center',
             headerName: 'Manufacturer Name',
             minWidth: 100,
-            flex: 1,
-            valueGetter: (params) => {
-                return `${params.row.manufacturerName ? params.row.manufacturerName : '-'}`
-            }
+            flex: 1,            
+            renderCell: (params) => (
+                <div>                    
+                    <button className='mfacturerActionBtn' onClick={() => { redirectaddmodal(params) }}>
+                        {params.row.manufacturerName ? params.row.manufacturerName : '-'}
+                    </button>                    
+                </div>
+            ),
         },
         {
             field: 'manufacturerDescription',
@@ -181,19 +185,7 @@ export default function Manufacturer_list() {
             flex: 1,           
             valueGetter: (params) => {
                 return `${params.row.manufacturerDescription ? params.row.manufacturerDescription : '-'}`
-            },
-            renderCell: (params) => {
-                const handleClick = () => {
-                  // Handle the click event here
-                  console.log('Clicked on:', params.row.manufacturerName);
-                };
-          
-                return (
-                  <div onClick={handleClick}>
-                    {params.value}
-                  </div>
-                );
-            },
+            }
         },     
         {
             field: 'isActive',
@@ -297,9 +289,6 @@ export default function Manufacturer_list() {
                         }}
                         rowSelection={false}
                         autoPageSize={false}
-                        onCellClick={(params, event) => {
-                            redirectaddmodal(params);
-                        }}
                     />
                 </div>
             </div>

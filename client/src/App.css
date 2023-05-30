@@ -340,6 +340,15 @@ select.myInput {
   text-decoration: underline;
 }
 
+/********** ManeFacturer Btn*************/
+.mfacturerActionBtn {
+  background: #fff;
+  border: none;
+}
+.mfacturerActionBtn:hover {
+  background: #77aaf7;
+  color: #fff;
+}
 
 @keyframes App-logo-spin {
   from {

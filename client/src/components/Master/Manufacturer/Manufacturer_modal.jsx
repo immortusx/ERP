@@ -29,7 +29,62 @@ export default function Manufacturer_modal() {
     const [deleteMessage, setDeleteMessage] = useState(null);
 
     console.log(rowData,'rowDatarowDatarowDatarowDatarowDatarowDatarowDatarowData')
+    const [modalRowsArr, setModalRowsArr] = useState([]);
     
+    var ModaleNumber = 1;
+    const onAddNewRowsHandler = () => {
+        setModalRowsArr((prevState) => [
+          ...prevState,
+          <div className="row" key={`ModaleNumber_${prevState.length + 1}`}>
+            <div className="col-6">
+              <label htmlFor="exampleFormControlInput1" className="form-label">
+                Modale Name :
+              </label>
+              <div className="row">
+                <div className="col-10">
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="recipient-name"
+                    name="stateName"
+                    value=""
+                  />
+                </div>
+                <div className="col-2">
+                  <Button variant="primary rounded-circle" onClick={() => {onAddNewRowsHandler()}}>+</Button>
+                </div>
+              </div>
+            </div>
+            <div className="col-6">
+              <label htmlFor="exampleFormControlInput1" className="form-label">
+                Variant Name :
+              </label>
+              <div className="row">
+                <div className="col-10">
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="recipient-name"
+                    name="stateName"
+                    value=""
+                  />
+                </div>
+                <div className="col-2">
+                  <Button variant="primary rounded-circle" onClick={() => {}}>
+                    +
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>,
+        ]);
+      };
+    
+      useEffect(() => {
+        // Initial rows
+        onAddNewRowsHandler();
+      }, []);
+
     return (
         <>
             <div className=''>
@@ -38,30 +93,26 @@ export default function Manufacturer_modal() {
                     <div className='d-flex align-items-center' type='button'>
                        
                         <h6 className='m-0 ps-1'>                           
-                            <button type="button" className="btn btn-primary">
+                            {/* <button type="button" className="btn btn-primary">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-plus-circle" viewBox="0 0 16 16">
                                     <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
                                     <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
                                 </svg>&nbsp;
-                                Add Manufacturer
-                            </button>
+                                Add
+                            </button> */}
                         </h6>
                     </div>
                 </div>
                 <div className="card">
                     <div className="card-header">
-                        <div className='d-flex'>
-                            <label for="exampleFormControlInput1" class="form-label">ManuFacturer Name : </label>
-                            <p className='px-4'>{rowData.manufacturerName}</p>
-                        </div>
+                    <div className="d-flex">
+                        <label htmlFor="exampleFormControlInput1" className="form-label">
+                        Manufacturer Name :
+                        </label>
+                        <p className="px-4">{rowData.manufacturerName}</p>
                     </div>
-                    <div class="card-body">
-                        <div className="row">
-                            <div className="col-4"></div>
-                            <div className="col-4"></div>
-                            <div className="col-4"></div>
-                        </div>
                     </div>
+                    <div className="card-body">{modalRowsArr}</div>
                 </div>
             </div>
         </>
