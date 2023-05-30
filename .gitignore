@@ -49,3 +49,8 @@ Thumbs.db
 *.mov
 *.wmv
 
+.expo
+
+*.package-lock.json
+client/package-lock.json
+Android_app/package-lock.json
