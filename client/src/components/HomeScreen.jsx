@@ -38,6 +38,7 @@ import BreadCrumb from './BreadCrumb/BreadCrumb'
 import Manufacturer_list from './Master/Manufacturer/Manufacturer_list';
 import Manufacturer_modal from './Master/Manufacturer/Manufacturer_modal';
 import Roles from './Roles'
+import Tax from './Master/Tax/Tax'
 
 const CheckPermission = ({ children, path }) => {
   // return checkList.includes(path) ? children : <Navigate to="../no-access" />
@@ -461,6 +462,8 @@ export default function HomeScreen() {
             <Route path="configuration/village" element={<CheckPermission path='profile'><Village_list /></CheckPermission>} exact />
             <Route path="configuration/taluka" element={<CheckPermission path='profile'><Taluka_list /></CheckPermission>} exact />
             <Route path="configuration/part-list" element={<CheckPermission path='profile'><Part_List/></CheckPermission>} exact />
+
+            <Route path="configuration/tax" element={<CheckPermission path='profile'><Tax/></CheckPermission>} exact />
 
             <Route path="service/sales" element={<CheckPermission path='sales'><Sales /></CheckPermission>} exact />
 
