@@ -340,6 +340,12 @@ select.myInput {
   text-decoration: underline;
 }
 
+.singleCompText {
+  font-size: 10px;
+  color: rgb(53, 172, 219);
+  text-align: end;
+  cursor: pointer;
+}
 
 @keyframes App-logo-spin {
   from {
