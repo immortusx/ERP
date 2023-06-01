@@ -6,19 +6,21 @@ import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { addDistrictToDb, clearaddDistrict } from '../../../redux/slices/Master/District/addDistrictSlice'
 import { setShowMessage } from '../../../redux/slices/notificationSlice'
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 //import {getAllDistrictAction, editeDistrictAction} from './getEditDistrict'
-import {getAllDistrictAction, getDistrictById, editeDistrictAction,deleteDistrictAction} from './getEditDistrict'
-import {getAllStateAction, editeStateAction} from '../State/getEditeSate'
+import { getAllDistrictAction, getDistrictById, editeDistrictAction, deleteDistrictAction } from './getEditDistrict'
+import { getAllStateAction, editeStateAction } from '../State/getEditeSate'
 import AlertDeleteModal from '../../AlertDelete/AlertDeleteModal';
 
 const axios = require('axios');
 
 export default function District_list() {
+    const location = useLocation();
+    const modalStatus = location.state;
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [stateOptions, setStatateOptions] = useState([])
@@ -28,11 +30,11 @@ export default function District_list() {
     const [editDistrictById, setEditDistrictById] = useState('');
     const addDistrict = useSelector(state => state.addDistrictSlice.addDistrict);
 
-  //---- Delete Modal Variable -----//
-  const [type, setType] = useState(null);
-  const [id, setId] = useState(null);
-  const [displayConfirmationModal, setDisplayConfirmationModal] = useState(false);
-  const [deleteMessage, setDeleteMessage] = useState(null);
+    //---- Delete Modal Variable -----//
+    const [type, setType] = useState(null);
+    const [id, setId] = useState(null);
+    const [displayConfirmationModal, setDisplayConfirmationModal] = useState(false);
+    const [deleteMessage, setDeleteMessage] = useState(null);
 
 
     const [districtData, setDistrictData] = useState({
@@ -40,10 +42,24 @@ export default function District_list() {
         StateName: ''
     })
     const handleClose = () => {
-        setModalShow(false);
+        if (modalStatus === true) {
+            goBack()
+        } else {
+            setModalShow(false);
+        }
     }
     const handleShow = () => {
-        setModalShow(true);
+        if (modalStatus === true) {
+            goBack()
+        } {
+            setModalShow(true);
+        }
+    }
+
+    const goBack = () => {
+        if (modalStatus === true) {
+            navigate(-1);
+        }
     }
     useEffect(() => {
         getAllStateAction().then((data) => {
@@ -52,19 +68,20 @@ export default function District_list() {
         }).catch((error) => {
             console.error('Error in getAllStateAction:', error);
         });
-         getAllDistrictAction().then((data) => {
+        getAllDistrictAction().then((data) => {
             setAllDistrictDate(data.result)
         }).catch((error) => {
             console.error('Error in getAllDistrictAction:', error);
         });
-       
 
-      
+
+
     }, [])
     useEffect(() => {
         if (addDistrict.isSuccess) {
             if (addDistrict.message.result === 'success') {
                 dispatch(setShowMessage('District is Added'))
+                goBack();
                 clearInpHook()
                 dispatch(clearaddDistrict())
                 setModalShow(false);
@@ -121,25 +138,25 @@ export default function District_list() {
             //     userData['id'] = editUserData.id
             //     dispatch(editUserUpdateToDb(userData))
             // } else {
-                if (editDistrictById != '') {
-                    console.log('Update getDistrictActionIdData: ', editDistrictById);
-                    districtData['id'] = editDistrictById;
-                   // console.log('UpdatedistrictData', districtData)
-                   editeDistrictAction(districtData).then((data) => {
-                        console.log('state Update getDistrictActionIdData:', data); 
-                        if(data.result === "updatesuccess"){
-                            getAllDistrictAction().then((data) => { setAllDistrictDate(data.result)});
-                            setModalShow(false);
-                            clearInpHook();
-                            dispatch(setShowMessage('State Data Update Successfully!')); 
-                        }else {
-                            dispatch(setShowMessage('Something is wrong!'))
-                        }                
-                    }).catch((error) => {
-                        console.error('Error in getAllDistrictAction:', error);
-                    });
-                }else{
-            dispatch(addDistrictToDb(districtData))
+            if (editDistrictById != '') {
+                console.log('Update getDistrictActionIdData: ', editDistrictById);
+                districtData['id'] = editDistrictById;
+                // console.log('UpdatedistrictData', districtData)
+                editeDistrictAction(districtData).then((data) => {
+                    console.log('state Update getDistrictActionIdData:', data);
+                    if (data.result === "updatesuccess") {
+                        getAllDistrictAction().then((data) => { setAllDistrictDate(data.result) });
+                        setModalShow(false);
+                        clearInpHook();
+                        dispatch(setShowMessage('State Data Update Successfully!'));
+                    } else {
+                        dispatch(setShowMessage('Something is wrong!'))
+                    }
+                }).catch((error) => {
+                    console.error('Error in getAllDistrictAction:', error);
+                });
+            } else {
+                dispatch(addDistrictToDb(districtData))
             }
         } else {
             dispatch(setShowMessage('All Field Must be Required.'))
@@ -151,21 +168,22 @@ export default function District_list() {
         console.log('districtDatahandleCancel', districtData)
         setDistrictData({ DistrictName: '', StateName: '' })
     }
-    const editeDistrictModal=(ev) =>{
+    const editeDistrictModal = (ev) => {
         getDistrictById(ev.id).then((data) => {
             console.log('Response from getDistrictActionIdData:', data);
-          
-            setDistrictData({ DistrictName: data[0].name,
-                 StateName: data[0].state_id
-                })
+
+            setDistrictData({
+                DistrictName: data[0].name,
+                StateName: data[0].state_id
+            })
             setEditDistrictById(data[0].id)
             setModalShow(true);
         }).catch((error) => {
             console.error('Error in getAllDistrictAction:', error);
         });
-        
+
     }
-    const deleteDistrictAlert=(ev) =>{
+    const deleteDistrictAlert = (ev) => {
         setType('district_delete');
         setId(ev.id);
         setDeleteMessage(`Are You Sure You Want To Delete The District '${ev.name}'?`);
@@ -175,22 +193,22 @@ export default function District_list() {
     const hideConfirmationModal = () => {
         setDisplayConfirmationModal(false);
     };
-    const submitDelete = (type, id) => { 
-        console.log(type,'DistrictDeleteId: ',id) 
+    const submitDelete = (type, id) => {
+        console.log(type, 'DistrictDeleteId: ', id)
         districtData['id'] = id;
         deleteDistrictAction(districtData).then((data) => {
-            console.log('district Update getDistrictActionIdData:', data); 
-            if(data.result === "deletesuccess"){
-                getAllDistrictAction().then((data) => { setAllDistrictDate(data.result)});                
+            console.log('district Update getDistrictActionIdData:', data);
+            if (data.result === "deletesuccess") {
+                getAllDistrictAction().then((data) => { setAllDistrictDate(data.result) });
                 clearInpHook();
                 setDisplayConfirmationModal(false);
-                dispatch(setShowMessage('District Data Delete Successfully!')); 
-            }else {
+                dispatch(setShowMessage('District Data Delete Successfully!'));
+            } else {
                 dispatch(setShowMessage('Something is wrong!'))
-            }                
+            }
         }).catch((error) => {
             console.error('Error in getAllDistrictAction:', error);
-        }); 
+        });
     };
 
     const columns = [
@@ -220,11 +238,11 @@ export default function District_list() {
             align: 'left',
             headerName: 'State Name',
             minWidth: 150,
-            flex: 1,           
+            flex: 1,
             valueGetter: (params) => {
                 return `${params.row.state_name ? params.row.state_name : '-'}`
             }
-        },     
+        },
         {
             field: 'is_active',
             headerName: 'Active',
@@ -269,11 +287,19 @@ export default function District_list() {
         }
     ];
     const rowsData = allDistrictDate.map((item, index) => ({ ...item, rowNumber: index + 1 }));
-    
-  
- const deleteDistrictActino=() =>{
+
+
+    const deleteDistrictActino = () => {
         //setModalShow(true);
     }
+    const openModal = () => {
+        if (modalStatus === true) {
+            setModalShow(true)
+        }
+    }
+    useEffect(() => {
+        openModal();
+    }, [])
 
     return (
         <>
@@ -335,7 +361,7 @@ export default function District_list() {
                     />
                 </div>
             </div>
-            <AlertDeleteModal showModal={displayConfirmationModal} confirmModal={submitDelete} hideModal={hideConfirmationModal} type={type} id={id} message={deleteMessage}  />
+            <AlertDeleteModal showModal={displayConfirmationModal} confirmModal={submitDelete} hideModal={hideConfirmationModal} type={type} id={id} message={deleteMessage} />
 
             {/* new modal */}
             <Modal show={modalShow} onHide={handleClose}>
@@ -352,10 +378,10 @@ export default function District_list() {
                                 <option value="2">Maharashtra </option>
                                 <option value="3">Rajasthan </option> */}
                                 {stateOptions.map((option) => (
-                                     <option key={option.state_id} value={option.state_id}>
-                                       {option.state_name}
-                                     </option>
-                                    ))}  
+                                    <option key={option.state_id} value={option.state_id}>
+                                        {option.state_name}
+                                    </option>
+                                ))}
                             </select>
                         </div>
                         <div className="mb-3">

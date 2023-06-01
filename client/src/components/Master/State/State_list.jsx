@@ -5,14 +5,16 @@ import Checkbox from '@mui/material/Checkbox'
 import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { addStateToDb, clearAddState } from '../../../redux/slices/Master/State/addStateSlice'
 import { setShowMessage } from '../../../redux/slices/notificationSlice'
 import { Modal, Button } from 'react-bootstrap';
-import {getAllStateAction, getStateById, editeStateAction,deleteStateAction} from './getEditeSate'
+import { getAllStateAction, getStateById, editeStateAction, deleteStateAction } from './getEditeSate'
 import AlertDeleteModal from '../../AlertDelete/AlertDeleteModal';
 
 export default function State_list() {
+    const location = useLocation();
+    const modalStatus = location.state;
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [allStateDate, setAllStateDate] = useState([]);
@@ -39,15 +41,25 @@ export default function State_list() {
     }
 
     const handleClose = () => {
-        setModalShow(false);
-        clearInpHook()  
+        if (modalStatus === true) {
+            goBack()
+        } else {
+            setModalShow(false);
+            clearInpHook()
+        }
+
     }
     const handleShow = () => {
-        setModalShow(true);
+        if (modalStatus === true) {
+            goBack()
+        } else {
+            setModalShow(true);
+        }
     }
-    function handleSubmit() {
+    function handleSubmit(e) {
+        e.preventDefault();
         console.log('stateData', stateData)
-       
+
         const sName = stateData.stateName;
         const sDiscr = stateData.stateDiscription;
 
@@ -57,15 +69,15 @@ export default function State_list() {
                 stateData['state_id'] = editStateById;
                 console.log('UpdatestateData', stateData)
                 editeStateAction(stateData).then((data) => {
-                    console.log('state Update getStateActionIdData:', data); 
-                    if(data.result === "updatesuccess"){
-                        getAllStateAction().then((data) => { setAllStateDate(data.result)});
+                    console.log('state Update getStateActionIdData:', data);
+                    if (data.result === "updatesuccess") {
+                        getAllStateAction().then((data) => { setAllStateDate(data.result) });
                         setModalShow(false);
                         clearInpHook();
-                        dispatch(setShowMessage('State Data Update Successfully!')); 
-                    }else {
+                        dispatch(setShowMessage('State Data Update Successfully!'));
+                    } else {
                         dispatch(setShowMessage('Something is wrong!'))
-                    }                
+                    }
                 }).catch((error) => {
                     console.error('Error in getAllStateAction:', error);
                 });
@@ -77,9 +89,9 @@ export default function State_list() {
         }
     }
 
-    const editeStateModal=(ev) =>{
-        console.log(ev,'qwertyuiopdsds12345')
-        console.log(ev.state_id,'state_id s12345')
+    const editeStateModal = (ev) => {
+        console.log(ev, 'qwertyuiopdsds12345')
+        console.log(ev.state_id, 'state_id s12345')
         getStateById(ev.state_id).then((data) => {
             console.log('Response from getStateActionIdData:', data);
             setStateData({
@@ -91,9 +103,9 @@ export default function State_list() {
         }).catch((error) => {
             console.error('Error in getAllStateAction:', error);
         });
-        
+
     }
-    const deleteStateAlert=(ev) =>{
+    const deleteStateAlert = (ev) => {
         //setModalShow(true);
         setType('state_delete');
         setId(ev.state_id);
@@ -105,30 +117,31 @@ export default function State_list() {
     const hideConfirmationModal = () => {
         setDisplayConfirmationModal(false);
     };
-    const submitDelete = (type, id) => { 
-        console.log(type,'StateDeleteId: ',id) 
+    const submitDelete = (type, id) => {
+        console.log(type, 'StateDeleteId: ', id)
         stateData['state_id'] = id;
         deleteStateAction(stateData).then((data) => {
-            console.log('state Update getStateActionIdData:', data); 
-            if(data.result === "deletesuccess"){
-                getAllStateAction().then((data) => { setAllStateDate(data.result)});                
+            console.log('state Update getStateActionIdData:', data);
+            if (data.result === "deletesuccess") {
+                getAllStateAction().then((data) => { setAllStateDate(data.result) });
                 clearInpHook();
                 setDisplayConfirmationModal(false);
-                dispatch(setShowMessage('State Data Delete Successfully!')); 
-            }else {
+                dispatch(setShowMessage('State Data Delete Successfully!'));
+            } else {
                 dispatch(setShowMessage('Something is wrong!'))
-            }                
+            }
         }).catch((error) => {
             console.error('Error in getAllStateAction:', error);
-        }); 
+        });
     };
 
     useEffect(() => {
         if (addState.isSuccess) {
             if (addState.message.result === 'success') {
-                dispatch(setShowMessage('State Save Successfully!')) 
-                clearInpHook()               
-                dispatch(clearAddState())              
+                dispatch(setShowMessage('State Save Successfully!'))
+                goBack();
+                clearInpHook()
+                dispatch(clearAddState())
                 setModalShow(false);
                 getAllStateAction().then((data) => {
                     setAllStateDate(data.result)
@@ -151,8 +164,8 @@ export default function State_list() {
         setEditStateById('');
     }
 
-   
-   
+
+
     const columns = [
         {
             field: 'rowNumber',
@@ -180,11 +193,11 @@ export default function State_list() {
             align: 'left',
             headerName: 'State Discription',
             minWidth: 150,
-            flex: 1,           
+            flex: 1,
             valueGetter: (params) => {
                 return `${params.row.description ? params.row.description : '-'}`
             }
-        },     
+        },
         {
             field: 'is_active',
             headerName: 'Active',
@@ -229,26 +242,41 @@ export default function State_list() {
         }
     ];
     const rowsData = allStateDate.map((item, index) => ({ ...item, rowNumber: index + 1 }));
-    
+
     useEffect(() => {
         getAllStateAction().then((data) => {
             setAllStateDate(data.result)
         }).catch((error) => {
             console.error('Error in getAllStateAction:', error);
         });
-       
+
     }, [])
-    useEffect(()=> {
-        console.log(rowsData,'rowdata');
-    },[allStateDate])
+    useEffect(() => {
+        console.log(rowsData, 'rowdata');
+    }, [allStateDate])
+
+    const openModal = () => {
+        if (modalStatus === true) {
+            setModalShow(true)
+        }
+    }
+    useEffect(() => {
+        openModal();
+    }, [])
+
+    const goBack = () => {
+        if (modalStatus === true) {
+            navigate(-1);
+        }
+    }
     return (
         <>
             <div className=''>
                 {/* <NavLink to={/edit-user}>callme</NavLink > */}
                 <div className='my-3  d-flex align-items-end justify-content-end'>
                     <div className='d-flex align-items-center' type='button'>
-                       
-                        <h6 className='m-0 ps-1'>                           
+
+                        <h6 className='m-0 ps-1'>
                             <button type="button" className="btn btn-primary" onClick={handleShow}>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-plus-circle" viewBox="0 0 16 16">
                                     <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
@@ -272,7 +300,7 @@ export default function State_list() {
                         style={{ fontFamily: 'Poppins', padding: 5, backgroundColor: 'white', }}
                         pageSizeOptions={[5, 10, 25]}
                         initialState={{
-                             ...allStateDate.initialState,
+                            ...allStateDate.initialState,
                             pagination: { paginationModel: { pageSize: 10 } },
                         }}
                         components={{
@@ -295,7 +323,7 @@ export default function State_list() {
             </div>
 
 
-            <AlertDeleteModal showModal={displayConfirmationModal} confirmModal={submitDelete} hideModal={hideConfirmationModal} type={type} id={id} message={deleteMessage}  />
+            <AlertDeleteModal showModal={displayConfirmationModal} confirmModal={submitDelete} hideModal={hideConfirmationModal} type={type} id={id} message={deleteMessage} />
             {/* state modal */}
             <Modal show={modalShow} onHide={handleClose}>
                 <Modal.Header closeButton>
@@ -309,7 +337,7 @@ export default function State_list() {
                         </div>
                         <div className="mb-3">
                             <label htmlFor="message-text" className="col-form-label">State Discription:</label>
-                            <textarea className="form-control" id="message-text" name="stateDiscription"  value={stateData.stateDiscription} onChange={(e) => { onChangeHandler(e) }}></textarea>
+                            <textarea className="form-control" id="message-text" name="stateDiscription" value={stateData.stateDiscription} onChange={(e) => { onChangeHandler(e) }}></textarea>
                         </div>
                     </div>
                 </Modal.Body>

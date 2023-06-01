@@ -5,7 +5,7 @@ import Checkbox from '@mui/material/Checkbox'
 import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { addStateToDb, clearAddState } from '../../../redux/slices/Master/State/addStateSlice'
 import { setShowMessage } from '../../../redux/slices/notificationSlice';
 import { Modal, Button } from 'react-bootstrap';
@@ -13,13 +13,18 @@ import AlertDeleteModal from '../../AlertDelete/AlertDeleteModal';
 import { Switch } from '@mui/material';
 import axios from 'axios'
 import { id } from 'date-fns/locale';
+import Village from '../../singleComponents/villageCom/village';
+import District from '../../singleComponents/villageCom/District';
 const Tax = () => {
+    const location = useLocation();
+    const modalStatus = location.state;
     const [selectedTax, setSelectedTax] = useState('');
     const [Percentage, setPercentage] = useState('');
     const [modalState, setModalState] = useState(false);
     const [slab, setSlab] = useState('');
     const [taxesList, setTaxesList] = useState([]);
     const [modalId, setModalId] = useState(0);
+
 
     const dispatch = useDispatch();
     const handleSelectedPr = (event) => {
@@ -81,10 +86,10 @@ const Tax = () => {
                         setModalId(0);
                         dispatch(setShowMessage('Success'))
                         getAllTaxes();
-                        
+
                     }
                 });
-        } 
+        }
         else {
             console.log(modalId, "editTime")
             await axios.post(editurl, requestData, config)
@@ -98,31 +103,43 @@ const Tax = () => {
                     }
                 });
         }
-        
+
         // dispatch(setShowMessage('All field must be field'))
     };
-    const getAllTaxes = async ()=> {
+    const getAllTaxes = async () => {
         const url = `${process.env.REACT_APP_NODE_URL}/api/master/gettax`;
         const config = {
             headers: {
                 token: localStorage.getItem('rbacToken')
             }
         }
-        await axios.get(url, config).then((response)=> {
-            if(response.data && response.data.isSuccess){
+        await axios.get(url, config).then((response) => {
+            if (response.data && response.data.isSuccess) {
                 console.log(response.data.result)
                 setTaxesList(response.data.result);
             }
         })
     }
-    useEffect(()=> {
+    useEffect(() => {
         getAllTaxes();
-    },[])
+    }, [])
     const editeStateModal = (editData) => {
         setSelectedTax(editData.tax)
         setPercentage(editData.percentage)
         setModalId(editData.id)
         setModalState(true);
+    }
+
+    const isModalStatus = () => {
+        if (modalStatus === true) {
+            setModalState(true);
+        }
+    }
+    useEffect(() => {
+        isModalStatus();
+    }, [])
+    const onVillageSelect = (village) => {
+        console.log(village, 'from parent')
     }
 
     const columns = [
@@ -202,6 +219,7 @@ const Tax = () => {
             ),
         }
     ];
+
     return (
         <>
             <main className='bg-white p-3 rounded'>
@@ -224,7 +242,6 @@ const Tax = () => {
                     </div>
                     
                 </div> */}
-
                 <div className='my-3  d-flex align-items-end justify-content-end'>
                     <div onClick={handleShow} className='d-flex align-items-center' type='button'>
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-plus-circle" viewBox="0 0 16 16">
@@ -232,7 +249,7 @@ const Tax = () => {
                             <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
                         </svg>
                         <h6 className='m-0 ps-1'>
-                            Add user
+                            Add Tax
                         </h6>
                     </div>
                 </div>

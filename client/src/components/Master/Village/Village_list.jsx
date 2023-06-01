@@ -5,17 +5,19 @@ import Checkbox from '@mui/material/Checkbox'
 import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { addVillageToDb, clearaddVillage } from '../../../redux/slices/Master/Village/addVillageSlice'
 import { setShowMessage } from '../../../redux/slices/notificationSlice'
 import { Modal, Button } from 'react-bootstrap';
-import {getAllVillageAction, editeVillageAction,getVillageById,deleteVillageAction} from './getEditeVillage'
-import {getAllStateAction, getStateById,} from '../State/getEditeSate'
-import {getDistrictByStateId} from '../District/getEditDistrict'
-import {getTalukaByDistrictId} from '../Taluka/getEditTaluka'
+import { getAllVillageAction, editeVillageAction, getVillageById, deleteVillageAction } from './getEditeVillage'
+import { getAllStateAction, getStateById, } from '../State/getEditeSate'
+import { getDistrictByStateId } from '../District/getEditDistrict'
+import { getTalukaByDistrictId } from '../Taluka/getEditTaluka'
 import AlertDeleteModal from '../../AlertDelete/AlertDeleteModal';
 
 export default function Village_list() {
+    const location = useLocation();
+    const modalStatus = location.state;
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [allStateDate, setAllStateDate] = useState([]);
@@ -33,15 +35,16 @@ export default function Village_list() {
 
     const addVillage = useSelector(state => state.addVillageSlice.addVillage);
     const [villageData, setVillageData] = useState({
-        StateName:'',       
-        DistrictName:'',        
-        TalukaName:'',        
-        villageName:''
+        StateName: '',
+        DistrictName: '',
+        TalukaName: '',
+        villageName: ''
     })
     useEffect(() => {
         if (addVillage.isSuccess) {
             if (addVillage.message.result === 'success') {
                 dispatch(setShowMessage('Village is Added'))
+                goBack();
                 clearInpHook()
                 dispatch(clearaddVillage())
                 setModalShow(false);
@@ -57,10 +60,11 @@ export default function Village_list() {
             }
         }
     }, [addVillage])
+
     function onChangeHandler(e) {
         const name = e.target.name;
         const value = e.target.value;
-        switch(name){
+        switch (name) {
             case 'StateName':
                 setVillageData({ ...villageData, [name]: value });
                 getDistrictByStateId(value).then((data) => {
@@ -78,46 +82,59 @@ export default function Village_list() {
                 });
                 break;
             case 'TalukaName':
-                setVillageData({ ...villageData, [name]: value });                
+                setVillageData({ ...villageData, [name]: value });
                 break;
-            default :
+            default:
                 setVillageData({ ...villageData, [name]: value })
-                break;    
-               
-        }       
-        console.log(villageData,'village onchange',name)
-       // console.log(districtOptions)
+                break;
+
+        }
+        console.log(villageData, 'village onchange', name)
+        // console.log(districtOptions)
     }
 
     const handleClose = () => {
-        setModalShow(false);
-        clearInpHook()  
+        if (modalStatus === true) {
+            goBack();
+        } else {
+            setModalShow(false);
+            clearInpHook()
+        }
     }
     const handleShow = () => {
-        setModalShow(true);
+        if (modalStatus === true) {
+            goBack();
+        } else {
+            setModalShow(true);
+        }
+    }
+    const goBack = () => {
+        if(modalStatus === true){
+            navigate(-1);
+        }
     }
     function handleSubmit() {
-       console.log(villageData,"villageDatavillageDatavillageData")
+        console.log(villageData, "villageDatavillageDatavillageData")
         const vName = villageData.villageName;
         const vDiscr = villageData.DistrictName;
         const vTaluka = villageData.TalukaName;
         const vstate = villageData.StateName;
-       
-        if (vName.length > 0 && vDiscr !== '',vTaluka !== '',vstate !=='' ) {
+
+        if (vName.length > 0 && vDiscr !== '', vTaluka !== '', vstate !== '') {
             if (editVillageById != '') {
-                
+
                 villageData['id'] = editVillageById;
-                
+
                 editeVillageAction(villageData).then((data) => {
-                    console.log('village Update getvillageActionIdData:', data); 
-                    if(data.result === "updatesuccess"){
-                        getAllVillageAction().then((data) => { setAllVillageDate(data.result)});
+                    console.log('village Update getvillageActionIdData:', data);
+                    if (data.result === "updatesuccess") {
+                        getAllVillageAction().then((data) => { setAllVillageDate(data.result) });
                         setModalShow(false);
                         clearInpHook();
-                        dispatch(setShowMessage('village Data Update Successfully!')); 
-                    }else {
+                        dispatch(setShowMessage('village Data Update Successfully!'));
+                    } else {
                         dispatch(setShowMessage('Something is wrong!'))
-                    }                
+                    }
                 }).catch((error) => {
                     console.error('Error in updateVillageAction:', error);
                 });
@@ -129,51 +146,51 @@ export default function Village_list() {
         }
     }
 
-    const editeVillageModal=(ev) =>{
-        getVillageById(ev.id).then((data) => {    
-            console.log(data,"data in vilage edit!!!!!!!!!!!!!!!!!")        
+    const editeVillageModal = (ev) => {
+        getVillageById(ev.id).then((data) => {
+            console.log(data, "data in vilage edit!!!!!!!!!!!!!!!!!")
             setVillageData({
-                villageName:data[0].name,
+                villageName: data[0].name,
                 TalukaName: data[0].taluka_id,
                 StateName: data[0].state_id,
-                DistrictName :data[0].district_id
+                DistrictName: data[0].district_id
             })
-            getDistrictByStateId( data[0].state_id).then((data) => {
+            getDistrictByStateId(data[0].state_id).then((data) => {
                 // console.log(data,"getDistrictByStateIdgetDistrictByStateIdgetDistrictByStateId")
                 setDistrictOptions(data.result)
-             }).catch((error) => {
-                 console.error('Error in setDistrictOptions:', error);
-             });
-             getTalukaByDistrictId( data[0].district_id).then((data) => {
+            }).catch((error) => {
+                console.error('Error in setDistrictOptions:', error);
+            });
+            getTalukaByDistrictId(data[0].district_id).then((data) => {
                 // console.log(data,"getDistrictByStateIdgetDistrictByStateIdgetDistrictByStateId")
                 setTalukaOptions(data.result)
-             }).catch((error) => {
-                 console.error('Error in setTalukaOptions:', error);
-             });
+            }).catch((error) => {
+                console.error('Error in setTalukaOptions:', error);
+            });
             seteditVillageById(data[0].id)
             setModalShow(true);
         }).catch((error) => {
             console.error('Error in editStateAction:', error);
-        });        
+        });
     }
-    const submitDelete = (type, id) => { 
-        console.log(type,'villageDeleteid: ',id) 
+    const submitDelete = (type, id) => {
+        console.log(type, 'villageDeleteid: ', id)
         villageData['id'] = id;
         deleteVillageAction(villageData).then((data) => {
             //console.log('Taluka Update getTalukaActionIdData:', data); 
-            if(data.result === "deletesuccess"){
-                getAllVillageAction().then((data) => { setAllVillageDate(data.result)});                
+            if (data.result === "deletesuccess") {
+                getAllVillageAction().then((data) => { setAllVillageDate(data.result) });
                 clearInpHook();
                 setDisplayConfirmationModal(false);
-                dispatch(setShowMessage('Village Data Delete Successfully!')); 
-            }else {
+                dispatch(setShowMessage('Village Data Delete Successfully!'));
+            } else {
                 dispatch(setShowMessage('Something is wrong!'))
-            }                
+            }
         }).catch((error) => {
             console.error('Error in getAllVillageAction:', error);
-        }); 
+        });
     };
-    const deleteVillageAlert=(ev) =>{
+    const deleteVillageAlert = (ev) => {
         //setModalShow(true);
         setType('village_delete');
         setId(ev.id);
@@ -181,23 +198,23 @@ export default function Village_list() {
         setDisplayConfirmationModal(true);
     }
 
-    
+
 
     const hideConfirmationModal = () => {
         setDisplayConfirmationModal(false);
     };
     function clearInpHook() {
         setVillageData({
-            StateName:'',       
-            DistrictName:'',        
-            TalukaName:'',        
-            villageName:''
+            StateName: '',
+            DistrictName: '',
+            TalukaName: '',
+            villageName: ''
         })
         seteditVillageById('');
     }
 
-   
-   
+
+
     const columns = [
         {
             field: 'rowNumber',
@@ -236,7 +253,7 @@ export default function Village_list() {
             align: 'left',
             headerName: 'District Name',
             minWidth: 150,
-            flex: 1,           
+            flex: 1,
             valueGetter: (params) => {
                 return `${params.row.DistrictName ? params.row.DistrictName : '-'}`
             }
@@ -247,11 +264,11 @@ export default function Village_list() {
             align: 'left',
             headerName: 'State Name',
             minWidth: 150,
-            flex: 1,           
+            flex: 1,
             valueGetter: (params) => {
                 return `${params.row.stateName ? params.row.stateName : '-'}`
             }
-        },     
+        },
         {
             field: 'is_active',
             headerName: 'Active',
@@ -296,7 +313,7 @@ export default function Village_list() {
         }
     ];
     const rowsData = allVillageDate.map((item, index) => ({ ...item, rowNumber: index + 1 }));
-    
+
     useEffect(() => {
         getAllStateAction().then((data) => {
             setStatateOptions(data.result)
@@ -305,13 +322,20 @@ export default function Village_list() {
         });
 
         getAllVillageAction().then((data) => {
-            console.log(data,"All villageeeee")
+            console.log(data, "All villageeeee")
             setAllVillageDate(data.result)
         }).catch((error) => {
             console.error('Error in getAllVillageAction:', error);
         });
-       
-       
+    }, [])
+
+    const openModal = () => {
+        if (modalStatus === true) {
+            setModalShow(true)
+        }
+    }
+    useEffect(() => {
+        openModal();
     }, [])
     return (
         <>
@@ -319,8 +343,8 @@ export default function Village_list() {
                 {/* <NavLink to={/edit-user}>callme</NavLink > */}
                 <div className='my-3  d-flex align-items-end justify-content-end'>
                     <div className='d-flex align-items-center' type='button'>
-                       
-                        <h6 className='m-0 ps-1'>                           
+
+                        <h6 className='m-0 ps-1'>
                             <button type="button" className="btn btn-primary" onClick={handleShow}>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-plus-circle" viewBox="0 0 16 16">
                                     <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
@@ -344,7 +368,7 @@ export default function Village_list() {
                         style={{ fontFamily: 'Poppins', padding: 5, backgroundColor: 'white', }}
                         pageSizeOptions={[5, 10, 25]}
                         initialState={{
-                             ...allStateDate.initialState,
+                            ...allStateDate.initialState,
                             pagination: { paginationModel: { pageSize: 10 } },
                         }}
                         components={{
@@ -367,7 +391,7 @@ export default function Village_list() {
             </div>
 
 
-            <AlertDeleteModal showModal={displayConfirmationModal} confirmModal={submitDelete} hideModal={hideConfirmationModal} type={type} id={id} message={deleteMessage}  />
+            <AlertDeleteModal showModal={displayConfirmationModal} confirmModal={submitDelete} hideModal={hideConfirmationModal} type={type} id={id} message={deleteMessage} />
             {/* village modal */}
             <Modal show={modalShow} onHide={handleClose}>
                 <Modal.Header closeButton>
@@ -376,41 +400,41 @@ export default function Village_list() {
                 <Modal.Body>
                     <div className="">
                         <div className="mb-3">
-                            <label htmlFor="selectstate" className="col-form-label">State Name:</label> 
+                            <label htmlFor="selectstate" className="col-form-label">State Name:</label>
                             <select class="form-control" name="StateName" id="selectstate" value={villageData.StateName} onChange={(e) => { onChangeHandler(e) }}>
-                                <option value="">Select State</option>                                
+                                <option value="">Select State</option>
                                 {stateOptions.map((option) => (
-                                     <option key={option.state_id} value={option.state_id}>
-                                       {option.state_name}
-                                     </option>
-                                    ))}  
+                                    <option key={option.state_id} value={option.state_id}>
+                                        {option.state_name}
+                                    </option>
+                                ))}
                             </select>
                         </div>
                         <div className="mb-3">
                             <label htmlFor="selectdistrict" className="col-form-label">District Name:</label>
                             <select class="form-control" name="DistrictName" id="selectdistrict" value={villageData.DistrictName} onChange={(e) => { onChangeHandler(e) }}>
-                                <option value="">Select District</option>                                
+                                <option value="">Select District</option>
                                 {districtOptions.map((option) => (
-                                     <option key={option.id} value={option.id}>
-                                       {option.name}
-                                     </option>
-                                    ))}  
+                                    <option key={option.id} value={option.id}>
+                                        {option.name}
+                                    </option>
+                                ))}
                             </select>
                         </div>
                         <div className="mb-3">
                             <label htmlFor="selecttaluka" className="col-form-label">Taluka Name:</label>
                             <select class="form-control" name="TalukaName" id="selecttaluka" value={villageData.TalukaName} onChange={(e) => { onChangeHandler(e) }}>
-                                <option value="">Select Taluka</option>                                
+                                <option value="">Select Taluka</option>
                                 {talukaOptions.map((option) => (
-                                     <option key={option.id} value={option.id}>
-                                       {option.name}
-                                     </option>
-                                    ))}  
+                                    <option key={option.id} value={option.id}>
+                                        {option.name}
+                                    </option>
+                                ))}
                             </select>
                         </div>
                         <div className="mb-3">
                             <label htmlFor="villagename" className="col-form-label">Village Name:</label>
-                            <input type="text" className="form-control" name="villageName"  id="villagename" value={villageData.villageName} onChange={(e) => { onChangeHandler(e) }} />
+                            <input type="text" className="form-control" name="villageName" id="villagename" value={villageData.villageName} onChange={(e) => { onChangeHandler(e) }} />
                         </div>
                     </div>
                 </Modal.Body>

@@ -251,7 +251,7 @@ export default function Branch({ workFor }) {
     }
     function editActionCall(data) {
         console.log('data ********', data)
-        navigate('/home/edit-branch')
+        navigate('/administration/configuration/branch/edit-branch')
         setBranchData({
             id: data.id,
             address: data.address,
@@ -317,7 +317,7 @@ export default function Branch({ workFor }) {
                     if (response.data.result === 'success') {
                         dispatch(setShowMessage('Branch is deactivated'))
                         clearState()
-                        navigate('/home/branch')
+                        navigate('/administration/configuration')
                         getBranchList()
                     } else {
                         dispatch(setShowMessage('Something is wrong'))
@@ -341,7 +341,7 @@ export default function Branch({ workFor }) {
                     if (response.data.result === 'success') {
                         dispatch(setShowMessage('New branch is created'))
                         clearState()
-                        navigate('/home/branch')
+                        navigate('/administration/configuration/branch')
                         getBranchList()
                     } else {
                         dispatch(setShowMessage('Something is wrong'))
@@ -365,7 +365,7 @@ export default function Branch({ workFor }) {
                     if (response.data.result === 'success') {
                         dispatch(setShowMessage('Branch is updated'))
                         clearState()
-                        navigate('/home/branch')
+                        navigate('/administration/configuration/branch')
                         getBranchList()
                     } else {
                         dispatch(setShowMessage('Something is wrong'))
@@ -424,7 +424,7 @@ export default function Branch({ workFor }) {
         saveTheNewBranch(branchData)
     }
     function cancelHandler() {
-        navigate('/home/branch')
+        navigate('/administration/configuration/branch')
 
     }
 
@@ -438,7 +438,7 @@ export default function Branch({ workFor }) {
                     {
 
                         workFor === 'branch' && <div className='mb-3  d-flex align-items-end justify-content-end'>
-                            <div onClick={() => { navigate('/home/add-branch') }} className='d-flex align-items-center' type='button'>
+                            <div onClick={() => { navigate('/administration/configuration/branch/add-branch') }} className='d-flex align-items-center' type='button'>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-plus-circle" viewBox="0 0 16 16">
                                     <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
                                     <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
