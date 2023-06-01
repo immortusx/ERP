@@ -785,6 +785,8 @@ export default function HomeScreen() {
               }
               exact
             />
+            <Route path="administration/configuration/manufacturer-list" element={<CheckPermission path='profile'><Manufacturer_list/></CheckPermission>} exact />
+            <Route path="administration/configuration/manufacturer-modal" element={<CheckPermission path="profile"><Manufacturer_modal /></CheckPermission>} exact/>
 
             <Route
               path="administration/configuration/tax"
