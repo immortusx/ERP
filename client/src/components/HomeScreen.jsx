@@ -38,28 +38,20 @@ import {
   clearTokenBranchState,
 } from "../redux/slices/tokenBranchChangeSlice";
 
-import {
-  useLocation,
-  NavLink,
-  Link,
-  useNavigate,
-  Navigate,
-  BrowserRouter,
-  Route,
-  Routes,
-  json,
-} from "react-router-dom";
-import EnquiryCategories from "./EnquiryCategories";
-import Branch from "./Branch";
-import State_list from "./Master/State/State_list";
-import District_list from "./Master/District/District_list";
-import Village_list from "./Master/Village/Village_list";
-import Taluka_list from "./Master/Taluka/Taluka_list";
-import Plan_List from "./Master/Plan/Part_List";
-import Part_List from "./Master/Plan/Part_List";
-import BreadCrumb from "./BreadCrumb/BreadCrumb";
-import Roles from "./Roles";
-import Tax from "./Master/Tax/Tax";
+import { useLocation, NavLink, Link, useNavigate, Navigate, BrowserRouter, Route, Routes, json } from "react-router-dom";
+import EnquiryCategories from './EnquiryCategories'
+import Branch from './Branch'
+import State_list from './Master/State/State_list'
+import District_list from './Master/District/District_list'
+import Village_list from './Master/Village/Village_list'
+import Taluka_list from './Master/Taluka/Taluka_list'
+import Plan_List from './Master/Plan/Part_List'
+import Part_List from './Master/Plan/Part_List'
+import BreadCrumb from './BreadCrumb/BreadCrumb'
+import Manufacturer_list from './Master/Manufacturer/Manufacturer_list';
+import Manufacturer_modal from './Master/Manufacturer/Manufacturer_modal';
+import Roles from './Roles'
+import Tax from './Master/Tax/Tax'
 
 const CheckPermission = ({ children, path }) => {
   // return checkList.includes(path) ? children : <Navigate to="../no-access" />
