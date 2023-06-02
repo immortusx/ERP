@@ -146,6 +146,7 @@ router.post('/set-new-enquiry-data', tokenCheck, async (req, res) => {
   const phoneNumber = req.body.mobileNumber
   const email = req.body.emailId
   const isActive = 1
+  const state = req.body.state
   const district = req.body.district
   const taluka = req.body.tehsil
   const block = req.body.block
@@ -160,7 +161,7 @@ router.post('/set-new-enquiry-data', tokenCheck, async (req, res) => {
   const deliveryDate = req.body.deliveryDate
   const sourceOfEnquiry = req.body.sourceOfEnquiry
 
-  const url = `INSERT INTO customers (first_name, middle_name, last_name, phone_number, email, is_active, district, taluka, block, village) VALUES ('${fristName}','${middleName}','${lastName}','${phoneNumber}','${email}','${isActive}','${district}','${taluka}','${block}','${village}')`;
+  const url = `INSERT INTO customers (first_name, middle_name, last_name, phone_number, email, is_active, state, district, taluka, block, village) VALUES ('${fristName}','${middleName}','${lastName}','${phoneNumber}','${email}','${isActive}','${state}','${district}','${taluka}','${block}','${village}')`;
 
   console.log('url', url)
 

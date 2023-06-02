@@ -15,6 +15,10 @@ import { useSelector, useDispatch } from 'react-redux'
 
 import { setShowMessage } from '../redux/slices/notificationSlice'
 import Switch from '@mui/material/Switch';
+import State from './singleComponents/villageCom/state'
+import District, { getDistrictList } from './singleComponents/villageCom/District'
+import Taluka from './singleComponents/villageCom/Taluka'
+import Village from './singleComponents/villageCom/village'
 
 
 export default function Branch({ workFor }) {
@@ -250,6 +254,7 @@ export default function Branch({ workFor }) {
 
     }
     function editActionCall(data) {
+        console.log(data.id, 'edit id')
         console.log('data ********', data)
         navigate('/administration/configuration/branch/edit-branch')
         setBranchData({
@@ -267,9 +272,9 @@ export default function Branch({ workFor }) {
             taluka: data.taluka,
             village: data.village,
         })
-        getDistrictByState(data.state)
-        getTalukaByDistrict(data.district)
-        getVillageByTaluka(data.taluka)
+        // getDistrictByState(data.state)
+        // getTalukaByDistrict(data.district)
+        // getVillageByTaluka(data.taluka)
     }
 
     function clearState() {
@@ -428,7 +433,26 @@ export default function Branch({ workFor }) {
 
     }
 
-
+    const onSelectedState = (val)=> {
+        setBranchData((pre)=> {
+            return {...pre, state: val};
+        })
+    }
+    const onSelectedDistrict = (val)=> {
+        setBranchData((pre)=> {
+            return {...pre, district: val}
+        })
+    }
+    const onSelectedTaluka = (val)=> {
+        setBranchData((pre)=> {
+            return {...pre, taluka: val}
+        })
+    }
+    const onSelectedVillage = (val)=> {
+        setBranchData((pre)=> {
+            return {...pre, village: val}
+        })
+    }
     return (
         <div className='bg-white rounded p-3'>
             <main>
@@ -497,7 +521,19 @@ export default function Branch({ workFor }) {
                                     <label className='myLabel' htmlFor="email">G.S.T Number *</label>
                                     <input defaultValue={branchData.gstNumber} onChange={changeHandler} className='inpClr myInput inputElement' autoComplete='false' type="text" name="gstNumber" />
                                 </section>
-                                <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
+                                <State onSelectedState={onSelectedState}
+                                stateId={branchData.state}/>
+                                <District onSelectedDistrict={onSelectedDistrict}
+                                 stateId={branchData.state}
+                                 districtId={branchData.district}/>
+                                <Taluka onSelectedTaluka={onSelectedTaluka}
+                                districtId={branchData.district}
+                                talukaId={branchData.taluka}/>
+                                <Village onSelectedVillage={onSelectedVillage}
+                                 talukaId={branchData.taluka}
+                                 villageId={branchData.village}/>
+                                 
+                                {/* <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
                                     <label className='myLabel' htmlFor="email">Select State </label>
                                     <select defaultValue={branchData.state} onChange={changeHandler} className='myInput inpClr' name="state">
                                         <option value='0' className='myLabel'>select</option>
@@ -540,7 +576,7 @@ export default function Branch({ workFor }) {
                                             })
                                         }
                                     </select>
-                                </section>
+                                </section> */}
                                 <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
                                     <label className='myLabel' htmlFor="email">Contact Person </label>
                                     <input defaultValue={branchData.contactPerson} onChange={changeHandler} className='inpClr myInput inputElement' autoComplete='false' type="text" name="contactPerson" />
