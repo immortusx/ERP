@@ -16,8 +16,10 @@ import AlertDeleteModal from '../../AlertDelete/AlertDeleteModal';
 export default function Manufacturer_modal() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const autoFocusRef = useRef(null);
+
     const location = useLocation();
-    const rowData = location.state?.rowData;
+    const rowData = [location.state?.rowData];
     const [allMfacturerData, setAllMfacturerData] = useState([]);
     const [editMaFacturerById, setEditMaFacturerById] = useState('');
     const [modalShow, setModalShow] = React.useState(false);
@@ -29,92 +31,204 @@ export default function Manufacturer_modal() {
     const [deleteMessage, setDeleteMessage] = useState(null);
 
     console.log(rowData,'rowDatarowDatarowDatarowDatarowDatarowDatarowDatarowData')
+    
     const [modalRowsArr, setModalRowsArr] = useState([]);
-    
-    var ModaleNumber = 1;
+    const [firstBlankField, setFirstBlankField] = useState(null);
+
+
     const onAddNewRowsHandler = () => {
-        setModalRowsArr((prevState) => [
-          ...prevState,
-          <div className="row" key={`ModaleNumber_${prevState.length + 1}`}>
-            <div className="col-6">
-              <label htmlFor="exampleFormControlInput1" className="form-label">
-                Modale Name :
-              </label>
-              <div className="row">
-                <div className="col-10">
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="recipient-name"
-                    name="stateName"
-                    value=""
-                  />
-                </div>
-                <div className="col-2">
-                  <Button variant="primary rounded-circle" onClick={() => {onAddNewRowsHandler()}}>+</Button>
-                </div>
-              </div>
-            </div>
-            <div className="col-6">
-              <label htmlFor="exampleFormControlInput1" className="form-label">
-                Variant Name :
-              </label>
-              <div className="row">
-                <div className="col-10">
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="recipient-name"
-                    name="stateName"
-                    value=""
-                  />
-                </div>
-                <div className="col-2">
-                  <Button variant="primary rounded-circle" onClick={() => {}}>
-                    +
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>,
-        ]);
-      };
+      setModalRowsArr((prevState) => [
+        ...prevState,
+        {
+          id: new Date().getTime(),
+          modalName: '',
+          variants: [
+            { variantName: '' }
+          ]
+        }
+      ]);
+    };
+  
+    const onAddNewVariantHandler = (modalIndex) => {
+      setModalRowsArr((prevState) => {
+        const updatedModalRowsArr = [...prevState];
+        const modalRow = updatedModalRowsArr[modalIndex];
+        modalRow.variants.push({ variantName: '' });
+        return updatedModalRowsArr;
+      });
+    };
+  
+    const onRemoveModalHandler = (modalId) => {
+      setModalRowsArr((prevState) => prevState.filter((modal) => modal.id !== modalId));
+    };
     
-      useEffect(() => {
-        // Initial rows
-        onAddNewRowsHandler();
-      }, []);
+    const onRemoveVariantHandler = (modalId, variantIndex) => {
+      setModalRowsArr((prevState) => {
+        const updatedModalRowsArr = [...prevState];
+        const modalIndex = updatedModalRowsArr.findIndex((modal) => modal.id === modalId);
+        const modalRow = updatedModalRowsArr[modalIndex];
+        modalRow.variants.splice(variantIndex, 1);
+        return updatedModalRowsArr;
+      });
+    };
+    
+    const onModalNameChange = (event, modalIndex) => {
+      setModalRowsArr((prevState) => {
+        const updatedModalRowsArr = [...prevState];
+        const modalRow = updatedModalRowsArr[modalIndex];
+        modalRow.modalName = event.target.value;
+        return updatedModalRowsArr;
+      });
+    };
+  
+    const onVariantNameChange = (event, modalIndex, variantIndex) => {
+      setModalRowsArr((prevState) => {
+        const updatedModalRowsArr = [...prevState];
+        const modalRow = updatedModalRowsArr[modalIndex];
+        const variantRow = modalRow.variants[variantIndex];
+        variantRow.variantName = event.target.value;
+        return updatedModalRowsArr;
+      });
+    };
+
+    function handleSubmit() {
+      const manufacturerNameData = rowData;
+      const manufacturerModalVarData = modalRowsArr;
+    
+      let firstBlankFieldIndex = null; // Index of the first blank field
+    
+      if (manufacturerNameData.length > 0 && manufacturerModalVarData.length > 0) {
+        for (let i = 0; i < manufacturerModalVarData.length; i++) {
+          const modalRow = manufacturerModalVarData[i];
+          if (modalRow.modalName.trim() === '') {
+            firstBlankFieldIndex = i;
+            break;
+          }
+          for (let j = 0; j < modalRow.variants.length; j++) {
+            const variantRow = modalRow.variants[j];
+            if (variantRow.variantName.trim() === '') {
+              firstBlankFieldIndex = i;
+              break;
+            }
+          }
+        }
+    
+        if (firstBlankFieldIndex === null) {
+          // All fields are filled, submit the data
+          console.log(manufacturerModalVarData);
+        } else {
+          // Set focus on the first blank field
+          setFirstBlankField(firstBlankFieldIndex);
+        }
+      } else {
+        dispatch(setShowMessage('All Field Must be Required.'));
+      }
+    }
+    
+  
+    const redirectaddmodal = ()=>{
+      navigate('/configuration/manufacturer-list');
+    }
+
+    const ErrorMsg =()=>{
+      dispatch(setShowMessage('All Field Must be Required.'));
+    }
+    useEffect(() => {
+      if (firstBlankField !== null && autoFocusRef.current) {
+        autoFocusRef.current.focus();
+      }
+    }, [firstBlankField]);
+
+    
+    useEffect(() => {
+      onAddNewRowsHandler();
+    }, []);
+
+
 
     return (
-        <>
-            <div className=''>
-                {/* <NavLink to={/edit-user}>callme</NavLink > */}
-                <div className='my-3  d-flex align-items-end justify-content-end'>
-                    <div className='d-flex align-items-center' type='button'>
-                       
-                        <h6 className='m-0 ps-1'>                           
-                            {/* <button type="button" className="btn btn-primary">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-plus-circle" viewBox="0 0 16 16">
-                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
-                                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
-                                </svg>&nbsp;
-                                Add
-                            </button> */}
-                        </h6>
-                    </div>
-                </div>
-                <div className="card">
-                    <div className="card-header">
-                    <div className="d-flex">
-                        <label htmlFor="exampleFormControlInput1" className="form-label">
-                        Manufacturer Name :
-                        </label>
-                        <p className="px-4">{rowData.manufacturerName}</p>
-                    </div>
-                    </div>
-                    <div className="card-body">{modalRowsArr}</div>
-                </div>
+      <div>
+        <div className='my-3  d-flex align-items-end justify-content-end'>
+          <div className='d-flex align-items-center' type='button'>
+            <h6 className='m-0 ps-1'></h6>
+          </div>
+        </div>
+        <div className="card">
+          <div className="card-header">
+            <div className="d-flex">
+              <label className="form-label">
+                Manufacturer Name:
+              </label>
+              <p className="px-4">{rowData.manufacturerName}</p>
             </div>
-        </>
-    )
-}
+          </div>
+          <div className="card-body">
+            {modalRowsArr.length > 0 && (
+              modalRowsArr.map((modalRow, modalIndex) => (
+                <div className="row" key={`ModaleNumber_${modalIndex}`}>
+                  <div className="col-6">
+                    <label className="form-label">
+                      Modal Name:
+                    </label>
+                    <div className="row">
+                      <div className="col-10">
+                      <input
+                        type="text"
+                        className={`form-control ${firstBlankField === modalIndex ? 'is-invalid' : 'was-validated'}`}
+                        id={`modalName_${modalIndex}`}
+                        name={`modalName_${modalIndex}`}
+                        value={modalRow.modalName}
+                        onChange={(event) => onModalNameChange(event, modalIndex)}
+                        ref={firstBlankField === modalIndex ? autoFocusRef : null}
+                      />
+                      </div>                      
+                      <div className="col-2">
+                        {modalRowsArr.length === modalIndex + 1 ? (
+                          <Button variant="primary rounded-circle" onClick={() => onAddNewRowsHandler(modalIndex)}>+</Button>
+                        ) : (
+                          <Button variant="danger rounded-circle" onClick={() => onRemoveModalHandler(modalRow.id)}>-</Button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-6">
+                    <label htmlFor="exampleFormControlInput1" className="form-label">
+                      Variant Name:
+                    </label>
+                    {modalRow.variants.map((variantRow, variantIndex) => (
+                      <div className="row mb-2" key={`VariantNumber_${variantIndex}`}>
+                        <div className="col-10">
+                        <input
+                          type="text"
+                          className={`form-control ${firstBlankField === modalIndex ? 'is-invalid' : 'was-validated'}`}
+                          id={`variantName_${modalIndex}_${variantIndex}`}
+                          name={`variantName_${modalIndex}_${variantIndex}`}
+                          value={variantRow.variantName}
+                          onChange={(event) => onVariantNameChange(event, modalIndex, variantIndex)}
+                          ref={firstBlankField === modalIndex ? autoFocusRef : null}
+                        />
+                        </div>
+                        <div className="col-2">
+                          {modalRow.variants.length === variantIndex + 1 ? (
+                            <Button variant="primary rounded-circle" onClick={() => onAddNewVariantHandler(modalIndex)}>+</Button>
+                          ) : (
+                            <Button variant="danger rounded-circle" onClick={() => onRemoveVariantHandler(modalRow.id, variantIndex)}>-</Button>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+          <div className="card-footer">
+            <div className='d-flex align-items-center justify-content-center'>
+              <Button variant="btn btn-warning mx-1" onClick={() => { redirectaddmodal() }}>CANCEL</Button>
+              <Button variant="btn btn-success mx-1" onClick={handleSubmit} >SAVE</Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
