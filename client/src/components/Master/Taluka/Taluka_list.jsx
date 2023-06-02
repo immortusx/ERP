@@ -6,20 +6,22 @@ import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { addTalukaToDb, clearaddTaluka } from '../../../redux/slices/Master/Taluka/addTalukaSlice'
 import { setShowMessage } from '../../../redux/slices/notificationSlice'
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 //import {getAllTalukaAction, editeTalukaAction} from './getEditTaluka'
-import {getAllTalukaAction, getTalukaById, editeTalukaAction,deleteTalukaAction} from './getEditTaluka'
-import {getAllStateAction, editeStateAction} from '../State/getEditeSate'
-import {getDistrictByStateId} from '../District/getEditDistrict'
+import { getAllTalukaAction, getTalukaById, editeTalukaAction, deleteTalukaAction } from './getEditTaluka'
+import { getAllStateAction, editeStateAction } from '../State/getEditeSate'
+import { getDistrictByStateId } from '../District/getEditDistrict'
 import AlertDeleteModal from '../../AlertDelete/AlertDeleteModal';
 
 const axios = require('axios');
 
 export default function Taluka_list() {
+    const location = useLocation();
+    const modalStatus = location.state;
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [stateOptions, setStatateOptions] = useState([])
@@ -30,23 +32,36 @@ export default function Taluka_list() {
     const [editTalukaById, setEditTalukaById] = useState('');
     const addTaluka = useSelector(state => state.addTalukaSlice.addTaluka);
 
-  //---- Delete Modal Variable -----//
-  const [type, setType] = useState(null);
-  const [id, setId] = useState(null);
-  const [displayConfirmationModal, setDisplayConfirmationModal] = useState(false);
-  const [deleteMessage, setDeleteMessage] = useState(null);
-  
+    //---- Delete Modal Variable -----//
+    const [type, setType] = useState(null);
+    const [id, setId] = useState(null);
+    const [displayConfirmationModal, setDisplayConfirmationModal] = useState(false);
+    const [deleteMessage, setDeleteMessage] = useState(null);
+
 
     const [TalukaData, setTalukaData] = useState({
         TalukaName: '',
         StateName: '',
-        DistrictName:''
+        DistrictName: ''
     })
     const handleClose = () => {
-        setModalShow(false);
+        if (modalStatus === true) {
+            goBack();
+        } else {
+            setModalShow(false);
+        }
     }
     const handleShow = () => {
-        setModalShow(true);
+        if (modalStatus === true) {
+            goBack();
+        } else {
+            setModalShow(true);
+        }
+    }
+    const goBack = () => {
+        if (modalStatus === true) {
+            navigate(-1);
+        }
     }
     useEffect(() => {
         getAllStateAction().then((data) => {
@@ -56,20 +71,21 @@ export default function Taluka_list() {
             console.error('Error in getAllStateAction:', error);
         });
 
-         getAllTalukaAction().then((data) => {
-            console.log(data,"All talukaaaaaaaaaaaaa")
+        getAllTalukaAction().then((data) => {
+            console.log(data, "All talukaaaaaaaaaaaaa")
             setAllTalukaDate(data.result)
         }).catch((error) => {
             console.error('Error in getAllTalukaAction:', error);
         });
-       
 
-      
+
+
     }, [])
     useEffect(() => {
         if (addTaluka.isSuccess) {
             if (addTaluka.message.result === 'success') {
                 dispatch(setShowMessage('Taluka is Added'))
+                goBack();
                 clearInpHook()
                 dispatch(clearaddTaluka())
                 setModalShow(false);
@@ -91,22 +107,23 @@ export default function Taluka_list() {
         setTalukaData({
             TalukaName: '',
             StateName: '',
-            DistrictName:''
+            DistrictName: ''
         })
         setEditTalukaById('');
     }
 
 
-  console.log(TalukaData.DistrictName,"TalukaData.DistrictNameTalukaData.DistrictNameTalukaData.DistrictName")
-  console.log(TalukaData.StateName,"TalukaData.StateNameTalukaData.StateNameTalukaData.StateName")
-    
+    console.log(TalukaData.DistrictName, "TalukaData.DistrictNameTalukaData.DistrictNameTalukaData.DistrictName")
+    console.log(TalukaData.StateName, "TalukaData.StateNameTalukaData.StateNameTalukaData.StateName")
+
     function onChangeHandlerForState(e) {
         const name = e.target.name;
         const value = e.target.value;
         setTalukaData({ ...TalukaData, [name]: value })
         getDistrictByStateId(e.target.value).then((data) => {
-           // console.log(data,"getDistrictByStateIdgetDistrictByStateIdgetDistrictByStateId")
-           setDistrictOptions(data)
+            // console.log(data,"getDistrictByStateIdgetDistrictByStateIdgetDistrictByStateId")
+        
+            setDistrictOptions(data.result) //it should be data.result
         }).catch((error) => {
             console.error('Error in setDistrictOptions:', error);
         });
@@ -129,27 +146,27 @@ export default function Taluka_list() {
         const tdName = TalukaData.DistrictName;
         const tsName = TalukaData.StateName;
 
-        if (tName.length > 0 && tdName !== '' &&tsName !=='') {
-           
-                if (editTalukaById != '') {
-                    console.log('Update getTalukaActionIdData: ', editTalukaById);
-                    TalukaData['id'] = editTalukaById;
-                   // console.log('UpdateTalukaData', TalukaData)
-                   editeTalukaAction(TalukaData).then((data) => {
-                        console.log('state Update getTalukaActionIdData:', data); 
-                        if(data.result === "updatesuccess"){
-                            getAllTalukaAction().then((data) => { setAllTalukaDate(data.result)});
-                            setModalShow(false);
-                            clearInpHook();
-                            dispatch(setShowMessage('State Data Update Successfully!')); 
-                        }else {
-                            dispatch(setShowMessage('Something is wrong!'))
-                        }                
-                    }).catch((error) => {
-                        console.error('Error in getAllTalukaAction:', error);
-                    });
-                }else{
-            dispatch(addTalukaToDb(TalukaData))
+        if (tName.length > 0 && tdName !== '' && tsName !== '') {
+
+            if (editTalukaById != '') {
+                console.log('Update getTalukaActionIdData: ', editTalukaById);
+                TalukaData['id'] = editTalukaById;
+                // console.log('UpdateTalukaData', TalukaData)
+                editeTalukaAction(TalukaData).then((data) => {
+                    console.log('state Update getTalukaActionIdData:', data);
+                    if (data.result === "updatesuccess") {
+                        getAllTalukaAction().then((data) => { setAllTalukaDate(data.result) });
+                        setModalShow(false);
+                        clearInpHook();
+                        dispatch(setShowMessage('State Data Update Successfully!'));
+                    } else {
+                        dispatch(setShowMessage('Something is wrong!'))
+                    }
+                }).catch((error) => {
+                    console.error('Error in getAllTalukaAction:', error);
+                });
+            } else {
+                dispatch(addTalukaToDb(TalukaData))
             }
         } else {
             dispatch(setShowMessage('All Field Must be Required.'))
@@ -161,28 +178,29 @@ export default function Taluka_list() {
         console.log('TalukaDatahandleCancel', TalukaData)
         setTalukaData({ TalukaName: '', StateName: '' })
     }
-    const editeTalukaModal=(ev) =>{
+    const editeTalukaModal = (ev) => {
         getTalukaById(ev.id).then((data) => {
             console.log('Response from getTalukaActionIdData:', data);
-          
-            setTalukaData({ TalukaName: data[0].name,
-                 StateName: data[0].state_id,
-                 DistrictName :data[0].district_id
-                })
-                getDistrictByStateId( data[0].state_id).then((data) => {
-                    // console.log(data,"getDistrictByStateIdgetDistrictByStateIdgetDistrictByStateId")
-                    setDistrictOptions(data)
-                 }).catch((error) => {
-                     console.error('Error in setDistrictOptions:', error);
-                 });
+
+            setTalukaData({
+                TalukaName: data[0].name,
+                StateName: data[0].state_id,
+                DistrictName: data[0].district_id
+            })
+            getDistrictByStateId(data[0].state_id).then((data) => {
+                // console.log(data,"getDistrictByStateIdgetDistrictByStateIdgetDistrictByStateId")
+                setDistrictOptions(data)
+            }).catch((error) => {
+                console.error('Error in setDistrictOptions:', error);
+            });
             setEditTalukaById(data[0].id)
             setModalShow(true);
         }).catch((error) => {
             console.error('Error in getAllTalukaAction:', error);
         });
-        
+
     }
-    const deleteTalukaAlert=(ev) =>{
+    const deleteTalukaAlert = (ev) => {
         setType('Taluka_delete');
         setId(ev.id);
         setDeleteMessage(`Are You Sure You Want To Delete The Taluka '${ev.name}'?`);
@@ -192,22 +210,22 @@ export default function Taluka_list() {
     const hideConfirmationModal = () => {
         setDisplayConfirmationModal(false);
     };
-    const submitDelete = (type, id) => { 
-        console.log(type,'TalukaDeleteId: ',id) 
+    const submitDelete = (type, id) => {
+        console.log(type, 'TalukaDeleteId: ', id)
         TalukaData['id'] = id;
         deleteTalukaAction(TalukaData).then((data) => {
-            console.log('Taluka Update getTalukaActionIdData:', data); 
-            if(data.result === "deletesuccess"){
-                getAllTalukaAction().then((data) => { setAllTalukaDate(data.result)});                
+            console.log('Taluka Update getTalukaActionIdData:', data);
+            if (data.result === "deletesuccess") {
+                getAllTalukaAction().then((data) => { setAllTalukaDate(data.result) });
                 clearInpHook();
                 setDisplayConfirmationModal(false);
-                dispatch(setShowMessage('Taluka Data Delete Successfully!')); 
-            }else {
+                dispatch(setShowMessage('Taluka Data Delete Successfully!'));
+            } else {
                 dispatch(setShowMessage('Something is wrong!'))
-            }                
+            }
         }).catch((error) => {
             console.error('Error in getAllTalukaAction:', error);
-        }); 
+        });
     };
 
     const columns = [
@@ -237,7 +255,7 @@ export default function Taluka_list() {
             align: 'left',
             headerName: 'District Name',
             minWidth: 150,
-            flex: 1,           
+            flex: 1,
             valueGetter: (params) => {
                 return `${params.row.DistrictName ? params.row.DistrictName : '-'}`
             }
@@ -248,11 +266,11 @@ export default function Taluka_list() {
             align: 'left',
             headerName: 'State Name',
             minWidth: 150,
-            flex: 1,           
+            flex: 1,
             valueGetter: (params) => {
                 return `${params.row.state_name ? params.row.state_name : '-'}`
             }
-        },     
+        },
         {
             field: 'is_active',
             headerName: 'Active',
@@ -297,12 +315,20 @@ export default function Taluka_list() {
         }
     ];
     const rowsData = allTalukaDate.map((item, index) => ({ ...item, rowNumber: index + 1 }));
-    
-  
- const deleteTalukaActino=() =>{
+
+
+    const deleteTalukaActino = () => {
         //setModalShow(true);
     }
 
+    const openModal = () => {
+        if (modalStatus === true) {
+            setModalShow(true)
+        }
+    }
+    useEffect(() => {
+        openModal();
+    }, [])
     return (
         <>
             <div className=''>
@@ -363,7 +389,7 @@ export default function Taluka_list() {
                     />
                 </div>
             </div>
-            <AlertDeleteModal showModal={displayConfirmationModal} confirmModal={submitDelete} hideModal={hideConfirmationModal} type={type} id={id} message={deleteMessage}  />
+            <AlertDeleteModal showModal={displayConfirmationModal} confirmModal={submitDelete} hideModal={hideConfirmationModal} type={type} id={id} message={deleteMessage} />
 
             {/* new modal */}
             <Modal show={modalShow} onHide={handleClose}>
@@ -380,10 +406,10 @@ export default function Taluka_list() {
                                 <option value="2">Maharashtra </option>
                                 <option value="3">Rajasthan </option> */}
                                 {stateOptions.map((option) => (
-                                     <option key={option.state_id} value={option.state_id}>
-                                       {option.state_name}
-                                     </option>
-                                    ))}  
+                                    <option key={option.state_id} value={option.state_id}>
+                                        {option.state_name}
+                                    </option>
+                                ))}
                             </select>
                         </div>
                         <div className="mb-3">
@@ -391,10 +417,10 @@ export default function Taluka_list() {
                             <select className="form-control" name="DistrictName" id="select" value={TalukaData.DistrictName} onChange={(e) => { onChangeHandlerDistrict(e) }}>
                                 <option value="">Select District</option>
                                 {districtOptions.map((option) => (
-                                     <option key={option.id} value={option.id}>
-                                       {option.name}
-                                     </option>
-                                    ))}  
+                                    <option key={option.id} value={option.id}>
+                                        {option.name}
+                                    </option>
+                                ))}
                             </select>
                         </div>
                         <div className="mb-3">

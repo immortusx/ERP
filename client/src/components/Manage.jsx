@@ -1,7 +1,5 @@
-import React from 'react'
+import React, { useState } from "react";
 
 export default function Manage() {
-  return (
-    <div>Manage</div>
-  )
+  return <div>Manage</div>;
 }

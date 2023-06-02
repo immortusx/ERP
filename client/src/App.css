@@ -349,6 +349,12 @@ select.myInput {
   background: #77aaf7;
   color: #fff;
 }
+.singleCompText {
+  font-size: 10px;
+  color: rgb(53, 172, 219);
+  text-align: end;
+  cursor: pointer;
+}
 
 @keyframes App-logo-spin {
   from {
