@@ -3,11 +3,11 @@ import React, { useEffect, useState } from 'react'
 import { Modal, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router';
 
-const Village = ({ onSelectedVillage, talukaid }) => {
+const Village = ({ onSelectedVillage = ()=> {}, talukaId = '', villageId = '' }) => {
     const navigate = useNavigate();
     const [villageList, setVillageList] = useState([]);
     const getVillageList = async () => {
-        const url = `${process.env.REACT_APP_NODE_URL}/api/get-village-list/${talukaid}`;
+        const url = `${process.env.REACT_APP_NODE_URL}/api/get-village-list/${talukaId}`;
         const config = {
             headers: {
                 token: localStorage.getItem('rbacToken')
@@ -20,10 +20,10 @@ const Village = ({ onSelectedVillage, talukaid }) => {
         })
     }
     useEffect(() => {
-        if (talukaid && talukaid !== 0 && talukaid.length){
+        if (talukaId){
             getVillageList();
         }
-    }, [talukaid])
+    }, [talukaId])
 
     const changeHandlerNewEnquiry = (event) => {
         console.log(event.target.value);
@@ -34,13 +34,14 @@ const Village = ({ onSelectedVillage, talukaid }) => {
             <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
                 <label className='myLabe    l' htmlFor="email">Select Village *</label>
                 <select
+                    defaultValue={villageId}
                     onChange={changeHandlerNewEnquiry}
                     className='inpClr myInput' name="village">
                     <option value='0' className='myLabel' >select</option>
                     {/* <option value='0' className='myLabel' style={{fontWeight: 'bold'}}>Add New Village</option> */}
                     {
                         villageList && villageList.length > 0 && villageList.map((i, index) => {
-                            return <option key={index} value={i.id} className='myLabel'>{i.name}</option>
+                            return <option selected={i.id == villageId ? true : false} key={index} value={i.id} className='myLabel'>{i.name}</option>
                         })
                     }
                 </select>
