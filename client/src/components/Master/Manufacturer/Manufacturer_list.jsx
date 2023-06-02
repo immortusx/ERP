@@ -147,7 +147,7 @@ export default function Manufacturer_list() {
     }
 
     const redirectaddmodal = (rmdata)=>{
-       navigate('/configuration/manufacturer-modal', { state: { rowData: rmdata.row } });
+       navigate('/administration/configuration/manufacturer-modal', { state: { rowData: rmdata.row } });
     }
    
     const columns = [
