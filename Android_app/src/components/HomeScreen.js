@@ -25,6 +25,9 @@ const pressProfile=()=>{
 const pressEnquiry=()=>{
   navigation.navigate("Enquiry");
 }
+const pressBooking=()=>{
+  navigation.navigate("Booking");
+}
 const pressMster=()=>{
   navigation.navigate("master");
 }
@@ -84,6 +87,9 @@ const pressManage=()=>{
          
           <Menu.Item>
             <Text onPress={pressEnquiry}>Enqiury</Text>
+          </Menu.Item>
+          <Menu.Item>
+            <Text onPress={pressBooking}>Booking</Text>
           </Menu.Item>
         </Menu>
       
