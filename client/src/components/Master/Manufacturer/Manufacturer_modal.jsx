@@ -32,7 +32,7 @@ export default function Manufacturer_modal() {
   const [allMfacturerData, setAllMfacturerData] = useState([]);
   const [editMaFacturerById, setEditMaFacturerById] = useState("");
   const [modalShow, setModalShow] = React.useState(false);
-  const [manufacturerId, setManufacturerId] = useState(0);
+  const [manufacturerID, setManufacturerID] = useState(0);
 
   //---- Delete Modal Variable -----//
   const [type, setType] = useState(null);
@@ -101,6 +101,15 @@ export default function Manufacturer_modal() {
     });
   };
 
+  useEffect(()=> {
+    if(rowData){
+      rowData.map((val)=> {
+        console.log(val.manufacturerId);
+        setManufacturerID(val.manufacturerId);
+      })
+    }
+  },[rowData])
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     const manufacturerNameData = rowData;
@@ -130,15 +139,8 @@ export default function Manufacturer_modal() {
       if (firstBlankFieldIndex === null) {
         // All fields are filled, submit the data #manufacturerId 
         console.log(manufacturerModalVarData);
-        rowData && rowData.map((val)=> {
-          console.log(val.manufacturerId);
-          if(val.manufacturerId){
-            setManufacturerId(val.manufacturerId);
-          }
-          
-        })
+        console.log(manufacturerNameData,'row');
         
-
         const url = `${process.env.REACT_APP_NODE_URL}/api/master/addmodal-variant`;
         const config = {
             headers: {
@@ -147,12 +149,13 @@ export default function Manufacturer_modal() {
         };
         const requestData = {
           manufacturerModalVarData: manufacturerModalVarData,
-          manufacturerId: manufacturerId
+          manufacturerId: manufacturerID
         }
 
         await axios.post(url, requestData, config).then((response)=> {
           if(response.data && response.data.isSuccess){
             redirectaddmodal();
+            dispatch(setShowMessage("Data Successfully Saved."));
             // console.log(response.data.result)
           }
         })
@@ -194,7 +197,7 @@ export default function Manufacturer_modal() {
         <div className="card-header">
           <div className="d-flex">
             <label className="form-label">Manufacturer Name:</label>
-            <p className="px-4">{rowData.map((val) => val.manufacturerName)}</p>
+            <p className="px-4">{rowData && rowData.length > 0 && rowData.map((val) => val.manufacturerName)}</p>
           </div>
         </div>
         <div className="card-body">
