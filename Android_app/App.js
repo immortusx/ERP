@@ -43,7 +43,7 @@ const App = () => {
             },
           }}
         >
-
+        <Stack.Screen name="Login" component={Login}  options={{ title: "User Login " }} />
           <Stack.Screen
             name="main"
             component={MainComponent}
