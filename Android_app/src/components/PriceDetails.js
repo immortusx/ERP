@@ -7,14 +7,9 @@ import { Dropdown } from "react-native-element-dropdown";
 const Booking = () => {
     const [value, setValue] = useState(null);
     const data = [
-      { label: "Item 1", value: "1" },
-      { label: "Item 2", value: "2" },
-      { label: "Item 3", value: "3" },
-      { label: "Item 4", value: "4" },
-      { label: "Item 5", value: "5" },
-      { label: "Item 6", value: "6" },
-      { label: "Item 7", value: "7" },
-      { label: "Item 8", value: "8" },
+      { label: "With GST", value: "1" },
+      { label: "Without GST", value: "2" },
+     
     ];
 
     const navigation = useNavigation();
@@ -41,12 +36,11 @@ const Booking = () => {
         <View>
         <Box style={styles.inputstyel} alignItems="center">
         <Input
-        //   name="Discriotion"
           keyboardType="default"
           mx="3"
           size="lg"
           w="100%"
-        //   placeholder="Discriotion"
+          placeholder="Deal Price"
           placeholderTextColor="black"
         />
       </Box>
@@ -54,12 +48,11 @@ const Booking = () => {
         <View>
         <Box style={styles.inputstyel} alignItems="center">
         <Input
-        //   name="Discriotion"
           keyboardType="default"
           mx="3"
           size="lg"
           w="100%"
-        //   placeholder="Discriotion"
+          placeholder="Price in words"
           placeholderTextColor="black"
         />
       </Box>
@@ -71,7 +64,7 @@ const Booking = () => {
               data={data}
               labelField="label"
               valueField="value"
-              placeholder="Select product"
+              placeholder="With GST"
               value={value}
               onChange={(item) => {
                 setValue(item.value);

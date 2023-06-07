@@ -53,71 +53,82 @@ const Booking = () => {
           />
         </Box>
       </View>
-        <View>
-        <Box style={styles.inputstyel} alignItems="center">
-        <Input
-        //   name="Discriotion"
-          keyboardType="default"
-          mx="3"
-          size="lg"
-          w="100%"
-          placeholder="Amount"
-          placeholderTextColor="black"
-        />
-      </Box>
-        </View>
-        <View>
-        <Box style={styles.inputstyel} alignItems="center">
-        <Input
-        //   name="Discriotion"
-          keyboardType="default"
-          mx="3"
-          size="lg"
-          w="100%"
-          placeholder="Amount"
-          placeholderTextColor="black"
-        />
-      </Box>
-        </View>
-        <View>
-        <Box style={styles.inputstyel} alignItems="center">
-        <Input
-        //   name="Discriotion"
-          keyboardType="default"
-          mx="3"
-          size="lg"
-          w="100%"
-          placeholder="Amount"
-          placeholderTextColor="black"
-        />
-      </Box>
-        </View>
-        <View>
-        <Box style={styles.inputstyel} alignItems="center">
-        <Input
-        //   name="Discriotion"
-          keyboardType="default"
-          mx="3"
-          size="lg"
-          w="100%"
-          placeholder="Amount"
-          placeholderTextColor="black"
-        />
-      </Box>
-        </View>
-        <View>
-        <Box style={styles.inputstyel} alignItems="center">
-        <Input
-        //   name="Discriotion"
-          keyboardType="default"
-          mx="3"
-          size="lg"
-          w="100%"
-          placeholder="Amount"
-          placeholderTextColor="black"
-        />
-      </Box>
-        </View>
+      <View>
+        <Box style={styles.inputstyel}>
+          <Dropdown
+            style={styles.input}
+            data={data}
+            labelField="label"
+            valueField="value"
+            placeholder="Select product"
+            value={value}
+            onChange={(item) => {
+              setValue(item.value);
+            }}
+          />
+        </Box>
+      </View>
+      <View>
+        <Box style={styles.inputstyel}>
+          <Dropdown
+            style={styles.input}
+            data={data}
+            labelField="label"
+            valueField="value"
+            placeholder="Select product"
+            value={value}
+            onChange={(item) => {
+              setValue(item.value);
+            }}
+          />
+        </Box>
+      </View>
+      <View>
+        <Box style={styles.inputstyel}>
+          <Dropdown
+            style={styles.input}
+            data={data}
+            labelField="label"
+            valueField="value"
+            placeholder="Select product"
+            value={value}
+            onChange={(item) => {
+              setValue(item.value);
+            }}
+          />
+        </Box>
+      </View>
+      <View>
+        <Box style={styles.inputstyel}>
+          <Dropdown
+            style={styles.input}
+            data={data}
+            labelField="label"
+            valueField="value"
+            placeholder="Select product"
+            value={value}
+            onChange={(item) => {
+              setValue(item.value);
+            }}
+          />
+        </Box>
+      </View>
+      <View>
+        <Box style={styles.inputstyel}>
+          <Dropdown
+            style={styles.input}
+            data={data}
+            labelField="label"
+            valueField="value"
+            placeholder="Select product"
+            value={value}
+            onChange={(item) => {
+              setValue(item.value);
+            }}
+          />
+        </Box>
+      </View>
+       
        
         <HStack space={3} justifyContent="center">
           <Button onPress={onNextclick} style={styles.btn} px="7" my="3">

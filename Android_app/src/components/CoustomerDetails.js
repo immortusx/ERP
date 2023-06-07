@@ -47,7 +47,7 @@ const Booking = () => {
           mx="3"
           size="lg"
           w="100%"
-        //   placeholder="Discriotion"
+          placeholder="Select Date"
           placeholderTextColor="black"
         />
       </Box>
@@ -60,7 +60,124 @@ const Booking = () => {
           mx="3"
           size="lg"
           w="100%"
-        //   placeholder="Discriotion"
+          placeholder="Mobile No"
+          placeholderTextColor="black"
+        />
+      </Box>
+        </View>
+        <View>
+        <Box style={styles.inputstyel} alignItems="center">
+        <Input
+        //   name="Discriotion"
+          keyboardType="default"
+          mx="3"
+          size="lg"
+          w="100%"
+          placeholder="Enter First Name"
+          placeholderTextColor="black"
+        />
+      </Box>
+        </View>
+        <View>
+        <Box style={styles.inputstyel} alignItems="center">
+        <Input
+        //   name="Discriotion"
+          keyboardType="default"
+          mx="3"
+          size="lg"
+          w="100%"
+          placeholder="Enter Last Name"
+          placeholderTextColor="black"
+        />
+      </Box>
+        </View>
+        <View>
+        <Box style={styles.inputstyel} alignItems="center">
+        <Input
+        //   name="Discriotion"
+          keyboardType="default"
+          mx="3"
+          size="lg"
+          w="100%"
+          placeholder="WhatsApp No"
+          placeholderTextColor="black"
+        />
+      </Box>
+        </View>
+        <View>
+        <Box style={styles.inputstyel} alignItems="center">
+        <Input
+        //   name="Discriotion"
+          keyboardType="default"
+          mx="3"
+          size="lg"
+          w="100%"
+          placeholder="Enter State"
+          placeholderTextColor="black"
+        />
+      </Box>
+        </View>
+        <View>
+        <Box style={styles.inputstyel} alignItems="center">
+        <Input
+        //   name="Discriotion"
+          keyboardType="default"
+          mx="3"
+          size="lg"
+          w="100%"
+          placeholder="Enter City"
+          placeholderTextColor="black"
+        />
+      </Box>
+        </View>
+        <View>
+        <Box style={styles.inputstyel} alignItems="center">
+        <Input
+        //   name="Discriotion"
+          keyboardType="default"
+          mx="3"
+          size="lg"
+          w="100%"
+          placeholder="Enter District"
+          placeholderTextColor="black"
+        />
+      </Box>
+        </View>
+        <View>
+        <Box style={styles.inputstyel} alignItems="center">
+        <Input
+        //   name="Discriotion"
+          keyboardType="default"
+          mx="3"
+          size="lg"
+          w="100%"
+          placeholder="Enter Taluko"
+          placeholderTextColor="black"
+        />
+      </Box>
+        </View>
+        <View>
+        <Box style={styles.inputstyel} alignItems="center">
+        <Input
+        //   name="Discriotion"
+          keyboardType="default"
+          mx="3"
+          size="lg"
+          w="100%"
+          placeholder="Enter Village"
+          placeholderTextColor="black"
+        />
+      </Box>
+        </View>
+        <View>
+        <Box style={styles.inputstyel} alignItems="center">
+        <Input
+        //   name="Discriotion"
+          keyboardType="default"
+          mx="3"
+          size="lg"
+          w="100%"
+          placeholder="agricultural"
           placeholderTextColor="black"
         />
       </Box>
@@ -79,112 +196,7 @@ const Booking = () => {
               }}
             />
           </Box>
-        </View>
-        <View>
-          <Box style={styles.inputstyel}>
-            <Dropdown
-              style={styles.input}
-              data={data}
-              labelField="label"
-              valueField="value"
-              placeholder="Select product"
-              value={value}
-              onChange={(item) => {
-                setValue(item.value);
-              }}
-            />
-          </Box>
-        </View>
-        <View>
-          <Box style={styles.inputstyel}>
-            <Dropdown
-              style={styles.input}
-              data={data}
-              labelField="label"
-              valueField="value"
-              placeholder="Select product"
-              value={value}
-              onChange={(item) => {
-                setValue(item.value);
-              }}
-            />
-          </Box>
-        </View>
-        <View>
-          <Box style={styles.inputstyel}>
-            <Dropdown
-              style={styles.input}
-              data={data}
-              labelField="label"
-              valueField="value"
-              placeholder="Select product"
-              value={value}
-              onChange={(item) => {
-                setValue(item.value);
-              }}
-            />
-          </Box>
-        </View>
-        <View>
-          <Box style={styles.inputstyel}>
-            <Dropdown
-              style={styles.input}
-              data={data}
-              labelField="label"
-              valueField="value"
-              placeholder="Select product"
-              value={value}
-              onChange={(item) => {
-                setValue(item.value);
-              }}
-            />
-          </Box>
-        </View>
-        <View>
-          <Box style={styles.inputstyel}>
-            <Dropdown
-              style={styles.input}
-              data={data}
-              labelField="label"
-              valueField="value"
-              placeholder="Select product"
-              value={value}
-              onChange={(item) => {
-                setValue(item.value);
-              }}
-            />
-          </Box>
-        </View>
-        <View>
-          <Box style={styles.inputstyel}>
-            <Dropdown
-              style={styles.input}
-              data={data}
-              labelField="label"
-              valueField="value"
-              placeholder="Select product"
-              value={value}
-              onChange={(item) => {
-                setValue(item.value);
-              }}
-            />
-          </Box>
-        </View>
-        <View>
-          <Box style={styles.inputstyel}>
-            <Dropdown
-              style={styles.input}
-              data={data}
-              labelField="label"
-              valueField="value"
-              placeholder="Select product"
-              value={value}
-              onChange={(item) => {
-                setValue(item.value);
-              }}
-            />
-          </Box>
-        </View>
+       </View>
        
         <HStack space={3} justifyContent="center">
           <Button onPress={onNextclick} style={styles.btn} px="7" my="3">

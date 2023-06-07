@@ -1,29 +1,87 @@
 import { StyleSheet, View, ScrollView, Text, SafeAreaView } from "react-native";
-import React,{useState} from 'react'
+import React,{useState,useEffect} from 'react'
 import { Input, Icon, Box, Flex, Button, HStack } from "native-base";
 import { useNavigation } from "@react-navigation/native";
 import { Dropdown } from "react-native-element-dropdown";
-
+import axios from "axios";
+import config from "../config";
+import { API_URL } from "@env";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 const Booking = () => {
-    const [value, setValue] = useState(null);
-    const data = [
-      { label: "Item 1", value: "1" },
-      { label: "Item 2", value: "2" },
-      { label: "Item 3", value: "3" },
-      { label: "Item 4", value: "4" },
-      { label: "Item 5", value: "5" },
-      { label: "Item 6", value: "6" },
-      { label: "Item 7", value: "7" },
-      { label: "Item 8", value: "8" },
-    ];
+  const data = [
+    { label: "Item 1", value: "1" },
+    { label: "Item 2", value: "2" },
+    { label: "Item 3", value: "3" },
+    { label: "Item 4", value: "4" },
+    { label: "Item 5", value: "5" },
+    { label: "Item 6", value: "6" },
+    { label: "Item 7", value: "7" },
+    { label: "Item 8", value: "8" },
+  ];
+
+  const [selectedValue, setSelectedValue] = useState("");
+  const [Value, setValue] = useState("");
+  const [showRolesList, setShowRolesList] = useState([])
+  const [categorieslist, setCategoriesList] = useState([])
+
+  async function getRoles() {
+    const url = `${API_URL}/api/roles/get-roles-to-edit`;
+    const token = await AsyncStorage.getItem("rbacToken");
+    const conf = {
+      headers: {
+        token: token,
+      },
+    };
+    await axios.get(url, conf).then((response) => {
+        if (response.data?.isSuccess) {
+          const rollist  = response.data.result;
+          setShowRolesList(
+            rollist.map((list) => ({
+              label: list.role,
+              value: list.id,
+            }))
+          );
+            console.log('get-roles-to-edit result', response.data.result);
+        }
+    })
+}
+
+
+async function getEnquiryCategories() {
+  console.log('>>>>>>getEnquiryCategories');
+  const url = `${API_URL}/api/enquiry/get-enquiry-categories`;
+  const token = await AsyncStorage.getItem("rbacToken");
+  const config = {
+      headers: {
+          token: token,
+      }
+  };
+  await axios.get(url, config).then((response) => {
+      if (response.data) {
+          // setRoles(response.data.result)
+          if (response.data.isSuccess) {
+             const getcategory = response.data.result
+              setCategoriesList(getcategory.map((list)=>({
+                label: list.category_name,
+                value: list.id,
+
+              }))
+              );
+            }
+      }
+  })
+}
+ useEffect(()=>{
+  getRoles();
+  getEnquiryCategories();
+ },[])
+    
 
     const navigation = useNavigation();
     const Nextclick = () => {
         navigation.navigate("PriceDetails");
       };
-    
-    
-
+  
   return (
     <ScrollView>
     <View style={styles.animatednav}>
@@ -44,14 +102,14 @@ const Booking = () => {
           <Box style={styles.inputstyel}>
             <Dropdown
               style={styles.input}
-              data={data}
+              data={showRolesList}
               labelField="label"
               valueField="value"
               placeholder="Select product"
-              value={value}
-              onChange={(item) => {
-                setValue(item.value);
-              }}
+              value={selectedValue}
+            onChange={(selectedItem) => {
+              setSelectedValue(selectedItem.value);
+            }}
             />
           </Box>
         </View>
@@ -59,21 +117,20 @@ const Booking = () => {
           <Box style={styles.inputstyel}>
           <Dropdown
           style={styles.input}
-          data={data}
+          data={categorieslist}
           labelField="label"
           valueField="value"
           placeholder="Select"
-          value={value}
-          onChange={(item) => {
-            setValue(item.value);
-          }}
+          value={Value}
+            onChange={(selectedItem) => {
+              setValue(selectedItem.value);
+            }}
         />
           </Box>
         </View>
         <View>
         <Box style={styles.inputstyel} alignItems="center">
         <Input
-        //   name="Discriotion"
           keyboardType="default"
           mx="3"
           size="lg"

@@ -17,17 +17,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL } from "@env";
 import { setShowMessage } from "../redux/slice/notificationSlice";
 const Form = () => {
-  const [value, setValue] = useState(null);
-  const data = [
-    { label: "Item 1", value: "1" },
-    { label: "Item 2", value: "2" },
-    { label: "Item 3", value: "3" },
-    { label: "Item 4", value: "4" },
-    { label: "Item 5", value: "5" },
-    { label: "Item 6", value: "6" },
-    { label: "Item 7", value: "7" },
-    { label: "Item 8", value: "8" },
-  ];
+  
 
   const dispatch = useDispatch();
   const navigation = useNavigation();
@@ -149,15 +139,9 @@ const Form = () => {
   };
 
   useEffect(() => {
-    // console.log("setNewEnquiryDataState", setNewEnquiryDataState);
-    // if (setNewEnquiryDataState.isSuccess) {
-    //   if (setNewEnquiryDataState.data.isSuccess) {
-    //     dispatch(clearNewEnquiryState());
+   
         clearStateAndInp()
-    //     dispatch(setShowMessage("Enquiry is registered"));
-    //     // // navigate('/home/enquiryies')
-    //   }
-    // }
+    
   }, [setNewEnquiryDataState]);
 
   const [branch, setBranch] = useState([""]);
@@ -169,6 +153,35 @@ const Form = () => {
   const [modeldata, setModelData] = useState([""]);
   const [villagedata, setVillageData] = useState([""]);
   const [sourceofenquiry, setSourceOfEnquiry] = useState([""]);
+  // const [selectedCity, setSelectedCity] = useState("");
+  // const [city, setCity] = useState([]);
+  //   const [title, setTitle] = useState([]);
+
+  const [selectedValue, setSelectedValue] = useState("");
+  const [showRolesList, setShowRolesList] = useState([])
+  async function getRoles() {
+    const url = `${API_URL}/api/roles/get-roles-to-edit`;
+    const token = await AsyncStorage.getItem("rbacToken");
+    const conf = {
+      headers: {
+        token: token,
+      },
+    };
+    await axios.get(url, conf).then((response) => {
+        if (response.data?.isSuccess) {
+          const rollist  = response.data.result;
+          setShowRolesList(
+            rollist.map((list) => ({
+              label: list.role,
+              value: list.id,
+            }))
+          );
+            console.log('get-roles-to-edit result', response.data.result);
+        }
+    })
+}
+
+   
 
   async function getBranchs() {
     const url = `${API_URL}/api/enquiry/enquiry-data`;
@@ -373,6 +386,7 @@ const Form = () => {
 
   useEffect(() => {
     getBranchs();
+    getRoles();
     console.log("new form");
   }, []);
 
@@ -468,7 +482,7 @@ const Form = () => {
           <Box style={styles.inputstyel} alignItems="center">
             <Input
               name="emailId"
-              keyboardType="email"
+              keyboardType="default"
               mx="3"
               size="lg"
               w="100%"
@@ -569,13 +583,13 @@ const Form = () => {
           <Box style={styles.inputstyel}>
             <Dropdown
               style={styles.input}
-              data={data}
+              data={showRolesList}
               labelField="label"
               valueField="value"
               placeholder="Select"
-              value={value}
-              onChange={(item) => {
-                setValue(item.value);
+              value={selectedValue}
+              onChange={(selectedItem) => {
+                setSelectedValue(selectedItem.value);
               }}
             />
           </Box>
@@ -689,13 +703,13 @@ const Form = () => {
           <Box style={styles.inputstyel}>
             <Dropdown
               style={styles.input}
-              data={data}
+              data={showRolesList}
               labelField="label"
               valueField="value"
               placeholder="Select"
-              value={value}
-              onChange={(item) => {
-                setValue(item.value);
+              value={selectedValue}
+              onChange={(selectedItem) => {
+                setSelectedValue(selectedItem.value);
               }}
             />
           </Box>
