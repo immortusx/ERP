@@ -11,7 +11,7 @@ import {
   clearAddManufacturer,
 } from "../../../redux/slices/Master/Manufacturer/addManufacturerSlice";
 import { setShowMessage } from "../../../redux/slices/notificationSlice";
-import { Modal, Button } from "react-bootstrap";
+import { Modal, Button, Spinner } from "react-bootstrap";
 import {
   getAllManufacturerAction,
   getManufacturerById,
@@ -27,6 +27,7 @@ export default function Manufacturer_list() {
   const [allMfacturerData, setAllMfacturerData] = useState([]);
   const [editMaFacturerById, setEditMaFacturerById] = useState("");
   const [modalShow, setModalShow] = React.useState(false);
+  const [loading, setLoading] = useState(false);
 
   //---- Delete Modal Variable -----//
   const [type, setType] = useState(null);
@@ -294,9 +295,11 @@ export default function Manufacturer_list() {
   }));
 
   useEffect(() => {
+    setLoading(true)
     getAllManufacturerAction()
       .then((data) => {
         setAllMfacturerData(data.result);
+        setLoading(false)
       })
       .catch((error) => {
         console.error("Error in getAllStateAction:", error);
@@ -367,7 +370,7 @@ export default function Manufacturer_list() {
           <div className="">
             <div className="mb-3">
               <label htmlFor="menufacturerName" className="col-form-label">
-                Menufacturer Name:
+                Manufacturer Name:
               </label>
               <input
                 type="text"
@@ -447,39 +450,46 @@ export default function Manufacturer_list() {
 
             <hr />
             <ul className="row m-0 px-2">
-              {rowsData.map((row) => {
-                return (
-                  <ul className="row mb-2 px-2">
-                    <li className="col-12 col-sm-4 col-md-4  d-flex align-items-center p-2">
-                      <main
-                        onClick={() => {
-                          redirectaddmodal(row);
-                        }}
-                        className="d-flex align-items-center"
-                      >
-                        <div className="myBtnRight">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="currentColor"
-                            className="bi bi-chevron-double-right"
-                            viewBox="0 0 16 16"
-                          >
-                            <path
-                              fill-rule="evenodd"
-                              d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708z"
-                            />
-                            <path
-                              fill-rule="evenodd"
-                              d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708z"
-                            />
-                          </svg>
-                        </div>
-                        <span className="ms-2">{row.manufacturerName}</span>
-                      </main>
-                    </li>
-                  </ul>
-                );
-              })}
+              {loading ? (
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <Spinner style={{ color: 'rgb(132, 211, 227)' }} />
+              </div>
+              ):(
+                rowsData.map((row) => {
+                  return (
+                    <ul className="row mb-2 px-2">
+                      <li className="col-12 col-sm-4 col-md-4  d-flex align-items-center p-2">
+                        <main
+                          onClick={() => {
+                            redirectaddmodal(row);
+                          }}
+                          className="d-flex align-items-center"
+                        >
+                          <div className="myBtnRight">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="currentColor"
+                              className="bi bi-chevron-double-right"
+                              viewBox="0 0 16 16"
+                            >
+                              <path
+                                fill-rule="evenodd"
+                                d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708z"
+                              />
+                              <path
+                                fill-rule="evenodd"
+                                d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708z"
+                              />
+                            </svg>
+                          </div>
+                          <span className="ms-2">{row.manufacturerName}</span>
+                        </main>
+                      </li>
+                    </ul>
+                  );
+                })
+              )
+             }
             </ul>
           </section>
         </main>

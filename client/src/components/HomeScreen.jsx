@@ -52,6 +52,8 @@ import Manufacturer_list from './Master/Manufacturer/Manufacturer_list';
 import Manufacturer_modal from './Master/Manufacturer/Manufacturer_modal';
 import Roles from './Roles'
 import Tax from './Master/Tax/Tax'
+import Sub_Modal from "./Master/Manufacturer/Sub_modal";
+import Variants from "./Master/Manufacturer/Sub_modal";
 
 const CheckPermission = ({ children, path }) => {
   // return checkList.includes(path) ? children : <Navigate to="../no-access" />
@@ -785,8 +787,9 @@ export default function HomeScreen() {
               }
               exact
             />
-            <Route path="administration/configuration/manufacturer-list" element={<CheckPermission path='profile'><Manufacturer_list/></CheckPermission>} exact />
+            <Route path="administration/configuration/manufacturer" element={<CheckPermission path='profile'><Manufacturer_list/></CheckPermission>} exact />
             <Route path="administration/configuration/manufacturer-modal" element={<CheckPermission path="profile"><Manufacturer_modal /></CheckPermission>} exact/>
+            <Route path="administration/configuration/manufacturer-modal/variants" element={<CheckPermission path="profile"><Variants /></CheckPermission>} exact/>
 
             <Route
               path="administration/configuration/tax"

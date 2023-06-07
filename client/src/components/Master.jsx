@@ -133,7 +133,7 @@ export default function Master() {
                         </li>
                         <li className='col-12 col-sm-4 col-md-4  d-flex align-items-center p-2'>
                             <main onClick={() => {
-                                navigate('/administration/configuration/manufacturer-list')                               
+                                navigate('/administration/configuration/manufacturer')                             
                             }} className='d-flex align-items-center'>
                                 <div className='myBtnRight'>
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="bi bi-chevron-double-right" viewBox="0 0 16 16">
