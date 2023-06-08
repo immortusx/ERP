@@ -1,6 +1,6 @@
 import { SafeAreaView, StyleSheet, View, ScrollView } from "react-native";
 import { FontAwesome,Octicons,MaterialCommunityIcons } from "@expo/vector-icons";
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { DataTable } from "react-native-paper";
 import { Icon,Text, HStack, Pressable, VStack, StatusBar, Divider } from "native-base";
@@ -21,15 +21,17 @@ const items = [
   },
 ];
 const Enquiry = () => {
-  const [page, setPage] = React.useState(0);
-  const [numberOfItemsPerPage, onItemsPerPageChange] = React.useState(
+  const [page, setPage] = useState(0);
+  const [numberOfItemsPerPage, onItemsPerPageChange] = useState(
     numberOfItemsPerPageList[0]
   );
   const from = page * numberOfItemsPerPage;
   const to = Math.min((page + 1) * numberOfItemsPerPage, items.length);
 
-  React.useEffect(() => {
-    setPage(0);
+  useEffect(() => {
+    if (page !== 0) {
+      setPage(0);
+    }
   }, [numberOfItemsPerPage]);
 
   const navigation = useNavigation();

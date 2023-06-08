@@ -1,105 +1,164 @@
-import React, { useState } from "react";
-import axios from "axios";
-import { Input,Button,Box } from "native-base";
-import { Ionicons } from '@expo/vector-icons';
+import React, { useState, useEffect } from "react";
+import { Input, Button, Box } from "native-base";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Ionicons } from "@expo/vector-icons";
 import {
+  Alert,
   StyleSheet,
   SafeAreaView,
   Text,
   View,
   TouchableOpacity,
 } from "react-native";
+import { useSelector, useDispatch } from "react-redux";
+import { getLoginUser, clearLoginState } from "../redux/slice/getuserlogin";
+import {
+  getProfileData,
+  clearProfileDataSliceState,
+} from "../redux/slice/getuserProfile";
+import { setShowMessage } from "../redux/slice/notificationSlice";
 import { useNavigation } from "@react-navigation/native";
 
 const Login = () => {
+  const [loginData, setLoginData] = useState({
+    email: "",
+    password: "",
+  });
 
-  const [show, setShow] = React.useState(false);
+  function onChangeHandler(value, field) {
+    if (field === "email") {
+      setLoginData((registerData) => ({ ...loginData, email: value }));
+    } else if (field === "password") {
+      setLoginData((registerData) => ({ ...loginData, password: value }));
+    }
+  }
+  const dispatch = useDispatch();
+  const loginState = useSelector((state) => state.getLoginSlice.loginState);
+  const profileDataState = useSelector((state) => state.profileData.profile);
+
+  useEffect(() => {
+    if (
+      profileDataState.isSuccess &&
+      profileDataState.currentUserData.isSuccess
+    ) {
+      const rolesArray = [];
+      Array.from(profileDataState.currentUserData.result.features).filter(
+        (i) => {
+          rolesArray.push(i.feature);
+        }
+      );
+      AsyncStorage.setItem("rolesArray", rolesArray);
+      AsyncStorage.setItem(
+        "userData",
+        JSON.stringify(profileDataState.currentUserData.result)
+      );
+
+      dispatch(clearProfileDataSliceState());
+      // navigate('/home')
+    }
+  }, [profileDataState]);
+
+  useEffect(() => {
+    if (loginState.isSuccess === true) {
+      if (loginState.result.message == "success") {
+        // taking first branch for login
+
+        AsyncStorage.setItem(
+          "branchesList",
+          JSON.stringify(loginState.result.result.branchResult)
+        );
+        AsyncStorage.setItem(
+          "currentBranchId",
+          loginState.result.result.currentBranch
+        );
+        AsyncStorage.setItem("rbacToken", loginState.result.result.tokenIs);
+        AsyncStorage.getItem("rbacToken").then((token) => {
+          if (!token) {
+            return;
+          } else {
+            // const token = AsyncStorage.getItem('rbacToken')
+
+            dispatch(getProfileData(token));
+            console.log(token, "aSDFGHJKDSFGHJDSFGSDFGHJ");
+            console.log("Welcome to Vehicle Management System");
+            alert("Welcome to Vehicle Management System");
+            // dispatch(setShowMessage('Welcome to Vehicle Management System'))
+            navigation.navigate("main");
+          }
+        });
+      } else if (loginState.result.message != "success") {
+        console.log("Credentials are wrong");
+        alert("Credentials are wrong");
+        dispatch(setShowMessage("Credentials are wrong"));
+      } else {
+        console.log("Something is wrong");
+        alert("Something is wrong");
+        dispatch(setShowMessage("Something is wrong"));
+      }
+      dispatch(clearLoginState());
+    } else if (loginState.isError === true) {
+      console.log("Form is failed");
+      alert("Form is failed");
+      dispatch(setShowMessage("Something is wrong"));
+    }
+    console.log("loginState", loginState);
+  }, [loginState]);
+
+  function handleSubmit() {
+    if (loginData.email.length > 0 && loginData.password.length > 0) {
+      dispatch(getLoginUser(loginData));
+    } else {
+      dispatch(setShowMessage("Please fill all the field"));
+    }
+  }
+
+  const [show, setShow] = useState(false);
 
   const navigation = useNavigation();
-  const [Email, setEmail] = useState("");
-  const [Password, setPassword] = useState("");
-  const [error, setError] = useState({ field: "", message: "" });
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const isValidEmail = emailRegex.test(Email);
+  const handleClick = () => setShow(!show);
 
-  const validPassword = /^\d{8}$/;
-  const isValidPassword = validPassword.test(Password);
-  
-  const handleClick = () => setShow(!show)
-
-  const onsubmit = () => {
-    let error = { field: "", message: "" };
-    if (!isValidEmail) {
-      error.field = "Email";
-      error.message = "Please enter  valid Email!";
-      setError(error);
-    } else if (!isValidPassword) {
-      error.field = "Password";
-      error.message = "Please enter correct password!";
-      setError(error);
-    }else {
-      axios
-        .post("https://crm.balkrushna.com/api/login", {
-          Email,
-          Password,
-        })
-        .then((response) => {
-          if (response.data.message) {
-            console.log("login fail")
-            alert("Login failed");
-          } else {
-            navigation.navigate("main");
-            alert("user successfully Logged In");
-            console.log(response.data)
-          }
-        })
-        .catch((error) => "Error", error.message);
-      setEmail(""), setPassword(""), setError("");
-    }
-  };
-  
   return (
     <SafeAreaView style={styles.safeview}>
-   <View>
-   <Text style={styles.textheader}> Vehicle Magagement System</Text>
-   </View>
+      <View>
+        <Text style={styles.textheader}> Vehicle Magagement System</Text>
+      </View>
       <View style={styles.content}>
-      <Text style={styles.text}> Login</Text>
-      <Box style={styles.inputbox}>
-        <Text style={styles.textlable}>Email:</Text>
-        <Input
-          placeholder="Email"
-          size="lg"
-          placeholderTextColor="black"
-          value={Email}
-          onChangeText={(value) => setEmail(value)}
-        />
-        {error.field === "Email" && (
-          <Text style={styles.error}>{error.message}</Text>
-        )}
-      </Box>
-      <Box style={styles.inputbox}>
-        <Text style={styles.textlable}>Password:</Text>
-        <Input
-        type={show ? "text" : "password"}
-          keyboardType="numeric"
-          size="lg"
-          onChangeText={(value) => setPassword(value)}
-          placeholderTextColor="black"
-          value={Password}
-          InputRightElement={<Button size="lg"  onPress={handleClick}>
-            {show ? <Ionicons name="md-eye-sharp" size={24} color="black" /> : <Ionicons name="md-eye-off-sharp" size={24} color="black" /> }
-        
-          </Button>} placeholder="Password"  />
-
-        {error.field === "Password" && (
-          <Text style={styles.error}>{error.message}</Text>
-        )}
-      </Box>
-      <TouchableOpacity style={styles.button} onPress={onsubmit}>
-        <Text style={styles.buttonText}>Login</Text>
-      </TouchableOpacity>
+        <Text style={styles.text}> Login</Text>
+        <Box style={styles.inputbox}>
+          <Text style={styles.textlable}>email:</Text>
+          <Input
+            placeholder="email"
+            size="lg"
+            placeholderTextColor="black"
+            value={loginData.email}
+            onChangeText={(value) => onChangeHandler(value, "email")}
+          />
+        </Box>
+        <Box style={styles.inputbox}>
+          <Text style={styles.textlable}>password:</Text>
+          <Input
+            type={show ? "text" : "password"}
+            keyboardType="numeric"
+            size="lg"
+            onChangeText={(value) => onChangeHandler(value, "password")}
+            placeholderTextColor="black"
+            value={loginData.password}
+            InputRightElement={
+              <Button size="lg" onPress={handleClick}>
+                {show ? (
+                  <Ionicons name="md-eye-sharp" size={24} color="black" />
+                ) : (
+                  <Ionicons name="md-eye-off-sharp" size={24} color="black" />
+                )}
+              </Button>
+            }
+            placeholder="password"
+          />
+        </Box>
+        <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+          <Text style={styles.buttonText}>Login</Text>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -107,21 +166,21 @@ const Login = () => {
 
 export default Login;
 const styles = StyleSheet.create({
-  safeview:{
- flex: 1,
+  safeview: {
+    flex: 1,
     justifyContent: "center",
   },
-  textheader:{
-fontSize:20,
-textAlign:"center",
-marginBottom:10,
+  textheader: {
+    fontSize: 20,
+    textAlign: "center",
+    marginBottom: 10,
   },
   content: {
-    marginHorizontal:20,
-    borderRadius:20,
+    marginHorizontal: 20,
+    borderRadius: 20,
     backgroundColor: "#fff",
-   paddingHorizontal: 50,
-   paddingVertical:30,
+    paddingHorizontal: 50,
+    paddingVertical: 30,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -131,8 +190,8 @@ marginBottom:10,
     shadowRadius: 3.84,
     elevation: 5,
   },
-  inputbox:{
-    marginBottom:20,
+  inputbox: {
+    marginBottom: 20,
   },
   text: {
     textAlign: "center",
@@ -164,4 +223,3 @@ marginBottom:10,
     fontSize: 15,
   },
 });
-

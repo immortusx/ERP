@@ -42,7 +42,7 @@ const Content = () => {
         <Text>Payment Collection</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.icondiv}>
-      <MaterialCommunityIcons name="book-outline" size={24} color="black" />
+      <MaterialCommunityIcons name="book-outline" size={24} color="black"/>
         <Text>Booking/Delivery Upload</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.icondiv}>
