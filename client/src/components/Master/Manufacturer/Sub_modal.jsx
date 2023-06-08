@@ -162,6 +162,7 @@ export default function Variants() {
         await axios.post(url, requestData, config).then((response) => {
           if (response.data && response.data.isSuccess) {
             redirectModal();
+            getVariantList();
             dispatch(setShowMessage("Data Successfully Saved."));
             // console.log(response.data.result)
           }
@@ -200,20 +201,33 @@ export default function Variants() {
         token: localStorage.getItem("rbacToken"),
       },
     };
-    setLoading(true);
-    await axios.get(url, config).then((response) => {
+  
+    try {
+      setLoading(true);
+      const response = await axios.get(url, config);
       if (response.data && response.data.isSuccess) {
         console.log(response.data.result);
         setVariantList(response.data.result);
+      } else {
+        // Handle error response
+        console.log(response.data.result);
+        // Show error message or take appropriate action
       }
+    } catch (error) {
+      // Handle error
+      console.log(error);
+      // Show error message or take appropriate action
+    } finally {
       setLoading(false);
-    });
+    }
   };
+  
   useEffect(() => {
     if (manufacturerID !== 0) {
       getVariantList();
     }
   }, [manufacturerID]);
+  
 
   const handleShow = () => {
     setModalShow(true);

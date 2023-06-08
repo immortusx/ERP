@@ -281,30 +281,6 @@ router.post('/addmodal', tokenCheck, async(req, res) => {
 });
 
 //==================addVariant===================
-// router.post('/addvariant', tokenCheck, async(req, res) => {
-//   try {
-//     const { manufacturerModalVarData, modalid, manufacturerId } = req.body;
-//     for (const modalVarData of manufacturerModalVarData) {
-//       const { variantName } = modalVarData;
-//       console.log(variantName);
-
-//       const variantQuery = 'INSERT INTO variant (variantName, modalid, manufacturerId) VALUES (?, ?, ?)';
-
-//       await db.query(variantQuery, [variantName, modalid, manufacturerId], async (err, results) => {
-//         if (err) {
-//           console.log({ isSuccess: false, result: err });
-//           res.send({isSuccess: false, result: 'error'})
-//         } else {
-//           console.log({ isSuccess: true, result: results });
-//           res.send({isSuccess: true, result: results})
-//         }
-//       });
-//     }
-//   } catch (err) {
-//     console.log(err);
-//   }
-// });
-
 router.post('/addvariant', tokenCheck, async (req, res) => {
   try {
     const { manufacturerModalVarData, modalid, manufacturerId } = req.body;
@@ -313,25 +289,21 @@ router.post('/addvariant', tokenCheck, async (req, res) => {
       const variants = data.variants;
       for (const variant of variants) {
         const variantName = variant.variantName;
-        console.log(variantName);
 
         const variantQuery = 'INSERT INTO variant (variantName, modalid, manufacturerId) VALUES (?, ?, ?)';
 
-        await db.query(variantQuery, [variantName, modalid, manufacturerId], async (err, results) => {
-          if (err) {
-            console.log({ isSuccess: false, result: err });
-            res.send({ isSuccess: false, result: 'error' });
-          } else {
-            console.log({ isSuccess: true, result: results });
-            res.send({ isSuccess: true, result: results });
-          }
-        });
+        await db.query(variantQuery, [variantName, modalid, manufacturerId]);
       }
     }
+
+    console.log({ isSuccess: true, result: 'Variants added successfully.' });
+    res.send({ isSuccess: true, result: 'Variants added successfully.' });
   } catch (err) {
     console.log(err);
+    res.status(500).send({ isSuccess: false, result: 'Error adding variants.' });
   }
 });
+
 
 
 //==========getModalist=============
@@ -355,25 +327,29 @@ router.get('/getmodal/:id', tokenCheck, async(req, res)=> {
 })
 
 //===========getVariantList===========
-router.get('/getvariant/:id', tokenCheck, async(req, res)=> {
-  console.log(req.params.id,'idddd')
-  try{
-    const modalid = req.params.id
-    await db.query(`Select * FROM variant WHERE modalid = ${modalid}`, (err, results)=> {
-      if(err){
-        console.log({isSuccess: false, result: err});
-        res.send({isSuccess: false, result: 'error'});
-      }else {
-        console.log({isSuccess: true, result: results})
-        res.send({isSuccess: true, result: results})
-      }
-    })
+router.get('/getvariant/:id', tokenCheck, async (req, res) => {
+  try {
+    const modalid = req.params.id;
+    const query = `SELECT * FROM variant WHERE modalid = ${modalid}`;
 
-  }catch(err){
+    await db.query(query, (err, results) => {
+      if (err) {
+        console.log({ isSuccess: false, result: err });
+        res.send({ isSuccess: false, result: 'error' });
+      } else {
+        console.log({ isSuccess: true, result: results });
+        res.send({ isSuccess: true, result: results });
+      }
+    });
+  } catch (err) {
     console.log(err);
+    res.send({ isSuccess: false, result: 'error' });
   }
-  
-})
+});
+
+
+
+
 //==========deletemodal=============
 // router.po('/deletemodal', tokenCheck, async (req, res) => {
 //   try {
