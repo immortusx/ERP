@@ -422,55 +422,60 @@ export default function Manufacturer_modal() {
       <div>
         <div className="card">
           <div className="card-header">
-            <div className="d-flex align-items-center justify-content-between">
-              <li className="col-10 col-sm-10 col-md-10 d-flex align-items-center p-2">
-                <main className="d-flex align-items-center">
-                  <div className="myBtnRight">
+            <div className="row align-items-center">
+              <div className="col-10 col-md-10 col-sm-10">
+                <div className="d-flex align-items-center">
+                  <li className="d-flex align-items-center p-2">
+                    <main className="d-flex align-items-center">
+                      <div className="myBtnRight">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="currentColor"
+                          className="bi bi-chevron-double-right"
+                          viewBox="0 0 16 16"
+                        >
+                          <path
+                            fill-rule="evenodd"
+                            d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708z"
+                          />
+                          <path
+                            fill-rule="evenodd"
+                            d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708z"
+                          />
+                        </svg>
+                      </div>
+                      <span className="ms-2">
+                        {rowData &&
+                          rowData.length > 0 &&
+                          rowData.map((val) => val.manufacturerName)}
+                      </span>
+                    </main>
+                  </li>
+                </div>
+              </div>
+              <div className="col-2 col-md-2 col-sm-2">
+                <div className="d-flex justify-content-end">
+                  <button
+                    className="myActionBtn m-1"
+                    onClick={() => { deleteManufacturerAlert() }}
+                  >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="currentColor"
-                      className="bi bi-chevron-double-right"
+                      className="bi bi-trash3"
                       viewBox="0 0 16 16"
                     >
-                      <path
-                        fill-rule="evenodd"
-                        d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708z"
-                      />
-                      <path
-                        fill-rule="evenodd"
-                        d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708z"
-                      />
+                      <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5ZM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0H11Zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5h9.916Zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5Z" />
                     </svg>
-                  </div>
-                  <span className="ms-2">
-                    {rowData &&
-                      rowData.length > 0 &&
-                      rowData.map((val) => val.manufacturerName)}
-                  </span>
-                </main>
-              </li>
-              <div className="d-flex">
-                <button
-                  className="myActionBtn m-1"
-                  onClick={() => { deleteManufacturerAlert() }}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="currentColor"
-                    className="bi bi-trash3"
-                    viewBox="0 0 16 16"
+                  </button>
+                  <Button
+                    className="rounded-pill mx-1"
+                    variant="btn btn-warning"
+                    onClick={() => redirectManufacurer()}
                   >
-                    <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5ZM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0H11Zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5h9.916Zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5Z" />
-                  </svg>
-                </button>
-
-                <Button
-                  className="rounded-pill"
-                  variant="btn btn-warning mx-1"
-                  onClick={() => redirectManufacurer()}
-                >
-                  BACK
-                </Button>
+                    BACK
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
