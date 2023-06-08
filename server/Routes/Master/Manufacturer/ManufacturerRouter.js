@@ -150,6 +150,280 @@ router.post('/delete-manufacturerbyId', tokenCheck, async (req, res) => {
   }
 })
 
+//=========Add Manufacturer_modal and variant========== 
+// router.post('/addmodal-variant', tokenCheck, async (req, res)=> {
+//   console.log('/addmodalvariatn???????????')
+//   try{
+//     const { manufacturerModalVarData, manufacturerId } = req.body;
+//     for (const modalVarData of manufacturerModalVarData) {
+//       const { modalName, variants } = modalVarData;
+//       console.log(modalName)
+
+//       const modalQuery = 'INSERT INTO modal (modalName, manufacturerId) VALUES (?, ?)';
+      
+//       await db.query(modalQuery, [modalName, manufacturerId], async(err, results)=> {
+//         if(err){
+//           console.log({isSuccess: false, result: err})
+//           // res.send({isSuccess: false, result: 'error'})
+//         }else{
+//           console.log({isSuccess: true, result: results})
+//           // res.send({isSuccess: true, result: results})
+//           const modalId = results.insertId;
+
+//           for (const variantData of variants) {
+//             const { variantName } = variantData;
+//             console.log(variantName)
+            
+//             const variantQuery = 'INSERT INTO variant (variantName, modalId, manufacturerId) VALUES (?, ?, ?)';
+//             await db.query(variantQuery, [variantName, modalId, manufacturerId], (err, results)=> {
+//               if(err){
+//                 console.log({isSuccess: false, result: err})
+//                 // res.send({isSuccess: false, result: 'error'})
+//               }else{
+//                 console.log({isSuccess: true, result: results})
+//                 // res.send({isSuccess: true, result: results})
+//               }
+//             })
+//             // const variantValues = [variantName, modalId];
+//           }
+
+//         }
+//       })
+
+//     }
+
+//   }catch(err){
+//     console.log(err)
+//     res.send({isSuccess: true, result: results})
+//   }
+// })
+
+
+// router.post('/addmodal-variant', tokenCheck, async (req, res) => {
+//   console.log('/addmodalvariatn???????????');
+//   try {
+//     const { manufacturerModalVarData, manufacturerId } = req.body;
+//     const responses = [];
+
+//     for (const modalVarData of manufacturerModalVarData) {
+//       const { modalName, variants } = modalVarData;
+//       console.log(modalName);
+
+//       const modalQuery = 'INSERT INTO modal (modalName, manufacturerId) VALUES (?, ?)';
+
+//       const modalResults = await new Promise((resolve, reject) => {
+//         db.query(modalQuery, [modalName, manufacturerId], async(err, results) => {
+//           if (err) { 
+//             console.log({ isSuccess: false, result: err });
+//             reject('error');
+//           } else {
+//             console.log({ isSuccess: true, result: results });
+//             const modalId = results.insertId;
+//             responses.push(results);
+
+//             for (const variantData of variants) {
+//               const { variantName } = variantData;
+//               console.log(variantName);
+
+//               const variantQuery =
+//                 'INSERT INTO variant (variantName, modalId, manufacturerId) VALUES (?, ?, ?)';
+
+//               const variantResults = await new Promise((resolve, reject) => {
+//                 db.query(variantQuery, [variantName, modalId, manufacturerId], (err, results) => {
+//                   if (err) {
+//                     console.log({ isSuccess: false, result: err });
+//                     reject('error');
+//                   } else {
+//                     console.log({ isSuccess: true, result: results });
+//                     resolve(results);
+//                   }
+//                 });
+//               });
+
+//               responses.push(variantResults);
+//             }
+
+//             resolve(results);
+//           }
+//         });
+//       });
+
+//       responses.push(modalResults);
+//     }
+
+//     res.send({ isSuccess: true, result: responses });
+//   } catch (err) {
+//     console.log(err);
+//     res.send({ isSuccess: false, result: 'error' });
+//   }
+// });
+
+
+//=========addModal==========
+router.post('/addmodal', tokenCheck, async(req, res) => {
+  try {
+    const { modal, manufacturerId } = req.body;
+
+      const modalQuery = 'INSERT INTO modal (modalName, manufacturerId) VALUES (?, ?)';
+
+      await db.query(modalQuery, [modal, manufacturerId], async (err, results) => {
+        if (err) {
+          console.log({ isSuccess: false, result: err });
+          res.send({isSuccess: false, result: 'error'})
+        } else {
+          console.log({ isSuccess: true, result: results });
+          res.send({isSuccess: true, result: results})
+        }
+      });
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+//==================addVariant===================
+router.post('/addvariant', tokenCheck, async (req, res) => {
+  try {
+    const { manufacturerModalVarData, modalid, manufacturerId } = req.body;
+
+    for (const data of manufacturerModalVarData) {
+      const variants = data.variants;
+      for (const variant of variants) {
+        const variantName = variant.variantName;
+
+        const variantQuery = 'INSERT INTO variant (variantName, modalid, manufacturerId) VALUES (?, ?, ?)';
+
+        await db.query(variantQuery, [variantName, modalid, manufacturerId]);
+      }
+    }
+
+    console.log({ isSuccess: true, result: 'Variants added successfully.' });
+    res.send({ isSuccess: true, result: 'Variants added successfully.' });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({ isSuccess: false, result: 'Error adding variants.' });
+  }
+});
+
+
+
+//==========getModalist=============
+router.get('/getmodal/:id', tokenCheck, async(req, res)=> {
+  try{
+    const manufacturerId = req.params.id
+    await db.query(`Select * FROM modal WHERE manufacturerId = ${manufacturerId}`, (err, results)=> {
+      if(err){
+        console.log({isSuccess: false, result: err});
+        res.send({isSuccess: false, result: 'error'});
+      }else {
+        console.log({isSuccess: true, result: results})
+        res.send({isSuccess: true, result: results})
+      }
+    })
+
+  }catch(err){
+    console.log(err);
+  }
+  
+})
+
+//===========getVariantList===========
+router.get('/getvariant/:id', tokenCheck, async (req, res) => {
+  try {
+    const modalid = req.params.id;
+    const query = `SELECT * FROM variant WHERE modalid = ${modalid}`;
+
+    await db.query(query, (err, results) => {
+      if (err) {
+        console.log({ isSuccess: false, result: err });
+        res.send({ isSuccess: false, result: 'error' });
+      } else {
+        console.log({ isSuccess: true, result: results });
+        res.send({ isSuccess: true, result: results });
+      }
+    });
+  } catch (err) {
+    console.log(err);
+    res.send({ isSuccess: false, result: 'error' });
+  }
+});
+
+
+
+
+//==========deletemodal=============
+// router.po('/deletemodal', tokenCheck, async (req, res) => {
+//   try {
+//     const { modalid, manufacturerId } = req.body;
+//     console.log(modalid);
+//     console.log(manufacturerId);
+//     const modalDeleteSql = `DELETE FROM variant JOIN modal ON variant.modalid = m.id WHERE variant.modalid = ${modalid} AND modalyy.manufacturerId = ${manufacturerId}`;
+//     await db.query(modalDeleteSql, (err, result) => {
+//       if (err) {
+//         console.log({ isSuccess: false, result: err });
+//         res.send({ isSuccess: false, result: err });
+//       } else {
+//         console.log({ isSuccess: true, result: result });
+//         res.send({ isSuccess: true, result: result });
+//       }
+//     });
+//   } catch (err) {
+//     console.log(err);
+//   }
+// });
+
+router.post('/deletemodal', tokenCheck, async (req, res) => {
+  try {
+    const { modalid, manufacturerId } = req.body;
+    console.log(modalid);
+    console.log(manufacturerId);
+    
+    // Delete records from the variant table
+    const variantDeleteSql = `DELETE FROM variant WHERE modalid = ${modalid}`;
+    await db.query(variantDeleteSql, (err, variantResult) => {
+      if (err) {
+        console.log({ isSuccess: false, result: err });
+        res.send({ isSuccess: false, result: err });
+      } else {
+        console.log("Variant records deleted");
+        
+        // Delete records from the modal table
+        const modalDeleteSql = `DELETE FROM modal WHERE manufacturerId = ${manufacturerId}`;
+        db.query(modalDeleteSql, (modalErr, modalResult) => {
+          if (modalErr) {
+            console.log({ isSuccess: false, result: modalErr });
+            res.send({ isSuccess: false, result: modalErr });
+          } else {
+            console.log({ isSuccess: true, result: modalResult });
+            res.send({ isSuccess: true, result: modalResult });
+          }
+        });
+      }
+    });
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+
+
+//========deletemanufacturer=============
+router.post('/deletemanufacturer', tokenCheck, async(req, res)=> {
+  try{
+    const {manufacturerId} =req.body;
+    const deleteManufacturerSql = `DELETE FROM manufacturers WHERE id = ${manufacturerId}`;
+    await db.query(deleteManufacturerSql, [manufacturerId], (err, results)=> {
+      if(err){
+        console.log({isSuccess: false, result: err});
+        res.send({isSuccess: false, result: 'error'});
+      }else {
+        console.log({isSuccess: true, result: results})
+        res.send({isSuccess: true, result: results})
+      }
+    })
+  }catch(err){
+    console.log(err);
+  }
+})
 
 
 

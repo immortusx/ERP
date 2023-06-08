@@ -22,7 +22,7 @@ import {
 import AlertDeleteModal from "../../AlertDelete/AlertDeleteModal";
 import axios from "axios";
 
-export default function Manufacturer_modal() {
+export default function Variants() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const autoFocusRef = useRef(null);
@@ -33,7 +33,9 @@ export default function Manufacturer_modal() {
   const [editMaFacturerById, setEditMaFacturerById] = useState("");
   const [modalShow, setModalShow] = React.useState(false);
   const [manufacturerID, setManufacturerID] = useState(0);
-  const [modalList, setModalist] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [variantList, setVariantList] = useState([]);
+  const [modalId, setModalId] = useState(0);
 
   //---- Delete Modal Variable -----//
   const [type, setType] = useState(null);
@@ -44,8 +46,6 @@ export default function Manufacturer_modal() {
 
   const [modalRowsArr, setModalRowsArr] = useState([]);
   const [firstBlankField, setFirstBlankField] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [modal, setModal] = useState("");
 
   const onAddNewRowsHandler = () => {
     setModalRowsArr((prevState) => [
@@ -95,6 +95,7 @@ export default function Manufacturer_modal() {
   };
 
   const onVariantNameChange = (event, modalIndex, variantIndex) => {
+    console.log(event.target.value);
     setModalRowsArr((prevState) => {
       const updatedModalRowsArr = [...prevState];
       const modalRow = updatedModalRowsArr[modalIndex];
@@ -107,108 +108,76 @@ export default function Manufacturer_modal() {
   useEffect(() => {
     if (rowData) {
       rowData.map((val) => {
-        console.log(val.manufacturerId);
+        setModalId(val.id);
         setManufacturerID(val.manufacturerId);
       });
     }
   }, [rowData]);
 
-  const handleModalSubmit = async (e) => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     const manufacturerNameData = rowData;
-    const manufacturerModalData = modalRowsArr;
-    console.log(manufacturerModalData);
-    console.log(manufacturerID);
+    const manufacturerModalVarData = modalRowsArr;
+    console.log(manufacturerModalVarData, "var");
 
-    const url = `${process.env.REACT_APP_NODE_URL}/api/master/addmodal`;
-    const config = {
-      headers: {
-        token: localStorage.getItem("rbacToken"),
-      },
-    };
-    const requestData = {
-      modal: modal,
-      manufacturerId: manufacturerID,
-    };
-    await axios.post(url, requestData, config).then((response) => {
-      if (response.data && response.data.isSuccess) {
-        // redirectManufacurer();
-        handleClose();
-        getModalList();
-        dispatch(setShowMessage("Data Successfully Saved."));
-        // console.log(response.data.result)
+    let firstBlankFieldIndex = null; // Index of the first blank field
+
+    if (
+      manufacturerNameData.length > 0 &&
+      manufacturerModalVarData.length > 0
+    ) {
+      for (let i = 0; i < manufacturerModalVarData.length; i++) {
+        const modalRow = manufacturerModalVarData[i];
+        if (modalRow.modalName.trim() === "") {
+          firstBlankFieldIndex = i;
+          break;
+        }
+        for (let j = 0; j < modalRow.variants.length; j++) {
+          const variantRow = modalRow.variants[j];
+          if (variantRow.variantName.trim() === "") {
+            firstBlankFieldIndex = i;
+            break;
+          }
+        }
       }
-    });
+
+      if (modalId) {
+        console.log(firstBlankFieldIndex, "blank");
+        // All fields are filled, submit the data #manufacturerId
+        console.log(manufacturerModalVarData, "varirantlist");
+        console.log(manufacturerNameData, "row");
+
+        const url = `${process.env.REACT_APP_NODE_URL}/api/master/addvariant`;
+        const config = {
+          headers: {
+            token: localStorage.getItem("rbacToken"),
+          },
+        };
+        const requestData = {
+          manufacturerModalVarData: manufacturerModalVarData,
+          modalid: modalId,
+          manufacturerId: manufacturerID,
+        };
+
+        await axios.post(url, requestData, config).then((response) => {
+          if (response.data && response.data.isSuccess) {
+            dispatch(setShowMessage("Data Successfully Saved."));
+            handleClose();
+            getVariantList();
+            // console.log(response.data.result)
+          }
+        });
+      } else {
+        // Set focus on the first blank field
+        setFirstBlankField(firstBlankFieldIndex);
+      }
+    } else {
+      dispatch(setShowMessage("All Field Must be Required."));
+    }
   };
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   const manufacturerNameData = rowData;
-  //   const manufacturerModalVarData = modalRowsArr;
 
-  //   let firstBlankFieldIndex = null; // Index of the first blank field
-
-  //   if (
-  //     manufacturerNameData.length > 0 &&
-  //     manufacturerModalVarData.length > 0
-  //   ) {
-  //     for (let i = 0; i < manufacturerModalVarData.length; i++) {
-  //       const modalRow = manufacturerModalVarData[i];
-  //       if (modalRow.modalName.trim() === "") {
-  //         firstBlankFieldIndex = i;
-  //         break;
-  //       }
-  //       for (let j = 0; j < modalRow.variants.length; j++) {
-  //         const variantRow = modalRow.variants[j];
-  //         if (variantRow.variantName.trim() === "") {
-  //           firstBlankFieldIndex = i;
-  //           break;
-  //         }
-  //       }
-  //     }
-
-  //     if (firstBlankFieldIndex === null) {
-  //       // All fields are filled, submit the data #manufacturerId
-  //       console.log(manufacturerModalVarData);
-  //       console.log(manufacturerNameData, "row");
-
-  //       const url = `${process.env.REACT_APP_NODE_URL}/api/master/addmodal`;
-  //       const config = {
-  //         headers: {
-  //           token: localStorage.getItem("rbacToken"),
-  //         },
-  //       };
-  //       const requestData = {
-  //         manufacturerModalVarData: manufacturerModalVarData,
-  //         manufacturerId: manufacturerID,
-  //       };
-
-  //       await axios.post(url, requestData, config).then((response) => {
-  //         if (response.data && response.data.isSuccess) {
-  //           redirectaddmodal();
-  //           dispatch(setShowMessage("Data Successfully Saved."));
-  //           // console.log(response.data.result)
-  //         }
-  //       });
-  //     } else {
-  //       // Set focus on the first blank field
-  //       setFirstBlankField(firstBlankFieldIndex);
-  //     }
-  //   } else {
-  //     dispatch(setShowMessage("All Field Must be Required."));
-  //   }
-  // };
-
-  const redirectManufacurer = () => {
+  const redirectModal = () => {
     navigate(-1);
-  };
-
-  const redirectToVariantScreen = (rmdata) => {
-    navigate("/administration/configuration/manufacturer-modal/variants", {
-      state: { rowData: rmdata },
-    });
-  };
-  const onChangeHandler = (e) => {
-    console.log(e.target.value);
-    setModal(e.target.value);
   };
 
   const ErrorMsg = () => {
@@ -224,157 +193,41 @@ export default function Manufacturer_modal() {
     onAddNewRowsHandler();
   }, []);
 
-  // const columns = [
-  //   {
-  //     field: "rowNumber",
-  //     headerAlign: "center",
-  //     align: "center",
-  //     headerName: "No",
-  //     minWidth: 80,
-  //     flex: 1,
-  //   },
-  //   {
-  //     field: "manufacturerName",
-  //     headerAlign: "center",
-  //     align: "center",
-  //     headerName: "Manufacturer Name",
-  //     minWidth: 150,
-  //     flex: 1,
-  //     renderCell: (params) => (
-  //       <div>
-  //         <button
-  //           className="mfacturerActionBtn"
-  //           onClick={() => {
-  //             redirectaddmodal(params);
-  //           }}
-  //         >
-  //           {params.row.manufacturerName ? params.row.manufacturerName : "-"}
-  //         </button>
-  //       </div>
-  //     ),
-  //   },
-  //   {
-  //     field: "manufacturerDescription",
-  //     headerAlign: "left",
-  //     align: "left",
-  //     headerName: "Manufacturer Discription",
-  //     minWidth: 180,
-  //     flex: 1,
-  //     valueGetter: (params) => {
-  //       return `${
-  //         params.row.manufacturerDescription
-  //           ? params.row.manufacturerDescription
-  //           : "-"
-  //       }`;
-  //     },
-  //   },
-  //   {
-  //     field: "isActive",
-  //     headerName: "Active",
-  //     headerAlign: "left",
-  //     align: "left",
-  //     type: "number",
-  //     minWidth: 80,
-  //     flex: 1,
-  //     renderCell: (params) =>
-  //       params.row.isActive ? <CheckIcon /> : <ClearIcon />,
-  //   },
-  //   {
-  //     field: "actions",
-  //     headerName: "Actions",
-  //     className: "bg-dark",
-  //     sortable: false,
-  //     filterable: false,
-  //     headerAlign: "center",
-  //     align: "center",
-  //     disableColumnMenu: true,
-  //     minWidth: 200,
-  //     flex: 1,
-  //     position: "sticky",
-  //     renderCell: (params) => (
-  //       <div>
-  //         {/* <button onClick={() => { editActionCall(params.row) }} className='myActionBtn m-1'> */}
-  //         <button
-  //           className="myActionBtn m-1"
-  //           onClick={() => {
-  //             // handleAdd();
-  //             redirectToSubModal(rowData);
-  //           }}
-  //         >
-  //           <svg
-  //             xmlns="http://www.w3.org/2000/svg"
-  //             width="20"
-  //             height="20"
-  //             fill="currentColor"
-  //             className="bi bi-plus-circle"
-  //             viewBox="0 0 16 16"
-  //           >
-  //             <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
-  //             <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
-  //           </svg>
-  //         </button>
-
-  //         <button
-  //           className="myActionBtn m-1"
-  //           onClick={() => {
-  //             // editeStateModal(params.row);
-  //           }}
-  //         >
-  //           <svg
-  //             xmlns="http://www.w3.org/2000/svg"
-  //             fill="currentColor"
-  //             className="bi bi-pencil-square"
-  //             viewBox="0 0 16 16"
-  //           >
-  //             <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
-  //             <path
-  //               fillRule="evenodd"
-  //               d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"
-  //             />
-  //           </svg>
-  //         </button>
-  //         <button
-  //           className="myActionBtn m-1"
-  //           onClick={() => {
-  //             // deleteStateAlert(params.row);
-  //           }}
-  //         >
-  //           <svg
-  //             xmlns="http://www.w3.org/2000/svg"
-  //             fill="currentColor"
-  //             className="bi bi-trash3"
-  //             viewBox="0 0 16 16"
-  //           >
-  //             <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5ZM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0H11Zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5h9.916Zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5Z" />
-  //           </svg>
-  //         </button>
-  //       </div>
-  //     ),
-  //   },
-  // ];
-
-  const getModalList = async () => {
-    console.log(manufacturerID, "get");
-    const url = `${process.env.REACT_APP_NODE_URL}/api/master/getmodal/${manufacturerID}`;
+  const getVariantList = async () => {
+    console.log(modalId, "get");
+    const url = `${process.env.REACT_APP_NODE_URL}/api/master/getvariant/${modalId}`;
     const config = {
       headers: {
         token: localStorage.getItem("rbacToken"),
       },
     };
-    setLoading(true);
-    await axios.get(url, config).then((response) => {
+
+    try {
+      setLoading(true);
+      const response = await axios.get(url, config);
       if (response.data && response.data.isSuccess) {
         console.log(response.data.result);
-        setModalist(response.data.result);
+        setVariantList(response.data.result);
+      } else {
+        // Handle error response
+        console.log(response.data.result);
+        // Show error message or take appropriate action
       }
+    } catch (error) {
+      // Handle error
+      console.log(error);
+      // Show error message or take appropriate action
+    } finally {
       setLoading(false);
-    });
+    }
   };
+
   useEffect(() => {
     if (manufacturerID !== 0) {
-      getModalList();
+      getVariantList();
     }
   }, [manufacturerID]);
+
   const handleShow = () => {
     setModalShow(true);
   };
@@ -382,13 +235,13 @@ export default function Manufacturer_modal() {
     setModalShow(false);
   };
 
-  const deleteManufacturerAlert = () => {
+  const deleteModalAlert = () => {
     setDisplayConfirmationModal(true);
     setType("modal_delete");
-    setId(manufacturerID);
+    setId(modalId);
     setDeleteMessage(
       `Are You Sure You Want To Delete The Modal '${rowData.map(
-        (val) => val.manufacturerName
+        (val) => val.modalName
       )}'?`
     );
   };
@@ -398,22 +251,23 @@ export default function Manufacturer_modal() {
   };
 
   const submitDelete = async () => {
-    const url = `${process.env.REACT_APP_NODE_URL}/api/master/deletemanufacturer`;
+    const url = `${process.env.REACT_APP_NODE_URL}/api/master/deletemodal`;
     const config = {
       headers: {
         token: localStorage.getItem("rbacToken"),
       },
     };
     const requestData = {
+      modalid: modalId,
       manufacturerId: manufacturerID,
     };
 
     await axios.post(url, requestData, config).then((response) => {
       if (response.data && response.data.isSuccess) {
-        console.log(response.data.result)
+        console.log(response.data.result);
         hideConfirmationModal();
-        redirectManufacurer();
-        dispatch(setShowMessage("Manufacturer Sucessfully Deleted."));
+        redirectModal();
+        dispatch(setShowMessage("Modal Sucessfully Deleted."));
       }
     });
   };
@@ -447,7 +301,7 @@ export default function Manufacturer_modal() {
                       <span className="ms-2">
                         {rowData &&
                           rowData.length > 0 &&
-                          rowData.map((val) => val.manufacturerName)}
+                          rowData.map((val) => val.modalName)}
                       </span>
                     </main>
                   </li>
@@ -457,7 +311,9 @@ export default function Manufacturer_modal() {
                 <div className="d-flex justify-content-end">
                   <button
                     className="myActionBtn m-1"
-                    onClick={() => { deleteManufacturerAlert() }}
+                    onClick={() => {
+                      deleteModalAlert();
+                    }}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -471,7 +327,7 @@ export default function Manufacturer_modal() {
                   <Button
                     className="rounded-pill mx-1"
                     variant="btn btn-warning"
-                    onClick={() => redirectManufacurer()}
+                    onClick={() => redirectModal()}
                   >
                     BACK
                   </Button>
@@ -479,9 +335,10 @@ export default function Manufacturer_modal() {
               </div>
             </div>
           </div>
+
           <section className="d-flex  flex-column col-12 col-lg-5 mt-2">
             <label className="myLabel mx-4" htmlFor="email">
-              Manufacturer Name
+              Modal Name
             </label>
             {/* <select className='myInput' name="selectRole">
                                 <option value='0' className='myLabel' selected>select role</option>
@@ -498,35 +355,17 @@ export default function Manufacturer_modal() {
               value={
                 rowData &&
                 rowData.length > 0 &&
-                rowData.map((val) => val.manufacturerName)
+                rowData.map((val) => val.modalName)
               }
             />
           </section>
-          <section className="d-flex mt-3 flex-column col-12">
-            <label className="myLabel mx-4" htmlFor="email">
-              Description
-            </label>
-            <textarea
-              disabled
-              rows="5"
-              value={
-                rowData &&
-                rowData.length > 0 &&
-                rowData.map((val) => val.manufacturerDescription)
-              }
-              className="myInput inputElement mx-4"
-              autoComplete="false"
-              //  onChange={(e) => { onChangeHandler(e) }}
-              type="text"
-              name="roleDescription"
-            />
-          </section>
+
           <section>
             <hr />
             <div className="mx-4 m-0">
               <div className="d-flex align-items-end justify-content-between">
                 <h6 className="fw-bold myH9 m-0 d-flex align-items-start justify-content-start">
-                  Modal List
+                  Variant List
                 </h6>
 
                 <div
@@ -545,7 +384,7 @@ export default function Manufacturer_modal() {
                     <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
                     <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
                   </svg>
-                  <h6 className="m-0 ps-1">Add Modal</h6>
+                  <h6 className="m-0 ps-1">Add Variant</h6>
                 </div>
               </div>
             </div>
@@ -562,16 +401,16 @@ export default function Manufacturer_modal() {
                 <Spinner style={{ color: "rgb(132, 211, 227)" }} />
               </div>
             ) : (
-              modalList.map((row) => {
+              variantList.map((row) => {
                 return (
                   <div className="master">
                     <main className="my-0">
                       <ul className="row m-0 px-2">
                         <li className="col-12 col-sm-4 col-md-3  d-flex align-items-center p-2">
                           <main
-                            onClick={() => {
-                              redirectToVariantScreen(row);
-                            }}
+                            // onClick={() => {
+                            //   redirectToVariantScreen(row);
+                            // }}
                             className="d-flex align-items-center"
                           >
                             <div className="myBtnRight">
@@ -591,7 +430,7 @@ export default function Manufacturer_modal() {
                                 />
                               </svg>
                             </div>
-                            <span className="ms-2">{row.modalName}</span>
+                            <span className="ms-2">{row.variantName}</span>
                           </main>
                         </li>
                       </ul>
@@ -627,79 +466,96 @@ export default function Manufacturer_modal() {
             <div className="card">
               <div className="card-header">
                 <div className="d-flex">
-                  <label className="form-label">Manufacturer Name:</label>
+                  <label className="form-label">Modal Name:</label>
                   <p className="px-4">
                     {rowData &&
                       rowData.length > 0 &&
-                      rowData.map((val) => val.manufacturerName)}
+                      rowData.map((val) => val.modalName)}
                   </p>
                 </div>
               </div>
               <div className="card-body">
-                {/* {modalRowsArr.length > 0 &&
-            modalRowsArr.map((modalRow, modalIndex) => (
-              <div className="row" key={`ModaleNumber_${modalIndex}`}>
-                <div className="col-12">
-                  <label className="form-label">Modal Name:</label>
-                  <div className="row">
-                    <div className="col-10">
-                      <input
-                        type="text"
-                        className={`form-control ${
-                          firstBlankField === modalIndex
-                            ? "is-invalid"
-                            : "was-validated"
-                        }`}
-                        id={`modalName_${modalIndex}`}
-                        name={`modalName_${modalIndex}`}
-                        value={modalRow.modalName}
-                        onChange={(event) =>
-                          onModalNameChange(event, modalIndex)
-                        }
-                        ref={
-                          firstBlankField === modalIndex ? autoFocusRef : null
-                        }
-                      />
+                {modalRowsArr.length > 0 &&
+                  modalRowsArr.map((modalRow, modalIndex) => (
+                    <div className="row" key={`ModaleNumber_${modalIndex}`}>
+                      <div className="col-12">
+                        <label
+                          htmlFor="exampleFormControlInput1"
+                          className="form-label"
+                        >
+                          Variant Name:
+                        </label>
+                        {modalRow.variants.map((variantRow, variantIndex) => (
+                          <div
+                            className="row mb-2"
+                            key={`VariantNumber_${variantIndex}`}
+                          >
+                            <div className="col-10">
+                              <input
+                                type="text"
+                                className={`form-control ${
+                                  firstBlankField === modalIndex
+                                    ? "is-invalid"
+                                    : "was-validated"
+                                }`}
+                                id={`variantName_${modalIndex}_${variantIndex}`}
+                                name={`variantName_${modalIndex}_${variantIndex}`}
+                                value={variantRow.variantName}
+                                onChange={(event) =>
+                                  onVariantNameChange(
+                                    event,
+                                    modalIndex,
+                                    variantIndex
+                                  )
+                                }
+                                ref={
+                                  firstBlankField === modalIndex
+                                    ? autoFocusRef
+                                    : null
+                                }
+                              />
+                            </div>
+                            <div className="col-2">
+                              {modalRow.variants.length === variantIndex + 1 ? (
+                                <Button
+                                  variant="primary rounded-circle"
+                                  onClick={() =>
+                                    onAddNewVariantHandler(modalIndex)
+                                  }
+                                >
+                                  +
+                                </Button>
+                              ) : (
+                                <Button
+                                  variant="danger rounded-circle"
+                                  onClick={() =>
+                                    onRemoveVariantHandler(
+                                      modalRow.id,
+                                      variantIndex
+                                    )
+                                  }
+                                >
+                                  -
+                                </Button>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                </div>
-              </div>
-            ))} */}
-                <div className="">
-                  <div className="mb-3">
-                    <label
-                      htmlFor="menufacturerName"
-                      className="col-form-label"
-                    >
-                      Modal Name:
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="menufacturerName"
-                      name="menufacturerName"
-                      // value={menufacturerData.menufacturerName}
-                      onChange={(e) => {
-                        onChangeHandler(e);
-                      }}
-                    />
-                  </div>
-                </div>
+                  ))}
               </div>
               <div className="card-footer">
                 <div className="d-flex align-items-center justify-content-center">
                   <Button
                     variant="btn btn-warning mx-1"
                     onClick={() => {
-                      redirectManufacurer();
+                      redirectModal();
                     }}
                   >
                     CANCEL
                   </Button>
-                  <Button
-                    variant="btn btn-success mx-1"
-                    onClick={handleModalSubmit}
-                  >
+                  <Button variant="btn btn-success mx-1" onClick={handleSubmit}>
                     SAVE
                   </Button>
                 </div>
@@ -715,5 +571,137 @@ export default function Manufacturer_modal() {
         </Modal.Footer>
       </Modal>
     </>
+
+    // <div>
+    //   <div className="my-3  d-flex align-items-end justify-content-end">
+    //     <div className="d-flex align-items-center" type="button">
+    //       <h6 className="m-0 ps-1"></h6>
+    //     </div>
+    //   </div>
+    //   <div className="card">
+    //     <div className="card-header">
+    //       <div className="d-flex">
+    //         <label className="form-label">Manufacturer Name:</label>
+    //         <p className="px-4">{rowData && rowData.length > 0 && rowData.map((val)=> val.manufacturerName)}</p>
+    //       </div>
+    //     </div>
+    //     <div className="card-body">
+    //       {modalRowsArr.length > 0 &&
+    //         modalRowsArr.map((modalRow, modalIndex) => (
+    //           <div className="row" key={`ModaleNumber_${modalIndex}`}>
+    //             <div className="col-6">
+    //               <label className="form-label">Modal Name:</label>
+    //               <div className="row">
+    //                 <div className="col-10">
+    //                   <input
+    //                     type="text"
+    //                     className={`form-control ${
+    //                       firstBlankField === modalIndex
+    //                         ? "is-invalid"
+    //                         : "was-validated"
+    //                     }`}
+    //                     id={`modalName_${modalIndex}`}
+    //                     name={`modalName_${modalIndex}`}
+    //                     value={modalRow.modalName}
+    //                     onChange={(event) =>
+    //                       onModalNameChange(event, modalIndex)
+    //                     }
+    //                     ref={
+    //                       firstBlankField === modalIndex ? autoFocusRef : null
+    //                     }
+    //                   />
+    //                 </div>
+    //                 <div className="col-2">
+    //                   {modalRowsArr.length === modalIndex + 1 ? (
+    //                     <Button
+    //                       variant="primary rounded-circle"
+    //                       onClick={() => onAddNewRowsHandler(modalIndex)}
+    //                     >
+    //                       +
+    //                     </Button>
+    //                   ) : (
+    //                     <Button
+    //                       variant="danger rounded-circle"
+    //                       onClick={() => onRemoveModalHandler(modalRow.id)}
+    //                     >
+    //                       -
+    //                     </Button>
+    //                   )}
+    //                 </div>
+    //               </div>
+    //             </div>
+    //             <div className="col-6">
+    //               <label
+    //                 htmlFor="exampleFormControlInput1"
+    //                 className="form-label"
+    //               >
+    //                 Variant Name:
+    //               </label>
+    //               {modalRow.variants.map((variantRow, variantIndex) => (
+    //                 <div
+    //                   className="row mb-2"
+    //                   key={`VariantNumber_${variantIndex}`}
+    //                 >
+    //                   <div className="col-10">
+    //                     <input
+    //                       type="text"
+    //                       className={`form-control ${
+    //                         firstBlankField === modalIndex
+    //                           ? "is-invalid"
+    //                           : "was-validated"
+    //                       }`}
+    //                       id={`variantName_${modalIndex}_${variantIndex}`}
+    //                       name={`variantName_${modalIndex}_${variantIndex}`}
+    //                       value={variantRow.variantName}
+    //                       onChange={(event) =>
+    //                         onVariantNameChange(event, modalIndex, variantIndex)
+    //                       }
+    //                       ref={
+    //                         firstBlankField === modalIndex ? autoFocusRef : null
+    //                       }
+    //                     />
+    //                   </div>
+    //                   <div className="col-2">
+    //                     {modalRow.variants.length === variantIndex + 1 ? (
+    //                       <Button
+    //                         variant="primary rounded-circle"
+    //                         onClick={() => onAddNewVariantHandler(modalIndex)}
+    //                       >
+    //                         +
+    //                       </Button>
+    //                     ) : (
+    //                       <Button
+    //                         variant="danger rounded-circle"
+    //                         onClick={() =>
+    //                           onRemoveVariantHandler(modalRow.id, variantIndex)
+    //                         }
+    //                       >
+    //                         -
+    //                       </Button>
+    //                     )}
+    //                   </div>
+    //                 </div>
+    //               ))}
+    //             </div>
+    //           </div>
+    //         ))}
+    //     </div>
+    //     <div className="card-footer">
+    //       <div className="d-flex align-items-center justify-content-center">
+    //         <Button
+    //           variant="btn btn-warning mx-1"
+    //           onClick={() => {
+    //             redirectaddmodal(rowData);
+    //           }}
+    //         >
+    //           CANCEL
+    //         </Button>
+    //         <Button variant="btn btn-success mx-1" onClick={handleSubmit}>
+    //           SAVE
+    //         </Button>
+    //       </div>
+    //     </div>
+    //   </div>
+    // </div>
   );
 }

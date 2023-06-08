@@ -103,9 +103,17 @@ router.post('/', async (req, res) => {
                   res.send({ isSuccess: true, message: 'success', result: { branchResult, tokenIs, currentBranch } })
                   console.log({ isSuccess: true, message: 'success', result: { branchResult, tokenIs, currentBranch } })
                 } else {
+                  let currentBranch = "-1"
+                  const tokenData = {
+                    id: result[0].id,
+                    branchId: currentBranch
+                  };
+                  const tokenIs = await getToken(tokenData)
+                  res.send({ isSuccess: true, message: 'success', result: { branchResult, tokenIs, currentBranch } })
+                  console.log({ isSuccess: true, message: 'success', result: { branchResult, tokenIs, currentBranch } })
 
-                  res.send({ isSuccess: true, message: 'wrong', result: [] })
-                  console.log({ isSuccess: true, message: 'wrong', result: [] })
+                  //res.send({ isSuccess: true, message: 'wrong', result: [] })
+                 // console.log({ isSuccess: true, message: 'wrong', result: [] })
                 }
               })
 
