@@ -62,29 +62,12 @@ router.get("/price-details", tokenCheck, async (req, res) => {
   }
 });
 
-//================Get Down Payment(mode of payment)==============//
-router.get("/getmodeofpayment", tokenCheck, async (req, res) => {
-  try {
-    await db.query(`SELECT * FROM down_payment`, (err, results) => {
-      if (err) {
-        console.log({ isSuccess: false, result: err });
-        res.send({ isSuccess: false, result: "error" });
-      } else {
-        console.log({ isSuccess: true, result: results });
-        res.send({ isSuccess: true, result: results });
-      }
-    });
-  } catch (err) {
-    console.log(err);
-  }
-});
-
 //==================Add Customer-Booking Details=============//
 router.post("/addbooking", tokenCheck, async (req, res) => {
+  console.log(req.body,'body');
   try {
     const {
       first_name,
-      middle_name,
       last_name,
       phone_number,
       email,
@@ -95,18 +78,22 @@ router.post("/addbooking", tokenCheck, async (req, res) => {
       products,
       price,
       down_payment,
-      rto_details,
-      consumer_skim,
+      payment_mode,
       booking_date,
+      delivery_date,
+      type_of_use,
+      rto_tax,
+      rto_passing,
+      insurance,
+      agent_fee,
     } = req.body;
 
-    const addCustomerSql = `INSERT INTO customers (first_name, middle_name, last_name, phone_number, email, state, district, taluka, village) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+    const addCustomerSql = `INSERT INTO customers (first_name, last_name, phone_number, email, state, district, taluka, village) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
 
     db.query(
       addCustomerSql,
       [
         first_name,
-        middle_name,
         last_name,
         phone_number,
         email,
@@ -118,12 +105,12 @@ router.post("/addbooking", tokenCheck, async (req, res) => {
       (err, customerResult) => {
         if (err) {
           console.log(err);
-          res.send({ isSuccess: false, result: "Error" });
+          // res.send({ isSuccess: false, result: "Error" });
         } else {
           console.log({ isSuccess: true, result: customerResult });
           const customer_id = customerResult.insertId;
 
-          const addBookingSql = `INSERT INTO booking (customer_id, products, price, down_payment, rto_details, consumer_skim, booking_date) VALUES (?, ?, ?, ?, ?, ?, ?)`;
+          const addBookingSql = `INSERT INTO booking (customer_id, products, price, down_payment, payment_mode, booking_date, delivery_date, type_of_use) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
 
           db.query(
             addBookingSql,
@@ -132,17 +119,35 @@ router.post("/addbooking", tokenCheck, async (req, res) => {
               products,
               price,
               down_payment,
-              rto_details,
-              consumer_skim,
+              payment_mode,
               booking_date,
+              delivery_date,
+              type_of_use,
             ],
             (err, bookingResult) => {
               if (err) {
                 console.log(err);
-                res.send({ isSuccess: false, result: "Error" });
+                // res.send({ isSuccess: false, result: "Error" });
               } else {
                 console.log({ isSuccess: true, result: bookingResult });
-                res.send({ isSuccess: true, result: bookingResult });
+                // res.send({ isSuccess: true, result: bookingResult });
+                const booking_id = bookingResult.insertId;
+                const addRtoDetails = `INSERT INTO rto_detail (booking_id, rto_tax, rto_passing, insurance, agent_fee) VALUES (?,?,?,?,?)`;
+
+                db.query(
+                  addRtoDetails,
+                  [booking_id, rto_tax, rto_passing, insurance, agent_fee],
+                  (err, rtoResults) => {
+                    if (err) {
+                      console.log(err);
+                      // res.send({ isSuccess: false, result: "Error" });
+                    }
+                    {
+                      console.log({ isSuccess: true, result: 'success' });
+                      res.send({ isSuccess: true, result: 'Booking Successfully' });
+                    }
+                  }
+                );
               }
             }
           );
@@ -150,7 +155,7 @@ router.post("/addbooking", tokenCheck, async (req, res) => {
       }
     );
   } catch (err) {
-    console.log(err);
+    console.log({isSuccess: false, result: 'Error'});
     res.send({ isSuccess: false, result: "Error" });
   }
 });
