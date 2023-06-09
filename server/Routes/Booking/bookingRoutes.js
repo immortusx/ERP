@@ -155,8 +155,8 @@ router.post("/addbooking", tokenCheck, async (req, res) => {
       }
     );
   } catch (err) {
-    console.log({isSuccess: false, result: 'Error'});
-    res.send({ isSuccess: false, result: "Error" });
+    console.log({isSuccess: false, result: 'failed'});
+    res.send({ isSuccess: false, result: "Booking Failed" });
   }
 });
 
