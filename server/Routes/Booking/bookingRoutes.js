@@ -4,7 +4,6 @@ const async = require("async");
 const { tokenCheck } = require("../../Auth/TokenCheck");
 const { checkUserPermission } = require("../../Auth/userPermission");
 const { db } = require("../../Database/dbConfig");
-const router = require("../usersRoutes");
 
 const router = express.Router();
 
