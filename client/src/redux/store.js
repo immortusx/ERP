@@ -2,7 +2,9 @@ import { configureStore } from '@reduxjs/toolkit';
 import getRegisterSlice from './slices/getRegisterSlice'
 import getLoginSlice from './slices/getLoginSlice'
 import addUserSlice from './slices/addUserSlice'
+import addemployeeSlice from './slices/addemployeeSlice'
 import getUserListSlice from './slices/getUserListSlice'
+import getemployeeListSlice from './slices/getemployeeListSlice'
 
 import profileDataSlice from './slices/profileSlice'
 import AdminSlice from './slices/adminSlice'
@@ -11,6 +13,7 @@ import addRoleSlice from './slices/addRoleSlice'
 import notificationSlice from './slices/notificationSlice'
 
 import editUserDataSlice from './slices/editUserDataSlice'
+import editemployeeDataSlice from './slices/editemployeeDataSlice'
 import editRoleDataSlice from './slices/editRoleDataSlice'
 import enquirySlice from './slices/enquirySlice'
 import enquiryFieldSaveSlice from './slices/enquiryFieldSaveSlice'
@@ -30,11 +33,14 @@ export const store = configureStore({
         AdminSlice: AdminSlice,
         profileData: profileDataSlice,
         addUserSlice: addUserSlice,
+        addemployeeSlice: addemployeeSlice,
         getUserListSlice: getUserListSlice,
+        getemployeeListSlice: getemployeeListSlice,
         featuresListState: getFeatureSlice,
         addRoleState: addRoleSlice,
         notificationState: notificationSlice,
         editUserDataState: editUserDataSlice,
+        editemployeeDataState: editemployeeDataSlice,
         enquiryState: enquirySlice,
         editRoleDataState: editRoleDataSlice,
         enquiryFieldSaveState: enquiryFieldSaveSlice,
