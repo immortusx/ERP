@@ -20,6 +20,8 @@ const items = [
     name: "Page 3",
   },
 ];
+
+
 const Enquiry = () => {
   const [page, setPage] = useState(0);
   const [numberOfItemsPerPage, onItemsPerPageChange] = useState(
@@ -100,12 +102,12 @@ const Enquiry = () => {
           </HStack>
           <DataTable>
           <DataTable.Header>
-          <DataTable.Title>No</DataTable.Title>
-          <DataTable.Title>First Name</DataTable.Title>
-          <DataTable.Title>Last Name</DataTable.Title>
-          <DataTable.Title>Phone Number</DataTable.Title>
-          <DataTable.Title>Email</DataTable.Title>
-          <DataTable.Title>Product</DataTable.Title>
+          <DataTable.Title><Text style={styles.title} >No</Text></DataTable.Title>
+          <DataTable.Title><Text style={styles.title}>First Name</Text></DataTable.Title>
+          <DataTable.Title><Text style={styles.title}>Last Name</Text></DataTable.Title>
+          <DataTable.Title><Text style={styles.title}>Phone Number</Text></DataTable.Title>
+          <DataTable.Title><Text style={styles.title}>Email</Text></DataTable.Title>
+          <DataTable.Title><Text style={styles.title}>Product</Text></DataTable.Title>
           </DataTable.Header>
             <VStack alignItems="center">
               <Text style={styles.enquirytext}>
@@ -133,6 +135,11 @@ const Enquiry = () => {
 export default Enquiry;
 
 const styles = StyleSheet.create({
+  title: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: 'black',
+  },
   enquirycontent: {
     borderRadius: 10,
     paddingHorizontal: 5,

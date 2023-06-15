@@ -1,196 +1,121 @@
 import { StyleSheet, View, ScrollView, Text, SafeAreaView } from "react-native";
-import React,{useState} from 'react'
-import { Input, Icon, Box, Flex, Button, HStack } from "native-base";
+import React, { useState } from "react";
+import { Checkbox, Center, Button, HStack } from "native-base";
 import { useNavigation } from "@react-navigation/native";
 import { Dropdown } from "react-native-element-dropdown";
+import style from "../style/externalStyle";
 
 const Booking = () => {
-    const [value, setValue] = useState(null);
-    const data = [
-      { label: "Item 1", value: "1" },
-      { label: "Item 2", value: "2" },
-      { label: "Item 3", value: "3" },
-      { label: "Item 4", value: "4" },
-      { label: "Item 5", value: "5" },
-      { label: "Item 6", value: "6" },
-      { label: "Item 7", value: "7" },
-      { label: "Item 8", value: "8" },
-    ];
+  const [isChecked, setIsChecked] = useState(false);
+  
 
-    const navigation = useNavigation();
-     const onNextclick = ()=>{
-        navigation.navigate("ConsumerSkim");
-     } 
+  
+  const handleCheckboxToggle = () => {
+    console.log("checkedsdsds", isChecked);
+    setIsChecked(!isChecked);
+  };
+  
+
+
+  const [checkboxStates, setCheckboxStates] = useState([
+    { value: "RTO", ischecked: false },
+    { value: "RTO Tax", ischecked: false },
+    { value: "RTO Passing", ischecked: false },
+    { value: "Insurance", ischecked: false },
+    { value: "Agent Fee", ischecked: false },
+  ]);
+  
+  const handleCheckboxToggle1 = (index) => {
+    setCheckboxStates((prevStates) => {
+      const updatedCheckboxStates = [...prevStates];
+      const checkbox = updatedCheckboxStates[index];
+  
+      if (checkbox) {
+        checkbox.ischecked = !checkbox.ischecked;
+  
+        // Check/uncheck all subsequent checkboxes based on the parent checkbox state
+        if (checkbox.ischecked) {
+          for (let i = index + 1; i < updatedCheckboxStates.length; i++) {
+            const subsequentCheckbox = updatedCheckboxStates[i];
+            if (subsequentCheckbox) {
+              subsequentCheckbox.ischecked = true;
+            }
+          }
+        } else {
+          for (let i = index + 1; i < updatedCheckboxStates.length; i++) {
+            const subsequentCheckbox = updatedCheckboxStates[i];
+            if (subsequentCheckbox) {
+              subsequentCheckbox.ischecked = false;
+            }
+          }
+        }
+      }
+  
+      return updatedCheckboxStates;
+    });
+  };
+  const navigation = useNavigation();
+  const onNextclick = () => {
+    navigation.navigate("ConsumerSkim");
+  };
 
   return (
     <ScrollView>
-    <View style={styles.animatednav}>
-    <Text style={[styles.circleicon, { backgroundColor: 'blue' }]}>1</Text>
-     <Text style={styles.line}></Text>
-    <Text style={[styles.circleicon, { backgroundColor: 'blue' }]}>2</Text>
-     <Text style={styles.line}></Text>
-    <Text style={[styles.circleicon, { backgroundColor: 'blue' }]}>3</Text>
-     <Text style={styles.line}></Text>
-    <Text style={[styles.circleicon, { backgroundColor: 'blue' }]}>4</Text>
-     <Text style={styles.line}></Text>
-    <Text style={[styles.circleicon, { backgroundColor: 'blue' }]}>5</Text>
-     <Text style={styles.line}></Text>
-    <Text style={[styles.circleicon, { backgroundColor: 'white' }]}>6</Text>
-    </View>
-      <SafeAreaView style={styles.content}>  
-      <View>
-        <Box style={styles.inputstyel}>
-          <Dropdown
-            style={styles.input}
-            data={data}
-            labelField="label"
-            valueField="value"
-            placeholder="Select product"
-            value={value}
-            onChange={(item) => {
-              setValue(item.value);
-            }}
-          />
-        </Box>
+      <View style={style.animatednav}>
+        <Text style={[style.circleicon, { backgroundColor: "blue" }]}>1</Text>
+        <Text style={style.line}></Text>
+        <Text style={[style.circleicon, { backgroundColor: "blue" }]}>2</Text>
+        <Text style={style.line}></Text>
+        <Text style={[style.circleicon, { backgroundColor: "blue" }]}>3</Text>
+        <Text style={style.line}></Text>
+        <Text style={[style.circleicon, { backgroundColor: "blue" }]}>4</Text>
+        <Text style={style.line}></Text>
+        <Text style={[style.circleicon, { backgroundColor: "blue" }]}>5</Text>
+        <Text style={style.line}></Text>
+        <Text style={[style.circleicon, { backgroundColor: "white" }]}>6</Text>
       </View>
-      <View>
-        <Box style={styles.inputstyel}>
-          <Dropdown
-            style={styles.input}
-            data={data}
-            labelField="label"
-            valueField="value"
-            placeholder="Select product"
-            value={value}
-            onChange={(item) => {
-              setValue(item.value);
-            }}
-          />
-        </Box>
-      </View>
-      <View>
-        <Box style={styles.inputstyel}>
-          <Dropdown
-            style={styles.input}
-            data={data}
-            labelField="label"
-            valueField="value"
-            placeholder="Select product"
-            value={value}
-            onChange={(item) => {
-              setValue(item.value);
-            }}
-          />
-        </Box>
-      </View>
-      <View>
-        <Box style={styles.inputstyel}>
-          <Dropdown
-            style={styles.input}
-            data={data}
-            labelField="label"
-            valueField="value"
-            placeholder="Select product"
-            value={value}
-            onChange={(item) => {
-              setValue(item.value);
-            }}
-          />
-        </Box>
-      </View>
-      <View>
-        <Box style={styles.inputstyel}>
-          <Dropdown
-            style={styles.input}
-            data={data}
-            labelField="label"
-            valueField="value"
-            placeholder="Select product"
-            value={value}
-            onChange={(item) => {
-              setValue(item.value);
-            }}
-          />
-        </Box>
-      </View>
-      <View>
-        <Box style={styles.inputstyel}>
-          <Dropdown
-            style={styles.input}
-            data={data}
-            labelField="label"
-            valueField="value"
-            placeholder="Select product"
-            value={value}
-            onChange={(item) => {
-              setValue(item.value);
-            }}
-          />
-        </Box>
-      </View>
-       
-       
+      <SafeAreaView style={style.content}>
+          <Checkbox
+            my={2}
+            onPress={handleCheckboxToggle}
+            isChecked={isChecked}
+          >
+            RTO
+          </Checkbox>
+          {isChecked && (
+            <View style={{ marginLeft: 20 }}>
+            
+          {checkboxStates.map((checkbox, index) => (
+            <View style={{ marginBottom: 10 }}>
+            <Checkbox
+              key={index}
+              value={checkbox.value}
+              isChecked={checkbox.ischecked}
+              onPress={() => handleCheckboxToggle1(index)}
+            >
+              {checkbox.value}
+            </Checkbox>
+            </View>
+          ))}
+         
+          </View>
+          )}
         <HStack space={3} justifyContent="center">
-          <Button onPress={onNextclick} style={styles.btn} px="7" my="3">
+          <Button onPress={onNextclick} style={style.btn} px="7" my="3">
             Next
           </Button>
-          
         </HStack>
       </SafeAreaView>
     </ScrollView>
-  )
-}
+  );
+};
 
-export default Booking
+export default Booking;
 
 const styles = StyleSheet.create({
-    animatednav:{
-        display:"flex",
-        flexDirection:"row",
-        justifyContent:"center",
-        marginTop:30,
-      },
-      circleicon:{
-        borderRadius: 50,
-        width: 50, 
-        height: 50, 
-        textAlign:"center",
-        padding: 10,
-        fontSize:20, 
-      },
-      line: {
-        marginTop:22,
-        width: 10,
-        height:0,
-        borderWidth: 1,
-        color:"black",
-      },
-        content: {
-            marginTop:30,
-            marginHorizontal:10,
-            backgroundColor: "white",
-            paddingVertical: 50,
-            paddingHorizontal: 20,
-            flex: 1,
-            justifyContent: "center",
-          },
-      inputstyel: {
-        marginHorizontal: 10,
-        marginBottom: 30,
-        borderRadius: 5,
-        borderWidth: 1,
-        borderColor: "black",
-      },
-      input: {
-        paddingVertical: 6,
-        paddingHorizontal: 6,
-      },
-      btn:{
-        backgroundColor: "grey",
-        color: "white",
-        borderRadius: 5,
-        borderWidth: 1,
-        borderColor: "black",
-      },
-    
-})
+ 
+});
+
+
+
+ 

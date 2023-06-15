@@ -1,21 +1,69 @@
-import { StyleSheet, View, ScrollView, Text, SafeAreaView } from "react-native";
-import React,{useState} from 'react'
-import { Input, Icon, Box, Flex, Button, HStack } from "native-base";
+import { StyleSheet, View, ScrollView, Text, SafeAreaView,TouchableWithoutFeedback } from "react-native";
+import React,{useState,useEffect} from 'react'
+import { Input,  Box,  Button, HStack } from "native-base";
 import { useNavigation } from "@react-navigation/native";
 import { Dropdown } from "react-native-element-dropdown";
+import axios from "axios";
+import config from "../config";
+import { API_URL } from "@env";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import moment from "moment/moment";
+import style from "../style/externalStyle";
 
 const Booking = () => {
-    const [value, setValue] = useState(null);
-    const data = [
-      { label: "Item 1", value: "1" },
-      { label: "Item 2", value: "2" },
-      { label: "Item 3", value: "3" },
-      { label: "Item 4", value: "4" },
-      { label: "Item 5", value: "5" },
-      { label: "Item 6", value: "6" },
-      { label: "Item 7", value: "7" },
-      { label: "Item 8", value: "8" },
-    ];
+   
+
+    const [selectedValue, setSelectedValue] = useState("");
+    const [newlist, setNewList] = useState([""]);
+    const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+    const [enquirydate, setEnquiryDate] = useState("");
+
+    const handleConfirmDate = (date) => {
+      console.log("Date confirm")
+      setDatePickerVisibility(false);
+      setEnquiryDate(moment(date).format("MM/DD/YYYY"));
+    };
+    const handleDateCancel = () => {
+      console.log("Date is cancle")
+      setDatePickerVisibility(false);
+    };
+  
+    const handleShowDatePicker = () => {
+      console.log("datepicker is visible")
+      setDatePickerVisibility(true);
+    };
+
+
+    async function getRoles() {
+      const url = `${API_URL}/roles/get-roles-to-edit`;
+      // const url = `${config.API_URL}/api/enquiry/get-dsp/${id}`;
+      const token = await AsyncStorage.getItem("rbacToken");
+      const conf = {
+        headers: {
+          token: token,
+        },
+      };
+      await axios.get(url, conf).then((response) => {
+        if (response.data) {
+          if (response.data.isSuccess) {
+            console.log("response.data rollist", response.data.result);
+            const list = response.data.result;
+            setNewList(
+              list.map((list) => ({
+                label: list.role,
+                value: list.id,
+              }))
+            );
+            console.log(listdspdata, "RolIST");
+          }
+        }
+      });
+    }
+
+    useEffect(()=>{
+      getRoles();
+     },[])
 
     const navigation = useNavigation();
      const onNextclick = ()=>{
@@ -25,38 +73,47 @@ const Booking = () => {
   return (
     
     <ScrollView>
-    <View style={styles.animatednav}>
-    <Text style={[styles.circleicon, { backgroundColor: 'blue' }]}>1</Text>
-    <Text style={styles.line}></Text>
-    <Text style={[styles.circleicon, { backgroundColor: 'blue' }]}>2</Text>
-    <Text style={styles.line}></Text>
-    <Text style={[styles.circleicon, { backgroundColor: 'blue' }]}>3</Text>
-    <Text style={styles.line}></Text>
-    <Text style={[styles.circleicon, { backgroundColor: 'white' }]}>4</Text>
-    <Text style={styles.line}></Text>
-    <Text style={[styles.circleicon, { backgroundColor: 'white' }]}>5</Text>
-    <Text style={styles.line}></Text>
-    <Text style={[styles.circleicon, { backgroundColor: 'white' }]}>6</Text>
+    <View style={style.animatednav}>
+    <Text style={[style.circleicon, { backgroundColor: 'blue' }]}>1</Text>
+    <Text style={style.line}></Text>
+    <Text style={[style.circleicon, { backgroundColor: 'blue' }]}>2</Text>
+    <Text style={style.line}></Text>
+    <Text style={[style.circleicon, { backgroundColor: 'blue' }]}>3</Text>
+    <Text style={style.line}></Text>
+    <Text style={[style.circleicon, { backgroundColor: 'white' }]}>4</Text>
+    <Text style={style.line}></Text>
+    <Text style={[style.circleicon, { backgroundColor: 'white' }]}>5</Text>
+    <Text style={style.line}></Text>
+    <Text style={[style.circleicon, { backgroundColor: 'white' }]}>6</Text>
     </View>
-      <SafeAreaView style={styles.content}>
+      <SafeAreaView style={[style.content, { marginBottom:30 }]}>
         <View>
-        <Box style={styles.inputstyel} alignItems="center">
+        <TouchableWithoutFeedback onPress={handleShowDatePicker}>
+        <Box style={style.inputstyel} alignItems="center">
         <Input
-        //   name="Discriotion"
-          keyboardType="default"
-          mx="3"
-          size="lg"
-          w="100%"
-          placeholder="Select Date"
-          placeholderTextColor="black"
+        keyboardType="default"
+        mx="3"
+        size="lg"
+        w="100%"
+        placeholder="Select Date"
+        placeholderTextColor="black"
+        onChangeText={(value) => setEnquiryDate(value)}
+        value={enquirydate}
+        editable={false}
         />
-      </Box>
+        </Box>
+        </TouchableWithoutFeedback>
+        <DateTimePickerModal
+        isVisible={isDatePickerVisible}
+        mode="date"
+        onConfirm={handleConfirmDate}
+        onCancel={handleDateCancel}
+        />
         </View>
         <View>
-        <Box style={styles.inputstyel} alignItems="center">
+        <Box style={style.inputstyel} alignItems="center">
         <Input
-        //   name="Discriotion"
-          keyboardType="default"
+          keyboardType="numeric"
           mx="3"
           size="lg"
           w="100%"
@@ -66,9 +123,8 @@ const Booking = () => {
       </Box>
         </View>
         <View>
-        <Box style={styles.inputstyel} alignItems="center">
+        <Box style={style.inputstyel} alignItems="center">
         <Input
-        //   name="Discriotion"
           keyboardType="default"
           mx="3"
           size="lg"
@@ -79,9 +135,8 @@ const Booking = () => {
       </Box>
         </View>
         <View>
-        <Box style={styles.inputstyel} alignItems="center">
+        <Box style={style.inputstyel} alignItems="center">
         <Input
-        //   name="Discriotion"
           keyboardType="default"
           mx="3"
           size="lg"
@@ -92,10 +147,9 @@ const Booking = () => {
       </Box>
         </View>
         <View>
-        <Box style={styles.inputstyel} alignItems="center">
+        <Box style={style.inputstyel} alignItems="center">
         <Input
-        //   name="Discriotion"
-          keyboardType="default"
+          keyboardType="numeric"
           mx="3"
           size="lg"
           w="100%"
@@ -105,9 +159,8 @@ const Booking = () => {
       </Box>
         </View>
         <View>
-        <Box style={styles.inputstyel} alignItems="center">
+        <Box style={style.inputstyel} alignItems="center">
         <Input
-        //   name="Discriotion"
           keyboardType="default"
           mx="3"
           size="lg"
@@ -118,9 +171,8 @@ const Booking = () => {
       </Box>
         </View>
         <View>
-        <Box style={styles.inputstyel} alignItems="center">
+        <Box style={style.inputstyel} alignItems="center">
         <Input
-        //   name="Discriotion"
           keyboardType="default"
           mx="3"
           size="lg"
@@ -131,9 +183,8 @@ const Booking = () => {
       </Box>
         </View>
         <View>
-        <Box style={styles.inputstyel} alignItems="center">
+        <Box style={style.inputstyel} alignItems="center">
         <Input
-        //   name="Discriotion"
           keyboardType="default"
           mx="3"
           size="lg"
@@ -144,9 +195,8 @@ const Booking = () => {
       </Box>
         </View>
         <View>
-        <Box style={styles.inputstyel} alignItems="center">
+        <Box style={style.inputstyel} alignItems="center">
         <Input
-        //   name="Discriotion"
           keyboardType="default"
           mx="3"
           size="lg"
@@ -157,9 +207,8 @@ const Booking = () => {
       </Box>
         </View>
         <View>
-        <Box style={styles.inputstyel} alignItems="center">
+        <Box style={style.inputstyel} alignItems="center">
         <Input
-        //   name="Discriotion"
           keyboardType="default"
           mx="3"
           size="lg"
@@ -170,36 +219,39 @@ const Booking = () => {
       </Box>
         </View>
         <View>
-        <Box style={styles.inputstyel} alignItems="center">
-        <Input
-        //   name="Discriotion"
-          keyboardType="default"
-          mx="3"
-          size="lg"
-          w="100%"
+        <Box style={style.inputstyel}>
+        <Dropdown 
+        style={[style.input,{ backgroundColor: 'green' }]}
+        data={newlist}
+        labelField="label"
+        valueField="value"
           placeholder="agricultural"
           placeholderTextColor="black"
+          value={selectedValue}
+          onChange={(selectedItem) => {
+            setSelectedValue(selectedItem.value);
+          }}
         />
       </Box>
         </View>
         <View>
-          <Box style={styles.inputstyel}>
+          <Box style={style.inputstyel}>
             <Dropdown
-              style={styles.input}
-              data={data}
+              style={style.input}
+              data={newlist}
               labelField="label"
               valueField="value"
-              placeholder="Select product"
-              value={value}
-              onChange={(item) => {
-                setValue(item.value);
+              placeholder="Payment"
+              value={selectedValue}
+              onChange={(selectedItem) => {
+                setSelectedValue(selectedItem.value);
               }}
             />
           </Box>
        </View>
        
         <HStack space={3} justifyContent="center">
-          <Button onPress={onNextclick} style={styles.btn} px="7" my="3">
+          <Button onPress={onNextclick} style={style.btn} px="7" my="3">
             Next
           </Button>
           
@@ -212,54 +264,5 @@ const Booking = () => {
 export default Booking
 
 const styles = StyleSheet.create({
-  animatednav:{
-    display:"flex",
-    flexDirection:"row",
-    justifyContent:"center",
-    marginTop:30,
-  },
-  circleicon:{
-    borderRadius: 50,
-    width: 50, 
-    height: 50, 
-    textAlign:"center",
-    padding: 10,
-    fontSize:20, 
-  },
-  line: {
-    marginTop:22,
-    width: 10,
-    height:0,
-    borderWidth: 1,
-    color:"black",
-  },
-    content: {
-        marginTop:30,
-        marginBottom:30,
-        marginHorizontal:10,
-        backgroundColor: "white",
-        paddingVertical: 50,
-        paddingHorizontal: 20,
-        flex: 1,
-        justifyContent: "center",
-      },
-      inputstyel: {
-        marginHorizontal: 10,
-        marginBottom: 30,
-        borderRadius: 5,
-        borderWidth: 1,
-        borderColor: "black",
-      },
-      input: {
-        paddingVertical: 6,
-        paddingHorizontal: 6,
-      },
-      btn:{
-        backgroundColor: "grey",
-        color: "white",
-        borderRadius: 5,
-        borderWidth: 1,
-        borderColor: "black",
-      },
-    
+  
 })

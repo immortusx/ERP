@@ -1,11 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View, ScrollView, Text, SafeAreaView } from "react-native";
-import { Fontisto } from "@expo/vector-icons";
+import {
+  StyleSheet,
+  View,
+  ScrollView,
+  Text,
+  SafeAreaView,
+  TouchableOpacity,
+} from "react-native";
+import style from "../style/externalStyle";
+import { Fontisto, MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { Dropdown } from "react-native-element-dropdown";
 import { Input, Icon, Box, Flex, Button, HStack } from "native-base";
 import { RadioButton } from "react-native-paper";
-// import moment from "moment/moment";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
+import moment from "moment/moment";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -17,17 +26,12 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL } from "@env";
 import { setShowMessage } from "../redux/slice/notificationSlice";
 const Form = () => {
-  
-
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
   const oncancleclick = () => {
     navigation.navigate("Enquiry");
   };
-  const [redio, setRedio] = useState("0");
-  const [BirthDate, setBirthDate] = useState("");
-  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
   const getEnquiryState = (state) => state.enquiryState.enquiryState;
   const getNewEnquiryDataState = (state) =>
@@ -134,16 +138,14 @@ const Form = () => {
     } else {
       dispatch(setShowMessage("Please fill mandatory fields"));
       console.log("formdata failed");
-    alert("Please fill mandatory fields")
+      alert("Please fill mandatory fields");
     }
   };
 
   useEffect(() => {
-   
-        clearStateAndInp()
-    
+    clearStateAndInp();
   }, [setNewEnquiryDataState]);
-
+  const [redio, setRedio] = useState("0");
   const [branch, setBranch] = useState([""]);
   const [district, setDistrict] = useState([""]);
   const [newlistDSP, setNewListDSP] = useState([""]);
@@ -153,14 +155,41 @@ const Form = () => {
   const [modeldata, setModelData] = useState([""]);
   const [villagedata, setVillageData] = useState([""]);
   const [sourceofenquiry, setSourceOfEnquiry] = useState([""]);
-  // const [selectedCity, setSelectedCity] = useState("");
-  // const [city, setCity] = useState([]);
-  //   const [title, setTitle] = useState([]);
-
   const [selectedValue, setSelectedValue] = useState("");
-  const [showRolesList, setShowRolesList] = useState([])
+  const [showRolesList, setShowRolesList] = useState([]);
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  const [isDatePickerVisible2, setDatePickerVisibility2] = useState(false);
+  const [enquirydate, setEnquiryDate] = useState("");
+  const [expecteddate, setExpectedDate] = useState("");
+
+  const handleConfirmDate = (date) => {
+    console.log("Date confirm");
+    setDatePickerVisibility(false);
+    setEnquiryDate(moment(date).format("MM/DD/YYYY"));
+  };
+  const handleConfirmDate2 = (date) => {
+    console.log("Date confirm");
+    setDatePickerVisibility2(false);
+    setExpectedDate(moment(date).format("MM/DD/YYYY"));
+  };
+
+  const handleDateCancel = () => {
+    console.log("Date is cancle");
+    setDatePickerVisibility(false);
+    setDatePickerVisibility2(false);
+  };
+
+  const handleShowDatePicker = () => {
+    console.log("datepicker is visible");
+    setDatePickerVisibility(true);
+  };
+  const handleShowDatePicker2 = () => {
+    console.log("datepicker is visible");
+    setDatePickerVisibility2(true);
+  };
+
   async function getRoles() {
-    const url = `${API_URL}/api/roles/get-roles-to-edit`;
+    const url = `${API_URL}/roles/get-roles-to-edit`;
     const token = await AsyncStorage.getItem("rbacToken");
     const conf = {
       headers: {
@@ -168,23 +197,21 @@ const Form = () => {
       },
     };
     await axios.get(url, conf).then((response) => {
-        if (response.data?.isSuccess) {
-          const rollist  = response.data.result;
-          setShowRolesList(
-            rollist.map((list) => ({
-              label: list.role,
-              value: list.id,
-            }))
-          );
-            console.log('get-roles-to-edit result', response.data.result);
-        }
-    })
-}
-
-   
+      if (response.data?.isSuccess) {
+        const rollist = response.data.result;
+        setShowRolesList(
+          rollist.map((list) => ({
+            label: list.role,
+            value: list.id,
+          }))
+        );
+        console.log("get-roles-to-edit result", response.data.result);
+      }
+    });
+  }
 
   async function getBranchs() {
-    const url = `${API_URL}/api/enquiry/enquiry-data`;
+    const url = `${API_URL}/enquiry/enquiry-data`;
     // const url = `${config.API_URL}/api/enquiry/enquiry-data`;
     const token = await AsyncStorage.getItem("rbacToken");
     if (!token) {
@@ -229,7 +256,7 @@ const Form = () => {
   }
 
   async function getDspList(id) {
-    const url = `${API_URL}/api/enquiry/get-dsp/${id}`;
+    const url = `${API_URL}/enquiry/get-dsp/${id}`;
     // const url = `${config.API_URL}/api/enquiry/get-dsp/${id}`;
     const token = await AsyncStorage.getItem("rbacToken");
     const conf = {
@@ -254,7 +281,7 @@ const Form = () => {
     });
   }
   async function getTehsilList(id) {
-    const url = `${API_URL}/api/enquiry/get-tehsil/${id}`;
+    const url = `${API_URL}/enquiry/get-tehsil/${id}`;
     // const url = `${config.API_URL}/api/enquiry/get-tehsil/${id}`;
     const token = await AsyncStorage.getItem("rbacToken");
     const conf = {
@@ -277,8 +304,8 @@ const Form = () => {
   }
   async function getModelList(id) {
     // const url = `${config.API_URL}/api/enquiry/get-model/${id}`;
-    const url = `${API_URL}/api/enquiry/get-model/${id}`;
-    const token = await AsyncStorage.getItem("rbacToken")
+    const url = `${API_URL}/enquiry/get-model/${id}`;
+    const token = await AsyncStorage.getItem("rbacToken");
     const conf = {
       headers: {
         token: token,
@@ -293,19 +320,17 @@ const Form = () => {
             modlelist.map((list) => ({ label: list.name, value: list.id }))
           );
           console.log(modlelist, "modlelist");
-          // setCategoriesList(response.data.result)
-          // setNewEnquiryList(newEnquiryList => ({ ...newEnquiryList, ['listModel']: response.data.result }))
         }
       }
     });
   }
   async function getSourceOfEnquiryList(id) {
     // const url = `${config.API_URL}/api/enquiry/get-source-enquiry/${id}`;
-    const url = `${API_URL}/api/enquiry/get-source-enquiry/${id}`;
-    const token = await AsyncStorage.getItem("rbacToken")
+    const url = `${API_URL}/enquiry/get-source-enquiry/${id}`;
+    const token = await AsyncStorage.getItem("rbacToken");
     const conf = {
       headers: {
-        token:token,
+        token: token,
       },
     };
     await axios.get(url, conf).then((response) => {
@@ -320,19 +345,17 @@ const Form = () => {
             }))
           );
           console.log(sourceofenquiry, "sourceofenquiry");
-
-          // setNewEnquiryList(newEnquiryList => ({ ...newEnquiryList, ['listSourceOfEnquiry']: response.data.result }))
         }
       }
     });
   }
   async function getVillageList(id) {
     // const url = `${config.API_URL}/api/enquiry/get-village/${id}`;
-    const url = `${API_URL}/api/enquiry/get-village/${id}`;
-    const token = await AsyncStorage.getItem("rbacToken")
+    const url = `${API_URL}/enquiry/get-village/${id}`;
+    const token = await AsyncStorage.getItem("rbacToken");
     const conf = {
       headers: {
-        token:token,
+        token: token,
       },
     };
     await axios.get(url, conf).then((response) => {
@@ -344,7 +367,6 @@ const Form = () => {
             villagelist.map((list) => ({ label: list.name, value: list.id }))
           );
           console.log(villagelist, "villagelist");
-          // setNewEnquiryList(newEnquiryList => ({ ...newEnquiryList, ['listVillage']: response.data.result }))
         }
       }
     });
@@ -395,9 +417,9 @@ const Form = () => {
       <SafeAreaView style={styles.content}>
         <View>
           <Text style={styles.textstyle}>Select Branch*</Text>
-          <Box style={styles.inputstyel}>
+          <Box style={style.inputstyel}>
             <Dropdown
-              style={styles.input}
+              style={style.input}
               data={branch}
               labelField="label"
               valueField="value"
@@ -412,9 +434,9 @@ const Form = () => {
 
         <View>
           <Text style={styles.textstyle}>Select DSP*</Text>
-          <Box style={styles.inputstyel}>
+          <Box style={style.inputstyel}>
             <Dropdown
-              style={styles.input}
+              style={style.input}
               data={newlistDSP}
               labelField="label"
               valueField="value"
@@ -428,7 +450,7 @@ const Form = () => {
         </View>
         <View>
           <Text style={styles.textstyle}>First Name*</Text>
-          <Box style={styles.inputstyel} alignItems="center">
+          <Box style={style.inputstyel} alignItems="center">
             <Input
               name="firstName"
               keyboardType="default"
@@ -445,7 +467,7 @@ const Form = () => {
         </View>
         <View>
           <Text style={styles.textstyle}>Last Name*</Text>
-          <Box style={styles.inputstyel} alignItems="center">
+          <Box style={style.inputstyel} alignItems="center">
             <Input
               name="lastName"
               keyboardType="default"
@@ -462,7 +484,7 @@ const Form = () => {
         </View>
         <View>
           <Text style={styles.textstyle}>Father Name*</Text>
-          <Box style={styles.inputstyel} alignItems="center">
+          <Box style={style.inputstyel} alignItems="center">
             <Input
               name="fatherName"
               keyboardType="default"
@@ -479,10 +501,10 @@ const Form = () => {
         </View>
         <View>
           <Text style={styles.textstyle}>Email*</Text>
-          <Box style={styles.inputstyel} alignItems="center">
+          <Box style={style.inputstyel} alignItems="center">
             <Input
               name="emailId"
-              keyboardType="default"
+              keyboardType="email"
               mx="3"
               size="lg"
               w="100%"
@@ -496,7 +518,7 @@ const Form = () => {
         </View>
         <View>
           <Text style={styles.textstyle}>Mobile Number*</Text>
-          <Box style={styles.inputstyel} alignItems="center">
+          <Box style={style.inputstyel} alignItems="center">
             <Input
               name="mobileNumber"
               keyboardType="numeric"
@@ -513,9 +535,9 @@ const Form = () => {
         </View>
         <View>
           <Text style={styles.textstyle}>Select District*</Text>
-          <Box style={styles.inputstyel}>
+          <Box style={style.inputstyel}>
             <Dropdown
-              style={styles.input}
+              style={style.input}
               data={district}
               labelField="label"
               valueField="value"
@@ -529,9 +551,9 @@ const Form = () => {
         </View>
         <View>
           <Text style={styles.textstyle}>Select Teshil*</Text>
-          <Box style={styles.inputstyel}>
+          <Box style={style.inputstyel}>
             <Dropdown
-              style={styles.input}
+              style={style.input}
               data={tehsil}
               labelField="label"
               valueField="value"
@@ -545,9 +567,9 @@ const Form = () => {
         </View>
         <View>
           <Text style={styles.textstyle}>Select Block*</Text>
-          <Box style={styles.inputstyel}>
+          <Box style={style.inputstyel}>
             <Dropdown
-              style={styles.input}
+              style={style.input}
               data={newEnquiryList.listBlock.map((i) => ({
                 label: i.id,
                 value: i.id,
@@ -564,9 +586,9 @@ const Form = () => {
         </View>
         <View>
           <Text style={styles.textstyle}>Select Village*</Text>
-          <Box style={styles.inputstyel}>
+          <Box style={style.inputstyel}>
             <Dropdown
-              style={styles.input}
+              style={style.input}
               data={villagedata}
               labelField="label"
               valueField="value"
@@ -580,9 +602,9 @@ const Form = () => {
         </View>
         <View>
           <Text style={styles.textstyle}>Select SSP</Text>
-          <Box style={styles.inputstyel}>
+          <Box style={style.inputstyel}>
             <Dropdown
-              style={styles.input}
+              style={style.input}
               data={showRolesList}
               labelField="label"
               valueField="value"
@@ -596,9 +618,9 @@ const Form = () => {
         </View>
         <View>
           <Text style={styles.textstyle}>Select Make*</Text>
-          <Box style={styles.inputstyel}>
+          <Box style={style.inputstyel}>
             <Dropdown
-              style={styles.input}
+              style={style.input}
               data={makelist}
               labelField="label"
               valueField="value"
@@ -612,9 +634,9 @@ const Form = () => {
         </View>
         <View>
           <Text style={styles.textstyle}>Select Model*</Text>
-          <Box style={styles.inputstyel}>
+          <Box style={style.inputstyel}>
             <Dropdown
-              style={styles.input}
+              style={style.input}
               data={modeldata}
               labelField="label"
               valueField="value"
@@ -628,9 +650,9 @@ const Form = () => {
         </View>
         <View>
           <Text style={styles.textstyle}>Enquiry primary Source*</Text>
-          <Box style={styles.inputstyel}>
+          <Box style={style.inputstyel}>
             <Dropdown
-              style={styles.input}
+              style={style.input}
               data={sourcelist}
               labelField="label"
               valueField="value"
@@ -644,9 +666,9 @@ const Form = () => {
         </View>
         <View>
           <Text style={styles.textstyle}>Select Source of Enquiry*</Text>
-          <Box style={styles.inputstyel}>
+          <Box style={style.inputstyel}>
             <Dropdown
-              style={styles.input}
+              style={style.input}
               data={sourceofenquiry}
               labelField="label"
               valueField="value"
@@ -660,49 +682,58 @@ const Form = () => {
         </View>
         <View>
           <Text style={styles.textstyle}>Enquiry Date*</Text>
-          <Box style={styles.inputstyel} alignItems="center">
+          <Box style={style.inputstyel} alignItems="center">
             <Input
               mx="3"
               size="lg"
-              InputRightElement={
-                <Icon
-                  as={<Fontisto name="date" />}
-                  size={5}
-                  mr="2"
-                  color="muted.400"
-                />
-              }
-              placeholder="Expected Delivery Date"
+              keyboardType="numeric"
+              placeholder="MM/DD/YYYY"
               placeholderTextColor="black"
               w="100%"
+              onChangeText={(value) => setEnquiryDate(value)}
+              value={enquirydate}
+            />
+            <TouchableOpacity onPress={handleShowDatePicker}>
+              <MaterialIcons style={styles.icon} name="date-range" size={24} />
+            </TouchableOpacity>
+            <DateTimePickerModal
+              isVisible={isDatePickerVisible}
+              mode="date"
+              onConfirm={handleConfirmDate}
+              onCancel={handleDateCancel}
             />
           </Box>
         </View>
+
         <View>
           <Text style={styles.textstyle}>Expected Delivery Date</Text>
-          <Box style={styles.inputstyel} alignItems="center">
+          <Box style={style.inputstyel} alignItems="center">
             <Input
               mx="3"
               size="lg"
-              InputRightElement={
-                <Icon
-                  as={<Fontisto name="date" />}
-                  size={5}
-                  mr="2"
-                  color="muted.400"
-                />
-              }
-              placeholder="Expected Delivery Date"
+              keyboardType="numeric"
+              placeholder="MM/DD/YYYY"
               placeholderTextColor="black"
               w="100%"
+              onChangeText={(value) => setExpectedDate(value)}
+              value={expecteddate}
+            />
+            <TouchableOpacity onPress={handleShowDatePicker2}>
+              <MaterialIcons style={styles.icon} name="date-range" size={24} />
+            </TouchableOpacity>
+            <DateTimePickerModal
+              isVisible={isDatePickerVisible2}
+              mode="date"
+              onConfirm={handleConfirmDate2}
+              onCancel={handleDateCancel}
             />
           </Box>
         </View>
         <View>
           <Text style={styles.textstyle}>Select Customer Category</Text>
-          <Box style={styles.inputstyel}>
+          <Box style={style.inputstyel}>
             <Dropdown
-              style={styles.input}
+              style={style.input}
               data={showRolesList}
               labelField="label"
               valueField="value"
@@ -716,9 +747,9 @@ const Form = () => {
         </View>
         <View>
           <Text style={styles.textstyle}>Select Mode Of Finance</Text>
-          <Box style={styles.inputstyel}>
+          <Box style={style.inputstyel}>
             <Dropdown
-              style={styles.input}
+              style={style.input}
               data={newEnquiryList.listModeOfFinance.map((i) => ({
                 label: i.name,
                 value: i.id,
@@ -735,9 +766,9 @@ const Form = () => {
         </View>
         <View>
           <Text style={styles.textstyle}>Select Bank</Text>
-          <Box style={styles.inputstyel}>
+          <Box style={style.inputstyel}>
             <Dropdown
-              style={styles.input}
+              style={style.input}
               data={newEnquiryList.listBank.map((i) => ({
                 label: i.name,
                 value: i.id,
@@ -786,10 +817,10 @@ const Form = () => {
           </Flex>
         </RadioButton.Group>
         <HStack space={3} justifyContent="center">
-          <Button style={styles.btn} onPress={onsaveclick} px="7" my="3">
+          <Button style={style.btn} onPress={onsaveclick} px="7" my="3">
             Save
           </Button>
-          <Button style={styles.btn} onPress={oncancleclick} px="7" my="3">
+          <Button style={style.btn} onPress={oncancleclick} px="7" my="3">
             Cancle
           </Button>
         </HStack>
@@ -813,22 +844,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 
-  inputstyel: {
-    marginHorizontal: 10,
-    marginBottom: 30,
-    borderRadius: 5,
-    borderWidth: 1,
-    borderColor: "black",
-  },
-  input: {
-    paddingVertical: 6,
-    paddingHorizontal: 6,
-  },
-  btn: {
-    backgroundColor: "grey",
-    color: "white",
-    borderRadius: 5,
-    borderWidth: 1,
-    borderColor: "black",
+  icon: {
+    position: "absolute",
+    left: 130,
+    bottom: 10,
   },
 });
