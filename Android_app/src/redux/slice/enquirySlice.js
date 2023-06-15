@@ -15,7 +15,7 @@ const initialState = {
 
 export const setEnquiryDb = createAsyncThunk('setEnquiryDb/enquirySlice', async (data) => {
     console.log('data', data)
-    const url = `${API_URL}/api/setEnquiryDb`
+    const url = `${API_URL}/setEnquiryDb`
     // const url = `${config.API_URL}/api/setEnquiryDb`
     // return await Axios.get(url).then((response) => {
     //     return response.data

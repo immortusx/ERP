@@ -107,7 +107,6 @@ export default function AddRole({ workFor }) {
             if (featuresState.data.isSuccess) {
                 setFeaturesList(featuresState.data.result)
             }
-
         }
     }, [featuresState])
     // useEffect(() => {

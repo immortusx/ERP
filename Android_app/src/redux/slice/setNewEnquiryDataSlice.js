@@ -20,7 +20,7 @@ export const setNewEnquiryDataDb = createAsyncThunk('setNewEnquiryDataDb/setNewE
             token: AsyncStorage.getItem('rbacToken')
         }
     };
-    const url = `${API_URL}/api/enquiry/set-new-enquiry-data`
+    const url = `${API_URL}/enquiry/set-new-enquiry-data`
     // const url = `${config.API_URL}/api/enquiry/set-new-enquiry-data`
     return await Axios.post(url, userData, conf).then((response) => {
         console.log(userData,"user Data")

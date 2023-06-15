@@ -1,133 +1,133 @@
 import { StyleSheet, View, ScrollView, Text, SafeAreaView } from "react-native";
-import React,{useState} from 'react'
-import { Input, Icon, Box, Flex, Button, HStack } from "native-base";
+import React, { useState } from "react";
+import { Input, Icon, Box, Button, HStack } from "native-base";
 import { useNavigation } from "@react-navigation/native";
 import { Dropdown } from "react-native-element-dropdown";
+import { TouchableOpacity } from "react-native";
+import { AntDesign } from "@expo/vector-icons";
+import style from "../style/externalStyle";
 
 const Booking = () => {
-    const [value, setValue] = useState(null);
-    const data = [
-      { label: "Item 1", value: "1" },
-      { label: "Item 2", value: "2" },
-      { label: "Item 3", value: "3" },
-      { label: "Item 4", value: "4" },
-      { label: "Item 5", value: "5" },
-      { label: "Item 6", value: "6" },
-      { label: "Item 7", value: "7" },
-      { label: "Item 8", value: "8" },
-    ];
+  const [value, setValue] = useState(null);
+  const data = [
+    { label: "Select Booking Amount", value: "0" },
+    { label: "Cash", value: "1" },
+  ];
 
-    const navigation = useNavigation();
-     const onNextclick = ()=>{
-        navigation.navigate("RtoDetails");
-     } 
+  // const [selectedOption, setSelectedOption] = useState('');
+  const [showNextInput, setShowNextInput] = useState(false);
+  const [nextInputValue, setNextInputValue] = useState("");
+  const [isPlus, setIsPlus] = useState(true);
+  const handleIconToggle = () => {
+    setIsPlus((prevState) => !prevState);
+  };
+
+
+  const handleOptionChange = (value) => {
+    setValue(value);
+    setShowNextInput(true);
+  };
+
+  const handleNextInputChange = (value) => {
+    setNextInputValue(value);
+  };
+
+  const navigation = useNavigation();
+  const onNextclick = () => {
+    navigation.navigate("RtoDetails");
+  };
 
   return (
     <ScrollView>
-    <View style={styles.animatednav}>
-    <Text style={[styles.circleicon, { backgroundColor: 'blue' }]}>1</Text>
-    <Text style={styles.line}></Text>
-    <Text style={[styles.circleicon, { backgroundColor: 'blue' }]}>2</Text>
-    <Text style={styles.line}></Text>
-    <Text style={[styles.circleicon, { backgroundColor: 'blue' }]}>3</Text>
-    <Text style={styles.line}></Text>
-    <Text style={[styles.circleicon, { backgroundColor: 'blue' }]}>4</Text>
-    <Text style={styles.line}></Text>
-    <Text  style={[styles.circleicon, { backgroundColor: 'white' }]}>5</Text>
-    <Text style={styles.line}></Text>
-    <Text  style={[styles.circleicon, { backgroundColor: 'white' }]}>6</Text>
-    </View>
-      <SafeAreaView style={styles.content}>  
-      <View>
-        <Box style={styles.inputstyel}>
-          <Dropdown
-            style={styles.input}
-            data={data}
-            labelField="label"
-            valueField="value"
-            placeholder="Select product"
-            value={value}
-            onChange={(item) => {
-              setValue(item.value);
-            }}
-          />
-        </Box>
+      <View style={style.animatednav}>
+        <Text style={[style.circleicon, { backgroundColor: "blue" }]}>1</Text>
+        <Text style={style.line}></Text>
+        <Text style={[style.circleicon, { backgroundColor: "blue" }]}>2</Text>
+        <Text style={style.line}></Text>
+        <Text style={[style.circleicon, { backgroundColor: "blue" }]}>3</Text>
+        <Text style={style.line}></Text>
+        <Text style={[style.circleicon, { backgroundColor: "blue" }]}>4</Text>
+        <Text style={style.line}></Text>
+        <Text style={[style.circleicon, { backgroundColor: "white" }]}>5</Text>
+        <Text style={style.line}></Text>
+        <Text style={[style.circleicon, { backgroundColor: "white" }]}>6</Text>
       </View>
-        <View>
-        <Box style={styles.inputstyel} alignItems="center">
-        <Input
-        //   name="Discriotion"
-          keyboardType="default"
-          mx="3"
-          size="lg"
-          w="100%"
-          placeholder="Amount"
-          placeholderTextColor="black"
-        />
-      </Box>
+      <SafeAreaView style={style.content}>
+        <View style={styles.inputflex}>
+          <Box style={[style.inputstyel, styles.inputmargin]}>
+            <Dropdown
+              style={style.input}
+              data={data}
+              labelField="label"
+              valueField="value"
+              placeholder="Select Booking Amount"
+              value={value}
+              onChange={handleOptionChange}
+            />
+          </Box>
+          <TouchableOpacity onPress={handleIconToggle}>
+          <Icon as={AntDesign} name={isPlus ? "plus" : "minus"} size={10} style={styles.icon} />
+        </TouchableOpacity>
         </View>
-       
+        {showNextInput && (
+          <View>
+            <Box style={style.inputstyel} alignItems="center">
+              <Input
+                keyboardType="default"
+                mx="3"
+                size="lg"
+                w="100%"
+                placeholder="Enter Cash Amount"
+                placeholderTextColor="black"
+                value={nextInputValue}
+                onChangeText={handleNextInputChange}
+              />
+            </Box>
+          </View>
+        )}
+
+        {!isPlus && (
+          <View style={styles.inputflex}>
+          <Box style={[style.inputstyel, styles.inputmargin]}>
+            <Dropdown
+              style={style.input}
+              data={data}
+              labelField="label"
+              valueField="value"
+              placeholder="Select Booking Amount"
+              value={value}
+              // onChange={handleOptionChange}
+            />
+          </Box>
+          <TouchableOpacity onPress={handleIconToggle}>
+          <Icon as={AntDesign} name={!isPlus ? "plus" : "minus"} size={10} style={styles.icon} />
+        </TouchableOpacity>
+        </View>
+        )}
+
         <HStack space={3} justifyContent="center">
-          <Button onPress={onNextclick} style={styles.btn} px="7" my="3">
+          <Button onPress={onNextclick} style={style.btn} px="7" my="3">
             Next
           </Button>
-          
         </HStack>
       </SafeAreaView>
     </ScrollView>
-  )
-}
+  );
+};
 
-export default Booking
+export default Booking;
 
 const styles = StyleSheet.create({
-    animatednav:{
-        display:"flex",
-        flexDirection:"row",
-        justifyContent:"center",
-        marginTop:30,
-      },
-      circleicon:{
-        borderRadius: 50,
-        width: 50, 
-        height: 50, 
-        textAlign:"center",
-        padding: 10,
-        fontSize:20, 
-      },
-      line: {
-        marginTop:22,
-        width: 10,
-        height:0,
-        borderWidth: 1,
-        color:"black",
-      },
-        content: {
-            marginTop:30,
-            marginHorizontal:10,
-            backgroundColor: "white",
-            paddingVertical: 50,
-            paddingHorizontal: 20,
-            flex: 1,
-            justifyContent: "center",
-          },
-      inputstyel: {
-        marginHorizontal: 10,
-        marginBottom: 30,
-        borderRadius: 5,
-        borderWidth: 1,
-        borderColor: "black",
-      },
-      input: {
-        paddingVertical: 6,
-        paddingHorizontal: 6,
-      },
-      btn:{
-        backgroundColor: "grey",
-        color: "white",
-        borderRadius: 5,
-        borderWidth: 1,
-        borderColor: "black",
-      },
-    
-})
+  icon: {
+    color: "blue",
+  },
+
+  inputmargin: {
+    width: "80%",
+  },
+
+  inputflex: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+});

@@ -76,7 +76,6 @@ const Login = () => {
           if (!token) {
             return;
           } else {
-            // const token = AsyncStorage.getItem('rbacToken')
 
             dispatch(getProfileData(token));
             console.log(token, "aSDFGHJKDSFGHJDSFGSDFGHJ");
@@ -84,22 +83,26 @@ const Login = () => {
             alert("Welcome to Vehicle Management System");
             // dispatch(setShowMessage('Welcome to Vehicle Management System'))
             navigation.navigate("main");
+            setLoginData({
+              email: "",
+              password: "",
+            });
           }
         });
       } else if (loginState.result.message != "success") {
         console.log("Credentials are wrong");
         alert("Credentials are wrong");
-        dispatch(setShowMessage("Credentials are wrong"));
+        // dispatch(setShowMessage("Credentials are wrong"));
       } else {
         console.log("Something is wrong");
-        alert("Something is wrong");
-        dispatch(setShowMessage("Something is wrong"));
+        alert("Somethinggggggggggg is wrong");
+        // dispatch(setShowMessage("Something is wrong"));
       }
       dispatch(clearLoginState());
     } else if (loginState.isError === true) {
-      console.log("Form is failed");
-      alert("Form is failed");
-      dispatch(setShowMessage("Something is wrong"));
+      console.log("Something is wrong");
+      alert("Something is wrong");
+      // dispatch(setShowMessage("Something is wrong"));
     }
     console.log("loginState", loginState);
   }, [loginState]);
@@ -108,7 +111,7 @@ const Login = () => {
     if (loginData.email.length > 0 && loginData.password.length > 0) {
       dispatch(getLoginUser(loginData));
     } else {
-      dispatch(setShowMessage("Please fill all the field"));
+      // dispatch(setShowMessage("Please fill all the field"));
     }
   }
 
@@ -139,7 +142,7 @@ const Login = () => {
           <Text style={styles.textlable}>password:</Text>
           <Input
             type={show ? "text" : "password"}
-            keyboardType="numeric"
+            keyboardType="default"
             size="lg"
             onChangeText={(value) => onChangeHandler(value, "password")}
             placeholderTextColor="black"

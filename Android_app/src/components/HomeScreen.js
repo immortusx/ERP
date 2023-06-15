@@ -1,8 +1,7 @@
 import { StyleSheet, Text, View,TouchableOpacity } from "react-native";
 import React,{useState} from "react";
 import { useNavigation } from "@react-navigation/native";
-import { AntDesign,MaterialIcons } from '@expo/vector-icons';
-import { Entypo } from "@expo/vector-icons";
+import {Entypo, AntDesign,MaterialIcons } from '@expo/vector-icons';
 import {  Menu,Pressable,Icon,Box } from "native-base";
 const HomeScreen = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
