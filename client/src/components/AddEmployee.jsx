@@ -64,11 +64,11 @@ export default function Addemployee({ workFor }) {
     }, [editemployeeSliceState])
 
     function handleSubmit() {
-        // console.log('employeeData', employeeData)
-        // console.log('selectedDate', selectedDate)
-        // console.log('bloodgroup', bloodgroup)
-        // console.log('branchRoles', branchRoles)
-        // console.log('BankDetais', BankDetais)
+        console.log('employeeData', employeeData)
+        console.log('selectedDate', selectedDate)
+        console.log('bloodgroup', bloodgroup)
+        console.log('branchRoles', branchRoles)
+        console.log('BankDetais', BankDetais)
         const fN = employeeData.firstName;
         const lN = employeeData.lastName;
         const email = employeeData.email;
@@ -97,12 +97,25 @@ export default function Addemployee({ workFor }) {
             (workFor === 'forAdd' ? pass.length > 0 : true) &&
             Object.keys(branchRoles).length > 0) {
             employeeData['branchRole'] = branchRoles
+            employeeData['bankname'] = BankDetais.bankname
+
+            employeeData['bankBranch'] =BankDetais.bankBranch
+
+            employeeData['accountNo'] = BankDetais.accountNo
+
+            employeeData['accountType'] = BankDetais.accountType
+
+            employeeData['ifscCode'] = BankDetais.ifscCode
+
+            employeeData['bloodgroup'] = bloodgroup
+
+            employeeData['selectedDate'] = selectedDate
             if (workFor === 'forEdit') {
                 employeeData['id'] = editemployeeData.id
                 dispatch(editemployeeUpdateToDb(employeeData))
             } else {
        
-                 dispatch(addemployeeToDb(employeeData,selectedDate,bloodgroup,BankDetais))
+                 dispatch(addemployeeToDb(employeeData))
             }
         } else {
             dispatch(setShowMessage('All field must be field'))
@@ -412,7 +425,6 @@ export default function Addemployee({ workFor }) {
                                 selected={selectedDate}
                                 onChange={handleDateChange}
                                 dateFormat="dd/MM/yyyy"
-                                minDate={new Date()}
                                 placeholderText="Select a date"
                                 className='myInput inputElement'
                             />
