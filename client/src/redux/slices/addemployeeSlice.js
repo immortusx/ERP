@@ -12,13 +12,13 @@ const initialState = {
 }
 
 
-export const addemployeeToDb = createAsyncThunk('addemployeeToDb/addemployeeSlice', async (employeeData) => {
+export const addemployeeToDb = createAsyncThunk('addemployeeToDb/addemployeeSlice', async (employeeData,selectedDate,bloodgroup,BankDetais) => {
     const config = {
         headers: {
             token: localStorage.getItem('rbacToken')
         }
     };
-    console.log('in addemployeeSlice', employeeData)
+    console.log('in addemployeeSlice', employeeData,selectedDate,bloodgroup,BankDetais)
     const url = `${process.env.REACT_APP_NODE_URL}/api/employees/add-employee`
     return await Axios.post(url, employeeData,config).then((response) => {
         return response.data

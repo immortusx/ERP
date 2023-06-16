@@ -31,13 +31,13 @@ export default function Addemployee({ workFor }) {
         phoneNumber: '',
     })
     const [BankDetais, setBankDetais] = useState({
-        bankName: '',
+        bankname: '',
         bankBranch: '',
         accountNo: '',
         accountType: '',
         ifscCode: '',
     })
-    const [selectedDate, setSelectedDate] = useState(null);
+    const [selectedDate, setSelectedDate] = useState('');
     const [bloodgroup, setBloodGroup] = useState('');
     const bloodGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
     const bankName = ['AXIS Bank', 'State Bank of India (SBI)', 'HDFC Bank', 'ICICI Bank', 'Bank of Baroda (BOB)', 'IDBI Bank', 'Union Bank of India', 'Canara Bank'];
@@ -64,18 +64,36 @@ export default function Addemployee({ workFor }) {
     }, [editemployeeSliceState])
 
     function handleSubmit() {
-        console.log('employeeData', employeeData)
-        console.log('branchRoles', branchRoles)
+        // console.log('employeeData', employeeData)
+        // console.log('selectedDate', selectedDate)
+        // console.log('bloodgroup', bloodgroup)
+        // console.log('branchRoles', branchRoles)
+        // console.log('BankDetais', BankDetais)
         const fN = employeeData.firstName;
         const lN = employeeData.lastName;
         const email = employeeData.email;
         const pass = employeeData.password;
         const pN = employeeData.phoneNumber;
+        const bN = BankDetais.bankname;
+        const bb = BankDetais.bankBranch;
+        const an = BankDetais.accountNo;
+        const at = BankDetais.accountType;
+        const ic = BankDetais.ifscCode;
+        const bg = bloodgroup;
+        const bd = selectedDate;
+        
 
         if (fN.length > 0 &&
             lN.length > 0 &&
             email.length > 0 &&
             pN.length > 0 &&
+            bN.length > 0 &&
+            bb.length > 0 &&
+            an.length > 0 &&
+            at.length > 0 &&
+            ic.length > 0 &&
+            bg.length > 0 &&
+            // bd.length > 0 &&
             (workFor === 'forAdd' ? pass.length > 0 : true) &&
             Object.keys(branchRoles).length > 0) {
             employeeData['branchRole'] = branchRoles
@@ -83,7 +101,8 @@ export default function Addemployee({ workFor }) {
                 employeeData['id'] = editemployeeData.id
                 dispatch(editemployeeUpdateToDb(employeeData))
             } else {
-                dispatch(addemployeeToDb(employeeData))
+       
+                 dispatch(addemployeeToDb(employeeData,selectedDate,bloodgroup,BankDetais))
             }
         } else {
             dispatch(setShowMessage('All field must be field'))
@@ -145,13 +164,23 @@ export default function Addemployee({ workFor }) {
             phoneNumber: '',
         })
         setBranchRoles({})
+        setSelectedDate('')
+        setBloodGroup('')
+        setBankDetais({
+            bankname: '',
+            bankBranch: '',
+            accountNo: '',
+            accountType: '',
+            ifscCode: '',
+        })
+
         const allInp = document.getElementsByClassName('inputElement')
         Array.from(allInp).forEach((item) => {
             item.value = ''
         })
     }
     async function getRolesFromDb() {
-        const url = `${process.env.REACT_APP_NODE_URL}/api/employees/roles-list`;
+        const url = `${process.env.REACT_APP_NODE_URL}/api/users/roles-list`;
         const config = {
             headers: {
                 token: localStorage.getItem('rbacToken')
@@ -165,7 +194,7 @@ export default function Addemployee({ workFor }) {
         })
     }
     async function getBranchsFromDb() {
-        const url = `${process.env.REACT_APP_NODE_URL}/api/employees/branches-list`;
+        const url = `${process.env.REACT_APP_NODE_URL}/api/users/branches-list`;
         const config = {
             headers: {
                 token: localStorage.getItem('rbacToken')
@@ -267,7 +296,7 @@ export default function Addemployee({ workFor }) {
     function onChangeBankDetais(e) {
         const name = e.target.name;
         const value = e.target.value;
-        setBankDetais({ ...employeeData, [name]: value })
+        setBankDetais({ ...BankDetais, [name]: value })
     }
     const handleDateChange = (date) => {
         setSelectedDate(date);
@@ -469,7 +498,7 @@ export default function Addemployee({ workFor }) {
                             <div className=' row mt-3 m-0'>
                                 <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
                                     <label className='myLabel' htmlFor="bloodGroup">Bank Name</label>
-                                    <select className="form-control" id="bloodGroup" name="bankname" onChange={onChangeBankDetais} value={BankDetais.bankname}>
+                                    <select className="form-control" id="bloodGroup" name="bankname" onChange={onChangeBankDetais} value={BankDetais.value}>
                                         <option value=''>Select Bank Name</option>
                                         {bankName.map((group, index) => (
                                             <option key={index} value={group}>{group}</option>
@@ -482,11 +511,11 @@ export default function Addemployee({ workFor }) {
                                 </section>
                                 <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
                                     <label className='myLabel' htmlFor="email">Account Number</label>
-                                    <input value={BankDetais.accountNo} className='myInput inputElement' autoComplete='false' onChange={(e) => { onChangeHandler(e) }} type="number" name="accountNo" />
+                                    <input value={BankDetais.accountNo} className='myInput inputElement' autoComplete='false' onChange={(e) => { onChangeBankDetais(e) }} type="number" name="accountNo" />
                                 </section>
                                 <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
                                     <label className='myLabel' htmlFor="email">Account Type </label>
-                                    <select className="form-control" id="bloodGroup" name="accountType" onChange={onChangeBankDetais} value={BankDetais.accountType}>
+                                    <select className="form-control" id="accountType" name="accountType" onChange={onChangeBankDetais} value={BankDetais.value} >
 
                                         <option value=''>Select Account Type</option>
                                         <option value='Savings'>Savings</option>
@@ -497,7 +526,7 @@ export default function Addemployee({ workFor }) {
                                 </section>
                                 <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
                                     <label className='myLabel' htmlFor="email">IFSC Code</label>
-                                    <input value={BankDetais.ifscCode} className='myInput inputElement' autoComplete='false' onChange={(e) => { onChangeHandler(e) }} type="text" name="ifscCode" />
+                                    <input value={BankDetais.ifscCode} className='myInput inputElement' autoComplete='false' onChange={(e) => { onChangeBankDetais(e) }} type="text" name="ifscCode" />
                                 </section>
 
 
