@@ -29,6 +29,7 @@ router.post("/add-employee", tokenCheck, async (req, res) => {
   const bloodgroup = req.body.bloodgroup;
   const selectedDate = moment(req.body.selectedDate).format("YYYY/MM/DD");
   const departmentId = 1;
+  const user_type_id = 2;
 
   const hashedPassword = await hasThePass(password);
 
@@ -39,7 +40,7 @@ router.post("/add-employee", tokenCheck, async (req, res) => {
 
     if (newResult.length === 0) {
       const result = await queryDatabase(
-        `INSERT INTO users(first_name, last_name, email, password, phone_number, bloodgroup, dob) VALUES('${firstName}', '${lastName}', '${email}', '${hashedPassword}', '${phoneNumber}', '${bloodgroup}', '${selectedDate}')`
+        `INSERT INTO users(first_name, last_name, email, password, phone_number, bloodgroup, dob, user_type_id) VALUES('${firstName}', '${lastName}', '${email}', '${hashedPassword}', '${phoneNumber}', '${bloodgroup}', '${selectedDate}', '${user_type_id}')`
       );
 
       const userId = result.insertId;
@@ -84,9 +85,238 @@ async function queryDatabase(query) {
 //===========get List of Employee================//
 router.get("/get-employee-list", tokenCheck, async (req, res) => {
   try {
-    await db.query(`SEL`)
+    await db.query(
+      `SELECT *
+      FROM users
+      LEFT JOIN bank_details ON users.id = bank_details.user_id
+      WHERE users.user_type_id = 2`,
+      (err, results) => {
+        if (err) {
+          console.log({ isSuccess: false, result: err });
+          res.send({ isSuccess: false, result: "error" });
+        } else {
+          console.log({ isSuccess: true, result: results });
+          res.send({ isSuccess: true, result: results });
+        }
+      }
+    );
   } catch (err) {
     console.log(err);
   }
 });
+
+//============Edit Employee List==============//
+router.post("/edit-employee", tokenCheck, async (req, res) => {
+  console.log(">>>>>editemployeee");
+  console.log(req.body);
+
+  const roleArr = req.body.role;
+  const firstName = req.body.firstName;
+  const lastName = req.body.lastName;
+  const email = req.body.email;
+  const password = req.body.password;
+  const phoneNumber = req.body.phoneNumber;
+  const branchRole = req.body.branchRole;
+  const bankname = req.body.bankname;
+  const bankBranch = req.body.bankBranch;
+  const accountNo = req.body.accountNo;
+  const accountType = req.body.accountType;
+  const ifscCode = req.body.ifscCode;
+  const bloodgroup = req.body.bloodgroup;
+  const selectedDate = moment(req.body.selectedDate).format("YYYY/MM/DD");
+  const departmentId = 1;
+  const user_type_id = 2;
+  const id = req.body.id;
+
+  const hashedPassword = await hasThePass(password);
+
+  try {
+    const result = await queryDatabase(
+      `UPDATE users SET first_name = '${firstName}', last_name = '${lastName}', email = '${email}', password = '${hashedPassword}', phone_number = '${phoneNumber}', bloodgroup = '${bloodgroup}', dob = '${selectedDate}', user_type_id = '${user_type_id}' WHERE id = '${id}'`
+    );
+
+    // const userId = result.insertId;
+
+    for (const branchId of Object.keys(branchRole)) {
+      const rolesAr = branchRole[branchId];
+      for (const roleId of rolesAr) {
+        await queryDatabase(
+          `UPDATE branch_department_user 
+          SET branch_id = '${branchId}', 
+              department_id = '${departmentId}', 
+              user_id = '${id}', 
+              role_id = '${roleId}' 
+          WHERE user_id = '${id}'`
+        );        
+      }
+    }
+
+    await queryDatabase(
+      `UPDATE bank_details SET bank_name = '${bankname}', bank_branch = '${bankBranch}', account_number = '${accountNo}', account_type = '${accountType}', ifsc_code = '${ifscCode}' WHERE user_id = '${id}'`
+    );
+
+    console.log({ isSuccess: true, result: "success" });
+    res.send({ isSuccess: true, result: "success" });
+  } catch (error) {
+    console.log({ isSuccess: false, result: error });
+    res.send({ isSuccess: false, result: "error" });
+  }
+});
+
+
+
+// router.post("/edit-employee", tokenCheck, async (req, res) => {
+//   console.log(">>>>>editemployeee");
+//   console.log(req.body);
+
+//   const roleArr = req.body.role;
+//   const firstName = req.body.firstName;
+//   const lastName = req.body.lastName;
+//   const email = req.body.email;
+//   const password = req.body.password;
+//   const phoneNumber = req.body.phoneNumber;
+//   const branchRole = req.body.branchRole;
+//   const bankname = req.body.bankname;
+//   const bankBranch = req.body.bankBranch;
+//   const accountNo = req.body.accountNo;
+//   const accountType = req.body.accountType;
+//   const ifscCode = req.body.ifscCode;
+//   const bloodgroup = req.body.bloodgroup;
+//   const selectedDate = moment(req.body.selectedDate).format("YYYY/MM/DD");
+//   const departmentId = 1;
+//   const user_type_id = 2;
+
+//   const hashedPassword = await hasThePass(password);
+
+//   try {
+//     const newResult = await queryDatabase(
+//       `SELECT * FROM users WHERE email = '${req.body.email}'`
+//     );
+
+//     if (newResult.length === 0) {
+//       const result = await queryDatabase(
+//         `UPDATE users SET   (first_name, last_name, email, password, phone_number, bloodgroup, dob, user_type_id) VALUES('${firstName}', '${lastName}', '${email}', '${hashedPassword}', '${phoneNumber}', '${bloodgroup}', '${selectedDate}', '${user_type_id}')`
+//       );
+
+//       const userId = result.insertId;
+
+//       for (const branchId of Object.keys(branchRole)) {
+//         const rolesAr = branchRole[branchId];
+//         for (const roleId of rolesAr) {
+//           await queryDatabase(
+//             `INSERT INTO branch_department_user(branch_id, department_id, user_id, role_id) VALUES('${branchId}','${departmentId}','${userId}','${roleId}')`
+//           );
+//         }
+//       }
+
+//       await queryDatabase(
+//         `UPDATE bank_details SET (bank_name, bank_branch, account_number, account_type, ifsc_code, user_id) VALUES('${bankname}','${bankBranch}','${accountNo}','${accountType}','${ifscCode}','${userId}')`
+//       );
+
+//       console.log({ isSuccess: true, result: "success" });
+//       res.send({ isSuccess: true, result: "success" });
+//     } else {
+//       console.log({ isSuccess: false, result: "alreadyExist" });
+//       res.send({ isSuccess: false, result: "alreadyExist" });
+//     }
+//   } catch (error) {
+//     console.log({ isSuccess: false, result: error });
+//     res.send({ isSuccess: false, result: "error" });
+//   }
+// });
+
+
+
+// router.post("/edit-employee", tokenCheck, async (req, res) => {
+//   console.log(">>>>>editemployeee");
+//   console.log(req.body);
+
+//   const roleArr = req.body.role;
+//   const firstName = req.body.firstName;
+//   const lastName = req.body.lastName;
+//   const email = req.body.email;
+//   const password = req.body.password;
+//   const phoneNumber = req.body.phoneNumber;
+//   const branchRole = req.body.branchRole;
+//   const bankname = req.body.bankname;
+//   const bankBranch = req.body.bankBranch;
+//   const accountNo = req.body.accountNo;
+//   const accountType = req.body.accountType;
+//   const ifscCode = req.body.ifscCode;
+//   const bloodgroup = req.body.bloodgroup;
+//   const selectedDate = moment(req.body.selectedDate).format("YYYY/MM/DD");
+//   const departmentId = 1;
+//   const user_type_id = 2;
+
+//   const hashedPassword = await hasThePass(password);
+
+//   try {
+//     const newResult = await queryDatabase(
+//       `SELECT * FROM users WHERE email = '${req.body.email}'`
+//     );
+
+//     if (newResult.length === 0) {
+//       const result = await queryDatabase(
+//         `UPDATE users SET first_name = '${firstName}', last_name = '${lastName}', email = '${email}', password = '${hashedPassword}', phone_number = '${phoneNumber}', bloodgroup = '${bloodgroup}', dob = '${selectedDate}', user_type_id = '${user_type_id}' WHERE id = '${userId}'`
+//       );
+
+//       const userId = result.insertId;
+
+//       for (const branchId of Object.keys(branchRole)) {
+//         const rolesAr = branchRole[branchId];
+//         for (const roleId of rolesAr) {
+//           await queryDatabase(
+//             `INSERT INTO branch_department_user (branch_id, department_id, user_id, role_id) VALUES ('${branchId}', '${departmentId}', '${userId}', '${roleId}')`
+//           );
+//         }
+//       }
+
+//       await queryDatabase(
+//         `UPDATE bank_details SET bank_name = '${bankname}', bank_branch = '${bankBranch}', account_number = '${accountNo}', account_type = '${accountType}', ifsc_code = '${ifscCode}' WHERE user_id = '${userId}'`
+//       );
+
+//       console.log({ isSuccess: true, result: "success" });
+//       res.send({ isSuccess: true, result: "success" });
+//     } else {
+//       console.log({ isSuccess: false, result: "alreadyExist" });
+//       res.send({ isSuccess: false, result: "alreadyExist" });
+//     }
+//   } catch (error) {
+//     console.log({ isSuccess: false, result: error });
+//     res.send({ isSuccess: false, result: "error" });
+//   }
+// });
+
+
+//=============Delete Employee=============//
+router.get("/delete-employee/:id", tokenCheck, async (req, res) => {
+  try {
+    const employeeId = req.params.id;
+    const newUrl =
+      "SELECT * FROM users where is_active = 1 and id=" + employeeId;
+    await db.query(newUrl, async (err, newResult) => {
+      if (err) {
+        console.log({ isSuccess: false, result: err });
+        res.send({ isSuccess: false, result: "error" });
+      } else if (newResult.length === 1) {
+        const editurl = "UPDATE users SET is_active = 0 WHERE id=" + employeeId;
+        await db.query(editurl, async (err, result) => {
+          if (err) {
+            console.log({ isSuccess: false, result: err });
+            res.send({ isSuccess: false, result: "error" });
+          } else {
+            res.send({ isSuccess: true, result: "deletesuccess" });
+          }
+        });
+      } else {
+        console.log(newResult);
+        console.log({ isSuccess: false, result: "notExist" });
+        res.send({ isSuccess: false, result: "notExist" });
+      }
+    });
+  } catch (e) {
+    console.log(e);
+  }
+});
+
 module.exports = router;
