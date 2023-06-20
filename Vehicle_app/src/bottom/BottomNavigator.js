@@ -7,13 +7,13 @@ import AddBooking from '../components/AddBooking';
 const Bottom = createBottomTabNavigator();
 const BottomNavigator = () => {
   return (
-    <Bottom.Navigator>
+    <Bottom.Navigator initialRouteName='AddMore'>
       <Bottom.Screen
         name="AddEnquiry"
         component={AddEnquiry}
         options={{
           headerShown: false,
-          tabBarLabel: () => null,
+          tabBarLabel: "Enquriy",
           tabBarIcon: () => {
             return (
               <TouchableOpacity style={[styles.button, styles.enquiryBtn]}>
@@ -28,7 +28,7 @@ const BottomNavigator = () => {
         component={AddMore}
         options={{
           headerShown: false,
-          tabBarLabel: () => null,
+          // tabBarLabel: () => null,
           tabBarIcon: () => {
             return (
               <TouchableOpacity style={[styles.button, styles.plusBtn]}>
@@ -43,7 +43,7 @@ const BottomNavigator = () => {
         component={AddBooking}
         options={{
           headerShown: false,
-          tabBarLabel: () => null,
+          // tabBarLabel: () => null,
           tabBarIcon: () => {
             return (
               <TouchableOpacity style={[styles.button, styles.bookingBtn]}>

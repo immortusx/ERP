@@ -42,6 +42,7 @@ export default function Addemployee({ workFor }) {
     email: "",
     password: "",
     phoneNumber: "",
+    bloodgroup: "",
   });
   const [BankDetais, setBankDetais] = useState({
     bankname: "",
@@ -74,10 +75,10 @@ export default function Addemployee({ workFor }) {
   useEffect(() => {
     if (editemployeeSliceState.isSuccess) {
       if (editemployeeSliceState.message.result === "success") {
-        dispatch(setShowMessage("employee data is updated"));
+        dispatch(setShowMessage("Data is Updated"));
         clearInpHook();
         dispatch(clearEditemployeeState());
-        navigate("/home/employees");
+        navigate("/administration/employees");
       } else {
         dispatch(setShowMessage("Something is wrong!"));
       }
@@ -132,10 +133,10 @@ export default function Addemployee({ workFor }) {
       employeeData["bloodgroup"] = bloodgroup;
 
       employeeData["selectedDate"] = selectedDate;
-      console.log(workFor)
+      console.log(workFor);
       if (workFor === "forEdit") {
         employeeData["id"] = editemployeeData.user_id;
-        console.log('editData', employeeData)
+        console.log("editData", employeeData);
         dispatch(editemployeeUpdateToDb(employeeData));
       } else {
         dispatch(addemployeeToDb(employeeData));
@@ -177,6 +178,14 @@ export default function Addemployee({ workFor }) {
           email: editemployeeData.email,
           password: "",
           phoneNumber: editemployeeData.phone_number,
+          bloodgroup: editemployeeData.bloodgroup,
+        });
+        setBankDetais({
+          bankname: editemployeeData.bank_name,
+          bankBranch: editemployeeData.bank_branch,
+          accountNo: editemployeeData.account_number,
+          accountType: editemployeeData.account_number,
+          ifscCode: editemployeeData.ifsc_code,
         });
       }
     }
@@ -194,6 +203,7 @@ export default function Addemployee({ workFor }) {
       email: "",
       password: "",
       phoneNumber: "",
+      bloodgroup: "",
     });
     setBranchRoles({});
     setSelectedDate("");
@@ -240,7 +250,7 @@ export default function Addemployee({ workFor }) {
   useEffect(() => {
     if (addemployeeState.isSuccess) {
       if (addemployeeState.message.result === "success") {
-        dispatch(setShowMessage("employee is created"));
+        dispatch(setShowMessage("Employee succesfully created"));
         clearInpHook();
         dispatch(clearAddemployeeState());
         navigate("/administration/employees");
@@ -520,7 +530,7 @@ export default function Addemployee({ workFor }) {
                 id="bloodGroup"
                 name="bloodGroup"
                 onChange={(e) => setBloodGroup(e.target.value)}
-                value={bloodgroup}
+                value={!editemployeeData ? bloodgroup : editemployeeData.bloodgroup}
               >
                 {bloodGroups.map((group, index) => (
                   <option key={index} value={group}>
@@ -712,7 +722,7 @@ export default function Addemployee({ workFor }) {
                     onChange={(e) => {
                       onChangeBankDetais(e);
                     }}
-                    type="number"
+                    type="text"
                     name="accountNo"
                   />
                 </section>

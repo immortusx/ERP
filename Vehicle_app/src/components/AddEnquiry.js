@@ -3,8 +3,8 @@ import React from 'react'
 
 const AddEnquiry = () => {
   return (
-    <View>
-      <Text>AddEnquiry</Text>
+    <View style={{flex: 1, backgroundColor: 'yellow'}}>
+      <Text>Add Enquiry</Text>
     </View>
   )
 }
