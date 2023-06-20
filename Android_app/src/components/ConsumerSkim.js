@@ -1,14 +1,51 @@
 import { StyleSheet, View, ScrollView, Text, SafeAreaView } from "react-native";
 import React, { useState } from "react";
 import { Input, Icon, Box, Flex, Button, HStack, Checkbox } from "native-base";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { Dropdown } from "react-native-element-dropdown";
 import style from "../style/externalStyle";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
+import { API_URL } from "@env";
 
-const Booking = () => {
+const ConsumerSkim = () => {
+  const route = useRoute();
+  const { formData } = route.params;
   const [isChecked, setIsChecked] = useState(false);
   const [isChecked1, setIsChecked1] = useState(false);
   const [isChecked2, setIsChecked2] = useState(false);
+  
+  
+  const handleSaveButton = async () => {
+    try {
+      const requestBody = {
+         ...formData,
+      
+      };
+
+    
+      const url = `${API_URL}/booking/addbooking`;
+      const token = await AsyncStorage.getItem("rbacToken");
+      const conf = {
+        headers: {
+          token: token,
+        },
+      };
+
+      const response = await axios.post(url, requestBody, conf);
+
+      if (response.data && response.data.isSuccess) {
+        console.log(requestBody, "qgfgudhgstgfydhzrtrryrt");
+        alert("Booking Successfully");
+      } else {
+        console.log(requestBody, "qgfgudhgstgfydhz");
+        alert("Booking Failed");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    
+  };
   const handleCheckboxToggle = () => {
     console.log("checkedsdsds", isChecked);
     setIsChecked(!isChecked);
@@ -21,7 +58,6 @@ const Booking = () => {
     console.log("checkedsdsds", isChecked);
     setIsChecked2(!isChecked2);
   };
-
   const [checkboxStates, setCheckboxStates] = useState([
     { value: "Hood(canopy)", ischecked: false },
     { value: "TopLink", ischecked: false },
@@ -43,7 +79,6 @@ const Booking = () => {
       return updatedCheckboxStates;
     });
   };
-  const navigation = useNavigation();
 
   return (
     <ScrollView>
@@ -175,7 +210,7 @@ const Booking = () => {
         )}
 
         <HStack space={3} justifyContent="center">
-          <Button style={style.btn} px="7" my="3">
+          <Button onPress={handleSaveButton} style={style.btn} px="7" my="3">
             Submit
           </Button>
         </HStack>
@@ -184,89 +219,8 @@ const Booking = () => {
   );
 };
 
-export default Booking;
+export default ConsumerSkim;
 
-const styles = StyleSheet.create({
-  
-});
+const styles = StyleSheet.create({});
 
-// <View>
-//         <View>
-//         <Box style={styles.inputstyel}>
-//         <Dropdown
-//           style={styles.input}
-//           data={data3}
-//           labelField="label"
-//           valueField="value"
-//           placeholder="Referral Skim"
-//           value={value3}
-//           onChange={(item)=>{setValue3(item.value)}}
-//         />
-//       </Box>
-//         </View>
-//         <View>
-//         <Box style={styles.inputstyel}>
-//         <Dropdown
-//           style={styles.input}
-//           data={data3}
-//           labelField="label"
-//           valueField="value"
-//           placeholder="Referral Skim"
-//           value={value3}
-//           onChange={(item)=>{setValue3(item.value)}}
-//         />
-//       </Box>
-//         </View>
-//         <View>
-//         <Box style={styles.inputstyel}>
-//         <Dropdown
-//           style={styles.input}
-//           data={data3}
-//           labelField="label"
-//           valueField="value"
-//           placeholder="Referral Skim"
-//           value={value3}
-//           onChange={(item)=>{setValue3(item.value)}}
-//         />
-//       </Box>
-//         </View>
-//         <View>
-//         <Box style={styles.inputstyel}>
-//         <Dropdown
-//           style={styles.input}
-//           data={data3}
-//           labelField="label"
-//           valueField="value"
-//           placeholder="Referral Skim"
-//           value={value3}
-//           onChange={(item)=>{setValue3(item.value)}}
-//         />
-//       </Box>
-//         </View>
-//         <View>
-//         <Box style={styles.inputstyel}>
-//         <Dropdown
-//           style={styles.input}
-//           data={data3}
-//           labelField="label"
-//           valueField="value"
-//           placeholder="Referral Skim"
-//           value={value3}
-//           onChange={(item)=>{setValue3(item.value)}}
-//         />
-//       </Box>
-//         </View>
-//         <View>
-//         <Box style={styles.inputstyel}>
-//         <Dropdown
-//           style={styles.input}
-//           data={data3}
-//           labelField="label"
-//           valueField="value"
-//           placeholder="Referral Skim"
-//           value={value3}
-//           onChange={(item)=>{setValue3(item.value)}}
-//         />
-//       </Box>
-//         </View>
-//         </View>
+
