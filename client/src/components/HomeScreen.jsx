@@ -907,6 +907,15 @@ export default function HomeScreen() {
               exact
             />
             <Route
+              path="administration/employees/editemployee"
+              element={
+                // <CheckPermission path="add-role">
+                  <AddEmployee workFor="forEdit" />
+                // </CheckPermission>
+              }
+              exact
+            />
+            <Route
               path="administration/users/edituser"
               element={
                 <CheckPermission path="edit-user">

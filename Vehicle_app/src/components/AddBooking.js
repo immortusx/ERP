@@ -3,7 +3,7 @@ import React from 'react'
 
 const AddBooking = () => {
   return (
-    <View>
+    <View style={{flex: 1, backgroundColor: 'green'}}>
       <Text>AddBooking</Text>
     </View>
   )
