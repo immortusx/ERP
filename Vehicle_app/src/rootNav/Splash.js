@@ -4,7 +4,7 @@ import React, { useEffect } from 'react';
 const Splash = ({ navigation }) => {
   useEffect(() => {
     setTimeout(() => {
-      navigation.navigate('Login');
+      navigation.navigate('Main');
     }, 2000);
   }, []);
 
