@@ -42,8 +42,12 @@ const App = () => {
                 },
               }}
             >
-              
-
+           
+<Stack.Screen
+name="Login"
+component={Login}
+options={{ title: "User Login " }}
+/>
               <Stack.Screen
                 name="main"
                 component={MainComponent}
@@ -139,8 +143,4 @@ const styles = StyleSheet.create({
 });
 
 
-// <Stack.Screen
-//                 name="Login"
-//                 component={Login}
-//                 options={{ title: "User Login " }}
-//               />
+
