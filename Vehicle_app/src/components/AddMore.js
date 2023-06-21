@@ -4,7 +4,7 @@ import React from 'react';
 const AddMore = () => {
   return (
     <View style={styles.container}>
-      <Text style={{fontSize: 55, paddingVertical: 20, marginHorizontal: 20}}>App Home</Text>
+      <Text style={{fontSize: 55, paddingHorizontal: 20}}>HomeScreen</Text>
     </View>
   );
 };

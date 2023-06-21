@@ -26,8 +26,11 @@ const Login = ({navigation}) => {
   };
 
   const handleLogin = () => {
-    console.warn(loginData)
-    navigation.navigate('Main');
+    let email = 'admin@123';
+    let password = 'admin';
+    if (loginData.email == email && loginData.password == password) {
+      navigation.navigate('Main');
+    }
   };
 
   return (
@@ -56,7 +59,7 @@ const Login = ({navigation}) => {
               keyboardType="email-address"
               textContentType="emailAddress"
               value={loginData.email}
-              onChangeText={(value) => onChangeHandler(value, "email")}
+              onChangeText={value => onChangeHandler(value, 'email')}
             />
           </View>
           <View style={styles.inputView}>

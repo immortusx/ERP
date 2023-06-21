@@ -3,6 +3,7 @@ import React from 'react'
 import { createDrawerNavigator } from '@react-navigation/drawer'
 import Home from './Home';
 import Test from '../components/Test';
+import AddLocation from '../components/AddLocation';
 const Drawer = createDrawerNavigator();
 const SidebarMenu = () => {
   return (
@@ -15,6 +16,7 @@ const SidebarMenu = () => {
         <Drawer.Screen name='Sales' component={Test} options={{headerShown: true}}/>
         <Drawer.Screen name='Products' component={Test} options={{headerShown: true}}/>
         <Drawer.Screen name='Manage' component={Test} options={{headerShown: true}}/>
+        <Drawer.Screen name='Add Location' component={AddLocation} options={{headerShown: true}}/>
         <Drawer.Screen name='Sign Out' component={Test} options={{headerShown: true}}/>
     </Drawer.Navigator>
   )
