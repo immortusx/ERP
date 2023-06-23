@@ -69,6 +69,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   customerContainer: {
+    marginVertical: 10,
     paddingHorizontal: 15,
   },
   inputContainer: {

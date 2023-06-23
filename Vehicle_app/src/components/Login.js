@@ -10,8 +10,12 @@ import {
   Keyboard,
   Image,
 } from 'react-native';
+import {useDispatch, useSelector} from 'react-redux';
 import BackgroundImage from '../../assets/cover.jpg';
+import { getLoginUser } from '../redux/slice/getUserLogin';
 const Login = ({navigation}) => {
+  const dispatch = useDispatch();
+  const loginState = useSelector((state)=> state.getLoginSlice.loginState)
   const [loginData, setLoginData] = useState({
     email: '',
     password: '',
@@ -26,10 +30,11 @@ const Login = ({navigation}) => {
   };
 
   const handleLogin = () => {
-    let email = 'admin@123';
-    let password = 'admin';
-    if (loginData.email == email && loginData.password == password) {
-      navigation.navigate('Main');
+    if (loginData.email.length > 0 && loginData.password.length > 0) {
+      dispatch(getLoginUser(loginData));
+    } else {
+      // dispatch(setShowMessage("Please fill all the field"));
+      console.log("please fill credentials first")
     }
   };
 
