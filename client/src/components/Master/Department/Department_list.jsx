@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import axios from "axios";
+import Axios from "axios";
 import { getToPathname } from "@remix-run/router";
-import { getDepartment } from "./getEditDepartment";
+import { getDepartment, deleteDepartment } from "./getEditDepartment";
 // import { setShowMessage } from "../redux/slices/notificationSlice";
 import { useNavigate } from "react-router-dom";
-// import AlertDeleteModal from "./AlertDelete/AlertDeleteModal";
+import AlertDeleteModal from "../../AlertDelete/AlertDeleteModal";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from "@mui/icons-material/Clear";
@@ -13,6 +13,11 @@ import ClearIcon from "@mui/icons-material/Clear";
 
 export default function Department_list({ workFor }) {
   const [partsList, setPartsList] = useState([]);
+  const [displayConfirmationModal, setDisplayConfirmationModal] =
+    useState(false);
+   const [deleteMessage, setDeleteMessage] = useState(null);
+   const [type, setType] = useState(null);
+   const [id, setId] = useState(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -43,6 +48,10 @@ export default function Department_list({ workFor }) {
          console.error("Error in getDepartment:", error);
        });
   }, []);
+
+  
+  
+ 
 
   const columns = [
     {
@@ -111,9 +120,9 @@ export default function Department_list({ workFor }) {
             </svg>
           </button>
           <button
-            // onClick={() => {
-            //   deleteActionCall(params.row);
-            // }}
+            onClick={() => {
+              deleteActionCall(params.row);
+            }}
             className="myActionBtn m-1"
           >
             <svg
@@ -137,6 +146,44 @@ export default function Department_list({ workFor }) {
       ),
     },
   ];
+
+  const deleteActionCall = (data) => {
+    console.log(data.id,"fffffffffffffffffff")
+    setType("department_delete");
+    setId(data.id);
+    setDeleteMessage(
+      `Are You Sure You Want To Delete The department '${data.name}'?`
+    );
+    setDisplayConfirmationModal(true);
+  };
+
+  const hideConfirmationModal = () => {
+    setDisplayConfirmationModal(false);
+  };
+
+ const submitDelete = async () => {
+   console.log(id, "iiiiiiiiiiiiiiii");
+   const url = `${process.env.REACT_APP_NODE_URL}/api/master/delete-department`;
+   const config = {
+     headers: {
+       token: localStorage.getItem("rbacToken"),
+     },
+   };
+   const requestData = {
+    id: id
+   }
+   try {
+     const response = await Axios.post(url, requestData, config);
+     if (response.data?.isSuccess) {
+       return response.data;
+     }
+     console.log(response.data.id);
+     return null;
+   } catch (error) {
+     console.error(error);
+     return null;
+   }
+ };
 
   return (
     <>
@@ -212,6 +259,14 @@ export default function Department_list({ workFor }) {
             autoPageSize={false}
           />
         </div>
+         <AlertDeleteModal
+  showModal={displayConfirmationModal}
+  confirmModal={submitDelete}
+  hideModal={hideConfirmationModal}
+  type={type}
+  id={id}
+  message={deleteMessage}
+/>
       </div>
     </>
   );
@@ -219,12 +274,5 @@ export default function Department_list({ workFor }) {
 
 
 
-// <AlertDeleteModal
-//   showModal={displayConfirmationModal}
-//   confirmModal={submitDelete}
-//   hideModal={hideConfirmationModal}
-//   type={type}
-//   id={id}
-//   message={deleteMessage}
-// />
+
 
