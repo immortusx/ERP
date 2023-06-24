@@ -22,6 +22,7 @@ import Profile from "./Profile";
 import Enquiry from "./Enquiry";
 import Products from "./Products";
 import Master from "./Master";
+import AddDepartment from "./AddDepartment";
 
 import logo from "../assets/svg/logo.svg";
 import logoT from "../assets/svg/logofinal.svg";
@@ -52,6 +53,7 @@ import Part_List from './Master/Plan/Part_List'
 import BreadCrumb from './BreadCrumb/BreadCrumb'
 import Manufacturer_list from './Master/Manufacturer/Manufacturer_list';
 import Manufacturer_modal from './Master/Manufacturer/Manufacturer_modal';
+import Department_list from './Master/Department/Department_list';
 import Roles from './Roles'
 import Tax from './Master/Tax/Tax'
 import Sub_Modal from "./Master/Manufacturer/Sub_modal";
@@ -433,94 +435,94 @@ export default function HomeScreen() {
                 "users",
                 "branch",
                 "employee",
-                "add-employee"
+                "add-employee",
               ]) && (
-                  <li className="outLi">
-                    <button
-                      className="headBtn"
-                      type="button"
-                      data-bs-toggle="collapse"
-                      data-bs-target="#admin-collapseOne"
-                      aria-expanded="false"
-                      aria-controls="admin-collapseOne"
-                    >
-                      {/* <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="headSvg bi bi-house" viewBox="0 0 16 16">
+                <li className="outLi">
+                  <button
+                    className="headBtn"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#admin-collapseOne"
+                    aria-expanded="false"
+                    aria-controls="admin-collapseOne"
+                  >
+                    {/* <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="headSvg bi bi-house" viewBox="0 0 16 16">
                     <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.707 1.5ZM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5 5 5Z" />
                   </svg> */}
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="currentColor"
-                        className="bi bi-person-gear"
-                        viewBox="0 0 16 16"
-                      >
-                        <path d="M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm.256 7a4.474 4.474 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10c.26 0 .507.009.74.025.226-.341.496-.65.804-.918C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4s1 1 1 1h5.256Zm3.63-4.54c.18-.613 1.048-.613 1.229 0l.043.148a.64.64 0 0 0 .921.382l.136-.074c.561-.306 1.175.308.87.869l-.075.136a.64.64 0 0 0 .382.92l.149.045c.612.18.612 1.048 0 1.229l-.15.043a.64.64 0 0 0-.38.921l.074.136c.305.561-.309 1.175-.87.87l-.136-.075a.64.64 0 0 0-.92.382l-.045.149c-.18.612-1.048.612-1.229 0l-.043-.15a.64.64 0 0 0-.921-.38l-.136.074c-.561.305-1.175-.309-.87-.87l.075-.136a.64.64 0 0 0-.382-.92l-.148-.045c-.613-.18-.613-1.048 0-1.229l.148-.043a.64.64 0 0 0 .382-.921l-.074-.136c-.306-.561.308-1.175.869-.87l.136.075a.64.64 0 0 0 .92-.382l.045-.148ZM14 12.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0Z" />
-                      </svg>
-                      <span>Administration</span>
-                    </button>
-                    <div
-                      id="admin-collapseOne"
-                      data-bs-parent="#accordionExample"
-                      className="accordion-collapse collapse"
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="currentColor"
+                      className="bi bi-person-gear"
+                      viewBox="0 0 16 16"
                     >
-                      <ul className="inUl">
-                        {checkTabGrant(["roles"]) && (
-                          <li className="inLi">
-                            <NavLink
-                              className={({ isActive }) =>
-                                isActive ? "activeLink" : ""
-                              }
-                              to="administration/roles"
-                            >
-                              Roles
-                            </NavLink>
-                          </li>
-                        )}
-                        {checkTabGrant(["users"]) && (
-                          <li className="inLi">
-                            <NavLink
-                              className={({ isActive }) =>
-                                isActive ? "activeLink" : ""
-                              }
-                              to="administration/users"
-                            >
-                              Users
-                            </NavLink>
-                          </li>
-                        )}
-                        {checkTabGrant(["users"]) && (
-                          <li className="inLi">
-                            <NavLink
-                              className={({ isActive }) =>
-                                isActive ? "activeLink" : ""
-                              }
-                              to="administration/employees"
-                            >
-                              Employee
-                            </NavLink>
-                          </li>
-                        )}
-                        {checkTabGrant(["profile"]) && (
-                          <li className="inLi">
-                            <NavLink
-                              className={({ isActive }) =>
-                                isActive ? "activeLink" : ""
-                              }
-                              to="administration/configuration"
-                            >
-                              Configuration
-                            </NavLink>
-                          </li>
-                        )}
+                      <path d="M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm.256 7a4.474 4.474 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10c.26 0 .507.009.74.025.226-.341.496-.65.804-.918C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4s1 1 1 1h5.256Zm3.63-4.54c.18-.613 1.048-.613 1.229 0l.043.148a.64.64 0 0 0 .921.382l.136-.074c.561-.306 1.175.308.87.869l-.075.136a.64.64 0 0 0 .382.92l.149.045c.612.18.612 1.048 0 1.229l-.15.043a.64.64 0 0 0-.38.921l.074.136c.305.561-.309 1.175-.87.87l-.136-.075a.64.64 0 0 0-.92.382l-.045.149c-.18.612-1.048.612-1.229 0l-.043-.15a.64.64 0 0 0-.921-.38l-.136.074c-.561.305-1.175-.309-.87-.87l.075-.136a.64.64 0 0 0-.382-.92l-.148-.045c-.613-.18-.613-1.048 0-1.229l.148-.043a.64.64 0 0 0 .382-.921l-.074-.136c-.306-.561.308-1.175.869-.87l.136.075a.64.64 0 0 0 .92-.382l.045-.148ZM14 12.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0Z" />
+                    </svg>
+                    <span>Administration</span>
+                  </button>
+                  <div
+                    id="admin-collapseOne"
+                    data-bs-parent="#accordionExample"
+                    className="accordion-collapse collapse"
+                  >
+                    <ul className="inUl">
+                      {checkTabGrant(["roles"]) && (
+                        <li className="inLi">
+                          <NavLink
+                            className={({ isActive }) =>
+                              isActive ? "activeLink" : ""
+                            }
+                            to="administration/roles"
+                          >
+                            Roles
+                          </NavLink>
+                        </li>
+                      )}
+                      {checkTabGrant(["users"]) && (
+                        <li className="inLi">
+                          <NavLink
+                            className={({ isActive }) =>
+                              isActive ? "activeLink" : ""
+                            }
+                            to="administration/users"
+                          >
+                            Users
+                          </NavLink>
+                        </li>
+                      )}
+                      {checkTabGrant(["users"]) && (
+                        <li className="inLi">
+                          <NavLink
+                            className={({ isActive }) =>
+                              isActive ? "activeLink" : ""
+                            }
+                            to="administration/employees"
+                          >
+                            Employee
+                          </NavLink>
+                        </li>
+                      )}
+                      {checkTabGrant(["profile"]) && (
+                        <li className="inLi">
+                          <NavLink
+                            className={({ isActive }) =>
+                              isActive ? "activeLink" : ""
+                            }
+                            to="administration/configuration"
+                          >
+                            Configuration
+                          </NavLink>
+                        </li>
+                      )}
 
-                        {/*need to remove this */}
-                        {/* {
+                      {/*need to remove this */}
+                      {/* {
                         checkTabGrant(['users']) && <li className='inLi'>
                           <NavLink className={({ isActive }) => isActive ? 'activeLink' : ''} to="administration/enquirycategories" >
                             Enquiry categories
                           </NavLink>
                         </li>
                       } */}
-                        {/* {checkTabGrant(["branch"]) && (
+                      {/* {checkTabGrant(["branch"]) && (
                         <li className="inLi">
                           <NavLink
                             className={({ isActive }) =>
@@ -532,11 +534,10 @@ export default function HomeScreen() {
                           </NavLink>
                         </li>
                       )} */}
-                      </ul>
-                    </div>
-                  </li>
-                )}
-
+                    </ul>
+                  </div>
+                </li>
+              )}
 
               {/* {checkTabGrant(["profile"]) && (
                 <li className="outLi">
@@ -602,9 +603,9 @@ export default function HomeScreen() {
                   <span className="text-uppercase">
                     {Object.keys(profileDataState.currentUserData).length
                       ? `${profileDataState?.currentUserData?.result?.first_name.slice(
-                        0,
-                        1
-                      )}`
+                          0,
+                          1
+                        )}`
                       : "A"}
                   </span>
                 </div>
@@ -670,9 +671,9 @@ export default function HomeScreen() {
                           {Object.keys(profileDataState.currentUserData)
                             .length > 0
                             ? `${profileDataState?.currentUserData?.result?.first_name.slice(
-                              0,
-                              1
-                            )}`
+                                0,
+                                1
+                              )}`
                             : "A"}
                         </span>
                       </div>
@@ -680,12 +681,12 @@ export default function HomeScreen() {
                         Last login :{" "}
                         {Object.keys(profileDataState.currentUserData).length >
                           0 &&
-                          profileDataState?.currentUserData.result.last_login !=
+                        profileDataState?.currentUserData.result.last_login !=
                           null
                           ? getDateTime(
-                            profileDataState?.currentUserData.result
-                              .last_login
-                          )
+                              profileDataState?.currentUserData.result
+                                .last_login
+                            )
                           : "first time logged in"}
                       </span>
                     </div>
@@ -803,9 +804,51 @@ export default function HomeScreen() {
               }
               exact
             />
-            <Route path="administration/configuration/manufacturer" element={<CheckPermission path='profile'><Manufacturer_list /></CheckPermission>} exact />
-            <Route path="administration/configuration/manufacturer-modal" element={<CheckPermission path="profile"><Manufacturer_modal /></CheckPermission>} exact />
-            <Route path="administration/configuration/manufacturer-modal/variants" element={<CheckPermission path="profile"><Variants /></CheckPermission>} exact />
+            <Route
+              path="administration/configuration/department"
+              element={
+                <CheckPermission path="profile">
+                  <Department_list workFor="department" />
+                </CheckPermission>
+              }
+              exact
+            />
+            <Route 
+              path="administration/configuration/department/adddepartment"
+              element={
+                <CheckPermission path="profile">
+                  <AddDepartment workFor="adddepartment" />
+                </CheckPermission>
+              }
+              exact
+            />
+            <Route
+              path="administration/configuration/manufacturer"
+              element={
+                <CheckPermission path="profile">
+                  <Manufacturer_list />
+                </CheckPermission>
+              }
+              exact
+            />
+            <Route
+              path="administration/configuration/manufacturer-modal"
+              element={
+                <CheckPermission path="profile">
+                  <Manufacturer_modal />
+                </CheckPermission>
+              }
+              exact
+            />
+            <Route
+              path="administration/configuration/manufacturer-modal/variants"
+              element={
+                <CheckPermission path="profile">
+                  <Variants />
+                </CheckPermission>
+              }
+              exact
+            />
 
             <Route
               path="administration/configuration/tax"
@@ -883,7 +926,7 @@ export default function HomeScreen() {
               path="administration/employees"
               element={
                 // <CheckPermission path="employees">
-                  <Employees />
+                <Employees />
                 // </CheckPermission>
               }
               exact
@@ -901,7 +944,7 @@ export default function HomeScreen() {
               path="administration/employees/addemployee"
               element={
                 // <CheckPermission path="add-employee">
-                  <AddEmployee workFor="forAdd" />
+                <AddEmployee workFor="forAdd" />
                 // </CheckPermission>
               }
               exact
@@ -910,7 +953,7 @@ export default function HomeScreen() {
               path="administration/employees/editemployee"
               element={
                 // <CheckPermission path="add-role">
-                  <AddEmployee workFor="forEdit" />
+                <AddEmployee workFor="forEdit" />
                 // </CheckPermission>
               }
               exact

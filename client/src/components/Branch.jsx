@@ -529,9 +529,9 @@ export default function Branch({ workFor }) {
                                 <Taluka onSelectedTaluka={onSelectedTaluka}
                                 districtId={branchData.district}
                                 talukaId={branchData.taluka}/>
-                                <Village onSelectedVillage={onSelectedVillage}
+                               {/* <Village onSelectedVillage={onSelectedVillage}
                                  talukaId={branchData.taluka}
-                                 villageId={branchData.village}/>
+                    villageId={branchData.village}/>*/}
                                  
                                 {/* <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
                                     <label className='myLabel' htmlFor="email">Select State </label>
@@ -611,6 +611,6 @@ export default function Branch({ workFor }) {
                     }
                 </div>
             </main >
-        </div >
+        </div>
     )
 }

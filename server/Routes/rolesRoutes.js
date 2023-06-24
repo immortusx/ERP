@@ -114,7 +114,7 @@ router.post('/get-roles-features', tokenCheck, async (req, res) => {
 router.get('/get-roles-to-edit', tokenCheck, async (req, res) => {
     console.log('>>>>>get-roles');
 
-    const url = `SELECT * from roles where id != 1`
+    const url = `SELECT * from roles where id != 1 and \`delete\` = 0`
     await db.query(url, async (err, result) => {
         if (err) {
             console.log({ isSuccess: true, result: err })
@@ -125,5 +125,39 @@ router.get('/get-roles-to-edit', tokenCheck, async (req, res) => {
         }
     })
 })
+
+ //=============Delete Roles=============//
+router.get("/delete-roles/:id", tokenCheck, async (req, res) => {
+  try {
+    const rolesId = req.params.id;
+    const newUrl = "SELECT * FROM roles WHERE  id = " + rolesId;
+    await db.query(newUrl, async (err, newResult) => {
+      if (err) {
+        console.log({ isSuccess: false, result: err });
+        res.send({ isSuccess: false, result: "error" });
+      } else if (newResult.length === 1) {
+        const editurl = "UPDATE roles SET `delete` = 1 WHERE id = " + rolesId;
+        await db.query(editurl, async (err, result) => {
+          if (err) {
+            console.log({ isSuccess: false, result: err });
+            res.send({ isSuccess: false, result: "error" });
+          } else {
+            res.send({ isSuccess: true, result: "deletesuccess" });
+          }
+        });
+      } else {
+        console.log(newResult);
+        console.log({ isSuccess: false, result: "notExist" });
+        res.send({ isSuccess: false, result: "notExist" });
+      }
+    });
+  } catch (e) {
+    console.log(e);
+  }
+});
+
+
+
+
 
 module.exports = router;

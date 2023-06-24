@@ -11,6 +11,7 @@ import AdminSlice from './slices/adminSlice'
 import getFeatureSlice from './slices/getFeatureSlice'
 import addRoleSlice from './slices/addRoleSlice'
 import notificationSlice from './slices/notificationSlice'
+import addDepartmentSlice from './slices/Master/Department/addDepartmentSlice';
 
 import editUserDataSlice from './slices/editUserDataSlice'
 import editemployeeDataSlice from './slices/editemployeeDataSlice'
@@ -50,6 +51,7 @@ export const store = configureStore({
         addStateSlice:addStateSlice,
         addDistrictSlice:addDistrictSlice,
         addTalukaSlice:addTalukaSlice,
+        addDepartment:addDepartmentSlice,
         addVillageSlice:addVillageSlice,
         addManufacturerSlice:addManufacturerSlice,
     }

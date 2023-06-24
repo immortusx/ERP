@@ -156,6 +156,9 @@ router.post('/add-user', tokenCheck, checkUserPermission('add-user'), async (req
   const phoneNumber = req.body.phoneNumber
   const branchRole = req.body.branchRole
   const departmentId = 1
+  const user_type_id = 1;
+  
+  
 
   const hassPass = await hasThePass(password)
 
@@ -165,7 +168,7 @@ router.post('/add-user', tokenCheck, checkUserPermission('add-user'), async (req
       console.log({ isSuccess: false, result: err })
       res.send({ isSuccess: false, result: 'error' })
     } else if (newResult.length === 0) {
-      const url = `INSERT INTO users(first_name, last_name, email, password, phone_number) VALUES('${firstName}', '${lastName}', '${email}', '${hassPass}', '${phoneNumber}')`
+      const url = `INSERT INTO users(first_name, last_name, email, password, phone_number, user_type_id) VALUES('${firstName}', '${lastName}', '${email}', '${hassPass}', '${phoneNumber}', '${user_type_id}')`;
       await db.query(url, async (err, result) => {
         if (err) {
           console.log({ isSuccess: false, result: err })
