@@ -34,6 +34,7 @@ const Login = ({navigation}) => {
       if (loginState.result.message == "success") {
         console.warn(loginState.result.result.tokenIs)
         console.log(loginState.result.result.tokenIs);
+        navigation.navigate("Main")
         // taking first branch for login
       }}
     //     AsyncStorage.setItem(
