@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import { getToPathname } from "@remix-run/router";
+import { getDepartment } from "./getEditDepartment";
 // import { setShowMessage } from "../redux/slices/notificationSlice";
 import { useNavigate } from "react-router-dom";
 // import AlertDeleteModal from "./AlertDelete/AlertDeleteModal";
@@ -16,22 +17,31 @@ export default function Department_list({ workFor }) {
   const navigate = useNavigate();
 
 
-  const getAllDepartments = async () => {
-    const url = `${process.env.REACT_APP_NODE_URL}/api/master/get-department-list`;
-    const config = {
-      headers: {
-        token: localStorage.getItem("rbacToken"),
-      },
-    };
-    await axios.get(url, config).then((response) => {
-      if (response.data && response.data.isSuccess) {
-        console.log(response.data.result);
-        setPartsList(response.data.result);
-      }
-    });
-  };
+  // const getAllDepartments = async () => {
+  //   const url = `${process.env.REACT_APP_NODE_URL}/api/master/get-department-list`;
+  //   const config = {
+  //     headers: {
+  //       token: localStorage.getItem("rbacToken"),
+  //     },
+  //   };
+  //   await axios.get(url, config).then((response) => {
+  //     if (response.data && response.data.isSuccess) {
+  //       console.log(response.data.result);
+  //       setPartsList(response.data.result);
+  //     }
+  //   });
+  // };
   useEffect(() => {
-    getAllDepartments();
+    // getAllDepartments();
+
+     getDepartment()
+       .then((data) => {
+         console.log("Response from getDepartment:", data.result);
+         setPartsList(data.result);
+       })
+       .catch((error) => {
+         console.error("Error in getDepartment:", error);
+       });
   }, []);
 
   const columns = [
