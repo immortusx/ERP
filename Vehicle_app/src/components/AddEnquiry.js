@@ -6,16 +6,26 @@ import {
   Button,
   Image,
   TouchableOpacity,
+  ScrollView,
 } from 'react-native';
 import React, {useState} from 'react';
 import DatePicker from 'react-native-date-picker';
-
+import DropDownPicker from 'react-native-dropdown-picker';
 const AddEnquiry = ({navigation}) => {
   const [date, setDate] = useState(new Date());
   const [open, setOpen] = useState(false);
-
+  const [openEnquirySource, setOpenEnquirySource] = useState(false);
+  const [selectedSource, setSelectedSource] = useState(null);
+  const [enquirySourceItem, setEnquirySourceItem] = useState([
+    {label: 'Digital', value: '1'},
+    {label: 'Telemarketing', value: '2'},
+    {label: 'News', value: '3'},
+    {label: 'Visit', value: '4'},
+    {label: 'Other', value: '5'},
+  ]);
   return (
-    <View style={styles.container}>
+   <ScrollView>
+     <View style={styles.container}>
       <View style={styles.customerContainer}>
         <View style={styles.dateContainer}>
           <Text>Enquiry No.</Text>
@@ -104,6 +114,46 @@ const AddEnquiry = ({navigation}) => {
             </TouchableOpacity>
           </View>
         </View>
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Select Enquiry Source :</Text>
+          <DropDownPicker
+            open={openEnquirySource}
+            value={selectedSource}
+            items={enquirySourceItem}
+            setOpen={setOpenEnquirySource}
+            setValue={setSelectedSource}
+            setItems={setEnquirySourceItem}
+            containerStyle={{marginTop: 5}}
+            style={styles.dropBoxStyle}
+            dropDownStyle={styles.dropDownStyle}
+            placeholder="Select Enquriy Source"
+            onChangeItem={item => setSelectedSource(item.value)}
+            autoScroll
+          />
+        </View>
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Expected Delivery Date :</Text>
+            <Text
+              style={styles.deliveryDate}
+              placeholder="Select Date"
+              onPress={() => setOpen(true)}>
+              {date.toLocaleDateString()}
+            </Text>
+          <DatePicker
+              mode="date"
+              modal
+              open={open}
+              date={date}
+              theme="dark"
+              onConfirm={date => {
+                setOpen(false);
+                setDate(date);
+              }}
+              onCancel={() => {
+                setOpen(false);
+              }}
+            />
+        </View>
       </View>
       <View style={{paddingHorizontal: 15}}>
         <TouchableOpacity style={styles.saveButton}>
@@ -111,6 +161,7 @@ const AddEnquiry = ({navigation}) => {
         </TouchableOpacity>
       </View>
     </View>
+   </ScrollView>
   );
 };
 
@@ -215,5 +266,22 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'black',
   },
+  dropBoxStyle: {
+    backgroundColor: '#fafafa',
+    borderColor: '#0984DF',
+    borderWidth: 1,
+  },
+  dropDownStyle: {
+    backgroundColor: '#fafafa',
+    borderColor: '#0984DF',
+    borderWidth: 1,
+  },
+  deliveryDate: {
+    borderWidth: 1,
+    borderColor: '#EA6A20',
+    padding: 5,
+    borderRadius: 33,
+    borderColor: 'grey',
+  }
 });
 export default AddEnquiry;

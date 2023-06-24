@@ -6,10 +6,12 @@ import {
   TextInput,
   TouchableOpacity,
   Picker,
+  Button,
 } from 'react-native';
 import SelectDropdown from 'react-native-select-dropdown';
 import {Dropdown} from 'react-native-element-dropdown';
 import DropDownPicker from 'react-native-dropdown-picker';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const AddManufacturDetails = () => {
   const [selectedValue, setSelectedValue] = useState('');
   const countries = ['Egypt', 'Canada', 'Australia', 'Ireland'];
@@ -33,6 +35,20 @@ const AddManufacturDetails = () => {
     {label: 'Mahindra varaint', value: '2'},
   ]);
 
+  const getData = async () => {
+    const name = await AsyncStorage.setItem('hell', 'therer')
+    if(name){
+      console.warn(name)
+    }else{
+      console.warn(typeof AsyncStorage)
+    }
+  //   const name = await AsyncStorage.getItem('name')
+  //   if(name){
+  //     console.warn(name);
+  //   }else{
+  //    console.warn(typeof AsyncStorage);
+  //  }
+  };
   return (
     <View style={styles.container}>
       <View style={styles.customerContainer}>
@@ -88,6 +104,7 @@ const AddManufacturDetails = () => {
             autoScroll
           />
         </View>
+        <Button title="Get" onPress={getData} />
       </View>
       <View style={{paddingHorizontal: 15}}>
         <TouchableOpacity style={styles.saveButton}>
@@ -111,7 +128,7 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     marginBottom: 10,
-    zIndex: 1000
+    zIndex: 1000,
   },
   label: {
     color: 'grey',
