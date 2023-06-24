@@ -24,11 +24,8 @@ app.use('/api/master', require('./Routes/Master/District/districtRouter'))
 app.use('/api/master', require('./Routes/Master/Taluka/talukaRouter'))
 app.use('/api/master', require('./Routes/Master/Parts/partsRouter'));
 app.use('/api/master', require('./Routes/Master/Village/villageRouter'))
-app.use('/api/master', require('./Routes/Master/Manufacturer/ManufacturerRouter'))
-app.use('/api/booking', require('./Routes/Booking/bookingRoutes'));
-app.use('/api/employees', require('./Routes/employeeRoutes'));
-app.use('/api/master', require('./Routes/Master/Tax/taxRoutes'));
 app.use('/api/enquiry', require('./Routes/enquiryRoutes'))
+app.use('/api/areaAssign', require('./Routes/areaAssignRoutes'))
 app.use('/api/login', require('./Routes/loginRoutes'))
 app.use('/api/roles', require('./Routes/rolesRoutes'))
 app.use('/api/branch', require('./Routes/branchRoutes'))
@@ -49,6 +46,7 @@ app.get('/api', (req, res) => {
     'HOST': process.env.ENV_HOST,
   });
 })
+
 
 app.listen(process.env.ENV_PORT, (req, res) => {
   console.log({

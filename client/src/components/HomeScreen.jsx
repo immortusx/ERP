@@ -22,6 +22,8 @@ import Profile from "./Profile";
 import Enquiry from "./Enquiry";
 import Products from "./Products";
 import Master from "./Master";
+import AreaAssignListList from "./AreaAssignListList";
+import AddAssignArea from "./AddAssignArea"
 
 import logo from "../assets/svg/logo.svg";
 import logoT from "../assets/svg/logofinal.svg";
@@ -320,6 +322,16 @@ export default function HomeScreen() {
                           </NavLink>
                         </li>
                       )}
+                      <li className="inLi">
+                        <NavLink
+                          className={({ isActive }) =>
+                            isActive ? "activeLink" : ""
+                          }
+                          to="sale/areaAssign"
+                        >
+                          Area Assign
+                        </NavLink>
+                      </li>
                     </ul>
                   </div>
                 </li>
@@ -748,7 +760,20 @@ export default function HomeScreen() {
               }
               exact
             />
-
+            <Route
+              path="sale/areaAssign"
+              element={
+                <AreaAssignListList />
+              }
+              exact
+            />
+            <Route
+              path="sale/areaAssign/addAsignArea"
+              element={              
+                < AddAssignArea />                
+              }
+              exact
+            />
             <Route
               path="administration/configuration"
               element={
@@ -883,7 +908,7 @@ export default function HomeScreen() {
               path="administration/employees"
               element={
                 // <CheckPermission path="employees">
-                  <Employees />
+                <Employees />
                 // </CheckPermission>
               }
               exact
@@ -901,7 +926,7 @@ export default function HomeScreen() {
               path="administration/employees/addemployee"
               element={
                 // <CheckPermission path="add-employee">
-                  <AddEmployee workFor="forAdd" />
+                <AddEmployee workFor="forAdd" />
                 // </CheckPermission>
               }
               exact
@@ -910,7 +935,7 @@ export default function HomeScreen() {
               path="administration/employees/editemployee"
               element={
                 // <CheckPermission path="add-role">
-                  <AddEmployee workFor="forEdit" />
+                <AddEmployee workFor="forEdit" />
                 // </CheckPermission>
               }
               exact
