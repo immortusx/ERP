@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   TextInput,
@@ -29,12 +29,63 @@ const Login = ({navigation}) => {
     }
   };
 
+  useEffect(() => {
+    if (loginState.isSuccess === true) {
+      if (loginState.result.message == "success") {
+        console.warn(loginState.result.result.tokenIs)
+        console.log(loginState.result.result.tokenIs);
+        // taking first branch for login
+      }}
+    //     AsyncStorage.setItem(
+    //       "branchesList",
+    //       JSON.stringify(loginState.result.result.branchResult)
+    //     );
+    //     AsyncStorage.setItem(
+    //       "currentBranchId",
+    //       loginState.result.result.currentBranch
+    //     );
+    //     AsyncStorage.setItem("rbacToken", loginState.result.result.tokenIs);
+    //     AsyncStorage.getItem("rbacToken").then((token) => {
+    //       if (!token) {
+    //         return;
+    //       } else {
+
+    //         dispatch(getProfileData(token));
+    //         console.log(token, "aSDFGHJKDSFGHJDSFGSDFGHJ");
+    //         console.log("Welcome to Vehicle Management System");
+    //         alert("Welcome to Vehicle Management System");
+    //         // dispatch(setShowMessage('Welcome to Vehicle Management System'))
+    //         navigation.navigate("main");
+    //         setLoginData({
+    //           email: "",
+    //           password: "",
+    //         });
+    //       }
+    //     });
+    //   } else if (loginState.result.message != "success") {
+    //     console.log("Credentials are wrong");
+    //     alert("Credentials are wrong");
+    //     // dispatch(setShowMessage("Credentials are wrong"));
+    //   } else {
+    //     console.log("Something is wrong");
+    //     alert("Somethinggggggggggg is wrong");
+    //     // dispatch(setShowMessage("Something is wrong"));
+    //   }
+    //   dispatch(clearLoginState());
+    // } else if (loginState.isError === true) {
+    //   console.log("Something is wrong");
+    //   alert("Something is wrong");
+    //   // dispatch(setShowMessage("Something is wrong"));
+    // }
+    // console.log("loginState", loginState);
+  }, [loginState]);
   const handleLogin = () => {
     if (loginData.email.length > 0 && loginData.password.length > 0) {
       dispatch(getLoginUser(loginData));
     } else {
       // dispatch(setShowMessage("Please fill all the field"));
       console.log("please fill credentials first")
+      console.warn("please fill credentials first")
     }
   };
 
@@ -46,7 +97,7 @@ const Login = ({navigation}) => {
             style={{flex: 1, width: null, marginTop: -500}}
             source={BackgroundImage}
           />
-        </View>
+        </View> 
         <Text>Keshav Tractors</Text>
         <View style={styles.bottomView}>
           <Text style={styles.loginText}>Login</Text>
