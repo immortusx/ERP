@@ -175,6 +175,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   loginText: {
+    color: "black",
     fontFamily: 'SourceSansProBold',
     fontSize: 24,
     marginTop: 12,
@@ -197,7 +198,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontFamily: 'SourceSansProRegular',
     fontSize: 16,
-    color: '#333',
+    color: 'black',
   },
   loginButton: {
     backgroundColor: '#006400',

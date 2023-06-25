@@ -13,98 +13,136 @@ import {Dropdown} from 'react-native-element-dropdown';
 import DropDownPicker from 'react-native-dropdown-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 const AddManufacturDetails = () => {
-  const [selectedValue, setSelectedValue] = useState('');
-  const countries = ['Egypt', 'Canada', 'Australia', 'Ireland'];
-  const [openModal, setOpenModal] = useState(false);
-  const [openVariant, setOpenVaraint] = useState(false);
-  const [openManufactur, setOpenManufactur] = useState(false);
   const [value, setValue] = useState(null);
-  const [selectedManufacture, setSelectedManufactureName] = useState(null);
-  const [selectedModal, setSelectedModal] = useState(null);
-  const [selectedVariant, setSelectedVariant] = useState(null);
-  const [manufacturItem, setManufacturItem] = useState([
+  const [isFocus, setIsFocus] = useState(false);
+  const [manufacturer, setManufacturer] = useState(null);
+  const [modal, setModal] = useState(null);
+  const [variant, setVariant] = useState(null);
+  const manufacturItem = [
     {label: 'Sonalika', value: '1'},
     {label: 'Mahindra', value: '2'},
-  ]);
-  const [modalItem, setModalItem] = useState([
-    {label: 'Sonalika ver', value: '1'},
-    {label: 'Mahindra ver1', value: '2'},
-  ]);
-  const [variantItem, setVariantItem] = useState([
-    {label: 'Sonalika varaint', value: '1'},
-    {label: 'Mahindra varaint', value: '2'},
-  ]);
+  ];
+  const modalItem = [
+    {label: 'Sonalika A2R', value: '1'},
+    {label: 'Mahindra WCR', value: '2'},
+  ];
+  const variantItem = [
+    {label: 'Sonalika var 3', value: '1'},
+    {label: 'Mahindra var SA', value: '2'},
+  ];
 
-  const getData = async () => {
-    const name = await AsyncStorage.setItem('hell', 'therer')
-    if(name){
-      console.warn(name)
-    }else{
-      console.warn(typeof AsyncStorage)
+  const renderLabel = () => {
+    if (value || isFocus) {
+      return (
+        <Text style={[styles.label, isFocus && {color: 'blue'}]}>
+          Select Manufacturer :
+        </Text>
+      );
     }
-  //   const name = await AsyncStorage.getItem('name')
-  //   if(name){
-  //     console.warn(name);
-  //   }else{
-  //    console.warn(typeof AsyncStorage);
-  //  }
+    return null;
+  };
+  const getData = async () => {
+    const name = await AsyncStorage.setItem('hell', 'therer');
+    if (name) {
+      console.warn(name);
+    } else {
+      console.warn(typeof AsyncStorage);
+    }
   };
   return (
     <View style={styles.container}>
       <View style={styles.customerContainer}>
         <Text style={styles.mainHeader}>Customer Details</Text>
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Select Manufacturer :</Text>
-          <DropDownPicker
-            open={openManufactur}
-            value={selectedManufacture}
-            items={manufacturItem}
-            setOpen={setOpenManufactur}
-            setValue={setSelectedManufactureName}
-            setItems={setManufacturItem}
-            containerStyle={{marginTop: 5}}
-            style={styles.dropBoxStyle}
-            dropDownStyle={styles.dropDownStyle}
-            placeholder="Select Manufacturer"
-            onChangeItem={item => setSelectedManufactureName(item.value)}
-            autoScroll
-          />
+        <View style={{marginBottom: 5}}>
+          <Text style={styles.label}>Manufacturer :</Text>
+          <View style={styles.inputContainer}>
+            {/* {renderLabel()} */}
+            <Dropdown
+              style={[styles.dropdown, isFocus && {borderColor: 'blue'}]}
+              placeholderStyle={styles.placeholderStyle}
+              selectedTextStyle={styles.selectedTextStyle}
+              inputSearchStyle={styles.inputSearchStyle}
+              iconStyle={styles.iconStyle}
+              data={manufacturItem}
+              search
+              maxHeight={300}
+              labelField="label"
+              valueField="value"
+              placeholder={!isFocus ? 'Select Manufacturer' : ' '}
+              searchPlaceholder="Search..."
+              value={manufacturer}
+              onFocus={() => setIsFocus(true)}
+              onBlur={() => setIsFocus(false)}
+              onChange={item => {
+                setManufacturer(item.value);
+                setIsFocus(false);
+              }}
+              // renderLeftIcon={() => (
+              //   <Text>{isFocus ? 'blue' : 'black'}</Text>
+              // )}
+            />
+          </View>
         </View>
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Select Modal :</Text>
-          <DropDownPicker
-            open={openModal}
-            value={selectedModal}
-            items={modalItem}
-            setOpen={setOpenModal}
-            setValue={setSelectedModal}
-            setItems={setModalItem}
-            containerStyle={{marginTop: 5}}
-            style={styles.dropBoxStyle}
-            dropDownStyle={styles.dropDownStyle}
-            placeholder="Select Modal"
-            onChangeItem={item => setSelectedModal(item.value)}
-            autoScroll
-          />
+        <View style={{marginBottom: 5}}>
+          <Text style={styles.label}>Modal :</Text>
+          <View style={styles.inputContainer}>
+            {/* {renderLabel()} */}
+            <Dropdown
+              style={[styles.dropdown, isFocus && {borderColor: 'blue'}]}
+              placeholderStyle={styles.placeholderStyle}
+              selectedTextStyle={styles.selectedTextStyle}
+              inputSearchStyle={styles.inputSearchStyle}
+              iconStyle={styles.iconStyle}
+              data={modalItem}
+              search
+              maxHeight={300}
+              labelField="label"
+              valueField="value"
+              placeholder={!isFocus ? 'Select Modal' : ' '}
+              searchPlaceholder="Search..."
+              value={modal}
+              onFocus={() => setIsFocus(true)}
+              onBlur={() => setIsFocus(false)}
+              onChange={item => {
+                setModal(item.value);
+                setIsFocus(false);
+              }}
+              // renderLeftIcon={() => (
+              //   <Text>{isFocus ? 'blue' : 'black'}</Text>
+              // )}
+            />
+          </View>
         </View>
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Select Variant :</Text>
-          <DropDownPicker
-            open={openVariant}
-            value={selectedVariant}
-            items={variantItem}
-            setOpen={setOpenVaraint}
-            setValue={setSelectedVariant}
-            setItems={setVariantItem}
-            containerStyle={{marginTop: 5}}
-            style={styles.dropBoxStyle}
-            dropDownStyle={styles.dropDownStyle}
-            placeholder="Select Variant"
-            onChangeItem={item => setSelectedVariant(item.value)}
-            autoScroll
-          />
+        <View style={{marginBottom: 5}}>
+          <Text style={styles.label}>Modal :</Text>
+          <View style={styles.inputContainer}>
+            {/* {renderLabel()} */}
+            <Dropdown
+              style={[styles.dropdown, isFocus && {borderColor: 'blue'}]}
+              placeholderStyle={styles.placeholderStyle}
+              selectedTextStyle={styles.selectedTextStyle}
+              inputSearchStyle={styles.inputSearchStyle}
+              iconStyle={styles.iconStyle}
+              data={variantItem}
+              search
+              maxHeight={300}
+              labelField="label"
+              valueField="value"
+              placeholder={!isFocus ? 'Select Variant' : ' '}
+              searchPlaceholder="Search..."
+              value={variant}
+              onFocus={() => setIsFocus(true)}
+              onBlur={() => setIsFocus(false)}
+              onChange={item => {
+                setVariant(item.value);
+                setIsFocus(false);
+              }}
+              // renderLeftIcon={() => (
+              //   <Text>{isFocus ? 'blue' : 'black'}</Text>
+              // )}
+            />
+          </View>
         </View>
-        <Button title="Get" onPress={getData} />
       </View>
       <View style={{paddingHorizontal: 15}}>
         <TouchableOpacity style={styles.saveButton}>
@@ -128,10 +166,13 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     marginBottom: 10,
-    zIndex: 1000,
+    borderColor: '#0984DF',
+    borderWidth: 1,
+    borderRadius: 5,
   },
   label: {
     color: 'grey',
+    marginBottom: 2,
   },
   inputStyle: {
     marginVertical: 5,
