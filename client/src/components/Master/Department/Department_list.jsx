@@ -4,11 +4,13 @@ import Axios from "axios";
 import { getToPathname } from "@remix-run/router";
 import { getDepartment, deleteDepartment } from "./getEditDepartment";
 // import { setShowMessage } from "../redux/slices/notificationSlice";
+import { setShowMessage } from "../../../redux/slices/notificationSlice";
 import { useNavigate } from "react-router-dom";
 import AlertDeleteModal from "../../AlertDelete/AlertDeleteModal";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from "@mui/icons-material/Clear";
+import { addDepartmentToDb } from "../../../redux/slices/Master/Department/addDepartmentSlice";
 
 
 export default function Department_list({ workFor }) {
@@ -175,9 +177,13 @@ export default function Department_list({ workFor }) {
    try {
      const response = await Axios.post(url, requestData, config);
      if (response.data?.isSuccess) {
-       return response.data;
+       dispatch(setShowMessage("Department Deleted"));
+        dispatch(addDepartmentToDb);
+        setDisplayConfirmationModal(false);
+      //  return response.data;
+     }else{
+       dispatch(setShowMessage("failed to delete"));
      }
-     console.log(response.data.id);
      return null;
    } catch (error) {
      console.error(error);
