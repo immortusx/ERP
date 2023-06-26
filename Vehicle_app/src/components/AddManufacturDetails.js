@@ -12,7 +12,10 @@ import SelectDropdown from 'react-native-select-dropdown';
 import {Dropdown} from 'react-native-element-dropdown';
 import DropDownPicker from 'react-native-dropdown-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useDispatch } from 'react-redux';
+import { saveManufacturerDetails } from '../redux/slice/manufacturerDetailsSlice';
 const AddManufacturDetails = () => {
+  const dispatch = useDispatch();
   const [value, setValue] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
   const [manufacturer, setManufacturer] = useState(null);
@@ -41,13 +44,12 @@ const AddManufacturDetails = () => {
     }
     return null;
   };
-  const getData = async () => {
-    const name = await AsyncStorage.setItem('hell', 'therer');
-    if (name) {
-      console.warn(name);
-    } else {
-      console.warn(typeof AsyncStorage);
-    }
+  const saveManufacturDetails = () => {
+    console.warn(manufacturer, modal, variant);
+    dispatch(saveManufacturerDetails({
+      manufacturer, modal, variant
+    }))
+
   };
   return (
     <View style={styles.container}>
@@ -145,7 +147,9 @@ const AddManufacturDetails = () => {
         </View>
       </View>
       <View style={{paddingHorizontal: 15}}>
-        <TouchableOpacity style={styles.saveButton}>
+        <TouchableOpacity
+          style={styles.saveButton}
+          onPress={saveManufacturDetails}>
           <Text style={styles.buttonText}>Save</Text>
         </TouchableOpacity>
       </View>

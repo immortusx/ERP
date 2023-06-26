@@ -11,19 +11,46 @@ import {
   Pressable,
   Modal,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import DatePicker from 'react-native-date-picker';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {Dropdown} from 'react-native-element-dropdown';
 import CustomRadioButton from './subCom/CustomRadioButton';
+import {useDispatch, useSelector} from 'react-redux';
+import {setEnquiryDb} from '../redux/slice/addEnquirySlice';
+import {saveEnquiryModalForm} from '../redux/slice/addEnquiryModal';
+import {saveModalData} from '../redux/slice/modalDataSlice';
 const AddEnquiry = ({navigation}) => {
+  const dispatch = useDispatch();
+  // const enquiryState = useSelector(state => state.enquriySlice.enquiryState);
+  const locationForm = useSelector(state => state.locationForm);
+  const enquiryState = useSelector(state => state.enquirySlice.enquiryState);
+  const {maker, modalName, variantName, year, condition_of} = useSelector(
+    state => state.modalData,
+  );
+  const {manufacturer, modal, variant} = useSelector(
+    state => state.manufacturerDetails,
+  );
   const [date, setDate] = useState(new Date());
+  const [expDeliveryDate, setExpDeliveryDate] = useState(new Date());
+  const [manuYearDate, setManuYearDate] = useState(new Date());
   const [isFocus, setIsFocus] = useState(false);
   const [enquiry, setEnquiry] = useState(null);
+  const [condition, setCondtion] = useState(null);
   const [open, setOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState('No');
   const options = ['Yes', 'No'];
   const [modalVisible, setModalVisible] = useState(false);
+  const [oldVehicleData, setOldVehicleData] = useState({
+    maker: '',
+    modalName: '',
+    variantName: '',
+  });
+  const [enquiryData, setEnquiryData] = useState({
+    firstname: '',
+    lastname: '',
+    phone: '',
+  });
 
   const enquirySourceItem = [
     {label: 'Digital', value: '1'},
@@ -53,6 +80,101 @@ const AddEnquiry = ({navigation}) => {
   const handleReadValue = () => {
     console.log(selectedOption);
   };
+  const closeModal = () => {
+    setModalVisible(!modalVisible);
+    setSelectedOption('No');
+  };
+  const onChangeHandler = (value, field) => {
+    setEnquiryData(preData => ({
+      ...preData,
+      [field]: value,
+    }));
+  };
+  useEffect(() => {
+    if (enquiryState.isSuccess === true) {
+      console.warn('Enquiry Succesful');
+    }
+  }, [enquiryState]);
+  const submitEnquiry = () => {
+    const {firstname, lastname, phone} = enquiryData;
+    const {state, district, taluka, native} = locationForm;
+    console.log(state, district, taluka, native);
+    console.log(firstname, lastname, phone);
+    console.log(manufacturer, modal, variant);
+    console.log(enquiry);
+    console.log(expDeliveryDate);
+    console.log(condition, 'consdtion');
+    console.log(maker, modalName, variantName, year, condition_of);
+
+    const formData = {
+      firstName: firstname,
+      lastName: lastname,
+      mobileNumber: phone,
+      emailId: 'admin@123',
+      state: state,
+      district: district,
+      tehsil: taluka,
+      block: 11,
+      dsp: 62,
+      model: 6,
+      village: native,
+      branchId: 2,
+      enquiryDate: date,
+      deliveryDate: expDeliveryDate,
+      sourceOfEnquiry: 25,
+      manufacturer,
+      modal,
+      variant,
+      maker,
+      modalName,
+      variantName,
+      year,
+      condition_of,
+    };
+    if (
+      enquiryData.firstname.length > 0 &&
+      enquiryData.lastname.length > 0 &&
+      enquiryData.phone.length > 0
+    ) {
+      dispatch(setEnquiryDb(formData));
+    } else {
+      console.warn('Please first fill the field*');
+    }
+  };
+  const saveDate = date => {
+    setExpDeliveryDate(date);
+  };
+  const saveYearOfManu = date => {
+    setManuYearDate(date);
+  };
+  const handleModalData = () => {
+    if (
+      oldVehicleData.maker.length > 0 &&
+      oldVehicleData.modalName.length > 0 &&
+      oldVehicleData.variantName.length > 0
+    ) {
+      dispatch(
+        saveModalData({
+          maker: oldVehicleData.maker,
+          modalName: oldVehicleData.modalName,
+          variantName: oldVehicleData.variantName,
+          year: manuYearDate.toISOString(),
+          condition_of: condition,
+        }),
+      );
+      setModalVisible(!modalVisible);
+      console.warn(oldVehicleData);
+    } else {
+      console.warn('please first fill the field');
+    }
+  };
+  const onChangeInputField = (value, field) => {
+    setOldVehicleData(prefield => ({
+      ...prefield,
+      [field]: value,
+    }));
+  };
+
   return (
     <ScrollView>
       <View style={styles.container}>
@@ -116,6 +238,7 @@ const AddEnquiry = ({navigation}) => {
               autoCapitalize="none"
               keyboardType="firstname"
               textContentType="firstname"
+              onChangeText={value => onChangeHandler(value, 'firstname')}
             />
           </View>
           <View style={styles.inputContainer}>
@@ -126,6 +249,7 @@ const AddEnquiry = ({navigation}) => {
               autoCapitalize="none"
               keyboardType="lastname"
               textContentType="lastname"
+              onChangeText={value => onChangeHandler(value, 'lastname')}
             />
           </View>
           <View style={styles.inputContainer}>
@@ -136,6 +260,7 @@ const AddEnquiry = ({navigation}) => {
               autoCapitalize="none"
               keyboardType="phone"
               textContentType="phone"
+              onChangeText={value => onChangeHandler(value, 'phone')}
             />
           </View>
           <View editable={false} style={[styles.inputStyle, styles.optional]}>
@@ -201,21 +326,18 @@ const AddEnquiry = ({navigation}) => {
           <View style={{marginBottom: 5}}>
             <Text style={styles.label}>Expected Delivery Date *</Text>
             <View style={styles.deliveryDateContainer}>
-              <Text
-                style={styles.deliveryDate}
-                placeholder="Select Date"
-                onPress={() => setOpen(true)}>
-                {date.toLocaleDateString()}
+              <Text style={styles.deliveryDate} onPress={() => setOpen(true)}>
+                {expDeliveryDate.toLocaleDateString()}
               </Text>
               <DatePicker
                 mode="date"
                 modal
                 open={open}
-                date={date}
+                date={expDeliveryDate}
                 theme="dark"
                 onConfirm={date => {
                   setOpen(false);
-                  setDate(date);
+                  saveDate(date);
                 }}
                 onCancel={() => {
                   setOpen(false);
@@ -233,8 +355,8 @@ const AddEnquiry = ({navigation}) => {
           </View>
         </View>
         <View style={{paddingHorizontal: 15}}>
-          <TouchableOpacity style={styles.saveButton} onPress={()=> {console.warn("Saving Enquiry")}}>
-            <Text style={styles.buttonText}>Save</Text>
+          <TouchableOpacity style={styles.submitButton} onPress={submitEnquiry}>
+            <Text style={styles.submitButtonText}>Submit</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.centeredView}>
@@ -250,7 +372,7 @@ const AddEnquiry = ({navigation}) => {
               <View style={styles.modalView}>
                 <Pressable
                   style={[styles.button, styles.buttonClose]}
-                  onPress={() => setModalVisible(!modalVisible)}>
+                  onPress={closeModal}>
                   <Image
                     source={require('../../assets/cancel.png')}
                     style={styles.cancelImage}
@@ -260,20 +382,31 @@ const AddEnquiry = ({navigation}) => {
                 <TextInput
                   style={styles.textInput}
                   placeholder="Enter Maker's Name"
+                  autoCapitalize="none"
+                  keyboardType="maker"
+                  textContentType="maker"
                   // value={manufacturer}
-                  // onChangeText={setManufacturer}
+                  onChangeText={value => onChangeInputField(value, 'maker')}
                 />
                 <TextInput
                   style={styles.textInput}
                   placeholder="Enter Modal"
+                  autoCapitalize="none"
+                  keyboardType="modal"
+                  textContentType="modal"
                   // value={manufacturer}
-                  // onChangeText={setManufacturer}
+                  onChangeText={value => onChangeInputField(value, 'modalName')}
                 />
                 <TextInput
                   style={styles.textInput}
                   placeholder="Enter Variant"
+                  autoCapitalize="none"
+                  keyboardType="variant"
+                  textContentType="variant"
                   // value={manufacturer}
-                  // onChangeText={setManufacturer}
+                  onChangeText={value =>
+                    onChangeInputField(value, 'variantName')
+                  }
                 />
                 <View style={styles.deliveryDateContainer}>
                   <Text>Year of Manufactur</Text>
@@ -287,11 +420,11 @@ const AddEnquiry = ({navigation}) => {
                     mode="date"
                     modal
                     open={open}
-                    date={date}
+                    date={manuYearDate}
                     theme="dark"
                     onConfirm={date => {
                       setOpen(false);
-                      setDate(date);
+                      saveYearOfManu(date);
                     }}
                     onCancel={() => {
                       setOpen(false);
@@ -318,11 +451,11 @@ const AddEnquiry = ({navigation}) => {
                       valueField="value"
                       placeholder={!isFocus ? 'Select Condition' : ' '}
                       searchPlaceholder="Search..."
-                      value={enquiry}
+                      value={condition}
                       onFocus={() => setIsFocus(true)}
                       onBlur={() => setIsFocus(false)}
                       onChange={item => {
-                        setEnquiry(item.value);
+                        setCondtion(item.value);
                         setIsFocus(false);
                       }}
                       // renderLeftIcon={() => (
@@ -333,7 +466,7 @@ const AddEnquiry = ({navigation}) => {
                 </View>
                 <Pressable
                   style={[styles.roundedButton, styles.saveButton]}
-                  onPress={()=> {console.warn('Saving')}}>
+                  onPress={handleModalData}>
                   <Text style={styles.buttonText}>Save</Text>
                 </Pressable>
               </View>
@@ -555,6 +688,20 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: 'white',
+    fontWeight: 'bold',
+  },
+  submitButton: {
+    backgroundColor: '#0984DF',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    marginBottom: 10,
+    alignItems: 'center',
+    borderRadius: 2,
+  },
+  submitButtonText: {
+    textAlign: 'center',
+    color: 'white',
+    fontSize: 16,
     fontWeight: 'bold',
   },
 });
