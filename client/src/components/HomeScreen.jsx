@@ -837,7 +837,7 @@ export default function HomeScreen() {
               }
               exact
             />
-            <Route
+            {/* <Route
               path="administration/configuration/department/adddepartment"
               element={
                 <CheckPermission path="profile">
@@ -845,7 +845,7 @@ export default function HomeScreen() {
                 </CheckPermission>
               }
               exact
-            />
+            /> */}
             <Route
               path="administration/configuration/manufacturer"
               element={

@@ -16,8 +16,12 @@ import Select from 'react-select';
 
 
 export default function AddAssignArea() {
-    const location = useLocation();
-    const { id, firstName, lastName, phoneNumber } = location.state;
+    const location = useLocation();  
+   const areaAssign = location.state ? location.state.assigneAreaPerUser : [];
+    console.log(areaAssign,"9999999999999999")
+    const [selectedVillagesList, setSelectedVillagesList] = useState([]);  
+    const [selectedCategoryList, setSelectedCategoryList] = useState([]);  
+    const [selecteddTypeList, setSelecteddTypeList] = useState([]);  
     const navigate = useNavigate()
     const dispatch = useDispatch()
     const [allVillageData, setAllVillageData] = useState([]);
@@ -29,7 +33,7 @@ export default function AddAssignArea() {
     const [enquireCtaegory, setEnquiryCtaegory] = useState([]);
 
     const addAssignState = useSelector(state => state.addassigneAreaSlice.addassigneAreaState)
-    console.log(addAssignState,"88888888")
+    //console.log(addAssignState,"88888888")
     useEffect(() => {
         if (addAssignState.isSuccess) {
             if (addAssignState.message.isSuccess) {
@@ -65,7 +69,7 @@ export default function AddAssignArea() {
         label: village.name,
     }));
     const distributionoptions = [
-        { value: '1', label: 'AreaWise' }       
+        { value: 1, label: 'AreaWise' }       
       ];
     const handleRemove = (selectedVillage) => {
         const updatedVillages = selectedVillages.filter(
@@ -77,7 +81,7 @@ export default function AddAssignArea() {
 
     function handleSubmit() {
         for (let i = 0; i < selectedOptionVillage.length; i++) {
-            selectedOptionVillage[i].id = id;
+            selectedOptionVillage[i].id = areaAssign[0].id;
             selectedOptionVillage[i].category = selectedCtaegory.value;
             selectedOptionVillage[i].distributionType = selectedDistributionType.value;
         }
@@ -108,7 +112,14 @@ export default function AddAssignArea() {
             console.error('Error in getAllVillageAction:', error);
         });
         getEnquiryCategoryFromDb();
+        setSelectedVillagesList(areaAssign[0].names)
+        setSelecteddTypeList(areaAssign[0].distributionType)
+        setSelectedCategoryList(areaAssign[0].categoryName)
     }, [])
+    console.log(selectedVillagesList,"selectedVillagesListselectedVillagesListselectedVillagesListselectedVillagesList")
+    console.log(selectedCategoryList,"selectedVillagesListselectedVillagesListselectedVillagesListselectedVillagesList")
+    console.log(selecteddTypeList,"selectedVillagesListselectedVillagesListselectedVillagesListselectedVillagesList")
+    console.log(areaAssign[0],"selectedVillagesListselectedVillagesListselectedVillagesListselectedVillagesList")
     return (
         <>
             <div className='addUser myBorder bg-white rounded p-3'>
@@ -125,15 +136,17 @@ export default function AddAssignArea() {
                     <div class=" row mt-2 m-0">
                         <section class="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
                             <label class="myLabel"> Name </label>
-                            <p class="myInput inputElement">{firstName} {lastName}</p>
+                            {areaAssign && <><p class="myInput inputElement">{areaAssign[0].first_name} {areaAssign[0].last_name}</p></>}
+                            
                         </section>
                        
                         <section class="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
                             <label class="myLabel">PhoneNumber </label>
-                            <p class="myInput inputElement">{phoneNumber}</p>
+                          {areaAssign && <><p class="myInput inputElement">{areaAssign[0].phone_number}</p></>}  
                         </section>
                     </div>
                     <div className="row mt-5">
+                        <div className="col-md-4">
                         <h5>Select Category</h5>
                         <Select
                             value={selectedCtaegory}
@@ -142,13 +155,12 @@ export default function AddAssignArea() {
 
                             placeholder="Search for a category..."
                         />
-                    </div>
-                    <div className="row mt-5">
+                        </div>
+                        <div className="col-md-4">
                         <h5>Select DistributionType</h5>
                         <Select options={distributionoptions} onChange={handleChangeDistribution} value={selectedDistributionType}/>
-                        
-                    </div>
-                    <div className="row mt-5">
+                        </div>
+                        <div className="col-md-4">
                         <h5>Select Villages want to assign</h5>
                         <Select
                             value={selectedOptionVillage}
@@ -158,7 +170,36 @@ export default function AddAssignArea() {
                             isMulti
                             placeholder="Search for a village..."
                         />
+                        </div>
+                       
                     </div>
+                   <div className="row mt-5">
+                    <div className="col-md-4">
+                       <h6>Inquiry category</h6>
+                      
+                       <ul>
+                            {selectedCategoryList && selectedCategoryList.map((category,index)=>(
+                                <li key={index}>{category}</li>
+                            ))}
+                        </ul>
+                    </div>
+                    <div className="col-md-4">
+                    <h6>Distribution Type</h6>                   
+                       <ul>
+                            {selecteddTypeList && selecteddTypeList.map((dType,index)=>(
+                                <li key={index}>{dType}</li>
+                            ))}
+                        </ul>
+                    </div>
+                    <div className="col-md-4">
+                        <h6>Villages</h6>
+                        <ul>
+                            {selectedVillagesList && selectedVillagesList.map((village,index)=>(
+                                <li key={index}>{village}</li>
+                            ))}
+                        </ul>
+                    </div>
+                   </div>
                     {/* <div className="row mt-3">
                         {selectedVillages.length > 0 && (
                             <div className="selected-villages">
