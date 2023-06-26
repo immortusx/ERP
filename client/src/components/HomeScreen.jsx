@@ -22,7 +22,8 @@ import Profile from "./Profile";
 import Enquiry from "./Enquiry";
 import Products from "./Products";
 import Master from "./Master";
-import AddDepartment from "./AddDepartment";
+import AreaAssignListList from "./AreaAssignListList";
+import AddAssignArea from "./AddAssignArea"
 
 import logo from "../assets/svg/logo.svg";
 import logoT from "../assets/svg/logofinal.svg";
@@ -322,6 +323,16 @@ export default function HomeScreen() {
                           </NavLink>
                         </li>
                       )}
+                      <li className="inLi">
+                        <NavLink
+                          className={({ isActive }) =>
+                            isActive ? "activeLink" : ""
+                          }
+                          to="sale/areaAssign"
+                        >
+                          Area Assign
+                        </NavLink>
+                      </li>
                     </ul>
                   </div>
                 </li>
@@ -749,7 +760,20 @@ export default function HomeScreen() {
               }
               exact
             />
-
+            <Route
+              path="sale/areaAssign"
+              element={
+                <AreaAssignListList />
+              }
+              exact
+            />
+            <Route
+              path="sale/areaAssign/addAsignArea"
+              element={              
+                < AddAssignArea />                
+              }
+              exact
+            />
             <Route
               path="administration/configuration"
               element={
