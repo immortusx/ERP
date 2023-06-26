@@ -7,7 +7,19 @@ const { db } = require("../Database/dbConfig");
 
 const router = express.Router();
 
-
+router.get('/get-allUser', tokenCheck, async (req, res) => {
+  console.log('>>>>>>>>>get-allUser', req.myData)
+  const urlNew = `CALL sp_all_user()`
+  await db.query(urlNew, async (err, result) => {
+    if (err) {
+      console.log({ isSuccess: false, result: err })
+      res.send({ isSuccess: false, result: 'error' })
+    } else {
+      console.log({ isSuccess: 'success', result: urlNew })
+      res.send({ isSuccess: 'success', result: result[0] })
+    }
+  })
+})
 
 router.get('/get-areaAssignUser', tokenCheck, async (req, res) => {
   console.log('>>>>>>>>>get-areaAssignUser', req.myData)
@@ -23,6 +35,20 @@ router.get('/get-areaAssignUser', tokenCheck, async (req, res) => {
   })
 })
 
+router.get('/edit-areaAssignUserById/:id', tokenCheck, async (req, res) => {
+  console.log('>>>>>>>>>edit-areaAssignUserById')
+  const userId = req.params.id
+  const urlNew = `CALL sp_areaAssign_userPerId(${userId})`
+  await db.query(urlNew, async (err, result) => {
+    if (err) {
+      console.log({ isSuccess: false, result: err })
+      res.send({ isSuccess: false, result: 'error' })
+    } else {
+      console.log({ isSuccess: 'success', result: urlNew })
+      res.send({ isSuccess: 'success', result: result[0] })
+    }
+  })
+})
 router.post('/add-assigneArea', tokenCheck, async (req, res) => {
     console.log('>>>>>add-assigneArea');
     try {
