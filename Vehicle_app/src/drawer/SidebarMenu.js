@@ -8,7 +8,10 @@ const Drawer = createDrawerNavigator();
 const SidebarMenu = () => {
   return (
     <Drawer.Navigator>
-        <Drawer.Screen name='Home' component={Home} options={{headerShown: true}}/>
+        <Drawer.Screen name='Home' component={Home} options={{headerShown: true, headerStyle: {
+              borderWidth: 0.9,
+              borderColor: 'grey',
+            },}}/>
         <Drawer.Screen name='Profile' component={Test} options={{headerShown: true}}/>
         <Drawer.Screen name='Enquiry' component={Test} options={{headerShown: true}}/>
         <Drawer.Screen name='Booking' component={Test} options={{headerShown: true}}/>
@@ -16,7 +19,6 @@ const SidebarMenu = () => {
         <Drawer.Screen name='Sales' component={Test} options={{headerShown: true}}/>
         <Drawer.Screen name='Products' component={Test} options={{headerShown: true}}/>
         <Drawer.Screen name='Manage' component={Test} options={{headerShown: true}}/>
-        <Drawer.Screen name='Add Location' component={AddLocation} options={{headerShown: true}}/>
         <Drawer.Screen name='Sign Out' component={Test} options={{headerShown: true}}/>
     </Drawer.Navigator>
   )

@@ -5,9 +5,32 @@ import {
   TextInput,
   TouchableOpacity,
 } from 'react-native';
-import React from 'react';
+import React, {useState} from 'react';
+import { useDispatch } from 'react-redux';
+import { saveLocationForm } from '../redux/slice/locationFormSlice';
 
 const AddLocation = () => {
+  const dispatch = useDispatch();
+  const [locationForm, setLocationForm] = useState({
+    state: '',
+    district: '',
+    taluka: '',
+    native: ''
+  });
+  const onChangeHandler =(value, field)=> {
+    setLocationForm(preLocation => ({
+      ...preLocation,
+      [field]:value
+    }))
+  }
+  const saveLocation = ()=> {
+    if(locationForm.state.length > 0 && locationForm.district.length > 0 && locationForm.taluka.length > 0 && locationForm.native.length > 0){
+      console.warn(locationForm);
+      dispatch(saveLocationForm(locationForm));
+    }else{
+      console.warn("please fill the field");
+    }
+  }
   return (
     <View style={styles.container}>
       <View style={styles.customerContainer}>
@@ -20,6 +43,7 @@ const AddLocation = () => {
             autoCapitalize="none"
             keyboardType="state"
             textContentType="state"
+            onChangeText={value => onChangeHandler(value, 'state')}
           />
         </View>
         <View style={styles.inputContainer}>
@@ -30,6 +54,7 @@ const AddLocation = () => {
             autoCapitalize="none"
             keyboardType="district"
             textContentType="district"
+            onChangeText={value => onChangeHandler(value, 'district')}
           />
         </View>
         <View style={styles.inputContainer}>
@@ -40,6 +65,7 @@ const AddLocation = () => {
             autoCapitalize="none"
             keyboardType="taluka"
             textContentType="taluka"
+            onChangeText={value => onChangeHandler(value, 'taluka')}
           />
         </View>
         <View style={styles.inputContainer}>
@@ -50,11 +76,12 @@ const AddLocation = () => {
             autoCapitalize="none"
             keyboardType="native"
             textContentType="native"
+            onChangeText={value => onChangeHandler(value, 'native')}
           />
         </View>
       </View>
       <View style={{paddingHorizontal: 15}}>
-        <TouchableOpacity style={styles.saveButton}>
+        <TouchableOpacity style={styles.saveButton} onPress={saveLocation}>
           <Text style={styles.buttonText}>Save</Text>
         </TouchableOpacity>
       </View>
@@ -69,6 +96,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   customerContainer: {
+    marginVertical: 10,
     paddingHorizontal: 15,
   },
   inputContainer: {

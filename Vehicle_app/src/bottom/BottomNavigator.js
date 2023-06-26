@@ -96,7 +96,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#000080',
   },
   plusImg: {
-    width: 55,
+    width: 50,
+    height: 50
   },
 });
 export default BottomNavigator;

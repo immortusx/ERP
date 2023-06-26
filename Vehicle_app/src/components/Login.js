@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   TextInput,
@@ -10,8 +10,13 @@ import {
   Keyboard,
   Image,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useDispatch, useSelector} from 'react-redux';
 import BackgroundImage from '../../assets/cover.jpg';
+import {getLoginUser} from '../redux/slice/getUserLogin';
 const Login = ({navigation}) => {
+  const dispatch = useDispatch();
+  const loginState = useSelector(state => state.getLoginSlice.loginState);
   const [loginData, setLoginData] = useState({
     email: '',
     password: '',
@@ -25,11 +30,53 @@ const Login = ({navigation}) => {
     }
   };
 
+  useEffect(() => {
+    if (loginState.isSuccess === true) {
+      if (loginState.result.message === 'success') {
+        console.warn(loginState.result.result.tokenIs);
+        console.log(loginState.result.result.tokenIs);
+        AsyncStorage.setItem(
+          'branchesList',
+          JSON.stringify(loginState.result.result.branchResult)
+        );
+        AsyncStorage.setItem(
+          'currentBranchId',
+          loginState.result.result.currentBranch
+        );
+        AsyncStorage.setItem('rbacToken', loginState.result.result.tokenIs);
+        AsyncStorage.getItem('rbacToken').then(token => {
+          if (!token) {
+            return;
+          }
+          console.log(token, 'token_--__--he');
+
+          navigation.navigate('Main');
+          console.warn('Welcome');
+          setLoginData({
+            email: '',
+            password: '',
+          });
+        });
+      } else if (loginState.result.message !== 'success') {
+        console.log('Credentials are wrong');
+        alert('Credentials are wrong');
+        // dispatch(setShowMessage("Credentials are wrong"));
+      } else {
+        console.log('Something is wrong');
+        alert('Something is wrong');
+        // dispatch(setShowMessage("Something is wrong"));
+      }
+    }
+    console.log('loginState', loginState);
+  }, [loginState]);
+
   const handleLogin = () => {
-    let email = 'admin@123';
-    let password = 'admin';
-    if (loginData.email == email && loginData.password == password) {
-      navigation.navigate('Main');
+    if (loginData.email.length > 0 && loginData.password.length > 0) {
+      dispatch(getLoginUser(loginData));
+    } else {
+      // dispatch(setShowMessage("Please fill all the field"));
+      console.log('please fill credentials first');
+      console.warn('please fill credentials first');
     }
   };
 
@@ -128,6 +175,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   loginText: {
+    color: "black",
     fontFamily: 'SourceSansProBold',
     fontSize: 24,
     marginTop: 12,
@@ -150,7 +198,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontFamily: 'SourceSansProRegular',
     fontSize: 16,
-    color: '#333',
+    color: 'black',
   },
   loginButton: {
     backgroundColor: '#006400',
