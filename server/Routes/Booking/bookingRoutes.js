@@ -70,12 +70,15 @@ router.post("/addbooking", tokenCheck, async (req, res) => {
       first_name,
       last_name,
       phone_number,
+      whatsapp_number,
       email,
       state,
+      city,
       district,
       taluka,
       village,
       products,
+      model,
       price,
       down_payment,
       payment_mode,
@@ -88,7 +91,7 @@ router.post("/addbooking", tokenCheck, async (req, res) => {
       agent_fee,
     } = req.body;
 
-    const addCustomerSql = `INSERT INTO customers (first_name, last_name, phone_number, email, state, district, taluka, village) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+    const addCustomerSql = `INSERT INTO customers (first_name, last_name, phone_number, whatsapp_number, email, state,city,district, taluka, village) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
     db.query(
       addCustomerSql,
@@ -96,8 +99,10 @@ router.post("/addbooking", tokenCheck, async (req, res) => {
         first_name,
         last_name,
         phone_number,
+        whatsapp_number,
         email,
         state,
+        city,
         district,
         taluka,
         village,
@@ -105,18 +110,19 @@ router.post("/addbooking", tokenCheck, async (req, res) => {
       (err, customerResult) => {
         if (err) {
           console.log(err);
-          // res.send({ isSuccess: false, result: "Error" });
+          res.send({ isSuccess: false, result: "Error" });
         } else {
           console.log({ isSuccess: true, result: customerResult });
           const customer_id = customerResult.insertId;
 
-          const addBookingSql = `INSERT INTO booking (customer_id, products, price, down_payment, payment_mode, booking_date, delivery_date, type_of_use) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+          const addBookingSql = `INSERT INTO booking (customer_id, products,model,price, down_payment, payment_mode, booking_date, delivery_date, type_of_use) VALUES (?, ?,?, ?, ?, ?, ?, ?, ?)`;
 
           db.query(
             addBookingSql,
             [
               customer_id,
               products,
+              model,
               price,
               down_payment,
               payment_mode,
@@ -127,10 +133,10 @@ router.post("/addbooking", tokenCheck, async (req, res) => {
             (err, bookingResult) => {
               if (err) {
                 console.log(err);
-                // res.send({ isSuccess: false, result: "Error" });
+                res.send({ isSuccess: false, result: "Error" });
               } else {
                 console.log({ isSuccess: true, result: bookingResult });
-                // res.send({ isSuccess: true, result: bookingResult });
+                res.send({ isSuccess: true, result: bookingResult });
                 const booking_id = bookingResult.insertId;
                 const addRtoDetails = `INSERT INTO rto_detail (booking_id, rto_tax, rto_passing, insurance, agent_fee) VALUES (?,?,?,?,?)`;
 
@@ -140,7 +146,7 @@ router.post("/addbooking", tokenCheck, async (req, res) => {
                   (err, rtoResults) => {
                     if (err) {
                       console.log(err);
-                      // res.send({ isSuccess: false, result: "Error" });
+                      res.send({ isSuccess: false, result: "Error" });
                     }
                     {
                       console.log({ isSuccess: true, result: 'success' });

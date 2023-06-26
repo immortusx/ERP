@@ -11,6 +11,8 @@ import AdminSlice from './slices/adminSlice'
 import getFeatureSlice from './slices/getFeatureSlice'
 import addRoleSlice from './slices/addRoleSlice'
 import notificationSlice from './slices/notificationSlice'
+import addDepartmentSlice from './slices/Master/Department/addDepartmentSlice';
+import addCategorySlice from './slices/Master/Category/addCategorySlice';
 
 import editUserDataSlice from './slices/editUserDataSlice'
 import editemployeeDataSlice from './slices/editemployeeDataSlice'
@@ -25,32 +27,36 @@ import addDistrictSlice from './slices/Master/District/addDistrictSlice';
 import addTalukaSlice from './slices/Master/Taluka/addTalukaSlice';
 import addVillageSlice from './slices/Master/Village/addVillageSlice';
 import addManufacturerSlice from './slices/Master/Manufacturer/addManufacturerSlice';
+import addassigneAreaSlice from './slices/assignedAreaSlice'
 
 export const store = configureStore({
-    reducer: {
-        getRegisterSlice: getRegisterSlice,
-        getLoginSlice: getLoginSlice,
-        AdminSlice: AdminSlice,
-        profileData: profileDataSlice,
-        addUserSlice: addUserSlice,
-        addemployeeSlice: addemployeeSlice,
-        getUserListSlice: getUserListSlice,
-        getemployeeListSlice: getemployeeListSlice,
-        featuresListState: getFeatureSlice,
-        addRoleState: addRoleSlice,
-        notificationState: notificationSlice,
-        editUserDataState: editUserDataSlice,
-        editemployeeDataState: editemployeeDataSlice,
-        enquiryState: enquirySlice,
-        editRoleDataState: editRoleDataSlice,
-        enquiryFieldSaveState: enquiryFieldSaveSlice,
-        categoryAddState: categoryAddSlice,
-        setNewEnquiryDataState: setNewEnquiryDataSlice,
-        tokenBranchChangeState: tokenBranchChangeSlice,
-        addStateSlice:addStateSlice,
-        addDistrictSlice:addDistrictSlice,
-        addTalukaSlice:addTalukaSlice,
-        addVillageSlice:addVillageSlice,
-        addManufacturerSlice:addManufacturerSlice,
-    }
-})  
+  reducer: {
+    getRegisterSlice: getRegisterSlice,
+    getLoginSlice: getLoginSlice,
+    AdminSlice: AdminSlice,
+    profileData: profileDataSlice,
+    addUserSlice: addUserSlice,
+    addemployeeSlice: addemployeeSlice,
+    getUserListSlice: getUserListSlice,
+    getemployeeListSlice: getemployeeListSlice,
+    featuresListState: getFeatureSlice,
+    addRoleState: addRoleSlice,
+    notificationState: notificationSlice,
+    editUserDataState: editUserDataSlice,
+    editemployeeDataState: editemployeeDataSlice,
+    enquiryState: enquirySlice,
+    editRoleDataState: editRoleDataSlice,
+    enquiryFieldSaveState: enquiryFieldSaveSlice,
+    categoryAddState: categoryAddSlice,
+    setNewEnquiryDataState: setNewEnquiryDataSlice,
+    tokenBranchChangeState: tokenBranchChangeSlice,
+    addStateSlice: addStateSlice,
+    addDistrictSlice: addDistrictSlice,
+    addTalukaSlice: addTalukaSlice,
+    addDepartment: addDepartmentSlice,
+    addCategory: addCategorySlice,
+    addVillageSlice: addVillageSlice,
+    addManufacturerSlice: addManufacturerSlice,
+    addassigneAreaSlice: addassigneAreaSlice,
+  },
+});  
