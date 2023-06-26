@@ -26,8 +26,8 @@ export const getDepartment = async () => {
 
 
 
-// export const deleteStateAction = async (sData) => {
-//   const url = `${process.env.REACT_APP_NODE_URL}/api/master/delete-satebyId`;
+// export const deleteDepartment = async (dData) => {
+//   const url = `${process.env.REACT_APP_NODE_URL}/api/master/delete-department`;
 //   const config = {
 //     headers: {
 //       token: localStorage.getItem("rbacToken"),
@@ -35,7 +35,7 @@ export const getDepartment = async () => {
 //   };
 
 //   try {
-//     const response = await Axios.post(url, sData, config);
+//     const response = await Axios.post(url, dData, config);
 //     if (response.data?.isSuccess) {
 //       return response.data;
 //     }
