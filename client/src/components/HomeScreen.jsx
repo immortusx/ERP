@@ -16,6 +16,8 @@ import AddEmployee from "./AddEmployee";
 import AddRole from "./AddRole";
 import NoAuth from "./NoAuth";
 import EnquiryList from "./EnquiryList";
+import AddDepartment from "./AddDepartment";
+import AddCategory from "./AddCategory"
 import Sales from "./Sales";
 import Manage from "./Manage";
 import Profile from "./Profile";
@@ -55,6 +57,7 @@ import BreadCrumb from './BreadCrumb/BreadCrumb'
 import Manufacturer_list from './Master/Manufacturer/Manufacturer_list';
 import Manufacturer_modal from './Master/Manufacturer/Manufacturer_modal';
 import Department_list from './Master/Department/Department_list';
+import Category_list from "./Master/Category/Category_list";
 import Roles from './Roles'
 import Tax from './Master/Tax/Tax'
 import Sub_Modal from "./Master/Manufacturer/Sub_modal";
@@ -762,16 +765,12 @@ export default function HomeScreen() {
             />
             <Route
               path="sale/areaAssign"
-              element={
-                <AreaAssignListList />
-              }
+              element={<AreaAssignListList />}
               exact
             />
             <Route
               path="sale/areaAssign/addAsignArea"
-              element={              
-                < AddAssignArea />                
-              }
+              element={<AddAssignArea />}
               exact
             />
             <Route
@@ -1013,8 +1012,17 @@ export default function HomeScreen() {
             <Route
               path="administration/configuration/category"
               element={
-                <CheckPermission path="category">
-                  <Branch workFor="category" />
+                <CheckPermission path="profile">
+                  <Category_list workFor="category" />
+                </CheckPermission>
+              }
+              exact
+            />
+            <Route
+              path="administration/configuration/category/addcategory"
+              element={
+                <CheckPermission path="profile">
+                  <AddCategory workFor="addcategory" />
                 </CheckPermission>
               }
               exact

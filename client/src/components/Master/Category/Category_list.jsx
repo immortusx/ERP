@@ -2,8 +2,7 @@ import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Axios from "axios";
 import { getToPathname } from "@remix-run/router";
-import { getDepartment, deleteDepartment } from "./getEditDepartment";
-// import { setShowMessage } from "../redux/slices/notificationSlice";
+import { getCategory } from "./getEditCategory";
 import { setShowMessage } from "../../../redux/slices/notificationSlice";
 import { useNavigate } from "react-router-dom";
 import AlertDeleteModal from "../../AlertDelete/AlertDeleteModal";
@@ -12,34 +11,28 @@ import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from "@mui/icons-material/Clear";
 import { addDepartmentToDb } from "../../../redux/slices/Master/Department/addDepartmentSlice";
 
-
-export default function Department_list({ workFor }) {
+export default function Category_list({ workFor }) {
   const [partsList, setPartsList] = useState([]);
   const [displayConfirmationModal, setDisplayConfirmationModal] =
     useState(false);
-   const [deleteMessage, setDeleteMessage] = useState(null);
-   const [type, setType] = useState(null);
-   const [id, setId] = useState(null);
+  const [deleteMessage, setDeleteMessage] = useState(null);
+  const [type, setType] = useState(null);
+  const [id, setId] = useState(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-
-  
+ 
   useEffect(() => {
 
-     getDepartment()
-       .then((data) => {
-         console.log("Response from getDepartment:", data.result);
-         setPartsList(data.result);
-       })
-       .catch((error) => {
-         console.error("Error in getDepartment:", error);
-       });
+    getCategory()
+      .then((data) => {
+        console.log("Response from getCategory:", data.result);
+        setPartsList(data.result);
+      })
+      .catch((error) => {
+        console.error("Error in getCategory:", error);
+      });
   }, []);
-
-  
-  
- 
 
   const columns = [
     {
@@ -52,25 +45,40 @@ export default function Department_list({ workFor }) {
     },
 
     {
-      field: "name",
+      field: "category_name",
       headerAlign: "left",
       align: "left",
-      headerName: "Department",
+      headerName: "Category",
       minWidth: 120,
       flex: 1,
       valueGetter: (params) => {
-        return `${params.row.name ? params.row.name : "-"}`;
+        return `${params.row.category_name ? params.row.category_name : "-"}`;
       },
     },
     {
-      field: "description",
+      field: "category_description",
       headerAlign: "left",
       align: "left",
-      headerName: "Department description",
+      headerName: "Description",
       minWidth: 250,
       flex: 1,
       valueGetter: (params) => {
-        return `${params.row.description ? params.row.description : "-"}`;
+        return `${
+          params.row.category_description
+            ? params.row.category_description
+            : "-"
+        }`;
+      },
+    },
+    {
+      field: "department",
+      headerAlign: "left",
+      align: "left",
+      headerName: "Department",
+      minWidth: 250,
+      flex: 1,
+      valueGetter: (params) => {
+        return `${params.row.department ? params.row.department : "-"}`;
       },
     },
     {
@@ -136,11 +144,11 @@ export default function Department_list({ workFor }) {
   ];
 
   const deleteActionCall = (data) => {
-    console.log(data.id,"fffffffffffffffffff")
-    setType("department_delete");
+    console.log(data.id, "fffffffffffffffffff");
+    setType("category_delete");
     setId(data.id);
     setDeleteMessage(
-      `Are You Sure You Want To Delete The department '${data.name}'?`
+      `Are You Sure You Want To Delete The category '${data.category_name}'?`
     );
     setDisplayConfirmationModal(true);
   };
@@ -149,32 +157,32 @@ export default function Department_list({ workFor }) {
     setDisplayConfirmationModal(false);
   };
 
- const submitDelete = async () => {
-   console.log(id, "iiiiiiiiiiiiiiii");
-   const url = `${process.env.REACT_APP_NODE_URL}/api/master/delete-department`;
-   const config = {
-     headers: {
-       token: localStorage.getItem("rbacToken"),
-     },
-   };
-   const requestData = {
-    id: id
-   }
-   try {
-     const response = await Axios.post(url, requestData, config);
-     if (response.data?.isSuccess) {
-       dispatch(setShowMessage("Department Deleted"));
+  const submitDelete = async () => {
+    console.log(id, "iiiiiiiiiiiiiiii");
+    const url = `${process.env.REACT_APP_NODE_URL}/api/master/delete-category`;
+    const config = {
+      headers: {
+        token: localStorage.getItem("rbacToken"),
+      },
+    };
+    const requestData = {
+      id: id,
+    };
+    try {
+      const response = await Axios.post(url, requestData, config);
+      if (response.data?.isSuccess) {
+        dispatch(setShowMessage("Category Deleted"));
         dispatch(addDepartmentToDb);
         setDisplayConfirmationModal(false);
-     }else{
-       dispatch(setShowMessage("failed to delete"));
-     }
-     return null;
-   } catch (error) {
-     console.error(error);
-     return null;
-   }
- };
+      } else {
+        dispatch(setShowMessage("failed to delete"));
+      }
+      return null;
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
+  };
 
   return (
     <>
@@ -185,9 +193,7 @@ export default function Department_list({ workFor }) {
               type="button"
               className="btn btn-primary"
               onClick={() => {
-                navigate(
-                  "/administration/configuration/department/adddepartment"
-                );
+                navigate("/administration/configuration/category/addcategory");
               }}
             >
               <svg
@@ -201,7 +207,7 @@ export default function Department_list({ workFor }) {
                 <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
                 <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
               </svg>
-              &nbsp; Add Department
+              &nbsp; Add Category
             </button>
           </h6>
         </div>
@@ -250,20 +256,15 @@ export default function Department_list({ workFor }) {
             autoPageSize={false}
           />
         </div>
-         <AlertDeleteModal
-  showModal={displayConfirmationModal}
-  confirmModal={submitDelete}
-  hideModal={hideConfirmationModal}
-  type={type}
-  id={id}
-  message={deleteMessage}
-/>
+        <AlertDeleteModal
+          showModal={displayConfirmationModal}
+          confirmModal={submitDelete}
+          hideModal={hideConfirmationModal}
+          type={type}
+          id={id}
+          message={deleteMessage}
+        />
       </div>
     </>
   );
 }
-
-
-
-
-
