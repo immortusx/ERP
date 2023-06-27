@@ -33,6 +33,7 @@ export default function AreaAssignListList() {
                 dispatch(setShowMessage('Area is assignrd'))
                 dispatch(clearAddassigneAreaState())
                 setShow(false)
+                getAreaAssignUserFromDb();
 
             } else {
                 dispatch(setShowMessage('Something is wrong'))
@@ -147,9 +148,9 @@ export default function AreaAssignListList() {
                             <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5ZM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0H11Zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5h9.916Zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5Z" />
                         </svg>
                     </button>
-                    <button className='myActionBtn m-1'>
+                    {/* <button className='myActionBtn m-1'>
                         assign
-                    </button>
+                    </button> */}
                 </div>
             ),
         }
@@ -163,17 +164,34 @@ export default function AreaAssignListList() {
         };
         await Axios.get(url, config).then((response) => {
             if (response.data?.isSuccess) {
-console.log(response.data.result,"response.data.resultresponse.data.result")
-                const combinedArray = response.data.result.reduce((result, obj) => {
-                    const existingObj = result.find(item => item.id === obj.id);
-                    if (existingObj) {
-                        existingObj.names.push(obj.name);
-                    } else {
-                        result.push({ id: obj.id, category_name: obj.category_name, distribution_type: obj.distribution_type, first_name: obj.first_name, last_name: obj.last_name, phone_number: obj.phone_number, names: [obj.name] });
-                    }
+                console.log(response.data.result, "response.data.resultresponse.data.result")
+                function combineObjects(array) {
+                    const combinedObjects = {};
+                  
+                    // Iterate through the array
+                    array.forEach(obj => {
+                      const key = obj.category_name + "_" + obj.id;
+                  
+                      // Create or update the combined object
+                      if (combinedObjects.hasOwnProperty(key)) {
+                        combinedObjects[key] = { ...combinedObjects[key], ...obj };
+                      } else {
+                        combinedObjects[key] = obj;
+                      }
+                    });
+                  
+                    // Convert combined objects back to an array
+                    const result = Object.values(combinedObjects);
+                  
                     return result;
-                }, []);
-                
+                  }
+                  
+                  // Call the function with the array of objects
+                  const combinedArray = combineObjects(response.data.result);
+                  
+                  // Output the combined array
+                  console.log(combinedArray,"&&&&&&&&&&&&&&&&&&&&77777");
+
                 setareaAssign(combinedArray)
 
             }
@@ -225,7 +243,8 @@ console.log(response.data.result,"response.data.resultresponse.data.result")
         })
     }
     const handleEditArea = async (ev) => {
-        const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/edit-areaAssignUserById/${ev.id}`;
+        console.log(ev,"evvvvvv")
+        const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/edit-areaAssignUserById/${ev.id}/${ev.category_id}`;
         const config = {
             headers: {
                 token: localStorage.getItem('rbacToken')
@@ -241,28 +260,34 @@ console.log(response.data.result,"response.data.resultresponse.data.result")
                     if (!existingObj.names.includes(obj.name)) {
                         existingObj.names.push(obj.name);
                     }
-                    if (!existingObj.categoryName.includes(obj.category_name)) {
-                        existingObj.categoryName.push(obj.category_name);
+                    if (!existingObj.nameId.includes(obj.distribution_id)) {
+                        existingObj.nameId.push(obj.distribution_id);
                     }
-                    if (!existingObj.distributionType.includes(obj.distribution_type)) {
-                        existingObj.distributionType.push(obj.distribution_type);
-                    }
+                    // if (!existingObj.categoryName.includes(obj.category_name)) {
+                    //     existingObj.categoryName.push(obj.category_name);
+                    // }
+                    // if (!existingObj.distributionType.includes(obj.distribution_type)) {
+                    //     existingObj.distributionType.push(obj.distribution_type);
+                    // }
                 } else {
                     result.push({
                         id: obj.id,
-                        categoryName: [obj.category_name],
-                        distributionType: [obj.distribution_type],
+                        categoryName: obj.category_name,
+                        distributionType: obj.distribution_type,
                         first_name: obj.first_name,
                         last_name: obj.last_name,
                         phone_number: obj.phone_number,
-                        names: [obj.name]
+                        names: [obj.name],
+                        nameId: [obj.distribution_id],
+                        category_id:obj.category_id,
+                        distribution_type:obj.dType
                     });
                 }
                 return result;
             }, []);
 
             setAssignedAreaPerUser(combinedArrayForIndividualUser)
-            //console.log(combinedArrayForIndividualUser[0],"combinedArrayForIndividualUsercombinedArrayForIndividualUser")   
+            console.log(combinedArrayForIndividualUser[0],"combinedArrayForIndividualUsercombinedArrayForIndividualUser")   
             //console.log(assigneAreaPerUser,"assigneAreaPerUserassigneAreaPerUserassigneAreaPerUserassigneAreaPerUser")   
             navigate('/sale/areaAssign/addAsignArea', { state: { assigneAreaPerUser: combinedArrayForIndividualUser } })
         }
