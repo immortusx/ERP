@@ -20,6 +20,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {setEnquiryDb} from '../redux/slice/addEnquirySlice';
 import {saveEnquiryModalForm} from '../redux/slice/addEnquiryModal';
 import {saveModalData} from '../redux/slice/modalDataSlice';
+import SweetSuccessAlert from './subCom/SweetSuccessAlert';
 const AddEnquiry = ({navigation}) => {
   const dispatch = useDispatch();
   // const enquiryState = useSelector(state => state.enquriySlice.enquiryState);
@@ -34,6 +35,7 @@ const AddEnquiry = ({navigation}) => {
   const [date, setDate] = useState(new Date());
   const [expDeliveryDate, setExpDeliveryDate] = useState(new Date());
   const [manuYearDate, setManuYearDate] = useState(new Date());
+  const [showModal, setShowModal] = useState(false);
   const [isFocus, setIsFocus] = useState(false);
   const [enquiry, setEnquiry] = useState(null);
   const [condition, setCondtion] = useState(null);
@@ -92,7 +94,8 @@ const AddEnquiry = ({navigation}) => {
   };
   useEffect(() => {
     if (enquiryState.isSuccess === true) {
-      console.warn('Enquiry Succesful');
+      console.log("Enquiry submitted")
+      openModal();
     }
   }, [enquiryState]);
   const submitEnquiry = () => {
@@ -174,7 +177,9 @@ const AddEnquiry = ({navigation}) => {
       [field]: value,
     }));
   };
-
+  const openModal = () => {
+    setShowModal(true);
+  };
   return (
     <ScrollView>
       <View style={styles.container}>
@@ -473,6 +478,7 @@ const AddEnquiry = ({navigation}) => {
             </View>
           </Modal>
         </View>
+        <SweetSuccessAlert modalShow={showModal}/>
       </View>
     </ScrollView>
   );

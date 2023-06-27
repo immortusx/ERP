@@ -8,9 +8,11 @@ import {
 import React, {useState} from 'react';
 import { useDispatch } from 'react-redux';
 import { saveLocationForm } from '../redux/slice/locationFormSlice';
+import SweetSuccessAlert from './subCom/SweetSuccessAlert';
 
 const AddLocation = () => {
   const dispatch = useDispatch();
+  const [showModal, setShowModal] = useState(false);
   const [locationForm, setLocationForm] = useState({
     state: '',
     district: '',
@@ -25,12 +27,15 @@ const AddLocation = () => {
   }
   const saveLocation = ()=> {
     if(locationForm.state.length > 0 && locationForm.district.length > 0 && locationForm.taluka.length > 0 && locationForm.native.length > 0){
-      console.warn(locationForm);
-      dispatch(saveLocationForm(locationForm));
+      dispatch(saveLocationForm(locationForm))
+      openModal();
     }else{
       console.warn("please fill the field");
     }
   }
+  const openModal = () => {
+    setShowModal(true);
+  };
   return (
     <View style={styles.container}>
       <View style={styles.customerContainer}>
@@ -85,6 +90,7 @@ const AddLocation = () => {
           <Text style={styles.buttonText}>Save</Text>
         </TouchableOpacity>
       </View>
+      <SweetSuccessAlert modalShow={showModal}/>
     </View>
   );
 };
