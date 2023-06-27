@@ -23,24 +23,6 @@ export default function Department_list({ workFor }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-
-  
-  useEffect(() => {
-
-     getDepartment()
-       .then((data) => {
-         console.log("Response from getDepartment:", data.result);
-         setPartsList(data.result);
-       })
-       .catch((error) => {
-         console.error("Error in getDepartment:", error);
-       });
-  }, []);
-
-  
-  
- 
-
   const columns = [
     {
       field: "id",
@@ -163,8 +145,10 @@ export default function Department_list({ workFor }) {
    try {
      const response = await Axios.post(url, requestData, config);
      if (response.data?.isSuccess) {
+       getDepartmentForm();
        dispatch(setShowMessage("Department Deleted"));
         dispatch(addDepartmentToDb);
+        getDepartment();
         setDisplayConfirmationModal(false);
      }else{
        dispatch(setShowMessage("failed to delete"));
@@ -175,6 +159,23 @@ export default function Department_list({ workFor }) {
      return null;
    }
  };
+
+const getDepartmentForm=() =>{
+ getDepartment()
+    .then((data) => {
+      console.log("Response from getDepartment:", data.result);
+      setPartsList(data.result);
+    })
+    .catch((error) => {
+      console.error("Error in getDepartment:", error);
+    });
+}
+
+useEffect(() => {
+  getDepartmentForm()
+}, []);
+
+
 
   return (
     <>

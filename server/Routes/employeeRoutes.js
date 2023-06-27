@@ -12,7 +12,7 @@ const router = express.Router();
 //================addEmployee===============//
 router.post("/add-employee", tokenCheck, async (req, res) => {
   console.log(">>>>>employee");
-  console.log(req.body);
+  console.log(req.body,"asjdxfkclgh");
 
   const roleArr = req.body.role;
   const firstName = req.body.firstName;
@@ -20,15 +20,17 @@ router.post("/add-employee", tokenCheck, async (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
   const phoneNumber = req.body.phoneNumber;
-  const branchRole = req.body.branchRole;
+  // const branchRole = req.body.branchRole;
   const bankname = req.body.bankname;
   const bankBranch = req.body.bankBranch;
   const accountNo = req.body.accountNo;
   const accountType = req.body.accountType;
   const ifscCode = req.body.ifscCode;
   const bloodgroup = req.body.bloodgroup;
+  const branchId = req.body.branchId;
   const selectedDate = moment(req.body.selectedDate).format("YYYY/MM/DD");
-  const departmentId = 1;
+  // const departmentId = 1;
+  const departmentId = req.body.departmentId;
   const user_type_id = 2;
 
   const hashedPassword = await hasThePass(password);
@@ -45,14 +47,18 @@ router.post("/add-employee", tokenCheck, async (req, res) => {
 
       const userId = result.insertId;
 
-      for (const branchId of Object.keys(branchRole)) {
-        const rolesAr = branchRole[branchId];
-        for (const roleId of rolesAr) {
-          await queryDatabase(
-            `INSERT INTO branch_department_user(branch_id, department_id, user_id, role_id) VALUES('${branchId}','${departmentId}','${userId}','${roleId}')`
-          );
-        }
-      }
+      // for (const branchId of Object.keys(branchRole)) {
+      //   const rolesAr = branchRole[branchId];
+      //   for (const roleId of rolesAr) {
+      //     await queryDatabase(
+      //       `INSERT INTO branch_department_user(branch_id, department_id, user_id, role_id) VALUES('${branchId}','${departmentId}','${userId}','${roleId}')`
+      //     );
+      //   }
+      // }
+
+      await queryDatabase(
+        `INSERT INTO employee_detail(branch_id, department_id, user_id) VALUES('${branchId}','${departmentId}','${userId}')`
+      );
 
       await queryDatabase(
         `INSERT INTO bank_details (bank_name, bank_branch, account_number, account_type, ifsc_code, user_id) VALUES('${bankname}','${bankBranch}','${accountNo}','${accountType}','${ifscCode}','${userId}')`
