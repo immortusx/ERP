@@ -47,7 +47,7 @@ const BottomNavigator = () => {
                 }}>
                 <Image
                   style={styles.plusImg}
-                  source={require('../../assets/plus.png')}
+                  source={require('../../assets/home.png')}
                 />
               </TouchableOpacity>
             );

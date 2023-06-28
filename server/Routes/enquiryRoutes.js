@@ -146,7 +146,7 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
 
   const fristName = req.body.firstName;
   const lastName = req.body.lastName;
-  const middleName = req.body.fatherName || null;
+  const middleName = req.body.fatherName;
   const phoneNumber = req.body.mobileNumber;
   const email = req.body.emailId;
   const isActive = 1;
@@ -156,6 +156,12 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
   const block = req.body.block;
   const village = req.body.village;
 
+  const maker = req.body.maker;
+  const modalName = req.body.modalName;
+  const variantName = req.body.variantName;
+  const year = req.body.year;
+  const condition_of = req.body.condition_of;
+
   const enquiryTypeId = "1";
   const visitReason = "1";
   const branchId = req.body.branchId;
@@ -164,7 +170,6 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
   const enquiryDate = req.body.enquiryDate;
   const deliveryDate = req.body.deliveryDate;
   const sourceOfEnquiry = req.body.sourceOfEnquiry;
-  console.log("middleName", middleName);
 
   const url = `INSERT INTO customers (first_name, middle_name, last_name, phone_number, email, is_active, state, district, taluka, block, village) VALUES ('${fristName}','${middleName}','${lastName}','${phoneNumber}','${email}','${isActive}','${state}','${district}','${taluka}','${block}','${village}')`;
 
@@ -187,7 +192,26 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
           res.send({ isSuccess: false, result: "error" });
         } else if (result && result.insertId) {
           console.log({ isSuccess: "success", result: urlNew });
-          res.send({ isSuccess: "success", result: "success" });
+          if (
+            (maker &&
+              modalName &&
+              variantName &&
+              year &&
+              condition_of != null) ||
+            undefined
+          ) {
+            const newYearOfManufactur = await getDateInFormate(year);
+            const urlSql = `INSERT INTO manufactur_details (enquiry_id, maker, modalName, variantName, year_of_manufactur, condition_of) VALUES('${result.insertId}', '${maker}', '${modalName}', '${variantName}', '${newYearOfManufactur}', '${condition_of}')`;
+            await db.query(urlSql, (err, result) => {
+              if (err) {
+                console.log(err);
+              } else {
+                res.send({ isSuccess: "success", result: "success" });
+              }
+            });
+          } else {
+            res.send({ isSuccess: "success", result: "success" });
+          }
         }
       });
     }

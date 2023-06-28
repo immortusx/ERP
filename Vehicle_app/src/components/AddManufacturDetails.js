@@ -14,9 +14,11 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useDispatch } from 'react-redux';
 import { saveManufacturerDetails } from '../redux/slice/manufacturerDetailsSlice';
+import SweetSuccessAlert from './subCom/SweetSuccessAlert';
 const AddManufacturDetails = () => {
   const dispatch = useDispatch();
   const [value, setValue] = useState(null);
+  const [showModal, setShowModal] = useState(false);
   const [isFocus, setIsFocus] = useState(false);
   const [manufacturer, setManufacturer] = useState(null);
   const [modal, setModal] = useState(null);
@@ -49,7 +51,10 @@ const AddManufacturDetails = () => {
     dispatch(saveManufacturerDetails({
       manufacturer, modal, variant
     }))
-
+    openModal();
+  };
+  const openModal = () => {
+    setShowModal(true);
   };
   return (
     <View style={styles.container}>
@@ -153,6 +158,7 @@ const AddManufacturDetails = () => {
           <Text style={styles.buttonText}>Save</Text>
         </TouchableOpacity>
       </View>
+      <SweetSuccessAlert modalShow={showModal}/>
     </View>
   );
 };
