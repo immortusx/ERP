@@ -51,7 +51,6 @@ const Login = ({navigation}) => {
           console.log(token, 'token_--__--he');
 
           navigation.navigate('Main');
-          console.warn('Welcome');
           setLoginData({
             email: '',
             password: '',
@@ -63,7 +62,6 @@ const Login = ({navigation}) => {
         // dispatch(setShowMessage("Credentials are wrong"));
       } else {
         console.log('Something is wrong');
-        alert('Something is wrong');
         // dispatch(setShowMessage("Something is wrong"));
       }
     }

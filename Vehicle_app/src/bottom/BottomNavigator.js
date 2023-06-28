@@ -47,7 +47,7 @@ const BottomNavigator = () => {
                 }}>
                 <Image
                   style={styles.plusImg}
-                  source={require('../../assets/home.png')}
+                  source={require('../../assets/hom.png')}
                 />
               </TouchableOpacity>
             );
@@ -89,11 +89,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   enquiryBtn: {
-    backgroundColor: '#000080',
+    backgroundColor: '#0A8BE2',
   },
 
   bookingBtn: {
-    backgroundColor: '#000080',
+    backgroundColor: '#0A8BE2',
   },
   plusImg: {
     width: 50,

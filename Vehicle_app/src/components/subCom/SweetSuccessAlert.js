@@ -26,7 +26,6 @@ const SweetSuccessAlert = ({modalShow}) => {
         onRequestClose={hideModal}>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <Text style={styles.modalText}>Submitted succesfully</Text>
             <Pressable
             //   style={[styles.button, styles.buttonClose]}
               onPress={hideModal}>
@@ -35,6 +34,7 @@ const SweetSuccessAlert = ({modalShow}) => {
                   source={require('../../../assets/success.png')}
                 />
             </Pressable>
+            <Text style={styles.modalText}>Submitted succesfully</Text>
           </View>
         </View>
       </Modal>
@@ -74,8 +74,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   modalText: {
-    marginBottom: 15,
     textAlign: 'center',
+    margin: 10
   },
   successImg: {
     width: 50,

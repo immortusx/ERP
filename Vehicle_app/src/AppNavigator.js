@@ -7,6 +7,8 @@ import Login from './components/Login';
 import Main from './rootNav/Main';
 import AddLocation from './components/AddLocation';
 import AddManufacturDetails from './components/AddManufacturDetails';
+import AdditonalDetails from './components/AdditonalDetails';
+import ScheduleCall from './components/ScheduleCall';
 const Stack = createStackNavigator();
 const AppNavigator = () => {
   return (
@@ -39,6 +41,28 @@ const AppNavigator = () => {
         <Stack.Screen
           name="Add Manufacturer Details"
           component={AddManufacturDetails}
+          options={{
+            headerShown: true,
+            headerStyle: {
+              borderWidth: 0.9,
+              borderColor: 'grey',
+            },
+          }}
+        />
+        <Stack.Screen
+          name="Additonal Details"
+          component={AdditonalDetails}
+          options={{
+            headerShown: true,
+            headerStyle: {
+              borderWidth: 0.9,
+              borderColor: 'grey',
+            },
+          }}
+        />
+         <Stack.Screen
+          name="Schedule Call"
+          component={ScheduleCall}
           options={{
             headerShown: true,
             headerStyle: {
