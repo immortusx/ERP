@@ -35,10 +35,11 @@ router.get('/get-areaAssignUser', tokenCheck, async (req, res) => {
   })
 })
 
-router.get('/edit-areaAssignUserById/:id', tokenCheck, async (req, res) => {
+router.get('/edit-areaAssignUserById/:id/:category', tokenCheck, async (req, res) => {
   console.log('>>>>>>>>>edit-areaAssignUserById')
   const userId = req.params.id
-  const urlNew = `CALL sp_areaAssign_userPerId(${userId})`
+  const category = req.params.category
+  const urlNew = `CALL sp_areaAssign_userPerId(${userId},${category})`
   await db.query(urlNew, async (err, result) => {
     if (err) {
       console.log({ isSuccess: false, result: err })

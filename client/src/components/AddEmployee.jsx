@@ -36,6 +36,7 @@ export default function Addemployee({ workFor }) {
 
   const [roles, setRoles] = useState([]);
   const [branches, setBranchs] = useState([]);
+  const [departmentList, setDepartmentList] = useState([]);
   const [employeeData, setemployeeData] = useState({
     firstName: "",
     lastName: "",
@@ -51,6 +52,10 @@ export default function Addemployee({ workFor }) {
     accountType: "",
     ifscCode: "",
   });
+  const [jobdetails, setJobDetails] = useState({
+    branch:"",
+    department:"",
+  })
   const [selectedDate, setSelectedDate] = useState("");
   const [bloodgroup, setBloodGroup] = useState("");
   const bloodGroups = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
@@ -91,6 +96,7 @@ export default function Addemployee({ workFor }) {
     console.log("bloodgroup", bloodgroup);
     console.log("branchRoles", branchRoles);
     console.log("BankDetais", BankDetais);
+    console.log("jobdetails", jobdetails);
     const fN = employeeData.firstName;
     const lN = employeeData.lastName;
     const email = employeeData.email;
@@ -101,6 +107,8 @@ export default function Addemployee({ workFor }) {
     const an = BankDetais.accountNo;
     const at = BankDetais.accountType;
     const ic = BankDetais.ifscCode;
+    const brd = jobdetails.branch;
+    const dp = jobdetails.department;
     const bg = bloodgroup;
     const bd = selectedDate;
 
@@ -115,11 +123,15 @@ export default function Addemployee({ workFor }) {
       at.length > 0 &&
       ic.length > 0 &&
       bg.length > 0 &&
+      brd.length > 0 &&
+      dp.length > 0 &&
       // bd.length > 0 &&
-      (workFor === "forAdd" ? pass.length > 0 : true) &&
-      Object.keys(branchRoles).length > 0
-    ) {
-      employeeData["branchRole"] = branchRoles;
+      (workFor === "forAdd" ? pass.length > 0 : true)
+      //  &&
+      // Object.keys(branchRoles).length > 0
+      ) {
+        // employeeData["branchRole"] = branchRoles;
+        console.log(workFor,"true");
       employeeData["bankname"] = BankDetais.bankname;
 
       employeeData["bankBranch"] = BankDetais.bankBranch;
@@ -130,18 +142,24 @@ export default function Addemployee({ workFor }) {
 
       employeeData["ifscCode"] = BankDetais.ifscCode;
 
+      employeeData["branch"] = jobdetails.branch;
+
+      employeeData["department"] = jobdetails.department;
+
       employeeData["bloodgroup"] = bloodgroup;
 
       employeeData["selectedDate"] = selectedDate;
-      console.log(workFor);
+      
       if (workFor === "forEdit") {
         employeeData["id"] = editemployeeData.user_id;
         console.log("editData", employeeData);
         dispatch(editemployeeUpdateToDb(employeeData));
       } else {
         dispatch(addemployeeToDb(employeeData));
+        console.log(addemployeeToDb, "addemployeeToDb");
       }
     } else {
+       console.log(workFor,"false");
       dispatch(setShowMessage("All field must be field"));
     }
   }
@@ -187,6 +205,10 @@ export default function Addemployee({ workFor }) {
           accountType: editemployeeData.account_number,
           ifscCode: editemployeeData.ifsc_code,
         });
+        setJobDetails({
+          branch:editemployeeData.branch_name,
+          department:editemployeeData.department_name,
+        });
       }
     }
     return () => {
@@ -215,7 +237,10 @@ export default function Addemployee({ workFor }) {
       accountType: "",
       ifscCode: "",
     });
-
+ setJobDetails({
+   branch: "",
+   department: "",
+ });
     const allInp = document.getElementsByClassName("inputElement");
     Array.from(allInp).forEach((item) => {
       item.value = "";
@@ -243,10 +268,29 @@ export default function Addemployee({ workFor }) {
     };
     await Axios.get(url, config).then((response) => {
       if (response.data?.isSuccess) {
-        setBranchs(response.data.result);
+        const branchdata = response.data.result;
+        setBranchs(branchdata);
+        console.log(branchdata, "branchdata");
       }
     });
   }
+
+  const getDepartmentList = async () => {
+    const url = `${process.env.REACT_APP_NODE_URL}/api/master/get-department-list`;
+    const config = {
+      headers: {
+        token: localStorage.getItem("rbacToken"),
+      },
+    };
+    await Axios.get(url, config).then((response) => {
+      if (response.data.isSuccess) {
+        setDepartmentList(response.data.result);
+      }
+    });
+  };
+
+
+
   useEffect(() => {
     if (addemployeeState.isSuccess) {
       if (addemployeeState.message.result === "success") {
@@ -265,6 +309,7 @@ export default function Addemployee({ workFor }) {
   useEffect(() => {
     getBranchsFromDb();
     getRolesFromDb();
+    getDepartmentList();
   }, []);
 
   function makeSelected(e, side, item) {
@@ -334,6 +379,12 @@ export default function Addemployee({ workFor }) {
     const name = e.target.name;
     const value = e.target.value;
     setBankDetais({ ...BankDetais, [name]: value });
+  }
+  const onChangejobdetails =(e) =>{
+     const name = e.target.name;
+     const value = e.target.value;
+     setJobDetails({ ...jobdetails, [name]: value });
+     console.log(value);
   }
   const handleDateChange = (date) => {
     setSelectedDate(date);
@@ -530,7 +581,9 @@ export default function Addemployee({ workFor }) {
                 id="bloodGroup"
                 name="bloodGroup"
                 onChange={(e) => setBloodGroup(e.target.value)}
-                value={!editemployeeData ? bloodgroup : editemployeeData.bloodgroup}
+                value={
+                  !editemployeeData ? bloodgroup : editemployeeData.bloodgroup
+                }
               >
                 {bloodGroups.map((group, index) => (
                   <option key={index} value={group}>
@@ -542,135 +595,48 @@ export default function Addemployee({ workFor }) {
           </div>
         </main>
         <main className="mt-4">
-          <h5 className="m-0">
+          {/*<h5 className="m-0">
             {workFor === "forAdd" ? "Select branch" : "Edit branch"}
-          </h5>
-          <div className=" row m-0">
-            <section className="d-flex mt-3 flex-column  col-12">
-              <label className="myLabel">Select one or more branch</label>
-              <div className="swapSelection d-flex flex-column flex-md-row mt-2">
-                <main>
-                  <label className="pb-2">
-                    Available branches (
-                    {branches && branches.length > 0 ? branches.length : 0})
-                  </label>
-                  <ul
-                    ref={selectInp}
-                    name="selectRole"
-                    className="inputElement"
-                  >
-                    {branches.length > 0 &&
-                      branches.map((item, index) => {
-                        return (
-                          <li
-                            onClick={(event) => {
-                              makeSelected(event, "rightSide", item);
-                            }}
-                            className="text-uppercase"
-                            key={index}
-                            value={item.id}
-                          >
-                            <div className="d-flex align-items-center">
-                              {/* <input type='checkbox' className='m-2 myCheckBox inputElement' onChange={(e) => { onChangeHandler(e) }} name="enableemployee" /> */}
-                              <p className="ms-1">{item.name}</p>
-                            </div>
-                          </li>
-                        );
-                      })}
-                  </ul>
-                </main>
-
-                <div className="d-flex flex-row flex-md-column justify-content-around allBtnsMain m-3">
-                  <div
-                    ref={rightArrowBtn}
-                    className="arrowBtn disabledBtn"
-                    name="rightDiv"
-                    onClick={rightClick}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="currentColor"
-                      className="bi bi-arrow-right"
-                      viewBox="0 0 16 16"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"
-                      />
-                    </svg>
-                  </div>
-                  <div
-                    ref={leftArrowBtn}
-                    className="arrowBtn disabledBtn"
-                    onClick={leftClick}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      fill="currentColor"
-                      className="bi bi-arrow-left"
-                      viewBox="0 0 16 16"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"
-                      />
-                    </svg>
-                  </div>
-                </div>
-                <main>
-                  <label className="pb-2">
-                    Selected (
-                    {branchRoles && Object.keys(branchRoles).length
-                      ? connectedBranch
-                      : 0}
-                    )
-                  </label>
-
-                  <ul
-                    ref={selectedInp}
-                    className="inputElement"
-                    name="selectedRole"
-                  >
-                    {branchRoles &&
-                      Object.keys(branchRoles).length > 0 &&
-                      showSelectedData.map((item, index) => {
-                        return (
-                          <>
-                            <li
-                              value={item.branch.id}
-                              onDoubleClick={editBranchRole}
-                              onClick={(event) => {
-                                makeSelected(event, "leftSide", item.branch.id);
-                              }}
-                              className="text-uppercase"
-                              key={index}
-                            >
-                              <div className="d-flex flex-wrap align-items-center  justify-content-between">
-                                {item.branch.name}
-
-                                <div className="d-flex flex-wrap">
-                                  {item.role.map((i, index) => {
-                                    return (
-                                      <span
-                                        key={index}
-                                        value={i.id}
-                                        className="myTag myH7 m-1"
-                                      >
-                                        {i.role}
-                                      </span>
-                                    );
-                                  })}
-                                </div>
-                              </div>
-                            </li>
-                          </>
-                        );
-                      })}
-                  </ul>
-                </main>
-              </div>
+                </h5>*/}
+          <h5 className="m-0">Job Information</h5>
+          <div className="row mt-3 m-0">
+            <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
+              <label className="myLabel" htmlFor="bloodGroup">
+                Select Branch
+              </label>
+              <select
+                className="form-control"
+                id="branch"
+                name="branch"
+                onChange={onChangejobdetails}
+                value={jobdetails.value}
+              >
+                <option value="">Select Branch Name</option>
+                {branches.map((branch, index) => (
+                  <option key={index} value={branch.id}>
+                    {branch.name}
+                  </option>
+                ))}
+              </select>
+            </section>
+            <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
+              <label className="myLabel" htmlFor="bloodGroup">
+                Select Department
+              </label>
+              <select
+                className="form-control"
+                id="department"
+                name="department"
+                onChange={onChangejobdetails}
+                value={jobdetails.value}
+              >
+                <option value="">Select Department Name</option>
+                {departmentList.map((dept, index) => (
+                  <option key={index} value={dept.id}>
+                    {dept.name}
+                  </option>
+                ))}
+              </select>
             </section>
             {/* ===========bankDetails========== */}
             <main className="mt-4">
@@ -814,3 +780,133 @@ export default function Addemployee({ workFor }) {
     </>
   );
 }
+
+
+
+
+  // <section className="d-flex mt-3 flex-column  col-12">
+            //   <label className="myLabel">Select one or more branch</label>
+            //   <div className="swapSelection d-flex flex-column flex-md-row mt-2">
+            //     <main>
+            //       <label className="pb-2">
+            //         Available branches (
+            //         {branches && branches.length > 0 ? branches.length : 0})
+            //       </label>
+            //       <ul
+            //         ref={selectInp}
+            //         name="selectRole"
+            //         className="inputElement"
+            //       >
+            //         {branches.length > 0 &&
+            //           branches.map((item, index) => {
+            //             return (
+            //               <li
+            //                 onClick={(event) => {
+            //                   makeSelected(event, "rightSide", item);
+            //                 }}
+            //                 className="text-uppercase"
+            //                 key={index}
+            //                 value={item.id}
+            //               >
+            //                 <div className="d-flex align-items-center">
+            //                   {/* <input type='checkbox' className='m-2 myCheckBox inputElement' onChange={(e) => { onChangeHandler(e) }} name="enableemployee" /> */}
+            //                   <p className="ms-1">{item.name}</p>
+            //                 </div>
+            //               </li>
+            //             );
+            //           })}
+            //       </ul>
+            //     </main>
+
+            //     <div className="d-flex flex-row flex-md-column justify-content-around allBtnsMain m-3">
+            //       <div
+            //         ref={rightArrowBtn}
+            //         className="arrowBtn disabledBtn"
+            //         name="rightDiv"
+            //         onClick={rightClick}
+            //       >
+            //         <svg
+            //           xmlns="http://www.w3.org/2000/svg"
+            //           fill="currentColor"
+            //           className="bi bi-arrow-right"
+            //           viewBox="0 0 16 16"
+            //         >
+            //           <path
+            //             fillRule="evenodd"
+            //             d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"
+            //           />
+            //         </svg>
+            //       </div>
+            //       <div
+            //         ref={leftArrowBtn}
+            //         className="arrowBtn disabledBtn"
+            //         onClick={leftClick}
+            //       >
+            //         <svg
+            //           xmlns="http://www.w3.org/2000/svg"
+            //           width="16"
+            //           height="16"
+            //           fill="currentColor"
+            //           className="bi bi-arrow-left"
+            //           viewBox="0 0 16 16"
+            //         >
+            //           <path
+            //             fillRule="evenodd"
+            //             d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"
+            //           />
+            //         </svg>
+            //       </div>
+            //     </div>
+            //     <main>
+            //       <label className="pb-2">
+            //         Selected (
+            //         {branchRoles && Object.keys(branchRoles).length
+            //           ? connectedBranch
+            //           : 0}
+            //         )
+            //       </label>
+
+            //       <ul
+            //         ref={selectedInp}
+            //         className="inputElement"
+            //         name="selectedRole"
+            //       >
+            //         {branchRoles &&
+            //           Object.keys(branchRoles).length > 0 &&
+            //           showSelectedData.map((item, index) => {
+            //             return (
+            //               <>
+            //                 <li
+            //                   value={item.branch.id}
+            //                   onDoubleClick={editBranchRole}
+            //                   onClick={(event) => {
+            //                     makeSelected(event, "leftSide", item.branch.id);
+            //                   }}
+            //                   className="text-uppercase"
+            //                   key={index}
+            //                 >
+            //                   <div className="d-flex flex-wrap align-items-center  justify-content-between">
+            //                     {item.branch.name}
+
+            //                     <div className="d-flex flex-wrap">
+            //                       {item.role.map((i, index) => {
+            //                         return (
+            //                           <span
+            //                             key={index}
+            //                             value={i.id}
+            //                             className="myTag myH7 m-1"
+            //                           >
+            //                             {i.role}
+            //                           </span>
+            //                         );
+            //                       })}
+            //                     </div>
+            //                   </div>
+            //                 </li>
+            //               </>
+            //             );
+            //           })}
+            //       </ul>
+            //     </main>
+            //   </div>
+            // </section>

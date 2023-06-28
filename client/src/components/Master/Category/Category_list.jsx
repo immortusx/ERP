@@ -21,17 +21,20 @@ export default function Category_list({ workFor }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const getCategoryForm =() =>{
+ getCategory()
+   .then((data) => {
+     console.log("Response from getCategory:", data.result);
+     setPartsList(data.result);
+   })
+   .catch((error) => {
+     console.error("Error in getCategory:", error);
+   });
+  }
  
   useEffect(() => {
-
-    getCategory()
-      .then((data) => {
-        console.log("Response from getCategory:", data.result);
-        setPartsList(data.result);
-      })
-      .catch((error) => {
-        console.error("Error in getCategory:", error);
-      });
+getCategoryForm()
+   
   }, []);
 
   const columns = [
@@ -171,6 +174,7 @@ export default function Category_list({ workFor }) {
     try {
       const response = await Axios.post(url, requestData, config);
       if (response.data?.isSuccess) {
+        getCategoryForm();
         dispatch(setShowMessage("Category Deleted"));
         dispatch(addDepartmentToDb);
         setDisplayConfirmationModal(false);
