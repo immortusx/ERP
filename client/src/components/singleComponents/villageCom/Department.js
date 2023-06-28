@@ -35,7 +35,7 @@ const Department = ({ onSelectedState = () => {}, DeptId = "" }) => {
           Select Department
         </label>
         <select
-          className="inpClr myInput"
+          className="form-control"
           name="department"
           onChange={(e) => onSelectedState(e.target.value, DeptId)}
           value={DeptId}
