@@ -1,18 +1,33 @@
-import {View, Text, TouchableOpacity, StyleSheet, Image} from 'react-native';
 import React from 'react';
+import {
+  View,
+  Text,
+  TouchableWithoutFeedback,
+  StyleSheet,
+  Image,
+} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import AddEnquiry from '../components/AddEnquiry';
 import AddMore from '../components/AddMore';
 import AddBooking from '../components/AddBooking';
 import {useNavigation} from '@react-navigation/native';
+
 const Bottom = createBottomTabNavigator();
+
 const BottomNavigator = () => {
   const navigation = useNavigation();
+
   const handleNavigate = path => {
     navigation.navigate(path);
   };
+
   return (
-    <Bottom.Navigator initialRouteName="AddMore">
+    <Bottom.Navigator initialRouteName="AddMore" 
+    tabBarOptions={{
+      style: {
+        height: 60
+      }
+    }}>
       <Bottom.Screen
         name="AddEnquiry"
         component={AddEnquiry}
@@ -21,13 +36,19 @@ const BottomNavigator = () => {
           tabBarLabel: () => null,
           tabBarIcon: () => {
             return (
-              <TouchableOpacity
-                style={[styles.button, styles.enquiryBtn, styles.roundedPill]}
+              <TouchableWithoutFeedback
                 onPress={() => {
                   handleNavigate('AddEnquiry');
                 }}>
-                <Text style={styles.buttonText}>Add Enquiry</Text>
-              </TouchableOpacity>
+                <View
+                  style={[
+                    styles.button,
+                    styles.enquiryBtn,
+                    styles.roundedPill,
+                  ]}>
+                  <Text style={styles.buttonText}>Add Enquiry</Text>
+                </View>
+              </TouchableWithoutFeedback>
             );
           },
         }}
@@ -40,16 +61,18 @@ const BottomNavigator = () => {
           tabBarLabel: () => null,
           tabBarIcon: () => {
             return (
-              <TouchableOpacity
-                style={[styles.button, styles.plusBtn, styles.roundedPill]}
+              <TouchableWithoutFeedback
                 onPress={() => {
                   handleNavigate('AddMore');
                 }}>
-                <Image
-                  style={styles.plusImg}
-                  source={require('../../assets/hom.png')}
-                />
-              </TouchableOpacity>
+                <View
+                  style={[styles.button, styles.plusBtn, styles.roundedPill]}>
+                  <Image
+                    style={styles.plusImg}
+                    source={require('../../assets/hom.png')}
+                  />
+                </View>
+              </TouchableWithoutFeedback>
             );
           },
         }}
@@ -62,13 +85,19 @@ const BottomNavigator = () => {
           tabBarLabel: () => null,
           tabBarIcon: () => {
             return (
-              <TouchableOpacity
-                style={[styles.button, styles.bookingBtn, styles.roundedPill]}
+              <TouchableWithoutFeedback
                 onPress={() => {
                   handleNavigate('AddBooking');
                 }}>
-                <Text style={styles.buttonText}>Add Booking</Text>
-              </TouchableOpacity>
+                <View
+                  style={[
+                    styles.button,
+                    styles.bookingBtn,
+                    styles.roundedPill,
+                  ]}>
+                  <Text style={styles.buttonText}>Add Booking</Text>
+                </View>
+              </TouchableWithoutFeedback>
             );
           },
         }}
@@ -76,6 +105,7 @@ const BottomNavigator = () => {
     </Bottom.Navigator>
   );
 };
+
 const styles = StyleSheet.create({
   button: {
     borderRadius: 20,
@@ -85,19 +115,20 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: 'white',
-    fontSize: 16,
+    fontSize: 13,
     textAlign: 'center',
+    fontWeight: 'bold'
   },
   enquiryBtn: {
     backgroundColor: '#0A8BE2',
   },
-
   bookingBtn: {
     backgroundColor: '#0A8BE2',
   },
   plusImg: {
-    width: 50,
-    height: 50
+    width: 51,
+    height: 51,
   },
 });
+
 export default BottomNavigator;

@@ -106,7 +106,7 @@ const AdditonalDetails = ({route}) => {
 const styles = StyleSheet.create({
   userCard: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: '#F5EEF8',
     paddingHorizontal: 12,
     justifyContent: 'center',
     alignItems: 'center',

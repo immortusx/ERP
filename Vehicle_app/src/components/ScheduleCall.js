@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {View, Text, TextInput, TouchableOpacity, StyleSheet} from 'react-native';
+import {View, Text, TextInput, TouchableOpacity, StyleSheet, TouchableWithoutFeedback} from 'react-native';
 
 const ScheduleCall = ({route}) => {
   const {item} = route.params;
@@ -8,8 +8,13 @@ const ScheduleCall = ({route}) => {
 
   const handleSaveDetails = () => {
   };
+  const onPress = ()=> {
+    console.warn('Hello')
+  }
   return (
-    <View style={styles.container}>
+
+    <View style={styles.mainContainer}>
+        <View style={styles.container}>
       <View style={styles.fieldContainer}>
         <Text style={styles.label}>Current Date:</Text>
         <TextInput
@@ -32,10 +37,15 @@ const ScheduleCall = ({route}) => {
         <Text style={styles.buttonText}>Save Details</Text>
       </TouchableOpacity>
     </View>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+    mainContainer: {
+        flex: 1,
+        backgroundColor: '#F5EEF8'
+    },
     container: {
         flex: 1,
         marginVertical: 20,

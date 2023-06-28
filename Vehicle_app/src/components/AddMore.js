@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Image,
+  TouchableWithoutFeedback
 } from 'react-native';
 import React, {useState, useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
@@ -57,7 +58,7 @@ const AddMore = () => {
         renderItem={({item, index}) => {
           return (
             <ScrollView>
-              <TouchableOpacity
+              <TouchableWithoutFeedback
                 onPress={() => {
                   openAdditonalEnquiry(item);
                 }}>
@@ -86,7 +87,7 @@ const AddMore = () => {
                     - {item.product}
                   </Text>
                 </View>
-              </TouchableOpacity>
+              </TouchableWithoutFeedback>
             </ScrollView>
           );
         }}
@@ -98,6 +99,7 @@ const AddMore = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#F5EEF8'
   },
   boxContainer: {},
   historyText: {

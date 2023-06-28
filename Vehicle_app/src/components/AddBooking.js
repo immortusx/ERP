@@ -3,8 +3,8 @@ import React from 'react'
 
 const AddBooking = () => {
   return (
-    <View style={{flex: 1, backgroundColor: 'green'}}>
-      <Text>AddBooking</Text>
+    <View style={{flex: 1, backgroundColor: '#F5EEF8'}}>
+      <Text style={{textAlign: 'center'}}>AddBooking</Text>
     </View>
   )
 }
