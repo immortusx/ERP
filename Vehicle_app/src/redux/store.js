@@ -13,6 +13,6 @@ export const store = configureStore({
         locationForm: locationFormSlice,
         manufacturerDetails: manufacturerDetailsSlice,
         modalData: modalDataSlice,
-        getEnquirySlice: getEnquirySlice
+        getEnquiryState: getEnquirySlice
     }
 })

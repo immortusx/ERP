@@ -1,11 +1,24 @@
-import {View, StyleSheet, Text} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Text,
+  FlatList,
+  ScrollView,
+  TouchableOpacity,
+  Image,
+  TouchableWithoutFeedback
+} from 'react-native';
 import React, {useState, useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {getEnquiryData} from '../redux/slice/getEnquirySlice';
+import {useNavigation} from '@react-navigation/native';
 
 const AddMore = () => {
+  const navigation = useNavigation();
   const dispatch = useDispatch();
-  const getEnquiryState = useSelector(state => state.getEnquirySlice);
+  const [resultData, setResultData] = useState([]);
+  const getEnquiryState = useSelector(state => state.getEnquiryState);
+  const {isFetching, isSuccess, isError, result} = getEnquiryState;
 
   useEffect(() => {
     const getEnquiry = () => {
@@ -13,41 +26,72 @@ const AddMore = () => {
     };
     getEnquiry();
   }, []);
+
   useEffect(() => {
-    if (getEnquiryState) {
-      console.log('********', getEnquiryState);
+    if (result) {
+      console.log(result.result);
+      setResultData(result.result);
     }
-    console.log(getEnquiryState, 'getEnquiryState');
-  }, [getEnquiryState]);
+  }, [result]);
+
+  const openAdditonalEnquiry = (item) => {
+    navigation.navigate('Additional Details', {item: item});
+  };
   return (
     <View style={styles.container}>
       <View style={styles.boxContainer}>
         <Text style={styles.historyText}>Enquiry Details</Text>
-        <View style={styles.box}>
-          <Text style={styles.label}>Enquiry No:</Text>
-          <Text style={styles.content}>123456789</Text>
-          <Text style={styles.label}>Customer Name:</Text>
-          <Text style={styles.content}>John Doe</Text>
-          <Text style={styles.label}>Phone Number:</Text>
-          <Text style={styles.content}>123-456-7890</Text>
-        </View>
-        <View style={styles.box}>
-          <Text style={styles.label}>Enquiry No:</Text>
-          <Text style={styles.content}>123456789</Text>
-          <Text style={styles.label}>Customer Name:</Text>
-          <Text style={styles.content}>John Doe</Text>
-          <Text style={styles.label}>Phone Number:</Text>
-          <Text style={styles.content}>123-456-7890</Text>
-        </View>
-        <View style={styles.box}>
-          <Text style={styles.label}>Enquiry No:</Text>
-          <Text style={styles.content}>123456789</Text>
-          <Text style={styles.label}>Customer Name:</Text>
-          <Text style={styles.content}>John Doe</Text>
-          <Text style={styles.label}>Phone Number:</Text>
-          <Text style={styles.content}>123-456-7890</Text>
-        </View>
       </View>
+      <View style={styles.wrapper}>
+        <TouchableOpacity style={[styles.buttonStyle, styles.todayButton]}>
+          <Text style={[styles.buttonText, {paddingHorizontal: 17}]}>Today</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.buttonStyle, styles.weekButton]}>
+          <Text style={[styles.buttonText, {paddingHorizontal: 10}]}>Last Week</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.buttonStyle, styles.monthButton]}>
+          <Text style={[styles.buttonText, {paddingHorizontal: 10}]}>Last Month</Text>
+        </TouchableOpacity>
+      </View>
+      <FlatList
+        data={resultData}
+        renderItem={({item, index}) => {
+          return (
+            <ScrollView>
+              <TouchableWithoutFeedback
+                onPress={() => {
+                  openAdditonalEnquiry(item);
+                }}>
+                <View key={index} style={styles.box}>
+                  <Text style={styles.label}>
+                    <Image
+                      style={styles.personImg}
+                      source={require('../../assets/person.png')}
+                    />
+                    - {item.first_name + ' ' + item.last_name}
+                  </Text>
+
+                  <Text style={styles.label}>
+                    <Image
+                      style={styles.personImg}
+                      source={require('../../assets/phone.png')}
+                    />
+                    - {item.phone_number}
+                  </Text>
+
+                  <Text style={styles.label}>
+                    <Image
+                      style={styles.personImg}
+                      source={require('../../assets/product.png')}
+                    />
+                    - {item.product}
+                  </Text>
+                </View>
+              </TouchableWithoutFeedback>
+            </ScrollView>
+          );
+        }}
+      />
     </View>
   );
 };
@@ -55,8 +99,11 @@ const AddMore = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#F5EEF8'
   },
-  boxContainer: {},
+  boxContainer: {
+    marginVertical: 4
+  },
   historyText: {
     fontSize: 24,
     fontWeight: 'bold',
@@ -68,10 +115,10 @@ const styles = StyleSheet.create({
     borderRadius: 22,
   },
   box: {
-    marginTop: 5,
+    marginTop: 6,
     width: '95%',
     padding: 10,
-    backgroundColor: '#7FBCF3',
+    backgroundColor: 'white',
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -82,6 +129,7 @@ const styles = StyleSheet.create({
     elevation: 5,
     marginHorizontal: 10,
     borderRadius: 5,
+    marginBottom: 7
   },
   label: {
     fontSize: 16,
@@ -91,6 +139,36 @@ const styles = StyleSheet.create({
   content: {
     fontSize: 14,
     marginBottom: 10,
+  },
+  wrapper: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 10,
+    marginVertical: 1,
+    marginBottom: 7
+  },
+  buttonStyle: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  todayButton: {
+    backgroundColor: '#E67E22',
+  },
+  weekButton: {
+    backgroundColor: '#EB984E',
+  },
+  monthButton: {
+    backgroundColor: '#F0B27A',
+  },
+  personImg: {
+    width: 20,
+    height: 20,
   },
 });
 
