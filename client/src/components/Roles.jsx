@@ -383,7 +383,7 @@ export default function Roles({ workFor }) {
       if (response.data && response.data.isSuccess) {
         console.log(response.data);
         dispatch(setShowMessage("Roles Deleted"));
-        dispatch(addRoleToDb);
+        dispatch(addRoleToDb());
         setDisplayConfirmationModal(false);
       } else {
         dispatch(setShowMessage("failed to delete"));

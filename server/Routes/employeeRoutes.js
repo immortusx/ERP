@@ -95,7 +95,7 @@ router.get("/get-employee-list", tokenCheck, async (req, res) => {
       `SELECT *
       FROM users
        RIGHT JOIN bank_details ON users.id = bank_details.user_id
-      WHERE users.user_type_id = 2`,
+      WHERE users.user_type_id = 2 and is_active = 1`,
       (err, results) => {
         if (err) {
           console.log({ isSuccess: false, result: err });

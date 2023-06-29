@@ -217,9 +217,10 @@ export default function Employees() {
     await axios.get(url, config).then((response) => {
       console.log(response, "response.data ");
       if (response.data && response.data.isSuccess) {
+        
         console.log(response.data,"delete true");
         dispatch(setShowMessage("Employee Deleted"));
-        dispatch(getemployeeListFromDb);
+        dispatch(getemployeeListFromDb());
         setDisplayConfirmationModal(false);
       }else{
         console.log(response.data, "false");
