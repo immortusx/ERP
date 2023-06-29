@@ -185,7 +185,7 @@ const AddEnquiry = ({navigation}) => {
       <View style={styles.container}>
         <View style={styles.customerContainer}>
           <View style={styles.dateContainer}>
-            <Text>Enquiry No.</Text>
+            <Text>Enquiry</Text>
             <View style={styles.dateStyle}>
               <Text>Select Date : </Text>
               <Text

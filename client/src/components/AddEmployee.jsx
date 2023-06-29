@@ -681,6 +681,52 @@ return (
           {/* ===========bankDetails========== */}
           <main className="mt-4">
             <h5 className="m-0">Bank Details</h5>
+          <h5 className="m-0">Job Information</h5>
+          <div className="row mt-3 m-0">
+          
+
+          
+            <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
+              <label className="myLabel" htmlFor="bloodGroup">
+                Select Branch
+              </label>
+              <select
+                className="form-control"
+                id="branch"
+                name="branch"
+                onChange={onChangejobdetails}
+                value={jobdetails.value}
+              >
+                <option value="">Select Branch Name</option>
+                {branches.map((branch, index) => (
+                  <option key={index} value={branch.id}>
+                    {branch.name}
+                  </option>
+                ))}
+              </select>
+            </section>
+            <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
+              <label className="myLabel" htmlFor="bloodGroup">
+                Select Department
+              </label>
+              <select
+                className="form-control"
+                id="department"
+                name="department"
+                onChange={onChangejobdetails}
+                value={jobdetails.value}
+              >
+                <option value="">Select Department Name</option>
+                {departmentList.map((dept, index) => (
+                  <option key={index} value={dept.id}>
+                    {dept.name}
+                  </option>
+                ))}
+              </select>
+            </section>
+            {/* ===========bankDetails========== */}
+            <main className="mt-4">
+              <h5 className="m-0">Bank Details</h5>
 
             <div className=" row mt-3 m-0">
               <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
@@ -872,136 +918,137 @@ return (
         </main>
       </section>
     )}
-  </>
+  
+  </main></div></>
 );
 }
 
 
 
 
-  // <section className="d-flex mt-3 flex-column  col-12">
-            //   <label className="myLabel">Select one or more branch</label>
-            //   <div className="swapSelection d-flex flex-column flex-md-row mt-2">
-            //     <main>
-            //       <label className="pb-2">
-            //         Available branches (
-            //         {branches && branches.length > 0 ? branches.length : 0})
-            //       </label>
-            //       <ul
-            //         ref={selectInp}
-            //         name="selectRole"
-            //         className="inputElement"
-            //       >
-            //         {branches.length > 0 &&
-            //           branches.map((item, index) => {
-            //             return (
-            //               <li
-            //                 onClick={(event) => {
-            //                   makeSelected(event, "rightSide", item);
-            //                 }}
-            //                 className="text-uppercase"
-            //                 key={index}
-            //                 value={item.id}
-            //               >
-            //                 <div className="d-flex align-items-center">
-            //                   {/* <input type='checkbox' className='m-2 myCheckBox inputElement' onChange={(e) => { onChangeHandler(e) }} name="enableemployee" /> */}
-            //                   <p className="ms-1">{item.name}</p>
-            //                 </div>
-            //               </li>
-            //             );
-            //           })}
-            //       </ul>
-            //     </main>
+   {/* <section className="d-flex mt-3 flex-column  col-12">
+               <label className="myLabel">Select one or more branch</label>
+               <div className="swapSelection d-flex flex-column flex-md-row mt-2">
+                 <main>
+                   <label className="pb-2">
+                     Available branches (
+                     {branches && branches.length > 0 ? branches.length : 0})
+                   </label>
+                   <ul
+                    ref={selectInp}
+                    name="selectRole"
+                    className="inputElement"
+                  >
+                    {branches.length > 0 &&
+                      branches.map((item, index) => {
+                        return (
+                          <li
+                            onClick={(event) => {
+                              makeSelected(event, "rightSide", item);
+                            }}
+                            className="text-uppercase"
+                            key={index}
+                            value={item.id}
+                          >
+                            <div className="d-flex align-items-center">
+                              <input type='checkbox' className='m-2 myCheckBox inputElement' onChange={(e) => { onChangeHandler(e) }} name="enableemployee" />
+                              <p className="ms-1">{item.name}</p>
+                            </div>
+                          </li>
+                        );
+                      })}
+                  </ul>
+                </main>
 
-            //     <div className="d-flex flex-row flex-md-column justify-content-around allBtnsMain m-3">
-            //       <div
-            //         ref={rightArrowBtn}
-            //         className="arrowBtn disabledBtn"
-            //         name="rightDiv"
-            //         onClick={rightClick}
-            //       >
-            //         <svg
-            //           xmlns="http://www.w3.org/2000/svg"
-            //           fill="currentColor"
-            //           className="bi bi-arrow-right"
-            //           viewBox="0 0 16 16"
-            //         >
-            //           <path
-            //             fillRule="evenodd"
-            //             d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"
-            //           />
-            //         </svg>
-            //       </div>
-            //       <div
-            //         ref={leftArrowBtn}
-            //         className="arrowBtn disabledBtn"
-            //         onClick={leftClick}
-            //       >
-            //         <svg
-            //           xmlns="http://www.w3.org/2000/svg"
-            //           width="16"
-            //           height="16"
-            //           fill="currentColor"
-            //           className="bi bi-arrow-left"
-            //           viewBox="0 0 16 16"
-            //         >
-            //           <path
-            //             fillRule="evenodd"
-            //             d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"
-            //           />
-            //         </svg>
-            //       </div>
-            //     </div>
-            //     <main>
-            //       <label className="pb-2">
-            //         Selected (
-            //         {branchRoles && Object.keys(branchRoles).length
-            //           ? connectedBranch
-            //           : 0}
-            //         )
-            //       </label>
+                <div className="d-flex flex-row flex-md-column justify-content-around allBtnsMain m-3">
+                  <div
+                    ref={rightArrowBtn}
+                    className="arrowBtn disabledBtn"
+                    name="rightDiv"
+                    onClick={rightClick}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="currentColor"
+                      className="bi bi-arrow-right"
+                      viewBox="0 0 16 16"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"
+                      />
+                    </svg>
+                  </div>
+                  <div
+                    ref={leftArrowBtn}
+                    className="arrowBtn disabledBtn"
+                    onClick={leftClick}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      fill="currentColor"
+                      className="bi bi-arrow-left"
+                      viewBox="0 0 16 16"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"
+                      />
+                    </svg>
+                  </div>
+                </div>
+                <main>
+                  <label className="pb-2">
+                    Selected (
+                    {branchRoles && Object.keys(branchRoles).length
+                      ? connectedBranch
+                      : 0}
+                    )
+                  </label>
 
-            //       <ul
-            //         ref={selectedInp}
-            //         className="inputElement"
-            //         name="selectedRole"
-            //       >
-            //         {branchRoles &&
-            //           Object.keys(branchRoles).length > 0 &&
-            //           showSelectedData.map((item, index) => {
-            //             return (
-            //               <>
-            //                 <li
-            //                   value={item.branch.id}
-            //                   onDoubleClick={editBranchRole}
-            //                   onClick={(event) => {
-            //                     makeSelected(event, "leftSide", item.branch.id);
-            //                   }}
-            //                   className="text-uppercase"
-            //                   key={index}
-            //                 >
-            //                   <div className="d-flex flex-wrap align-items-center  justify-content-between">
-            //                     {item.branch.name}
+                  <ul
+                    ref={selectedInp}
+                    className="inputElement"
+                    name="selectedRole"
+                  >
+                    {branchRoles &&
+                      Object.keys(branchRoles).length > 0 &&
+                      showSelectedData.map((item, index) => {
+                        return (
+                          <>
+                            <li
+                              value={item.branch.id}
+                              onDoubleClick={editBranchRole}
+                              onClick={(event) => {
+                                makeSelected(event, "leftSide", item.branch.id);
+                              }}
+                              className="text-uppercase"
+                              key={index}
+                            >
+                              <div className="d-flex flex-wrap align-items-center  justify-content-between">
+                                {item.branch.name}
 
-            //                     <div className="d-flex flex-wrap">
-            //                       {item.role.map((i, index) => {
-            //                         return (
-            //                           <span
-            //                             key={index}
-            //                             value={i.id}
-            //                             className="myTag myH7 m-1"
-            //                           >
-            //                             {i.role}
-            //                           </span>
-            //                         );
-            //                       })}
-            //                     </div>
-            //                   </div>
-            //                 </li>
-            //               </>
-            //             );
-            //           })}
-            //       </ul>
-            //     </main>
-            //   </div>
-            // </section>
+                                <div className="d-flex flex-wrap">
+                                  {item.role.map((i, index) => {
+                                    return (
+                                      <span
+                                        key={index}
+                                        value={i.id}
+                                        className="myTag myH7 m-1"
+                                      >
+                                        {i.role}
+                                      </span>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            </li>
+                          </>
+                        );
+                      })}
+                  </ul>
+                </main>
+              </div>
+            </section> */}
