@@ -27,10 +27,10 @@ router.post("/add-employee", tokenCheck, async (req, res) => {
   const accountType = req.body.accountType;
   const ifscCode = req.body.ifscCode;
   const bloodgroup = req.body.bloodgroup;
-  const branchId = req.body.branchId;
+  const branch = req.body.branch;
   const selectedDate = moment(req.body.selectedDate).format("YYYY/MM/DD");
   // const departmentId = 1;
-  const departmentId = req.body.departmentId;
+  const department = req.body.department;
   const user_type_id = 2;
 
   const hashedPassword = await hasThePass(password);
@@ -57,7 +57,7 @@ router.post("/add-employee", tokenCheck, async (req, res) => {
       // }
 
       await queryDatabase(
-        `INSERT INTO employee_detail(branch_id, department_id, user_id) VALUES('${branchId}','${departmentId}','${userId}')`
+        `INSERT INTO employee_detail(branch_id, department_id, user_id) VALUES('${branch}','${department}','${userId}')`
       );
 
       await queryDatabase(
@@ -94,8 +94,8 @@ router.get("/get-employee-list", tokenCheck, async (req, res) => {
     await db.query(
       `SELECT *
       FROM users
-      LEFT JOIN bank_details ON users.id = bank_details.user_id
-      WHERE users.user_type_id = 2`,
+       RIGHT JOIN bank_details ON users.id = bank_details.user_id
+      WHERE users.user_type_id = 2 and is_active = 1`,
       (err, results) => {
         if (err) {
           console.log({ isSuccess: false, result: err });
@@ -143,19 +143,19 @@ router.post("/edit-employee", tokenCheck, async (req, res) => {
 
     // const userId = result.insertId;
 
-    for (const branchId of Object.keys(branchRole)) {
-      const rolesAr = branchRole[branchId];
-      for (const roleId of rolesAr) {
-        await queryDatabase(
-          `UPDATE branch_department_user 
-          SET branch_id = '${branchId}', 
-              department_id = '${departmentId}', 
-              user_id = '${id}', 
-              role_id = '${roleId}' 
-          WHERE user_id = '${id}'`
-        );        
-      }
-    }
+    // for (const branchId of Object.keys(branchRole)) {
+    //   const rolesAr = branchRole[branchId];
+    //   for (const roleId of rolesAr) {
+    //     await queryDatabase(
+    //       `UPDATE branch_department_user 
+    //       SET branch_id = '${branchId}', 
+    //           department_id = '${departmentId}', 
+    //           user_id = '${id}', 
+    //           role_id = '${roleId}' 
+    //       WHERE user_id = '${id}'`
+    //     );        
+    //   }
+    // }
 
     await queryDatabase(
       `UPDATE bank_details SET bank_name = '${bankname}', bank_branch = '${bankBranch}', account_number = '${accountNo}', account_type = '${accountType}', ifsc_code = '${ifscCode}' WHERE user_id = '${id}'`
@@ -173,6 +173,7 @@ router.post("/edit-employee", tokenCheck, async (req, res) => {
 router.get("/delete-employee/:id", tokenCheck, async (req, res) => {
   try {
     const employeeId = req.params.id;
+    console.log(employeeId);
     const newUrl =
       "SELECT * FROM users where is_active = 1 and id=" + employeeId;
     await db.query(newUrl, async (err, newResult) => {
@@ -180,6 +181,7 @@ router.get("/delete-employee/:id", tokenCheck, async (req, res) => {
         console.log({ isSuccess: false, result: err });
         res.send({ isSuccess: false, result: "error" });
       } else if (newResult.length === 1) {
+        console.log(newResult.length, "true");
         const editurl = "UPDATE users SET is_active = 0 WHERE id=" + employeeId;
         await db.query(editurl, async (err, result) => {
           if (err) {
@@ -190,7 +192,7 @@ router.get("/delete-employee/:id", tokenCheck, async (req, res) => {
           }
         });
       } else {
-        console.log(newResult);
+        console.log(newResult.length, "false");
         console.log({ isSuccess: false, result: "notExist" });
         res.send({ isSuccess: false, result: "notExist" });
       }
