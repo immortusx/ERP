@@ -44,13 +44,13 @@ const AddMore = () => {
       </View>
       <View style={styles.wrapper}>
         <TouchableOpacity style={[styles.buttonStyle, styles.todayButton]}>
-          <Text style={styles.buttonText}>Today</Text>
+          <Text style={[styles.buttonText, {paddingHorizontal: 17}]}>Today</Text>
         </TouchableOpacity>
         <TouchableOpacity style={[styles.buttonStyle, styles.weekButton]}>
-          <Text style={styles.buttonText}>Last Week</Text>
+          <Text style={[styles.buttonText, {paddingHorizontal: 10}]}>Last Week</Text>
         </TouchableOpacity>
         <TouchableOpacity style={[styles.buttonStyle, styles.monthButton]}>
-          <Text style={styles.buttonText}>Last Month</Text>
+          <Text style={[styles.buttonText, {paddingHorizontal: 10}]}>Last Month</Text>
         </TouchableOpacity>
       </View>
       <FlatList
@@ -101,7 +101,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F5EEF8'
   },
-  boxContainer: {},
+  boxContainer: {
+    marginVertical: 4
+  },
   historyText: {
     fontSize: 24,
     fontWeight: 'bold',
@@ -142,6 +144,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingHorizontal: 10,
+    marginVertical: 1,
+    marginBottom: 7
   },
   buttonStyle: {
     paddingVertical: 10,
@@ -150,17 +154,17 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: 'white',
-    fontSize: 16,
+    fontSize: 12,
     fontWeight: 'bold',
   },
   todayButton: {
-    backgroundColor: '#518ADC',
+    backgroundColor: '#E67E22',
   },
   weekButton: {
-    backgroundColor: '#518ADC',
+    backgroundColor: '#EB984E',
   },
   monthButton: {
-    backgroundColor: '#518ADC',
+    backgroundColor: '#F0B27A',
   },
   personImg: {
     width: 20,

@@ -23,7 +23,7 @@ const BottomNavigator = () => {
 
   return (
     <Bottom.Navigator initialRouteName="AddMore" 
-    tabBarOptions={{
+    screenOptions={{
       style: {
         height: 60
       }
