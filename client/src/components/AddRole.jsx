@@ -16,11 +16,16 @@ import ClearIcon from '@mui/icons-material/Clear';
 export default function AddRole({ workFor }) {
     const location = useLocation();
     const tableEditData = location.state
+   // console.log(tableEditData,"tableEditDatatableEditData")
     const [featuresList, setFeaturesList] = useState([])
     const [showRolesList, setShowRolesList] = useState([])
+    const [checkedd, setChecked] = useState(false);
+    const [role_emp, setRole_emp] = useState(0);
+   // console.log("ddddddd",checkedd)
     const [currentRole, setCurrentRole] = useState({
         role: null,
         features: null,
+        
     })
 
     const [featureData, setFeatureData] = useState({
@@ -35,6 +40,11 @@ export default function AddRole({ workFor }) {
     const addRoleState = useSelector(state => state.addRoleState.addRoleState)
     const editRoleState = useSelector(state => state.editRoleDataState.editRoleSliceState)
 
+    const handleCheckboxChange = () => {
+        setChecked(!checkedd);       
+        setRole_emp(1)
+      };
+
     useEffect(() => {
         if (workFor === "forEdit") {
             setFeatureData({
@@ -46,7 +56,7 @@ export default function AddRole({ workFor }) {
     }, [workFor])
 
     useEffect(() => {
-        console.log('editRoleState', editRoleState);
+       // console.log('editRoleState', editRoleState);
         if (editRoleState.isSuccess) {
             if (editRoleState.message.isSuccess && editRoleState.message.result === 'success') {
                 dispatch(setShowMessage('Success'))
@@ -61,8 +71,9 @@ export default function AddRole({ workFor }) {
         setFeatureData({
             roleName: '',
             roleDescription: '',
-            checkedFeatures: [],
+            checkedFeatures: [],           
         })
+       // setChecked(false)
         const allInp = document.getElementsByClassName('inputElement')
         Array.from(allInp).forEach((item) => {
             if (item.type === 'checkbox') {
@@ -72,7 +83,29 @@ export default function AddRole({ workFor }) {
             }
         })
     }
-
+useEffect(()=>{
+getRoleEmp();
+},[])
+const getRoleEmp = async()=>{
+    const RoleForEmp = tableEditData.id;
+    const url = `${process.env.REACT_APP_NODE_URL}/api/users/getRoleDesc/${RoleForEmp}`;
+    const config = {
+      headers: {
+        token: localStorage.getItem("rbacToken"),
+      },
+    };
+    await Axios.get(url, config).then((response) => {
+      if (response.data?.isSuccess) {
+        setRole_emp(response.data.result[0].role_emp);
+       // console.log(response.data.result, "6666666666666666666666666")
+        if(response.data.result[0].role_emp == 1){
+            setChecked(true)
+        }else{
+            setChecked(false)
+        }
+      }
+    });
+}
     useEffect(() => {
         if (workFor === 'forEdit') {
             clearInpHook()
@@ -84,7 +117,7 @@ export default function AddRole({ workFor }) {
                 })
             }
             if (currentRole.features !== null) {
-                console.log('currentRole.features', currentRole.features)
+               // console.log('currentRole.features', currentRole.features)
                 let tempAr = [];
                 currentRole.features.forEach((target) => {
                     // console.log('getElementsByName', document.getElementsByName(`${target.feature}Inp`)[0]);
@@ -129,6 +162,7 @@ export default function AddRole({ workFor }) {
     useEffect(() => {
         dispatch(getFeatureFromDb())
     }, [])
+   
     function onChangeHandler(data, id) {
         let tempAr = [];
         const value = data.target.value
@@ -164,7 +198,7 @@ export default function AddRole({ workFor }) {
         await Axios.get(url, config).then((response) => {
             if (response.data?.isSuccess) {
                 setShowRolesList(response.data.result)
-                console.log('get-roles-to-edit result>', response.data.result);
+               // console.log('get-roles-to-edit result>', response.data.result);
             }
         })
     }
@@ -178,26 +212,34 @@ export default function AddRole({ workFor }) {
         await Axios.post(url, { roleId: roleId }, config).then((response) => {
             if (response.data?.isSuccess) {
                 // setShowRolesList(response.data.result)
-                setCurrentRole(currentRole => ({ ...currentRole, features: response.data.result }))
+                setCurrentRole(currentRole => ({ ...currentRole, features: response.data.result }))              
             }
         })
     }
     function handleSubmit() {
-        console.log('featureData', featureData);
-        console.log('currentRole', currentRole);
+        //console.log('featureData', featureData);
+        //console.log('currentRole', currentRole);
+       // console.log('role_emp', role_emp);
+
+        const updatedObject = {
+            ...featureData,
+            role_emp: role_emp
+          };
+           //setFeatureData(updatedObject)
+           //console.log('featureDatanewwwww', featureData);
         if (workFor === 'addRole') {
             if (featureData.roleName != '' && featureData.checkedFeatures.length > 0) {
-                dispatch(addRoleToDb(featureData))
+                dispatch(addRoleToDb(updatedObject))
             } else {
                 dispatch(setShowMessage('Please fill all the field'))
             }
         } else {
             if (workFor === 'forEdit') {
-                console.log("editnow")
-                console.log(currentRole,'current')
-                console.log(featureData.roleDescription)
-                console.log(featureData.checkedFeatures)
-                console.log(tableEditData.id)
+                //console.log("editnow")
+               // console.log(currentRole, 'current')
+              //  console.log(featureData.roleDescription)
+              //  console.log(featureData.checkedFeatures)
+              //  console.log(tableEditData.id)
                 if (currentRole != null) {
                     let myData = {
                         description: featureData.roleDescription,
@@ -265,12 +307,22 @@ export default function AddRole({ workFor }) {
             </div>
             <main>
                 <div className=' row mt-3 m-0'>
+                    <div className="d-flex justify-content-between">
+                        <h5 className='m-0'>
+                            {
+                                workFor === 'addRole' ? 'Create role' : 'Edit role'
+                            }
+                        </h5>
+                        <div className=''>
+                            <input
+                                type="checkbox"
+                                checked={checkedd}
+                                onChange={handleCheckboxChange}
+                            />
+                            <label className='ms-1'>Role for Employee</label>
+                        </div>
+                    </div>
 
-                    <h5 className='m-0'>
-                        {
-                            workFor === 'addRole' ? 'Create role' : 'Edit role'
-                        }
-                    </h5>
 
 
                     {

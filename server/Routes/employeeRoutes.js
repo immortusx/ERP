@@ -28,6 +28,7 @@ router.post("/add-employee", tokenCheck, async (req, res) => {
   const ifscCode = req.body.ifscCode;
   const bloodgroup = req.body.bloodgroup;
   const branchId = req.body.branchId;
+  const role = req.body.selectedRole;
   const selectedDate = moment(req.body.selectedDate).format("YYYY/MM/DD");
   // const departmentId = 1;
   const departmentId = req.body.departmentId;
@@ -63,6 +64,9 @@ router.post("/add-employee", tokenCheck, async (req, res) => {
       await queryDatabase(
         `INSERT INTO bank_details (bank_name, bank_branch, account_number, account_type, ifsc_code, user_id) VALUES('${bankname}','${bankBranch}','${accountNo}','${accountType}','${ifscCode}','${userId}')`
       );
+
+    
+      
 
       console.log({ isSuccess: true, result: "success" });
       res.send({ isSuccess: true, result: "success" });

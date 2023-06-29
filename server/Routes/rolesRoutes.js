@@ -65,8 +65,8 @@ router.post('/edit-role', tokenCheck, async (req, res) => {
 })
 router.post('/add-role', tokenCheck, checkUserPermission('add-role'), async (req, res) => {
     console.log('>>>>>add-role');
-    const { roleName, roleDescription, checkedFeatures } = req.body
-    const urlNew = `INSERT INTO roles(role, active, description) VALUES('${roleName}', 1, '${roleDescription}'); `
+    const { roleName, roleDescription, checkedFeatures,role_emp } = req.body
+    const urlNew = `INSERT INTO roles(role, active, description,role_emp) VALUES('${roleName}', 1, '${roleDescription}','${role_emp}'); `
     await db.query(urlNew, async (err, result) => {
         if (err) {
             console.log({ isSuccess: false, result: 'error' })
