@@ -38,7 +38,7 @@ export default function Employees() {
 
   const columns = [
     {
-      field: "rowNumber",
+      field: "id",
       headerAlign: "center",
       align: "center",
       headerName: "No",
@@ -197,7 +197,7 @@ export default function Employees() {
   }
   const deleteActionCall = (data) => {
     setType("emplyee_delete");
-    setId(data.id);
+    setId(data.user_id);
     setDeleteMessage(
       `Are You Sure You Want To Delete The Employee '${data.first_name} ${data.last_name}'?`
     );
@@ -213,13 +213,16 @@ export default function Employees() {
         token: localStorage.getItem("rbacToken"),
       },
     };
+    console.log(id,"idddddddddddddddddddddddd")
     await axios.get(url, config).then((response) => {
+      console.log(response, "response.data ");
       if (response.data && response.data.isSuccess) {
-        console.log(response.data);
+        console.log(response.data,"delete true");
         dispatch(setShowMessage("Employee Deleted"));
         dispatch(getemployeeListFromDb);
         setDisplayConfirmationModal(false);
       }else{
+        console.log(response.data, "false");
         dispatch(setShowMessage("failed to delete"));
       }
     });

@@ -600,6 +600,9 @@ export default function Addemployee({ workFor }) {
                 </h5>*/}
           <h5 className="m-0">Job Information</h5>
           <div className="row mt-3 m-0">
+          
+
+          
             <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
               <label className="myLabel" htmlFor="bloodGroup">
                 Select Branch
