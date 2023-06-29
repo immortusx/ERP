@@ -35,7 +35,7 @@ const AddMore = () => {
   }, [result]);
 
   const openAdditonalEnquiry = (item) => {
-    navigation.navigate('Additonal Details', {item: item});
+    navigation.navigate('Additional Details', {item: item});
   };
   return (
     <View style={styles.container}>

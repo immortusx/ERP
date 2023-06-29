@@ -10,7 +10,7 @@ const SidebarMenu = () => {
   const navigation = useNavigation();
   return (
     
-    <Drawer.Navigator>
+    <Drawer.Navigator initialRouteName='Home'>
         <Drawer.Screen name='Home' component={Home} options={{headerShown: true, 
         headerStyle: {
               borderWidth: 0.9,

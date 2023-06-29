@@ -50,7 +50,7 @@ const AppNavigator = () => {
           }}
         />
         <Stack.Screen
-          name="Additonal Details"
+          name="Additional Details"
           component={AdditonalDetails}
           options={{
             headerShown: true,
