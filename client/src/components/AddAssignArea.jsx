@@ -49,6 +49,7 @@ export default function AddAssignArea() {
 
         }
     }, [addAssignState])
+  
     useEffect(() => {
         getAllVillageAction().then((data) => {
            // console.log(data, "All villageeeee")
@@ -216,7 +217,7 @@ export default function AddAssignArea() {
 
 
                     <div className="row mt-3">
-                        <button className='col-12 col-sm-5 col-lg-2 myBtn py-2' onClick={handleSubmit} type='button'>Assign </button>
+                        <button className='col-12 col-sm-5 col-lg-2 myBtn py-2' onClick={handleSubmit} type='button'>Save </button>
                         <button className='ms-0 ms-sm-3 mt-3 mt-sm-0 col-12 col-sm-5 col-lg-2 myBtn py-2' onClick={handlCancel} type='button'>Cancel </button>
                     </div>
                 </main>

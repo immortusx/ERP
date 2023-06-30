@@ -34,3 +34,14 @@ body:has(.popUpScreen) {
     border-radius: 10px;
     border: 1.5px solid #0000001c;
 }
+.noAccess{
+    border: 1px solid grey;
+    padding: 10px;
+}
+.noAccess img{
+    width: 20px;
+    height: 20px;
+}
+.noAccessDiv  :hover{
+   background: grey;
+}

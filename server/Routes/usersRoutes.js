@@ -78,6 +78,36 @@ router.get('/roles-list', async (req, res) => {
     }
   })
 })
+router.get('/roles-lists', async (req, res) => {
+  console.log('>>>>>role-list');
+  const url = "select * from roles where role_emp = 1"
+  await db.query(url, async (err, roles) => {
+    if (err) {
+      console.log({ isSuccess: true, result: err })
+      res.send({ isSuccess: true, result: 'error' })
+    } else {
+      console.log({ isSuccess: true, result: url })
+      res.send({ isSuccess: true, result: roles })
+
+    }
+  })
+})
+
+router.get('/getRoleDesc/:id', async (req, res) => {
+  console.log('>>>>>usersgetRoleDesc');
+  const id = req.params.id
+  const url = `select description ,role_emp from roles where id = ${id}`
+  await db.query(url, async (err, roles) => {
+    if (err) {
+      console.log({ isSuccess: true, result: err })
+      res.send({ isSuccess: true, result: 'error' })
+    } else {
+      console.log({ isSuccess: true, result: url })
+      res.send({ isSuccess: true, result: roles })
+
+    }
+  })
+})
 router.get('/branches-list', tokenCheck, async (req, res) => {
   console.log('>>>>>branches-list');
   const url = `call sp_get_branch_list(${req.myData.branchId}, ${req.myData.isSuperAdmin});`

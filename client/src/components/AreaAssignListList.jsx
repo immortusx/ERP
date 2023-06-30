@@ -34,6 +34,7 @@ export default function AreaAssignListList() {
                 dispatch(clearAddassigneAreaState())
                 setShow(false)
                 getAreaAssignUserFromDb();
+                clearInpHook();
 
             } else {
                 dispatch(setShowMessage('Something is wrong'))
@@ -41,6 +42,12 @@ export default function AreaAssignListList() {
 
         }
     }, [addAssignState])
+    function clearInpHook() {       
+        setSelectedOptionUser('');
+        setselectedCtaegory('');
+        setSelectedDistributionType('')
+        setSelectedOptionVillage(null)
+    }
     const handleClose = () => {
         setShow(false)
     }
@@ -72,7 +79,7 @@ export default function AreaAssignListList() {
         label: village.name,
     }));
     const distributionoptions = [
-        { value: 1, label: 'AreaWise' }
+        { value: 1, label: 'Area wise' }
     ];
     const columns = [
         {
@@ -301,6 +308,7 @@ export default function AreaAssignListList() {
             selectedOptionVillage[i].category = selectedCtaegory.value;
             selectedOptionVillage[i].distributionType = selectedDistributionType.value;
         }
+        
         dispatch(addassigneAreaToDb(selectedOptionVillage))
     }
     const rowsData = areaAssign.map((item, index) => ({ ...item, rowNumber: index + 1 }));
