@@ -845,6 +845,15 @@ export default function HomeScreen() {
               }
               exact
             /> 
+             <Route
+              path="administration/configuration/department/editdepartment"
+              element={
+                <CheckPermission path="profile">
+                  <AddDepartment workFor="editdepartment" />
+                </CheckPermission>
+              }
+              exact
+            /> 
             <Route
               path="administration/configuration/manufacturer"
               element={
