@@ -1,14 +1,14 @@
 import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
 import React, {useEffect, useState} from 'react';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 
 const AdditonalDetails = ({route}) => {
-    const navigation = useNavigation();
+  const navigation = useNavigation();
   const {item} = route.params;
 
-  const handleSheduleCall = (item)=> {
-    navigation.navigate("Schedule Call", {item: item})
-  }
+  const handleSheduleCall = item => {
+    navigation.navigate('Schedule Call', {item: item});
+  };
   return (
     <View style={styles.userCard}>
       <View style={styles.dataContainer}>
@@ -95,9 +95,13 @@ const AdditonalDetails = ({route}) => {
             - {item.village}
           </Text>
         </View>
-        <TouchableOpacity onPress={()=> {handleSheduleCall(item)}} style={styles.followButtonContainer}>
-      <Text style={styles.followButtonText}>Follow Up</Text>
-    </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            handleSheduleCall(item);
+          }}
+          style={styles.followButtonContainer}>
+          <Text style={styles.followButtonText}>Follow Up</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
