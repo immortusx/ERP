@@ -100,7 +100,7 @@ router.get("/get-employee-list", tokenCheck, async (req, res) => {
       `SELECT *
       FROM users
        RIGHT JOIN bank_details ON users.id = bank_details.user_id
-      WHERE users.user_type_id = 2 and is_active = 1`,
+      WHERE users.user_type_id = 2 and is_delete = 0`,
       (err, results) => {
         if (err) {
           console.log({ isSuccess: false, result: err });
@@ -180,14 +180,14 @@ router.get("/delete-employee/:id", tokenCheck, async (req, res) => {
     const employeeId = req.params.id;
     console.log(employeeId);
     const newUrl =
-      "SELECT * FROM users where is_active = 1 and id=" + employeeId;
+      "SELECT * FROM users where is_delete = 0 and id=" + employeeId;
     await db.query(newUrl, async (err, newResult) => {
       if (err) {
         console.log({ isSuccess: false, result: err });
         res.send({ isSuccess: false, result: "error" });
       } else if (newResult.length === 1) {
         console.log(newResult.length, "true");
-        const editurl = "UPDATE users SET is_active = 0 WHERE id=" + employeeId;
+        const editurl = "UPDATE users SET is_delete = 1 WHERE id=" + employeeId;
         await db.query(editurl, async (err, result) => {
           if (err) {
             console.log({ isSuccess: false, result: err });

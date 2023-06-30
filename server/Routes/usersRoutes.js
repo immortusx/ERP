@@ -236,4 +236,36 @@ router.post('/add-user', tokenCheck, checkUserPermission('add-user'), async (req
   })
 })
 
+router.get("/delete-user/:id", tokenCheck, async (req, res) => {
+  try {
+    const userId = req.params.id;
+    console.log(userId,"ggggggggggggggggggggggggggg");
+    const newUrl =
+      "SELECT * FROM users where is_delete = 0 and id=" + userId;
+    await db.query(newUrl, async (err, newResult) => {
+      if (err) {
+        console.log({ isSuccess: false, result: err });
+        res.send({ isSuccess: false, result: "error" });
+      } else if (newResult.length === 1) {
+        console.log(newResult.length, "true");
+        const editurl = "UPDATE users SET is_delete = 1 WHERE id=" + userId;
+        await db.query(editurl, async (err, result) => {
+          if (err) {
+            console.log({ isSuccess: false, result: err });
+            res.send({ isSuccess: false, result: "error" });
+          } else {
+            res.send({ isSuccess: true, result: "deletesuccess" });
+          }
+        });
+      } else {
+        console.log(newResult.length, "false");
+        console.log({ isSuccess: false, result: "notExist" });
+        res.send({ isSuccess: false, result: "notExist" });
+      }
+    });
+  } catch (e) {
+    console.log(e);
+  }
+});
+
 module.exports = router;

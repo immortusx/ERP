@@ -13,6 +13,7 @@ import { getAllVillageAction } from './Master/Village/getEditeVillage'
 import Select from 'react-select';
 import { addassigneAreaToDb, clearAddassigneAreaState } from '../redux/slices/assignedAreaSlice'
 import { setShowMessage } from '../redux/slices/notificationSlice'
+import AlertDeleteModal from "./AlertDelete/AlertDeleteModal";
 export default function AreaAssignListList() {
     const [areaAssign, setareaAssign] = useState([]);
     const [assigneAreaPerUser, setAssignedAreaPerUser] = useState([]);
@@ -24,6 +25,13 @@ export default function AreaAssignListList() {
     const [selectedDistributionType, setSelectedDistributionType] = useState([]);
     const [allVillageData, setAllVillageData] = useState([]);
     const [enquireCtaegory, setEnquiryCtaegory] = useState([]);
+    const [displayConfirmationModal, setDisplayConfirmationModal] =
+        useState(false);
+    const [deleteMessage, setDeleteMessage] = useState(null);
+    const [id, setId] = useState(null);
+    const [categoryd, setCategoryd] = useState(null);
+    const [dId, setDId] = useState(null);   
+    const [type, setType] = useState(null);
     const navigate = useNavigate()
     const dispatch = useDispatch()
     const addAssignState = useSelector(state => state.addassigneAreaSlice.addassigneAreaState)
@@ -42,7 +50,7 @@ export default function AreaAssignListList() {
 
         }
     }, [addAssignState])
-    function clearInpHook() {       
+    function clearInpHook() {
         setSelectedOptionUser('');
         setselectedCtaegory('');
         setSelectedDistributionType('')
@@ -81,6 +89,20 @@ export default function AreaAssignListList() {
     const distributionoptions = [
         { value: 1, label: 'Area wise' }
     ];
+    const deleteActionCall = (data) => {      
+        //console.log(data,"cccccccccccccccccccccccc")
+        setType("asignArea_delete");
+        setId(data.id);
+        setCategoryd(data.category_id);
+        setDId(data.dId);
+        setDeleteMessage(
+            `Are You Sure You Want To Delete The Assign Area of  '${data.first_name} ${data.last_name}'?`
+        );
+        setDisplayConfirmationModal(true);
+    };
+    const hideConfirmationModal = () => {
+        setDisplayConfirmationModal(false);
+    };
     const columns = [
         {
             field: 'rowNumber',
@@ -150,7 +172,9 @@ export default function AreaAssignListList() {
                             <path fillRule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
                         </svg>
                     </button>
-                    <button className='myActionBtn m-1'>
+                    <button className='myActionBtn m-1' onClick={() => {
+                        deleteActionCall(params.row);
+                    }}>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="bi bi-trash3" viewBox="0 0 16 16">
                             <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5ZM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0H11Zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5h9.916Zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5Z" />
                         </svg>
@@ -171,33 +195,33 @@ export default function AreaAssignListList() {
         };
         await Axios.get(url, config).then((response) => {
             if (response.data?.isSuccess) {
-                console.log(response.data.result, "response.data.resultresponse.data.result")
+                console.log(response.data.result, "response.data.resultresponse.data.result5555555555555")
                 function combineObjects(array) {
                     const combinedObjects = {};
-                  
+
                     // Iterate through the array
                     array.forEach(obj => {
-                      const key = obj.category_name + "_" + obj.id;
-                  
-                      // Create or update the combined object
-                      if (combinedObjects.hasOwnProperty(key)) {
-                        combinedObjects[key] = { ...combinedObjects[key], ...obj };
-                      } else {
-                        combinedObjects[key] = obj;
-                      }
+                        const key = obj.category_name + "_" + obj.id;
+
+                        // Create or update the combined object
+                        if (combinedObjects.hasOwnProperty(key)) {
+                            combinedObjects[key] = { ...combinedObjects[key], ...obj };
+                        } else {
+                            combinedObjects[key] = obj;
+                        }
                     });
-                  
+
                     // Convert combined objects back to an array
                     const result = Object.values(combinedObjects);
-                  
+
                     return result;
-                  }
-                  
-                  // Call the function with the array of objects
-                  const combinedArray = combineObjects(response.data.result);
-                  
-                  // Output the combined array
-                  console.log(combinedArray,"&&&&&&&&&&&&&&&&&&&&77777");
+                }
+
+                // Call the function with the array of objects
+                const combinedArray = combineObjects(response.data.result);
+
+                // Output the combined array
+                //console.log(combinedArray, "&&&&&&&&&&&&&&&&&&&&77777");
 
                 setareaAssign(combinedArray)
 
@@ -250,7 +274,7 @@ export default function AreaAssignListList() {
         })
     }
     const handleEditArea = async (ev) => {
-        console.log(ev,"evvvvvv")
+        //console.log(ev, "evvvvvv")
         const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/edit-areaAssignUserById/${ev.id}/${ev.category_id}`;
         const config = {
             headers: {
@@ -286,15 +310,15 @@ export default function AreaAssignListList() {
                         phone_number: obj.phone_number,
                         names: [obj.name],
                         nameId: [obj.distribution_id],
-                        category_id:obj.category_id,
-                        distribution_type:obj.dType
+                        category_id: obj.category_id,
+                        distribution_type: obj.dType
                     });
                 }
                 return result;
             }, []);
 
             setAssignedAreaPerUser(combinedArrayForIndividualUser)
-            console.log(combinedArrayForIndividualUser[0],"combinedArrayForIndividualUsercombinedArrayForIndividualUser")   
+            console.log(combinedArrayForIndividualUser[0], "combinedArrayForIndividualUsercombinedArrayForIndividualUser")
             //console.log(assigneAreaPerUser,"assigneAreaPerUserassigneAreaPerUserassigneAreaPerUserassigneAreaPerUser")   
             navigate('/sale/areaAssign/addAsignArea', { state: { assigneAreaPerUser: combinedArrayForIndividualUser } })
         }
@@ -308,9 +332,29 @@ export default function AreaAssignListList() {
             selectedOptionVillage[i].category = selectedCtaegory.value;
             selectedOptionVillage[i].distributionType = selectedDistributionType.value;
         }
-        
+
         dispatch(addassigneAreaToDb(selectedOptionVillage))
     }
+    const submitDelete = async (type, id,categoryd,dId) => {
+        //console.log(categoryd,dId,"categoryd,dIdcategoryd,dIdcategoryd,dIdcategoryd,dId")
+        const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/delete-area/${id}/${categoryd}/${dId}`;
+        const config = {
+          headers: {
+            token: localStorage.getItem("rbacToken"),
+          },
+        };
+        await Axios.get(url, config).then((response) => {
+          if (response.data && response.data.isSuccess) {
+            console.log(response.data);
+            dispatch(setShowMessage("Assign Area Deleted"));
+           // dispatch(addRoleToDb());
+            setDisplayConfirmationModal(false);
+            getAreaAssignUserFromDb();
+          } else {
+            dispatch(setShowMessage("failed to delete"));
+          }
+        });
+      };
     const rowsData = areaAssign.map((item, index) => ({ ...item, rowNumber: index + 1 }));
     return (
 
@@ -369,6 +413,16 @@ export default function AreaAssignListList() {
                         autoPageSize={false}
                     />
                 </div>
+                <AlertDeleteModal
+                    showModal={displayConfirmationModal}
+                    confirmModal={submitDelete}
+                    hideModal={hideConfirmationModal}
+                    type={type}
+                    id={id}                
+                    categoryd={categoryd}                
+                    dId={dId}                
+                    message={deleteMessage}
+                />
             </div>
 
             {/* new modal */}
