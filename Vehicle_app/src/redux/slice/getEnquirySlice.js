@@ -13,7 +13,7 @@ const initialState = {
 export const getEnquiryData = createAsyncThunk(
   'getEnquiryData/getEnquirySlice',
   async () => {
-    const url = `${API_URL}/enquiry/get-enquiries`;
+    const url = `${API_URL}/api/enquiry/get-enquiries`;
     console.log('get Enquiry Url', url);
     const token = await AsyncStorage.getItem('rbacToken');
     const config = {
