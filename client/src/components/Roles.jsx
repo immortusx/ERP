@@ -248,7 +248,7 @@ export default function Roles({ workFor }) {
 
   const columns = [
     {
-      field: "id",
+      field: "rowNumber",
       headerAlign: "center",
       align: "center",
       headerName: "No",
@@ -383,13 +383,15 @@ export default function Roles({ workFor }) {
       if (response.data && response.data.isSuccess) {
         console.log(response.data);
         dispatch(setShowMessage("Roles Deleted"));
-        dispatch(addRoleToDb());
+       // dispatch(addRoleToDb());      
         setDisplayConfirmationModal(false);
+        dispatch(getRoles());
       } else {
         dispatch(setShowMessage("failed to delete"));
       }
     });
   };
+  const rowsData = showRolesList.map((item, index) => ({ ...item, rowNumber: index + 1 }));
   return (
     <div className="addUser myBorder bg-white rounded p-3">
       <div className=" row mt-3 m-0">
@@ -419,10 +421,10 @@ export default function Roles({ workFor }) {
         )}
         <div className="mt-4" style={{ height: "85vh", width: "100%" }}>
           <DataGrid
-            rows={showRolesList}
+            rows={rowsData}
             columns={columns}
             getRowId={(params) => {
-              return params.id;
+              return params.rowNumber;
             }}
             className="rounded"
             style={{

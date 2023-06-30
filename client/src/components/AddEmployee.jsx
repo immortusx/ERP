@@ -196,6 +196,7 @@ export default function Addemployee({ workFor }) {
           navigate("/administration/employees");
         }, 1000);
       } else {
+        console.log("editemployeeData2222222222222222222222222",editemployeeData)
         setemployeeData({
           firstName: editemployeeData.first_name,
           lastName: editemployeeData.last_name,
