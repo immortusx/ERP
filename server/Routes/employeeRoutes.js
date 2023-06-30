@@ -59,7 +59,7 @@ router.post("/add-employee", tokenCheck, async (req, res) => {
       // }
 
       await queryDatabase(
-        `INSERT INTO employee_detail(branch_id, department_id, user_id) VALUES('${branch}','${department}','${userId}')`
+        `INSERT INTO employee_detail(branch_id, department_id, user_id,role_id) VALUES('${branch}','${department}','${userId}','${role}')`
       );
 
       await queryDatabase(
