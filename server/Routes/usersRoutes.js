@@ -52,6 +52,7 @@ router.get('/get-user-details/:id', tokenCheck, async (req, res) => {
   const userId = req.params.id
   const urlNew = `call sp_user_details_branches_roles( ${userId}) `
   db.query(urlNew, async (err, result) => {
+    console.log(result,"result")
     console.log('result[0][0].branchesRole ***********', result[0][0].branchesRole)
     let data = JSON.parse(result[0][0].branchesRole)
     console.log('result[0]', data)

@@ -31,8 +31,8 @@ router.post("/add-employee", tokenCheck, async (req, res) => {
   const role = req.body.selectedRole;
   const branch = req.body.branch;
   const selectedDate = moment(req.body.selectedDate).format("YYYY/MM/DD");
-  // const departmentId = 1;
   const department = req.body.department;
+  // const departmentId = 1;
   const user_type_id = 2;
 
   const hashedPassword = await hasThePass(password);
@@ -134,11 +134,13 @@ router.post("/edit-employee", tokenCheck, async (req, res) => {
   const accountType = req.body.accountType;
   const ifscCode = req.body.ifscCode;
   const bloodgroup = req.body.bloodgroup;
+  const branch = req.body.branch;
+  const department = req.body.department;
+  const role = req.body.selectedRole;
   const selectedDate = moment(req.body.selectedDate).format("YYYY/MM/DD");
-  const departmentId = 1;
+  // const departmentId = 1;
   const user_type_id = 2;
   const id = req.body.id;
-
   const hashedPassword = await hasThePass(password);
 
   try {
@@ -146,7 +148,7 @@ router.post("/edit-employee", tokenCheck, async (req, res) => {
       `UPDATE users SET first_name = '${firstName}', last_name = '${lastName}', email = '${email}', password = '${hashedPassword}', phone_number = '${phoneNumber}', bloodgroup = '${bloodgroup}', dob = '${selectedDate}', user_type_id = '${user_type_id}' WHERE id = '${id}'`
     );
 
-    // const userId = result.insertId;
+    const userId = result.insertId;
 
     // for (const branchId of Object.keys(branchRole)) {
     //   const rolesAr = branchRole[branchId];
@@ -161,6 +163,11 @@ router.post("/edit-employee", tokenCheck, async (req, res) => {
     //     );        
     //   }
     // }
+
+
+await queryDatabase(
+  `INSERT INTO employee_detail(branch_id, department_id, user_id,role_id) VALUES('${branch}','${department}','${userId}','${role}')`
+);
 
     await queryDatabase(
       `UPDATE bank_details SET bank_name = '${bankname}', bank_branch = '${bankBranch}', account_number = '${accountNo}', account_type = '${accountType}', ifsc_code = '${ifscCode}' WHERE user_id = '${id}'`

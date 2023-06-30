@@ -88,4 +88,23 @@ router.post("/delete-department", tokenCheck, async (req, res) => {
 });
 
 
+router.get("/get-department-edit", tokenCheck, async (req, res) => {
+  console.log(">>>>>get-roles");
+
+  const url = `SELECT * from departments where  id=" + id`;
+  await db.query(url, async (err, result) => {
+    if (err) {
+      console.log({ isSuccess: true, result: err });
+      res.send({ isSuccess: true, result: "error" });
+    } else {
+      console.log({ isSuccess: true, result: url });
+      res.send({ isSuccess: true, result: result });
+    }
+  });
+});
+
+
+
+
+
 module.exports = router;
