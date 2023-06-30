@@ -76,6 +76,7 @@ export default function Addemployee({ workFor }) {
   const [empRoleDesc, setEmpRolesDesc] = useState('');
   const [roleSelect, setRoleSelect] = useState('');
   const [selectedRole, setSelectedRole] = useState('');
+  const [selectedRoleName, setSelectedRoleName] = useState('');
  
   const selectInp = useRef();
   const selectedInp = useRef();
@@ -488,10 +489,14 @@ export default function Addemployee({ workFor }) {
 
   }
   const onChangeAccess = async (e) => {
-    const selectedRole = e.target.value;
-    setSelectedRole(selectedRole);   
-   // console.log(e,"roleSelectroleSelectroleSelectroleSelect")
-    const url = `${process.env.REACT_APP_NODE_URL}/api/users/getRoleDesc/${selectedRole}`;
+    const selectedValue  = e.target.value;
+    const [id, role] = selectedValue.split(',');
+    const selectedId = id;
+    const selectedRole = role;
+    setSelectedRole(selectedId);   
+    setSelectedRoleName(selectedRole);   
+   // console.log(selectedRole,"roleSelectroleSelectroleSelectroleSelect")
+    const url = `${process.env.REACT_APP_NODE_URL}/api/users/getRoleDesc/${selectedId}`;
     const config = {
       headers: {
         token: localStorage.getItem("rbacToken"),
@@ -625,6 +630,7 @@ return (
                 !editemployeeData ? bloodgroup : editemployeeData.bloodgroup
               }
             >
+                <option value="">Select Blood group</option>
               {bloodGroups.map((group, index) => (
                 <option key={index} value={group}>
                   {group}
@@ -680,13 +686,13 @@ return (
           </section>
           {/* ===========bankDetails========== */}
           <main className="mt-4">
-            <h5 className="m-0">Bank Details</h5>
-          <h5 className="m-0">Job Information</h5>
-          <div className="row mt-3 m-0">
+            {/* <h5 className="m-0">Bank Details</h5> */}
+          {/* <h5 className="m-0">Job Information</h5> */}
+          <div className="row  m-0">
           
 
           
-            <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
+            {/* <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
               <label className="myLabel" htmlFor="bloodGroup">
                 Select Branch
               </label>
@@ -723,9 +729,9 @@ return (
                   </option>
                 ))}
               </select>
-            </section>
+            </section> */}
             {/* ===========bankDetails========== */}
-            <main className="mt-4">
+            <main className="">
               <h5 className="m-0">Bank Details</h5>
 
             <div className=" row mt-3 m-0">
@@ -825,25 +831,25 @@ return (
                           <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm1.679-4.493-1.335 2.226a.75.75 0 0 1-1.174.144l-.774-.773a.5.5 0 0 1 .708-.708l.547.548 1.17-1.951a.5.5 0 1 1 .858.514ZM11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                           <path d="M2 13c0 1 1 1 1 1h5.256A4.493 4.493 0 0 1 8 12.5a4.49 4.49 0 0 1 1.544-3.393C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4Z" />
                         </svg>
-                        <h6 className="fw-bold ms-4 mt-1">Admmin</h6>
-                        <div className="ms-2">
+                     
+                        <h6 className="fw-bold ms-4 mt-1">{selectedRoleName && selectedRoleName.length>0 ? selectedRoleName:'Admin'}</h6>
+                        <div className="ms-5">
                           <select
                             className="form-control dropup"
                             id="access"
                             name="access"
                             onChange={onChangeAccess}
-                          value={selectedRole}
+                          // value={selectedRoleName}
                           >
-                            <option value=""> Select Role</option>
+                            <option value="">Admin</option>
                             {empRoles && empRoles.map((acc, index) => (
-                              <option key={index} value={acc.id}>
+                              <option key={index} value={`${acc.id},${acc.role}`}>
                                 {acc.role}
                               </option>
                             ))}
                           </select>
                         </div>
-
-                        {/* </div> */}
+                      
                       </div>
                       <div>
                         <p className="ms-4">  {empRoleDesc.length > 0 ?empRoleDesc :'Admin have all rights and able to do all things.'}</p>
