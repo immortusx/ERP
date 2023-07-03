@@ -83,4 +83,52 @@ router.post("/delete-category", tokenCheck, async (req, res) => {
   }
 });
 
+router.post("/get-category-edit/:id", tokenCheck, async (req, res) => {
+  console.log(">>>>>get-roles");
+  const { category_name, category_description, department } = req.body;
+  const id = req.params.id;
+
+  try {
+    const result = `UPDATE enquiry_category SET category_name = '${category_name}', category_description = '${category_description}',  department = '${department} WHERE is_active = 1 and id = ${id}`;
+    await db.query(result, async (err, newResult) => {
+      if (err) {
+        console.log({ isSuccess: false, result: err });
+        res.status(500).json({ isSuccess: false, result: "error" });
+      } else {
+        console.log({ isSuccess: true, result: "success" });
+        res.status(200).json({ isSuccess: true, result: "success" });
+      }
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ isSuccess: false, result: "error" });
+  }
+});
+
+
+router.get("/get-categorybyid/:id", tokenCheck, async (req, res) => {
+  console.log(">>>>>/get-categorybyid");
+  try {
+    const categorybyId = req.params.id;
+    console.log(categorybyId);
+    await db.query(
+      "SELECT * FROM enquiry_category where is_active = 1 and id=" +
+        categorybyId,
+      (err, categorybyIdData) => {
+        if (err) {
+          console.log({ isSuccess: false, result: "error" });
+          res.send({ isSuccess: false, result: "error" });
+        } else {
+          console.log({ isSuccess: true, result: categorybyIdData });
+          res.status(200).send({ isSuccess: true, result: categorybyIdData });
+        }
+      }
+    );
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({ isSuccess: false, result: "error" });
+  }
+});
+
+
 module.exports = router;

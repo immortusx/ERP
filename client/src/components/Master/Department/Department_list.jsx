@@ -1,20 +1,17 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Axios from "axios";
-import { getToPathname } from "@remix-run/router";
-import { getDepartment, deleteDepartment } from "./getEditDepartment";
+import { getDepartment} from "./getEditDepartment";
 // import { setShowMessage } from "../redux/slices/notificationSlice";
 import { setShowMessage } from "../../../redux/slices/notificationSlice";
 import { useNavigate } from "react-router-dom";
 import AlertDeleteModal from "../../AlertDelete/AlertDeleteModal";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
-import CheckIcon from "@mui/icons-material/Check";
-import ClearIcon from "@mui/icons-material/Clear";
 import { addDepartmentToDb } from "../../../redux/slices/Master/Department/addDepartmentSlice";
+import { setEditdepartmentData } from "../../../redux/slices/Master/Department/editDepartmentSlice";
 
 export default function Department_list({ workFor }) {
   const [partsList, setPartsList] = useState([]);
-  const [editdepartment, setEditDepartment] = useState([]);
   const [displayConfirmationModal, setDisplayConfirmationModal] =
     useState(false);
   const [deleteMessage, setDeleteMessage] = useState(null);
@@ -119,9 +116,11 @@ export default function Department_list({ workFor }) {
 
   const editeStateModal = (data) => {
     // setTableEditData(data);
-    navigate("/administration/configuration/department/editdepartment", {
-      state: data,
-    });
+     console.log(data.id);
+     console.log("editEmployeee");
+    dispatch(setEditdepartmentData(data));
+    console.log(setEditdepartmentData(data));
+    navigate("/administration/configuration/department/editdepartment");
   };
 
   const deleteActionCall = (data) => {
@@ -167,28 +166,6 @@ export default function Department_list({ workFor }) {
     }
   };
 
-  const editDepartment = async () => {
-    const url = `${process.env.REACT_APP_NODE_URL}/api/master/get-department-edit`;
-    const config = {
-      headers: {
-        token: localStorage.getItem("rbacToken"),
-      },
-    };
-    await Axios.get(url, config).then((response) => {
-      if (response.data?.isSuccess) {
-        setEditDepartment(response.data.result);
-        console.log("get-department-edit", response.data.result);
-      }
-    });
-  };
-
-  useEffect(() => {
-    // clearInpHook();
-
-    if (workFor === "department") {
-      editDepartment();
-    }
-  }, [workFor]);
 
   const getDepartmentForm = () => {
     getDepartment()
