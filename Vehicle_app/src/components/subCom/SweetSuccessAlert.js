@@ -13,7 +13,7 @@ const SweetSuccessAlert = ({modalShow}) => {
       setModalVisible(modalShow);
       const timeout = setTimeout(() => {
         hideModal();
-      }, 200000);
+      }, 3000);
       return () => clearTimeout(timeout);
     }
   }, [modalShow]);

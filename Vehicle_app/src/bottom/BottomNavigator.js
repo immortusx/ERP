@@ -120,10 +120,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold'
   },
   enquiryBtn: {
-    backgroundColor: '#0A8BE2',
+    backgroundColor: '#0984DF',
   },
   bookingBtn: {
-    backgroundColor: '#0A8BE2',
+    backgroundColor: '#0984DF',
   },
   plusImg: {
     width: 51,

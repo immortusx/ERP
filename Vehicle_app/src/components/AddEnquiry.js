@@ -32,14 +32,16 @@ const AddEnquiry = ({navigation}) => {
   const {manufacturer, modal, variant} = useSelector(
     state => state.manufacturerDetails,
   );
-  const [date, setDate] = useState(new Date());
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [openCurentDate, setOpenCurrentDate] = useState(false);
   const [expDeliveryDate, setExpDeliveryDate] = useState(new Date());
+  const [openExpDeliveryDate, setOpenExpDeliveryDate] = useState(false);
   const [manuYearDate, setManuYearDate] = useState(new Date());
+  const [openManuYearDate, setOPenManuYearDate] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [isFocus, setIsFocus] = useState(false);
   const [enquiry, setEnquiry] = useState(null);
   const [condition, setCondtion] = useState(null);
-  const [open, setOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState('No');
   const options = ['Yes', 'No'];
   const [modalVisible, setModalVisible] = useState(false);
@@ -79,6 +81,7 @@ const AddEnquiry = ({navigation}) => {
       setModalVisible(true);
     }
   };
+  const formattedDeliveryDate = expDeliveryDate.toLocaleDateString();
   const handleReadValue = () => {
     console.log(selectedOption);
   };
@@ -94,7 +97,7 @@ const AddEnquiry = ({navigation}) => {
   };
   useEffect(() => {
     if (enquiryState.isSuccess === true) {
-      console.log("Enquiry submitted")
+      console.log('Enquiry submitted');
       openModal();
     }
   }, [enquiryState]);
@@ -122,8 +125,8 @@ const AddEnquiry = ({navigation}) => {
       model: 6,
       village: native,
       branchId: 2,
-      enquiryDate: date,
-      deliveryDate: expDeliveryDate,
+      enquiryDate: formattedCurrentDate,
+      deliveryDate: formattedDeliveryDate,
       sourceOfEnquiry: 25,
       manufacturer,
       modal,
@@ -144,12 +147,9 @@ const AddEnquiry = ({navigation}) => {
       console.warn('Please first fill the field*');
     }
   };
-  const saveDate = date => {
-    setExpDeliveryDate(date);
-  };
-  const saveYearOfManu = date => {
-    setManuYearDate(date);
-  };
+
+  const formattedCurrentDate = currentDate.toLocaleDateString();
+  const formattedManuYear = manuYearDate.toLocaleDateString();
   const handleModalData = () => {
     if (
       oldVehicleData.maker.length > 0 &&
@@ -161,7 +161,7 @@ const AddEnquiry = ({navigation}) => {
           maker: oldVehicleData.maker,
           modalName: oldVehicleData.modalName,
           variantName: oldVehicleData.variantName,
-          year: manuYearDate.toISOString(),
+          year: formattedManuYear,
           condition_of: condition,
         }),
       );
@@ -191,49 +191,45 @@ const AddEnquiry = ({navigation}) => {
               <Text
                 style={styles.dateText}
                 placeholder="Select Date"
-                onPress={() => setOpen(true)}>
-                {date.toLocaleDateString()}
+                onPress={() => setOpenCurrentDate(true)}>
+                {formattedCurrentDate}
               </Text>
               <DatePicker
                 mode="date"
                 modal
-                open={open}
-                date={date}
+                open={openCurentDate}
+                date={currentDate}
                 theme="dark"
                 onConfirm={date => {
-                  setOpen(false);
-                  setDate(date);
+                  setOpenCurrentDate(false);
+                  setCurrentDate(date);
                 }}
                 onCancel={() => {
-                  setOpen(false);
+                  setOpenCurrentDate(false);
                 }}
               />
             </View>
           </View>
           <Text style={styles.mainHeader}>Customer Details</Text>
-          <View style={styles.inputContainer}>
+          <View>
             <Text style={styles.label}>Select Branch *</Text>
-            <TextInput
+            <View
               editable={false}
-              style={styles.inputStyle}
-              placeholder="Select Branch"
-              autoCapitalize="none"
-              keyboardType="branch"
-              textContentType="branch"
-              value={branch}
-            />
+              style={[styles.dataContainer, styles.optional]}>
+              <TouchableOpacity>
+                <Text style={styles.branchText}>New Keshav Tractors</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Select DSP *</Text>
-            <TextInput
+          <View>
+          <Text style={styles.label}>Select DSP *</Text>
+            <View
               editable={false}
-              style={styles.inputStyle}
-              placeholder="Select Branch"
-              autoCapitalize="none"
-              keyboardType="dsp"
-              textContentType="dsp"
-              value={dsp}
-            />
+              style={[styles.dataContainer, styles.optional]}>
+              <TouchableOpacity>
+                <Text style={styles.branchText}>Harilal Mehta</Text>
+              </TouchableOpacity>
+            </View>
           </View>
           <View style={styles.inputContainer}>
             <Text style={styles.label}>First Name *</Text>
@@ -299,7 +295,7 @@ const AddEnquiry = ({navigation}) => {
             </View>
           </View>
           <View style={{marginBottom: 5}}>
-            <Text style={styles.label}>Enquiry Primary Source :</Text>
+            <Text style={styles.label}>Enquiry Primary Source *</Text>
             <View style={styles.enquirySourceContainer}>
               {/* {renderLabel()} */}
               <Dropdown
@@ -331,21 +327,23 @@ const AddEnquiry = ({navigation}) => {
           <View style={{marginBottom: 5}}>
             <Text style={styles.label}>Expected Delivery Date *</Text>
             <View style={styles.deliveryDateContainer}>
-              <Text style={styles.deliveryDate} onPress={() => setOpen(true)}>
-                {expDeliveryDate.toLocaleDateString()}
+              <Text
+                style={styles.deliveryDate}
+                onPress={() => setOpenExpDeliveryDate(true)}>
+                {formattedDeliveryDate}
               </Text>
               <DatePicker
                 mode="date"
                 modal
-                open={open}
+                open={openExpDeliveryDate}
                 date={expDeliveryDate}
                 theme="dark"
                 onConfirm={date => {
-                  setOpen(false);
-                  saveDate(date);
+                  setOpenExpDeliveryDate(false);
+                  setExpDeliveryDate(date);
                 }}
                 onCancel={() => {
-                  setOpen(false);
+                  setOpenExpDeliveryDate(false);
                 }}
               />
             </View>
@@ -418,21 +416,21 @@ const AddEnquiry = ({navigation}) => {
                   <Text
                     style={styles.deliveryDate}
                     placeholder="Select Date"
-                    onPress={() => setOpen(true)}>
-                    {date.toLocaleDateString()}
+                    onPress={() => setOPenManuYearDate(true)}>
+                    {formattedManuYear}
                   </Text>
                   <DatePicker
                     mode="date"
                     modal
-                    open={open}
+                    open={openManuYearDate}
                     date={manuYearDate}
                     theme="dark"
                     onConfirm={date => {
-                      setOpen(false);
-                      saveYearOfManu(date);
+                      setOPenManuYearDate(false);
+                      setManuYearDate(date);
                     }}
                     onCancel={() => {
-                      setOpen(false);
+                      setOPenManuYearDate(false);
                     }}
                   />
                 </View>
@@ -478,7 +476,7 @@ const AddEnquiry = ({navigation}) => {
             </View>
           </Modal>
         </View>
-        <SweetSuccessAlert modalShow={showModal}/>
+        <SweetSuccessAlert modalShow={showModal} />
       </View>
     </ScrollView>
   );
@@ -510,6 +508,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 22,
     padding: 5,
+    paddingHorizontal: 25,
   },
   inputStyle: {
     marginVertical: 5,
@@ -519,6 +518,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 5,
   },
+  dataContainer: {
+    marginVertical: 5,
+    borderRadius: 5,
+    borderColor: '#0984DF',
+    borderWidth: 1,
+    paddingHorizontal: 10,
+    paddingVertical: 9,
+  },
   centeredContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -527,6 +534,10 @@ const styles = StyleSheet.create({
   textMore: {
     fontWeight: 'bold',
     color: '#3AA4F7',
+  },
+  branchText: {
+    fontWeight: 'bold',
+    color: '#273746',
   },
   saveButton: {
     marginTop: 30,

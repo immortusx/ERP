@@ -47,7 +47,6 @@ const AddManufacturDetails = () => {
     return null;
   };
   const saveManufacturDetails = () => {
-    console.warn(manufacturer, modal, variant);
     dispatch(saveManufacturerDetails({
       manufacturer, modal, variant
     }))
