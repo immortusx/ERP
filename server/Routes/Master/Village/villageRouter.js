@@ -192,4 +192,23 @@ router.get('/get-Villagebydistrictid/:id', tokenCheck, async (req, res) => {
       console.log(e);
     }
   })
+
+  router.get('/get-Village-by-branchId/:id', tokenCheck, async (req, res) => {
+    console.log('>>>>>/get-Village-by-branchId');
+
+    try{
+      const branchId = req.params.id
+      await db.query("SELECT * FROM branches where id =" + branchId, (err, villageByBranchId) => {
+        if (err) {
+            console.log({ isSuccess: false, result: 'error' })
+            res.send({ isSuccess: false, result: 'error' })
+        } else {
+            console.log({ isSuccess: true, result: villageByBranchId })
+            res.status(200).send({ isSuccess: true, result: villageByBranchId })
+        }
+      })      
+    }catch(e){
+      console.log(e);
+    }
+  })
 module.exports = router;

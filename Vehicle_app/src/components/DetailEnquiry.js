@@ -211,7 +211,7 @@ const DetailEnquiry = ({navigation}) => {
               style={styles.inputStyle}
               placeholder="Enter First Name"
               autoCapitalize="none"
-              keyboardType="firstname"
+              keyboardType="default"
               textContentType="firstname"
               onChangeText={value => onChangeHandler(value, 'firstname')}
             />
@@ -222,7 +222,7 @@ const DetailEnquiry = ({navigation}) => {
               style={styles.inputStyle}
               placeholder="Enter Last Name"
               autoCapitalize="none"
-              keyboardType="lastname"
+              keyboardType="default"
               textContentType="lastname"
               onChangeText={value => onChangeHandler(value, 'lastname')}
             />
@@ -233,7 +233,7 @@ const DetailEnquiry = ({navigation}) => {
               style={styles.inputStyle}
               placeholder="Enter Phone Number"
               autoCapitalize="none"
-              keyboardType="phone"
+              keyboardType="default"
               textContentType="phone"
               onChangeText={value => onChangeHandler(value, 'phone')}
             />
@@ -361,7 +361,7 @@ const DetailEnquiry = ({navigation}) => {
                   style={styles.textInput}
                   placeholder="Enter Maker's Name"
                   autoCapitalize="none"
-                  keyboardType="maker"
+                  keyboardType="default"
                   textContentType="maker"
                   // value={manufacturer}
                   onChangeText={value => onChangeInputField(value, 'maker')}
@@ -370,7 +370,7 @@ const DetailEnquiry = ({navigation}) => {
                   style={styles.textInput}
                   placeholder="Enter Modal"
                   autoCapitalize="none"
-                  keyboardType="modal"
+                  keyboardType="default"
                   textContentType="modal"
                   // value={manufacturer}
                   onChangeText={value => onChangeInputField(value, 'modalName')}
@@ -379,7 +379,7 @@ const DetailEnquiry = ({navigation}) => {
                   style={styles.textInput}
                   placeholder="Enter Variant"
                   autoCapitalize="none"
-                  keyboardType="variant"
+                  keyboardType="default"
                   textContentType="variant"
                   // value={manufacturer}
                   onChangeText={value =>

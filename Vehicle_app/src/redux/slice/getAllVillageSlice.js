@@ -13,8 +13,11 @@ const initialState = {
 export const getVillageData = createAsyncThunk(
   'getVillageData/getAllVillageSlice',
   async () => {
-    const url = `${API_URL}/api/master/get-allVillage`;
+    const branchId = await AsyncStorage.getItem('currentBranchId');
+    const id = branchId ? branchId : ''
+    const url = `${API_URL}/api/master/get-Village-by-branchId/${id}`;
     console.log('get all village', url);
+    console.log(id);
     const token = await AsyncStorage.getItem('rbacToken');
     const config = {
       headers: {
@@ -23,7 +26,7 @@ export const getVillageData = createAsyncThunk(
     };
     console.log(config);
     const response = await axios.get(url, config);
-    console.log(response.data);
+    console.log(response.data,'response');
     return response.data;
   },
 );

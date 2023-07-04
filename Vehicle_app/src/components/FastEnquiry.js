@@ -22,7 +22,6 @@ import {saveEnquiryModalForm} from '../redux/slice/addEnquiryModal';
 import {saveModalData} from '../redux/slice/modalDataSlice';
 import SweetSuccessAlert from './subCom/SweetSuccessAlert';
 import {getVillageData} from '../redux/slice/getAllVillageSlice';
-import { getEnquiryData } from '../redux/slice/getEnquirySlice';
 const FastEnquiry = ({navigation}) => {
   const dispatch = useDispatch();
   // const enquiryState = useSelector(state => state.enquriySlice.enquiryState);
@@ -48,6 +47,7 @@ const FastEnquiry = ({navigation}) => {
   const [condition, setCondtion] = useState(null);
   const [selectedOption, setSelectedOption] = useState('No');
   const options = ['Yes', 'No'];
+  const [resultData, setResultData] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [oldVehicleData, setOldVehicleData] = useState({
     maker: '',
@@ -87,17 +87,25 @@ const FastEnquiry = ({navigation}) => {
   };
   useEffect(() => {
     const getVillage = () => {
-        dispatch(getEnquiryData());
-    //   dispatch(getVillageData());
+      dispatch(getVillageData());
     };
     getVillage();
   }, []);
 
   useEffect(() => {
     if (result) {
-      console.log(result.result);
+        console.log(result.result);
+      setResultData(result.result);
     }
   }, [result]);
+
+//   useEffect(() => {
+//     if (resultData && resultData.length > 0) {
+//       resultData.map(i => {
+//         console.log(i.name);
+//       });
+//     }
+//   }, [resultData]);
 
   const formattedDeliveryDate = expDeliveryDate.toLocaleDateString();
   const handleReadValue = () => {
@@ -204,7 +212,7 @@ const FastEnquiry = ({navigation}) => {
               placeholder="Enter Customer Name"
               autoCapitalize="none"
               keyboardType="customer"
-              textContentType="customer"
+              
               onChangeText={value => onChangeHandler(value, 'customer')}
             />
           </View>
@@ -215,7 +223,7 @@ const FastEnquiry = ({navigation}) => {
               placeholder="Enter Phone Number"
               autoCapitalize="none"
               keyboardType="phone"
-              textContentType="phone"
+              
               onChangeText={value => onChangeHandler(value, 'phone')}
             />
           </View>
@@ -226,7 +234,7 @@ const FastEnquiry = ({navigation}) => {
               placeholder="Enter WhatsApp Number"
               autoCapitalize="none"
               keyboardType="whatsappno"
-              textContentType="whatsappno"
+              
               onChangeText={value => onChangeHandler(value, 'whatsappno')}
             />
           </View>
@@ -292,8 +300,7 @@ const FastEnquiry = ({navigation}) => {
                   placeholder="Enter Maker's Name"
                   autoCapitalize="none"
                   keyboardType="maker"
-                  textContentType="maker"
-                  // value={manufacturer}
+                // value={manufacturer}
                   onChangeText={value => onChangeInputField(value, 'maker')}
                 />
                 <TextInput
@@ -301,8 +308,7 @@ const FastEnquiry = ({navigation}) => {
                   placeholder="Enter Modal"
                   autoCapitalize="none"
                   keyboardType="modal"
-                  textContentType="modal"
-                  // value={manufacturer}
+                // value={manufacturer}
                   onChangeText={value => onChangeInputField(value, 'modalName')}
                 />
                 <TextInput
@@ -310,8 +316,7 @@ const FastEnquiry = ({navigation}) => {
                   placeholder="Enter Variant"
                   autoCapitalize="none"
                   keyboardType="variant"
-                  textContentType="variant"
-                  // value={manufacturer}
+                      // value={manufacturer}
                   onChangeText={value =>
                     onChangeInputField(value, 'variantName')
                   }

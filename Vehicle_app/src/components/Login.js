@@ -41,7 +41,7 @@ const Login = ({navigation}) => {
         );
         AsyncStorage.setItem(
           'currentBranchId',
-          loginState.result.result.currentBranch
+          JSON.stringify(loginState.result.result.currentBranch)
         );
         AsyncStorage.setItem('rbacToken', loginState.result.result.tokenIs);
         AsyncStorage.getItem('rbacToken').then(token => {
