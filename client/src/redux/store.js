@@ -16,6 +16,7 @@ import addCategorySlice from './slices/Master/Category/addCategorySlice';
 
 import editUserDataSlice from './slices/editUserDataSlice'
 import editemployeeDataSlice from './slices/editemployeeDataSlice'
+import editDepartmentSlice from './slices/Master/Department/editDepartmentSlice';
 import editRoleDataSlice from './slices/editRoleDataSlice'
 import enquirySlice from './slices/enquirySlice'
 import enquiryFieldSaveSlice from './slices/enquiryFieldSaveSlice'
@@ -28,6 +29,7 @@ import addTalukaSlice from './slices/Master/Taluka/addTalukaSlice';
 import addVillageSlice from './slices/Master/Village/addVillageSlice';
 import addManufacturerSlice from './slices/Master/Manufacturer/addManufacturerSlice';
 import addassigneAreaSlice from './slices/assignedAreaSlice'
+import editCategorySlice from './slices/Master/Category/editCategorySlice';
 
 export const store = configureStore({
   reducer: {
@@ -44,6 +46,8 @@ export const store = configureStore({
     notificationState: notificationSlice,
     editUserDataState: editUserDataSlice,
     editemployeeDataState: editemployeeDataSlice,
+    editDepartmentDataState : editDepartmentSlice,
+    editCategoryDataState :editCategorySlice,
     enquiryState: enquirySlice,
     editRoleDataState: editRoleDataSlice,
     enquiryFieldSaveState: enquiryFieldSaveSlice,

@@ -88,19 +88,52 @@ router.post("/delete-department", tokenCheck, async (req, res) => {
 });
 
 
-router.get("/get-department-edit", tokenCheck, async (req, res) => {
+router.post("/get-department-edit/:id", tokenCheck, async (req, res) => {
   console.log(">>>>>get-roles");
+  const { name, description } = req.body;
+  const id = req.params.id;
 
-  const url = `SELECT * from departments where  id=" + id`;
-  await db.query(url, async (err, result) => {
-    if (err) {
-      console.log({ isSuccess: true, result: err });
-      res.send({ isSuccess: true, result: "error" });
-    } else {
-      console.log({ isSuccess: true, result: url });
-      res.send({ isSuccess: true, result: result });
-    }
-  });
+  try {
+    const result = `UPDATE departments SET name = '${name}', description = '${description}' WHERE is_active = 1 and id = ${id}`;
+    await db.query(result, async (err, newResult) => {
+      if (err) {
+        console.log({ isSuccess: false, result: err });
+        res.status(500).json({ isSuccess: false, result: "error" });
+      } else {
+        console.log({ isSuccess: true, result: "success" });
+        res.status(200).json({ isSuccess: true, result: "success" });
+      }
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ isSuccess: false, result: "error" });
+  }
+});
+
+
+router.get("/get-departmentbyid/:id", tokenCheck, async (req, res) => {
+  console.log(">>>>>/get-departmentbyid");
+   try {
+     const departmentbyId = req.params.id;
+     console.log(departmentbyId);
+     await db.query(
+       "SELECT * FROM departments where is_active = 1 and id=" + departmentbyId,
+       (err, departmentbyIdData) => {
+         if (err) {
+           console.log({ isSuccess: false, result: "error" });
+           res.send({ isSuccess: false, result: "error" });
+         } else {
+           console.log({ isSuccess: true, result: departmentbyIdData });
+           res
+             .status(200)
+             .send({ isSuccess: true, result: departmentbyIdData });
+         }
+       }
+     );
+   } catch (e) {
+     console.log(e);
+     res.status(500).json({ isSuccess: false, result: "error" });
+   }
 });
 
 
