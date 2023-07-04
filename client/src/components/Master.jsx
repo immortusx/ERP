@@ -136,7 +136,12 @@ export default function Master() {
             <hr />
             <ul className="row m-0 px-2">
               <li className="col-12 col-sm-4 col-md-3  d-flex align-items-center p-2">
-                <main className="d-flex align-items-center">
+                <main
+                  onClick={() => {
+                    navigate("/administration/configuration/addagency");
+                  }}
+                  className="d-flex align-items-center"
+                >
                   <div className="myBtnRight">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"

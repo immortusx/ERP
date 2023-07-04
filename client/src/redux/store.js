@@ -13,7 +13,7 @@ import addRoleSlice from './slices/addRoleSlice'
 import notificationSlice from './slices/notificationSlice'
 import addDepartmentSlice from './slices/Master/Department/addDepartmentSlice';
 import addCategorySlice from './slices/Master/Category/addCategorySlice';
-
+import addagencySlice from './slices/addagencySlice';
 import editUserDataSlice from './slices/editUserDataSlice'
 import editemployeeDataSlice from './slices/editemployeeDataSlice'
 import editDepartmentSlice from './slices/Master/Department/editDepartmentSlice';
@@ -46,6 +46,7 @@ export const store = configureStore({
     notificationState: notificationSlice,
     editUserDataState: editUserDataSlice,
     editemployeeDataState: editemployeeDataSlice,
+    addAgency:addagencySlice,
     editDepartmentDataState : editDepartmentSlice,
     editCategoryDataState :editCategorySlice,
     enquiryState: enquirySlice,

@@ -191,7 +191,7 @@ dispatch(editcategoryUpdateToDb(categoryData));
       <main>
         <div className=" row mt-3 m-0">
           <h5 className="m-0">
-            {workFor === "foradd" ? "Create Category" : "Edit Category"}
+            {workFor === "forAdd" ? "Create Category" : "Edit Category"}
           </h5>
 
           <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
@@ -241,7 +241,7 @@ dispatch(editcategoryUpdateToDb(categoryData));
               onClick={handleSubmit}
               type="button"
             >
-              {workFor === "foradd" ? "Create Category" : "Edit Category"}
+              {workFor === "forAdd" ? "Create Category" : "Edit Category"}
             </button>
             <button
               className="ms-0 ms-sm-3 mt-3 mt-sm-0 col-12 col-sm-5 col-lg-2 myBtn py-2"

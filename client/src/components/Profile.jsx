@@ -85,7 +85,7 @@ export default function Profile() {
     
     return (
         <>
-            <div>Profile</div>
+            <div> Agency Profile</div>
 
             {/* <div style={{ height: '90vh', width: '100%' }}>
                 <DataGrid
