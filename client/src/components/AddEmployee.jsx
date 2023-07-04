@@ -76,6 +76,7 @@ export default function Addemployee({ workFor }) {
   const [empRoleDesc, setEmpRolesDesc] = useState('');
   const [roleSelect, setRoleSelect] = useState('');
   const [selectedRole, setSelectedRole] = useState('');
+  const [selectedRoleName, setSelectedRoleName] = useState('');
  
   const selectInp = useRef();
   const selectedInp = useRef();
@@ -195,6 +196,7 @@ export default function Addemployee({ workFor }) {
           navigate("/administration/employees");
         }, 1000);
       } else {
+        console.log("editemployeeData2222222222222222222222222",editemployeeData)
         setemployeeData({
           firstName: editemployeeData.first_name,
           lastName: editemployeeData.last_name,
@@ -488,10 +490,14 @@ export default function Addemployee({ workFor }) {
 
   }
   const onChangeAccess = async (e) => {
-    const selectedRole = e.target.value;
-    setSelectedRole(selectedRole);   
-   // console.log(e,"roleSelectroleSelectroleSelectroleSelect")
-    const url = `${process.env.REACT_APP_NODE_URL}/api/users/getRoleDesc/${selectedRole}`;
+    const selectedValue  = e.target.value;
+    const [id, role] = selectedValue.split(',');
+    const selectedId = id;
+    const selectedRole = role;
+    setSelectedRole(selectedId);   
+    setSelectedRoleName(selectedRole);   
+   // console.log(selectedRole,"roleSelectroleSelectroleSelectroleSelect")
+    const url = `${process.env.REACT_APP_NODE_URL}/api/users/getRoleDesc/${selectedId}`;
     const config = {
       headers: {
         token: localStorage.getItem("rbacToken"),
@@ -625,6 +631,7 @@ return (
                 !editemployeeData ? bloodgroup : editemployeeData.bloodgroup
               }
             >
+              <option value="">Select Blood group</option>
               {bloodGroups.map((group, index) => (
                 <option key={index} value={group}>
                   {group}
@@ -678,15 +685,14 @@ return (
               ))}
             </select>
           </section>
-          {/* ===========bankDetails========== */}
-          <main className="mt-4">
-            <h5 className="m-0">Bank Details</h5>
-          <h5 className="m-0">Job Information</h5>
-          <div className="row mt-3 m-0">
-          
-
-          
-            <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
+        </div>
+      </main>
+      {/* ===========bankDetails========== */}
+      {/* <main className="mt-4">*/}
+      {/* <h5 className="m-0">Bank Details</h5> */}
+      {/* <h5 className="m-0">Job Information</h5> */}
+      {/*<div className="row  m-0"> */}
+      {/* <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
               <label className="myLabel" htmlFor="bloodGroup">
                 Select Branch
               </label>
@@ -723,203 +729,217 @@ return (
                   </option>
                 ))}
               </select>
-            </section>
-            {/* ===========bankDetails========== */}
-            <main className="mt-4">
-              <h5 className="m-0">Bank Details</h5>
-
-            <div className=" row mt-3 m-0">
-              <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
-                <label className="myLabel" htmlFor="bloodGroup">
-                  Bank Name
-                </label>
-                <select
-                  className="form-control"
-                  id="bloodGroup"
-                  name="bankname"
-                  onChange={onChangeBankDetais}
-                  value={BankDetais.value}
-                >
-                  <option value="">Select Bank Name</option>
-                  {bankName.map((group, index) => (
-                    <option key={index} value={group}>
-                      {group}
-                    </option>
-                  ))}
-                </select>
-              </section>
-              <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
-                <label className="myLabel" htmlFor="email">
-                  Bank Branch{" "}
-                </label>
-                <input
-                  value={BankDetais.bankBranch}
-                  className="myInput inputElement"
-                  autoComplete="false"
-                  onChange={(e) => {
-                    onChangeBankDetais(e);
-                  }}
-                  type="text"
-                  name="bankBranch"
-                />
-              </section>
-              <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
-                <label className="myLabel" htmlFor="email">
-                  Account Number
-                </label>
-                <input
-                  value={BankDetais.accountNo}
-                  className="myInput inputElement"
-                  autoComplete="false"
-                  onChange={(e) => {
-                    onChangeBankDetais(e);
-                  }}
-                  type="text"
-                  name="accountNo"
-                />
-              </section>
-              <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
-                <label className="myLabel" htmlFor="email">
-                  Account Type{" "}
-                </label>
-                <select
-                  className="form-control"
-                  id="accountType"
-                  name="accountType"
-                  onChange={onChangeBankDetais}
-                  value={BankDetais.value}
-                >
-                  <option value="">Select Account Type</option>
-                  <option value="Savings">Savings</option>
-                  <option value="Salery">Salery</option>
-                  <option value="Current">Current</option>
-                </select>
-              </section>
-              <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
-                <label className="myLabel" htmlFor="email">
-                  IFSC Code
-                </label>
-                <input
-                  value={BankDetais.ifscCode}
-                  className="myInput inputElement"
-                  autoComplete="false"
-                  onChange={(e) => {
-                    onChangeBankDetais(e);
-                  }}
-                  type="text"
-                  name="ifscCode"
-                />
-              </section>
-            </div>
-          </main>
-          {/* ===========bankDetails end========== */}
-          <main className="mt-4">
-            <h5 className="m-0">Access Level</h5>
-            <div className=" row mt-3 mb-3 m-0">
-              <section className="d-flex mt-3 flex-column col-12 ">
-                <div className="row">
-                  <div className="col-5">
-                    <div className="noAccess">
-                      <div className="d-flex">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" className="bi bi-person-fill-check text-success" viewBox="0 0 16 16">
-                          <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm1.679-4.493-1.335 2.226a.75.75 0 0 1-1.174.144l-.774-.773a.5.5 0 0 1 .708-.708l.547.548 1.17-1.951a.5.5 0 1 1 .858.514ZM11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                          <path d="M2 13c0 1 1 1 1 1h5.256A4.493 4.493 0 0 1 8 12.5a4.49 4.49 0 0 1 1.544-3.393C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4Z" />
-                        </svg>
-                        <h6 className="fw-bold ms-4 mt-1">Admmin</h6>
-                        <div className="ms-2">
-                          <select
-                            className="form-control dropup"
-                            id="access"
-                            name="access"
-                            onChange={onChangeAccess}
-                          value={selectedRole}
-                          >
-                            <option value=""> Select Role</option>
-                            {empRoles && empRoles.map((acc, index) => (
-                              <option key={index} value={acc.id}>
-                                {acc.role}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-
-                        {/* </div> */}
-                      </div>
-                      <div>
-                        <p className="ms-4">  {empRoleDesc.length > 0 ?empRoleDesc :'Admin have all rights and able to do all things.'}</p>
-                      </div>
-                    </div>
-
-                  </div>
-                  <div className="col-5 noAccessDiv">
-                    <div className="noAccess" onClick={handleNoAccess}>
-                      <div className="d-flex">
-                        <img className="" src="/noAccess.png" alt="Logo" />
-                        <h6 className="fw-bold ms-2">No Access</h6>
-                      </div>
-                      <p className="ms-4">
-                        They will be able to login using the Access level you choose.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-              </section>
-
-            </div>            </main>
-          <section className="d-flex mt-3  flex-column flex-sm-row">
-            <button
-              className="col-12 col-sm-5 col-lg-2 myBtn py-2"
-              onClick={handleSubmit}
-              type="button"
+            </section> */}
+      {/* </main> */}
+      {/*} </div> */}
+      {/* ===========bankDetails========== */}
+      <main className="mt-4">
+        <h5 className="m-0">Bank Details</h5>
+        <div className="row mt-3 m-0">
+          <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
+            <label className="myLabel" htmlFor="bloodGroup">
+              Bank Name
+            </label>
+            <select
+              className="form-control"
+              id="bloodGroup"
+              name="bankname"
+              onChange={onChangeBankDetais}
+              value={BankDetais.value}
             >
-              {workFor === "forAdd" ? "Add employee" : "Edit employee"}
-            </button>
-            <button
-              className="ms-0 ms-sm-3 mt-3 mt-sm-0 col-12 col-sm-5 col-lg-2 myBtn py-2"
-              onClick={handleCancel}
-              type="button"
+              <option value="">Select Bank Name</option>
+              {bankName.map((group, index) => (
+                <option key={index} value={group}>
+                  {group}
+                </option>
+              ))}
+            </select>
+          </section>
+          <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
+            <label className="myLabel" htmlFor="email">
+              Bank Branch{" "}
+            </label>
+            <input
+              value={BankDetais.bankBranch}
+              className="myInput inputElement"
+              autoComplete="false"
+              onChange={(e) => {
+                onChangeBankDetais(e);
+              }}
+              type="text"
+              name="bankBranch"
+            />
+          </section>
+          <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
+            <label className="myLabel" htmlFor="email">
+              Account Number
+            </label>
+            <input
+              value={BankDetais.accountNo}
+              className="myInput inputElement"
+              autoComplete="false"
+              onChange={(e) => {
+                onChangeBankDetais(e);
+              }}
+              type="text"
+              name="accountNo"
+            />
+          </section>
+          <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
+            <label className="myLabel" htmlFor="email">
+              Account Type{" "}
+            </label>
+            <select
+              className="form-control"
+              id="accountType"
+              name="accountType"
+              onChange={onChangeBankDetais}
+              value={BankDetais.value}
             >
-              Cancel
-            </button>
+              <option value="">Select Account Type</option>
+              <option value="Savings">Savings</option>
+              <option value="Salery">Salery</option>
+              <option value="Current">Current</option>
+            </select>
+          </section>
+          <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
+            <label className="myLabel" htmlFor="email">
+              IFSC Code
+            </label>
+            <input
+              value={BankDetais.ifscCode}
+              className="myInput inputElement"
+              autoComplete="false"
+              onChange={(e) => {
+                onChangeBankDetais(e);
+              }}
+              type="text"
+              name="ifscCode"
+            />
           </section>
         </div>
       </main>
+      {/* ===========bankDetails end========== */}
+      {/* ===========Access Level start========== */}
+      <main className="mt-4">
+        <h5 className="m-0">Access Level</h5>
+        <div className=" row mt-3 mb-3 m-0">
+          <section className="d-flex mt-3 flex-column col-12 ">
+            <div className="row">
+              <div className="col-5">
+                <div className="noAccess">
+                  <div className="d-flex">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="25"
+                      height="25"
+                      fill="currentColor"
+                      className="bi bi-person-fill-check text-success"
+                      viewBox="0 0 16 16"
+                    >
+                      <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm1.679-4.493-1.335 2.226a.75.75 0 0 1-1.174.144l-.774-.773a.5.5 0 0 1 .708-.708l.547.548 1.17-1.951a.5.5 0 1 1 .858.514ZM11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                      <path d="M2 13c0 1 1 1 1 1h5.256A4.493 4.493 0 0 1 8 12.5a4.49 4.49 0 0 1 1.544-3.393C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4Z" />
+                    </svg>
 
-    </div>
-    {popUpScreen && (
-      <section className="popUpScreen">
-        <main className="shadow col-10 col-md-8 col-lg-7  p-3">
-          <h5 className="m-0">Select role</h5>
-          <div className=" row m-0">
-            <section className="d-flex mt-3 flex-column col-12">
-              <label className="myLabel">Select one or more roles</label>
-              <SwapSection
-                workFor="roles"
-                currentId={branchId}
-                selectedData={branchRoles}
-                setSelectedData={setBranchRoles}
-                callBackLeft={callBackLeft}
-                callBackFun={callBackFun}
-                selectionData={roles}
-              />
-            </section>
-            <section className="d-flex mt-3  flex-column flex-sm-row">
-              <button
-                onClick={confirmClicked}
-                className="col-12 col-sm-5 col-lg-2 myBtn py-2"
-                type="button"
-              >
-                Done
-              </button>
-              {/* <button onClick={cancelClicked} className='ms-0 ms-sm-3 mt-3 mt-sm-0 col-12 col-sm-5 col-lg-2 myBtn py-2' type='button'>Cancel</button> */}
-            </section>
-          </div>
-        </main>
+                    <h6 className="fw-bold ms-4 mt-1">
+                      {selectedRoleName && selectedRoleName.length > 0
+                        ? selectedRoleName
+                        : "Admin"}
+                    </h6>
+                    <div className="ms-5">
+                      <select
+                        className="form-control dropup"
+                        id="access"
+                        name="access"
+                        onChange={onChangeAccess}
+                        // value={selectedRoleName}
+                      >
+                        <option value="">Admin</option>
+                        {empRoles &&
+                          empRoles.map((acc, index) => (
+                            <option key={index} value={`${acc.id},${acc.role}`}>
+                              {acc.role}
+                            </option>
+                          ))}
+                      </select>
+                    </div>
+                  </div>
+                  <div>
+                    <p className="ms-4">
+                      {" "}
+                      {empRoleDesc.length > 0
+                        ? empRoleDesc
+                        : "Admin have all rights and able to do all things."}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="col-5 noAccessDiv">
+                <div className="noAccess" onClick={handleNoAccess}>
+                  <div className="d-flex">
+                    <img className="" src="/noAccess.png" alt="Logo" />
+                    <h6 className="fw-bold ms-2">No Access</h6>
+                  </div>
+                  <p className="ms-4">
+                    They will be able to login using the Access level you choose.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>{" "}
+      </main>
+      {/* ===========Access Level end========== */}
+      <section className="d-flex mt-3  flex-column flex-sm-row">
+        <button
+          className="col-12 col-sm-5 col-lg-2 myBtn py-2"
+          onClick={handleSubmit}
+          type="button"
+        >
+          {workFor === "forAdd" ? "Add employee" : "Edit employee"}
+        </button>
+        <button
+          className="ms-0 ms-sm-3 mt-3 mt-sm-0 col-12 col-sm-5 col-lg-2 myBtn py-2"
+          onClick={handleCancel}
+          type="button"
+        >
+          Cancel
+        </button>
       </section>
-    )}
-  
-  </main></div></>
+
+      {popUpScreen && (
+        <section className="popUpScreen">
+          <main className="shadow col-10 col-md-8 col-lg-7  p-3">
+            <h5 className="m-0">Select role</h5>
+            <div className=" row m-0">
+              <section className="d-flex mt-3 flex-column col-12">
+                <label className="myLabel">Select one or more roles</label>
+                <SwapSection
+                  workFor="roles"
+                  currentId={branchId}
+                  selectedData={branchRoles}
+                  setSelectedData={setBranchRoles}
+                  callBackLeft={callBackLeft}
+                  callBackFun={callBackFun}
+                  selectionData={roles}
+                />
+              </section>
+              <section className="d-flex mt-3  flex-column flex-sm-row">
+                <button
+                  onClick={confirmClicked}
+                  className="col-12 col-sm-5 col-lg-2 myBtn py-2"
+                  type="button"
+                >
+                  Done
+                </button>
+                {/* <button onClick={cancelClicked} className='ms-0 ms-sm-3 mt-3 mt-sm-0 col-12 col-sm-5 col-lg-2 myBtn py-2' type='button'>Cancel</button> */}
+              </section>
+            </div>
+          </main>
+        </section>
+      )}
+    </div>
+  </>
 );
 }
 

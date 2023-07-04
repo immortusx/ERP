@@ -1,25 +1,22 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Axios from "axios";
-import { getToPathname } from "@remix-run/router";
-import { getDepartment, deleteDepartment } from "./getEditDepartment";
+import { getDepartment} from "./getEditDepartment";
 // import { setShowMessage } from "../redux/slices/notificationSlice";
 import { setShowMessage } from "../../../redux/slices/notificationSlice";
 import { useNavigate } from "react-router-dom";
 import AlertDeleteModal from "../../AlertDelete/AlertDeleteModal";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
-import CheckIcon from "@mui/icons-material/Check";
-import ClearIcon from "@mui/icons-material/Clear";
 import { addDepartmentToDb } from "../../../redux/slices/Master/Department/addDepartmentSlice";
-
+import { setEditdepartmentData } from "../../../redux/slices/Master/Department/editDepartmentSlice";
 
 export default function Department_list({ workFor }) {
   const [partsList, setPartsList] = useState([]);
   const [displayConfirmationModal, setDisplayConfirmationModal] =
     useState(false);
-   const [deleteMessage, setDeleteMessage] = useState(null);
-   const [type, setType] = useState(null);
-   const [id, setId] = useState(null);
+  const [deleteMessage, setDeleteMessage] = useState(null);
+  const [type, setType] = useState(null);
+  const [id, setId] = useState(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -72,9 +69,9 @@ export default function Department_list({ workFor }) {
           {/* <button onClick={() => { editActionCall(params.row) }} className='myActionBtn m-1'> */}
           <button
             className="myActionBtn m-1"
-            // onClick={() => {
-            //   editeStateModal(params.row);
-            // }}
+            onClick={() => {
+              editeStateModal(params.row);
+            }}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -117,8 +114,17 @@ export default function Department_list({ workFor }) {
     },
   ];
 
+  const editeStateModal = (data) => {
+    // setTableEditData(data);
+     console.log(data.id);
+     console.log("editEmployeee");
+    dispatch(setEditdepartmentData(data));
+    console.log(setEditdepartmentData(data));
+    navigate("/administration/configuration/department/editdepartment");
+  };
+
   const deleteActionCall = (data) => {
-    console.log(data.id,"fffffffffffffffffff")
+    console.log(data.id, "fffffffffffffffffff");
     setType("department_delete");
     setId(data.id);
     setDeleteMessage(
@@ -131,51 +137,50 @@ export default function Department_list({ workFor }) {
     setDisplayConfirmationModal(false);
   };
 
- const submitDelete = async () => {
-   console.log(id, "iiiiiiiiiiiiiiii");
-   const url = `${process.env.REACT_APP_NODE_URL}/api/master/delete-department`;
-   const config = {
-     headers: {
-       token: localStorage.getItem("rbacToken"),
-     },
-   };
-   const requestData = {
-    id: id
-   }
-   try {
-     const response = await Axios.post(url, requestData, config);
-     if (response.data?.isSuccess) {
-       getDepartmentForm();
-       dispatch(setShowMessage("Department Deleted"));
+  const submitDelete = async () => {
+    console.log(id, "iiiiiiiiiiiiiiii");
+    const url = `${process.env.REACT_APP_NODE_URL}/api/master/delete-department`;
+    const config = {
+      headers: {
+        token: localStorage.getItem("rbacToken"),
+      },
+    };
+    const requestData = {
+      id: id,
+    };
+    try {
+      const response = await Axios.post(url, requestData, config);
+      if (response.data?.isSuccess) {
+        getDepartmentForm();
+        dispatch(setShowMessage("Department Deleted"));
         dispatch(addDepartmentToDb);
         getDepartment();
         setDisplayConfirmationModal(false);
-     }else{
-       dispatch(setShowMessage("failed to delete"));
-     }
-     return null;
-   } catch (error) {
-     console.error(error);
-     return null;
-   }
- };
-
-const getDepartmentForm=() =>{
- getDepartment()
-    .then((data) => {
-      console.log("Response from getDepartment:", data.result);
-      setPartsList(data.result);
-    })
-    .catch((error) => {
-      console.error("Error in getDepartment:", error);
-    });
-}
-
-useEffect(() => {
-  getDepartmentForm()
-}, []);
+      } else {
+        dispatch(setShowMessage("failed to delete"));
+      }
+      return null;
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
+  };
 
 
+  const getDepartmentForm = () => {
+    getDepartment()
+      .then((data) => {
+        console.log("Response from getDepartment:", data.result);
+        setPartsList(data.result);
+      })
+      .catch((error) => {
+        console.error("Error in getDepartment:", error);
+      });
+  };
+
+  useEffect(() => {
+    getDepartmentForm();
+  }, []);
 
   return (
     <>
@@ -251,20 +256,15 @@ useEffect(() => {
             autoPageSize={false}
           />
         </div>
-         <AlertDeleteModal
-  showModal={displayConfirmationModal}
-  confirmModal={submitDelete}
-  hideModal={hideConfirmationModal}
-  type={type}
-  id={id}
-  message={deleteMessage}
-/>
+        <AlertDeleteModal
+          showModal={displayConfirmationModal}
+          confirmModal={submitDelete}
+          hideModal={hideConfirmationModal}
+          type={type}
+          id={id}
+          message={deleteMessage}
+        />
       </div>
     </>
   );
 }
-
-
-
-
-

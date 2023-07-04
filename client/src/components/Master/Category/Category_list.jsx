@@ -10,6 +10,7 @@ import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from "@mui/icons-material/Clear";
 import { addDepartmentToDb } from "../../../redux/slices/Master/Department/addDepartmentSlice";
+import { setEdicategoryData } from "../../../redux/slices/Master/Category/editCategorySlice";
 
 export default function Category_list({ workFor }) {
   const [partsList, setPartsList] = useState([]);
@@ -36,6 +37,16 @@ export default function Category_list({ workFor }) {
 getCategoryForm()
    
   }, []);
+
+   const editeStateModal = (data) => {
+     // setTableEditData(data);
+     console.log(data.id);
+     console.log("editEmployeee");
+     dispatch(setEdicategoryData(data));
+     console.log(setEdicategoryData(data));
+     navigate("/administration/configuration/category/editcategory");
+   };
+
 
   const columns = [
     {
@@ -101,9 +112,9 @@ getCategoryForm()
           {/* <button onClick={() => { editActionCall(params.row) }} className='myActionBtn m-1'> */}
           <button
             className="myActionBtn m-1"
-            // onClick={() => {
-            //   editeStateModal(params.row);
-            // }}
+            onClick={() => {
+              editeStateModal(params.row);
+            }}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

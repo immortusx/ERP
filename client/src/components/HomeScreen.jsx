@@ -836,15 +836,24 @@ export default function HomeScreen() {
               }
               exact
             />
-             <Route
+            <Route
               path="administration/configuration/department/adddepartment"
               element={
                 <CheckPermission path="profile">
-                  <AddDepartment workFor="adddepartment" />
+                  <AddDepartment workFor="forAdd" />
                 </CheckPermission>
               }
               exact
-            /> 
+            />
+            <Route
+              path="administration/configuration/department/editdepartment"
+              element={
+                <CheckPermission path="profile">
+                  <AddDepartment workFor="forEdit" />
+                </CheckPermission>
+              }
+              exact
+            />
             <Route
               path="administration/configuration/manufacturer"
               element={
@@ -1022,7 +1031,16 @@ export default function HomeScreen() {
               path="administration/configuration/category/addcategory"
               element={
                 <CheckPermission path="profile">
-                  <AddCategory workFor="addcategory" />
+                  <AddCategory workFor="foradd" />
+                </CheckPermission>
+              }
+              exact
+            />
+            <Route
+              path="administration/configuration/category/editcategory"
+              element={
+                <CheckPermission path="profile">
+                  <AddCategory workFor="forEdit" />
                 </CheckPermission>
               }
               exact
