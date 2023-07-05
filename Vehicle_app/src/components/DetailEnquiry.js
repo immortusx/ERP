@@ -57,6 +57,7 @@ const DetailEnquiry = () => {
     firstname: '',
     lastname: '',
     phone: '',
+    whatsappno: ''
   });
 
   const enquirySourceItem = [
@@ -68,10 +69,10 @@ const DetailEnquiry = () => {
   ];
 
   const conditionType = [
-    {label: 'Good', value: '1'},
-    {label: 'Below Average', value: '2'},
-    {label: 'Average', value: '3'},
-    {label: 'Vey Good', value: '4'},
+    {label: 'Good', value: 'Good'},
+    {label: 'Below Average', value: 'Below Average'},
+    {label: 'Average', value: 'Average'},
+    {label: 'Vey Good', value: 'Vey Good'},
   ];
 
   let branch = 'New Keshav Tractors';
@@ -105,9 +106,9 @@ const DetailEnquiry = () => {
     }
   }, [enquiryState]);
   const submitEnquiry = () => {
-    const {firstname, lastname, phone} = enquiryData;
+    const {firstname, lastname, phone, whatsappno} = enquiryData;
     const {state, district, taluka, village} = locationForm;
-    console.log(state, district, taluka, native);
+    console.log(state, district, taluka, village);
     console.log(firstname, lastname, phone);
     console.log(manufacturer, modal, variant);
     console.log(enquiry);
@@ -116,34 +117,29 @@ const DetailEnquiry = () => {
     console.log(maker, modalName, variantName, year, condition_of);
 
     const formData = {
-      firstName: firstname,
-      lastName: lastname,
-      mobileNumber: phone,
-      emailId: 'admin@123',
+      first_name: firstname,
+      last_name: lastname,
+      phone_number: phone,
+      whatsapp_number: whatsappno,
       state: state,
       district: district,
-      tehsil: taluka,
-      block: 11,
-      dsp: 62,
-      model: 6,
-      village: native,
-      branchId: 2,
-      enquiryDate: formattedCurrentDate,
+      taluka: taluka,
+      village: village,
       deliveryDate: formattedDeliveryDate,
-      sourceOfEnquiry: 25,
-      manufacturer,
-      modal,
-      variant,
-      maker,
-      modalName,
-      variantName,
-      year,
-      condition_of,
+      manufacturer: manufacturer,
+      modal: modal,
+      variant: variant,
+      maker: maker,
+      modalName: modalName,
+      variantName: variantName,
+      year: year,
+      condition_of: condition_of,
     };
     if (
       enquiryData.firstname.length > 0 &&
       enquiryData.lastname.length > 0 &&
-      enquiryData.phone.length > 0
+      enquiryData.phone.length > 0 && 
+      enquiryData.whatsappno.length > 0
     ) {
       dispatch(setEnquiryDb(formData));
     } else {
@@ -153,6 +149,7 @@ const DetailEnquiry = () => {
 
   const formattedCurrentDate = currentDate.toLocaleDateString();
   const formattedManuYear = manuYearDate.toLocaleDateString();
+
   const handleModalData = () => {
     if (
       oldVehicleData.maker.length > 0 &&
@@ -219,6 +216,17 @@ const DetailEnquiry = () => {
               keyboardType="default"
               textContentType="phone"
               onChangeText={value => onChangeHandler(value, 'phone')}
+            />
+          </View>
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>WhatsApp Number *</Text>
+            <TextInput
+              style={styles.inputStyle}
+              placeholder="Enter WhatsApp Number"
+              autoCapitalize="none"
+              keyboardType="default"
+              textContentType="whatsappno"
+              onChangeText={value => onChangeHandler(value, 'whatsappno')}
             />
           </View>
           <View editable={false} style={[styles.inputStyle, styles.optional]}>
