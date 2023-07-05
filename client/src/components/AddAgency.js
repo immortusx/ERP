@@ -3,29 +3,34 @@ import { useSelector, useDispatch } from "react-redux";
 import Axios from "axios";
 import { setShowMessage } from "../redux/slices/notificationSlice";
 import { useLocation, useNavigate } from "react-router-dom";
-import { addAgencyToDb,clearaddaddAgency } from "../redux/slices/addagencySlice";
+import {
+  addAgencyToDb,
+  clearaddaddAgency,
+} from "../redux/slices/addagencySlice";
 export default function AddDepartment({ workFor }) {
   const [agencyData, setAgencyData] = useState({
-      name: "",
-      contact: "",
-      email: "",
+    name: "",
+    contact: "",
+    email: "",
+    logo: null,
   });
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  
+
+
+   const fileInputRef = useRef(null);
+
   function clearInpHook() {
     setAgencyData({
       name: "",
       contact: "",
       email: "",
+      logo: null,
     });
+     fileInputRef.current.value = "";
   }
 
- const addAgency = useSelector((state) => 
-  state.addAgency.addAgency
- );
-
- 
+  const addAgency = useSelector((state) => state.addAgency.addAgency);
 
   useEffect(() => {
     if (addAgency.isSuccess) {
@@ -43,12 +48,28 @@ export default function AddDepartment({ workFor }) {
   }, [addAgency]);
 
   const onChangeHandler = (e) => {
-    const { name, value } = e.target;
-    setAgencyData((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
+    const { name, value, files } = e.target;
+    if (name === "logo") {
+      setAgencyData((prevState) => ({
+        ...prevState,
+        [name]: files[0],
+      }));
+    } else {
+      setAgencyData((prevState) => ({
+        ...prevState,
+        [name]: value,
+      }));
+    }
   };
+
+  // const onChangeHandler = (e) => {
+  // const { name, value,files } = e.target;
+  // setAgencyData((prevState) => ({
+  //   ...prevState,
+  //   [name]: value,
+  //   logo: files[0],
+  // }));
+  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -56,16 +77,27 @@ export default function AddDepartment({ workFor }) {
     const aname = agencyData.name;
     const acontact = agencyData.contact;
     const aemail = agencyData.email;
-    if (aname.length > 0 && acontact !== "" && aemail !== "") {
-      console.log("result save")
+    const alogo = agencyData.logo;
+    const formData = new FormData();
+    formData.append("name", aname);
+    formData.append("contact", acontact);
+    formData.append("email", aemail);
+    formData.append("logo", alogo.name);
+    if (
+      aname.length > 0 &&
+      acontact !== "" &&
+      aemail !== "" &&
+      alogo !== null
+    ) {
+      console.log("result save");
       // if (workFor === "forEdit") {
       //   dpData["id"] = editdepartmentData.data.id;
       //   dispatch(editdepartmentUpdateToDb(dpData));
-      dispatch(addAgencyToDb(agencyData));
-      } else {
-        dispatch(setShowMessage("All field must be field"));
-      }
-    
+      dispatch(addAgencyToDb(formData));
+    } else {
+      dispatch(setShowMessage("All field must be field"));
+    }
+
     //  setDpData({
     //    name: "",
     //    description: "",
@@ -135,18 +167,18 @@ export default function AddDepartment({ workFor }) {
             />
           </section>
           <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
-            <label className="myLabel" htmlFor="email">
+            <label className="myLabel" htmlFor="logo">
               Logo
             </label>
             <input
+              ref={fileInputRef}
               // value={agencyData.email}
               onChange={(e) => {
                 onChangeHandler(e);
               }}
-            
               autoComplete="false"
               type="file"
-              name="email"
+              name="logo"
             />
           </section>
 
