@@ -27,7 +27,7 @@ const FastEnquiry = ({navigation}) => {
   const dispatch = useDispatch();
   // const enquiryState = useSelector(state => state.enquriySlice.enquiryState);
   const locationForm = useSelector(state => state.locationForm);
-  const enquiryState = useSelector(state => state.enquirySlice.enquiryState);
+  const fastEnquiryState = useSelector(state => state.fastEnquirySlice.fastEnquiryState);
   const getVillageState = useSelector(state => state.getVillageState);
   const {isFetching, isSuccess, isError, result} = getVillageState;
   const {maker, modalName, variantName, year, condition_of} = useSelector(
@@ -124,44 +124,18 @@ const FastEnquiry = ({navigation}) => {
     }));
   };
   useEffect(() => {
-    if (enquiryState.isSuccess === true) {
+    if (fastEnquiryState.isSuccess === true) {
       console.log('Enquiry submitted');
       openModal();
     }
-  }, [enquiryState]);
+  }, [fastEnquiryState]);
   const submitEnquiry = () => {
-
     const formData = {
       first_name: enquiryData.customer,
       phone_number: enquiryData.phone,
       whatsapp_number: enquiryData.whatsappno,
       village: village
     }
-    // const formData = {
-    //   firstName: firstname,
-    //   lastName: lastname,
-    //   mobileNumber: phone,
-    //   emailId: 'admin@123',
-    //   state: state,
-    //   district: district,
-    //   tehsil: taluka,
-    //   block: 11,
-    //   dsp: 62,
-    //   model: 6,
-    //   village: native,
-    //   branchId: 2,
-    //   enquiryDate: formattedCurrentDate,
-    //   deliveryDate: formattedDeliveryDate,
-    //   sourceOfEnquiry: 25,
-    //   manufacturer,
-    //   modal,
-    //   variant,
-    //   maker,
-    //   modalName,
-    //   variantName,
-    //   year,
-    //   condition_of,
-    // };
     if (
       enquiryData.customer.length > 0 &&
       enquiryData.phone.length > 0 &&

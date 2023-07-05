@@ -28,6 +28,7 @@ export const setFastEnquiryDb = createAsyncThunk(
     };
     console.log(config);
     await axios.post(url, data, config).then(response => {
+      console.log(response.data);
       return response.data;
     });
   },

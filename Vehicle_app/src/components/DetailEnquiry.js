@@ -21,10 +21,13 @@ import {setEnquiryDb} from '../redux/slice/addEnquirySlice';
 import {saveEnquiryModalForm} from '../redux/slice/addEnquiryModal';
 import {saveModalData} from '../redux/slice/modalDataSlice';
 import SweetSuccessAlert from './subCom/SweetSuccessAlert';
-const DetailEnquiry = ({navigation}) => {
+import { useNavigation } from '@react-navigation/native';
+const DetailEnquiry = () => {
   const dispatch = useDispatch();
+  const navigation = useNavigation();
   // const enquiryState = useSelector(state => state.enquriySlice.enquiryState);
   const locationForm = useSelector(state => state.locationForm);
+  const {state, district, taluka, village} = locationForm;
   const enquiryState = useSelector(state => state.enquirySlice.enquiryState);
   const {maker, modalName, variantName, year, condition_of} = useSelector(
     state => state.modalData,
@@ -103,7 +106,7 @@ const DetailEnquiry = ({navigation}) => {
   }, [enquiryState]);
   const submitEnquiry = () => {
     const {firstname, lastname, phone} = enquiryData;
-    const {state, district, taluka, native} = locationForm;
+    const {state, district, taluka, village} = locationForm;
     console.log(state, district, taluka, native);
     console.log(firstname, lastname, phone);
     console.log(manufacturer, modal, variant);
@@ -185,26 +188,6 @@ const DetailEnquiry = ({navigation}) => {
       <View style={styles.container}>
         <View style={styles.customerContainer}>
           <Text style={styles.mainHeader}>Customer Details</Text>
-          <View>
-            <Text style={styles.label}>Select Branch *</Text>
-            <View
-              editable={false}
-              style={[styles.dataContainer, styles.optional]}>
-              <TouchableOpacity>
-                <Text style={styles.branchText}>New Keshav Tractors</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-          <View>
-            <Text style={styles.label}>Select DSP *</Text>
-            <View
-              editable={false}
-              style={[styles.dataContainer, styles.optional]}>
-              <TouchableOpacity>
-                <Text style={styles.branchText}>Harilal Mehta</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
           <View style={styles.inputContainer}>
             <Text style={styles.label}>First Name *</Text>
             <TextInput
@@ -253,6 +236,7 @@ const DetailEnquiry = ({navigation}) => {
               </TouchableOpacity>
             </View>
           </View>
+          <Text style={{ color: '#A93226', fontSize: 12 }}>{`${state} ${district} ${taluka} ${village}`}</Text>
           <View editable={false} style={[styles.inputStyle, styles.optional]}>
             <View>
               <TouchableOpacity
@@ -268,6 +252,8 @@ const DetailEnquiry = ({navigation}) => {
               </TouchableOpacity>
             </View>
           </View>
+          <Text style={{ color: '#A93226', fontSize: 12 }}>{`${manufacturer} ${modal} ${variant}`}</Text>
+
           <View style={{marginBottom: 5}}>
             <Text style={styles.label}>Enquiry Primary Source *</Text>
             <View style={styles.enquirySourceContainer}>
@@ -283,7 +269,7 @@ const DetailEnquiry = ({navigation}) => {
                 maxHeight={300}
                 labelField="label"
                 valueField="value"
-                placeholder={!isFocus ? 'Select Manufacturer' : ' '}
+                placeholder={!isFocus ? 'Select Source' : ' '}
                 searchPlaceholder="Search..."
                 value={enquiry}
                 onFocus={() => setIsFocus(true)}
@@ -335,121 +321,6 @@ const DetailEnquiry = ({navigation}) => {
           <TouchableOpacity style={styles.submitButton} onPress={submitEnquiry}>
             <Text style={styles.submitButtonText}>Submit</Text>
           </TouchableOpacity>
-        </View>
-
-        <View style={styles.centeredView}>
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={modalVisible}
-            onRequestClose={() => {
-              Alert.alert('Modal has been closed.');
-              setModalVisible(!modalVisible);
-            }}>
-            <View style={styles.centeredView}>
-              <View style={styles.modalView}>
-                <Pressable
-                  style={[styles.button, styles.buttonClose]}
-                  onPress={closeModal}>
-                  <Image
-                    source={require('../../assets/cancel.png')}
-                    style={styles.cancelImage}
-                  />
-                </Pressable>
-                <Text style={styles.modalTitle}>Add Details</Text>
-                <TextInput
-                  style={styles.textInput}
-                  placeholder="Enter Maker's Name"
-                  autoCapitalize="none"
-                  keyboardType="default"
-                  textContentType="maker"
-                  // value={manufacturer}
-                  onChangeText={value => onChangeInputField(value, 'maker')}
-                />
-                <TextInput
-                  style={styles.textInput}
-                  placeholder="Enter Modal"
-                  autoCapitalize="none"
-                  keyboardType="default"
-                  textContentType="modal"
-                  // value={manufacturer}
-                  onChangeText={value => onChangeInputField(value, 'modalName')}
-                />
-                <TextInput
-                  style={styles.textInput}
-                  placeholder="Enter Variant"
-                  autoCapitalize="none"
-                  keyboardType="default"
-                  textContentType="variant"
-                  // value={manufacturer}
-                  onChangeText={value =>
-                    onChangeInputField(value, 'variantName')
-                  }
-                />
-                <View style={styles.deliveryDateContainer}>
-                  <Text>Year of Manufactur</Text>
-                  <Text
-                    style={styles.deliveryDate}
-                    placeholder="Select Date"
-                    onPress={() => setOPenManuYearDate(true)}>
-                    {formattedManuYear}
-                  </Text>
-                  <DatePicker
-                    mode="date"
-                    modal
-                    open={openManuYearDate}
-                    date={manuYearDate}
-                    theme="dark"
-                    onConfirm={date => {
-                      setOPenManuYearDate(false);
-                      setManuYearDate(date);
-                    }}
-                    onCancel={() => {
-                      setOPenManuYearDate(false);
-                    }}
-                  />
-                </View>
-                <View style={styles.sourceContainer}>
-                  <Text style={styles.label}>Condition :</Text>
-                  <View style={styles.enquirySourceContainer}>
-                    {/* {renderLabel()} */}
-                    <Dropdown
-                      style={[
-                        styles.dropdown,
-                        isFocus && {borderColor: 'blue'},
-                      ]}
-                      placeholderStyle={styles.placeholderStyle}
-                      selectedTextStyle={styles.selectedTextStyle}
-                      inputSearchStyle={styles.inputSearchStyle}
-                      iconStyle={styles.iconStyle}
-                      data={conditionType}
-                      search
-                      maxHeight={300}
-                      labelField="label"
-                      valueField="value"
-                      placeholder={!isFocus ? 'Select Condition' : ' '}
-                      searchPlaceholder="Search..."
-                      value={condition}
-                      onFocus={() => setIsFocus(true)}
-                      onBlur={() => setIsFocus(false)}
-                      onChange={item => {
-                        setCondtion(item.value);
-                        setIsFocus(false);
-                      }}
-                      // renderLeftIcon={() => (
-                      //   <Text>{isFocus ? 'blue' : 'black'}</Text>
-                      // )}
-                    />
-                  </View>
-                </View>
-                <Pressable
-                  style={[styles.roundedButton, styles.saveButton]}
-                  onPress={handleModalData}>
-                  <Text style={styles.buttonText}>Save</Text>
-                </Pressable>
-              </View>
-            </View>
-          </Modal>
         </View>
         <SweetSuccessAlert modalShow={showModal} />
       </View>

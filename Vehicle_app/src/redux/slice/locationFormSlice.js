@@ -6,7 +6,7 @@ const locationFormSlice = createSlice({
     state: '',
     district: '',
     taluka: '',
-    native: '',
+    village: '',
   },
   reducers: {
     saveLocationForm: (state, action) => {

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -9,32 +9,41 @@ import {
   Button,
 } from 'react-native';
 import SelectDropdown from 'react-native-select-dropdown';
+import {API_URL} from '@env';
+import axios from 'axios';
 import {Dropdown} from 'react-native-element-dropdown';
 import DropDownPicker from 'react-native-dropdown-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useDispatch } from 'react-redux';
-import { saveManufacturerDetails } from '../redux/slice/manufacturerDetailsSlice';
+import {useDispatch} from 'react-redux';
+import {saveManufacturerDetails} from '../redux/slice/manufacturerDetailsSlice';
 import SweetSuccessAlert from './subCom/SweetSuccessAlert';
+import { useNavigation } from '@react-navigation/native';
 const AddManufacturDetails = () => {
   const dispatch = useDispatch();
+  const navigation = useNavigation();
   const [value, setValue] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [manufacturerData, setManufacurerData] = useState([]);
+  const [modalData, setModalData] = useState([]);
+  const [variantData, setVariantData] = useState([]);
   const [isFocus, setIsFocus] = useState(false);
   const [manufacturer, setManufacturer] = useState(null);
   const [modal, setModal] = useState(null);
   const [variant, setVariant] = useState(null);
-  const manufacturItem = [
-    {label: 'Sonalika', value: '1'},
-    {label: 'Mahindra', value: '2'},
-  ];
-  const modalItem = [
-    {label: 'Sonalika A2R', value: '1'},
-    {label: 'Mahindra WCR', value: '2'},
-  ];
-  const variantItem = [
-    {label: 'Sonalika var 3', value: '1'},
-    {label: 'Mahindra var SA', value: '2'},
-  ];
+
+  const manufacturItem = manufacturerData.map(item => ({
+    label: item.manufacturerName,
+    value: item.manufacturerId,
+  }));
+
+  const modalItem = modalData.map(item => ({
+    label: item.modalName,
+    value: item.id
+  }));
+  const variantItem = variantData.map(item => ({
+    label: item.variantName,
+    value: item.id
+  }));
 
   const renderLabel = () => {
     if (value || isFocus) {
@@ -46,11 +55,86 @@ const AddManufacturDetails = () => {
     }
     return null;
   };
+  useEffect(() => {
+    const getManufacturer = async () => {
+      const url = `${API_URL}/api/master/get-allmanufacturer`;
+      console.log('get manufacturer', url);
+      const token = await AsyncStorage.getItem('rbacToken');
+      const config = {
+        headers: {
+          token: token ? token : '',
+        },
+      };
+      console.log(config);
+      await axios.get(url, config).then(response => {
+        if (response) {
+          console.log(response.data.result);
+          setManufacurerData(response.data.result);
+        }
+      });
+    };
+    getManufacturer();
+  }, []);
+
+  useEffect(() => {
+    if (manufacturer) {
+      const getModal = async () => {
+        console.log(manufacturer ,'id');
+        const url = `${API_URL}/api/master/getmodal/${manufacturer}`;
+        console.log('get modal', url);
+        const token = await AsyncStorage.getItem('rbacToken');
+        const config = {
+          headers: {
+            token: token ? token : '',
+          },
+        };
+        console.log(config);
+        await axios.get(url, config).then(response => {
+          if (response) {
+            console.log(response.data.result);
+            setModalData(response.data.result);
+          }
+        });
+      };
+      getModal();
+    }
+  }, [manufacturer]);
+
+  useEffect(() => {
+    if (modal) {
+      const getVariant = async () => {
+        console.log(modal ,'id');
+        const url = `${API_URL}/api/master/getvariant/${modal}`;
+        console.log('get variant', url);
+        const token = await AsyncStorage.getItem('rbacToken');
+        const config = {
+          headers: {
+            token: token ? token : '',
+          },
+        };
+        console.log(config);
+        await axios.get(url, config).then(response => {
+          if (response) {
+            console.log(response.data.result);
+            setVariantData(response.data.result);
+          }
+        });
+      };
+      getVariant();
+    }
+  }, [modal]);
+
   const saveManufacturDetails = () => {
-    dispatch(saveManufacturerDetails({
-      manufacturer, modal, variant
-    }))
+    console.warn(manufacturer, modal, variant,'all');
+    dispatch(
+      saveManufacturerDetails({
+        manufacturer,
+        modal,
+        variant,
+      }),
+    );
     openModal();
+    navigation.navigate("AddEnquiry");
   };
   const openModal = () => {
     setShowModal(true);
@@ -60,7 +144,7 @@ const AddManufacturDetails = () => {
       <View style={styles.customerContainer}>
         <Text style={styles.mainHeader}>Customer Details</Text>
         <View style={{marginBottom: 5}}>
-          <Text style={styles.label}>Manufacturer :</Text>
+          <Text style={styles.label}>Manufacturer *</Text>
           <View style={styles.inputContainer}>
             {/* {renderLabel()} */}
             <Dropdown
@@ -90,7 +174,7 @@ const AddManufacturDetails = () => {
           </View>
         </View>
         <View style={{marginBottom: 5}}>
-          <Text style={styles.label}>Modal :</Text>
+          <Text style={styles.label}>Modal *</Text>
           <View style={styles.inputContainer}>
             {/* {renderLabel()} */}
             <Dropdown
@@ -120,7 +204,7 @@ const AddManufacturDetails = () => {
           </View>
         </View>
         <View style={{marginBottom: 5}}>
-          <Text style={styles.label}>Modal :</Text>
+          <Text style={styles.label}>Variant *</Text>
           <View style={styles.inputContainer}>
             {/* {renderLabel()} */}
             <Dropdown
@@ -154,10 +238,10 @@ const AddManufacturDetails = () => {
         <TouchableOpacity
           style={styles.saveButton}
           onPress={saveManufacturDetails}>
-          <Text style={styles.buttonText}>Save</Text>
+          <Text style={styles.buttonText}>Add</Text>
         </TouchableOpacity>
       </View>
-      <SweetSuccessAlert modalShow={showModal}/>
+      <SweetSuccessAlert modalShow={showModal} />
     </View>
   );
 };
