@@ -33,7 +33,6 @@ const Login = ({navigation}) => {
   useEffect(() => {
     if (loginState.isSuccess === true) {
       if (loginState.result.message === 'success') {
-        console.warn(loginState.result.result.tokenIs);
         console.log(loginState.result.result.tokenIs);
         AsyncStorage.setItem(
           'branchesList',

@@ -17,16 +17,16 @@ export const getVillageData = createAsyncThunk(
     const id = branchId ? branchId : ''
     const url = `${API_URL}/api/master/get-Village-by-branchId/${id}`;
     console.log('get all village', url);
-    console.log(id);
+    // console.log(id);
     const token = await AsyncStorage.getItem('rbacToken');
     const config = {
       headers: {
         token: token ? token : '',
       },
     };
-    console.log(config);
+    // console.log(config);
     const response = await axios.get(url, config);
-    console.log(response.data,'response');
+    // console.log(response.data,'response');
     return response.data;
   },
 );

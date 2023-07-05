@@ -22,6 +22,7 @@ import {saveEnquiryModalForm} from '../redux/slice/addEnquiryModal';
 import {saveModalData} from '../redux/slice/modalDataSlice';
 import SweetSuccessAlert from './subCom/SweetSuccessAlert';
 import {getVillageData} from '../redux/slice/getAllVillageSlice';
+import { setFastEnquiryDb } from '../redux/slice/addFastEnquirySlice';
 const FastEnquiry = ({navigation}) => {
   const dispatch = useDispatch();
   // const enquiryState = useSelector(state => state.enquriySlice.enquiryState);
@@ -60,13 +61,10 @@ const FastEnquiry = ({navigation}) => {
     whatsappno: '',
   });
 
-  const villageData = [
-    {label: 'Kunkavav', value: '1'},
-    {label: 'Bagasara', value: '2'},
-    {label: 'Derdi', value: '3'},
-    {label: 'Gondal', value: '4'},
-    {label: 'Ankadiya', value: '5'},
-  ];
+  const villageData = resultData.map(village => ({
+    label: village.name,
+    value: village.name,
+  }));
 
   const conditionType = [
     {label: 'Good', value: '1'},
@@ -94,18 +92,22 @@ const FastEnquiry = ({navigation}) => {
 
   useEffect(() => {
     if (result) {
-        console.log(result.result);
+      const villageData = result.result.map(village => ({
+        label: village.name,
+        value: village.name,
+      }));
+      // console.log(villageData);
       setResultData(result.result);
     }
   }, [result]);
 
-//   useEffect(() => {
-//     if (resultData && resultData.length > 0) {
-//       resultData.map(i => {
-//         console.log(i.name);
-//       });
-//     }
-//   }, [resultData]);
+  //   useEffect(() => {
+  //     if (resultData && resultData.length > 0) {
+  //       resultData.map(i => {
+  //         console.log(i.name);
+  //       });
+  //     }
+  //   }, [resultData]);
 
   const formattedDeliveryDate = expDeliveryDate.toLocaleDateString();
   const handleReadValue = () => {
@@ -128,8 +130,13 @@ const FastEnquiry = ({navigation}) => {
     }
   }, [enquiryState]);
   const submitEnquiry = () => {
-    console.log(enquiryData);
 
+    const formData = {
+      first_name: enquiryData.customer,
+      phone_number: enquiryData.phone,
+      whatsapp_number: enquiryData.whatsappno,
+      village: village
+    }
     // const formData = {
     //   firstName: firstname,
     //   lastName: lastname,
@@ -160,8 +167,7 @@ const FastEnquiry = ({navigation}) => {
       enquiryData.phone.length > 0 &&
       enquiryData.whatsappno.length > 0
     ) {
-      console.log(enquiryData.customer);
-      //   dispatch(setEnquiryDb(formData));
+        dispatch(setFastEnquiryDb(formData));
     } else {
       console.warn('Please first fill the field*');
     }
@@ -212,7 +218,6 @@ const FastEnquiry = ({navigation}) => {
               placeholder="Enter Customer Name"
               autoCapitalize="none"
               keyboardType="customer"
-              
               onChangeText={value => onChangeHandler(value, 'customer')}
             />
           </View>
@@ -223,7 +228,6 @@ const FastEnquiry = ({navigation}) => {
               placeholder="Enter Phone Number"
               autoCapitalize="none"
               keyboardType="phone"
-              
               onChangeText={value => onChangeHandler(value, 'phone')}
             />
           </View>
@@ -234,7 +238,6 @@ const FastEnquiry = ({navigation}) => {
               placeholder="Enter WhatsApp Number"
               autoCapitalize="none"
               keyboardType="whatsappno"
-              
               onChangeText={value => onChangeHandler(value, 'whatsappno')}
             />
           </View>
@@ -250,7 +253,7 @@ const FastEnquiry = ({navigation}) => {
                 iconStyle={styles.iconStyle}
                 data={villageData}
                 search
-                maxHeight={300}
+                maxHeight={200}
                 labelField="label"
                 valueField="value"
                 placeholder={!isFocus ? 'Select Village' : ' '}
@@ -300,7 +303,7 @@ const FastEnquiry = ({navigation}) => {
                   placeholder="Enter Maker's Name"
                   autoCapitalize="none"
                   keyboardType="maker"
-                // value={manufacturer}
+                  // value={manufacturer}
                   onChangeText={value => onChangeInputField(value, 'maker')}
                 />
                 <TextInput
@@ -308,7 +311,7 @@ const FastEnquiry = ({navigation}) => {
                   placeholder="Enter Modal"
                   autoCapitalize="none"
                   keyboardType="modal"
-                // value={manufacturer}
+                  // value={manufacturer}
                   onChangeText={value => onChangeInputField(value, 'modalName')}
                 />
                 <TextInput
@@ -316,7 +319,7 @@ const FastEnquiry = ({navigation}) => {
                   placeholder="Enter Variant"
                   autoCapitalize="none"
                   keyboardType="variant"
-                      // value={manufacturer}
+                  // value={manufacturer}
                   onChangeText={value =>
                     onChangeInputField(value, 'variantName')
                   }

@@ -341,4 +341,128 @@ router.get("/get-enquiry-categories", tokenCheck, async (req, res) => {
   });
 });
 
+//===========Add Fast Enquiry through Application=============//
+router.post("/set-new-fast-enquiry", tokenCheck, async (req, res) => {
+  console.log(">>>>>/set-new-fast-enquiry", req.body);
+  try {
+    const first_name = req.body.first_name;
+    const phone_number = req.body.phone_number;
+    const whatsapp_number = req.body.whatsapp_number;
+    const village = req.body.village;
+    console.log(first_name, phone_number, whatsapp_number, village);
+
+    const branch_id = req.body.branchId;
+    const salesperson_id = 20;
+
+    const fastSql = `INSERT INTO customers (first_name, phone_number, whatsapp_number, village) VALUES (?,?,?,?)`;
+    await db.query(
+      fastSql,
+      [first_name, phone_number, whatsapp_number, village],
+      async (err, fastEnquiry) => {
+        if (err) {
+          console.log({ isSuccess: false, result: err });
+          res.send({ isSuccess: false, result: "error" });
+        } else {
+          console.log({ isSuccess: true, result: "success" });
+          // res.send({ isSuccess: true, result: fastEnquiry });
+          const customer_id = fastEnquiry.insertId;
+          const enquiryDate = new Date().toISOString().slice(0, 19).replace('T', ' ');
+          console.log(enquiryDate);
+          console.log(customer_id);
+          const enquirySql = `INSERT INTO enquiries (branch_id, salesperson_id, customer_id, date) VALUES (?,?,?,?)`;
+          await db.query(enquirySql, [branch_id, salesperson_id, customer_id, enquiryDate], (err, enquiryResult)=> {
+            if(err){
+              console.log({isSuccess: false, result: err});
+              res.send({isSuccess: false, result: 'error'});
+            }else{
+              console.log({isSuccess: true, result: enquiryResult});
+              res.send({isSuccess: true, result: 'success'});
+            }
+          })
+        }
+      }
+    );
+  } catch (err) {
+    console.log(err);
+    console.log({ isSuccess: false, result: "error" });
+    // res.send({ isSuccess: false, result: "error" });
+  }
+});
+
+// router.post("/set-new-fast-enquiry", tokenCheck, async (req, res) => {
+//   console.log(">>>>>>>>>/set-new-fast-enquiry", req.body);
+
+//   // const fristName = req.body.firstName;
+//   // const lastName = req.body.lastName;
+//   // const middleName = req.body.fatherName;
+//   // const phoneNumber = req.body.mobileNumber;
+//   // const email = req.body.emailId;
+//   // const isActive = 1;
+//   // const state = req.body.state;
+//   // const district = req.body.district;
+//   // const taluka = req.body.tehsil;
+//   // const block = req.body.block;
+//   // const village = req.body.village;
+
+//   // const maker = req.body.maker;
+//   // const modalName = req.body.modalName;
+//   // const variantName = req.body.variantName;
+//   // const year = req.body.year;
+//   // const condition_of = req.body.condition_of;
+
+//   // const enquiryTypeId = "1";
+//   // const visitReason = "1";
+//   // const branchId = req.body.branchId;
+//   // const dsp = req.body.dsp;
+//   // const model = req.body.model;
+//   // const enquiryDate = req.body.enquiryDate;
+//   // const deliveryDate = req.body.deliveryDate;
+//   // const sourceOfEnquiry = req.body.sourceOfEnquiry;
+
+//   // const url = `INSERT INTO customers (first_name, middle_name, last_name, phone_number, email, is_active, state, district, taluka, block, village) VALUES ('${fristName}','${middleName}','${lastName}','${phoneNumber}','${email}','${isActive}','${state}','${district}','${taluka}','${block}','${village}')`;
+
+//   // console.log("url", url);
+
+//   // await db.query(url, async (err, result) => {
+//   //   if (err) {
+//   //     console.log({ isSuccess: false, result: err });
+//   //     res.send({ isSuccess: false, result: "error" });
+//   //   } else if (result && result.insertId) {
+//   //     const insertedId = result.insertId;
+
+//   //     const newEnquiryDate = await getDateInFormate(enquiryDate);
+//   //     const newDeliveryDate = await getDateInFormate(deliveryDate);
+
+//   //     const urlNew = `INSERT INTO enquiries (branch_id, enquiry_type_id, salesperson_id, customer_id, product_id, date, delivery_date, enquiry_source_id, visitReason) VALUES('${branchId}','${enquiryTypeId}','${dsp}','${insertedId}','${model}','${newEnquiryDate}','${newDeliveryDate}','${sourceOfEnquiry}','${visitReason}')`;
+//   //     await db.query(urlNew, async (err, result) => {
+//   //       if (err) {
+//   //         console.log({ isSuccess: false, result: err });
+//   //         res.send({ isSuccess: false, result: "error" });
+//   //       } else if (result && result.insertId) {
+//   //         console.log({ isSuccess: "success", result: urlNew });
+//   //         if (
+//   //           (maker &&
+//   //             modalName &&
+//   //             variantName &&
+//   //             year &&
+//   //             condition_of != null) ||
+//   //           undefined
+//   //         ) {
+//   //           const newYearOfManufactur = await getDateInFormate(year);
+//   //           const urlSql = `INSERT INTO manufactur_details (enquiry_id, maker, modalName, variantName, year_of_manufactur, condition_of) VALUES('${result.insertId}', '${maker}', '${modalName}', '${variantName}', '${newYearOfManufactur}', '${condition_of}')`;
+//   //           await db.query(urlSql, (err, result) => {
+//   //             if (err) {
+//   //               console.log(err);
+//   //             } else {
+//   //               res.send({ isSuccess: "success", result: "success" });
+//   //             }
+//   //           });
+//   //         } else {
+//   //           res.send({ isSuccess: "success", result: "success" });
+//   //         }
+//   //       }
+//   //     });
+//   //   }
+//   // });
+// });
 module.exports = router;

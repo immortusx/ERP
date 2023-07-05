@@ -6,6 +6,7 @@ import manufacturerDetailsSlice from "./slice/manufacturerDetailsSlice";
 import modalDataSlice from "./slice/modalDataSlice";
 import getEnquirySlice from "./slice/getEnquirySlice";
 import getAllVillageSlice from "./slice/getAllVillageSlice";
+import addFastEnquirySlice from "./slice/addFastEnquirySlice";
 
 export const store = configureStore({
     reducer: {
@@ -16,5 +17,6 @@ export const store = configureStore({
         modalData: modalDataSlice,
         getVillageState: getAllVillageSlice,
         getEnquiryState: getEnquirySlice,
+        fastEnquiryState: addFastEnquirySlice,
     }
 })
