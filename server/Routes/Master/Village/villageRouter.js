@@ -228,7 +228,7 @@ router.get("/get-Village-by-branchId/:id", tokenCheck, async (req, res) => {
           console.log({ isSuccess: false, result: "error" });
           res.send({ isSuccess: false, result: "error" });
         } else {
-          const taluka = villageByBranchId[0].taluka; // Access taluka from the response
+          const taluka = villageByBranchId[0].taluka;
           console.log(taluka);
           await db.query(
             `SELECT name FROM village WHERE taluka_id = ${taluka}`,
@@ -237,7 +237,7 @@ router.get("/get-Village-by-branchId/:id", tokenCheck, async (req, res) => {
                 console.log({ isSuccess: false, result: "error" });
                 res.send({ isSuccess: false, result: "error" });
               } else {
-                // console.log({ isSuccess: true, result: villageList });
+                console.log({ isSuccess: true, result: villageList });
                 res.status(200).send({ isSuccess: true, result: villageList });
               }
             }

@@ -17,7 +17,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import {Dropdown} from 'react-native-element-dropdown';
 import CustomRadioButton from './subCom/CustomRadioButton';
 import {useDispatch, useSelector} from 'react-redux';
-import {setEnquiryDb} from '../redux/slice/addEnquirySlice';
+import {clearEnquiryState, setEnquiryDb} from '../redux/slice/addEnquirySlice';
 import {saveEnquiryModalForm} from '../redux/slice/addEnquiryModal';
 import {saveModalData} from '../redux/slice/modalDataSlice';
 import SweetSuccessAlert from './subCom/SweetSuccessAlert';
@@ -85,6 +85,7 @@ const DetailEnquiry = () => {
       setModalVisible(true);
     }
   };
+  
   const formattedDeliveryDate = expDeliveryDate.toLocaleDateString();
   const handleReadValue = () => {
     console.log(selectedOption);
@@ -102,6 +103,7 @@ const DetailEnquiry = () => {
   useEffect(() => {
     if (enquiryState.isSuccess === true) {
       console.log('Enquiry submitted');
+      clearEnquiryState();
       openModal();
     }
   }, [enquiryState]);
@@ -112,7 +114,7 @@ const DetailEnquiry = () => {
     console.log(firstname, lastname, phone);
     console.log(manufacturer, modal, variant);
     console.log(enquiry);
-    console.log(expDeliveryDate);
+    console.log(formattedDeliveryDate);
     console.log(condition, 'consdtion');
     console.log(maker, modalName, variantName, year, condition_of);
 
@@ -125,7 +127,7 @@ const DetailEnquiry = () => {
       district: district,
       taluka: taluka,
       village: village,
-      deliveryDate: formattedDeliveryDate,
+      deliveryDate: expDeliveryDate.toISOString().replace("T", " ").slice(0, 19),
       manufacturer: manufacturer,
       modal: modal,
       variant: variant,
@@ -134,6 +136,7 @@ const DetailEnquiry = () => {
       variantName: variantName,
       year: year,
       condition_of: condition_of,
+      sourceOfEnquiry: enquiry
     };
     if (
       enquiryData.firstname.length > 0 &&
