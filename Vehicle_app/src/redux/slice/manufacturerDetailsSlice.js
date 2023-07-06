@@ -16,9 +16,14 @@ const manufacturerDetailsSlice = createSlice({
       state.modal = modal;
       state.variant = variant;
     },
+    clearManufacturerDetails: (state) => {
+      state.manufacturer = '';
+      state.modal = '';
+      state.variant = '';
+    },
   },
 });
 
-export const { saveManufacturerDetails } = manufacturerDetailsSlice.actions;
+export const { saveManufacturerDetails, clearManufacturerDetails } = manufacturerDetailsSlice.actions;
 
 export default manufacturerDetailsSlice.reducer;

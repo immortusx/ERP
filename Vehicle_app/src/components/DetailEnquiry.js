@@ -19,13 +19,16 @@ import CustomRadioButton from './subCom/CustomRadioButton';
 import {useDispatch, useSelector} from 'react-redux';
 import {clearEnquiryState, setEnquiryDb} from '../redux/slice/addEnquirySlice';
 import {saveEnquiryModalForm} from '../redux/slice/addEnquiryModal';
-import {saveModalData} from '../redux/slice/modalDataSlice';
+import {clearModalData, saveModalData} from '../redux/slice/modalDataSlice';
 import SweetSuccessAlert from './subCom/SweetSuccessAlert';
-import { useNavigation } from '@react-navigation/native';
-const DetailEnquiry = () => {
+import {useNavigation} from '@react-navigation/native';
+import {getEnquiryData} from '../redux/slice/getEnquirySlice';
+import {clearLocationForm} from '../redux/slice/locationFormSlice';
+import {clearManufacturerDetails} from '../redux/slice/manufacturerDetailsSlice';
+const DetailEnquiry = ({route}) => {
+  const editData = route.params?.editData;
   const dispatch = useDispatch();
   const navigation = useNavigation();
-  // const enquiryState = useSelector(state => state.enquriySlice.enquiryState);
   const locationForm = useSelector(state => state.locationForm);
   const {state, district, taluka, village} = locationForm;
   const enquiryState = useSelector(state => state.enquirySlice.enquiryState);
@@ -57,7 +60,7 @@ const DetailEnquiry = () => {
     firstname: '',
     lastname: '',
     phone: '',
-    whatsappno: ''
+    whatsappno: '',
   });
 
   const enquirySourceItem = [
@@ -85,7 +88,7 @@ const DetailEnquiry = () => {
       setModalVisible(true);
     }
   };
-  
+
   const formattedDeliveryDate = expDeliveryDate.toLocaleDateString();
   const handleReadValue = () => {
     console.log(selectedOption);
@@ -101,13 +104,21 @@ const DetailEnquiry = () => {
     }));
   };
   useEffect(() => {
-    if (enquiryState.isSuccess === true) {
+    if (enquiryState && enquiryState.isSuccess === true) {
+      dispatch(clearEnquiryState());
+      dispatch(clearLocationForm());
+      dispatch(clearManufacturerDetails());
+      dispatch(clearModalData());
       console.log('Enquiry submitted');
-      clearEnquiryState();
       openModal();
+      dispatch(getEnquiryData()).then(() => {
+        navigation.navigate('AddMore');
+      });
     }
   }, [enquiryState]);
+
   const submitEnquiry = () => {
+    console.log(editData,'editData');
     const {firstname, lastname, phone, whatsappno} = enquiryData;
     const {state, district, taluka, village} = locationForm;
     console.log(state, district, taluka, village);
@@ -127,7 +138,10 @@ const DetailEnquiry = () => {
       district: district,
       taluka: taluka,
       village: village,
-      deliveryDate: expDeliveryDate.toISOString().replace("T", " ").slice(0, 19),
+      deliveryDate: expDeliveryDate
+        .toISOString()
+        .replace('T', ' ')
+        .slice(0, 19),
       manufacturer: manufacturer,
       modal: modal,
       variant: variant,
@@ -136,12 +150,12 @@ const DetailEnquiry = () => {
       variantName: variantName,
       year: year,
       condition_of: condition_of,
-      sourceOfEnquiry: enquiry
+      sourceOfEnquiry: enquiry,
     };
     if (
       enquiryData.firstname.length > 0 &&
       enquiryData.lastname.length > 0 &&
-      enquiryData.phone.length > 0 && 
+      enquiryData.phone.length > 0 &&
       enquiryData.whatsappno.length > 0
     ) {
       dispatch(setEnquiryDb(formData));
@@ -196,6 +210,7 @@ const DetailEnquiry = () => {
               autoCapitalize="none"
               keyboardType="default"
               textContentType="firstname"
+              defaultValue={editData.first_name}
               onChangeText={value => onChangeHandler(value, 'firstname')}
             />
           </View>
@@ -207,6 +222,7 @@ const DetailEnquiry = () => {
               autoCapitalize="none"
               keyboardType="default"
               textContentType="lastname"
+              defaultValue={editData.last_name}
               onChangeText={value => onChangeHandler(value, 'lastname')}
             />
           </View>
@@ -218,6 +234,7 @@ const DetailEnquiry = () => {
               autoCapitalize="none"
               keyboardType="default"
               textContentType="phone"
+              defaultValue={editData.phone_number}
               onChangeText={value => onChangeHandler(value, 'phone')}
             />
           </View>
@@ -229,6 +246,7 @@ const DetailEnquiry = () => {
               autoCapitalize="none"
               keyboardType="default"
               textContentType="whatsappno"
+              defaultValue={editData.phone_number}
               onChangeText={value => onChangeHandler(value, 'whatsappno')}
             />
           </View>
@@ -247,7 +265,11 @@ const DetailEnquiry = () => {
               </TouchableOpacity>
             </View>
           </View>
-          <Text style={{ color: '#A93226', fontSize: 12 }}>{`${state} ${district} ${taluka} ${village}`}</Text>
+          <Text
+            style={{
+              color: '#A93226',
+              fontSize: 12,
+            }}>{`${state} ${district} ${taluka} ${village}`}</Text>
           <View editable={false} style={[styles.inputStyle, styles.optional]}>
             <View>
               <TouchableOpacity
@@ -263,7 +285,11 @@ const DetailEnquiry = () => {
               </TouchableOpacity>
             </View>
           </View>
-          <Text style={{ color: '#A93226', fontSize: 12 }}>{`${manufacturer} ${modal} ${variant}`}</Text>
+          <Text
+            style={{
+              color: '#A93226',
+              fontSize: 12,
+            }}>{`${manufacturer} ${modal} ${variant}`}</Text>
 
           <View style={{marginBottom: 5}}>
             <Text style={styles.label}>Enquiry Primary Source *</Text>

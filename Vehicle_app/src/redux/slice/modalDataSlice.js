@@ -18,9 +18,16 @@ const modalDataSlice = createSlice({
       state.year = year;
       state.condition_of = condition_of;
     },
+    clearModalData: (state) => {
+      state.maker = '';
+      state.modalName = '';
+      state.variantName = '';
+      state.year = '';
+      state.condition_of = '';
+    },
   },
 });
 
-export const { saveModalData } = modalDataSlice.actions;
+export const { saveModalData, clearModalData } = modalDataSlice.actions;
 
 export default modalDataSlice.reducer;

@@ -12,9 +12,17 @@ const locationFormSlice = createSlice({
     saveLocationForm: (state, action) => {
       return action.payload;
     },
+    clearLocationForm: (state) => {
+      return {
+        state: '',
+        district: '',
+        taluka: '',
+        village: '',
+      };
+    },
   },
 });
 
-export const { saveLocationForm } = locationFormSlice.actions;
+export const { saveLocationForm, clearLocationForm } = locationFormSlice.actions;
 
 export default locationFormSlice.reducer;

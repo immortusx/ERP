@@ -17,17 +17,22 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import {Dropdown} from 'react-native-element-dropdown';
 import CustomRadioButton from './subCom/CustomRadioButton';
 import {useDispatch, useSelector} from 'react-redux';
-import {setEnquiryDb} from '../redux/slice/addEnquirySlice';
+import {clearEnquiryState, setEnquiryDb} from '../redux/slice/addEnquirySlice';
 import {saveEnquiryModalForm} from '../redux/slice/addEnquiryModal';
 import {saveModalData} from '../redux/slice/modalDataSlice';
 import SweetSuccessAlert from './subCom/SweetSuccessAlert';
 import {getVillageData} from '../redux/slice/getAllVillageSlice';
-import { setFastEnquiryDb } from '../redux/slice/addFastEnquirySlice';
-const FastEnquiry = ({navigation}) => {
+import {clearFastEnquiryState, setFastEnquiryDb} from '../redux/slice/addFastEnquirySlice';
+import {getEnquiryData} from '../redux/slice/getEnquirySlice';
+import {useNavigation} from '@react-navigation/native';
+const FastEnquiry = () => {
+  const navigation = useNavigation();
   const dispatch = useDispatch();
   // const enquiryState = useSelector(state => state.enquriySlice.enquiryState);
   const locationForm = useSelector(state => state.locationForm);
-  const fastEnquiryState = useSelector(state => state.fastEnquirySlice.fastEnquiryState);
+  const fastEnquiryState = useSelector(
+    state => state.fastEnquirySlice.fastEnquiryState,
+  );
   const getVillageState = useSelector(state => state.getVillageState);
   const {isFetching, isSuccess, isError, result} = getVillageState;
   const {maker, modalName, variantName, year, condition_of} = useSelector(
@@ -60,7 +65,7 @@ const FastEnquiry = ({navigation}) => {
     phone: '',
     whatsappno: '',
   });
-
+  
   const villageData = resultData.map(village => ({
     label: village.name,
     value: village.name,
@@ -101,14 +106,6 @@ const FastEnquiry = ({navigation}) => {
     }
   }, [result]);
 
-  //   useEffect(() => {
-  //     if (resultData && resultData.length > 0) {
-  //       resultData.map(i => {
-  //         console.log(i.name);
-  //       });
-  //     }
-  //   }, [resultData]);
-
   const formattedDeliveryDate = expDeliveryDate.toLocaleDateString();
   const handleReadValue = () => {
     console.log(selectedOption);
@@ -124,28 +121,36 @@ const FastEnquiry = ({navigation}) => {
     }));
   };
   useEffect(() => {
-    if (fastEnquiryState.isSuccess === true) {
+    if (fastEnquiryState && fastEnquiryState.isSuccess === true) {
+      dispatch(clearFastEnquiryState());
       console.log('Enquiry submitted');
       openModal();
+      dispatch(getEnquiryData()).then(() => {
+        navigation.navigate('AddMore');
+      });
     }
   }, [fastEnquiryState]);
-  const submitEnquiry = () => {
-    const formData = {
-      first_name: enquiryData.customer,
-      phone_number: enquiryData.phone,
-      whatsapp_number: enquiryData.whatsappno,
-      village: village
-    }
-    if (
-      enquiryData.customer.length > 0 &&
-      enquiryData.phone.length > 0 &&
-      enquiryData.whatsappno.length > 0
-    ) {
-        dispatch(setFastEnquiryDb(formData));
-    } else {
-      console.warn('Please first fill the field*');
-    }
+
+ const submitEnquiry = () => {
+  const formData = {
+    first_name: enquiryData.customer,
+    phone_number: enquiryData.phone,
+    whatsapp_number: enquiryData.whatsappno,
+    village: village,
   };
+  if (
+    enquiryData.customer.length > 0 &&
+    enquiryData.phone.length > 0 &&
+    enquiryData.whatsappno.length > 0
+  ) {
+    dispatch(setFastEnquiryDb(formData)).then(() => {
+      dispatch(clearFastEnquiryState());
+    });
+  } else {
+    console.warn('Please first fill the field*');
+  }
+};
+
 
   const formattedCurrentDate = currentDate.toLocaleDateString();
   const formattedManuYear = manuYearDate.toLocaleDateString();

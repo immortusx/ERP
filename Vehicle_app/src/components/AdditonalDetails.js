@@ -9,11 +9,24 @@ const AdditonalDetails = ({route}) => {
   const handleSheduleCall = item => {
     navigation.navigate('Schedule Call', {item: item});
   };
+  const openEditEnquiry = (editData)=> {
+    console.log(editData);
+    navigation.navigate("Detail Enquiry", {editData: editData});
+  }
   return (
     <View style={styles.userCard}>
       <View style={styles.dataContainer}>
         <View style={styles.boxContainer}>
           <Text style={styles.historyText}>Customer Details</Text>
+          <View style={styles.imageContainer}>
+            <TouchableOpacity
+            onPress={()=> {openEditEnquiry(item)}}>
+              <Image
+                style={styles.editImg}
+                source={require('../../assets/edit.png')}
+              />
+            </TouchableOpacity>
+          </View>
         </View>
         <View style={styles.mainContent}>
           <Text style={styles.myName}>
@@ -174,6 +187,10 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
   },
+  editImg: {
+    width: 22,
+    height: 22,
+  },
   followButtonContainer: {
     backgroundColor: '#007AFF',
     borderRadius: 20,
@@ -185,6 +202,13 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  boxContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  imageContainer: {
+    marginLeft: 'auto',
   },
 });
 export default AdditonalDetails;

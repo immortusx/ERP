@@ -68,7 +68,7 @@ const AddMore = () => {
                       style={styles.personImg}
                       source={require('../../assets/person.png')}
                     />
-                    - {item.first_name + ' ' + item.last_name}
+                    - {item.first_name + (item.last_name ? ' ' + item.last_name : '')}
                   </Text>
 
                   <Text style={styles.label}>

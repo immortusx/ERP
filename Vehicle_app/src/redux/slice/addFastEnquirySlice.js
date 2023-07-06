@@ -16,8 +16,8 @@ export const setFastEnquiryDb = createAsyncThunk(
   async data => {
     console.log('fastData', data);
     const id = await AsyncStorage.getItem('currentBranchId');
-    const branchId = id ? id : ''
-    data.branchId  = branchId;
+    const branchId = id ? id : '';
+    data.branchId = branchId;
     const url = `${API_URL}/api/enquiry/set-new-fast-enquiry`;
     console.log('fast enquiry', url);
     const token = await AsyncStorage.getItem('rbacToken');
@@ -43,7 +43,6 @@ const fastEnquirySlice = createSlice({
       state.fastEnquiryState.isSuccess = false;
       state.fastEnquiryState.isError = false;
       state.fastEnquiryState.result = '';
-      return state;
     },
   },
   extraReducers: builder => {
