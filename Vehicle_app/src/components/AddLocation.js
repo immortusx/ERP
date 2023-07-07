@@ -19,14 +19,15 @@ import {saveManufacturerDetails} from '../redux/slice/manufacturerDetailsSlice';
 import SweetSuccessAlert from './subCom/SweetSuccessAlert';
 import {getEnquiryLocationData} from '../redux/slice/getEnquiryLocationSlice';
 import {saveLocationForm} from '../redux/slice/locationFormSlice';
-import { useNavigation } from '@react-navigation/native';
-const AddManufacturDetails = () => {
+import {useNavigation} from '@react-navigation/native';
+const AddLocation = ({route}) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const [resultData, setResultData] = useState([]);
   const [districtResult, setDisrictResult] = useState([]);
   const [talukaResult, setTalukaResult] = useState([]);
   const [villageResult, setVillageresult] = useState([]);
+  const [editData, setEditData] = useState(null);
   const [state, setState] = useState('');
   const [district, setDistrict] = useState('');
   const [taluka, setTaluka] = useState('');
@@ -39,17 +40,17 @@ const AddManufacturDetails = () => {
 
   const stateData = resultData.map(stateName => ({
     label: stateName.state_name,
-    value: stateName.state_name,
+    value: stateName.state_id,
   }));
 
   const districtData = districtResult.map(item => ({
     label: item.name,
-    value: item.name,
+    value: item.id,
   }));
 
   const talukaData = talukaResult.map(taluka => ({
     label: taluka.name,
-    value: taluka.name,
+    value: taluka.id,
   }));
 
   const villageData = villageResult.map(village => ({
@@ -57,6 +58,23 @@ const AddManufacturDetails = () => {
     value: village.name,
   }));
 
+  useEffect(() => {
+    if (route) {
+      console.log(route, 'editlocation');
+      const {editData} = route.params;
+      setEditData(editData);
+    }
+  }, [route]);
+
+  useEffect(() => {
+    if (editData) {
+      console.log(editData, 'editLocationdd');
+      setState(editData.state_id);
+      setDistrict(editData.district_id);
+      setTaluka(editData.taluka_id);
+      setVillage(editData.village_id);
+    }
+  }, [editData]);
   const renderLabel = () => {
     if (value || isFocus) {
       return (
@@ -70,8 +88,8 @@ const AddManufacturDetails = () => {
 
   useEffect(() => {
     const getStateList = async () => {
-      const url = `${API_URL}/api/master/get-allsate`;
-      console.log('get village', url);
+      const url = `${API_URL}/api/get-state-list`;
+      console.log('get state', url);
       const token = await AsyncStorage.getItem('rbacToken');
       const config = {
         headers: {
@@ -81,6 +99,7 @@ const AddManufacturDetails = () => {
       console.log(config);
       await axios.get(url, config).then(response => {
         if (response) {
+          // console.log(response.data.result,'data');
           setResultData(response.data.result);
         }
       });
@@ -89,86 +108,86 @@ const AddManufacturDetails = () => {
   }, []);
 
   useEffect(() => {
-    const getEnquiryDistrict = async () => {
-      const url = `${API_URL}/api/master/get-alldistrict`;
-      console.log('get district', url);
-      const token = await AsyncStorage.getItem('rbacToken');
-      const config = {
-        headers: {
-          token: token ? token : '',
-        },
+    if (state) {
+      const getEnquiryDistrict = async () => {
+        const url = `${API_URL}/api/get-district-list/${state}`;
+        console.log('get district', url);
+        const token = await AsyncStorage.getItem('rbacToken');
+        const config = {
+          headers: {
+            token: token ? token : '',
+          },
+        };
+        console.log(config);
+        await axios.get(url, config).then(response => {
+          if (response) {
+            console.log(response.data.result, 'data');
+            setDisrictResult(response.data.result);
+          }
+        });
       };
-      console.log(config);
-      await axios.get(url, config).then(response => {
-        if (response) {
-          setDisrictResult(response.data.result);
-        }
-      });
-    };
-    getEnquiryDistrict();
-  }, []);
+      getEnquiryDistrict();
+    }
+  }, [state]);
 
   useEffect(() => {
-    const getTaluka = async () => {
-      const url = `${API_URL}/api/master/get-allTaluka`;
-      console.log('get taluka', url);
-      const token = await AsyncStorage.getItem('rbacToken');
-      const config = {
-        headers: {
-          token: token ? token : '',
-        },
+    if (district) {
+      const getTaluka = async () => {
+        const url = `${API_URL}/api/get-taluka-list/${district}`;
+        console.log('get taluka', url);
+        const token = await AsyncStorage.getItem('rbacToken');
+        const config = {
+          headers: {
+            token: token ? token : '',
+          },
+        };
+        console.log(config);
+        await axios.get(url, config).then(response => {
+          if (response) {
+            setTalukaResult(response.data.result);
+          }
+        });
       };
-      console.log(config);
-      await axios.get(url, config).then(response => {
-        if (response) {
-          setTalukaResult(response.data.result);
-        }
-      });
-    };
-    getTaluka();
-  }, []);
+      getTaluka();
+    }
+  }, [district]);
 
   useEffect(() => {
-    const getVillage = async () => {
-      const url = `${API_URL}/api/master/get-allVillage`;
-      console.log('get taluka', url);
-      const token = await AsyncStorage.getItem('rbacToken');
-      const config = {
-        headers: {
-          token: token ? token : '',
-        },
+    if (taluka) {
+      const getVillage = async () => {
+        const url = `${API_URL}/api/get-village-list/${taluka}`;
+        console.log('get taluka', url);
+        const token = await AsyncStorage.getItem('rbacToken');
+        const config = {
+          headers: {
+            token: token ? token : '',
+          },
+        };
+        console.log(config);
+        await axios.get(url, config).then(response => {
+          if (response) {
+            setVillageresult(response.data.result);
+          }
+        });
       };
-      console.log(config);
-      await axios.get(url, config).then(response => {
-        if (response) {
-          setVillageresult(response.data.result);
-        }
-      });
-    };
-    getVillage();
-  }, []);
+      getVillage();
+    }
+  }, [taluka]);
 
   const saveLocation = () => {
     console.log(state, district, taluka, village);
-    if (
-      state.length > 0 &&
-      district.length > 0 &&
-      taluka.length > 0 &&
-      village.length > 0
-    ) {
-      dispatch(
-        saveLocationForm({
-          state: state,
-          district: district,
-          taluka: taluka,
-          village: village,
-        }),
-      );
-      openModal();
-      navigation.navigate("AddEnquiry")
-    } else {
-      console.warn('Please select first*');
-    }
+    console.log(taluka, 'id');
+
+    dispatch(
+      saveLocationForm({
+        state: state,
+        district: district,
+        taluka: taluka,
+        village: village,
+      }),
+    );
+    openModal();
+    navigation.goBack();
   };
   const openModal = () => {
     setShowModal(true);
@@ -378,4 +397,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AddManufacturDetails;
+export default AddLocation;

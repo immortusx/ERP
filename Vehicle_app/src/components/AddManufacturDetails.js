@@ -18,18 +18,19 @@ import {useDispatch} from 'react-redux';
 import {saveManufacturerDetails} from '../redux/slice/manufacturerDetailsSlice';
 import SweetSuccessAlert from './subCom/SweetSuccessAlert';
 import { useNavigation } from '@react-navigation/native';
-const AddManufacturDetails = () => {
+const AddManufacturDetails = ({route}) => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const [value, setValue] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [editData, setEditData] = useState(null);
   const [manufacturerData, setManufacurerData] = useState([]);
   const [modalData, setModalData] = useState([]);
   const [variantData, setVariantData] = useState([]);
   const [isFocus, setIsFocus] = useState(false);
-  const [manufacturer, setManufacturer] = useState(null);
-  const [modal, setModal] = useState(null);
-  const [variant, setVariant] = useState(null);
+  const [manufacturer, setManufacturer] = useState('');
+  const [modal, setModal] = useState('');
+  const [variant, setVariant] = useState('');
 
   const manufacturItem = manufacturerData.map(item => ({
     label: item.manufacturerName,
@@ -45,6 +46,25 @@ const AddManufacturDetails = () => {
     value: item.id
   }));
 
+  useEffect(()=> {
+    if(route){
+      console.log(route,'editManu')
+      const {editData} = route.params;
+      setEditData(editData);
+    }
+  },[route])
+
+  useEffect(()=> {
+    if(editData){
+      console.log(editData, 'manuedetails');
+      console.log(editData.manufacturer);
+      console.log(editData.modal);
+      console.log(editData.variant);
+      setManufacturer(editData.manufacturer);
+      setModal(editData.modal);
+      setVariant(editData.variant);
+    }
+  },[editData])
   const renderLabel = () => {
     if (value || isFocus) {
       return (
@@ -125,7 +145,6 @@ const AddManufacturDetails = () => {
   }, [modal]);
 
   const saveManufacturDetails = () => {
-    console.warn(manufacturer, modal, variant,'all');
     dispatch(
       saveManufacturerDetails({
         manufacturer,
@@ -134,7 +153,7 @@ const AddManufacturDetails = () => {
       }),
     );
     openModal();
-    navigation.navigate("AddEnquiry");
+    navigation.goBack();
   };
   const openModal = () => {
     setShowModal(true);

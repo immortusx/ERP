@@ -10,8 +10,7 @@ const AdditonalDetails = ({route}) => {
     navigation.navigate('Schedule Call', {item: item});
   };
   const openEditEnquiry = (editData)=> {
-    console.log(editData);
-    navigation.navigate("Detail Enquiry", {editData: editData});
+    navigation.navigate("Edit Detail Enquiry", {editData: editData});
   }
   return (
     <View style={styles.userCard}>
@@ -34,7 +33,7 @@ const AdditonalDetails = ({route}) => {
               style={styles.personImg}
               source={require('../../assets/person.png')}
             />
-            - {item.first_name + ' ' + item.last_name}
+            - {item.first_name + (item.last_name ? ' ' + item.last_name : '')}
           </Text>
 
           <Text style={styles.myName}>
@@ -43,6 +42,13 @@ const AdditonalDetails = ({route}) => {
               source={require('../../assets/phone.png')}
             />
             - {item.phone_number}
+          </Text>
+          <Text style={styles.myName}>
+            <Image
+              style={styles.personImg}
+              source={require('../../assets/whatsapp.png')}
+            />
+            - {item.whatsapp_number}
           </Text>
           <Text style={styles.myName}>
             <Image

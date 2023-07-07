@@ -25,13 +25,14 @@ import {useNavigation} from '@react-navigation/native';
 import {getEnquiryData} from '../redux/slice/getEnquirySlice';
 import {clearLocationForm} from '../redux/slice/locationFormSlice';
 import {clearManufacturerDetails} from '../redux/slice/manufacturerDetailsSlice';
+import { setEditEnquiryDb } from '../redux/slice/editEnquirySlice';
 const DetailEnquiry = ({route}) => {
-  const editData = route.params?.editData;
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const locationForm = useSelector(state => state.locationForm);
   const {state, district, taluka, village} = locationForm;
   const enquiryState = useSelector(state => state.enquirySlice.enquiryState);
+  const editEnquiryState = useSelector((state)=> state.editEnquirySlice.editEnquiryState);
   const {maker, modalName, variantName, year, condition_of} = useSelector(
     state => state.modalData,
   );
@@ -39,6 +40,7 @@ const DetailEnquiry = ({route}) => {
     state => state.manufacturerDetails,
   );
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [editData, setEditData] = useState(null);
   const [openCurentDate, setOpenCurrentDate] = useState(false);
   const [expDeliveryDate, setExpDeliveryDate] = useState(new Date());
   const [openExpDeliveryDate, setOpenExpDeliveryDate] = useState(false);
@@ -64,11 +66,11 @@ const DetailEnquiry = ({route}) => {
   });
 
   const enquirySourceItem = [
-    {label: 'Digital', value: '1'},
-    {label: 'Telemarketing', value: '2'},
-    {label: 'News', value: '3'},
-    {label: 'Visit', value: '4'},
-    {label: 'Other', value: '5'},
+    {label: 'Digital', value: '25'},
+    {label: 'Telemarketing', value: '26'},
+    {label: 'News', value: '27'},
+    {label: 'Visit', value: '28'},
+    {label: 'Other', value: '29'},
   ];
 
   const conditionType = [
@@ -89,6 +91,20 @@ const DetailEnquiry = ({route}) => {
     }
   };
 
+  useEffect(() => {
+    if (route) {
+      console.log(route, '>>>>>>>>>>>>');
+      // console.log(route.params,"para");
+      const {editData} = route.params;
+      // console.log(editData,'edit');
+      setEditData(editData);
+    }
+  }, [route]);
+  useEffect(() => {
+    if (editData) {
+      console.log(editData, 'usedu');
+    }
+  }, [editData]);
   const formattedDeliveryDate = expDeliveryDate.toLocaleDateString();
   const handleReadValue = () => {
     console.log(selectedOption);
@@ -103,6 +119,7 @@ const DetailEnquiry = ({route}) => {
       [field]: value,
     }));
   };
+
   useEffect(() => {
     if (enquiryState && enquiryState.isSuccess === true) {
       dispatch(clearEnquiryState());
@@ -118,7 +135,7 @@ const DetailEnquiry = ({route}) => {
   }, [enquiryState]);
 
   const submitEnquiry = () => {
-    console.log(editData,'editData');
+    console.log(editData, 'editData');
     const {firstname, lastname, phone, whatsappno} = enquiryData;
     const {state, district, taluka, village} = locationForm;
     console.log(state, district, taluka, village);
@@ -153,12 +170,20 @@ const DetailEnquiry = ({route}) => {
       sourceOfEnquiry: enquiry,
     };
     if (
-      enquiryData.firstname.length > 0 &&
-      enquiryData.lastname.length > 0 &&
-      enquiryData.phone.length > 0 &&
-      enquiryData.whatsappno.length > 0
+      enquiryData.firstname.length > 0 
+      // &&
+      // enquiryData.lastname.length > 0 &&
+      // enquiryData.phone.length > 0 &&
+      // enquiryData.whatsappno.length > 0
     ) {
-      dispatch(setEnquiryDb(formData));
+      if (editData) {
+        console.log('Edit Enquiry');
+        formData.customer_id = editData.id;
+        dispatch(setEditEnquiryDb(formData));
+      } else {
+        console.log('Add Enquiry');
+        dispatch(setEnquiryDb(formData));
+      }
     } else {
       console.warn('Please first fill the field*');
     }
@@ -183,7 +208,6 @@ const DetailEnquiry = ({route}) => {
         }),
       );
       setModalVisible(!modalVisible);
-      console.warn(oldVehicleData);
     } else {
       console.warn('please first fill the field');
     }
@@ -196,6 +220,12 @@ const DetailEnquiry = ({route}) => {
   };
   const openModal = () => {
     setShowModal(true);
+  };
+  const openAddLocation = editData => {
+    navigation.navigate('Add Location', {editData: editData});
+  };
+  const openManufactureDetails = editData => {
+    navigation.navigate('Add Manufacturer Details', {editData: editData});
   };
   return (
     <ScrollView>
@@ -210,7 +240,7 @@ const DetailEnquiry = ({route}) => {
               autoCapitalize="none"
               keyboardType="default"
               textContentType="firstname"
-              defaultValue={editData.first_name}
+              defaultValue={editData?.first_name || ''}
               onChangeText={value => onChangeHandler(value, 'firstname')}
             />
           </View>
@@ -222,7 +252,7 @@ const DetailEnquiry = ({route}) => {
               autoCapitalize="none"
               keyboardType="default"
               textContentType="lastname"
-              defaultValue={editData.last_name}
+              defaultValue={editData?.last_name || ''}
               onChangeText={value => onChangeHandler(value, 'lastname')}
             />
           </View>
@@ -234,7 +264,7 @@ const DetailEnquiry = ({route}) => {
               autoCapitalize="none"
               keyboardType="default"
               textContentType="phone"
-              defaultValue={editData.phone_number}
+              defaultValue={editData?.phone_number || ''}
               onChangeText={value => onChangeHandler(value, 'phone')}
             />
           </View>
@@ -246,7 +276,7 @@ const DetailEnquiry = ({route}) => {
               autoCapitalize="none"
               keyboardType="default"
               textContentType="whatsappno"
-              defaultValue={editData.phone_number}
+              defaultValue={editData?.whatsapp_number || ''}
               onChangeText={value => onChangeHandler(value, 'whatsappno')}
             />
           </View>
@@ -255,7 +285,7 @@ const DetailEnquiry = ({route}) => {
               <TouchableOpacity
                 style={styles.centeredContainer}
                 onPress={() => {
-                  navigation.navigate('Add Location');
+                  openAddLocation(editData);
                 }}>
                 <Image
                   style={styles.plusImg}
@@ -275,7 +305,7 @@ const DetailEnquiry = ({route}) => {
               <TouchableOpacity
                 style={styles.centeredContainer}
                 onPress={() => {
-                  navigation.navigate('Add Manufacturer Details');
+                  openManufactureDetails(editData);
                 }}>
                 <Image
                   style={styles.plusImg}
@@ -356,7 +386,9 @@ const DetailEnquiry = ({route}) => {
         </View>
         <View style={{paddingHorizontal: 15}}>
           <TouchableOpacity style={styles.submitButton} onPress={submitEnquiry}>
-            <Text style={styles.submitButtonText}>Submit</Text>
+            <Text style={styles.submitButtonText}>
+              {editData ? 'Update' : 'Submit'}
+            </Text>
           </TouchableOpacity>
         </View>
         <View style={styles.centeredView}>

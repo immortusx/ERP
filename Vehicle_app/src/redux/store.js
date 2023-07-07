@@ -7,6 +7,7 @@ import modalDataSlice from './slice/modalDataSlice';
 import getEnquirySlice from './slice/getEnquirySlice';
 import getAllVillageSlice from './slice/getAllVillageSlice';
 import addFastEnquirySlice from './slice/addFastEnquirySlice';
+import editEnquirySlice from './slice/editEnquirySlice';
 
 export const store = configureStore({
   reducer: {
@@ -18,5 +19,6 @@ export const store = configureStore({
     getVillageState: getAllVillageSlice,
     getEnquiryState: getEnquirySlice,
     fastEnquirySlice: addFastEnquirySlice,
+    editEnquirySlice: editEnquirySlice
   },
 });

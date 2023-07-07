@@ -97,6 +97,17 @@ const AppNavigator = () => {
             },
           }}
         />
+        <Stack.Screen
+          name="Edit Detail Enquiry"
+          component={DetailEnquiry}
+          options={{
+            headerShown: true,
+            headerStyle: {
+              borderWidth: 0.9,
+              borderColor: 'grey',
+            },
+          }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
