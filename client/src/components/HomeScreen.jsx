@@ -57,9 +57,9 @@ import Part_List from './Master/Plan/Part_List'
 import BreadCrumb from './BreadCrumb/BreadCrumb'
 import Manufacturer_list from './Master/Manufacturer/Manufacturer_list';
 import Manufacturer_modal from './Master/Manufacturer/Manufacturer_modal';
-import Agency_list from "./Master/Agency/Agency_list";
 import Department_list from './Master/Department/Department_list';
 import Category_list from "./Master/Category/Category_list";
+import Profile_list from "./Profile";
 import Roles from './Roles'
 import Tax from './Master/Tax/Tax'
 import Sub_Modal from "./Master/Manufacturer/Sub_modal";
@@ -270,9 +270,9 @@ export default function HomeScreen() {
                             className={({ isActive }) =>
                               isActive ? "activeLink" : ""
                             }
-                            to="profile"
+                            to="home/profile/agency"
                           >
-                           Agency Profile
+                            Agency Profile
                           </NavLink>
                         </li>
                       )}
@@ -1076,7 +1076,16 @@ export default function HomeScreen() {
               exact
             />
 
-             {/* <Route
+            <Route
+              path="home/profile/agency"
+              element={
+                <CheckPermission path="profile">
+                  <Profile_list workFor="forEdit" />
+                </CheckPermission>
+              }
+              exact
+            />
+            {/*<Route
               path="administration/configuration/agency"
               element={
                 <CheckPermission path="agency">
@@ -1091,6 +1100,15 @@ export default function HomeScreen() {
               element={
                 <CheckPermission path="profile">
                   <AddAgency workFor="forAdd" />
+                </CheckPermission>
+              }
+              exact
+            />
+            <Route
+              path="administration/configuration/editagency"
+              element={
+                <CheckPermission path="profile">
+                  <Profile_list workFor="forEdit" />
                 </CheckPermission>
               }
               exact

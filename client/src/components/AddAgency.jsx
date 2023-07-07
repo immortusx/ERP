@@ -7,7 +7,13 @@ import {
   addAgencyToDb,
   clearaddaddAgency,
 } from "../redux/slices/addagencySlice";
-export default function AddDepartment({ workFor }) {
+import {
+  clearEditagencyData,
+  clearEditagencyState,
+  editagencyUpdateToDb,
+} from "../redux/slices/editAgencySlice";
+export default function AddAgency({ workFor }) {
+  const [agencyCreated, setAgencyCreated] = useState(false);
   const [agencyData, setAgencyData] = useState({
     name: "",
     contact: "",
@@ -32,17 +38,115 @@ export default function AddDepartment({ workFor }) {
 
   const addAgency = useSelector((state) => state.addAgency.addAgency);
 
+  const { editagencySliceState } = useSelector(
+    (state) => state.editAgencyDataState
+  );
+  const editagencyData = useSelector(
+    (state) => state.editAgencyDataState.editagencyData
+  );
+
+
+
+  // useEffect(() => {
+  //   if (editagencySliceState.isSuccess) {
+  //     console.log(editagencySliceState, "editagencySliceState");
+  //     if (editagencySliceState.message.result === "success") {
+  //       dispatch(setShowMessage("Data is Updated"));
+  //       clearInpHook();
+  //       dispatch(clearEditagencyState());
+  //       navigate("/administration/configuration/agency");
+  //     } else {
+  //       dispatch(setShowMessage("Something is wrong!"));
+  //     }
+  //   }
+  // }, [editagencySliceState]);
+
+
+
+  //  useEffect(() => {
+  //    if (workFor === "forEdit") {
+  //      if (editagencyData.data === null) {
+  //        dispatch(setShowMessage("Please select a employee"));
+  //        setTimeout(() => {
+  //           navigate("/administration/configuration/agency");
+  //          console.log("asdfghjkdfghj");
+  //        }, 1000);
+  //      } else {
+  //        console.log("editagencyData2222222222222222222222222", editagencyData);
+  //        setAgencyData({
+  //          name: editagencyData.data.configuration_setting,
+  //          contact: editagencyData.data.configuration_key,
+  //          email: editagencyData.data.configuration_value,
+  //          logo: editagencyData.data.logo,
+  //        });
+  //      }
+  //    }
+  //    return () => {
+  //      if (workFor === "forEdit") {
+  //        dispatch(clearEditagencyData());
+  //      }
+  //    };
+  //  }, [workFor, clearEditagencyData]);
+
+
+//  async function getagencyid(id) {
+//    console.log(id, "asdfghjkl;fdghjk");
+//    const url = `${process.env.REACT_APP_NODE_URL}/api/agency/get-agencybyid/${id}`;
+//    const config = {
+//      headers: {
+//        token: localStorage.getItem("rbacToken"),
+//      },
+//    };
+//    try {
+//      const response = await Axios.get(url, config);
+//      if (response.data?.isSuccess) {
+//        setAgencyData(response.data.result);
+//      }
+//    } catch (error) {
+//      console.log(error);
+//    }
+//  }
+
+    // useEffect(() => {
+    //   if (workFor === "forEdit" && editagencyData && editagencyData.data) {
+    //     const id = editagencyData.data.id;
+    //     console.log(id, "IDDATA");
+    //     getagencyid(id);
+    //   }
+    // }, []);
+   
+  // useEffect(() => {
+  //   if (addAgency.isSuccess) {
+  //     if (addAgency.message.isSuccess) {
+  //       console.log(addAgency, "addAgency");
+  //       dispatch(setShowMessage("Agency is created"));
+  //       dispatch(clearaddaddAgency());
+  //       navigate("/administration/configuration");
+  //       clearInpHook();
+  //       clearaddaddAgency();
+  //     } else {
+  //       dispatch(setShowMessage("Something is wrong"));
+  //     }
+  //   }
+  // }, [addAgency]);
+
+
   useEffect(() => {
     if (addAgency.isSuccess) {
       if (addAgency.message.isSuccess) {
         console.log(addAgency, "addAgency");
         dispatch(setShowMessage("Agency is created"));
         dispatch(clearaddaddAgency());
-        // navigate("/administration/configuration/agency");
+        navigate("/administration/configuration");
         clearInpHook();
         clearaddaddAgency();
       } else {
-        dispatch(setShowMessage("Something is wrong"));
+        if (addAgency.message.result === "Agency already exists") {
+          dispatch(setShowMessage("Permission denied: Agency already exists"));
+          dispatch(clearaddaddAgency());
+        } else {
+          dispatch(setShowMessage("Something is wrong"));
+        }
       }
     }
   }, [addAgency]);
@@ -62,16 +166,9 @@ export default function AddDepartment({ workFor }) {
     }
   };
 
-  // const onChangeHandler = (e) => {
-  // const { name, value,files } = e.target;
-  // setAgencyData((prevState) => ({
-  //   ...prevState,
-  //   [name]: value,
-  //   logo: files[0],
-  // }));
-  // };
+  
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {                               
     e.preventDefault();
     console.log("agencyData", agencyData);
     const aname = agencyData.name;
@@ -83,44 +180,37 @@ export default function AddDepartment({ workFor }) {
     formData.append("contact", acontact);
     formData.append("email", aemail);
     formData.append("logo", alogo.name);
-    if (
-      aname.length > 0 &&
-      acontact !== "" &&
-      aemail !== "" &&
-      alogo !== null
-    ) {
+    if ( aname.length > 0 && acontact !== "" && aemail !== "" && alogo !== null) {
       console.log("result save");
       // if (workFor === "forEdit") {
-      //   dpData["id"] = editdepartmentData.data.id;
-      //   dispatch(editdepartmentUpdateToDb(dpData));
-      dispatch(addAgencyToDb(formData));
+      //   agencyData["id"] = editagencyData.data.id;
+      //   dispatch(editagencyUpdateToDb(agencyData));
+      // }else{
+        dispatch(addAgencyToDb(formData));
+      // }
     } else {
       dispatch(setShowMessage("All field must be field"));
     }
-
-    //  setDpData({
-    //    name: "",
-    //    description: "",
-    //  });
-    //    console.log(dpData, "dpdata");
   };
-
   function handlCancel() {
     navigate("/administration/configuration");
     clearInpHook();
+  }
+
+  const handleEdit = () =>{
+    navigate("/administration/configuration/editagency");
+
   }
 
   return (
     <div className="addUser myBorder bg-white rounded p-3">
       <main>
         <div className=" row mt-3 m-0">
-          <h5 className="m-0">
-            {workFor === "forAdd" ? "Create Agency" : "Edit Agency"}
-          </h5>
+          <h5 className="m-0">Create Agency</h5>
 
           <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
             <label className="myLabel" htmlFor="email">
-              Agency name
+              name
             </label>
             <input
               value={agencyData.name}
@@ -136,7 +226,7 @@ export default function AddDepartment({ workFor }) {
 
           <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
             <label className="myLabel" htmlFor="email">
-              Contact person
+              person
             </label>
             <input
               value={agencyData.contact}
@@ -172,7 +262,6 @@ export default function AddDepartment({ workFor }) {
             </label>
             <input
               ref={fileInputRef}
-              // value={agencyData.email}
               onChange={(e) => {
                 onChangeHandler(e);
               }}
@@ -191,12 +280,13 @@ export default function AddDepartment({ workFor }) {
               Create Agency
             </button>
             <button
-              className=" ms-0 ms-sm-3 mt-3 mt-sm-0 col-12 col-sm-5 col-lg-2 myBtn py-2"
-              //   onClick={handleSubmit}
+              className="ms-0 ms-sm-3 mt-3 mt-sm-0 col-12 col-sm-5 col-lg-2 myBtn py-2"
+              onClick={handleEdit}
               type="button"
             >
               Edit Agency
             </button>
+
             <button
               className="ms-0 ms-sm-3 mt-3 mt-sm-0 col-12 col-sm-5 col-lg-2 myBtn py-2"
               onClick={handlCancel}

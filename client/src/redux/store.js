@@ -17,6 +17,7 @@ import addagencySlice from './slices/addagencySlice';
 import editUserDataSlice from './slices/editUserDataSlice'
 import editemployeeDataSlice from './slices/editemployeeDataSlice'
 import editDepartmentSlice from './slices/Master/Department/editDepartmentSlice';
+import editAgencySlice from './slices/editAgencySlice';
 import editRoleDataSlice from './slices/editRoleDataSlice'
 import enquirySlice from './slices/enquirySlice'
 import enquiryFieldSaveSlice from './slices/enquiryFieldSaveSlice'
@@ -49,6 +50,7 @@ export const store = configureStore({
     addAgency:addagencySlice,
     editDepartmentDataState : editDepartmentSlice,
     editCategoryDataState :editCategorySlice,
+    editAgencyDataState :editAgencySlice,
     enquiryState: enquirySlice,
     editRoleDataState: editRoleDataSlice,
     enquiryFieldSaveState: enquiryFieldSaveSlice,

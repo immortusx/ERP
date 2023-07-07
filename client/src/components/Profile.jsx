@@ -1,117 +1,265 @@
-import React from 'react'
-import { DataGrid, GridToolbar } from '@mui/x-data-grid';
-import { useDemoData } from '@mui/x-data-grid-generator';
 
-export default function Profile() {
+import React, { useState, useEffect, useMemo, useRef } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import Axios from "axios";
+import { setShowMessage } from "../redux/slices/notificationSlice";
+import { useLocation, useNavigate } from "react-router-dom";
+import {
+  addAgencyToDb,
+  clearaddaddAgency,
+} from "../redux/slices/addagencySlice";
+import {
+  clearEditagencyData,
+  clearEditagencyState,
+  editagencyUpdateToDb,
+} from "../redux/slices/editAgencySlice";
+export default function Profile_list({ workFor }) {
+  const [agencyData, setAgencyData] = useState({
+    name: "",
+    contact: "",
+    email: "",
+    logo: null,
+  });
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const fileInputRef = useRef(null);
+
+  function clearInpHook() {
+    setAgencyData({
+      name: "",
+      contact: "",
+      email: "",
+      logo: null,
+    });
+    fileInputRef.current.value = "";
+  }
 
 
-    const columns = [
-        {
-            field: 'id',
-            headerAlign: 'center',
-            align: 'center',
-            headerName: 'ID',
-            minWidth: 80,
-            flex: 1,
+  const { editagencySliceState } = useSelector(
+    (state) => state.editAgencyDataState
+  );
+  const editagencyData = useSelector(
+    (state) => state.editAgencyDataState.editagencyData
+  );
 
-        },
-        { field: 'firstName', headerName: 'First name', minWidth: 150, flex: 1, },
-        { field: 'lastName', headerName: 'Last name', minWidth: 150, flex: 1, },
-        {
-            field: 'age',
-            headerName: 'Age',
-            headerAlign: 'left',
-            align: 'left',
-            type: 'number',
-            minWidth: 80,
-            flex: 1,
-        },
-        {
-            field: 'fullName',
-            headerName: 'Full name',
-            description: 'This column has a value getter and is not sortable.',
-            sortable: false,
-            minWidth: 180,
-            flex: 1,
-            valueGetter: (params) =>
-                `${params.row.firstName || ''} ${params.row.lastName || ''}`,
-        },
-        {
-            field: 'actions',
-            headerName: 'Actions',
-            className: 'bg-dark',
-            sortable: false,
-            filterable: false,
-            headerAlign: 'center',
-            align: 'center',
-            disableColumnMenu: true,
-            minWidth: 180,
-            flex: 1,
-            position: 'sticky',
-            renderCell: (params) => (
-                <div>
-                    <button onClick={() => { console.log(params) }} className='myActionBtn m-1'>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="bi bi-pencil-square" viewBox="0 0 16 16">
-                            <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
-                            <path fillRule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
-                        </svg>
-                    </button>
-                    <button className='myActionBtn m-1'>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="bi bi-trash3" viewBox="0 0 16 16">
-                            <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5ZM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0H11Zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5h9.916Zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5Z" />
-                        </svg>
-                    </button>
-                </div>
-            ),
-        }
-    ];
+  useEffect(() => {
+    if (editagencySliceState.isSuccess) {
+      const result = editagencySliceState.message.result;
+      if (result === "success") {
+        dispatch(setShowMessage("Data is Updated"));
+        clearInpHook();
+        dispatch(clearEditagencyState());
+        navigate("/administration/configuration");
+      } else {
+        dispatch(setShowMessage("Something is wrong!"));
+      }
+    } else {
+      dispatch(setShowMessage("Something is wrong!"));
+    }
+  }, [editagencySliceState]);
 
-    const rows = [
-        { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
-        { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
-        { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
-        { id: 4, lastName: 'Stark', firstName: 'Arya', age: 16 },
-        { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: null },
-        { id: 6, lastName: 'Melisandre', firstName: null, age: 150 },
-        { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
-        { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
-        { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
-        { id: 10, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
-        { id: 11, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
-        { id: 12, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
-        { id: 13, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
-    ];
+//    useEffect(() => {
+//      if (workFor === "forEdit") {
+//        if (editagencyData.data === null) {
+//          dispatch(setShowMessage("Please select a employee"));
+//          setTimeout(() => {
+//             // navigate("/administration/configuration/agency");
+//            console.log("asdfghjkdfghj");
+//          }, 1000);
+//        } else {
+//          console.log("editagencyData2222222222222222222222222", editagencyData);
+//          setAgencyData({
+//            name: editagencyData.data.name,
+//            contact: editagencyData.data.contact,
+//            email: editagencyData.data.email,
+//            logo: editagencyData.data.logo,
+//          });
+//        }
+//      }
+//      return () => {
+//        if (workFor === "forEdit") {
+//          dispatch(clearEditagencyData());
+//        }
+//      };
+//    }, [workFor, clearEditagencyData]);
 
+   async function getagencyid() {
+     console.log( "asdfghjklfdghjk");
+     const url = `${process.env.REACT_APP_NODE_URL}/api/agency/get-agencybyid`;
+     const config = {
+       headers: {
+         token: localStorage.getItem("rbacToken"),
+       },
+     };
+     try {
+       const response = await Axios.get(url, config);
+       if (response.data?.isSuccess) {
+        console.log(response.data.result, "response.data");
+const agencyaary = response.data.result;
+const jsonObject = {};
+
+agencyaary.forEach((item) => {
+  jsonObject[item.key_name] = item.value;
+});
+const jsonOutput = JSON.stringify(jsonObject);
+console.log(jsonOutput);
+
+const parsedJson = JSON.parse(jsonOutput);
+console.log(parsedJson, "parsedJson");
+console.log(parsedJson.logo, "parsedJson.logo");
+setAgencyData(parsedJson)
+       }
+     } catch (error) {
+       console.log(error);
+     }
+   }
+
+  useEffect(() => {
+ 
+      getagencyid();
+  }, []);
+
+
+
+  const onChangeHandler = (e) => {
+    const { name, value, files } = e.target;
+    if (name === "logo") {
+      setAgencyData((prevState) => ({
+        ...prevState,
+        [name]: files[0],
+      }));
+    } else {
+      setAgencyData((prevState) => ({
+        ...prevState,
+        [name]: value,
+      }));
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log("agencyData", agencyData);
+    const aname = agencyData.name;
+    const acontact = agencyData.contact;
+    const aemail = agencyData.email;
+    const alogo = agencyData.logo;
+    const formData = new FormData();
+    formData.append("name", aname);
+    formData.append("contact", acontact);
+    formData.append("email", aemail);
+    formData.append("logo", alogo.name);
+    if ( aname.length > 0 && acontact !== "" && aemail !== "" && alogo !== null) {
+      console.log("result save");
+      console.log(workFor,"workfor")
+      if (workFor === "forEdit") {
+
+        dispatch(editagencyUpdateToDb(formData));
     
-    return (
-        <>
-            <div> Agency Profile</div>
-
-            {/* <div style={{ height: '90vh', width: '100%' }}>
-                <DataGrid
-
-                    rows={rows}
-                    columns={columns}
-                    style={{ fontFamily: 'Poppins', padding: 5, backgroundColor: 'white', }}
-                    pageSizeOptions={[5, 10, 25]}
-                    initialState={{
-                        ...rows.initialState,
-                        pagination: { paginationModel: { pageSize: 10 } },
-                    }}
-                    components={{
-                        Toolbar: GridToolbar
-                    }}
-                    componentsProps={{
-                        toolbar: {
-                            position: 'right',
-                            style: { fontFamily: 'Poppins', alignSelf: 'end' },
-                        },
-                    }}
-                    rowSelection={false}
-                    autoPageSize={false}
-                />
-            </div> */}
-
-        </>
-    )
+    } else {
+        dispatch(setShowMessage("All field must be field"));
+    }
+  };
 }
+  
+  function handlCancel() {
+     navigate("/administration/configuration");
+  }
+
+  return (
+    <div className="addUser myBorder bg-white rounded p-3">
+      <main>
+        <div className=" row mt-3 m-0">
+          <h5 className="m-0">Edit Agency</h5>
+
+          <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
+            <label className="myLabel" htmlFor="email">
+              name
+            </label>
+            <input
+              value={agencyData.name}
+              className="myInput inputElement"
+              autoComplete="false"
+              onChange={(e) => {
+                onChangeHandler(e);
+              }}
+              type="text"
+              name="name"
+            />
+          </section>
+
+          <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
+            <label className="myLabel" htmlFor="email">
+              person
+            </label>
+            <input
+              value={agencyData.contact}
+              className="myInput inputElement"
+              autoComplete="false"
+              onChange={(e) => {
+                onChangeHandler(e);
+              }}
+              type="text"
+              name="contact"
+            />
+          </section>
+        </div>
+        <div className=" row m-0">
+          <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
+            <label className="myLabel" htmlFor="email">
+              Email
+            </label>
+            <input
+              value={agencyData.email}
+              onChange={(e) => {
+                onChangeHandler(e);
+              }}
+              className="myInput inputElement"
+              autoComplete="false"
+              type="text"
+              name="email"
+            />
+          </section>
+          <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
+            <label className="myLabel" htmlFor="logo">
+              Logo
+            </label>
+            <input
+              ref={fileInputRef}
+              onChange={(e) => {
+                onChangeHandler(e);
+              }}
+              autoComplete="false"
+              type="file"
+              name="logo"
+            />
+          </section>
+
+          <section className="d-flex mt-3 flex-column flex-sm-row">
+            <button
+              className="col-12 col-sm-5 col-lg-2 myBtn py-2"
+              onClick={handleSubmit}
+              type="button"
+            >
+              Edit Agency
+            </button>
+
+            <button
+              className="ms-0 ms-sm-3 mt-3 mt-sm-0 col-12 col-sm-5 col-lg-2 myBtn py-2"
+              onClick={handlCancel}
+              type="button"
+            >
+              Cancel
+            </button>
+          </section>
+        </div>
+      </main>
+    </div>
+  );
+}
+
+
+
+
+
+
