@@ -26,8 +26,7 @@ import Enquiry from "./Enquiry";
 import Products from "./Products";
 import Master from "./Master";
 import AreaAssignListList from "./AreaAssignListList";
-import AddAssignArea from "./AddAssignArea"
-
+import AddAssignArea from "./AddAssignArea";
 import logo from "../assets/svg/logo.svg";
 import logoT from "../assets/svg/logofinal.svg";
 

@@ -54,8 +54,7 @@ export default function Profile_list({ workFor }) {
       } else {
         dispatch(setShowMessage("Something is wrong!"));
       }
-    } else {
-      dispatch(setShowMessage("Something is wrong!"));
+  
     }
   }, [editagencySliceState]);
 
@@ -148,7 +147,7 @@ setAgencyData(parsedJson)
     formData.append("name", aname);
     formData.append("contact", acontact);
     formData.append("email", aemail);
-    formData.append("logo", alogo.name);
+    formData.append("logo", alogo);
     if ( aname.length > 0 && acontact !== "" && aemail !== "" && alogo !== null) {
       console.log("result save");
       console.log(workFor,"workfor")
@@ -221,18 +220,31 @@ setAgencyData(parsedJson)
             />
           </section>
           <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
-            <label className="myLabel" htmlFor="logo">
-              Logo
-            </label>
-            <input
-              ref={fileInputRef}
-              onChange={(e) => {
-                onChangeHandler(e);
-              }}
-              autoComplete="false"
-              type="file"
-              name="logo"
-            />
+            <div class="mb-3">
+              <label for="formFile" className="myLabel" htmlFor="logo">
+                {" "}
+                Logo
+              </label>
+              <input
+                className="form-control"
+                type="file"
+                name="logo"
+                ref={fileInputRef}
+                onChange={(e) => {
+                  onChangeHandler(e);
+                }}
+              />
+            </div>
+            {agencyData && (
+              <img
+                src={`${process.env.REACT_APP_NODE_URL}/api${agencyData.logo}`}
+                alt="logo"
+                className="logo-image"
+                height={50}
+                width={50}
+                
+              />
+            )}
           </section>
 
           <section className="d-flex mt-3 flex-column flex-sm-row">

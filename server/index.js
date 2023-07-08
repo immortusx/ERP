@@ -17,7 +17,7 @@ const { db } = require("./Database/dbConfig");
 app.use(express.json());
 app.use(cors());
 
-app.use("/api/upload", express.static("uploadFile"));
+app.use("/api/upload", express.static("upload"));
 
 app.use("/api/users", require("./Routes/usersRoutes"));
 app.use("/api/master", require("./Routes/Master/State/stateRouter"));
