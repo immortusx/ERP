@@ -9,7 +9,35 @@ const { db } = require("../Database/dbConfig");
 const uploadFile = require("../Utils/multerMiddaeware");
 const router = express.Router();
 
-//=====Add-Department======
+
+
+//=====Agency-Exist======
+router.get("/add-agency-exist", tokenCheck, async (req, res) => {
+  console.log("req.body *********", req.body);
+
+  const checkagency = "SELECT * FROM configuration where  setting='agency'";
+  try {
+   
+    await db.query(checkagency, (err, agencyIdData) => {
+      if (err) {
+        console.log({ isSuccess: false, result: err });
+        res.send({ isSuccess: false, result: "error" });
+      } else {
+        const agencyExists = agencyIdData.length > 0 ? true : false;
+        console.log({ isSuccess: true, result: "success" });
+        console.log("agencyIdData &****", agencyExists);
+        res.send({ isSuccess: true, result: agencyExists });
+      }
+    });
+  } catch (err) {
+    console.log({ isSuccess: false, result: err });
+    res.send({ isSuccess: false, result: "error" });
+  }
+});
+
+//=====Agency-Exist-End======
+
+//=====Add-Agency======
 router.post(
   "/add-agency",
   tokenCheck,
@@ -19,7 +47,6 @@ router.post(
     const { name, contact, email, logo } = req.body;
     console.log("file *********", req.file);
     // console.log("file *********", file);
-    
 
     const addnameSql = `INSERT INTO configuration (setting, key_name, value) VALUES ('agency','name','${name}')`;
     const addpersonSql = `INSERT INTO configuration (setting, key_name, value) VALUES ('agency','contact','${contact}')`;
@@ -27,10 +54,10 @@ router.post(
     const addlogoSql = `INSERT INTO configuration (setting, key_name, value) VALUES ('agency','logo','${logo}')`;
 
     try {
-    await db.query(addnameSql);
-    await db.query(addpersonSql);
-    await db.query(addemailSql);
-    await db.query(addlogoSql);
+      await db.query(addnameSql);
+      await db.query(addpersonSql);
+      await db.query(addemailSql);
+      await db.query(addlogoSql);
 
       console.log({ isSuccess: true, result: "success" });
       res.send({ isSuccess: true, result: "success" });
@@ -41,8 +68,6 @@ router.post(
   }
 );
 
-
-
 router.post(
   "/get-agency-edit",
   tokenCheck,
@@ -50,7 +75,7 @@ router.post(
   async (req, res) => {
     console.log(">>>>>get-roles");
     const { name, contact, email, logo } = req.body;
-console.log(req.body, "req.body");
+    console.log(req.body, "req.body");
     try {
       const updateNameSql = `UPDATE configuration SET value = '${name}' WHERE setting = 'agency' AND key_name = 'name'`;
       const updateContactSql = `UPDATE configuration SET value = '${contact}' WHERE setting = 'agency' AND key_name = 'contact'`;
@@ -70,8 +95,6 @@ console.log(req.body, "req.body");
     }
   }
 );
-
-
 
 // router.get("/get-agency-list", tokenCheck, async (req, res) => {
 //   try {
@@ -95,7 +118,6 @@ console.log(req.body, "req.body");
 router.get("/get-agencybyid", tokenCheck, async (req, res) => {
   console.log(">>>>>/get-agencybyid");
   try {
-   
     await db.query(
       "SELECT * FROM configuration where  setting = 'agency'",
       (err, agencyIdData) => {
