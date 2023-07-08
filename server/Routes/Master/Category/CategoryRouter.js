@@ -89,7 +89,7 @@ router.post("/get-category-edit/:id", tokenCheck, async (req, res) => {
   const id = req.params.id;
 
   try {
-    const result = `UPDATE enquiry_category SET category_name = '${category_name}', category_description = '${category_description}',  department = '${department} WHERE is_active = 1 and id = ${id}`;
+    const result = `UPDATE enquiry_category SET category_name = '${category_name}', category_description = '${category_description}',  department = '${department}' WHERE is_active = 1 and id = ${id}`;
     await db.query(result, async (err, newResult) => {
       if (err) {
         console.log({ isSuccess: false, result: err });

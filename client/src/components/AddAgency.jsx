@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Axios from "axios";
@@ -13,7 +12,8 @@ import {
   clearEditagencyState,
   editagencyUpdateToDb,
 } from "../redux/slices/editAgencySlice";
-export default function Profile_list({ workFor }) {
+export default function AddAgency({ workFor }) {
+  const [agencyCreated, setAgencyCreated] = useState(false);
   const [agencyData, setAgencyData] = useState({
     name: "",
     contact: "",
@@ -23,7 +23,8 @@ export default function Profile_list({ workFor }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const fileInputRef = useRef(null);
+
+   const fileInputRef = useRef(null);
 
   function clearInpHook() {
     setAgencyData({
@@ -32,9 +33,10 @@ export default function Profile_list({ workFor }) {
       email: "",
       logo: null,
     });
-    fileInputRef.current.value = "";
+     fileInputRef.current.value = "";
   }
 
+  const addAgency = useSelector((state) => state.addAgency.addAgency);
 
   const { editagencySliceState } = useSelector(
     (state) => state.editAgencyDataState
@@ -44,82 +46,19 @@ export default function Profile_list({ workFor }) {
   );
 
   useEffect(() => {
-    if (editagencySliceState.isSuccess) {
-      const result = editagencySliceState.message.result;
-      if (result === "success") {
-        dispatch(setShowMessage("Data is Updated"));
-        clearInpHook();
-        dispatch(clearEditagencyState());
+    if (addAgency.isSuccess) {
+      if (addAgency.message.isSuccess) {
+        console.log(addAgency, "addAgency");
+        dispatch(setShowMessage("Agency is created"));
+        dispatch(clearaddaddAgency());
         navigate("/administration/configuration");
+        clearInpHook();
+        clearaddaddAgency();
       } else {
-        dispatch(setShowMessage("Something is wrong!"));
+        dispatch(setShowMessage("Something is wrong"));
       }
-    } else {
-      dispatch(setShowMessage("Something is wrong!"));
     }
-  }, [editagencySliceState]);
-
-//    useEffect(() => {
-//      if (workFor === "forEdit") {
-//        if (editagencyData.data === null) {
-//          dispatch(setShowMessage("Please select a employee"));
-//          setTimeout(() => {
-//             // navigate("/administration/configuration/agency");
-//            console.log("asdfghjkdfghj");
-//          }, 1000);
-//        } else {
-//          console.log("editagencyData2222222222222222222222222", editagencyData);
-//          setAgencyData({
-//            name: editagencyData.data.name,
-//            contact: editagencyData.data.contact,
-//            email: editagencyData.data.email,
-//            logo: editagencyData.data.logo,
-//          });
-//        }
-//      }
-//      return () => {
-//        if (workFor === "forEdit") {
-//          dispatch(clearEditagencyData());
-//        }
-//      };
-//    }, [workFor, clearEditagencyData]);
-
-   async function getagencyid() {
-     console.log( "asdfghjklfdghjk");
-     const url = `${process.env.REACT_APP_NODE_URL}/api/agency/get-agencybyid`;
-     const config = {
-       headers: {
-         token: localStorage.getItem("rbacToken"),
-       },
-     };
-     try {
-       const response = await Axios.get(url, config);
-       if (response.data?.isSuccess) {
-        console.log(response.data.result, "response.data");
-const agencyaary = response.data.result;
-const jsonObject = {};
-
-agencyaary.forEach((item) => {
-  jsonObject[item.key_name] = item.value;
-});
-const jsonOutput = JSON.stringify(jsonObject);
-console.log(jsonOutput);
-
-const parsedJson = JSON.parse(jsonOutput);
-console.log(parsedJson, "parsedJson");
-console.log(parsedJson.logo, "parsedJson.logo");
-setAgencyData(parsedJson)
-       }
-     } catch (error) {
-       console.log(error);
-     }
-   }
-
-  useEffect(() => {
- 
-      getagencyid();
-  }, []);
-
+  }, [addAgency]);
 
 
   const onChangeHandler = (e) => {
@@ -137,7 +76,9 @@ setAgencyData(parsedJson)
     }
   };
 
-  const handleSubmit = async (e) => {
+  
+
+  const handleSubmit = async (e) => {                               
     e.preventDefault();
     console.log("agencyData", agencyData);
     const aname = agencyData.name;
@@ -151,26 +92,25 @@ setAgencyData(parsedJson)
     formData.append("logo", alogo.name);
     if ( aname.length > 0 && acontact !== "" && aemail !== "" && alogo !== null) {
       console.log("result save");
-      console.log(workFor,"workfor")
-      if (workFor === "forEdit") {
-
-        dispatch(editagencyUpdateToDb(formData));
+      
+        dispatch(addAgencyToDb(formData));
     
     } else {
-        dispatch(setShowMessage("All field must be field"));
+      dispatch(setShowMessage("All field must be field"));
     }
   };
-}
-  
   function handlCancel() {
-     navigate("/administration/configuration");
+    navigate("/administration/configuration");
+    clearInpHook();
   }
+
+  
 
   return (
     <div className="addUser myBorder bg-white rounded p-3">
       <main>
         <div className=" row mt-3 m-0">
-          <h5 className="m-0">Edit Agency</h5>
+          <h5 className="m-0">Create Agency</h5>
 
           <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
             <label className="myLabel" htmlFor="email">
@@ -241,8 +181,9 @@ setAgencyData(parsedJson)
               onClick={handleSubmit}
               type="button"
             >
-              Edit Agency
+              Create Agency
             </button>
+           
 
             <button
               className="ms-0 ms-sm-3 mt-3 mt-sm-0 col-12 col-sm-5 col-lg-2 myBtn py-2"
@@ -257,9 +198,3 @@ setAgencyData(parsedJson)
     </div>
   );
 }
-
-
-
-
-
-
