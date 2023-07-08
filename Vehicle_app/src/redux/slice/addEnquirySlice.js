@@ -16,7 +16,10 @@ export const setEnquiryDb = createAsyncThunk(
   'setEnquiryDb/enquirySlice',
   async data => {
     console.log('data', data);
-    const url = `${API_URL}/enquiry/set-new-enquiry-data`;
+    const id = await AsyncStorage.getItem('currentBranchId');
+    const branchId = id ? id : ''
+    data.branchId  = branchId;
+    const url = `${API_URL}/api/enquiry/set-new-detail-enquiry`;
     console.log('enquiry url', url)
     const token = await AsyncStorage.getItem('rbacToken');
     const config = {

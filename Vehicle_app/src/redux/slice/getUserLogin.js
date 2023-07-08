@@ -12,7 +12,7 @@ const initialState = {
 
  export const getLoginUser = createAsyncThunk('getLoginUser/getLoginSlice', async(data)=> {
     console.log(data);
-    const url = `${API_URL}/login`
+    const url = `${API_URL}/api/login`
    console.log('getLoginUser', url);
    return await axios.post(url, data).then((response)=> {
     return response.data

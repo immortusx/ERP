@@ -9,6 +9,8 @@ import AddLocation from './components/AddLocation';
 import AddManufacturDetails from './components/AddManufacturDetails';
 import AdditonalDetails from './components/AdditonalDetails';
 import ScheduleCall from './components/ScheduleCall';
+import FastEnquiry from './components/FastEnquiry';
+import DetailEnquiry from './components/DetailEnquiry';
 const Stack = createStackNavigator();
 const AppNavigator = () => {
   return (
@@ -32,11 +34,13 @@ const AppNavigator = () => {
         <Stack.Screen
           name="Add Location"
           component={AddLocation}
-          options={{headerShown: true,
+          options={{
+            headerShown: true,
             headerStyle: {
               borderWidth: 0.9,
               borderColor: 'grey',
-            },}}
+            },
+          }}
         />
         <Stack.Screen
           name="Add Manufacturer Details"
@@ -60,9 +64,42 @@ const AppNavigator = () => {
             },
           }}
         />
-         <Stack.Screen
+        <Stack.Screen
           name="Schedule Call"
           component={ScheduleCall}
+          options={{
+            headerShown: true,
+            headerStyle: {
+              borderWidth: 0.9,
+              borderColor: 'grey',
+            },
+          }}
+        />
+        <Stack.Screen
+          name="Fast Enquiry"
+          component={FastEnquiry}
+          options={{
+            headerShown: true,
+            headerStyle: {
+              borderWidth: 0.9,
+              borderColor: 'grey',
+            },
+          }}
+        />
+         <Stack.Screen
+          name="Detail Enquiry"
+          component={DetailEnquiry}
+          options={{
+            headerShown: true,
+            headerStyle: {
+              borderWidth: 0.9,
+              borderColor: 'grey',
+            },
+          }}
+        />
+        <Stack.Screen
+          name="Edit Detail Enquiry"
+          component={DetailEnquiry}
           options={{
             headerShown: true,
             headerStyle: {

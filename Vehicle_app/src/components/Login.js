@@ -33,7 +33,6 @@ const Login = ({navigation}) => {
   useEffect(() => {
     if (loginState.isSuccess === true) {
       if (loginState.result.message === 'success') {
-        console.warn(loginState.result.result.tokenIs);
         console.log(loginState.result.result.tokenIs);
         AsyncStorage.setItem(
           'branchesList',
@@ -41,7 +40,7 @@ const Login = ({navigation}) => {
         );
         AsyncStorage.setItem(
           'currentBranchId',
-          loginState.result.result.currentBranch
+          JSON.stringify(loginState.result.result.currentBranch)
         );
         AsyncStorage.setItem('rbacToken', loginState.result.result.tokenIs);
         AsyncStorage.getItem('rbacToken').then(token => {

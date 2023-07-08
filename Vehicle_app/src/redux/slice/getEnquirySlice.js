@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { API_URL } from '@env';
+import {API_URL} from '@env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const initialState = {
@@ -13,7 +13,7 @@ const initialState = {
 export const getEnquiryData = createAsyncThunk(
   'getEnquiryData/getEnquirySlice',
   async () => {
-    const url = `${API_URL}/enquiry/get-enquiries`;
+    const url = `${API_URL}/api/enquiry/get-enquiries`;
     console.log('get Enquiry Url', url);
     const token = await AsyncStorage.getItem('rbacToken');
     const config = {

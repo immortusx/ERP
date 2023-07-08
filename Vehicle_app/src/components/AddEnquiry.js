@@ -10,6 +10,7 @@ import {
   Alert,
   Pressable,
   Modal,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import React, {useState, useEffect} from 'react';
 import DatePicker from 'react-native-date-picker';
@@ -21,6 +22,8 @@ import {setEnquiryDb} from '../redux/slice/addEnquirySlice';
 import {saveEnquiryModalForm} from '../redux/slice/addEnquiryModal';
 import {saveModalData} from '../redux/slice/modalDataSlice';
 import SweetSuccessAlert from './subCom/SweetSuccessAlert';
+import FastEnquiry from './FastEnquiry';
+import DetailEnquiry from './DetailEnquiry';
 const AddEnquiry = ({navigation}) => {
   const dispatch = useDispatch();
   // const enquiryState = useSelector(state => state.enquriySlice.enquiryState);
@@ -32,14 +35,17 @@ const AddEnquiry = ({navigation}) => {
   const {manufacturer, modal, variant} = useSelector(
     state => state.manufacturerDetails,
   );
-  const [date, setDate] = useState(new Date());
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [renderScreen, setRenderScreen] = useState('Fast Enquiry');
+  const [openCurentDate, setOpenCurrentDate] = useState(false);
   const [expDeliveryDate, setExpDeliveryDate] = useState(new Date());
+  const [openExpDeliveryDate, setOpenExpDeliveryDate] = useState(false);
   const [manuYearDate, setManuYearDate] = useState(new Date());
+  const [openManuYearDate, setOPenManuYearDate] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [isFocus, setIsFocus] = useState(false);
   const [enquiry, setEnquiry] = useState(null);
   const [condition, setCondtion] = useState(null);
-  const [open, setOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState('No');
   const options = ['Yes', 'No'];
   const [modalVisible, setModalVisible] = useState(false);
@@ -79,6 +85,7 @@ const AddEnquiry = ({navigation}) => {
       setModalVisible(true);
     }
   };
+  const formattedDeliveryDate = expDeliveryDate.toLocaleDateString();
   const handleReadValue = () => {
     console.log(selectedOption);
   };
@@ -94,7 +101,7 @@ const AddEnquiry = ({navigation}) => {
   };
   useEffect(() => {
     if (enquiryState.isSuccess === true) {
-      console.log("Enquiry submitted")
+      console.log('Enquiry submitted');
       openModal();
     }
   }, [enquiryState]);
@@ -122,8 +129,8 @@ const AddEnquiry = ({navigation}) => {
       model: 6,
       village: native,
       branchId: 2,
-      enquiryDate: date,
-      deliveryDate: expDeliveryDate,
+      enquiryDate: formattedCurrentDate,
+      deliveryDate: formattedDeliveryDate,
       sourceOfEnquiry: 25,
       manufacturer,
       modal,
@@ -144,12 +151,9 @@ const AddEnquiry = ({navigation}) => {
       console.warn('Please first fill the field*');
     }
   };
-  const saveDate = date => {
-    setExpDeliveryDate(date);
-  };
-  const saveYearOfManu = date => {
-    setManuYearDate(date);
-  };
+
+  const formattedCurrentDate = currentDate.toLocaleDateString();
+  const formattedManuYear = manuYearDate.toLocaleDateString();
   const handleModalData = () => {
     if (
       oldVehicleData.maker.length > 0 &&
@@ -161,7 +165,7 @@ const AddEnquiry = ({navigation}) => {
           maker: oldVehicleData.maker,
           modalName: oldVehicleData.modalName,
           variantName: oldVehicleData.variantName,
-          year: manuYearDate.toISOString(),
+          year: formattedManuYear,
           condition_of: condition,
         }),
       );
@@ -180,6 +184,17 @@ const AddEnquiry = ({navigation}) => {
   const openModal = () => {
     setShowModal(true);
   };
+  const renderEnquiryScreen = screen => {
+    setRenderScreen(screen);
+  };
+  const buttonEnquiryStyle = {
+    borderWidth: 2,
+    borderColor: 'transparent',
+  };
+
+  const buttonEnquiryPressedStyle = {
+    borderColor: 'blue',
+  };
   return (
     <ScrollView>
       <View style={styles.container}>
@@ -191,294 +206,69 @@ const AddEnquiry = ({navigation}) => {
               <Text
                 style={styles.dateText}
                 placeholder="Select Date"
-                onPress={() => setOpen(true)}>
-                {date.toLocaleDateString()}
+                onPress={() => setOpenCurrentDate(true)}>
+                {formattedCurrentDate}
               </Text>
               <DatePicker
                 mode="date"
                 modal
-                open={open}
-                date={date}
+                open={openCurentDate}
+                date={currentDate}
                 theme="dark"
                 onConfirm={date => {
-                  setOpen(false);
-                  setDate(date);
+                  setOpenCurrentDate(false);
+                  setCurrentDate(date);
                 }}
                 onCancel={() => {
-                  setOpen(false);
+                  setOpenCurrentDate(false);
                 }}
               />
             </View>
           </View>
-          <Text style={styles.mainHeader}>Customer Details</Text>
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Select Branch *</Text>
-            <TextInput
-              editable={false}
-              style={styles.inputStyle}
-              placeholder="Select Branch"
-              autoCapitalize="none"
-              keyboardType="branch"
-              textContentType="branch"
-              value={branch}
-            />
-          </View>
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Select DSP *</Text>
-            <TextInput
-              editable={false}
-              style={styles.inputStyle}
-              placeholder="Select Branch"
-              autoCapitalize="none"
-              keyboardType="dsp"
-              textContentType="dsp"
-              value={dsp}
-            />
-          </View>
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>First Name *</Text>
-            <TextInput
-              style={styles.inputStyle}
-              placeholder="Enter First Name"
-              autoCapitalize="none"
-              keyboardType="firstname"
-              textContentType="firstname"
-              onChangeText={value => onChangeHandler(value, 'firstname')}
-            />
-          </View>
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Last Name *</Text>
-            <TextInput
-              style={styles.inputStyle}
-              placeholder="Enter Last Name"
-              autoCapitalize="none"
-              keyboardType="lastname"
-              textContentType="lastname"
-              onChangeText={value => onChangeHandler(value, 'lastname')}
-            />
-          </View>
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Phone Number *</Text>
-            <TextInput
-              style={styles.inputStyle}
-              placeholder="Enter Phone Number"
-              autoCapitalize="none"
-              keyboardType="phone"
-              textContentType="phone"
-              onChangeText={value => onChangeHandler(value, 'phone')}
-            />
-          </View>
-          <View editable={false} style={[styles.inputStyle, styles.optional]}>
-            <View>
-              <TouchableOpacity
-                style={styles.centeredContainer}
-                onPress={() => {
-                  navigation.navigate('Add Location');
-                }}>
-                <Image
-                  style={styles.plusImg}
-                  source={require('../../assets/plus2.png')}
-                />
-                <Text style={styles.textMore}>Add Location (Optional)</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-          <View editable={false} style={[styles.inputStyle, styles.optional]}>
-            <View>
-              <TouchableOpacity
-                style={styles.centeredContainer}
-                onPress={() => {
-                  navigation.navigate('Add Manufacturer Details');
-                }}>
-                <Image
-                  style={styles.plusImg}
-                  source={require('../../assets/plus2.png')}
-                />
-                <Text style={styles.textMore}>Add Manufacturer Details</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-          <View style={{marginBottom: 5}}>
-            <Text style={styles.label}>Enquiry Primary Source :</Text>
-            <View style={styles.enquirySourceContainer}>
-              {/* {renderLabel()} */}
-              <Dropdown
-                style={[styles.dropdown, isFocus && {borderColor: 'blue'}]}
-                placeholderStyle={styles.placeholderStyle}
-                selectedTextStyle={styles.selectedTextStyle}
-                inputSearchStyle={styles.inputSearchStyle}
-                iconStyle={styles.iconStyle}
-                data={enquirySourceItem}
-                search
-                maxHeight={300}
-                labelField="label"
-                valueField="value"
-                placeholder={!isFocus ? 'Select Manufacturer' : ' '}
-                searchPlaceholder="Search..."
-                value={enquiry}
-                onFocus={() => setIsFocus(true)}
-                onBlur={() => setIsFocus(false)}
-                onChange={item => {
-                  setEnquiry(item.value);
-                  setIsFocus(false);
-                }}
-                // renderLeftIcon={() => (
-                //   <Text>{isFocus ? 'blue' : 'black'}</Text>
-                // )}
-              />
-            </View>
-          </View>
-          <View style={{marginBottom: 5}}>
-            <Text style={styles.label}>Expected Delivery Date *</Text>
-            <View style={styles.deliveryDateContainer}>
-              <Text style={styles.deliveryDate} onPress={() => setOpen(true)}>
-                {expDeliveryDate.toLocaleDateString()}
-              </Text>
-              <DatePicker
-                mode="date"
-                modal
-                open={open}
-                date={expDeliveryDate}
-                theme="dark"
-                onConfirm={date => {
-                  setOpen(false);
-                  saveDate(date);
-                }}
-                onCancel={() => {
-                  setOpen(false);
-                }}
-              />
-            </View>
-          </View>
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Old Tractor Owned ?</Text>
-            <CustomRadioButton
-              options={options}
-              selectedOption={selectedOption}
-              onSelect={handleSelect}
-            />
-          </View>
-        </View>
-        <View style={{paddingHorizontal: 15}}>
-          <TouchableOpacity style={styles.submitButton} onPress={submitEnquiry}>
-            <Text style={styles.submitButtonText}>Submit</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.centeredView}>
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={modalVisible}
-            onRequestClose={() => {
-              Alert.alert('Modal has been closed.');
-              setModalVisible(!modalVisible);
-            }}>
-            <View style={styles.centeredView}>
-              <View style={styles.modalView}>
-                <Pressable
-                  style={[styles.button, styles.buttonClose]}
-                  onPress={closeModal}>
-                  <Image
-                    source={require('../../assets/cancel.png')}
-                    style={styles.cancelImage}
-                  />
-                </Pressable>
-                <Text style={styles.modalTitle}>Add Details</Text>
-                <TextInput
-                  style={styles.textInput}
-                  placeholder="Enter Maker's Name"
-                  autoCapitalize="none"
-                  keyboardType="maker"
-                  textContentType="maker"
-                  // value={manufacturer}
-                  onChangeText={value => onChangeInputField(value, 'maker')}
-                />
-                <TextInput
-                  style={styles.textInput}
-                  placeholder="Enter Modal"
-                  autoCapitalize="none"
-                  keyboardType="modal"
-                  textContentType="modal"
-                  // value={manufacturer}
-                  onChangeText={value => onChangeInputField(value, 'modalName')}
-                />
-                <TextInput
-                  style={styles.textInput}
-                  placeholder="Enter Variant"
-                  autoCapitalize="none"
-                  keyboardType="variant"
-                  textContentType="variant"
-                  // value={manufacturer}
-                  onChangeText={value =>
-                    onChangeInputField(value, 'variantName')
-                  }
-                />
-                <View style={styles.deliveryDateContainer}>
-                  <Text>Year of Manufactur</Text>
-                  <Text
-                    style={styles.deliveryDate}
-                    placeholder="Select Date"
-                    onPress={() => setOpen(true)}>
-                    {date.toLocaleDateString()}
-                  </Text>
-                  <DatePicker
-                    mode="date"
-                    modal
-                    open={open}
-                    date={manuYearDate}
-                    theme="dark"
-                    onConfirm={date => {
-                      setOpen(false);
-                      saveYearOfManu(date);
-                    }}
-                    onCancel={() => {
-                      setOpen(false);
-                    }}
-                  />
-                </View>
-                <View style={styles.sourceContainer}>
-                  <Text style={styles.label}>Condition :</Text>
-                  <View style={styles.enquirySourceContainer}>
-                    {/* {renderLabel()} */}
-                    <Dropdown
-                      style={[
-                        styles.dropdown,
-                        isFocus && {borderColor: 'blue'},
-                      ]}
-                      placeholderStyle={styles.placeholderStyle}
-                      selectedTextStyle={styles.selectedTextStyle}
-                      inputSearchStyle={styles.inputSearchStyle}
-                      iconStyle={styles.iconStyle}
-                      data={conditionType}
-                      search
-                      maxHeight={300}
-                      labelField="label"
-                      valueField="value"
-                      placeholder={!isFocus ? 'Select Condition' : ' '}
-                      searchPlaceholder="Search..."
-                      value={condition}
-                      onFocus={() => setIsFocus(true)}
-                      onBlur={() => setIsFocus(false)}
-                      onChange={item => {
-                        setCondtion(item.value);
-                        setIsFocus(false);
-                      }}
-                      // renderLeftIcon={() => (
-                      //   <Text>{isFocus ? 'blue' : 'black'}</Text>
-                      // )}
-                    />
-                  </View>
-                </View>
-                <Pressable
-                  style={[styles.roundedButton, styles.saveButton]}
-                  onPress={handleModalData}>
-                  <Text style={styles.buttonText}>Save</Text>
-                </Pressable>
+          <View style={styles.wrapper}>
+            <TouchableWithoutFeedback
+              onPress={() => {
+                renderEnquiryScreen('Fast Enquiry');
+              }}>
+              <View
+                style={[
+                  styles.buttonEnquiryStyle,
+                  styles.fastEnquiry,
+                  renderScreen === 'Fast Enquiry' &&
+                    styles.buttonEnquiryPressedStyle,
+                ]}>
+                <Text
+                  style={[styles.buttonEnquiryText, {paddingHorizontal: 17}]}>
+                  Fast Enquiry
+                </Text>
               </View>
-            </View>
-          </Modal>
+            </TouchableWithoutFeedback>
+            <TouchableWithoutFeedback
+              onPress={() => {
+                renderEnquiryScreen('Detail Enquiry');
+              }}>
+              <View
+                style={[
+                  styles.buttonEnquiryStyle,
+                  styles.detailsEnquiry,
+                  renderScreen === 'Detail Enquiry' &&
+                    styles.buttonEnquiryPressedStyle,
+                ]}>
+                <Text
+                  style={[styles.buttonEnquiryText, {paddingHorizontal: 10}]}>
+                  Detail Enquiry
+                </Text>
+              </View>
+            </TouchableWithoutFeedback>
+          </View>
         </View>
-        <SweetSuccessAlert modalShow={showModal}/>
+        <View style={styles.renderContainer}>
+          {renderScreen === 'Fast Enquiry' ? (
+            <FastEnquiry />
+          ) : (
+            <DetailEnquiry />
+          )}
+        </View>
       </View>
     </ScrollView>
   );
@@ -510,6 +300,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 22,
     padding: 5,
+    paddingHorizontal: 25,
   },
   inputStyle: {
     marginVertical: 5,
@@ -519,6 +310,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 5,
   },
+  dataContainer: {
+    marginVertical: 5,
+    borderRadius: 5,
+    borderColor: '#0984DF',
+    borderWidth: 1,
+    paddingHorizontal: 10,
+    paddingVertical: 9,
+  },
   centeredContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -527,6 +326,10 @@ const styles = StyleSheet.create({
   textMore: {
     fontWeight: 'bold',
     color: '#3AA4F7',
+  },
+  branchText: {
+    fontWeight: 'bold',
+    color: '#273746',
   },
   saveButton: {
     marginTop: 30,
@@ -709,6 +512,38 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  wrapper: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 10,
+    marginVertical: 1,
+    marginBottom: 7,
+  },
+  fastEnquiry: {
+    backgroundColor: '#C0392B',
+  },
+  detailsEnquiry: {
+    backgroundColor: '#1ABC9C',
+  },
+
+  buttonEnquiryStyle: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+    borderWidth: 2,
+    borderColor: 'transparent',
+  },
+  buttonEnquiryPressedStyle: {
+    borderColor: '#2E86C1',
+  },
+  buttonEnquiryText: {
+    color: 'white',
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  renderContainer: {
+    marginTop: 10,
   },
 });
 export default AddEnquiry;

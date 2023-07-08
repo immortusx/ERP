@@ -9,11 +9,23 @@ const AdditonalDetails = ({route}) => {
   const handleSheduleCall = item => {
     navigation.navigate('Schedule Call', {item: item});
   };
+  const openEditEnquiry = (editData)=> {
+    navigation.navigate("Edit Detail Enquiry", {editData: editData});
+  }
   return (
     <View style={styles.userCard}>
       <View style={styles.dataContainer}>
         <View style={styles.boxContainer}>
           <Text style={styles.historyText}>Customer Details</Text>
+          <View style={styles.imageContainer}>
+            <TouchableOpacity
+            onPress={()=> {openEditEnquiry(item)}}>
+              <Image
+                style={styles.editImg}
+                source={require('../../assets/edit.png')}
+              />
+            </TouchableOpacity>
+          </View>
         </View>
         <View style={styles.mainContent}>
           <Text style={styles.myName}>
@@ -21,7 +33,7 @@ const AdditonalDetails = ({route}) => {
               style={styles.personImg}
               source={require('../../assets/person.png')}
             />
-            - {item.first_name + ' ' + item.last_name}
+            - {item.first_name + (item.last_name ? ' ' + item.last_name : '')}
           </Text>
 
           <Text style={styles.myName}>
@@ -30,6 +42,13 @@ const AdditonalDetails = ({route}) => {
               source={require('../../assets/phone.png')}
             />
             - {item.phone_number}
+          </Text>
+          <Text style={styles.myName}>
+            <Image
+              style={styles.personImg}
+              source={require('../../assets/whatsapp.png')}
+            />
+            - {item.whatsapp_number}
           </Text>
           <Text style={styles.myName}>
             <Image
@@ -174,6 +193,10 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
   },
+  editImg: {
+    width: 22,
+    height: 22,
+  },
   followButtonContainer: {
     backgroundColor: '#007AFF',
     borderRadius: 20,
@@ -185,6 +208,13 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  boxContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  imageContainer: {
+    marginLeft: 'auto',
   },
 });
 export default AdditonalDetails;

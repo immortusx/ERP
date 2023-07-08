@@ -6,20 +6,61 @@ import {
   TouchableOpacity,
   StyleSheet,
   TouchableWithoutFeedback,
+  Image,
+  FlatList,
 } from 'react-native';
+import DatePicker from 'react-native-date-picker';
 
 const ScheduleCall = ({route}) => {
   const {item} = route.params;
-  const [currentDate, setCurrentDate] = useState('');
   const [discussion, setDiscussion] = useState('');
+  const [openScheduleDate, setOpenScheduleDate] = useState(false);
+  const [scheduleDate, setScheduleDate] = useState(new Date());
+  const [scheduleDetails, setScheduleDetails] = useState([]);
 
-  const handleSaveDetails = () => {};
-  const onPress = () => {
-    console.warn('Hello');
+  const handleSaveDetails = () => {
+    if (discussion.length > 0) {
+      const newSchedule = {
+        date: formattedScheduleDate,
+        discussion: discussion,
+      };
+      setScheduleDetails(preScheduleDetails => [
+        ...preScheduleDetails,
+        newSchedule,
+      ]);
+      setDiscussion('');
+      console.log(formattedScheduleDate, discussion);
+    }
   };
+  const formattedScheduleDate = scheduleDate.toLocaleDateString();
   return (
     <View style={styles.mainContainer}>
       <View style={styles.container}>
+        <View style={styles.dateContainer}>
+          <Text>Select Call Date*</Text>
+          <View style={styles.dateStyle}>
+            <Text
+              style={styles.dateText}
+              placeholder="Select Date"
+              onPress={() => setOpenScheduleDate(true)}>
+              {formattedScheduleDate}
+            </Text>
+            <DatePicker
+              mode="date"
+              modal
+              open={openScheduleDate}
+              date={scheduleDate}
+              theme="dark"
+              onConfirm={date => {
+                setOpenScheduleDate(false);
+                setScheduleDate(date);
+              }}
+              onCancel={() => {
+                setOpenScheduleDate(false);
+              }}
+            />
+          </View>
+        </View>
         <View style={styles.fieldContainer}>
           <Text style={styles.label}>Discussion:</Text>
           <TextInput
@@ -33,6 +74,42 @@ const ScheduleCall = ({route}) => {
         <TouchableOpacity style={styles.saveButton} onPress={handleSaveDetails}>
           <Text style={styles.buttonText}>Save Details</Text>
         </TouchableOpacity>
+        <View style={{marginVertical: 10}}>
+          <Text>Schedule Details:</Text>
+          <View style={styles.callBox}>
+            <View style={styles.leftContainer}>
+              <Text>Let's have a call</Text>
+              <Text>{formattedScheduleDate}</Text>
+              <Text>987654567</Text>
+            </View>
+            <View style={styles.rightContainer}>
+              <Image
+                style={styles.personImg}
+                source={require('../../assets/telephone.png')}
+              />
+            </View>
+          </View>
+          <FlatList
+            data={scheduleDetails}
+            renderItem={({item, index}) => {
+              return (
+                <View style={styles.callBox}>
+                  <View style={styles.leftContainer}>
+                    <Text>{item.discussion}</Text>
+                    <Text>{item.date}</Text>
+                    <Text>987654567</Text>
+                  </View>
+                  <View style={styles.rightContainer}>
+                    <Image
+                      style={styles.personImg}
+                      source={require('../../assets/telephone.png')}
+                    />
+                  </View>
+                </View>
+              );
+            }}
+          />
+        </View>
       </View>
     </View>
   );
@@ -71,7 +148,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   saveButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: '#28B463',
     borderRadius: 8,
     paddingVertical: 12,
     alignItems: 'center',
@@ -80,6 +157,55 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  dateContainer: {
+    marginTop: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  dateStyle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  dateText: {
+    marginBottom: 10,
+    borderColor: '#0984DF',
+    borderWidth: 1,
+    borderRadius: 22,
+    padding: 5,
+    paddingHorizontal: 30,
+  },
+  callBox: {
+    width: '95%',
+    padding: 10,
+    backgroundColor: 'white',
+    marginHorizontal: 10,
+    marginVertical: 5,
+    shadowColor: '#F39C12 ',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    borderRadius: 5,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+  },
+  leftContainer: {
+    marginRight: 16,
+  },
+  rightContainer: {
+    marginLeft: 16,
+  },
+  personImg: {
+    width: 40,
+    height: 40,
   },
 });
 
