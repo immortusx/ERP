@@ -589,14 +589,13 @@ router.post("/edit-new-detail-enquiry", tokenCheck, async (req, res) => {
         } else {
           console.log({ isSuccess: true, result: "success" });
           // res.send({ isSuccess: true, result: fastEnquiry });
-          const customer_id = fastEnquiry.insertId;
+          // const customer_id = fastEnquiry.insertId;
           const enquiryDate = new Date()
             .toISOString()
             .slice(0, 19)
             .replace("T", " ");
           console.log(enquiryDate);
-          console.log(customer_id);
-          const enquirySql = `UPDATE enquiries SET branch_id = ?, salesperson_id = ?, customer_id = ?, date = ?, delivery_date = ?, enquiry_source_id = ? WHERE enquiry_id = (SELECT id FROM enquiries WHERE customer_id = ${customer_id})`;
+          const enquirySql = `UPDATE enquiries SET branch_id = ?, salesperson_id = ?, customer_id = ?, date = ?, delivery_date = ?, enquiry_source_id = ? WHERE id = (SELECT id FROM enquiries WHERE customer_id = ${customer_id})`;
           await db.query(
             enquirySql,
             [
@@ -611,10 +610,9 @@ router.post("/edit-new-detail-enquiry", tokenCheck, async (req, res) => {
               if (err) {
                 console.log({ isSuccess: false, result: err });
                 res.send({ isSuccess: false, result: "error" });
-              } else if (enquiryResult && enquiryResult.insertId) {
+              } else if (enquiryResult) {
                 console.log({ isSuccess: "success", result: enquirySql });
-                const enquiryId = enquiryResult.insertId;
-                const enquiryProductSql = `UPDATE enquiry_products SET manufacturer = ?, modal = ?, variant = ? WHERE enquiry_id = (SELECT id FROM enquiries WHERE enquiry_id = ${customer_id})`;
+                const enquiryProductSql = `UPDATE enquiry_products SET manufacturer = ?, modal = ?, variant = ? WHERE enquiry_id = (SELECT id FROM enquiries WHERE customer_id = ${customer_id})`;
                 await db.query(
                   enquiryProductSql,
                   [enquiryId, manufacturer, modal, variant],
@@ -641,7 +639,6 @@ router.post("/edit-new-detail-enquiry", tokenCheck, async (req, res) => {
                         await db.query(
                           urlSql,
                           [
-                            enquiryId,
                             maker,
                             modalName,
                             variantName,
