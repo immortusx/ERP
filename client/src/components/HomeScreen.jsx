@@ -18,6 +18,7 @@ import NoAuth from "./NoAuth";
 import EnquiryList from "./EnquiryList";
 import AddDepartment from "./AddDepartment";
 import AddCategory from "./AddCategory"
+import AddAgency from "./AddAgency";
 import Sales from "./Sales";
 import Manage from "./Manage";
 import Profile from "./Profile";
@@ -58,6 +59,7 @@ import Manufacturer_list from './Master/Manufacturer/Manufacturer_list';
 import Manufacturer_modal from './Master/Manufacturer/Manufacturer_modal';
 import Department_list from './Master/Department/Department_list';
 import Category_list from "./Master/Category/Category_list";
+import Profile_list from "./Profile";
 import Roles from './Roles'
 import Tax from './Master/Tax/Tax'
 import Sub_Modal from "./Master/Manufacturer/Sub_modal";
@@ -268,9 +270,9 @@ export default function HomeScreen() {
                             className={({ isActive }) =>
                               isActive ? "activeLink" : ""
                             }
-                            to="profile"
+                            to="home/profile/agency"
                           >
-                            Profile
+                            Agency Profile
                           </NavLink>
                         </li>
                       )}
@@ -1031,7 +1033,7 @@ export default function HomeScreen() {
               path="administration/configuration/category/addcategory"
               element={
                 <CheckPermission path="profile">
-                  <AddCategory workFor="foradd" />
+                  <AddCategory workFor="forAdd" />
                 </CheckPermission>
               }
               exact
@@ -1045,6 +1047,7 @@ export default function HomeScreen() {
               }
               exact
             />
+
             <Route
               path="administration/configuration/branch"
               element={
@@ -1068,6 +1071,44 @@ export default function HomeScreen() {
               element={
                 <CheckPermission path="branch">
                   <Branch workFor="editBranch" />
+                </CheckPermission>
+              }
+              exact
+            />
+
+            <Route
+              path="home/profile/agency"
+              element={
+                <CheckPermission path="profile">
+                  <Profile_list workFor="forEdit" />
+                </CheckPermission>
+              }
+              exact
+            />
+            {/*<Route
+              path="administration/configuration/agency"
+              element={
+                <CheckPermission path="agency">
+                  <Agency_list workFor="agency" />
+                </CheckPermission>
+              }
+              exact
+            /> */}
+
+            <Route
+              path="administration/configuration/addagency"
+              element={
+                <CheckPermission path="profile">
+                  <AddAgency workFor="forAdd" />
+                </CheckPermission>
+              }
+              exact
+            />
+            <Route
+              path="administration/configuration/editagency"
+              element={
+                <CheckPermission path="profile">
+                  <Profile_list workFor="forEdit" />
                 </CheckPermission>
               }
               exact
