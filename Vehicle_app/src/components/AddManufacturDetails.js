@@ -27,6 +27,7 @@ const AddManufacturDetails = ({route}) => {
   const [manufacturerData, setManufacurerData] = useState([]);
   const [modalData, setModalData] = useState([]);
   const [variantData, setVariantData] = useState([]);
+  const [message, setMessage] = useState('');
   const [isFocus, setIsFocus] = useState(false);
   const [manufacturer, setManufacturer] = useState('');
   const [modal, setModal] = useState('');
@@ -152,6 +153,7 @@ const AddManufacturDetails = ({route}) => {
         variant,
       }),
     );
+    setMessage(" Manufacturer Added")
     openModal();
     navigation.goBack();
   };
@@ -260,7 +262,7 @@ const AddManufacturDetails = ({route}) => {
           <Text style={styles.buttonText}>Add</Text>
         </TouchableOpacity>
       </View>
-      <SweetSuccessAlert modalShow={showModal} />
+      <SweetSuccessAlert message={message} modalShow={showModal} />
     </View>
   );
 };

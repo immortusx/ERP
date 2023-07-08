@@ -29,6 +29,7 @@ export const setEditEnquiryDb = createAsyncThunk(
     };
     console.log(config);
     await axios.post(url, data, config).then(response => {
+      console.log(response.data,'heloo');
       return response.data;
     });
   },

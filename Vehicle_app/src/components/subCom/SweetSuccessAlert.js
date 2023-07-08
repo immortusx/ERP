@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import {Alert, Modal, StyleSheet, Text, Pressable, View, Image} from 'react-native';
 
-const SweetSuccessAlert = ({modalShow}) => {
+const SweetSuccessAlert = ({message, modalShow}) => {
   const [modalVisible, setModalVisible] = useState(false);
 
   const hideModal = () => {
@@ -34,7 +34,7 @@ const SweetSuccessAlert = ({modalShow}) => {
                   source={require('../../../assets/success.png')}
                 />
             </Pressable>
-            <Text style={styles.modalText}>Submitted succesfully</Text>
+            <Text style={styles.modalText}>{message}</Text>
           </View>
         </View>
       </Modal>

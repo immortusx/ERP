@@ -31,6 +31,7 @@ const AddLocation = ({route}) => {
   const [state, setState] = useState('');
   const [district, setDistrict] = useState('');
   const [taluka, setTaluka] = useState('');
+  const [message, setMessage] = useState('');
   const [village, setVillage] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [isFocus, setIsFocus] = useState(false);
@@ -186,6 +187,7 @@ const AddLocation = ({route}) => {
         village: village,
       }),
     );
+    setMessage("Location Added");
     openModal();
     navigation.goBack();
   };
@@ -322,7 +324,7 @@ const AddLocation = ({route}) => {
           <Text style={styles.buttonText}>Add</Text>
         </TouchableOpacity>
       </View>
-      <SweetSuccessAlert modalShow={showModal} />
+      <SweetSuccessAlert message={message} modalShow={showModal} />
     </View>
   );
 };

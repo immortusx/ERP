@@ -50,6 +50,7 @@ const FastEnquiry = () => {
   const [showModal, setShowModal] = useState(false);
   const [isFocus, setIsFocus] = useState(false);
   const [village, setVillage] = useState(null);
+  const [message, setMessage] = useState('');
   const [condition, setCondtion] = useState(null);
   const [selectedOption, setSelectedOption] = useState('No');
   const options = ['Yes', 'No'];
@@ -123,6 +124,7 @@ const FastEnquiry = () => {
   useEffect(() => {
     if (fastEnquiryState && fastEnquiryState.isSuccess === true) {
       dispatch(clearFastEnquiryState());
+      setMessage("Enquiry Submitted");
       console.log('Enquiry submitted');
       openModal();
       dispatch(getEnquiryData()).then(() => {
@@ -368,7 +370,7 @@ const FastEnquiry = () => {
             </View>
           </Modal>
         </View>
-        <SweetSuccessAlert modalShow={showModal} />
+        <SweetSuccessAlert message={message} modalShow={showModal} />
       </View>
     </ScrollView>
   );
