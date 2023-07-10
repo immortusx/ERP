@@ -27,6 +27,7 @@ router.get('/profile-data', tokenCheck, async (req, res) => {
         email: result[0][0].email,
         first_name: result[0][0].first_name,
         last_name: result[0][0].last_name,
+        phone_number: result[0][0].phone_number,
         last_login: result[0][0].last_login,
         features: features,
       }

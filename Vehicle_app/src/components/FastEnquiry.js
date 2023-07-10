@@ -121,6 +121,7 @@ const FastEnquiry = () => {
       [field]: value,
     }));
   };
+  
   useEffect(() => {
     if (fastEnquiryState && fastEnquiryState.isSuccess === true) {
       dispatch(clearFastEnquiryState());

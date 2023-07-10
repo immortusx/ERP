@@ -14,8 +14,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useDispatch, useSelector} from 'react-redux';
 import BackgroundImage from '../../assets/cover.jpg';
 import {getLoginUser} from '../redux/slice/getUserLogin';
+import getUserProfile, {getProfileData} from '../redux/slice/getUserProfile';
 const Login = ({navigation}) => {
   const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(false);
   const loginState = useSelector(state => state.getLoginSlice.loginState);
   const [loginData, setLoginData] = useState({
     email: '',
@@ -30,25 +32,66 @@ const Login = ({navigation}) => {
     }
   };
 
+  //for loginState
+  // useEffect(() => {
+  //   if (loginState.isSuccess === true) {
+  //     if (loginState.result.message === 'success') {
+  //       setIsLoading(true);
+  //       console.log(loginState.result.result.tokenIs);
+  //       AsyncStorage.setItem(
+  //         'branchesList',
+  //         JSON.stringify(loginState.result.result.branchResult)
+  //       );
+  //       AsyncStorage.setItem(
+  //         'currentBranchId',
+  //         JSON.stringify(loginState.result.result.currentBranch)
+  //       );
+  //       AsyncStorage.setItem('rbacToken', loginState.result.result.tokenIs);
+  //       AsyncStorage.getItem('rbacToken').then(token => {
+  //         setIsLoading(false);
+  //         if (!token) {
+  //           return;
+  //         }
+  //         console.log(token, 'token_--__--he');
+  //         navigation.navigate('Main');
+  //         setLoginData({
+  //           email: '',
+  //           password: '',
+  //         });
+  //       });
+  //     } else if (loginState.result.message !== 'success') {
+  //       console.log('Credentials are wrong');
+  //       alert('Credentials are wrong');
+  //       // dispatch(setShowMessage("Credentials are wrong"));
+  //     } else {
+  //       console.log('Something is wrong');
+  //       // dispatch(setShowMessage("Something is wrong"));
+  //     }
+  //   }
+  //   console.log('loginState', loginState);
+  // }, [loginState]);
+
   useEffect(() => {
     if (loginState.isSuccess === true) {
       if (loginState.result.message === 'success') {
+        setIsLoading(true);
         console.log(loginState.result.result.tokenIs);
         AsyncStorage.setItem(
           'branchesList',
-          JSON.stringify(loginState.result.result.branchResult)
+          JSON.stringify(loginState.result.result.branchResult),
         );
         AsyncStorage.setItem(
           'currentBranchId',
-          JSON.stringify(loginState.result.result.currentBranch)
+          JSON.stringify(loginState.result.result.currentBranch),
         );
         AsyncStorage.setItem('rbacToken', loginState.result.result.tokenIs);
         AsyncStorage.getItem('rbacToken').then(token => {
+          setIsLoading(false);
           if (!token) {
             return;
           }
+          dispatch(getProfileData());
           console.log(token, 'token_--__--he');
-
           navigation.navigate('Main');
           setLoginData({
             email: '',
@@ -61,8 +104,12 @@ const Login = ({navigation}) => {
         // dispatch(setShowMessage("Credentials are wrong"));
       } else {
         console.log('Something is wrong');
+        alert('Something is wrong');
         // dispatch(setShowMessage("Something is wrong"));
       }
+    } else if (loginState.isError === true) {
+      console.log('An error occurred. Please try again.');
+      alert('An error occurred. Please try again.');
     }
     console.log('loginState', loginState);
   }, [loginState]);
@@ -73,7 +120,7 @@ const Login = ({navigation}) => {
     } else {
       // dispatch(setShowMessage("Please fill all the field"));
       console.log('please fill credentials first');
-      console.warn('please fill credentials first');
+      alert('Please fill in all the fields');
     }
   };
 
@@ -124,7 +171,9 @@ const Login = ({navigation}) => {
           </View>
           <Text style={styles.fpText}>Forgot Password?</Text>
           <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-            <Text style={styles.loginButtonText}>Login</Text>
+            <Text style={styles.loginButtonText}>
+              {isLoading ? 'Signing in...' : 'Login'}
+            </Text>
           </TouchableOpacity>
           <Text style={styles.registerText}>
             Don't have an account?
@@ -172,7 +221,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   loginText: {
-    color: "black",
+    color: 'black',
     fontFamily: 'SourceSansProBold',
     fontSize: 24,
     marginTop: 12,

@@ -4,7 +4,10 @@ import {
   DrawerContentScrollView,
   DrawerItemList,
 } from '@react-navigation/drawer';
+import { useDispatch, useSelector } from 'react-redux';
 const CustomDrawer = props => {
+  const dispatch = useDispatch();
+  const profileData =  useSelector(state => state.getUserProfileSlice.profile.currentUserData.result);
   return (
     <View style={{flex: 1}}>
       <DrawerContentScrollView {...props} contentContainerStyle={{backgroundColor: '#AED6F1'}}>

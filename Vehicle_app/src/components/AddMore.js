@@ -6,17 +6,19 @@ import {
   ScrollView,
   TouchableOpacity,
   Image,
-  TouchableWithoutFeedback
+  TouchableWithoutFeedback,
 } from 'react-native';
 import React, {useState, useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {getEnquiryData} from '../redux/slice/getEnquirySlice';
 import {useNavigation} from '@react-navigation/native';
+import CustomLoadingSpinner from './subCom/CustomLoadingSpinner';
 
 const AddMore = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const [resultData, setResultData] = useState([]);
+  const profileData =  useSelector(state => state.getUserProfileSlice.profile.currentUserData.result);
   const getEnquiryState = useSelector(state => state.getEnquiryState);
   const {isFetching, isSuccess, isError, result} = getEnquiryState;
 
@@ -31,13 +33,18 @@ const AddMore = () => {
     if (result) {
       console.log(result.result);
       setResultData(result.result);
+      console.log(profileData.phone_number,'mmmmmmmmmmmmmmmmmm');
     }
   }, [result]);
 
-  const openAdditonalEnquiry = (item) => {
-    console.log(item,'>>>>>>>>>>>>>>>.')
+  const openAdditonalEnquiry = item => {
+    console.log(item, '>>>>>>>>>>>>>>>.');
     navigation.navigate('Additional Details', {item: item});
   };
+
+  if (isFetching) {
+    return <CustomLoadingSpinner />;
+  }
   return (
     <View style={styles.container}>
       <View style={styles.boxContainer}>
@@ -45,13 +52,19 @@ const AddMore = () => {
       </View>
       <View style={styles.wrapper}>
         <TouchableOpacity style={[styles.buttonStyle, styles.todayButton]}>
-          <Text style={[styles.buttonText, {paddingHorizontal: 17}]}>Today</Text>
+          <Text style={[styles.buttonText, {paddingHorizontal: 17}]}>
+            Today
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity style={[styles.buttonStyle, styles.weekButton]}>
-          <Text style={[styles.buttonText, {paddingHorizontal: 10}]}>Last Week</Text>
+          <Text style={[styles.buttonText, {paddingHorizontal: 10}]}>
+            Last Week
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity style={[styles.buttonStyle, styles.monthButton]}>
-          <Text style={[styles.buttonText, {paddingHorizontal: 10}]}>Last Month</Text>
+          <Text style={[styles.buttonText, {paddingHorizontal: 10}]}>
+            Last Month
+          </Text>
         </TouchableOpacity>
       </View>
       <FlatList
@@ -69,7 +82,9 @@ const AddMore = () => {
                       style={styles.personImg}
                       source={require('../../assets/person.png')}
                     />
-                    - {item.first_name + (item.last_name ? ' ' + item.last_name : '')}
+                    -{' '}
+                    {item.first_name +
+                      (item.last_name ? ' ' + item.last_name : '')}
                   </Text>
 
                   <Text style={styles.label}>
@@ -100,10 +115,10 @@ const AddMore = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5EEF8'
+    backgroundColor: '#F5EEF8',
   },
   boxContainer: {
-    marginVertical: 4
+    marginVertical: 4,
   },
   historyText: {
     fontSize: 24,
@@ -130,7 +145,7 @@ const styles = StyleSheet.create({
     elevation: 5,
     marginHorizontal: 10,
     borderRadius: 5,
-    marginBottom: 7
+    marginBottom: 7,
   },
   label: {
     fontSize: 16,
@@ -146,7 +161,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 10,
     marginVertical: 1,
-    marginBottom: 7
+    marginBottom: 7,
   },
   buttonStyle: {
     paddingVertical: 10,

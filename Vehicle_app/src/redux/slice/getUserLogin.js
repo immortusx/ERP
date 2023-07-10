@@ -15,6 +15,7 @@ const initialState = {
     const url = `${API_URL}/api/login`
    console.log('getLoginUser', url);
    return await axios.post(url, data).then((response)=> {
+    console.log(response.data,'gggggggggggggg');
     return response.data
    })
  })
