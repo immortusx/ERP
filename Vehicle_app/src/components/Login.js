@@ -172,7 +172,7 @@ const Login = ({navigation}) => {
           <Text style={styles.fpText}>Forgot Password?</Text>
           <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
             <Text style={styles.loginButtonText}>
-              {isLoading ? 'Signing in...' : 'Login'}
+              {isLoading ? 'Signing In...' : 'Login'}
             </Text>
           </TouchableOpacity>
           <Text style={styles.registerText}>

@@ -18,7 +18,9 @@ const AddMore = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const [resultData, setResultData] = useState([]);
-  const profileData =  useSelector(state => state.getUserProfileSlice.profile.currentUserData.result);
+  const profileData = useSelector(
+    state => state.getUserProfileSlice.profile.currentUserData.result,
+  );
   const getEnquiryState = useSelector(state => state.getEnquiryState);
   const {isFetching, isSuccess, isError, result} = getEnquiryState;
 
@@ -31,9 +33,8 @@ const AddMore = () => {
 
   useEffect(() => {
     if (result) {
-      console.log(result.result);
+      console.log(result.result, 'tttttttttt');
       setResultData(result.result);
-      console.log(profileData.phone_number,'mmmmmmmmmmmmmmmmmm');
     }
   }, [result]);
 
@@ -51,6 +52,12 @@ const AddMore = () => {
         <Text style={styles.historyText}>Enquiry Details</Text>
       </View>
       <View style={styles.wrapper}>
+      <View style={styles.newContainer}>
+        <Image
+          style={styles.newImg}
+          source={require('../../assets/new.png')}
+        />
+      </View>
         <TouchableOpacity style={[styles.buttonStyle, styles.todayButton]}>
           <Text style={[styles.buttonText, {paddingHorizontal: 17}]}>
             Today
@@ -186,6 +193,14 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
   },
+  newImg: {
+    width: 30,
+    height: 30,
+  },
+  newContainer: {
+    alignItems: 'center',
+    margin: 2
+  }
 });
 
 export default AddMore;
