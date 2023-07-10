@@ -7,13 +7,13 @@ import {
   addAgencyToDb,
   clearaddaddAgency,
 } from "../redux/slices/addagencySlice";
-import {
-  clearEditagencyData,
-  clearEditagencyState,
-  editagencyUpdateToDb,
-} from "../redux/slices/editAgencySlice";
+// import {
+//   clearEditagencyData,
+//   clearEditagencyState,
+//   editagencyUpdateToDb,
+// } from "../redux/slices/editAgencySlice";
 export default function AddAgency({ workFor }) {
-  const [agencyCreated, setAgencyCreated] = useState(false);
+  // const [agencyCreated, setAgencyCreated] = useState(false);
   const [agencyData, setAgencyData] = useState({
     name: "",
     contact: "",
@@ -38,12 +38,12 @@ export default function AddAgency({ workFor }) {
 
   const addAgency = useSelector((state) => state.addAgency.addAgency);
 
-  const { editagencySliceState } = useSelector(
-    (state) => state.editAgencyDataState
-  );
-  const editagencyData = useSelector(
-    (state) => state.editAgencyDataState.editagencyData
-  );
+  // const { editagencySliceState } = useSelector(
+  //   (state) => state.editAgencyDataState
+  // );
+  // const editagencyData = useSelector(
+  //   (state) => state.editAgencyDataState.editagencyData
+  // );
 
   useEffect(() => {
     if (addAgency.isSuccess) {

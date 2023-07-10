@@ -4,10 +4,10 @@ import { useSelector, useDispatch } from "react-redux";
 import Axios from "axios";
 import { setShowMessage } from "../redux/slices/notificationSlice";
 import { useLocation, useNavigate } from "react-router-dom";
-import {
-  addAgencyToDb,
-  clearaddaddAgency,
-} from "../redux/slices/addagencySlice";
+// import {
+//   addAgencyToDb,
+//   clearaddaddAgency,
+// } from "../redux/slices/addagencySlice";
 import {
   clearEditagencyData,
   clearEditagencyState,
@@ -39,9 +39,9 @@ export default function Profile_list({ workFor }) {
   const { editagencySliceState } = useSelector(
     (state) => state.editAgencyDataState
   );
-  const editagencyData = useSelector(
-    (state) => state.editAgencyDataState.editagencyData
-  );
+  // const editagencyData = useSelector(
+  //   (state) => state.editAgencyDataState.editagencyData
+  // );
 
   useEffect(() => {
     if (editagencySliceState.isSuccess) {
@@ -169,7 +169,7 @@ setAgencyData(parsedJson)
     <div className="addUser myBorder bg-white rounded p-3">
       <main>
         <div className=" row mt-3 m-0">
-          <h5 className="m-0">Edit Agency</h5>
+          <h5 className="m-0"> Agency</h5>
 
           <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
             <label className="myLabel" htmlFor="email">
@@ -253,7 +253,7 @@ setAgencyData(parsedJson)
               onClick={handleSubmit}
               type="button"
             >
-              Edit Agency
+              Edit 
             </button>
 
             <button

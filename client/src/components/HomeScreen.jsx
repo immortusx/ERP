@@ -1104,7 +1104,7 @@ export default function HomeScreen() {
               exact
             />
             <Route
-              path="administration/configuration/editagency"
+              path="administration/configuration/agency"
               element={
                 <CheckPermission path="profile">
                   <Profile_list workFor="forEdit" />
