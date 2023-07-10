@@ -46,16 +46,19 @@ export default function Profile_list({ workFor }) {
   useEffect(() => {
     if (editagencySliceState.isSuccess) {
       const result = editagencySliceState.message.result;
+      console.log(result,"result")
       if (result === "success") {
         dispatch(setShowMessage("Data is Updated"));
         clearInpHook();
         dispatch(clearEditagencyState());
         navigate("/administration/configuration");
       } else {
+        console.log("Something is wrong!");
         dispatch(setShowMessage("Something is wrong!"));
       }
   
     }
+    
   }, [editagencySliceState]);
 
 //    useEffect(() => {
@@ -123,7 +126,7 @@ setAgencyData(parsedJson)
 
   const onChangeHandler = (e) => {
     const { name, value, files } = e.target;
-    if (name === "logo") {
+    if (name === "logo" ) {
       setAgencyData((prevState) => ({
         ...prevState,
         [name]: files[0],
@@ -148,18 +151,18 @@ setAgencyData(parsedJson)
     formData.append("contact", acontact);
     formData.append("email", aemail);
     formData.append("logo", alogo);
-    if ( aname.length > 0 && acontact !== "" && aemail !== "" && alogo !== null) {
-      console.log("result save");
-      console.log(workFor,"workfor")
-      if (workFor === "forEdit") {
 
+    if (  aname.length > 0 &&  acontact !== "" && aemail !== "" &&  alogo !== null
+) {
+      console.log("result save");
+      console.log(workFor, "workfor");
+      if (workFor === "forEdit") {
         dispatch(editagencyUpdateToDb(formData));
-    
+      }
     } else {
-        dispatch(setShowMessage("All field must be field"));
+      dispatch(setShowMessage("All fields must be filled"));
     }
   };
-}
   
   function handlCancel() {
      navigate("/administration/configuration");

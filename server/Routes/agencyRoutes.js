@@ -68,36 +68,38 @@ router.post(
   }
 );
 
-router.post(
-  "/get-agency-edit",
-  tokenCheck,
-  uploadFile.single("logo"),
-  async (req, res) => {
-    console.log(">>>>>get-roles");
-    const { name, contact, email} = req.body;
-    console.log(req.body, "req.body");
-    console.log(req.file, "req.file");
-    const logoImage = `/upload/${req.file.filename}`;
-  
-    try {
-      const updateNameSql = `UPDATE configuration SET value = '${name}' WHERE setting = 'agency' AND key_name = 'name'`;
-      const updateContactSql = `UPDATE configuration SET value = '${contact}' WHERE setting = 'agency' AND key_name = 'contact'`;
-      const updateEmailSql = `UPDATE configuration SET value = '${email}' WHERE setting = 'agency' AND key_name = 'email'`;
-      const updateLogoSql = `UPDATE configuration SET value = '${logoImage}' WHERE setting = 'agency' AND key_name = 'logo'`;
 
-      await db.query(updateNameSql);
-      await db.query(updateContactSql);
-      await db.query(updateEmailSql);
-      await db.query(updateLogoSql);
 
-      console.log({ isSuccess: true, result: "success" });
-      res.status(200).json({ isSuccess: true, result: "success" });
-    } catch (error) {
-      console.log(error);
-      res.status(500).json({ isSuccess: false, result: "error" });
-    }
-  }
-);
+  // router.post(
+  //   "/get-agency-edit",
+  //   tokenCheck,
+  //   uploadFile.single("logo"),
+  //   async (req, res) => {
+  //     console.log(">>>>>get-roles");
+  //     const { name, contact, email} = req.body;
+  //     console.log(req.body, "req.body");
+  //     console.log(req.file, "req.file");
+  //     const logoImage = `/upload/${req.file.filename}`;
+    
+  //     try {
+  //       const updateNameSql = `UPDATE configuration SET value = '${name}' WHERE setting = 'agency' AND key_name = 'name'`;
+  //       const updateContactSql = `UPDATE configuration SET value = '${contact}' WHERE setting = 'agency' AND key_name = 'contact'`;
+  //       const updateEmailSql = `UPDATE configuration SET value = '${email}' WHERE setting = 'agency' AND key_name = 'email'`;
+  //       const updateLogoSql = `UPDATE configuration SET value = '${logoImage}' WHERE setting = 'agency' AND key_name = 'logo'`;
+
+  //       await db.query(updateNameSql);
+  //       await db.query(updateContactSql);
+  //       await db.query(updateEmailSql);
+  //       await db.query(updateLogoSql);
+
+  //       console.log({ isSuccess: true, result: "success" });
+  //       res.status(200).json({ isSuccess: true, result: "success" });
+  //     } catch (error) {
+  //       console.log(error);
+  //       res.status(500).json({ isSuccess: false, result: "error" });
+  //     }
+  //   }
+  // );
 
 
 router.get("/get-agencybyid", tokenCheck, async (req, res) => {

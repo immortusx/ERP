@@ -38,7 +38,7 @@ export default function Employees() {
 
   const columns = [
     {
-      field: "rowNumber",
+      field: "id",
       headerAlign: "center",
       align: "center",
       headerName: "No",
