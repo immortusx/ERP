@@ -93,6 +93,21 @@ async function queryDatabase(query) {
   });
 }
 
+router.get("/get-employee-details/:id", tokenCheck, async (req, res) => {
+  const userId = req.params.id;
+  const urlNew = "SELECT * FROM employee_detail where id=" + userId;
+  db.query(urlNew, async (err, result) => {
+    console.log(result, "result");
+    if (err) {
+      console.log({ isSuccess: false, result: "emptyBranch" });
+      res.send({ isSuccess: false, result: "emptyBranch" });
+    } else {
+      console.log({ isSuccess: true, result: urlNew });
+      res.send({ isSuccess: true, result: result });
+    }
+  });
+});
+
 //===========get List of Employee================//
 router.get("/get-employee-list", tokenCheck, async (req, res) => {
   try {
