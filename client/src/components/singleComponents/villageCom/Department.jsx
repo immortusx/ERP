@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Modal, Button } from "react-bootstrap";
 import { useNavigate } from "react-router";
 
-const Department = ({ onSelectedState = () => {}, DeptId = "" }) => {
+const Department = ({ onSelectedState = () => {}, DeptId }) => {
   const navigate = useNavigate();
   const [departmentList, setDepartmentList] = useState([]);
   const getDepartmentList = async () => {

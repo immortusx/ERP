@@ -128,6 +128,7 @@ export default function AddCategory({ workFor }) {
       if (response.data.isSuccess) {
         const data = response.data.result;
         setDept(data);
+
         console.log(data, "dept");
       }
     });
@@ -138,7 +139,7 @@ export default function AddCategory({ workFor }) {
   }, []);
   const onSelectedState = (value) => {
     setCategoryData((categoryData) => ({ ...categoryData, department: value }));
-    console.log(value);
+    console.log(value,"valueeeeeeeeeeeeeee");
   };
 
   const onChangeHandler = (e) => {

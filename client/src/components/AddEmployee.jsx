@@ -458,30 +458,30 @@ export default function Addemployee({ workFor }) {
     });
     return tempCounter;
   }, [branchRoles]);
-  const showSelectedData = useMemo(() => {
-    let tempAr = [];
-    if (Object.keys(branchRoles).length > 0) {
-      Object.keys(branchRoles).forEach((item, index) => {
-        let tempObj = {};
-        let findBranch = branches.find((i) => {
-          return i.id == item;
-        });
-        if (findBranch) {
-          tempObj["branch"] = findBranch;
-          let tempArNested = [];
-          branchRoles[item].forEach((i) => {
-            let result = roles.find((roleItem) => {
-              return i == roleItem.id;
-            });
-            tempArNested.push(result);
-          });
-          tempObj["role"] = tempArNested;
-          tempAr.push(tempObj);
-        }
-      });
-    }
-    return tempAr;
-  }, [branchRoles]);
+  // const showSelectedData = useMemo(() => {
+  //   let tempAr = [];
+  //   if (Object.keys(branchRoles).length > 0) {
+  //     Object.keys(branchRoles).forEach((item, index) => {
+  //       let tempObj = {};
+  //       let findBranch = branches.find((i) => {
+  //         return i.id == item;
+  //       });
+  //       if (findBranch) {
+  //         tempObj["branch"] = findBranch;
+  //         let tempArNested = [];
+  //         branchRoles[item].forEach((i) => {
+  //           let result = roles.find((roleItem) => {
+  //             return i == roleItem.id;
+  //           });
+  //           tempArNested.push(result);
+  //         });
+  //         tempObj["role"] = tempArNested;
+  //         tempAr.push(tempObj);
+  //       }
+  //     });
+  //   }
+  //   return tempAr;
+  // }, [branchRoles]);
 
   function confirmClicked() {
     setPopUpScreen(false);

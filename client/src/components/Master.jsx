@@ -16,7 +16,7 @@ export default function Master() {
       console.log(response.data, "response.data?.isSuccess");
       if (response.data?.isSuccess && response.data.result) {
         console.log("editagency");
-        navigate("/administration/configuration/editagency");
+        navigate("/administration/configuration/agency");
       } else {
         console.log("addagency");
         navigate("/administration/configuration/addagency");
