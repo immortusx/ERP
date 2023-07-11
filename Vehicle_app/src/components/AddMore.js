@@ -38,6 +38,8 @@ const AddMore = () => {
     }
   }, [result]);
 
+  useEffect(() => {}, []);
+
   const handleSheduleCall = item => {
     navigation.navigate('Schedule Call', {item: item});
   };
@@ -48,6 +50,7 @@ const AddMore = () => {
     console.log('Calling...', mobileNumber);
     Linking.openURL(`tel:${mobileNumber}`);
   };
+
   const openAdditonalEnquiry = item => {
     console.log(item, '>>>>>>>>>>>>>>>.');
     navigation.navigate('Additional Details', {item: item});
@@ -156,14 +159,20 @@ const AddMore = () => {
                   <View style={styles.rightDataStyle}>
                     <View style={styles.daysContainer}>
                       <TouchableOpacity style={styles.dayBack}>
-                      <Text style={styles.dayText}>20</Text>
+                        <Text style={styles.dayText}>
+                          {Math.floor(
+                            (new Date() - new Date(item.date)) /
+                              (1000 * 60 * 60 * 24),
+                          )}
+                        </Text>
                       </TouchableOpacity>
                     </View>
                     <Text style={styles.dateText}>30 JULY 2023</Text>
                     <TouchableOpacity
                       onPress={() => {
                         handleSheduleCall(item);
-                      }}>
+                      }}
+                      style={styles.discussionButton}>
                       <Text style={styles.discussionText}>Last Discussion</Text>
                     </TouchableOpacity>
                   </View>
@@ -299,7 +308,7 @@ const styles = StyleSheet.create({
   },
   dateText: {
     marginBottom: 4,
-    color: 'blue',
+    color: '#21618C',
   },
   discussionText: {
     color: 'gray',
@@ -307,13 +316,22 @@ const styles = StyleSheet.create({
   dayText: {
     color: 'white',
     fontSize: 14,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   dayBack: {
-    backgroundColor: '#3498DB',
+    backgroundColor: '#2E86C1',
     borderRadius: 30,
-    color: 'white'
-  }
+    color: 'white',
+    padding: 2,
+  },
+  discussionButton: {
+    backgroundColor: 'white',
+    borderRadius: 20,
+  },
+  discussionText: {
+    color: '#138D75',
+    textAlign: 'center',
+  },
 });
 
 export default AddMore;
