@@ -504,7 +504,7 @@ router.post("/set-new-detail-enquiry", tokenCheck, async (req, res) => {
                             variantName,
                             newYearOfManufactur,
                             condition_of,
-                            old_tractor
+                            old_tractor,
                           ],
                           (err, result) => {
                             if (err) {
@@ -654,7 +654,7 @@ router.post("/edit-new-detail-enquiry", tokenCheck, async (req, res) => {
                                   variantName,
                                   newYearOfManufactur,
                                   condition_of,
-                                  old_tractor
+                                  old_tractor,
                                 ],
                                 (err, result) => {
                                   if (err) {
@@ -695,6 +695,50 @@ router.post("/edit-new-detail-enquiry", tokenCheck, async (req, res) => {
     // res.send({ isSuccess: false, result: "error" });
   }
 });
+
+//=======================Add Follow Up==================//
+router.post("/set-follow-up", tokenCheck, async (req, res) => {
+  console.log(">>>>>>>>>/set-follow-up", req.body);
+  try {
+    const { last_discussion, next_followup_date, customer_id } = req.body;
+    await db.query(
+      `SELECT id FROM enquiries WHERE customer_id = ${customer_id}`,
+      async (err, result) => {
+        if (err) {
+          console.log({ isSuccess: false, result: err });
+          res.status(500).send({ isSuccess: false, error: "Database error" });
+        } else {
+          console.log({ isSuccess: true, result: result });
+          console.log(result[0].id);
+          const enquiry_id = result[0].id;
+          const followup_date = new Date().toISOString().split("T")[0];
+          const followUpSql = `INSERT INTO follow_up_details (enquiry_id, last_discussion, followup_date, next_followup_date) VALUES ('${enquiry_id}', '${last_discussion}', '${followup_date}', '${next_followup_date}')`;
+          await db.query(followUpSql, async (err, followUpResult) => {
+            if (err) {
+              console.log({ isSuccess: false, result: err });
+              res.status(500).send({ isSuccess: false, error: "error" });
+            } else {
+              console.log({ isSuccess: true, result: followUpResult });
+              res.send({ isSuccess: true, result: 'success' });
+            }
+          });
+        }
+      }
+    );
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({ isSuccess: false, error: "Internal server error" });
+  }
+});
+
+//======================Get Follow Up===========//
+router.get('/get-follow-up', async(req, res)=> {
+  try{
+    await db.query('SELECT * FROM follow_up_details')
+  }catch(err){
+    console.log(err);
+  }
+})
 
 //=================Get Enquiry Location List============//
 router.get("/get-enquiry-location-list", tokenCheck, async (req, res) => {

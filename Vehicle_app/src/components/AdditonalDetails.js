@@ -1,7 +1,7 @@
 import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
-
+import moment from 'moment';
 const AdditonalDetails = ({route}) => {
   const navigation = useNavigation();
   const {item} = route.params;
@@ -76,14 +76,14 @@ const AdditonalDetails = ({route}) => {
               style={styles.personImg}
               source={require('../../assets/date.png')}
             />
-            - {item.date}
+            - {moment(item.date).format('LL')}
           </Text>
           <Text style={styles.myName}>
             <Image
               style={styles.personImg}
               source={require('../../assets/delivery.png')}
             />
-            - {item.delivery_date}
+            - {moment(item.delivery_date).format('LL')}
           </Text>
           <Text style={styles.myName}>
             <Image
@@ -135,6 +135,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   dataContainer: {
+    width: '90%',
     padding: 20,
     backgroundColor: 'rgba(255, 255, 255, 0.90)',
     textAlign: 'center',
