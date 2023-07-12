@@ -21,6 +21,7 @@ import Calendars from './subCom/Calendars';
 import {API_URL} from '@env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import moment from 'moment';
 const ScheduleCall = ({route}) => {
   const {item} = route.params;
   const dispatch = useDispatch();
@@ -31,13 +32,14 @@ const ScheduleCall = ({route}) => {
   const [openScheduleDate, setOpenScheduleDate] = useState(false);
   const [scheduleDate, setScheduleDate] = useState('');
   const [scheduleDetails, setScheduleDetails] = useState([]);
+  const [isShow, setIsShow] = useState(false);
 
   useEffect(() => {
-    console.log(followUpState, 'ggg');
     if (followUpState.isSuccess && followUpState.result === 'success') {
       dispatch(clearFollowUpState());
-      console.log(followUpState, 'bbbbbbbbbb');
-      console.warn('follow up saved');
+      setIsShow(true);
+      getFollowUpDetils();
+      // console.warn('follow up saved');
     }
   }, [followUpState]);
   const getFollowUpDetils = async () => {
@@ -54,13 +56,13 @@ const ScheduleCall = ({route}) => {
     await axios.get(url, config).then(response => {
       if (response) {
         console.log(response.data, 'get.......');
-        // setVillageresult(response.data.result);
+        setScheduleDetails(response.data.result);
       }
     });
   };
-  useEffect(()=> {
+  useEffect(() => {
     getFollowUpDetils();
-  },[])
+  }, []);
   const makePhoneCall = () => {
     console.log('Calling...');
     let mobileNumber = 9060779043;
@@ -74,16 +76,7 @@ const ScheduleCall = ({route}) => {
         customer_id: item.id,
       };
       dispatch(setFollowUpDb(formData));
-      const newSchedule = {
-        date: scheduleDate,
-        last_discussion: discussion,
-      };
-      setScheduleDetails(preScheduleDetails => [
-        ...preScheduleDetails,
-        newSchedule,
-      ]);
       setDiscussion('');
-      // console.log(formattedScheduleDate, discussion);
     }
   };
   const handleCalendarDate = selectedDate => {
@@ -92,96 +85,74 @@ const ScheduleCall = ({route}) => {
     setScheduleDate(selectedDate.dateString);
     setOpenScheduleDate(false);
   };
-  // const formattedScheduleDate = scheduleDate.toISOString().split('T')[0];
   return (
     <View style={styles.mainContainer}>
-      <View style={styles.container}>
-        {followUpState.isSuccess && (
-          <SweetSuccessAlert message={followUpState.result} modalShow={true} />
-        )}
-        <View style={styles.dateContainer}>
-          <Text>Select Call Date*</Text>
-          <View style={styles.dateStyle}>
-            <TouchableOpacity
-              onPress={() => {
-                setOpenScheduleDate(true);
-              }}>
-              <Text style={styles.dateText}>
-                {scheduleDate === ''
-                  ? new Date().toISOString().slice(0, 10)
-                  : scheduleDate}
-              </Text>
-            </TouchableOpacity>
-            <Calendars
-              showModal={openScheduleDate}
-              selectedDate={scheduleDate}
-              handleCalendarDate={handleCalendarDate}
-            />
-          </View>
-        </View>
-        <View style={styles.fieldContainer}>
-          <Text style={styles.label}>Discussion:</Text>
-          <TextInput
-            style={styles.input}
-            value={discussion}
-            onChangeText={setDiscussion}
-            multiline
-            numberOfLines={4}
+      <View style={styles.contentContainer}>
+      {isShow && (
+        <SweetSuccessAlert message={'Call Schedule'} modalShow={true} />
+      )}
+      <View style={styles.dateContainer}>
+        <Text>Select Call Date*</Text>
+        <View style={styles.dateStyle}>
+          <TouchableOpacity
+            onPress={() => {
+              setOpenScheduleDate(true);
+            }}>
+            <Text style={styles.dateText}>
+              {scheduleDate === ''
+                ? new Date().toISOString().slice(0, 10)
+                : scheduleDate}
+            </Text>
+          </TouchableOpacity>
+          <Calendars
+            showModal={openScheduleDate}
+            selectedDate={scheduleDate}
+            handleCalendarDate={handleCalendarDate}
           />
         </View>
-        <TouchableOpacity style={styles.saveButton} onPress={handleSaveDetails}>
-          <Text style={styles.buttonText}>Save Details</Text>
-        </TouchableOpacity>
-        <View style={{marginVertical: 10}}>
-          <Text>Schedule Details:</Text>
-          <View style={styles.callBox}>
-            <View style={styles.leftContainer}>
-              <Text>Let's have a call</Text>
-              <Text>
-                {scheduleDate === ''
-                  ? new Date().toISOString().slice(0, 10)
-                  : scheduleDate}
-              </Text>
-              <Text>987654567</Text>
-            </View>
-            <View style={styles.rightContainer}>
-              <TouchableOpacity
-                onPress={() => {
-                  makePhoneCall();
-                }}>
-                <Image
-                  style={styles.personImg}
-                  source={require('../../assets/telephone.png')}
-                />
-              </TouchableOpacity>
-            </View>
-          </View>
-          <FlatList
-            data={scheduleDetails}
-            renderItem={({item, index}) => {
-              return (
-                <View style={styles.callBox}>
-                  <View style={styles.leftContainer}>
-                    <Text>{item.last_discussion}</Text>
-                    <Text>{item.date}</Text>
-                    <Text>987654567</Text>
-                  </View>
-                  <View style={styles.rightContainer}>
-                    <TouchableOpacity
-                      onPress={() => {
-                        makePhoneCall();
-                      }}>
-                      <Image
-                        style={styles.personImg}
-                        source={require('../../assets/telephone.png')}
-                      />
-                    </TouchableOpacity>
-                  </View>
+      </View>
+      <View style={styles.fieldContainer}>
+        <Text style={styles.label}>Discussion:</Text>
+        <TextInput
+          style={styles.input}
+          value={discussion}
+          onChangeText={setDiscussion}
+          multiline
+          numberOfLines={4}
+        />
+      </View>
+      <TouchableOpacity style={styles.saveButton} onPress={handleSaveDetails}>
+        <Text style={styles.buttonText}>Save Details</Text>
+      </TouchableOpacity>
+      <View style={{marginVertical: 10}}>
+        <Text style={{fontWeight: 'bold'}}>Schedule Details</Text>
+        <Text>New</Text>
+        <FlatList
+          data={scheduleDetails}
+          renderItem={({item, index}) => {
+            return (
+              <View style={styles.callBox}>
+                <View style={styles.leftContainer}>
+                  <Text>{item.last_discussion}</Text>
+                  <Text>{moment(item.next_followup_date).format('LL')}</Text>
+                  <Text>987654567</Text>
                 </View>
-              );
-            }}
-          />
-        </View>
+                <View style={styles.rightContainer}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      makePhoneCall();
+                    }}>
+                    <Image
+                      style={styles.personImg}
+                      source={require('../../assets/telephone.png')}
+                    />
+                  </TouchableOpacity>
+                </View>
+              </View>
+            );
+          }}
+        />
+      </View>
       </View>
     </View>
   );
@@ -190,20 +161,11 @@ const ScheduleCall = ({route}) => {
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    backgroundColor: '#F5EEF8',
-  },
-  container: {
-    flex: 1,
-    marginVertical: 20,
-    marginHorizontal: 20,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 4,
     backgroundColor: 'white',
-    borderRadius: 8,
-    padding: 16,
+  },
+  contentContainer: {
+    marginHorizontal: 15,
+    marginVertical: 10
   },
   fieldContainer: {
     marginBottom: 20,
@@ -231,7 +193,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   dateContainer: {
-    marginTop: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
