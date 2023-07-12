@@ -29,6 +29,7 @@ import {
   clearEditEnquiryState,
   setEditEnquiryDb,
 } from '../redux/slice/editEnquirySlice';
+import Calendars from './subCom/Calendars';
 const DetailEnquiry = ({route}) => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
@@ -47,7 +48,7 @@ const DetailEnquiry = ({route}) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [editData, setEditData] = useState(null);
   const [openCurentDate, setOpenCurrentDate] = useState(false);
-  const [expDeliveryDate, setExpDeliveryDate] = useState(new Date());
+  const [expDeliveryDate, setExpDeliveryDate] = useState('');
   const [openExpDeliveryDate, setOpenExpDeliveryDate] = useState(false);
   const [manuYearDate, setManuYearDate] = useState(new Date());
   const [openManuYearDate, setOPenManuYearDate] = useState(false);
@@ -116,7 +117,7 @@ const DetailEnquiry = ({route}) => {
       });
     }
   }, [editData]);
-  const formattedDeliveryDate = expDeliveryDate.toLocaleDateString();
+  // const formattedDeliveryDate = expDeliveryDate.toLocaleDateString();
   const handleReadValue = () => {
     console.log(selectedOption);
   };
@@ -247,6 +248,12 @@ const DetailEnquiry = ({route}) => {
       ...prefield,
       [field]: value,
     }));
+  };
+  const handleCalendarDate = selectedDate => {
+    console.log(selectedDate.dateString);
+    console.log(selectedDate);
+    setExpDeliveryDate(selectedDate.dateString);
+    setOpenExpDeliveryDate(false);
   };
   const openModal = () => {
     setShowModal(true);
@@ -384,24 +391,20 @@ const DetailEnquiry = ({route}) => {
           <View style={{marginBottom: 5}}>
             <Text style={styles.label}>Expected Delivery Date *</Text>
             <View style={styles.deliveryDateContainer}>
-              <Text
-                style={styles.deliveryDate}
-                onPress={() => setOpenExpDeliveryDate(true)}>
-                {formattedDeliveryDate}
-              </Text>
-              <DatePicker
-                mode="date"
-                modal
-                open={openExpDeliveryDate}
-                date={expDeliveryDate}
-                theme="dark"
-                onConfirm={date => {
-                  setOpenExpDeliveryDate(false);
-                  setExpDeliveryDate(date);
-                }}
-                onCancel={() => {
-                  setOpenExpDeliveryDate(false);
-                }}
+            <TouchableOpacity
+                onPress={() => {
+                  setOpenExpDeliveryDate(true);
+                }}>
+                <Text style={{paddingVertical: 7}}>
+                  {expDeliveryDate === ''
+                    ? new Date().toISOString().slice(0, 10)
+                    : expDeliveryDate}
+                </Text>
+              </TouchableOpacity>
+              <Calendars 
+              showModal={openExpDeliveryDate}
+              selectedDate={expDeliveryDate}
+              handleCalendarDate={handleCalendarDate}
               />
             </View>
           </View>

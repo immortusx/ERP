@@ -17,6 +17,7 @@ import {
 } from '../redux/slice/addFollowUpSlice';
 import SweetSuccessAlert from './subCom/SweetSuccessAlert';
 import {Linking} from 'react-native';
+import Calendars from './subCom/Calendars';
 const ScheduleCall = ({route}) => {
   const {item} = route.params;
   const dispatch = useDispatch();
@@ -25,7 +26,7 @@ const ScheduleCall = ({route}) => {
   );
   const [discussion, setDiscussion] = useState('');
   const [openScheduleDate, setOpenScheduleDate] = useState(false);
-  const [scheduleDate, setScheduleDate] = useState(new Date());
+  const [scheduleDate, setScheduleDate] = useState('');
   const [scheduleDetails, setScheduleDetails] = useState([]);
 
   useEffect(() => {
@@ -61,7 +62,13 @@ const ScheduleCall = ({route}) => {
       console.log(formattedScheduleDate, discussion);
     }
   };
-  const formattedScheduleDate = scheduleDate.toISOString().split('T')[0];
+  const handleCalendarDate = selectedDate => {
+    console.log(selectedDate.dateString);
+    console.log(selectedDate);
+    setScheduleDate(selectedDate.dateString);
+    setOpenScheduleDate(false);
+  };
+  // const formattedScheduleDate = scheduleDate.toISOString().split('T')[0];
   return (
     <View style={styles.mainContainer}>
       <View style={styles.container}>
@@ -71,26 +78,21 @@ const ScheduleCall = ({route}) => {
         <View style={styles.dateContainer}>
           <Text>Select Call Date*</Text>
           <View style={styles.dateStyle}>
-            <Text
-              style={styles.dateText}
-              placeholder="Select Date"
-              onPress={() => setOpenScheduleDate(true)}>
-              {formattedScheduleDate}
-            </Text>
-            <DatePicker
-              mode="date"
-              modal
-              open={openScheduleDate}
-              date={scheduleDate}
-              theme="dark"
-              onConfirm={date => {
-                setOpenScheduleDate(false);
-                setScheduleDate(date);
-              }}
-              onCancel={() => {
-                setOpenScheduleDate(false);
-              }}
-            />
+          <TouchableOpacity
+                onPress={() => {
+                  setOpenScheduleDate(true);
+                }}>
+                <Text style={styles.dateText}>
+                  {scheduleDate === ''
+                    ? new Date().toISOString().slice(0, 10)
+                    : scheduleDate}
+                </Text>
+              </TouchableOpacity>
+              <Calendars 
+              showModal={openScheduleDate}
+              selectedDate={scheduleDate}
+              handleCalendarDate={handleCalendarDate}
+              />
           </View>
         </View>
         <View style={styles.fieldContainer}>
@@ -111,7 +113,9 @@ const ScheduleCall = ({route}) => {
           <View style={styles.callBox}>
             <View style={styles.leftContainer}>
               <Text>Let's have a call</Text>
-              <Text>{formattedScheduleDate}</Text>
+              <Text>{scheduleDate === ''
+                    ? new Date().toISOString().slice(0, 10)
+                    : scheduleDate}</Text>
               <Text>987654567</Text>
             </View>
             <View style={styles.rightContainer}>
