@@ -178,6 +178,7 @@ export default function Addemployee({ workFor }) {
     };
     await Axios.get(url, config).then((response) => {
       if (response.data?.isSuccess) {
+        console.log(response.data.result,"response.data.result");
         setBranchRoles(response.data.result);
       }
     });
@@ -191,8 +192,8 @@ export default function Addemployee({ workFor }) {
   useEffect(() => {
     if (workFor === "forEdit") {
       if (editemployeeData === null) {
-        dispatch(setShowMessage("Please select a employee"));
         setTimeout(() => {
+          dispatch(setShowMessage("Please select a employee"));
           navigate("/administration/employees");
         }, 1000);
       } else {
@@ -209,12 +210,12 @@ export default function Addemployee({ workFor }) {
           bankname: editemployeeData.bank_name,
           bankBranch: editemployeeData.bank_branch,
           accountNo: editemployeeData.account_number,
-          accountType: editemployeeData.account_number,
+          accountType: editemployeeData.account_type,
           ifscCode: editemployeeData.ifsc_code,
         });
         setJobDetails({
-          branch: editemployeeData.branch_name,
-          department: editemployeeData.department_name,
+          branch: editemployeeData.branch_id,
+          department: editemployeeData.department_id,
         });
       }
     }
@@ -648,7 +649,7 @@ return (
         <h5 className="m-0">Job Information</h5>
         <div className="row mt-3 m-0">
           <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
-            <label className="myLabel" htmlFor="bloodGroup">
+            <label className="myLabel" htmlFor="branch">
               Select Branch
             </label>
             <select
@@ -667,7 +668,7 @@ return (
             </select>
           </section>
           <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
-            <label className="myLabel" htmlFor="bloodGroup">
+            <label className="myLabel" htmlFor="department">
               Select Department
             </label>
             <select
@@ -675,7 +676,7 @@ return (
               id="department"
               name="department"
               onChange={onChangejobdetails}
-              value={jobdetails.value}
+              value={jobdetails.department}
             >
               <option value="">Select Department Name</option>
               {departmentList.map((dept, index) => (
@@ -745,7 +746,7 @@ return (
               id="bloodGroup"
               name="bankname"
               onChange={onChangeBankDetais}
-              value={BankDetais.value}
+              value={BankDetais.bankname}
             >
               <option value="">Select Bank Name</option>
               {bankName.map((group, index) => (
@@ -786,7 +787,7 @@ return (
             />
           </section>
           <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
-            <label className="myLabel" htmlFor="email">
+            <label className="myLabel" htmlFor="accountType">
               Account Type{" "}
             </label>
             <select
@@ -794,7 +795,7 @@ return (
               id="accountType"
               name="accountType"
               onChange={onChangeBankDetais}
-              value={BankDetais.value}
+              value={BankDetais.accountType}
             >
               <option value="">Select Account Type</option>
               <option value="Savings">Savings</option>
@@ -881,7 +882,8 @@ return (
                     <h6 className="fw-bold ms-2">No Access</h6>
                   </div>
                   <p className="ms-4">
-                    They will be able to login using the Access level you choose.
+                    They will be able to login using the Access level you
+                    choose.
                   </p>
                 </div>
               </div>
