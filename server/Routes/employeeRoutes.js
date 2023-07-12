@@ -59,7 +59,7 @@ router.post("/add-employee", tokenCheck, async (req, res) => {
       // }
 
       await queryDatabase(
-        `INSERT INTO employee_detail(branch_id, department_id, user_id,role_id) VALUES('${branch}','${department}','${userId}','${role}')`
+        `INSERT INTO employee_detail (branch_id, department_id, user_id,role_id) VALUES('${branch}','${department}','${userId}','${role}')`
       );
 
       await queryDatabase(
@@ -95,6 +95,7 @@ async function queryDatabase(query) {
 
 router.get("/get-employee-details/:id", tokenCheck, async (req, res) => {
   const userId = req.params.id;
+  console.log(req, " req");
   const urlNew = "SELECT * FROM employee_detail where id=" + userId;
   db.query(urlNew, async (err, result) => {
     console.log(result, "result");
