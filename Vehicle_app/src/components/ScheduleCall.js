@@ -18,6 +18,9 @@ import {
 import SweetSuccessAlert from './subCom/SweetSuccessAlert';
 import {Linking} from 'react-native';
 import Calendars from './subCom/Calendars';
+import {API_URL} from '@env';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 const ScheduleCall = ({route}) => {
   const {item} = route.params;
   const dispatch = useDispatch();
@@ -37,6 +40,27 @@ const ScheduleCall = ({route}) => {
       console.warn('follow up saved');
     }
   }, [followUpState]);
+  const getFollowUpDetils = async () => {
+    const customer_id = item.id;
+    const url = `${API_URL}/api/enquiry/get-follow-up/${customer_id}`;
+    console.log('get follow up', url);
+    const token = await AsyncStorage.getItem('rbacToken');
+    const config = {
+      headers: {
+        token: token ? token : '',
+      },
+    };
+    console.log(config);
+    await axios.get(url, config).then(response => {
+      if (response) {
+        console.log(response.data, 'get.......');
+        // setVillageresult(response.data.result);
+      }
+    });
+  };
+  useEffect(()=> {
+    getFollowUpDetils();
+  },[])
   const makePhoneCall = () => {
     console.log('Calling...');
     let mobileNumber = 9060779043;
@@ -46,12 +70,12 @@ const ScheduleCall = ({route}) => {
     if (discussion.length > 0) {
       const formData = {
         last_discussion: discussion,
-        next_followup_date: formattedScheduleDate,
+        next_followup_date: scheduleDate,
         customer_id: item.id,
       };
       dispatch(setFollowUpDb(formData));
       const newSchedule = {
-        date: formattedScheduleDate,
+        date: scheduleDate,
         last_discussion: discussion,
       };
       setScheduleDetails(preScheduleDetails => [
@@ -59,7 +83,7 @@ const ScheduleCall = ({route}) => {
         newSchedule,
       ]);
       setDiscussion('');
-      console.log(formattedScheduleDate, discussion);
+      // console.log(formattedScheduleDate, discussion);
     }
   };
   const handleCalendarDate = selectedDate => {
@@ -78,21 +102,21 @@ const ScheduleCall = ({route}) => {
         <View style={styles.dateContainer}>
           <Text>Select Call Date*</Text>
           <View style={styles.dateStyle}>
-          <TouchableOpacity
-                onPress={() => {
-                  setOpenScheduleDate(true);
-                }}>
-                <Text style={styles.dateText}>
-                  {scheduleDate === ''
-                    ? new Date().toISOString().slice(0, 10)
-                    : scheduleDate}
-                </Text>
-              </TouchableOpacity>
-              <Calendars 
+            <TouchableOpacity
+              onPress={() => {
+                setOpenScheduleDate(true);
+              }}>
+              <Text style={styles.dateText}>
+                {scheduleDate === ''
+                  ? new Date().toISOString().slice(0, 10)
+                  : scheduleDate}
+              </Text>
+            </TouchableOpacity>
+            <Calendars
               showModal={openScheduleDate}
               selectedDate={scheduleDate}
               handleCalendarDate={handleCalendarDate}
-              />
+            />
           </View>
         </View>
         <View style={styles.fieldContainer}>
@@ -113,9 +137,11 @@ const ScheduleCall = ({route}) => {
           <View style={styles.callBox}>
             <View style={styles.leftContainer}>
               <Text>Let's have a call</Text>
-              <Text>{scheduleDate === ''
-                    ? new Date().toISOString().slice(0, 10)
-                    : scheduleDate}</Text>
+              <Text>
+                {scheduleDate === ''
+                  ? new Date().toISOString().slice(0, 10)
+                  : scheduleDate}
+              </Text>
               <Text>987654567</Text>
             </View>
             <View style={styles.rightContainer}>
@@ -136,7 +162,7 @@ const ScheduleCall = ({route}) => {
               return (
                 <View style={styles.callBox}>
                   <View style={styles.leftContainer}>
-                    <Text>{item.discussion}</Text>
+                    <Text>{item.last_discussion}</Text>
                     <Text>{item.date}</Text>
                     <Text>987654567</Text>
                   </View>

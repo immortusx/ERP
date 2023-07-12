@@ -358,7 +358,7 @@ router.post("/set-new-fast-enquiry", tokenCheck, async (req, res) => {
     const fastSql = `INSERT INTO customers (first_name, phone_number, whatsapp_number, taluka, village) VALUES (?,?,?,?,?)`;
     await db.query(
       fastSql,
-      [first_name, phone_number, whatsapp_number,taluka, village],
+      [first_name, phone_number, whatsapp_number, taluka, village],
       async (err, fastEnquiry) => {
         if (err) {
           console.log({ isSuccess: false, result: err });
@@ -713,14 +713,14 @@ router.post("/set-follow-up", tokenCheck, async (req, res) => {
           console.log(result[0].id);
           const enquiry_id = result[0].id;
           const followup_date = new Date().toISOString().split("T")[0];
-          const followUpSql = `INSERT INTO follow_up_details (enquiry_id, last_discussion, followup_date, next_followup_date) VALUES ('${enquiry_id}', '${last_discussion}', '${followup_date}', '${next_followup_date}')`;
+          const followUpSql = `INSERT INTO follow_up_details (customer_id, enquiry_id, last_discussion, followup_date, next_followup_date) VALUES ('${customer_id}', '${enquiry_id}', '${last_discussion}', '${followup_date}', '${next_followup_date}')`;
           await db.query(followUpSql, async (err, followUpResult) => {
             if (err) {
               console.log({ isSuccess: false, result: err });
               res.status(500).send({ isSuccess: false, error: "error" });
             } else {
               console.log({ isSuccess: true, result: followUpResult });
-              res.send({ isSuccess: true, result: 'success' });
+              res.send({ isSuccess: true, result: "success" });
             }
           });
         }
@@ -733,13 +733,22 @@ router.post("/set-follow-up", tokenCheck, async (req, res) => {
 });
 
 //======================Get Follow Up===========//
-router.get('/get-follow-up', async(req, res)=> {
-  try{
-    await db.query('SELECT * FROM follow_up_details')
-  }catch(err){
+router.get("/get-follow-up/:id", tokenCheck, async (req, res) => {
+  try {
+    console.log(">>>>>>>>>/get-follow-up", req.params);
+    await db.query("SELECT * FROM follow_up_details", async (err, result) => {
+      if (err) {
+        console.log({ isSuccess: false, result: err });
+        res.send({ isSuccess: false, result: "error" });
+      } else {
+        console.log({ isSuccess: true, result: result });
+        res.send({ isSuccess: true, result: result });
+      }
+    });
+  } catch (err) {
     console.log(err);
   }
-})
+});
 
 //=================Get Enquiry Location List============//
 router.get("/get-enquiry-location-list", tokenCheck, async (req, res) => {

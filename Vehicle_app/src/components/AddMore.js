@@ -334,7 +334,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderColor: '#138D75',
     borderWidth: 0.1,
-    paddingHorizontal: 4,
+    paddingHorizontal: 5,
   },
   discussionText: {
     color: '#138D75',
