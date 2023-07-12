@@ -97,6 +97,13 @@ const AddManufacturDetails = ({route}) => {
     getManufacturer();
   }, []);
 
+  useEffect(()=> {
+    if(manufacturerData){
+      setManufacturer(1);
+    }
+  },[manufacturerData]);
+
+
   useEffect(() => {
     if (manufacturer) {
       const getModal = async () => {
@@ -176,6 +183,7 @@ const AddManufacturDetails = ({route}) => {
               iconStyle={styles.iconStyle}
               data={manufacturItem}
               search
+              disable={true}
               maxHeight={300}
               labelField="label"
               valueField="value"
@@ -287,6 +295,7 @@ const styles = StyleSheet.create({
   label: {
     color: 'grey',
     marginBottom: 2,
+    color: '#1B4F72',
   },
   inputStyle: {
     marginVertical: 5,

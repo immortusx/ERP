@@ -249,6 +249,7 @@ const FastEnquiry = () => {
                 iconStyle={styles.iconStyle}
                 data={talukaData}
                 search
+                disable={true}
                 maxHeight={200}
                 labelField="label"
                 valueField="value"
@@ -303,118 +304,7 @@ const FastEnquiry = () => {
             <Text style={styles.submitButtonText}>Submit</Text>
           </TouchableOpacity>
         </View>
-
-        <View style={styles.centeredView}>
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={modalVisible}
-            onRequestClose={() => {
-              Alert.alert('Modal has been closed.');
-              setModalVisible(!modalVisible);
-            }}>
-            <View style={styles.centeredView}>
-              <View style={styles.modalView}>
-                <Pressable
-                  style={[styles.button, styles.buttonClose]}
-                  onPress={closeModal}>
-                  <Image
-                    source={require('../../assets/cancel.png')}
-                    style={styles.cancelImage}
-                  />
-                </Pressable>
-                <Text style={styles.modalTitle}>Add Details</Text>
-                <TextInput
-                  style={styles.textInput}
-                  placeholder="Enter Maker's Name"
-                  autoCapitalize="none"
-                  keyboardType="maker"
-                  // value={manufacturer}
-                  onChangeText={value => onChangeInputField(value, 'maker')}
-                />
-                <TextInput
-                  style={styles.textInput}
-                  placeholder="Enter Modal"
-                  autoCapitalize="none"
-                  keyboardType="modal"
-                  // value={manufacturer}
-                  onChangeText={value => onChangeInputField(value, 'modalName')}
-                />
-                <TextInput
-                  style={styles.textInput}
-                  placeholder="Enter Variant"
-                  autoCapitalize="none"
-                  keyboardType="variant"
-                  // value={manufacturer}
-                  onChangeText={value =>
-                    onChangeInputField(value, 'variantName')
-                  }
-                />
-                <View style={styles.deliveryDateContainer}>
-                  <Text>Year of Manufactur</Text>
-                  <Text
-                    style={styles.deliveryDate}
-                    placeholder="Select Date"
-                    onPress={() => setOPenManuYearDate(true)}>
-                    {formattedManuYear}
-                  </Text>
-                  <DatePicker
-                    mode="date"
-                    modal
-                    open={openManuYearDate}
-                    date={manuYearDate}
-                    theme="dark"
-                    onConfirm={date => {
-                      setOPenManuYearDate(false);
-                      setManuYearDate(date);
-                    }}
-                    onCancel={() => {
-                      setOPenManuYearDate(false);
-                    }}
-                  />
-                </View>
-                <View style={styles.sourceContainer}>
-                  <Text style={styles.label}>Condition :</Text>
-                  <View style={styles.enquirySourceContainer}>
-                    {/* {renderLabel()} */}
-                    <Dropdown
-                      style={[
-                        styles.dropdown,
-                        isFocus && {borderColor: 'blue'},
-                      ]}
-                      placeholderStyle={styles.placeholderStyle}
-                      selectedTextStyle={styles.selectedTextStyle}
-                      inputSearchStyle={styles.inputSearchStyle}
-                      iconStyle={styles.iconStyle}
-                      data={conditionType}
-                      search
-                      maxHeight={300}
-                      labelField="label"
-                      valueField="value"
-                      placeholder={!isFocus ? 'Select Condition' : ' '}
-                      searchPlaceholder="Search..."
-                      value={condition}
-                      onFocus={() => setIsFocus(true)}
-                      onBlur={() => setIsFocus(false)}
-                      onChange={item => {
-                        setCondtion(item.value);
-                        setIsFocus(false);
-                      }}
-                      // renderLeftIcon={() => (
-                      //   <Text>{isFocus ? 'blue' : 'black'}</Text>
-                      // )}
-                    />
-                  </View>
-                </View>
-                <Pressable
-                  style={[styles.roundedButton, styles.saveButton]}
-                  onPress={handleModalData}>
-                  <Text style={styles.buttonText}>Save</Text>
-                </Pressable>
-              </View>
-            </View>
-          </Modal>
-        </View>
+        
         <SweetSuccessAlert message={message} modalShow={showModal} />
       </View>
     </ScrollView>

@@ -163,7 +163,12 @@ const AddMore = () => {
                           {Math.floor(
                             (new Date() - new Date(item.date)) /
                               (1000 * 60 * 60 * 24),
-                          )}Day
+                          ) === 0
+                            ? 'Today'
+                            : Math.floor(
+                                (new Date() - new Date(item.date)) /
+                                  (1000 * 60 * 60 * 24),
+                              ) + ' Day'}
                         </Text>
                       </TouchableOpacity>
                     </View>
@@ -329,12 +334,11 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderColor: '#138D75',
     borderWidth: 0.1,
-    paddingHorizontal: 4
+    paddingHorizontal: 4,
   },
   discussionText: {
     color: '#138D75',
     textAlign: 'center',
-    
   },
 });
 

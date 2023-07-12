@@ -350,6 +350,7 @@ const styles = StyleSheet.create({
   label: {
     color: 'grey',
     marginBottom: 2,
+    color: '#1B4F72',
   },
   inputStyle: {
     marginVertical: 5,
