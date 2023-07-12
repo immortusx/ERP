@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -10,19 +10,48 @@ import {
   FlatList,
 } from 'react-native';
 import DatePicker from 'react-native-date-picker';
-
+import {useDispatch, useSelector} from 'react-redux';
+import {
+  clearFollowUpState,
+  setFollowUpDb,
+} from '../redux/slice/addFollowUpSlice';
+import SweetSuccessAlert from './subCom/SweetSuccessAlert';
+import {Linking} from 'react-native';
 const ScheduleCall = ({route}) => {
   const {item} = route.params;
+  const dispatch = useDispatch();
+  const followUpState = useSelector(
+    state => state.followUpSlice.followUpState.result,
+  );
   const [discussion, setDiscussion] = useState('');
   const [openScheduleDate, setOpenScheduleDate] = useState(false);
   const [scheduleDate, setScheduleDate] = useState(new Date());
   const [scheduleDetails, setScheduleDetails] = useState([]);
 
+  useEffect(() => {
+    console.log(followUpState, 'ggg');
+    if (followUpState.isSuccess && followUpState.result === 'success') {
+      dispatch(clearFollowUpState());
+      console.log(followUpState, 'bbbbbbbbbb');
+      console.warn('follow up saved');
+    }
+  }, [followUpState]);
+  const makePhoneCall = () => {
+    console.log('Calling...');
+    let mobileNumber = 9060779043;
+    Linking.openURL(`tel:${item.phone_nmuber}`);
+  };
   const handleSaveDetails = () => {
     if (discussion.length > 0) {
+      const formData = {
+        last_discussion: discussion,
+        next_followup_date: formattedScheduleDate,
+        customer_id: item.id,
+      };
+      dispatch(setFollowUpDb(formData));
       const newSchedule = {
         date: formattedScheduleDate,
-        discussion: discussion,
+        last_discussion: discussion,
       };
       setScheduleDetails(preScheduleDetails => [
         ...preScheduleDetails,
@@ -32,10 +61,13 @@ const ScheduleCall = ({route}) => {
       console.log(formattedScheduleDate, discussion);
     }
   };
-  const formattedScheduleDate = scheduleDate.toLocaleDateString();
+  const formattedScheduleDate = scheduleDate.toISOString().split('T')[0];
   return (
     <View style={styles.mainContainer}>
       <View style={styles.container}>
+        {followUpState.isSuccess && (
+          <SweetSuccessAlert message={followUpState.result} modalShow={true} />
+        )}
         <View style={styles.dateContainer}>
           <Text>Select Call Date*</Text>
           <View style={styles.dateStyle}>
@@ -83,10 +115,15 @@ const ScheduleCall = ({route}) => {
               <Text>987654567</Text>
             </View>
             <View style={styles.rightContainer}>
-              <Image
-                style={styles.personImg}
-                source={require('../../assets/telephone.png')}
-              />
+              <TouchableOpacity
+                onPress={() => {
+                  makePhoneCall();
+                }}>
+                <Image
+                  style={styles.personImg}
+                  source={require('../../assets/telephone.png')}
+                />
+              </TouchableOpacity>
             </View>
           </View>
           <FlatList
@@ -100,10 +137,15 @@ const ScheduleCall = ({route}) => {
                     <Text>987654567</Text>
                   </View>
                   <View style={styles.rightContainer}>
-                    <Image
-                      style={styles.personImg}
-                      source={require('../../assets/telephone.png')}
-                    />
+                    <TouchableOpacity
+                      onPress={() => {
+                        makePhoneCall();
+                      }}>
+                      <Image
+                        style={styles.personImg}
+                        source={require('../../assets/telephone.png')}
+                      />
+                    </TouchableOpacity>
                   </View>
                 </View>
               );

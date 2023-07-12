@@ -646,6 +646,7 @@ const styles = StyleSheet.create({
   },
   label: {
     marginBottom: 5,
+    color: '#1B4F72'
   },
   inputStyle: {
     marginVertical: 5,

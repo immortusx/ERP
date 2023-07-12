@@ -23,7 +23,7 @@ export const getEnquiryData = createAsyncThunk(
     };
     console.log(config);
     const response = await axios.get(url, config);
-    // console.log(response.data,'ghg');
+    // console.log(response.data,'eeeeeeeeeeeeeeeee');
     return response.data;
   },
 );

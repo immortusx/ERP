@@ -57,13 +57,13 @@ const AddManufacturDetails = ({route}) => {
 
   useEffect(()=> {
     if(editData){
-      console.log(editData, 'manuedetails');
+      console.log(editData, 'manuedetails....');
       console.log(editData.manufacturer);
       console.log(editData.modal);
       console.log(editData.variant);
-      setManufacturer(editData.manufacturer);
-      setModal(editData.modal);
-      setVariant(editData.variant);
+      setManufacturer(1);
+      setModal(6);
+      setVariant(18);
     }
   },[editData])
   const renderLabel = () => {
@@ -89,7 +89,7 @@ const AddManufacturDetails = ({route}) => {
       console.log(config);
       await axios.get(url, config).then(response => {
         if (response) {
-          console.log(response.data.result);
+          console.log(response.data.result,'mmmmmmmmmmmmmmmmmmmmm');
           setManufacurerData(response.data.result);
         }
       });
@@ -112,7 +112,7 @@ const AddManufacturDetails = ({route}) => {
         console.log(config);
         await axios.get(url, config).then(response => {
           if (response) {
-            console.log(response.data.result);
+            console.log(response.data.result,'modllllllllllllll');
             setModalData(response.data.result);
           }
         });
@@ -136,7 +136,7 @@ const AddManufacturDetails = ({route}) => {
         console.log(config);
         await axios.get(url, config).then(response => {
           if (response) {
-            console.log(response.data.result);
+            console.log(response.data.result,'vvvvvvvvvvvv');
             setVariantData(response.data.result);
           }
         });

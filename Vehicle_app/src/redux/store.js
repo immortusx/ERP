@@ -9,6 +9,7 @@ import getAllVillageSlice from './slice/getAllVillageSlice';
 import addFastEnquirySlice from './slice/addFastEnquirySlice';
 import editEnquirySlice from './slice/editEnquirySlice';
 import getUserProfile from './slice/getUserProfile';
+import addFollowUpSlice from './slice/addFollowUpSlice';
 
 export const store = configureStore({
   reducer: {
@@ -21,6 +22,7 @@ export const store = configureStore({
     getEnquiryState: getEnquirySlice,
     fastEnquirySlice: addFastEnquirySlice,
     editEnquirySlice: editEnquirySlice,
-    getUserProfileSlice: getUserProfile
+    getUserProfileSlice: getUserProfile,
+    followUpSlice: addFollowUpSlice
   },
 });

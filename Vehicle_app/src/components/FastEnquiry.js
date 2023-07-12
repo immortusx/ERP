@@ -224,6 +224,36 @@ const FastEnquiry = () => {
             />
           </View>
           <View style={{marginBottom: 5}}>
+            <Text style={styles.label}>Select Taluka *</Text>
+            <View style={styles.enquirySourceContainer}>
+              {/* {renderLabel()} */}
+              <Dropdown
+                style={[styles.dropdown, isFocus && {borderColor: 'blue'}]}
+                placeholderStyle={styles.placeholderStyle}
+                selectedTextStyle={styles.selectedTextStyle}
+                inputSearchStyle={styles.inputSearchStyle}
+                iconStyle={styles.iconStyle}
+                data={villageData}
+                search
+                maxHeight={200}
+                labelField="label"
+                valueField="value"
+                placeholder={!isFocus ? 'Select Taluka' : ' '}
+                searchPlaceholder="Search..."
+                value={village}
+                onFocus={() => setIsFocus(true)}
+                onBlur={() => setIsFocus(false)}
+                onChange={item => {
+                  setVillage(item.value);
+                  setIsFocus(false);
+                }}
+                // renderLeftIcon={() => (
+                //   <Text>{isFocus ? 'blue' : 'black'}</Text>
+                // )}
+              />
+            </View>
+          </View>
+          <View style={{marginBottom: 5}}>
             <Text style={styles.label}>Select Village *</Text>
             <View style={styles.enquirySourceContainer}>
               {/* {renderLabel()} */}
@@ -482,6 +512,7 @@ const styles = StyleSheet.create({
   },
   label: {
     marginBottom: 5,
+    color: '#1B4F72'
   },
   inputStyle: {
     marginVertical: 5,
