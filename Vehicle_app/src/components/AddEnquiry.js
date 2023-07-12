@@ -24,6 +24,8 @@ import {saveModalData} from '../redux/slice/modalDataSlice';
 import SweetSuccessAlert from './subCom/SweetSuccessAlert';
 import FastEnquiry from './FastEnquiry';
 import DetailEnquiry from './DetailEnquiry';
+import {Calendar} from 'react-native-calendars';
+import Calendars from './subCom/Calendars';
 const AddEnquiry = ({navigation}) => {
   const dispatch = useDispatch();
   // const enquiryState = useSelector(state => state.enquriySlice.enquiryState);
@@ -35,7 +37,7 @@ const AddEnquiry = ({navigation}) => {
   const {manufacturer, modal, variant} = useSelector(
     state => state.manufacturerDetails,
   );
-  const [currentDate, setCurrentDate] = useState(new Date());
+  const [currentDate, setCurrentDate] = useState('');
   const [renderScreen, setRenderScreen] = useState('Fast Enquiry');
   const [openCurentDate, setOpenCurrentDate] = useState(false);
   const [expDeliveryDate, setExpDeliveryDate] = useState(new Date());
@@ -152,7 +154,7 @@ const AddEnquiry = ({navigation}) => {
     }
   };
 
-  const formattedCurrentDate = currentDate.toLocaleDateString();
+  // const formattedCurrentDate = currentDate.toLocaleDateString();
   const formattedManuYear = manuYearDate.toLocaleDateString();
   const handleModalData = () => {
     if (
@@ -181,6 +183,12 @@ const AddEnquiry = ({navigation}) => {
       [field]: value,
     }));
   };
+  const handleCalendarDate = selectedDate => {
+    console.log(selectedDate.dateString);
+    console.log(selectedDate);
+    setCurrentDate(selectedDate.dateString);
+    setShowModal(false);
+  };
   const openModal = () => {
     setShowModal(true);
   };
@@ -203,26 +211,43 @@ const AddEnquiry = ({navigation}) => {
             <Text>Enquiry</Text>
             <View style={styles.dateStyle}>
               <Text>Select Date : </Text>
-              <Text
-                style={styles.dateText}
-                placeholder="Select Date"
-                onPress={() => setOpenCurrentDate(true)}>
-                {formattedCurrentDate}
-              </Text>
-              <DatePicker
-                mode="date"
-                modal
-                open={openCurentDate}
-                date={currentDate}
-                theme="dark"
-                onConfirm={date => {
-                  setOpenCurrentDate(false);
-                  setCurrentDate(date);
-                }}
-                onCancel={() => {
-                  setOpenCurrentDate(false);
-                }}
+              <TouchableOpacity
+                onPress={() => {
+                  setShowModal(true);
+                }}>
+                <Text style={styles.dateText}>
+                  {currentDate === ''
+                    ? new Date().toISOString().slice(0, 10)
+                    : currentDate}
+                </Text>
+              </TouchableOpacity>
+              <Calendars
+                showModal={showModal}
+                selectedDate={currentDate}
+                handleCalendarDate={handleCalendarDate}
               />
+              {/* <Modal
+                visible={showModal}
+                animationType="fade"
+                transparent={true}>
+                <View style={styles.modalContainer}>
+                  <View style={styles.modalContent}>
+                    <Calendar
+                      style={{borderRadius: 10, elevation: 4, margin: 10}}
+                      onDayPress={date => {
+                        handleCalendarDate(date);
+                      }}
+                      markedDates={{
+                        [currentDate]: {
+                          selected: true,
+                          disableTouchEvent: true,
+                          selectedDotColor: 'orange',
+                        },
+                      }}
+                    />
+                  </View>
+                </View>
+              </Modal> */}
             </View>
           </View>
           <View style={styles.wrapper}>
@@ -545,5 +570,15 @@ const styles = StyleSheet.create({
   renderContainer: {
     marginTop: 10,
   },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    width: '80%',
+    borderRadius: 10,
+  },
 });
+
 export default AddEnquiry;

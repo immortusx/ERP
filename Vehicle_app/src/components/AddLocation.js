@@ -199,7 +199,66 @@ const AddLocation = ({route}) => {
     <View style={styles.container}>
       <View style={styles.customerContainer}>
         <Text style={styles.mainHeader}>Customer Location</Text>
-        
+        <View style={{marginBottom: 5}}>
+          <Text style={styles.label}>State *</Text>
+          <View style={styles.inputContainer}>
+            {/* {renderLabel()} */}
+            <Dropdown
+              style={[styles.dropdown, isFocus && {borderColor: 'blue'}]}
+              placeholderStyle={styles.placeholderStyle}
+              selectedTextStyle={styles.selectedTextStyle}
+              inputSearchStyle={styles.inputSearchStyle}
+              iconStyle={styles.iconStyle}
+              data={stateData}
+              search
+              maxHeight={300}
+              labelField="label"
+              valueField="value"
+              placeholder={!isFocus ? 'Select State' : ' '}
+              searchPlaceholder="Search..."
+              value={state}
+              onFocus={() => setIsFocus(true)}
+              onBlur={() => setIsFocus(false)}
+              onChange={item => {
+                setState(item.value);
+                setIsFocus(false);
+              }}
+              // renderLeftIcon={() => (
+              //   <Text>{isFocus ? 'blue' : 'black'}</Text>
+              // )}
+            />
+          </View>
+        </View>
+        <View style={{marginBottom: 5}}>
+          <Text style={styles.label}>District *</Text>
+          <View style={styles.inputContainer}>
+            {/* {renderLabel()} */}
+            <Dropdown
+              style={[styles.dropdown, isFocus && {borderColor: 'blue'}]}
+              placeholderStyle={styles.placeholderStyle}
+              selectedTextStyle={styles.selectedTextStyle}
+              inputSearchStyle={styles.inputSearchStyle}
+              iconStyle={styles.iconStyle}
+              data={districtData}
+              search
+              maxHeight={300}
+              labelField="label"
+              valueField="value"
+              placeholder={!isFocus ? 'Select District' : ' '}
+              searchPlaceholder="Search..."
+              value={district}
+              onFocus={() => setIsFocus(true)}
+              onBlur={() => setIsFocus(false)}
+              onChange={item => {
+                setDistrict(item.value);
+                setIsFocus(false);
+              }}
+              // renderLeftIcon={() => (
+              //   <Text>{isFocus ? 'blue' : 'black'}</Text>
+              // )}
+            />
+          </View>
+        </View>
         <View style={{marginBottom: 5}}>
           <Text style={styles.label}>Taluka *</Text>
           <View style={styles.inputContainer}>
@@ -291,6 +350,7 @@ const styles = StyleSheet.create({
   label: {
     color: 'grey',
     marginBottom: 2,
+    color: '#1B4F72',
   },
   inputStyle: {
     marginVertical: 5,

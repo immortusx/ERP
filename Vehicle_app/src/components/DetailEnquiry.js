@@ -29,6 +29,7 @@ import {
   clearEditEnquiryState,
   setEditEnquiryDb,
 } from '../redux/slice/editEnquirySlice';
+import Calendars from './subCom/Calendars';
 const DetailEnquiry = ({route}) => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
@@ -47,17 +48,18 @@ const DetailEnquiry = ({route}) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [editData, setEditData] = useState(null);
   const [openCurentDate, setOpenCurrentDate] = useState(false);
-  const [expDeliveryDate, setExpDeliveryDate] = useState(new Date());
+  const [expDeliveryDate, setExpDeliveryDate] = useState('');
   const [openExpDeliveryDate, setOpenExpDeliveryDate] = useState(false);
-  const [manuYearDate, setManuYearDate] = useState(new Date());
-  const [openManuYearDate, setOPenManuYearDate] = useState(false);
+  const [manuYearDate, setManuYearDate] = useState('');
+  const [openManuYearDate, setOpenManufafacturer] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [showMessageModal, setShowMessageModal] = useState(false);
   const [isFocus, setIsFocus] = useState(false);
   const [message, setMessage] = useState('');
   const [enquiry, setEnquiry] = useState(null);
   const [condition, setCondtion] = useState(null);
   const [selectedOption, setSelectedOption] = useState('No');
-  const options = ['Yes', 'No'];
+  const options = ['No', 'Yes'];
   const [modalVisible, setModalVisible] = useState(false);
   const [oldVehicleData, setOldVehicleData] = useState({
     maker: '',
@@ -94,6 +96,8 @@ const DetailEnquiry = ({route}) => {
     handleReadValue(selectedValue);
     if (selectedValue === 'Yes') {
       setModalVisible(true);
+    } else if (selectedValue === 'No') {
+      setModalVisible(false);
     }
   };
 
@@ -116,7 +120,7 @@ const DetailEnquiry = ({route}) => {
       });
     }
   }, [editData]);
-  const formattedDeliveryDate = expDeliveryDate.toLocaleDateString();
+  // const formattedDeliveryDate = expDeliveryDate.toLocaleDateString();
   const handleReadValue = () => {
     console.log(selectedOption);
   };
@@ -138,14 +142,14 @@ const DetailEnquiry = ({route}) => {
       dispatch(clearLocationForm());
       dispatch(clearManufacturerDetails());
       dispatch(clearModalData());
-      setMessage("Enquiry Updated");
+      setMessage('Enquiry Updated');
       console.log('Enquiry Updated');
       openModal();
       dispatch(getEnquiryData()).then(() => {
         navigation.navigate('AddMore');
       });
     }
-  },[editEnquiryState]);
+  }, [editEnquiryState]);
 
   useEffect(() => {
     if (enquiryState && enquiryState.isSuccess === true) {
@@ -153,7 +157,7 @@ const DetailEnquiry = ({route}) => {
       dispatch(clearLocationForm());
       dispatch(clearManufacturerDetails());
       dispatch(clearModalData());
-      setMessage("Enquiry Submitted");
+      setMessage('Enquiry Submitted');
       console.log('Enquiry submitted');
       openModal();
       dispatch(getEnquiryData()).then(() => {
@@ -171,7 +175,7 @@ const DetailEnquiry = ({route}) => {
     console.log(firstname, lastname, phone);
     console.log(manufacturer, modal, variant);
     console.log(enquiry);
-    console.log(formattedDeliveryDate);
+    // console.log(formattedDeliveryDate);
     console.log(condition, 'consdtion');
     console.log(maker, modalName, variantName, year, condition_of);
 
@@ -184,10 +188,7 @@ const DetailEnquiry = ({route}) => {
       district: district,
       taluka: taluka,
       village: village,
-      deliveryDate: expDeliveryDate
-        .toISOString()
-        .replace('T', ' ')
-        .slice(0, 19),
+      deliveryDate: expDeliveryDate.toString().replace('T', ' ').slice(0, 19),
       manufacturer: manufacturer,
       modal: modal,
       variant: variant,
@@ -220,7 +221,7 @@ const DetailEnquiry = ({route}) => {
   };
 
   const formattedCurrentDate = currentDate.toLocaleDateString();
-  const formattedManuYear = manuYearDate.toLocaleDateString();
+  // const formattedManuYear = manuYearDate.toLocaleDateString();
 
   const handleModalData = () => {
     if (
@@ -233,7 +234,7 @@ const DetailEnquiry = ({route}) => {
           maker: oldVehicleData.maker,
           modalName: oldVehicleData.modalName,
           variantName: oldVehicleData.variantName,
-          year: formattedManuYear,
+          year: manuYearDate,
           condition_of: condition,
         }),
       );
@@ -248,8 +249,20 @@ const DetailEnquiry = ({route}) => {
       [field]: value,
     }));
   };
+  const handleCalendarDate = selectedDate => {
+    console.log(selectedDate.dateString);
+    console.log(selectedDate);
+    setExpDeliveryDate(selectedDate.dateString);
+    setOpenExpDeliveryDate(false);
+  };
+  const handleManufacturYearDate = selectedDate => {
+    console.log(selectedDate.dateString);
+    console.log(selectedDate);
+    setManuYearDate(selectedDate.dateString);
+    setOpenManufafacturer(false);
+  };
   const openModal = () => {
-    setShowModal(true);
+    setShowMessageModal(true);
   };
   const openAddLocation = editData => {
     navigation.navigate('Add Location', {editData: editData});
@@ -384,24 +397,20 @@ const DetailEnquiry = ({route}) => {
           <View style={{marginBottom: 5}}>
             <Text style={styles.label}>Expected Delivery Date *</Text>
             <View style={styles.deliveryDateContainer}>
-              <Text
-                style={styles.deliveryDate}
-                onPress={() => setOpenExpDeliveryDate(true)}>
-                {formattedDeliveryDate}
-              </Text>
-              <DatePicker
-                mode="date"
-                modal
-                open={openExpDeliveryDate}
-                date={expDeliveryDate}
-                theme="dark"
-                onConfirm={date => {
-                  setOpenExpDeliveryDate(false);
-                  setExpDeliveryDate(date);
-                }}
-                onCancel={() => {
-                  setOpenExpDeliveryDate(false);
-                }}
+              <TouchableOpacity
+                onPress={() => {
+                  setOpenExpDeliveryDate(true);
+                }}>
+                <Text style={{paddingVertical: 7}}>
+                  {expDeliveryDate === ''
+                    ? new Date().toISOString().slice(0, 10)
+                    : expDeliveryDate}
+                </Text>
+              </TouchableOpacity>
+              <Calendars
+                showModal={openExpDeliveryDate}
+                selectedDate={expDeliveryDate}
+                handleCalendarDate={handleCalendarDate}
               />
             </View>
           </View>
@@ -413,34 +422,10 @@ const DetailEnquiry = ({route}) => {
               onSelect={handleSelect}
             />
           </View>
-        </View>
-        <View style={{paddingHorizontal: 15}}>
-          <TouchableOpacity style={styles.submitButton} onPress={submitEnquiry}>
-            <Text style={styles.submitButtonText}>
-              {editData ? 'Edit Enquiry' : 'Submit'}
-            </Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.centeredView}>
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={modalVisible}
-            onRequestClose={() => {
-              Alert.alert('Modal has been closed.');
-              setModalVisible(!modalVisible);
-            }}>
-            <View style={styles.centeredView}>
-              <View style={styles.modalView}>
-                <Pressable
-                  style={[styles.button, styles.buttonClose]}
-                  onPress={closeModal}>
-                  <Image
-                    source={require('../../assets/cancel.png')}
-                    style={styles.cancelImage}
-                  />
-                </Pressable>
-                <Text style={styles.modalTitle}>Add Details</Text>
+          {modalVisible && (
+            <View>
+              <View style={styles.expandedView}>
+                <Text style={styles.modalTitle}>Add Details *</Text>
                 <TextInput
                   style={styles.textInput}
                   placeholder="Enter Maker's Name"
@@ -470,28 +455,26 @@ const DetailEnquiry = ({route}) => {
                     onChangeInputField(value, 'variantName')
                   }
                 />
-                <View style={styles.deliveryDateContainer}>
-                  <Text>Year of Manufactur</Text>
-                  <Text
-                    style={styles.deliveryDate}
-                    placeholder="Select Date"
-                    onPress={() => setOPenManuYearDate(true)}>
-                    {formattedManuYear}
-                  </Text>
-                  <DatePicker
-                    mode="date"
-                    modal
-                    open={openManuYearDate}
-                    date={manuYearDate}
-                    theme="dark"
-                    onConfirm={date => {
-                      setOPenManuYearDate(false);
-                      setManuYearDate(date);
-                    }}
-                    onCancel={() => {
-                      setOPenManuYearDate(false);
-                    }}
-                  />
+
+                <View style={{marginBottom: 5}}>
+                  <Text style={styles.label}>Manufactur Year *</Text>
+                  <View style={styles.deliveryDateContainer}>
+                    <TouchableOpacity
+                      onPress={() => {
+                        setOpenManufafacturer(true);
+                      }}>
+                      <Text style={{paddingVertical: 7}}>
+                        {manuYearDate === ''
+                          ? new Date().toISOString().slice(0, 10)
+                          : manuYearDate}
+                      </Text>
+                    </TouchableOpacity>
+                    <Calendars
+                      showModal={openManuYearDate}
+                      selectedDate={manuYearDate}
+                      handleCalendarDate={handleManufacturYearDate}
+                    />
+                  </View>
                 </View>
                 <View style={styles.sourceContainer}>
                   <Text style={styles.label}>Condition :</Text>
@@ -526,16 +509,34 @@ const DetailEnquiry = ({route}) => {
                     />
                   </View>
                 </View>
-                <Pressable
-                  style={[styles.roundedButton, styles.saveButton]}
-                  onPress={handleModalData}>
-                  <Text style={styles.buttonText}>Save</Text>
-                </Pressable>
+                <View style={styles.buttonContainer}>
+                  <View style={styles.centeredButton}>
+                    <Pressable
+                      style={[
+                        styles.roundedButton,
+                        styles.saveButton,
+                        styles.smallButton,
+                      ]}
+                      onPress={handleModalData}>
+                      <Text style={[styles.buttonText, styles.smallButtonText]}>
+                        Add Details
+                      </Text>
+                    </Pressable>
+                  </View>
+                </View>
               </View>
             </View>
-          </Modal>
+          )}
         </View>
-        <SweetSuccessAlert message={message} modalShow={showModal} />
+        <View style={{paddingHorizontal: 15}}>
+          <TouchableOpacity style={styles.submitButton} onPress={submitEnquiry}>
+            <Text style={styles.submitButtonText}>
+              {editData ? 'Edit Enquiry' : 'Submit'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        <SweetSuccessAlert message={message} modalShow={showMessageModal} />
       </View>
     </ScrollView>
   );
@@ -599,8 +600,7 @@ const styles = StyleSheet.create({
     color: '#273746',
   },
   saveButton: {
-    marginTop: 30,
-    backgroundColor: '#0984DF',
+    backgroundColor: '#3498DB',
     paddingHorizontal: 20,
     paddingVertical: 10,
     marginBottom: 10,
@@ -646,7 +646,7 @@ const styles = StyleSheet.create({
   },
   label: {
     marginBottom: 5,
-    color: '#1B4F72'
+    color: '#1B4F72',
   },
   inputStyle: {
     marginVertical: 5,
@@ -804,6 +804,17 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 14,
     fontWeight: 'bold',
+  },
+  expandedView: {},
+  buttonContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  centeredButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 15,
   },
 });
 export default DetailEnquiry;
