@@ -44,6 +44,7 @@ getCategoryForm()
      console.log("editEmployeee");
      dispatch(setEdicategoryData(data));
      console.log(setEdicategoryData(data));
+     console.log(data,"sdfghjkl;fghjkl;vb")
      navigate("/administration/configuration/category/editcategory");
    };
 

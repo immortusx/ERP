@@ -4,10 +4,10 @@ import { useSelector, useDispatch } from "react-redux";
 import Axios from "axios";
 import { setShowMessage } from "../redux/slices/notificationSlice";
 import { useLocation, useNavigate } from "react-router-dom";
-import {
-  addAgencyToDb,
-  clearaddaddAgency,
-} from "../redux/slices/addagencySlice";
+// import {
+//   addAgencyToDb,
+//   clearaddaddAgency,
+// } from "../redux/slices/addagencySlice";
 import {
   clearEditagencyData,
   clearEditagencyState,
@@ -39,24 +39,26 @@ export default function Profile_list({ workFor }) {
   const { editagencySliceState } = useSelector(
     (state) => state.editAgencyDataState
   );
-  const editagencyData = useSelector(
-    (state) => state.editAgencyDataState.editagencyData
-  );
+  // const editagencyData = useSelector(
+  //   (state) => state.editAgencyDataState.editagencyData
+  // );
 
   useEffect(() => {
     if (editagencySliceState.isSuccess) {
       const result = editagencySliceState.message.result;
+      console.log(result,"result")
       if (result === "success") {
         dispatch(setShowMessage("Data is Updated"));
         clearInpHook();
         dispatch(clearEditagencyState());
         navigate("/administration/configuration");
       } else {
+        console.log("Something is wrong!");
         dispatch(setShowMessage("Something is wrong!"));
       }
-    } else {
-      dispatch(setShowMessage("Something is wrong!"));
+  
     }
+    
   }, [editagencySliceState]);
 
 //    useEffect(() => {
@@ -124,7 +126,7 @@ setAgencyData(parsedJson)
 
   const onChangeHandler = (e) => {
     const { name, value, files } = e.target;
-    if (name === "logo") {
+    if (name === "logo" ) {
       setAgencyData((prevState) => ({
         ...prevState,
         [name]: files[0],
@@ -148,19 +150,19 @@ setAgencyData(parsedJson)
     formData.append("name", aname);
     formData.append("contact", acontact);
     formData.append("email", aemail);
-    formData.append("logo", alogo.name);
-    if ( aname.length > 0 && acontact !== "" && aemail !== "" && alogo !== null) {
-      console.log("result save");
-      console.log(workFor,"workfor")
-      if (workFor === "forEdit") {
+    formData.append("logo", alogo);
 
+    if (  aname.length > 0 &&  acontact !== "" && aemail !== "" &&  alogo !== null
+) {
+      console.log("result save");
+      console.log(workFor, "workfor");
+      if (workFor === "forEdit") {
         dispatch(editagencyUpdateToDb(formData));
-    
+      }
     } else {
-        dispatch(setShowMessage("All field must be field"));
+      dispatch(setShowMessage("All fields must be filled"));
     }
   };
-}
   
   function handlCancel() {
      navigate("/administration/configuration");
@@ -170,7 +172,7 @@ setAgencyData(parsedJson)
     <div className="addUser myBorder bg-white rounded p-3">
       <main>
         <div className=" row mt-3 m-0">
-          <h5 className="m-0">Edit Agency</h5>
+          <h5 className="m-0"> Agency</h5>
 
           <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
             <label className="myLabel" htmlFor="email">
@@ -221,18 +223,31 @@ setAgencyData(parsedJson)
             />
           </section>
           <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
-            <label className="myLabel" htmlFor="logo">
-              Logo
-            </label>
-            <input
-              ref={fileInputRef}
-              onChange={(e) => {
-                onChangeHandler(e);
-              }}
-              autoComplete="false"
-              type="file"
-              name="logo"
-            />
+            <div class="mb-3">
+              <label for="formFile" className="myLabel" htmlFor="logo">
+                {" "}
+                Logo
+              </label>
+              <input
+                className="form-control"
+                type="file"
+                name="logo"
+                ref={fileInputRef}
+                onChange={(e) => {
+                  onChangeHandler(e);
+                }}
+              />
+            </div>
+            {agencyData && (
+              <img
+                src={`${process.env.REACT_APP_NODE_URL}/api${agencyData.logo}`}
+                alt="logo"
+                className="logo-image"
+                height={50}
+                width={50}
+                
+              />
+            )}
           </section>
 
           <section className="d-flex mt-3 flex-column flex-sm-row">
@@ -241,7 +256,7 @@ setAgencyData(parsedJson)
               onClick={handleSubmit}
               type="button"
             >
-              Edit Agency
+              Edit 
             </button>
 
             <button
