@@ -218,7 +218,6 @@ router.get("/get-Villagebydistrictid/:id", tokenCheck, async (req, res) => {
 
 router.get("/get-Village-by-branchId/:id", tokenCheck, async (req, res) => {
   console.log(">>>>>/get-Village-by-branchId");
-
   try {
     const branchId = req.params.id;
     await db.query(
@@ -228,20 +227,33 @@ router.get("/get-Village-by-branchId/:id", tokenCheck, async (req, res) => {
           console.log({ isSuccess: false, result: "error" });
           res.send({ isSuccess: false, result: "error" });
         } else {
+          console.log(villageByBranchId, "//////////////");
           const taluka = villageByBranchId[0].taluka;
           console.log(taluka);
           await db.query(
-            `SELECT name FROM village WHERE taluka_id = ${taluka}`,
-            (err, villageList) => {
+            `SELECT * FROM taluka WHERE id = ${taluka}`,
+            async (err, talukaName) => {
               if (err) {
                 console.log({ isSuccess: false, result: "error" });
                 res.send({ isSuccess: false, result: "error" });
               } else {
-                console.log({ isSuccess: true, result: villageList });
-                res.status(200).send({ isSuccess: true, result: villageList });
+                console.log({ isSuccess: true, result: talukaName });
+                await db.query(
+                  `SELECT * FROM village WHERE taluka_id = ${taluka}`,
+                  (err, villageList) => {
+                    if (err) {
+                      console.log({ isSuccess: false, result: "error" });
+                      res.send({ isSuccess: false, result: "error" });
+                    } else {
+                      console.log({ isSuccess: true, result: villageList });
+                      res.status(200).send({ isSuccess: true, result: {villageList, talukaName}});
+                    }
+                  }
+                );
               }
             }
           );
+
           // console.log({ isSuccess: true, result: villageByBranchId });
           // res.status(200).send({ isSuccess: true, result: villageByBranchId });
         }

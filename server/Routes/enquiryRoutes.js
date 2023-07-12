@@ -349,15 +349,16 @@ router.post("/set-new-fast-enquiry", tokenCheck, async (req, res) => {
     const phone_number = req.body.phone_number;
     const whatsapp_number = req.body.whatsapp_number;
     const village = req.body.village;
-    console.log(first_name, phone_number, whatsapp_number, village);
+    const taluka = req.body.taluka;
+    console.log(first_name, phone_number, whatsapp_number, village, taluka);
 
     const branch_id = req.body.branchId;
     const salesperson_id = 20;
 
-    const fastSql = `INSERT INTO customers (first_name, phone_number, whatsapp_number, village) VALUES (?,?,?,?)`;
+    const fastSql = `INSERT INTO customers (first_name, phone_number, whatsapp_number, taluka, village) VALUES (?,?,?,?,?)`;
     await db.query(
       fastSql,
-      [first_name, phone_number, whatsapp_number, village],
+      [first_name, phone_number, whatsapp_number,taluka, village],
       async (err, fastEnquiry) => {
         if (err) {
           console.log({ isSuccess: false, result: err });

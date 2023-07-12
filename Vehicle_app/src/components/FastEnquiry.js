@@ -22,7 +22,10 @@ import {saveEnquiryModalForm} from '../redux/slice/addEnquiryModal';
 import {saveModalData} from '../redux/slice/modalDataSlice';
 import SweetSuccessAlert from './subCom/SweetSuccessAlert';
 import {getVillageData} from '../redux/slice/getAllVillageSlice';
-import {clearFastEnquiryState, setFastEnquiryDb} from '../redux/slice/addFastEnquirySlice';
+import {
+  clearFastEnquiryState,
+  setFastEnquiryDb,
+} from '../redux/slice/addFastEnquirySlice';
 import {getEnquiryData} from '../redux/slice/getEnquirySlice';
 import {useNavigation} from '@react-navigation/native';
 const FastEnquiry = () => {
@@ -50,11 +53,13 @@ const FastEnquiry = () => {
   const [showModal, setShowModal] = useState(false);
   const [isFocus, setIsFocus] = useState(false);
   const [village, setVillage] = useState(null);
+  const [taluka, setTaluka] = useState(null);
   const [message, setMessage] = useState('');
   const [condition, setCondtion] = useState(null);
   const [selectedOption, setSelectedOption] = useState('No');
   const options = ['Yes', 'No'];
   const [resultData, setResultData] = useState([]);
+  const [branchTaluka, setBrnchTaluka] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [oldVehicleData, setOldVehicleData] = useState({
     maker: '',
@@ -66,10 +71,14 @@ const FastEnquiry = () => {
     phone: '',
     whatsappno: '',
   });
-  
+
+  const talukaData = branchTaluka.map(taluka => ({
+    label: taluka.name,
+    value: taluka.id,
+  }));
   const villageData = resultData.map(village => ({
     label: village.name,
-    value: village.name,
+    value: village.id,
   }));
 
   const conditionType = [
@@ -98,15 +107,20 @@ const FastEnquiry = () => {
 
   useEffect(() => {
     if (result) {
-      const villageData = result.result.map(village => ({
-        label: village.name,
-        value: village.name,
-      }));
-      // console.log(villageData);
-      setResultData(result.result);
+      const {talukaName, villageList} = result.result;
+      setBrnchTaluka(talukaName);
+      setResultData(villageList);
     }
   }, [result]);
 
+  useEffect(()=> {
+  
+    if(branchTaluka){
+      branchTaluka.map((taluka)=> {
+        setTaluka(taluka.id)
+      })
+    }
+  },[branchTaluka])
   const formattedDeliveryDate = expDeliveryDate.toLocaleDateString();
   const handleReadValue = () => {
     console.log(selectedOption);
@@ -121,11 +135,11 @@ const FastEnquiry = () => {
       [field]: value,
     }));
   };
-  
+
   useEffect(() => {
     if (fastEnquiryState && fastEnquiryState.isSuccess === true) {
       dispatch(clearFastEnquiryState());
-      setMessage("Enquiry Submitted");
+      setMessage('Enquiry Submitted');
       console.log('Enquiry submitted');
       openModal();
       dispatch(getEnquiryData()).then(() => {
@@ -134,26 +148,26 @@ const FastEnquiry = () => {
     }
   }, [fastEnquiryState]);
 
- const submitEnquiry = () => {
-  const formData = {
-    first_name: enquiryData.customer,
-    phone_number: enquiryData.phone,
-    whatsapp_number: enquiryData.whatsappno,
-    village: village,
+  const submitEnquiry = () => {
+    const formData = {
+      first_name: enquiryData.customer,
+      phone_number: enquiryData.phone,
+      whatsapp_number: enquiryData.whatsappno,
+      village: village,
+      taluka: taluka
+    };
+    if (
+      enquiryData.customer.length > 0 &&
+      enquiryData.phone.length > 0 &&
+      enquiryData.whatsappno.length > 0
+    ) {
+      dispatch(setFastEnquiryDb(formData)).then(() => {
+        dispatch(clearFastEnquiryState());
+      });
+    } else {
+      console.warn('Please first fill the field*');
+    }
   };
-  if (
-    enquiryData.customer.length > 0 &&
-    enquiryData.phone.length > 0 &&
-    enquiryData.whatsappno.length > 0
-  ) {
-    dispatch(setFastEnquiryDb(formData)).then(() => {
-      dispatch(clearFastEnquiryState());
-    });
-  } else {
-    console.warn('Please first fill the field*');
-  }
-};
-
 
   const formattedCurrentDate = currentDate.toLocaleDateString();
   const formattedManuYear = manuYearDate.toLocaleDateString();
@@ -233,18 +247,18 @@ const FastEnquiry = () => {
                 selectedTextStyle={styles.selectedTextStyle}
                 inputSearchStyle={styles.inputSearchStyle}
                 iconStyle={styles.iconStyle}
-                data={villageData}
+                data={talukaData}
                 search
                 maxHeight={200}
                 labelField="label"
                 valueField="value"
                 placeholder={!isFocus ? 'Select Taluka' : ' '}
                 searchPlaceholder="Search..."
-                value={village}
+                value={taluka}
                 onFocus={() => setIsFocus(true)}
                 onBlur={() => setIsFocus(false)}
                 onChange={item => {
-                  setVillage(item.value);
+                  setTaluka(item.value);
                   setIsFocus(false);
                 }}
                 // renderLeftIcon={() => (
@@ -512,7 +526,7 @@ const styles = StyleSheet.create({
   },
   label: {
     marginBottom: 5,
-    color: '#1B4F72'
+    color: '#1B4F72',
   },
   inputStyle: {
     marginVertical: 5,
