@@ -38,8 +38,6 @@ const AddMore = () => {
     }
   }, [result]);
 
-  useEffect(() => {}, []);
-
   const handleSheduleCall = item => {
     navigation.navigate('Schedule Call', {item: item});
   };
@@ -178,7 +176,7 @@ const AddMore = () => {
                         handleSheduleCall(item);
                       }}
                       style={styles.discussionButton}>
-                      <Text style={styles.discussionText}>Last Discussion</Text>
+                      <Text style={styles.discussionText}>Follow Up</Text>
                     </TouchableOpacity>
                   </View>
                 </View>
@@ -330,14 +328,14 @@ const styles = StyleSheet.create({
     padding: 2,
   },
   discussionButton: {
-    backgroundColor: 'white',
+    backgroundColor: '#2ECC71',
     borderRadius: 20,
     borderColor: '#138D75',
     borderWidth: 0.1,
     paddingHorizontal: 5,
   },
   discussionText: {
-    color: '#138D75',
+    color: 'white',
     textAlign: 'center',
   },
 });

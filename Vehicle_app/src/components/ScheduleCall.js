@@ -8,6 +8,7 @@ import {
   TouchableWithoutFeedback,
   Image,
   FlatList,
+  ScrollView,
 } from 'react-native';
 import DatePicker from 'react-native-date-picker';
 import {useDispatch, useSelector} from 'react-redux';
@@ -22,6 +23,7 @@ import {API_URL} from '@env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import moment from 'moment';
+import CustomLoadingSpinner from './subCom/CustomLoadingSpinner';
 const ScheduleCall = ({route}) => {
   const {item} = route.params;
   const dispatch = useDispatch();
@@ -33,6 +35,7 @@ const ScheduleCall = ({route}) => {
   const [scheduleDate, setScheduleDate] = useState('');
   const [scheduleDetails, setScheduleDetails] = useState([]);
   const [isShow, setIsShow] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (followUpState.isSuccess && followUpState.result === 'success') {
@@ -52,6 +55,7 @@ const ScheduleCall = ({route}) => {
         token: token ? token : '',
       },
     };
+    setLoading(true);
     console.log(config);
     await axios.get(url, config).then(response => {
       if (response) {
@@ -59,6 +63,7 @@ const ScheduleCall = ({route}) => {
         setScheduleDetails(response.data.result);
       }
     });
+    setLoading(false);
   };
   useEffect(() => {
     getFollowUpDetils();
@@ -88,71 +93,86 @@ const ScheduleCall = ({route}) => {
   return (
     <View style={styles.mainContainer}>
       <View style={styles.contentContainer}>
-      {isShow && (
-        <SweetSuccessAlert message={'Call Schedule'} modalShow={true} />
-      )}
-      <View style={styles.dateContainer}>
-        <Text>Select Call Date*</Text>
-        <View style={styles.dateStyle}>
-          <TouchableOpacity
-            onPress={() => {
-              setOpenScheduleDate(true);
-            }}>
-            <Text style={styles.dateText}>
-              {scheduleDate === ''
-                ? new Date().toISOString().slice(0, 10)
-                : scheduleDate}
-            </Text>
-          </TouchableOpacity>
-          <Calendars
-            showModal={openScheduleDate}
-            selectedDate={scheduleDate}
-            handleCalendarDate={handleCalendarDate}
+        {isShow && (
+          <SweetSuccessAlert message={'Call Schedule'} modalShow={true} />
+        )}
+        <View style={styles.dateContainer}>
+          <Text>Select Call Date*</Text>
+          <View style={styles.dateStyle}>
+            <TouchableOpacity
+              onPress={() => {
+                setOpenScheduleDate(true);
+              }}>
+              <Text style={styles.dateText}>
+                {scheduleDate === ''
+                  ? new Date().toISOString().slice(0, 10)
+                  : scheduleDate}
+              </Text>
+            </TouchableOpacity>
+            <Calendars
+              showModal={openScheduleDate}
+              selectedDate={scheduleDate}
+              handleCalendarDate={handleCalendarDate}
+            />
+          </View>
+        </View>
+        <View style={styles.fieldContainer}>
+          <Text style={styles.label}>Discussion:</Text>
+          <TextInput
+            style={styles.input}
+            value={discussion}
+            onChangeText={setDiscussion}
+            multiline
+            numberOfLines={4}
           />
         </View>
+        <TouchableOpacity style={styles.saveButton} onPress={handleSaveDetails}>
+          <Text style={styles.buttonText}>Save Details</Text>
+        </TouchableOpacity>
       </View>
-      <View style={styles.fieldContainer}>
-        <Text style={styles.label}>Discussion:</Text>
-        <TextInput
-          style={styles.input}
-          value={discussion}
-          onChangeText={setDiscussion}
-          multiline
-          numberOfLines={4}
-        />
-      </View>
-      <TouchableOpacity style={styles.saveButton} onPress={handleSaveDetails}>
-        <Text style={styles.buttonText}>Save Details</Text>
-      </TouchableOpacity>
-      <View style={{marginVertical: 10}}>
-        <Text style={{fontWeight: 'bold'}}>Schedule Details</Text>
-        <Text>New</Text>
-        <FlatList
-          data={scheduleDetails}
-          renderItem={({item, index}) => {
-            return (
-              <View style={styles.callBox}>
-                <View style={styles.leftContainer}>
-                  <Text>{item.last_discussion}</Text>
-                  <Text>{moment(item.next_followup_date).format('LL')}</Text>
-                  <Text>987654567</Text>
+      <View style={styles.callBodyContainer}>
+        <Text style={{fontWeight: 'bold', marginHorizontal: 10}}>
+          Schedule Details
+        </Text>
+        <Text style={{marginHorizontal: 10}}>New</Text>
+        {loading ? (
+          <CustomLoadingSpinner />
+        ) : scheduleDetails.length === 0 ? (
+          <Text style={styles.noScheduleText}>No Call Schedule</Text>
+        ) : (
+          <FlatList
+            data={scheduleDetails}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={({item, index}) => {
+              return (
+                <View style={styles.callBox}>
+                  <View style={styles.leftContainer}>
+                    <Text style={{color: '#229954'}}>
+                      {item.last_discussion}
+                    </Text>
+                    <Text style={{color: '#5DADE2'}}>
+                      {moment(item.next_followup_date).format('LL')}
+                    </Text>
+                    <Text style={{color: '#1A5276', fontSize: 20}}>
+                      987654567
+                    </Text>
+                  </View>
+                  <View style={styles.rightContainer}>
+                    <TouchableOpacity
+                      onPress={() => {
+                        makePhoneCall();
+                      }}>
+                      <Image
+                        style={styles.personImg}
+                        source={require('../../assets/telephone.png')}
+                      />
+                    </TouchableOpacity>
+                  </View>
                 </View>
-                <View style={styles.rightContainer}>
-                  <TouchableOpacity
-                    onPress={() => {
-                      makePhoneCall();
-                    }}>
-                    <Image
-                      style={styles.personImg}
-                      source={require('../../assets/telephone.png')}
-                    />
-                  </TouchableOpacity>
-                </View>
-              </View>
-            );
-          }}
-        />
-      </View>
+              );
+            }}
+          />
+        )}
       </View>
     </View>
   );
@@ -161,11 +181,11 @@ const ScheduleCall = ({route}) => {
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: '#FBFCFC',
   },
   contentContainer: {
     marginHorizontal: 15,
-    marginVertical: 10
+    marginVertical: 10,
   },
   fieldContainer: {
     marginBottom: 20,
@@ -196,7 +216,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 2,
   },
   dateStyle: {
     flexDirection: 'row',
@@ -231,6 +251,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   leftContainer: {
+    maxWidth: '80%',
     marginRight: 16,
   },
   rightContainer: {
@@ -239,6 +260,17 @@ const styles = StyleSheet.create({
   personImg: {
     width: 40,
     height: 40,
+  },
+  callBodyContainer: {
+    marginHorizontal: 10,
+    marginVertical: 10,
+  },
+  noScheduleText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: 'red',
+    textAlign: 'center',
+    marginTop: 20,
   },
 });
 

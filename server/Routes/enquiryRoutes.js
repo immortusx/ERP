@@ -735,8 +735,9 @@ router.post("/set-follow-up", tokenCheck, async (req, res) => {
 //======================Get Follow Up===========//
 router.get("/get-follow-up/:id", tokenCheck, async (req, res) => {
   try {
+    const customer_id = req.params.id;
     console.log(">>>>>>>>>/get-follow-up", req.params);
-    await db.query("SELECT * FROM follow_up_details", async (err, result) => {
+    await db.query(`SELECT * FROM follow_up_details WHERE customer_id = ${customer_id}  ORDER BY followup_date DESC`, async (err, result) => {
       if (err) {
         console.log({ isSuccess: false, result: err });
         res.send({ isSuccess: false, result: "error" });
