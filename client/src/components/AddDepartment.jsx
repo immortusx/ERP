@@ -56,9 +56,9 @@ export default function AddDepartment({ workFor }) {
   useEffect(() => {
     if (workFor === "forEdit") {
       if (editdepartmentData.data === null) {
-        dispatch(setShowMessage("Please select a employee"));
         setTimeout(() => {
           navigate("/administration/configuration/department");
+          dispatch(setShowMessage("Please select a department"));
         }, 1000);
       } else {
         console.log(

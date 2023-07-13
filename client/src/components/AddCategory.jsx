@@ -54,9 +54,9 @@ export default function AddCategory({ workFor }) {
   useEffect(() => {
     if (workFor === "forEdit") {
       if (editcategoryData.data === null) {
-        dispatch(setShowMessage("Please select a employee"));
         setTimeout(() => {
           navigate("/administration/configuration/category");
+          dispatch(setShowMessage("Please select a category"));
         }, 1000);
       } else {
         console.log(
