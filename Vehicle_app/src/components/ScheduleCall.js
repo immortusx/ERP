@@ -97,7 +97,7 @@ const ScheduleCall = ({route}) => {
           <SweetSuccessAlert message={'Call Schedule'} modalShow={true} />
         )}
         <View style={styles.dateContainer}>
-          <Text>Select Call Date*</Text>
+        <Text style={styles.selectDateText}>Select Next Follow Up Date *</Text>
           <View style={styles.dateStyle}>
             <TouchableOpacity
               onPress={() => {
@@ -271,6 +271,10 @@ const styles = StyleSheet.create({
     color: 'red',
     textAlign: 'center',
     marginTop: 20,
+  },
+  selectDateText: {
+    fontWeight: 'bold',
+    color: '#1A5276',
   },
 });
 

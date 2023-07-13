@@ -51,8 +51,7 @@ const DetailEnquiry = ({route}) => {
   const [expDeliveryDate, setExpDeliveryDate] = useState('');
   const [openExpDeliveryDate, setOpenExpDeliveryDate] = useState(false);
   const [manuYearDate, setManuYearDate] = useState('');
-  const [openManuYearDate, setOpenManufafacturer] = useState(false);
-  const [showModal, setShowModal] = useState(false);
+  const [openManuYearDate, setOpenManufacturer] = useState(false);
   const [showMessageModal, setShowMessageModal] = useState(false);
   const [isFocus, setIsFocus] = useState(false);
   const [message, setMessage] = useState('');
@@ -144,7 +143,8 @@ const DetailEnquiry = ({route}) => {
       dispatch(clearModalData());
       setMessage('Enquiry Updated');
       console.log('Enquiry Updated');
-      openModal();
+      // openModal();
+      setShowMessageModal(true);
       dispatch(getEnquiryData()).then(() => {
         navigation.navigate('AddMore');
       });
@@ -158,8 +158,9 @@ const DetailEnquiry = ({route}) => {
       dispatch(clearManufacturerDetails());
       dispatch(clearModalData());
       setMessage('Enquiry Submitted');
-      console.log('Enquiry submitted');
-      openModal();
+      // console.log('Enquiry submitted');
+      // openModal();
+      setShowMessageModal(true);
       dispatch(getEnquiryData()).then(() => {
         navigation.navigate('AddMore');
       });
@@ -215,6 +216,20 @@ const DetailEnquiry = ({route}) => {
         console.log('Add Enquiry');
         dispatch(setEnquiryDb(formData));
       }
+      setEnquiryData({
+        firstname: '',
+        lastname: '',
+        phone: '',
+        whatsappno: '',
+      });
+      setExpDeliveryDate('');
+      setCondtion(null);
+      setOldVehicleData({
+        maker: '',
+        modalName: '',
+        variantName: '',
+      });
+      setSelectedOption('No');
     } else {
       console.warn('Please first fill the field*');
     }
@@ -250,16 +265,16 @@ const DetailEnquiry = ({route}) => {
     }));
   };
   const handleCalendarDate = selectedDate => {
-    console.log(selectedDate.dateString);
-    console.log(selectedDate);
+    console.log(selectedDate.dateString, 'deliverydate');
+    console.log(selectedDate, 'deliverydate');
     setExpDeliveryDate(selectedDate.dateString);
     setOpenExpDeliveryDate(false);
   };
   const handleManufacturYearDate = selectedDate => {
-    console.log(selectedDate.dateString);
-    console.log(selectedDate);
+    console.log(selectedDate.dateString, 'manufacturee');
+    console.log(selectedDate, 'manufacturee');
     setManuYearDate(selectedDate.dateString);
-    setOpenManufafacturer(false);
+    setOpenManufacturer(false);
   };
   const openModal = () => {
     setShowMessageModal(true);
@@ -461,7 +476,7 @@ const DetailEnquiry = ({route}) => {
                   <View style={styles.deliveryDateContainer}>
                     <TouchableOpacity
                       onPress={() => {
-                        setOpenManufafacturer(true);
+                        setOpenManufacturer(true);
                       }}>
                       <Text style={{paddingVertical: 7}}>
                         {manuYearDate === ''

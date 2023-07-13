@@ -164,6 +164,13 @@ const FastEnquiry = () => {
       dispatch(setFastEnquiryDb(formData)).then(() => {
         dispatch(clearFastEnquiryState());
       });
+      setEnquiryData({
+        customer: '',
+        phone: '',
+        whatsappno: '',
+      });
+      setVillage(null);
+      setTaluka(null);
     } else {
       console.warn('Please first fill the field*');
     }
@@ -199,6 +206,7 @@ const FastEnquiry = () => {
     }));
   };
   const openModal = () => {
+    console.log("____________");
     setShowModal(true);
   };
   return (
