@@ -6,6 +6,9 @@ import {
 import { setEditemployeeData } from "../redux/slices/editemployeeDataSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
+import SlideshowIcon from "@mui/icons-material/Slideshow";
+import DownloadIcon from "@mui/icons-material/Download";
 import { faEllipsisV } from "@fortawesome/free-solid-svg-icons/faEllipsisV";
 
 import Checkbox from "@mui/material/Checkbox";
@@ -27,15 +30,7 @@ import AlertDeleteModal from "./AlertDelete/AlertDeleteModal";
 import axios from "axios";
 
 export default function Employees() {
-  const [isAccordionOpen, setIsAccordionOpen] = useState(false);
-
-  const handleMouseEnter = () => {
-    setIsAccordionOpen(true);
-  };
-
-  const handleMouseLeave = () => {
-    setIsAccordionOpen(false);
-  };
+ 
 
   const [selectAll, setSelectAll] = useState(false);
   const [rowData, setRowData] = useState([]);
@@ -236,31 +231,52 @@ export default function Employees() {
       headerAlign: "center",
       align: "center",
       disableColumnMenu: true,
-      minWidth: 120,
-      flex: 1,
+      maxWidth: 50,
+      // flex: 1,
       position: "sticky",
       renderCell: (params) => (
-        <div className="d-flex justify-content-center align-items-center accordion-container dotHover">
+        <div className="d-flex justify-content-center dotHover">
           <FontAwesomeIcon icon={faEllipsisV} />
           <div className="expandDiv">
             <button
-              onClick={() => {
-                editActionCall(params.row);
-              }}
+              // onClick={() => {
+              //   editActionCall(params.row);
+              // }}
               className="myActionBtn m-1"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="currentColor"
-                className="bi bi-pencil-square"
-                viewBox="0 0 16 16"
-              >
-                <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
-                <path
-                  fillRule="evenodd"
-                  d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"
-                />
-              </svg>
+              <AccessTimeOutlinedIcon />
+            </button>
+            <button
+              // onClick={() => {
+              //   editActionCall(params.row);
+              // }}
+              className="myActionBtn m-1"
+            >
+              <SlideshowIcon />
+            </button>
+            <button
+              // onClick={() => {
+              //   editActionCall(params.row);
+              // }}
+              className="myActionBtn m-1"
+            >
+              <DownloadIcon />
+            </button>
+            <button
+              // onClick={() => {
+              //   editActionCall(params.row);
+              // }}
+              className="myActionBtn m-1"
+            >
+              <AccessTimeOutlinedIcon />
+            </button>
+            <button
+              // onClick={() => {
+              //   editActionCall(params.row);
+              // }}
+              className="myActionBtn m-1"
+            >
+              <AccessTimeOutlinedIcon />
             </button>
           </div>
         </div>
@@ -361,7 +377,7 @@ export default function Employees() {
           </div>
         </div>
 
-        <div style={{ height: "85vh", width: "100%" }}>
+        <div className="tableMenuHover" style={{ height: "85vh", width: "100%" }}>
           <DataGrid
             rows={rowData}
             columns={columns}

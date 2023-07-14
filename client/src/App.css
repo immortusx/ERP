@@ -192,52 +192,46 @@ select.myInput {
   padding: 5px 10px;
   border-radius: 10px;
 }
-.myActionBtnClick {
-  border: none;
-  outline: none;
-  padding: 10px 20px;
-  /* border-radius: 10px; */
-  position: relative;
-}
-/* .accordion-container {
-  display: inline-block;
-} */
-.dotHover {
-  position: relative;
-  height: 100%;
+
+.tableMenuHover .MuiDataGrid-row{
+    position: relative;
+    overflow: hidden;
+  }
+  .dotHover {
+     
   width: 100%;
 }
-.dotHover:hover .expandDiv{
-    display: flex !important;
-    justify-content: center;
-    align-items: center;
-  inset: 0;
+ .tableMenuHover .MuiDataGrid-cell:hover .expandDiv{
+  background-color: white;
+  height: 100%;
+  display: flex !important;
+  justify-content:center;
+  align-items: center;
+  top:0;
+  right:50px;
+  width: 300px;
   position: absolute;
-}
-.expandDiv{
-  display: none;
+  animation: hoverRight 1s ease-out;
   
 }
-
-
-
-/* .myActionBtnClick .accordion-content {
-  position: absolute;
-  top: 0;
-  left: -200px; 
-  display: none;
-  width: 200px;
-  background-color: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  padding: 10px;
-  transition: left 0.3s ease;
+@keyframes hoverRight{
+  0%{
+    right:-100px;
+    opacity: 0.3;
+  }
+  100%{
+    right:45px;
+    opacity: 1;
+  }
 }
 
-.myActionBtnClick.open .accordion-content {
-  display: block;
-  left: 0;
-  transition: left 0.3s ease;
-} */
+.expandDiv{
+  display: none; 
+}
+
+
+
+
 .myActionBtn svg {
   height: 18px;
   width: 18px;
