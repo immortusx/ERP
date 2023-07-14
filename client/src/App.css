@@ -211,7 +211,7 @@ select.myInput {
   right:50px;
   width: 300px;
   position: absolute;
-  animation: hoverRight 1s ease-out;
+  animation: hoverRight .1s ease-out;
   
 }
 @keyframes hoverRight{

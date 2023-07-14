@@ -26,6 +26,7 @@ import Enquiry from "./Enquiry";
 import Products from "./Products";
 import Master from "./Master";
 import AreaAssignListList from "./AreaAssignListList";
+import EmployeeAddAssignArea from "./EmployeeAssignArea";
 import AddAssignArea from "./AddAssignArea";
 import logo from "../assets/svg/logo.svg";
 import logoT from "../assets/svg/logofinal.svg";
@@ -772,6 +773,11 @@ export default function HomeScreen() {
             <Route
               path="sale/areaAssign/addAsignArea"
               element={<AddAssignArea />}
+              exact
+            />
+            <Route
+              path="sale/areaAssign/addAsignArea"
+              element={<EmployeeAddAssignArea />}
               exact
             />
             <Route
