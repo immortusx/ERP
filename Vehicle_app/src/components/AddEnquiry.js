@@ -45,6 +45,7 @@ const AddEnquiry = ({navigation}) => {
   const [manuYearDate, setManuYearDate] = useState(new Date());
   const [openManuYearDate, setOPenManuYearDate] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [openCurrentDateModal, setOpenCurrentDateModal] = useState(false);
   const [isFocus, setIsFocus] = useState(false);
   const [enquiry, setEnquiry] = useState(null);
   const [condition, setCondtion] = useState(null);
@@ -104,7 +105,6 @@ const AddEnquiry = ({navigation}) => {
   useEffect(() => {
     if (enquiryState.isSuccess === true) {
       console.log('Enquiry submitted');
-      openModal();
     }
   }, [enquiryState]);
   const submitEnquiry = () => {
@@ -187,10 +187,7 @@ const AddEnquiry = ({navigation}) => {
     console.log(selectedDate.dateString);
     console.log(selectedDate);
     setCurrentDate(selectedDate.dateString);
-    setShowModal(false);
-  };
-  const openModal = () => {
-    setShowModal(true);
+    setOpenCurrentDateModal(false);
   };
   const renderEnquiryScreen = screen => {
     setRenderScreen(screen);
@@ -213,7 +210,7 @@ const AddEnquiry = ({navigation}) => {
               <Text>Select Date : </Text>
               <TouchableOpacity
                 onPress={() => {
-                  setShowModal(true);
+                  setOpenCurrentDateModal(true);
                 }}>
                 <Text style={styles.dateText}>
                   {currentDate === ''
@@ -222,7 +219,7 @@ const AddEnquiry = ({navigation}) => {
                 </Text>
               </TouchableOpacity>
               <Calendars
-                showModal={showModal}
+                showModal={openCurrentDateModal}
                 selectedDate={currentDate}
                 handleCalendarDate={handleCalendarDate}
               />
