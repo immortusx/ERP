@@ -13,6 +13,8 @@ import Sales from '../components/Sales';
 import Products from '../components/Products';
 import Manage from '../components/Manage';
 import CustomDrawer from '../components/CustomDrawer';
+import DeliveryScreen from '../components/Delivery';
+import DropScreen from '../components/DropScreen';
 const Drawer = createDrawerNavigator();
 const SidebarMenu = () => {
   const navigation = useNavigation();
@@ -87,6 +89,40 @@ const SidebarMenu = () => {
             <Image
               style={styles.personImg}
               source={require('../../assets/booking.png')}
+            />
+          ),
+        }}
+      />
+      <Drawer.Screen
+        name="Delivery"
+        component={DeliveryScreen}
+        options={{
+          headerShown: true,
+          headerStyle: {
+            borderWidth: 0.9,
+            borderColor: 'grey',
+          },
+          drawerIcon: () => (
+            <Image
+              style={styles.personImg}
+              source={require('../../assets/delivery.png')}
+            />
+          ),
+        }}
+      />
+      <Drawer.Screen
+        name="Drop"
+        component={DropScreen}
+        options={{
+          headerShown: true,
+          headerStyle: {
+            borderWidth: 0.9,
+            borderColor: 'grey',
+          },
+          drawerIcon: () => (
+            <Image
+              style={styles.personImg}
+              source={require('../../assets/drop.png')}
             />
           ),
         }}

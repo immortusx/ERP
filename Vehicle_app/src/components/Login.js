@@ -15,6 +15,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import BackgroundImage from '../../assets/cover.jpg';
 import {getLoginUser} from '../redux/slice/getUserLogin';
 import getUserProfile, {getProfileData} from '../redux/slice/getUserProfile';
+import LoadingSpinner from './subCom/LoadingSpinner';
 const Login = ({navigation}) => {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
@@ -172,7 +173,7 @@ const Login = ({navigation}) => {
           <Text style={styles.fpText}>Forgot Password?</Text>
           <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
             <Text style={styles.loginButtonText}>
-              {isLoading ? 'Signing You In...' : 'Login'}
+              {isLoading ? <LoadingSpinner isLoading={isLoading} messageText={"Signing You In..."}/> : 'Login'}
             </Text>
           </TouchableOpacity>
           <Text style={styles.registerText}>

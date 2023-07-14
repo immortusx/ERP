@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   tabBarLabelSmall: {
-    fontSize: 15,
+    fontSize: 14,
     marginTop: -30,
   },
   tabBarButton: {
@@ -84,8 +84,8 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   tabBarIcon: {
-    width: 25,
-    height: 25,
+    width: 23,
+    height: 23,
     marginBottom: 2,
   },
   tabBarLabelText: {

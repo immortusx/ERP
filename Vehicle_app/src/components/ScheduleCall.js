@@ -24,6 +24,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import moment from 'moment';
 import CustomLoadingSpinner from './subCom/CustomLoadingSpinner';
+import {CheckBox} from 'react-native-elements';
+import CustomCheckbox from './subCom/CustomCheckBox';
+import CustomRadioButton from './subCom/CustomRadioButton';
+import RadioButtons from './subCom/RadioButtons';
+import DeliveryScreen from './Delivery';
+import FollowUpScreen from './FollowUp';
+import AddBooking from './AddBooking';
+import DropScreen from './DropScreen';
 const ScheduleCall = ({route}) => {
   const {item} = route.params;
   const dispatch = useDispatch();
@@ -31,11 +39,18 @@ const ScheduleCall = ({route}) => {
     state => state.followUpSlice.followUpState.result,
   );
   const [discussion, setDiscussion] = useState('');
+  const [folloUpStage, setFollowUpStage] = useState(false);
+  const [bookingStage, setBookingStage] = useState(false);
+  const [dropStage, setDropStage] = useState(false);
+  const [invalidStage, setInvalidStage] = useState(false);
   const [openScheduleDate, setOpenScheduleDate] = useState(false);
   const [scheduleDate, setScheduleDate] = useState('');
   const [scheduleDetails, setScheduleDetails] = useState([]);
   const [isShow, setIsShow] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [customerId, setCustomerId] = useState(null);
+  const enquiryStage = ['Follow Up', 'Booking', 'Drop', 'Invalid   '];
+  const [selectedScreen, setSelectedScreen] = useState('Follow Up');
 
   useEffect(() => {
     if (followUpState.isSuccess && followUpState.result === 'success') {
@@ -66,6 +81,7 @@ const ScheduleCall = ({route}) => {
     setLoading(false);
   };
   useEffect(() => {
+    setCustomerId(item.id);
     getFollowUpDetils();
   }, []);
   const makePhoneCall = () => {
@@ -90,90 +106,91 @@ const ScheduleCall = ({route}) => {
     setScheduleDate(selectedDate.dateString);
     setOpenScheduleDate(false);
   };
+  const handleBookingStage = () => {
+    setBookingStage(!bookingStage);
+  };
+  const handleDropStage = () => {
+    setDropStage(!dropStage);
+  };
+  const handleInvalidStage = () => {
+    setInvalidStage(!invalidStage);
+  };
+  const handleFollowUpStage = () => {
+    setFollowUpStage(!folloUpStage);
+  };
+  const handleSelectedEnquiryStage = option => {
+    // const selectedValue = option === 'Yes' ? 'Yes' : 'No';
+    console.log(option, 'stage Enquiry');
+    setSelectedScreen(option);
+    // handleReadValue(selectedValue);
+    // if (selectedValue === 'Yes') {
+    //   setModalVisible(true);
+    // } else if (selectedValue === 'No') {
+    //   setModalVisible(false);
+    // }
+  };
   return (
     <View style={styles.mainContainer}>
       <View style={styles.contentContainer}>
-        {isShow && (
-          <SweetSuccessAlert message={'Call Schedule'} modalShow={true} />
-        )}
-        <View style={styles.dateContainer}>
-        <Text style={styles.selectDateText}>Select Next Follow Up Date *</Text>
-          <View style={styles.dateStyle}>
-            <TouchableOpacity
-              onPress={() => {
-                setOpenScheduleDate(true);
-              }}>
-              <Text style={styles.dateText}>
-                {scheduleDate === ''
-                  ? new Date().toISOString().slice(0, 10)
-                  : scheduleDate}
-              </Text>
-            </TouchableOpacity>
-            <Calendars
-              showModal={openScheduleDate}
-              selectedDate={scheduleDate}
-              handleCalendarDate={handleCalendarDate}
+        <View style={styles.enquiryStageContainer}>
+          <Text
+            style={{
+              color: '#154360',
+              fontWeight: 'bold',
+              fontVariant: ['tabular-nums'],
+              marginRight: 10,
+              fontSize: 16
+            }}>
+            Set Enquiry Stage{'  '}
+            <Image
+              style={{width: 20, height: 20}}
+              source={require('../../assets/set.png')}
             />
+          </Text>
+          {/* <View
+            style={{
+              marginHorizontal: 10,
+              marginVertical: 10,
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+            }}>
+            <CustomCheckbox
+              label="Delivery"
+              checked={bookingStage}
+              onChange={handleBookingStage}
+            />
+            <CustomCheckbox
+              label="Drop"
+              checked={dropStage}
+              onChange={handleDropStage}
+            />
+            <CustomCheckbox
+              label="Invalid"
+              checked={invalidStage}
+              onChange={handleInvalidStage}
+            />
+          </View> */}
+          <View
+            style={{
+              marginHorizontal: 20,
+              marginVertical: 10,
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+            }}>
+            <View
+              style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+              <RadioButtons
+                options={enquiryStage}
+                selectedOption={selectedScreen}
+                onSelect={handleSelectedEnquiryStage}
+              />
+            </View>
           </View>
         </View>
-        <View style={styles.fieldContainer}>
-          <Text style={styles.label}>Discussion:</Text>
-          <TextInput
-            style={styles.input}
-            value={discussion}
-            onChangeText={setDiscussion}
-            multiline
-            numberOfLines={4}
-          />
-        </View>
-        <TouchableOpacity style={styles.saveButton} onPress={handleSaveDetails}>
-          <Text style={styles.buttonText}>Save Details</Text>
-        </TouchableOpacity>
       </View>
-      <View style={styles.callBodyContainer}>
-        <Text style={{fontWeight: 'bold', marginHorizontal: 10}}>
-          Schedule Details
-        </Text>
-        <Text style={{marginHorizontal: 10}}>New</Text>
-        {loading ? (
-          <CustomLoadingSpinner />
-        ) : scheduleDetails.length === 0 ? (
-          <Text style={styles.noScheduleText}>No Call Schedule</Text>
-        ) : (
-          <FlatList
-            data={scheduleDetails}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={({item, index}) => {
-              return (
-                <View style={styles.callBox}>
-                  <View style={styles.leftContainer}>
-                    <Text style={{color: '#229954'}}>
-                      {item.last_discussion}
-                    </Text>
-                    <Text style={{color: '#5DADE2'}}>
-                      {moment(item.next_followup_date).format('LL')}
-                    </Text>
-                    <Text style={{color: '#1A5276', fontSize: 20}}>
-                      987654567
-                    </Text>
-                  </View>
-                  <View style={styles.rightContainer}>
-                    <TouchableOpacity
-                      onPress={() => {
-                        makePhoneCall();
-                      }}>
-                      <Image
-                        style={styles.personImg}
-                        source={require('../../assets/telephone.png')}
-                      />
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              );
-            }}
-          />
-        )}
-      </View>
+      {selectedScreen === 'Follow Up' && <FollowUpScreen item={item}/>}
+      {selectedScreen === 'Booking' && <AddBooking/>}
+      {selectedScreen === 'Drop' && <DropScreen/>}
     </View>
   );
 };
@@ -184,97 +201,18 @@ const styles = StyleSheet.create({
     backgroundColor: '#FBFCFC',
   },
   contentContainer: {
-    marginHorizontal: 15,
-    marginVertical: 10,
-  },
-  fieldContainer: {
-    marginBottom: 20,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    padding: 10,
-    borderRadius: 8,
-  },
-  saveButton: {
-    backgroundColor: '#28B463',
-    borderRadius: 8,
-    paddingVertical: 12,
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  dateContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 2,
-  },
-  dateStyle: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  dateText: {
-    marginBottom: 10,
-    borderColor: '#0984DF',
-    borderWidth: 1,
-    borderRadius: 22,
-    padding: 5,
-    paddingHorizontal: 30,
-  },
-  callBox: {
-    width: '95%',
-    padding: 10,
-    backgroundColor: 'white',
     marginHorizontal: 10,
     marginVertical: 5,
-    shadowColor: '#F39C12 ',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+  },
+  enquiryStageContainer: {
+    width: '96%',
+    padding: 10,
+    backgroundColor: '#EAF2F8',
+    marginHorizontal: 8,
+    marginVertical: 5,
+    borderColor: '#A9CCE3',
+    borderWidth: 0.2,
     borderRadius: 5,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-  },
-  leftContainer: {
-    maxWidth: '80%',
-    marginRight: 16,
-  },
-  rightContainer: {
-    marginLeft: 16,
-  },
-  personImg: {
-    width: 40,
-    height: 40,
-  },
-  callBodyContainer: {
-    marginHorizontal: 10,
-    marginVertical: 10,
-  },
-  noScheduleText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: 'red',
-    textAlign: 'center',
-    marginTop: 20,
-  },
-  selectDateText: {
-    fontWeight: 'bold',
-    color: '#1A5276',
   },
 });
 
