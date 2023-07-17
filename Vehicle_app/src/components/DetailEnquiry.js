@@ -15,6 +15,9 @@ import React, {useState, useEffect} from 'react';
 import DatePicker from 'react-native-date-picker';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {Dropdown} from 'react-native-element-dropdown';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {API_URL} from '@env';
+import axios from 'axios';
 import CustomRadioButton from './subCom/CustomRadioButton';
 import {useDispatch, useSelector} from 'react-redux';
 import {clearEnquiryState, setEnquiryDb} from '../redux/slice/addEnquirySlice';
@@ -60,6 +63,12 @@ const DetailEnquiry = ({route}) => {
   const [selectedOption, setSelectedOption] = useState('No');
   const options = ['No', 'Yes'];
   const [modalVisible, setModalVisible] = useState(false);
+  const [oldManufacturer, setOldManufacturer] = useState(null);
+  const [oldModal, setOldModal] = useState(null);
+  const [oldVariant, setOldVariant] = useState(null);
+  const [manufacturerData, setManufacurerData] = useState([]);
+  const [modalData, setModalData] = useState([]);
+  const [variantData, setVariantData] = useState([]);
   const [oldVehicleData, setOldVehicleData] = useState({
     maker: '',
     modalName: '',
@@ -72,6 +81,19 @@ const DetailEnquiry = ({route}) => {
     whatsappno: '',
   });
 
+  const manufacturItem = manufacturerData.map(item => ({
+    label: item.manufacturerName,
+    value: item.manufacturerId,
+  }));
+
+  const modalItem = modalData.map(item => ({
+    label: item.modalName,
+    value: item.id,
+  }));
+  const variantItem = variantData.map(item => ({
+    label: item.variantName,
+    value: item.id,
+  }));
   const enquirySourceItem = [
     {label: 'Digital', value: '25'},
     {label: 'Telemarketing', value: '26'},
@@ -87,8 +109,6 @@ const DetailEnquiry = ({route}) => {
     {label: 'Vey Good', value: 'Vey Good'},
   ];
 
-  let branch = 'New Keshav Tractors';
-  let dsp = 'Harilal Mehta';
   const handleSelect = option => {
     const selectedValue = option === 'Yes' ? 'Yes' : 'No';
     setSelectedOption(selectedValue);
@@ -101,8 +121,74 @@ const DetailEnquiry = ({route}) => {
   };
 
   useEffect(() => {
+    if (modalVisible) {
+      const getManufacturer = async () => {
+        const url = `${API_URL}/api/master/get-allmanufacturer`;
+        console.log('get manufacturer', url);
+        const token = await AsyncStorage.getItem('rbacToken');
+        const config = {
+          headers: {
+            token: token ? token : '',
+          },
+        };
+        console.log(config);
+        await axios.get(url, config).then(response => {
+          if (response) {
+            setManufacurerData(response.data.result);
+          }
+        });
+      };
+      getManufacturer();
+    }
+  }, [modalVisible]);
+  useEffect(() => {
+    if (oldManufacturer) {
+      const getModal = async () => {
+        console.log(oldManufacturer, 'id');
+        const url = `${API_URL}/api/master/getmodal/${oldManufacturer}`;
+        console.log('get modal', url);
+        const token = await AsyncStorage.getItem('rbacToken');
+        const config = {
+          headers: {
+            token: token ? token : '',
+          },
+        };
+        console.log(config);
+        await axios.get(url, config).then(response => {
+          if (response) {
+            setModalData(response.data.result);
+          }
+        });
+      };
+      getModal();
+    }
+  }, [oldManufacturer]);
+
+  useEffect(() => {
+    if (oldModal) {
+      const getVariant = async () => {
+        console.log(oldModal, 'id');
+        const url = `${API_URL}/api/master/getvariant/${oldModal}`;
+        console.log('get variant', url);
+        const token = await AsyncStorage.getItem('rbacToken');
+        const config = {
+          headers: {
+            token: token ? token : '',
+          },
+        };
+        console.log(config);
+        await axios.get(url, config).then(response => {
+          if (response) {
+            setVariantData(response.data.result);
+          }
+        });
+      };
+      getVariant();
+    }
+  }, [oldModal]);
+  useEffect(() => {
     if (route) {
-      console.log(route, '>>>>>>>>>>>>');
+      // console.log(route, '>>>>>>>>>>>>');
       // console.log(route.params,"para");
       const {editData} = route.params;
       // console.log(editData,'edit');
@@ -239,24 +325,22 @@ const DetailEnquiry = ({route}) => {
   // const formattedManuYear = manuYearDate.toLocaleDateString();
 
   const handleModalData = () => {
-    if (
-      oldVehicleData.maker.length > 0 &&
-      oldVehicleData.modalName.length > 0 &&
-      oldVehicleData.variantName.length > 0
-    ) {
-      dispatch(
-        saveModalData({
-          maker: oldVehicleData.maker,
-          modalName: oldVehicleData.modalName,
-          variantName: oldVehicleData.variantName,
-          year: manuYearDate,
-          condition_of: condition,
-        }),
-      );
-      setModalVisible(!modalVisible);
-    } else {
-      console.warn('please first fill the field');
-    }
+    console.log(oldManufacturer, oldModal, oldVariant, manuYearDate, condition);
+    dispatch(
+      saveModalData({
+        maker: oldManufacturer,
+        modalName: oldModal,
+        variantName: oldVariant,
+        year: manuYearDate,
+        condition_of: condition,
+      }),
+    );
+    setModalVisible(!modalVisible);
+    setOldManufacturer(null);
+    setOldModal(null);
+    setOldVariant(null);
+    setCondtion(null);
+    setManuYearDate(new Date());
   };
   const onChangeInputField = (value, field) => {
     setOldVehicleData(prefield => ({
@@ -441,40 +525,108 @@ const DetailEnquiry = ({route}) => {
             <View>
               <View style={styles.expandedView}>
                 <Text style={styles.modalTitle}>Add Details *</Text>
-                <TextInput
-                  style={styles.textInput}
-                  placeholder="Enter Maker's Name"
-                  autoCapitalize="none"
-                  keyboardType="default"
-                  textContentType="maker"
-                  // value={manufacturer}
-                  onChangeText={value => onChangeInputField(value, 'maker')}
-                />
-                <TextInput
-                  style={styles.textInput}
-                  placeholder="Enter Modal"
-                  autoCapitalize="none"
-                  keyboardType="default"
-                  textContentType="modal"
-                  // value={manufacturer}
-                  onChangeText={value => onChangeInputField(value, 'modalName')}
-                />
-                <TextInput
-                  style={styles.textInput}
-                  placeholder="Enter Variant"
-                  autoCapitalize="none"
-                  keyboardType="default"
-                  textContentType="variant"
-                  // value={manufacturer}
-                  onChangeText={value =>
-                    onChangeInputField(value, 'variantName')
-                  }
-                />
+                <View style={styles.sourceContainer}>
+                  <View style={styles.enquirySourceContainer}>
+                    {/* {renderLabel()} */}
+                    <Dropdown
+                      style={[
+                        styles.dropdown,
+                        isFocus && {borderColor: 'blue'},
+                      ]}
+                      placeholderStyle={styles.placeholderStyle}
+                      selectedTextStyle={styles.selectedTextStyle}
+                      inputSearchStyle={styles.inputSearchStyle}
+                      iconStyle={styles.iconStyle}
+                      data={manufacturItem}
+                      search
+                      maxHeight={300}
+                      labelField="label"
+                      valueField="value"
+                      placeholder={!isFocus ? 'Select Manufactur' : ' '}
+                      searchPlaceholder="Search..."
+                      value={oldManufacturer}
+                      onFocus={() => setIsFocus(true)}
+                      onBlur={() => setIsFocus(false)}
+                      onChange={item => {
+                        setOldManufacturer(item.value);
+                        setIsFocus(false);
+                      }}
+                      // renderLeftIcon={() => (
+                      //   <Text>{isFocus ? 'blue' : 'black'}</Text>
+                      // )}
+                    />
+                  </View>
+                </View>
+                <View style={styles.sourceContainer}>
+                  <View style={styles.enquirySourceContainer}>
+                    {/* {renderLabel()} */}
+                    <Dropdown
+                      style={[
+                        styles.dropdown,
+                        isFocus && {borderColor: 'blue'},
+                      ]}
+                      placeholderStyle={styles.placeholderStyle}
+                      selectedTextStyle={styles.selectedTextStyle}
+                      inputSearchStyle={styles.inputSearchStyle}
+                      iconStyle={styles.iconStyle}
+                      data={modalItem}
+                      search
+                      maxHeight={300}
+                      labelField="label"
+                      valueField="value"
+                      placeholder={!isFocus ? 'Select Modal' : ' '}
+                      searchPlaceholder="Search..."
+                      value={oldModal}
+                      onFocus={() => setIsFocus(true)}
+                      onBlur={() => setIsFocus(false)}
+                      onChange={item => {
+                        setOldModal(item.value);
+                        setIsFocus(false);
+                      }}
+                      // renderLeftIcon={() => (
+                      //   <Text>{isFocus ? 'blue' : 'black'}</Text>
+                      // )}
+                    />
+                  </View>
+                </View>
+                <View style={styles.sourceContainer}>
+                  <View style={styles.enquirySourceContainer}>
+                    {/* {renderLabel()} */}
+                    <Dropdown
+                      style={[
+                        styles.dropdown,
+                        isFocus && {borderColor: 'blue'},
+                      ]}
+                      placeholderStyle={styles.placeholderStyle}
+                      selectedTextStyle={styles.selectedTextStyle}
+                      inputSearchStyle={styles.inputSearchStyle}
+                      iconStyle={styles.iconStyle}
+                      data={variantItem}
+                      search
+                      maxHeight={300}
+                      labelField="label"
+                      valueField="value"
+                      placeholder={!isFocus ? 'Select Variant' : ' '}
+                      searchPlaceholder="Search..."
+                      value={oldVariant}
+                      onFocus={() => setIsFocus(true)}
+                      onBlur={() => setIsFocus(false)}
+                      onChange={item => {
+                        setOldVariant(item.value);
+                        setIsFocus(false);
+                      }}
+                      // renderLeftIcon={() => (
+                      //   <Text>{isFocus ? 'blue' : 'black'}</Text>
+                      // )}
+                    />
+                  </View>
+                </View>
 
                 <View style={{marginBottom: 5}}>
-                  <Text style={styles.label}>Manufactur Year *</Text>
                   <View style={styles.deliveryDateContainer}>
+                    <Text style={styles.label}>Manufactur Year *</Text>
                     <TouchableOpacity
+                      style={{flexDirection: 'row', alignItems: 'center'}}
                       onPress={() => {
                         setOpenManufacturer(true);
                       }}>
@@ -483,6 +635,10 @@ const DetailEnquiry = ({route}) => {
                           ? new Date().toISOString().slice(0, 10)
                           : manuYearDate}
                       </Text>
+                      <Image
+                        style={styles.dateImg}
+                        source={require('../../assets/date.png')}
+                      />
                     </TouchableOpacity>
                     <Calendars
                       showModal={openManuYearDate}
@@ -492,7 +648,6 @@ const DetailEnquiry = ({route}) => {
                   </View>
                 </View>
                 <View style={styles.sourceContainer}>
-                  <Text style={styles.label}>Condition :</Text>
                   <View style={styles.enquirySourceContainer}>
                     {/* {renderLabel()} */}
                     <Dropdown
@@ -660,7 +815,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   label: {
-    marginBottom: 5,
+    // marginBottom: 5,
     color: '#1B4F72',
   },
   inputStyle: {
@@ -830,6 +985,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 15,
+  },
+  dateImg: {
+    width: 22,
+    height: 22,
+    marginHorizontal: 258,
   },
 });
 export default DetailEnquiry;

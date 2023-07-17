@@ -90,7 +90,7 @@ const FollowUpScreen = ({item}) => {
       const formData = {
         last_discussion: discussion,
         next_followup_date: scheduleDate,
-        customer_id: customerId,
+        customer_id: item.id,
       };
       dispatch(setFollowUpDb(formData));
       setDiscussion('');

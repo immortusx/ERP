@@ -49,7 +49,7 @@ const ScheduleCall = ({route}) => {
   const [isShow, setIsShow] = useState(false);
   const [loading, setLoading] = useState(false);
   const [customerId, setCustomerId] = useState(null);
-  const enquiryStage = ['Follow Up', 'Booking', 'Drop', 'Invalid   '];
+  const enquiryStage = ['Follow Up', 'Delivery', 'Drop', 'Invalid   '];
   const [selectedScreen, setSelectedScreen] = useState('Follow Up');
 
   useEffect(() => {
@@ -139,7 +139,7 @@ const ScheduleCall = ({route}) => {
               fontWeight: 'bold',
               fontVariant: ['tabular-nums'],
               marginRight: 10,
-              fontSize: 16
+              fontSize: 16,
             }}>
             Set Enquiry Stage{'  '}
             <Image
@@ -188,9 +188,9 @@ const ScheduleCall = ({route}) => {
           </View>
         </View>
       </View>
-      {selectedScreen === 'Follow Up' && <FollowUpScreen item={item}/>}
-      {selectedScreen === 'Booking' && <AddBooking/>}
-      {selectedScreen === 'Drop' && <DropScreen/>}
+      {selectedScreen === 'Follow Up' && <FollowUpScreen item={item} />}
+      {selectedScreen === 'Delivery' && <AddBooking item={item} />}
+      {selectedScreen === 'Drop' && <DropScreen />}
     </View>
   );
 };
