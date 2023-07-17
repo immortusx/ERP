@@ -9,6 +9,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
 import SlideshowIcon from "@mui/icons-material/Slideshow";
 import DownloadIcon from "@mui/icons-material/Download";
+import AutoDeleteIcon from "@mui/icons-material/AutoDelete";
+import DoubleArrowIcon from "@mui/icons-material/DoubleArrow";
+import { getAllVillageAction } from "./Master/Village/getEditeVillage";
+
 import { faEllipsisV } from "@fortawesome/free-solid-svg-icons/faEllipsisV";
 
 import Checkbox from "@mui/material/Checkbox";
@@ -30,8 +34,6 @@ import AlertDeleteModal from "./AlertDelete/AlertDeleteModal";
 import axios from "axios";
 
 export default function Employees() {
- 
-
   const [selectAll, setSelectAll] = useState(false);
   const [rowData, setRowData] = useState([]);
 
@@ -66,16 +68,163 @@ export default function Employees() {
   const employeeListState = useSelector(
     (state) => state.getemployeeListSlice.employeeListState
   );
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const open = Boolean(anchorEl);
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-    console.log("clickedddddddddd");
+  const [allUser, setallUser] = useState([]);
+  const [areaAssign, setareaAssign] = useState([]);
+  const [enquireCtaegory, setEnquiryCtaegory] = useState([]);
+  const [assigneAreaPerUser, setAssignedAreaPerUser] = useState([]);
+  const handleEditArea = async (ev) => {
+    //console.log(ev, "evvvvvv")
+    const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/edit-areaAssignUserById/${ev.id}/${ev.category_id}`;
+    const config = {
+      headers: {
+        token: localStorage.getItem("rbacToken"),
+      },
+    };
+
+    const response = await Axios.get(url, config);
+    if (response.data?.isSuccess) {
+      const combinedArrayForIndividualUser = response.data.result.reduce(
+        (result, obj) => {
+          const existingObj = result.find((item) => item.id === obj.id);
+          console.log(existingObj, "existingObj");
+          if (existingObj) {
+            if (!existingObj.names.includes(obj.name)) {
+              existingObj.names.push(obj.name);
+            }
+            if (!existingObj.nameId.includes(obj.distribution_id)) {
+              existingObj.nameId.push(obj.distribution_id);
+            }
+            // if (!existingObj.categoryName.includes(obj.category_name)) {
+            //     existingObj.categoryName.push(obj.category_name);
+            // }
+            // if (!existingObj.distributionType.includes(obj.distribution_type)) {
+            //     existingObj.distributionType.push(obj.distribution_type);
+            // }
+          } else {
+            result.push({
+              id: obj.id,
+              categoryName: obj.category_name,
+              distributionType: obj.distribution_type,
+              first_name: obj.first_name,
+              last_name: obj.last_name,
+              phone_number: obj.phone_number,
+              names: [obj.name],
+              nameId: [obj.distribution_id],
+              category_id: obj.category_id,
+              distribution_type: obj.dType,
+            });
+          }
+          return result;
+        },
+        []
+      );
+
+      setAssignedAreaPerUser(combinedArrayForIndividualUser);
+      console.log(
+        combinedArrayForIndividualUser[0],
+        "combinedArrayForIndividualUsercombinedArrayForIndividualUser"
+      );
+      //console.log(assigneAreaPerUser,"assigneAreaPerUserassigneAreaPerUserassigneAreaPerUserassigneAreaPerUser")
+      navigate("/sale/areaAssign/addAsignArea", {
+        state: { assigneAreaPerUser: combinedArrayForIndividualUser },
+      });
+    }
   };
-  const handleClose = () => {
-    setAnchorEl(null);
-    console.log("UNclickedddddddddd");
-  };
+
+  async function getEnquiryCategoryFromDb() {
+    const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/get-enquiry-categories`;
+    const config = {
+      headers: {
+        token: localStorage.getItem("rbacToken"),
+      },
+    };
+    await Axios.get(url, config).then((response) => {
+      if (response.data?.isSuccess) {
+        setEnquiryCtaegory(response.data.result);
+      }
+    });
+  }
+
+  async function getAreaAssignUserFromDb() {
+    const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/get-areaAssignUser`;
+    const config = {
+      headers: {
+        token: localStorage.getItem("rbacToken"),
+      },
+    };
+    await Axios.get(url, config).then((response) => {
+      if (response.data?.isSuccess) {
+        console.log(
+          response.data.result,
+          "response.data.resultresponse.data.result5555555555555"
+        );
+        function combineObjects(array) {
+          const combinedObjects = {};
+
+          // Iterate through the array
+          array.forEach((obj) => {
+            const key = obj.category_name + "_" + obj.id;
+
+            // Create or update the combined object
+            if (combinedObjects.hasOwnProperty(key)) {
+              combinedObjects[key] = { ...combinedObjects[key], ...obj };
+            } else {
+              combinedObjects[key] = obj;
+            }
+          });
+
+          // Convert combined objects back to an array
+          const result = Object.values(combinedObjects);
+
+          return result;
+        }
+
+        // Call the function with the array of objects
+        const combinedArray = combineObjects(response.data.result);
+
+        // Output the combined array
+        //console.log(combinedArray, "&&&&&&&&&&&&&&&&&&&&77777");
+
+        setareaAssign(combinedArray);
+      }
+    });
+  }
+  async function getAllUserFromDb() {
+    const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/get-allUser`;
+    const config = {
+      headers: {
+        token: localStorage.getItem("rbacToken"),
+      },
+    };
+    await Axios.get(url, config).then((response) => {
+      if (response.data?.isSuccess) {
+        setallUser(response.data.result);
+        //console.log(combinedArray, "areaassign result66666666666666")
+        //console.log(areaAssign, "areaassign result0000000")
+      }
+    });
+  }
+
+  // useEffect(() => {
+  //   getAllVillageAction()
+  //     .then((data) => {
+  //       console.log(data, "All villageeeee");
+  //       setAllVillageData(data.result);
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error in getAllVillageAction:", error);
+  //     });
+  //   getEnquiryCategoryFromDb();
+  //   // setSelectedVillagesList(areaAssign[0].names)
+  //   // setSelecteddTypeList(areaAssign[0].distributionType)
+  //   // setSelectedCategoryList(areaAssign[0].categoryName)
+  // }, []);
+
+  useEffect(() => {
+    getAreaAssignUserFromDb();
+    getAllUserFromDb();
+    getEnquiryCategoryFromDb();
+  }, []);
 
   const columns = [
     {
@@ -89,7 +238,7 @@ export default function Employees() {
           onClick={handleHeaderCheckboxClick}
         />
       ),
-      minWidth: 80,
+      minWidth: 90,
       // flex: 1,
       renderCell: (params) => (
         <Checkbox
@@ -155,7 +304,7 @@ export default function Employees() {
       headerName: "Phone Number",
       // description: 'This column has a value getter and is not sortable.',
       // sortable: false,
-      minWidth: 200,
+      minWidth: 100,
       flex: 1,
       // valueGetter: (params) =>
       //     `${params.row.firstName || ''} ${params.row.lastName || ''}`,
@@ -163,13 +312,17 @@ export default function Employees() {
     {
       field: "is_active",
       headerName: "Active",
-      headerAlign: "left",
-      align: "left",
+      headerAlign: "center",
+      align: "center",
       type: "number",
       minWidth: 80,
-      flex: 1,
+      // flex: 1,
       renderCell: (params) =>
-        params.row.is_active ? <CheckIcon /> : <ClearIcon />,
+        params.row.is_active ? (
+          <CheckIcon className="d-flex justify-content-center" />
+        ) : (
+          <ClearIcon />
+        ),
     },
     {
       field: "actions",
@@ -180,7 +333,7 @@ export default function Employees() {
       headerAlign: "center",
       align: "center",
       disableColumnMenu: true,
-      minWidth: 200,
+      minWidth: 100,
       flex: 1,
       position: "sticky",
       renderCell: (params) => (
@@ -239,9 +392,9 @@ export default function Employees() {
           <FontAwesomeIcon icon={faEllipsisV} />
           <div className="expandDiv">
             <button
-              // onClick={() => {
-              //   editActionCall(params.row);
-              // }}
+              onClick={() => {
+                handleEditArea(params.row);
+              }}
               className="myActionBtn m-1"
             >
               <AccessTimeOutlinedIcon />
@@ -268,7 +421,7 @@ export default function Employees() {
               // }}
               className="myActionBtn m-1"
             >
-              <AccessTimeOutlinedIcon />
+              <AutoDeleteIcon />
             </button>
             <button
               // onClick={() => {
@@ -276,7 +429,7 @@ export default function Employees() {
               // }}
               className="myActionBtn m-1"
             >
-              <AccessTimeOutlinedIcon />
+              <DoubleArrowIcon />
             </button>
           </div>
         </div>
@@ -377,7 +530,10 @@ export default function Employees() {
           </div>
         </div>
 
-        <div className="tableMenuHover" style={{ height: "85vh", width: "100%" }}>
+        <div
+          className="tableMenuHover"
+          style={{ height: "85vh", width: "100%" }}
+        >
           <DataGrid
             rows={rowData}
             columns={columns}

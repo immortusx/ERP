@@ -34,7 +34,7 @@ export default function AddAssignArea() {
     const [enquireCtaegory, setEnquiryCtaegory] = useState([]);
 
     const addAssignState = useSelector(state => state.addassigneAreaSlice.addassigneAreaState)
-    //console.log(addAssignState,"88888888")
+    console.log(addAssignState,"88888888")
     useEffect(() => {
         if (addAssignState.isSuccess) {
             if (addAssignState.message.isSuccess) {
@@ -139,89 +139,102 @@ export default function AddAssignArea() {
 
 
     return (
-        <>
-            <div className='addUser myBorder bg-white rounded p-3'>
+      <>
+        <div className="addUser myBorder bg-white rounded p-3">
+          <main>
+            <div className=" row mt-3 m-0">
+              <h3 className="myLabel">Assign Area</h3>
+            </div>
+            <div className="row mt-2">
+              <h5 className="myLabel">User Information</h5>
+            </div>
+            <div className=" row mt-2 m-0">
+              <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
+                <label className="myLabel"> Name </label>
+                {" "}
+                {areaAssign && (
+                  <>
+                    <p className="myInput inputElement">
+                      {areaAssign[0].first_name} {areaAssign[0].last_name}
+                    </p>
+                  </>
+                 )} 
+              </section>
 
-                <main>
-                    <div className=' row mt-3 m-0'>
-                        <h3 className='myLabel'>Assign Area</h3>
-                    </div>
-                    <div className="row mt-2">
-                        <h5 className='myLabel'>
-                            User Information
-                        </h5>
-                    </div>
-                    <div className=" row mt-2 m-0">
-                        <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
-                            <label className="myLabel"> Name </label>
-                            {areaAssign && <><p className="myInput inputElement">{areaAssign[0].first_name} {areaAssign[0].last_name}</p></>}
+              <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
+                <label className="myLabel">PhoneNumber </label>
+                {areaAssign && (
+                  <>
+                    <p className="myInput inputElement">
+                       {areaAssign[0].phone_number}
+                    </p>
+                  </>
+               )} 
+              </section>
+            </div>
 
-                        </section>
+            <div className="row mt-5">
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Enquiry Category</th>
+                    <th scope="col">Distribution Type</th>
+                    <th scope="col">Villages</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">1</th>
+                    <td>
+                      <ul><li>{areaAssign[0].categoryName}</li></ul>
+                    </td>
+                    <td>
+                      <ul><li>{areaAssign[0].distribution_type}</li></ul>
+                    </td>
+                    <td>
+                      <Select
+                        isMulti
+                        options={options}
+                        value={selectedVillagesList.map((village) => ({
+                          value: village.value,
+                          label: village.label,
+                        }))}
+                        onChange={handleChange}
+                        isSearchable={true}
+                        filterOption={(option, inputValue) =>
+                          option.label
+                            .toLowerCase()
+                            .includes(inputValue.toLowerCase())
+                        }
+                      />
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              {/* =========table======= */}
+            </div>
 
-                        <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
-                            <label className="myLabel">PhoneNumber </label>
-                            {areaAssign && <><p className="myInput inputElement">{areaAssign[0].phone_number}</p></>}
-                        </section>
-                    </div>
-
-                    <div className="row mt-5">
-
-                        {/* =========table======= */}
-                        <table className="table">
-                            <thead>
-                                <tr>
-                                    <th scope="col">#</th>
-                                    <th scope="col">Enquiry Category</th>
-                                    <th scope="col">Distribution Type</th>
-                                    <th scope="col">Villages</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <th scope="row">1</th>
-                                    <td>
-                                        <ul>
-                                            <li>{areaAssign[0].categoryName}</li>
-                                        </ul>
-                                    </td>
-                                    <td>
-                                        <ul>
-                                            <li>{areaAssign[0].distribution_type}</li>
-                                        </ul>
-                                    </td>
-                                    <td>
-                                        <Select
-                                            isMulti
-                                            options={options} 
-                                            value={selectedVillagesList.map((village) => ({
-                                                value: village.value,
-                                                label: village.label,
-                                              }))}                                         
-                                            onChange={handleChange}
-                                            isSearchable={true}
-                                            filterOption={(option, inputValue) =>
-                                                option.label.toLowerCase().includes(inputValue.toLowerCase())
-
-                                            }
-                                        />
-
-                                    </td>
-                                </tr>
-
-                            </tbody>
-                        </table>
-                        {/* =========table======= */}
-
-
-                    </div>
-
-
-                    <div className="row mt-3">
-                        <button className='col-12 col-sm-5 col-lg-2 myBtn py-2' onClick={handleSubmit} type='button'>Save </button>
-                        <button className='ms-0 ms-sm-3 mt-3 mt-sm-0 col-12 col-sm-5 col-lg-2 myBtn py-2' onClick={handlCancel} type='button'>Cancel </button>
-                    </div>
-                </main>
-            </div >
-        </>
-    )
+            <div className="row mt-3">
+              <button
+                className="col-12 col-sm-5 col-lg-2 myBtn py-2"
+                onClick={handleSubmit}
+                type="button"
+              >
+                Save{" "}
+              </button>
+              <button
+                className="ms-0 ms-sm-3 mt-3 mt-sm-0 col-12 col-sm-5 col-lg-2 myBtn py-2"
+                s onClick={handlCancel}
+                type="button"
+              >
+                Cancel{" "}
+              </button>
+            </div>
+          </main>
+        </div>
+      </>
+    );
 }
+
+
