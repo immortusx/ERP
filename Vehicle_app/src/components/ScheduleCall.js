@@ -32,6 +32,7 @@ import DeliveryScreen from './Delivery';
 import FollowUpScreen from './FollowUp';
 import AddBooking from './AddBooking';
 import DropScreen from './DropScreen';
+import InvalidEnquiry from './InvalidEnquiry';
 const ScheduleCall = ({route}) => {
   const {item} = route.params;
   const dispatch = useDispatch();
@@ -49,7 +50,7 @@ const ScheduleCall = ({route}) => {
   const [isShow, setIsShow] = useState(false);
   const [loading, setLoading] = useState(false);
   const [customerId, setCustomerId] = useState(null);
-  const enquiryStage = ['Follow Up', 'Delivery', 'Drop', 'Invalid   '];
+  const enquiryStage = ['Follow Up', 'Delivery', 'Lost', 'Invalid   '];
   const [selectedScreen, setSelectedScreen] = useState('Follow Up');
 
   useEffect(() => {
@@ -160,7 +161,7 @@ const ScheduleCall = ({route}) => {
               onChange={handleBookingStage}
             />
             <CustomCheckbox
-              label="Drop"
+              label="Lost"
               checked={dropStage}
               onChange={handleDropStage}
             />
@@ -190,7 +191,9 @@ const ScheduleCall = ({route}) => {
       </View>
       {selectedScreen === 'Follow Up' && <FollowUpScreen item={item} />}
       {selectedScreen === 'Delivery' && <AddBooking item={item} />}
-      {selectedScreen === 'Drop' && <DropScreen />}
+      {selectedScreen === 'Lost' && <DropScreen />}
+      {selectedScreen === 'Invalid   ' && <InvalidEnquiry item={item} />}
+
     </View>
   );
 };

@@ -737,7 +737,32 @@ router.get("/get-follow-up/:id", tokenCheck, async (req, res) => {
   try {
     const customer_id = req.params.id;
     console.log(">>>>>>>>>/get-follow-up", req.params);
-    await db.query(`SELECT * FROM follow_up_details WHERE customer_id = ${customer_id}  ORDER BY followup_date DESC`, async (err, result) => {
+    await db.query(
+      `SELECT * FROM follow_up_details WHERE customer_id = ${customer_id}  ORDER BY followup_date DESC`,
+      async (err, result) => {
+        if (err) {
+          console.log({ isSuccess: false, result: err });
+          res.send({ isSuccess: false, result: "error" });
+        } else {
+          console.log({ isSuccess: true, result: result });
+          res.send({ isSuccess: true, result: result });
+        }
+      }
+    );
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+//===================Invalidate Or Close Enquiry===================//
+router.post("/close-enquiry/:id", tokenCheck, async (req, res) => {
+  console.log("/close-enquiry/:id>>>>>>>>>>>", req.body);
+  try {
+    const customer_id = req.params.id;
+    const { reason, enquiry_stage } = req.body;
+    console.log(reason, enquiry_stage);
+    const closeEnquirySql = `UPDATE enquiries SET enquiry_stage = ?, enquiry_remarks = ? WHERE customer_id = ${customer_id}`;
+    await db.query(closeEnquirySql, [enquiry_stage, reason], (err, result) => {
       if (err) {
         console.log({ isSuccess: false, result: err });
         res.send({ isSuccess: false, result: "error" });
@@ -747,7 +772,7 @@ router.get("/get-follow-up/:id", tokenCheck, async (req, res) => {
       }
     });
   } catch (err) {
-    console.log(err);
+    console.log({ isSuccess: false, result: err });
   }
 });
 

@@ -156,7 +156,7 @@ const AddBooking = ({item}) => {
       <View style={styles.contentContainer}>
         <TouchableOpacity style={styles.deliveryName}>
           <Text style={styles.header}>
-            Delivery :- {enquiryData.first_name} {enquiryData.last_name}{' '}
+            Delivery :- {enquiryData.first_name} {enquiryData.last_name}{' '},
             Enquiry. {moment(enquiryData.date).format('Do MMMM YYYY')}
           </Text>
         </TouchableOpacity>
