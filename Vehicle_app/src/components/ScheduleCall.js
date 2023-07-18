@@ -191,9 +191,8 @@ const ScheduleCall = ({route}) => {
       </View>
       {selectedScreen === 'Follow Up' && <FollowUpScreen item={item} />}
       {selectedScreen === 'Delivery' && <AddBooking item={item} />}
-      {selectedScreen === 'Lost' && <DropScreen />}
+      {selectedScreen === 'Lost' && <DropScreen item={item} />}
       {selectedScreen === 'Invalid   ' && <InvalidEnquiry item={item} />}
-
     </View>
   );
 };

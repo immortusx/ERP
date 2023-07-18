@@ -127,14 +127,12 @@ const InvalidEnquiry = ({item}) => {
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    // backgroundColor: '#F4F6F7',
   },
   contentContainer: {
-    marginTop: 20,
-    // marginHorizontal: 15,
-    // marginVertical: 10,
-    backgroundColor: '#F4F6F7',
-    borderRadius: 20,
+    marginTop: 7,
+    backgroundColor: 'white',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -144,7 +142,7 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
     paddingHorizontal: 10,
-    height: 560,
+    flex: 1
   },
   fieldContainer: {
     marginVertical: 20,
@@ -201,7 +199,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   buttonContainer: {
-    top: 280,
+    top: 302,
   },
 });
 

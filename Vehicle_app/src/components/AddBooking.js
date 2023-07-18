@@ -156,7 +156,7 @@ const AddBooking = ({item}) => {
       <View style={styles.contentContainer}>
         <TouchableOpacity style={styles.deliveryName}>
           <Text style={styles.header}>
-            Delivery :- {enquiryData.first_name} {enquiryData.last_name}{' '},
+            Delivery :- {enquiryData.first_name} {enquiryData.last_name} ,
             Enquiry. {moment(enquiryData.date).format('Do MMMM YYYY')}
           </Text>
         </TouchableOpacity>
@@ -338,7 +338,7 @@ const AddBooking = ({item}) => {
             />
           </View>
         </View>
-        <View style={styles.inputContainer}>
+        <View style={styles.buttonContainer}>
           <TouchableOpacity
             style={styles.deliveryButton}
             onPress={submitDelivery}>
@@ -353,7 +353,18 @@ const AddBooking = ({item}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FDFEFE ',
+    backgroundColor: 'white',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    marginTop: 7,
   },
   contentContainer: {
     marginHorizontal: 17,
@@ -407,7 +418,7 @@ const styles = StyleSheet.create({
   deliveryButton: {
     backgroundColor: '#27AE60',
     padding: 10,
-    borderRadius: 5,
+    borderRadius: 6,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -416,5 +427,8 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
+  buttonContainer: {
+    top: 50
+  }
 });
 export default AddBooking;
