@@ -17,14 +17,17 @@ const DropScreen = ({item}) => {
   const [bank, setBank] = useState('');
   const [openExpDeliveryDate, setOpenExpDeliveryDate] = useState(false);
   const [openRetailDate, setOpenRetailDate] = useState(false);
+  const [openEnquiryLostDate, setOpenEnquiryLostDate] = useState(false);
+  const [enquiryLostDate, setEnquiryLostDate] = useState('');
   const [expDeliveryDate, setExpDeliveryDate] = useState('');
   const [retailDate, setRetailDate] = useState('');
   const [manufacturerData, setManufacurerData] = useState([]);
   const [modalData, setModalData] = useState([]);
   const [variantData, setVariantData] = useState([]);
   const [commercialData, setCommercialData] = useState([]);
-  const [commecialReason, setCommercialReason] = useState(null);
-  const [nonCommecialReason, setNonCommercialReason] = useState(null);
+  const [commercialReason, setCommercialReason] = useState(null);
+  const [nonCommercialReason, setNonCommercialReason] = useState(null);
+  const [customerId, setCustomerId] = useState(null);
   const [enquiryData, setEnquiryData] = useState({});
   const [deliveryData, setDeliveryData] = useState({
     phone: '',
@@ -34,6 +37,7 @@ const DropScreen = ({item}) => {
   useEffect(() => {
     if (item) {
       setEnquiryData(item);
+      setCustomerId(item.id);
     }
   }, [item]);
   const manufacturItem = manufacturerData.map(item => ({
@@ -72,14 +76,9 @@ const DropScreen = ({item}) => {
     {label: 'Axis Bank', value: '5'},
   ];
   const handleCalendarDate = selectedDate => {
-    console.log(selectedDate.dateString, 'deliverydate');
-    console.log(selectedDate, 'deliverydate');
-    setExpDeliveryDate(selectedDate.dateString);
-    setOpenExpDeliveryDate(false);
-  };
-  const handleRetailDate = selectedDate => {
-    setRetailDate(selectedDate.dateString);
-    setOpenRetailDate(false);
+    console.log(selectedDate.dateString, 'lost');
+    setEnquiryLostDate(selectedDate.dateString);
+    setOpenEnquiryLostDate(false);
   };
   useEffect(() => {
     const getManufacturer = async () => {
@@ -169,17 +168,52 @@ const DropScreen = ({item}) => {
     getCommercialList();
   }, []);
 
-  
-
   const onChangeInputField = (value, field) => {
     setDeliveryData(prefield => ({
       ...prefield,
       [field]: value,
     }));
   };
-  const submitDelivery = () => {
-    console.log(deliveryData);
-    console.log(modal, variant, finance, bank, expDeliveryDate, retailDate);
+  const submitLostEnquiry = async () => {
+    console.log(
+      manufacturer,
+      modal,
+      variant,
+      commercialReason,
+      nonCommercialReason,
+      enquiryLostDate,
+      'cmmc',
+    );
+    if (manufacturer.length !== null) {
+      console.log(manufacturer);
+      const formData = {
+        manufacturer: manufacturer,
+        modal: modal,
+        variant: variant,
+        commercialReason: commercialReason,
+        nonCommercialReason: nonCommercialReason,
+        enquiryLostDate: enquiryLostDate
+      };
+      if (customerId) {
+        const url = `${API_URL}/api/enquiry/set-lost-enquiry/${customerId}`;
+        console.log('lost enquiry', url);
+        const token = await AsyncStorage.getItem('rbacToken');
+        const config = {
+          headers: {
+            token: token ? token : '',
+          },
+        };
+        console.log(config);
+        await axios.post(url, formData, config).then(response => {
+          if (response) {
+            console.log(response.data, 'lost enqiury');
+            setCommercialData(response.data.result);
+          }
+        });
+      }
+    } else {
+      console.log('Please Select from Options');
+    }
   };
   return (
     <View style={styles.container}>
@@ -277,7 +311,7 @@ const DropScreen = ({item}) => {
               valueField="value"
               placeholder={!isFocus ? 'Select Commercial Reason 1' : ' '}
               searchPlaceholder="Search..."
-              value={commecialReason}
+              value={commercialReason}
               onChange={item => {
                 setCommercialReason(item.value);
               }}
@@ -300,7 +334,7 @@ const DropScreen = ({item}) => {
               valueField="value"
               placeholder={!isFocus ? 'Select Non-Commercial Reason 2' : ' '}
               searchPlaceholder="Search..."
-              value={nonCommecialReason}
+              value={nonCommercialReason}
               onChange={item => {
                 setNonCommercialReason(item.value);
               }}
@@ -312,13 +346,13 @@ const DropScreen = ({item}) => {
             <TouchableOpacity
               style={{flexDirection: 'row', alignItems: 'center'}}
               onPress={() => {
-                setOpenExpDeliveryDate(true);
+                setOpenEnquiryLostDate(true);
               }}>
               <Text style={{paddingVertical: 7}}>
                 Enquiry Lost Date{' :- '}
-                {expDeliveryDate === ''
+                {enquiryLostDate === ''
                   ? new Date().toISOString().slice(0, 10)
-                  : expDeliveryDate}
+                  : enquiryLostDate}
               </Text>
               <Image
                 style={styles.dateImg}
@@ -326,8 +360,8 @@ const DropScreen = ({item}) => {
               />
             </TouchableOpacity>
             <Calendars
-              showModal={openExpDeliveryDate}
-              selectedDate={expDeliveryDate}
+              showModal={openEnquiryLostDate}
+              selectedDate={enquiryLostDate}
               handleCalendarDate={handleCalendarDate}
             />
           </View>
@@ -336,7 +370,7 @@ const DropScreen = ({item}) => {
         <View style={styles.buttonContainer}>
           <TouchableOpacity
             style={styles.deliveryButton}
-            onPress={submitDelivery}>
+            onPress={submitLostEnquiry}>
             <Text style={styles.deliveryButtonText}>Save Lost Enquiry</Text>
           </TouchableOpacity>
         </View>

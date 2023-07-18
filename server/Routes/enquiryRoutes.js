@@ -798,6 +798,61 @@ router.get("/get-commercial-reasonsList", tokenCheck, async (req, res) => {
   }
 });
 
+//===================Set Lost Enquiry===================//
+router.post("/set-lost-enquiry/:id", tokenCheck, async (req, res) => {
+  console.log("/set-lost-enquiry/:id>>>>>>>>>>>", req.body);
+  try {
+    const {
+      manufacturer,
+      modal,
+      variant,
+      commercialReason,
+      nonCommercialReason,
+      enquiryLostDate,
+    } = req.body;
+    const customer_id = req.params.id;
+    await db.query(
+      `SELECT id FROM enquiries WHERE customer_id = ${customer_id}`,
+      async (err, enquiryResult) => {
+        if (err) {
+          console.log({ isSuccess: false, result: err });
+          res.send({ isSuccess: false, result: "error" });
+        } else {
+          console.log({ isSuccess: true, result: enquiryResult });
+          // res.send({ isSuccess: true, result: result });
+          const enquiry_id = enquiryResult[0].id;
+          console.log(enquiry_id);
+          const lostEnquirySql = `INSERT INTO lost_enquiries (customer_id, enquiry_id, maker, modal, variant, commercial_reason_1, non_commercial_reason_2, lost_date) VALUES (?,?,?,?,?,?,?,?)`;
+          await db.query(
+            lostEnquirySql,
+            [
+              customer_id,
+              enquiry_id,
+              manufacturer,
+              modal,
+              variant,
+              commercialReason,
+              nonCommercialReason,
+              enquiryLostDate,
+            ],
+            (err, result) => {
+              if (err) {
+                console.log({ isSuccess: false, result: err });
+                res.send({ isSuccess: false, result: "error" });
+              } else {
+                console.log({ isSuccess: true, result: result });
+                res.send({ isSuccess: true, result: result });
+              }
+            }
+          );
+        }
+      }
+    );
+  } catch (err) {
+    console.log({ isSuccess: false, result: err });
+  }
+});
+
 //=================Get Enquiry Location List============//
 router.get("/get-enquiry-location-list", tokenCheck, async (req, res) => {
   console.log(">>>>>>>>>get-enquiry-location");
