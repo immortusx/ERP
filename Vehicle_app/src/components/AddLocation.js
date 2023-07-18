@@ -217,15 +217,9 @@ const AddLocation = ({route}) => {
               placeholder={!isFocus ? 'Select State' : ' '}
               searchPlaceholder="Search..."
               value={state}
-              onFocus={() => setIsFocus(true)}
-              onBlur={() => setIsFocus(false)}
               onChange={item => {
                 setState(item.value);
-                setIsFocus(false);
               }}
-              // renderLeftIcon={() => (
-              //   <Text>{isFocus ? 'blue' : 'black'}</Text>
-              // )}
             />
           </View>
         </View>
@@ -247,15 +241,9 @@ const AddLocation = ({route}) => {
               placeholder={!isFocus ? 'Select District' : ' '}
               searchPlaceholder="Search..."
               value={district}
-              onFocus={() => setIsFocus(true)}
-              onBlur={() => setIsFocus(false)}
               onChange={item => {
                 setDistrict(item.value);
-                setIsFocus(false);
               }}
-              // renderLeftIcon={() => (
-              //   <Text>{isFocus ? 'blue' : 'black'}</Text>
-              // )}
             />
           </View>
         </View>
@@ -277,15 +265,9 @@ const AddLocation = ({route}) => {
               placeholder={!isFocus ? 'Select Taluka' : ' '}
               searchPlaceholder="Search..."
               value={taluka}
-              onFocus={() => setIsFocus(true)}
-              onBlur={() => setIsFocus(false)}
               onChange={item => {
                 setTaluka(item.value);
-                setIsFocus(false);
               }}
-              // renderLeftIcon={() => (
-              //   <Text>{isFocus ? 'blue' : 'black'}</Text>
-              // )}
             />
           </View>
         </View>
@@ -307,15 +289,9 @@ const AddLocation = ({route}) => {
               placeholder={!isFocus ? 'Select Village' : ' '}
               searchPlaceholder="Search..."
               value={village}
-              onFocus={() => setIsFocus(true)}
-              onBlur={() => setIsFocus(false)}
               onChange={item => {
                 setVillage(item.value);
-                setIsFocus(false);
               }}
-              // renderLeftIcon={() => (
-              //   <Text>{isFocus ? 'blue' : 'black'}</Text>
-              // )}
             />
           </View>
         </View>

@@ -184,15 +184,9 @@ const AddBooking = ({item}) => {
               placeholder={!isFocus ? 'Select Modal' : ' '}
               searchPlaceholder="Search..."
               value={modal}
-              onFocus={() => setIsFocus(true)}
-              onBlur={() => setIsFocus(false)}
               onChange={item => {
                 setModal(item.value);
-                setIsFocus(false);
               }}
-              // renderLeftIcon={() => (
-              //   <Text>{isFocus ? 'blue' : 'black'}</Text>
-              // )}
             />
           </View>
         </View>
@@ -212,15 +206,9 @@ const AddBooking = ({item}) => {
               placeholder={!isFocus ? 'Select Variant' : ' '}
               searchPlaceholder="Search..."
               value={variant}
-              onFocus={() => setIsFocus(true)}
-              onBlur={() => setIsFocus(false)}
               onChange={item => {
                 setVariant(item.value);
-                setIsFocus(false);
               }}
-              // renderLeftIcon={() => (
-              //   <Text>{isFocus ? 'blue' : 'black'}</Text>
-              // )}
             />
           </View>
         </View>
@@ -247,15 +235,9 @@ const AddBooking = ({item}) => {
               placeholder={!isFocus ? 'Select Mode Of Finance' : ' '}
               searchPlaceholder="Search..."
               value={finance}
-              onFocus={() => setIsFocus(true)}
-              onBlur={() => setIsFocus(false)}
               onChange={item => {
                 setFinance(item.value);
-                setIsFocus(false);
               }}
-              // renderLeftIcon={() => (
-              //   <Text>{isFocus ? 'blue' : 'black'}</Text>
-              // )}
             />
           </View>
         </View>
@@ -276,15 +258,9 @@ const AddBooking = ({item}) => {
               placeholder={!isFocus ? 'Select Bank' : ' '}
               searchPlaceholder="Search..."
               value={bank}
-              onFocus={() => setIsFocus(true)}
-              onBlur={() => setIsFocus(false)}
               onChange={item => {
                 setBank(item.value);
-                setIsFocus(false);
               }}
-              // renderLeftIcon={() => (
-              //   <Text>{isFocus ? 'blue' : 'black'}</Text>
-              // )}
             />
           </View>
         </View>
@@ -396,7 +372,7 @@ const styles = StyleSheet.create({
   deliveryName: {
     backgroundColor: '#2980B9',
     padding: 5,
-    marginVertical: 10,
+    marginVertical: 16,
   },
   deliveryDateContainer: {
     width: '100%',
@@ -428,7 +404,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   buttonContainer: {
-    top: 50
+    top: 30
   }
 });
 export default AddBooking;

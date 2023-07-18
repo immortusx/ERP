@@ -776,6 +776,28 @@ router.post("/close-enquiry/:id", tokenCheck, async (req, res) => {
   }
 });
 
+//======================Get Commercial Reason=================//
+router.get("/get-commercial-reasonsList", tokenCheck, async (req, res) => {
+  try {
+    const customer_id = req.params.id;
+    console.log(">>>>>>>>>/get-commercial-reasonsList");
+    await db.query(
+      `SELECT * FROM enquiry_lost_reasons`,
+      async (err, result) => {
+        if (err) {
+          console.log({ isSuccess: false, result: err });
+          res.send({ isSuccess: false, result: "error" });
+        } else {
+          console.log({ isSuccess: true, result: result });
+          res.send({ isSuccess: true, result: result });
+        }
+      }
+    );
+  } catch (err) {
+    console.log(err);
+  }
+});
+
 //=================Get Enquiry Location List============//
 router.get("/get-enquiry-location-list", tokenCheck, async (req, res) => {
   console.log(">>>>>>>>>get-enquiry-location");

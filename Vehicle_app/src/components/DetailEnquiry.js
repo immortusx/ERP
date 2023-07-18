@@ -481,15 +481,9 @@ const DetailEnquiry = ({route}) => {
                 placeholder={!isFocus ? 'Select Source' : ' '}
                 searchPlaceholder="Search..."
                 value={enquiry}
-                onFocus={() => setIsFocus(true)}
-                onBlur={() => setIsFocus(false)}
                 onChange={item => {
                   setEnquiry(item.value);
-                  setIsFocus(false);
                 }}
-                // renderLeftIcon={() => (
-                //   <Text>{isFocus ? 'blue' : 'black'}</Text>
-                // )}
               />
             </View>
           </View>
@@ -545,15 +539,9 @@ const DetailEnquiry = ({route}) => {
                       placeholder={!isFocus ? 'Select Manufactur' : ' '}
                       searchPlaceholder="Search..."
                       value={oldManufacturer}
-                      onFocus={() => setIsFocus(true)}
-                      onBlur={() => setIsFocus(false)}
                       onChange={item => {
                         setOldManufacturer(item.value);
-                        setIsFocus(false);
                       }}
-                      // renderLeftIcon={() => (
-                      //   <Text>{isFocus ? 'blue' : 'black'}</Text>
-                      // )}
                     />
                   </View>
                 </View>
@@ -577,15 +565,9 @@ const DetailEnquiry = ({route}) => {
                       placeholder={!isFocus ? 'Select Modal' : ' '}
                       searchPlaceholder="Search..."
                       value={oldModal}
-                      onFocus={() => setIsFocus(true)}
-                      onBlur={() => setIsFocus(false)}
                       onChange={item => {
                         setOldModal(item.value);
-                        setIsFocus(false);
                       }}
-                      // renderLeftIcon={() => (
-                      //   <Text>{isFocus ? 'blue' : 'black'}</Text>
-                      // )}
                     />
                   </View>
                 </View>
@@ -609,15 +591,9 @@ const DetailEnquiry = ({route}) => {
                       placeholder={!isFocus ? 'Select Variant' : ' '}
                       searchPlaceholder="Search..."
                       value={oldVariant}
-                      onFocus={() => setIsFocus(true)}
-                      onBlur={() => setIsFocus(false)}
                       onChange={item => {
                         setOldVariant(item.value);
-                        setIsFocus(false);
                       }}
-                      // renderLeftIcon={() => (
-                      //   <Text>{isFocus ? 'blue' : 'black'}</Text>
-                      // )}
                     />
                   </View>
                 </View>
@@ -667,15 +643,9 @@ const DetailEnquiry = ({route}) => {
                       placeholder={!isFocus ? 'Select Condition' : ' '}
                       searchPlaceholder="Search..."
                       value={condition}
-                      onFocus={() => setIsFocus(true)}
-                      onBlur={() => setIsFocus(false)}
                       onChange={item => {
                         setCondtion(item.value);
-                        setIsFocus(false);
                       }}
-                      // renderLeftIcon={() => (
-                      //   <Text>{isFocus ? 'blue' : 'black'}</Text>
-                      // )}
                     />
                   </View>
                 </View>

@@ -17,7 +17,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useDispatch} from 'react-redux';
 import {saveManufacturerDetails} from '../redux/slice/manufacturerDetailsSlice';
 import SweetSuccessAlert from './subCom/SweetSuccessAlert';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 const AddManufacturDetails = ({route}) => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
@@ -40,23 +40,23 @@ const AddManufacturDetails = ({route}) => {
 
   const modalItem = modalData.map(item => ({
     label: item.modalName,
-    value: item.id
+    value: item.id,
   }));
   const variantItem = variantData.map(item => ({
     label: item.variantName,
-    value: item.id
+    value: item.id,
   }));
 
-  useEffect(()=> {
-    if(route){
-      console.log(route,'editManu')
+  useEffect(() => {
+    if (route) {
+      console.log(route, 'editManu');
       const {editData} = route.params;
       setEditData(editData);
     }
-  },[route])
+  }, [route]);
 
-  useEffect(()=> {
-    if(editData){
+  useEffect(() => {
+    if (editData) {
       console.log(editData, 'manuedetails....');
       console.log(editData.manufacturer);
       console.log(editData.modal);
@@ -65,7 +65,7 @@ const AddManufacturDetails = ({route}) => {
       setModal(6);
       setVariant(18);
     }
-  },[editData])
+  }, [editData]);
   const renderLabel = () => {
     if (value || isFocus) {
       return (
@@ -89,7 +89,7 @@ const AddManufacturDetails = ({route}) => {
       console.log(config);
       await axios.get(url, config).then(response => {
         if (response) {
-          console.log(response.data.result,'mmmmmmmmmmmmmmmmmmmmm');
+          console.log(response.data.result, 'mmmmmmmmmmmmmmmmmmmmm');
           setManufacurerData(response.data.result);
         }
       });
@@ -97,17 +97,16 @@ const AddManufacturDetails = ({route}) => {
     getManufacturer();
   }, []);
 
-  useEffect(()=> {
-    if(manufacturerData){
+  useEffect(() => {
+    if (manufacturerData) {
       setManufacturer(1);
     }
-  },[manufacturerData]);
-
+  }, [manufacturerData]);
 
   useEffect(() => {
     if (manufacturer) {
       const getModal = async () => {
-        console.log(manufacturer ,'id');
+        console.log(manufacturer, 'id');
         const url = `${API_URL}/api/master/getmodal/${manufacturer}`;
         console.log('get modal', url);
         const token = await AsyncStorage.getItem('rbacToken');
@@ -119,7 +118,7 @@ const AddManufacturDetails = ({route}) => {
         console.log(config);
         await axios.get(url, config).then(response => {
           if (response) {
-            console.log(response.data.result,'modllllllllllllll');
+            console.log(response.data.result, 'modllllllllllllll');
             setModalData(response.data.result);
           }
         });
@@ -131,7 +130,7 @@ const AddManufacturDetails = ({route}) => {
   useEffect(() => {
     if (modal) {
       const getVariant = async () => {
-        console.log(modal ,'id');
+        console.log(modal, 'id');
         const url = `${API_URL}/api/master/getvariant/${modal}`;
         console.log('get variant', url);
         const token = await AsyncStorage.getItem('rbacToken');
@@ -143,7 +142,7 @@ const AddManufacturDetails = ({route}) => {
         console.log(config);
         await axios.get(url, config).then(response => {
           if (response) {
-            console.log(response.data.result,'vvvvvvvvvvvv');
+            console.log(response.data.result, 'vvvvvvvvvvvv');
             setVariantData(response.data.result);
           }
         });
@@ -160,7 +159,7 @@ const AddManufacturDetails = ({route}) => {
         variant,
       }),
     );
-    setMessage(" Manufacturer Added")
+    setMessage(' Manufacturer Added');
     openModal();
     navigation.goBack();
   };
@@ -190,15 +189,9 @@ const AddManufacturDetails = ({route}) => {
               placeholder={!isFocus ? 'Select Manufacturer' : ' '}
               searchPlaceholder="Search..."
               value={manufacturer}
-              onFocus={() => setIsFocus(true)}
-              onBlur={() => setIsFocus(false)}
               onChange={item => {
                 setManufacturer(item.value);
-                setIsFocus(false);
               }}
-              // renderLeftIcon={() => (
-              //   <Text>{isFocus ? 'blue' : 'black'}</Text>
-              // )}
             />
           </View>
         </View>
@@ -220,15 +213,9 @@ const AddManufacturDetails = ({route}) => {
               placeholder={!isFocus ? 'Select Modal' : ' '}
               searchPlaceholder="Search..."
               value={modal}
-              onFocus={() => setIsFocus(true)}
-              onBlur={() => setIsFocus(false)}
               onChange={item => {
                 setModal(item.value);
-                setIsFocus(false);
               }}
-              // renderLeftIcon={() => (
-              //   <Text>{isFocus ? 'blue' : 'black'}</Text>
-              // )}
             />
           </View>
         </View>
@@ -250,15 +237,9 @@ const AddManufacturDetails = ({route}) => {
               placeholder={!isFocus ? 'Select Variant' : ' '}
               searchPlaceholder="Search..."
               value={variant}
-              onFocus={() => setIsFocus(true)}
-              onBlur={() => setIsFocus(false)}
               onChange={item => {
                 setVariant(item.value);
-                setIsFocus(false);
               }}
-              // renderLeftIcon={() => (
-              //   <Text>{isFocus ? 'blue' : 'black'}</Text>
-              // )}
             />
           </View>
         </View>

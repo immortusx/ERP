@@ -22,6 +22,9 @@ const DropScreen = ({item}) => {
   const [manufacturerData, setManufacurerData] = useState([]);
   const [modalData, setModalData] = useState([]);
   const [variantData, setVariantData] = useState([]);
+  const [commercialData, setCommercialData] = useState([]);
+  const [commecialReason, setCommercialReason] = useState(null);
+  const [nonCommecialReason, setNonCommercialReason] = useState(null);
   const [enquiryData, setEnquiryData] = useState({});
   const [deliveryData, setDeliveryData] = useState({
     phone: '',
@@ -44,6 +47,15 @@ const DropScreen = ({item}) => {
   }));
   const variantItem = variantData.map(item => ({
     label: item.variantName,
+    value: item.id,
+  }));
+  const commercialItem = commercialData.map(item => ({
+    label: item.commercial_reasons,
+    value: item.id,
+  }));
+
+  const nonCommercialReasonItem = commercialData.map(item => ({
+    label: item.non_commercial_reasons,
     value: item.id,
   }));
 
@@ -91,12 +103,6 @@ const DropScreen = ({item}) => {
   }, []);
 
   useEffect(() => {
-    if (manufacturerData) {
-      setManufacturer(1);
-    }
-  }, [manufacturerData]);
-
-  useEffect(() => {
     if (manufacturer) {
       const getModal = async () => {
         console.log(manufacturer, 'id');
@@ -141,6 +147,30 @@ const DropScreen = ({item}) => {
       getVariant();
     }
   }, [modal]);
+
+  useEffect(() => {
+    const getCommercialList = async () => {
+      const url = `${API_URL}/api/enquiry/get-commercial-reasonsList`;
+      console.log('commercial', url);
+      const token = await AsyncStorage.getItem('rbacToken');
+      const config = {
+        headers: {
+          token: token ? token : '',
+        },
+      };
+      console.log(config);
+      await axios.get(url, config).then(response => {
+        if (response) {
+          console.log(response.data, 'cmcmc');
+          setCommercialData(response.data.result);
+        }
+      });
+    };
+    getCommercialList();
+  }, []);
+
+  
+
   const onChangeInputField = (value, field) => {
     setDeliveryData(prefield => ({
       ...prefield,
@@ -168,23 +198,17 @@ const DropScreen = ({item}) => {
               selectedTextStyle={styles.selectedTextStyle}
               inputSearchStyle={styles.inputSearchStyle}
               iconStyle={styles.iconStyle}
-              data={modalItem}
+              data={manufacturItem}
               search
               maxHeight={200}
               labelField="label"
               valueField="value"
               placeholder={!isFocus ? 'Select Maker' : ' '}
               searchPlaceholder="Search..."
-              value={modal}
-              onFocus={() => setIsFocus(true)}
-              onBlur={() => setIsFocus(false)}
+              value={manufacturer}
               onChange={item => {
-                setModal(item.value);
-                setIsFocus(false);
+                setManufacturer(item.value);
               }}
-              // renderLeftIcon={() => (
-              //   <Text>{isFocus ? 'blue' : 'black'}</Text>
-              // )}
             />
           </View>
         </View>
@@ -232,15 +256,9 @@ const DropScreen = ({item}) => {
               placeholder={!isFocus ? 'Select Variant' : ' '}
               searchPlaceholder="Search..."
               value={variant}
-              onFocus={() => setIsFocus(true)}
-              onBlur={() => setIsFocus(false)}
               onChange={item => {
                 setVariant(item.value);
-                setIsFocus(false);
               }}
-              // renderLeftIcon={() => (
-              //   <Text>{isFocus ? 'blue' : 'black'}</Text>
-              // )}
             />
           </View>
         </View>
@@ -252,23 +270,17 @@ const DropScreen = ({item}) => {
               selectedTextStyle={styles.selectedTextStyle}
               inputSearchStyle={styles.inputSearchStyle}
               iconStyle={styles.iconStyle}
-              data={modeOfFinance}
+              data={commercialItem}
               search
               maxHeight={200}
               labelField="label"
               valueField="value"
               placeholder={!isFocus ? 'Select Commercial Reason 1' : ' '}
               searchPlaceholder="Search..."
-              value={finance}
-              onFocus={() => setIsFocus(true)}
-              onBlur={() => setIsFocus(false)}
+              value={commecialReason}
               onChange={item => {
-                setFinance(item.value);
-                setIsFocus(false);
+                setCommercialReason(item.value);
               }}
-              // renderLeftIcon={() => (
-              //   <Text>{isFocus ? 'blue' : 'black'}</Text>
-              // )}
             />
           </View>
         </View>
@@ -281,23 +293,17 @@ const DropScreen = ({item}) => {
               selectedTextStyle={styles.selectedTextStyle}
               inputSearchStyle={styles.inputSearchStyle}
               iconStyle={styles.iconStyle}
-              data={bankName}
+              data={nonCommercialReasonItem}
               search
               maxHeight={200}
               labelField="label"
               valueField="value"
               placeholder={!isFocus ? 'Select Non-Commercial Reason 2' : ' '}
               searchPlaceholder="Search..."
-              value={bank}
-              onFocus={() => setIsFocus(true)}
-              onBlur={() => setIsFocus(false)}
+              value={nonCommecialReason}
               onChange={item => {
-                setBank(item.value);
-                setIsFocus(false);
+                setNonCommercialReason(item.value);
               }}
-              // renderLeftIcon={() => (
-              //   <Text>{isFocus ? 'blue' : 'black'}</Text>
-              // )}
             />
           </View>
         </View>
@@ -418,7 +424,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   buttonContainer: {
-    top: 140
-  }
+    top: 135,
+  },
 });
 export default DropScreen;
