@@ -275,7 +275,7 @@ const DetailEnquiry = ({route}) => {
       district: district,
       taluka: taluka,
       village: village,
-      deliveryDate: expDeliveryDate.toString().replace('T', ' ').slice(0, 19),
+      deliveryDate: expDeliveryDate !== '' ? new Date(expDeliveryDate).toISOString().slice(0, 19).replace('T', ' ') : new Date().toISOString().slice(0, 19).replace('T', ' '),
       manufacturer: manufacturer,
       modal: modal,
       variant: variant,

@@ -16,6 +16,7 @@ import {API_URL} from '@env';
 import moment from 'moment';
 import CustomRadioButton from './subCom/CustomRadioButton';
 import RadioButtons from './subCom/RadioButtons';
+import SweetSuccessAlert from './subCom/SweetSuccessAlert';
 
 const AddBooking = ({item}) => {
   const [isFocus, setIsFocus] = useState(false);
@@ -37,10 +38,12 @@ const AddBooking = ({item}) => {
   const [openRetailDate, setOpenRetailDate] = useState(false);
   const [expDeliveryDate, setExpDeliveryDate] = useState('');
   const [retailDate, setRetailDate] = useState('');
+  const [showMessageModal, setShowMessageModal] = useState(false);
   const [manufacturerData, setManufacurerData] = useState([]);
   const [modalData, setModalData] = useState([]);
   const [variantData, setVariantData] = useState([]);
   const [enquiryData, setEnquiryData] = useState({});
+  const [oldVehicleData, setOldVehicleData] = useState({});
   const [deliveryData, setDeliveryData] = useState({
     phone: '',
     chassisno: '',
@@ -117,6 +120,21 @@ const AddBooking = ({item}) => {
   };
 
   useEffect(() => {
+    if (modalVisible && oldVehicleData) {
+      if (oldVehicleData.old_tractor === 'Yes') {
+        setOldManufacturer(Number(oldVehicleData.maker));
+        setOldModal(Number(oldVehicleData.modalName));
+        setOldVariant(Number(oldVehicleData.variantName));
+        const isYear = oldVehicleData.year_of_manufactur;
+        const manufactureYear = new Date(isYear).toISOString().slice(0, 10);
+        setManuYearDate(manufactureYear);
+        setCondtion(oldVehicleData.condition_of);
+      } else {
+        setSelectedOption('Exchange No');
+      }
+    }
+  }, [modalVisible, oldVehicleData]);
+  useEffect(() => {
     const getManufacturer = async () => {
       const url = `${API_URL}/api/master/get-allmanufacturer`;
       console.log('get manufacturer', url);
@@ -129,7 +147,6 @@ const AddBooking = ({item}) => {
       console.log(config);
       await axios.get(url, config).then(response => {
         if (response) {
-          console.log(response.data.result, 'mmmmmmmmmmmmmmmmmmmmm');
           setManufacurerData(response.data.result);
         }
       });
@@ -215,8 +232,12 @@ const AddBooking = ({item}) => {
         };
         console.log(config);
         await axios.get(url, config).then(response => {
-          console.log(response.data, 'oldData');
-          return response.data;
+          if (response && response.data.isSuccess) {
+            console.log(response.data, 'oldData');
+            const data = response.data;
+            setOldVehicleData(data.result[0]);
+            return response.data;
+          }
         });
       };
       getoldTractorData();
@@ -233,9 +254,41 @@ const AddBooking = ({item}) => {
       'aaaaaa',
     );
   };
-  const submitDelivery = () => {
+  const submitDelivery = async () => {
     console.log(deliveryData);
     console.log(modal, variant, finance, bank, expDeliveryDate, retailDate);
+    if (deliveryData.phone.length > 0) {
+      const customer_id = customerId;
+      const formData = {
+        phone_number: deliveryData.phone,
+        chassis_no: deliveryData.chassisno,
+        modal: modal,
+        variant: variant,
+        mode_of_finance: finance,
+        bank_name: bank,
+        deliveryDate: expDeliveryDate,
+        retailDate: retailDate,
+        selectedOption: selectedOption,
+      };
+      const url = `${API_URL}/api/enquiry/set-new-booking/${customer_id}`;
+      console.log('closing enqury', url);
+      const token = await AsyncStorage.getItem('rbacToken');
+      const config = {
+        headers: {
+          token: token ? token : '',
+        },
+      };
+      console.log(config);
+      await axios.post(url, formData, config).then(response => {
+        if (response && response.data.isSuccess) {
+          console.log(response.data, 'booking');
+          setShowMessageModal(true);
+          
+        }
+      });
+    } else {
+      console.log('Please fill Data');
+    }
   };
   return (
     <ScrollView>
@@ -617,6 +670,10 @@ const AddBooking = ({item}) => {
             </TouchableOpacity>
           </View>
         </View>
+        <SweetSuccessAlert
+          message={'Booking successfully'}
+          modalShow={showMessageModal}
+        />
       </View>
     </ScrollView>
   );

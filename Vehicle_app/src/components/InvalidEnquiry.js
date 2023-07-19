@@ -51,7 +51,7 @@ const InvalidEnquiry = ({item}) => {
       const customer_id = customerId;
       const formData = {
         reason: reason,
-        enquiry_stage: 'Invalid',
+        enquiry_stage: 'INVALID',
       };
       const url = `${API_URL}/api/enquiry/close-enquiry/${customer_id}`;
       console.log('closing enqury', url);

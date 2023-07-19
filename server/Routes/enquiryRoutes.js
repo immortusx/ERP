@@ -636,14 +636,7 @@ router.post("/edit-new-detail-enquiry", tokenCheck, async (req, res) => {
                               isSuccess: "success",
                               result: enquiryProductSql,
                             });
-
-                            if (
-                              maker &&
-                              modalName &&
-                              variantName &&
-                              year &&
-                              condition_of
-                            ) {
+                            if (old_tractor === "Yes") {
                               const newYearOfManufactur =
                                 await getDateInFormate(year);
                               const urlSql = `UPDATE manufactur_details SET maker = ?, modalName = ?, variantName = ?, year_of_manufactur = ?, condition_of = ?, old_tractor = ? WHERE enquiry_id = ${enquiry_id}`;
@@ -657,6 +650,26 @@ router.post("/edit-new-detail-enquiry", tokenCheck, async (req, res) => {
                                   condition_of,
                                   old_tractor,
                                 ],
+                                (err, result) => {
+                                  if (err) {
+                                    console.log(err);
+                                  } else {
+                                    console.log({
+                                      isSuccess: "success",
+                                      result: urlSql,
+                                    });
+                                    res.send({
+                                      isSuccess: "success",
+                                      result: "Enquiry Updated",
+                                    });
+                                  }
+                                }
+                              );
+                            } else if (old_tractor === "No") {
+                              const urlSql = `UPDATE manufactur_details SET maker = ?, modalName = ?, variantName = ?, year_of_manufactur = ?, condition_of = ?, old_tractor = ? WHERE enquiry_id = ${enquiry_id}`;
+                              await db.query(
+                                urlSql,
+                                [old_tractor],
                                 (err, result) => {
                                   if (err) {
                                     console.log(err);
@@ -875,18 +888,65 @@ router.get("/get-old-tractor-data/:id", tokenCheck, async (req, res) => {
 });
 
 //=================Get Enquiry Location List============//
-router.get("/get-enquiry-location-list", tokenCheck, async (req, res) => {
-  console.log(">>>>>>>>>get-enquiry-location");
-  const urlNew = `call sp_get_enquiry_location_list()`;
-  await db.query(urlNew, (err, result) => {
-    if (err) {
-      console.log({ isSuccess: false, result: err });
-      res.send({ isSuccess: false, result: "error" });
-    } else {
-      console.log({ isSuccess: true, result: result });
-      res.send({ isSuccess: true, result: result });
-    }
-  });
+
+//===================Set New Booking===================//
+router.post("/set-new-booking/:id", tokenCheck, async (req, res) => {
+  console.log("/set-new-booking>>>>>>>>>>>", req.body);
+  try {
+    const {
+      phone_number,
+      modal,
+      variant,
+      chassis_no,
+      mode_of_finance,
+      bank_name,
+      deliveryDate,
+      retailDate,
+      selectedOption,
+    } = req.body;
+    const customer_id = req.params.id;
+    await db.query(
+      `SELECT id FROM enquiries WHERE customer_id = ${customer_id}`,
+      async (err, enquiryResult) => {
+        if (err) {
+          console.log({ isSuccess: false, result: err });
+          res.send({ isSuccess: false, result: "error" });
+        } else {
+          console.log({ isSuccess: true, result: enquiryResult });
+          // res.send({ isSuccess: true, result: result });
+          const enquiry_id = enquiryResult[0].id;
+          console.log(enquiry_id);
+          const lostEnquirySql = `INSERT INTO booking (customer_id, enquiry_id, phone_number, modal, variant, chassis_no, mode_of_finance, bank_name, delivery_date, retail_date) VALUES (?,?,?,?,?,?,?,?,?,?)`;
+          await db.query(
+            lostEnquirySql,
+            [
+              customer_id,
+              enquiry_id,
+              phone_number,
+              chassis_no,
+              modal,
+              variant,
+              mode_of_finance,
+              bank_name,
+              deliveryDate,
+              retailDate,
+            ],
+            (err, result) => {
+              if (err) {
+                console.log({ isSuccess: false, result: err });
+                res.send({ isSuccess: false, result: "error" });
+              } else {
+                console.log({ isSuccess: true, result: result });
+                res.send({ isSuccess: true, result: result });
+              }
+            }
+          );
+        }
+      }
+    );
+  } catch (err) {
+    console.log({ isSuccess: false, result: err });
+  }
 });
 
 module.exports = router;
