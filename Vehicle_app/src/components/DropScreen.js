@@ -224,7 +224,7 @@ const DropScreen = ({item}) => {
         <View style={styles.inputContainer}>
           <View style={styles.dropDownStyle}>
             <Dropdown
-              style={[styles.dropdown, isFocus && {borderColor: 'blue'}]}
+              style={[styles.dropdown, isFocus && {borderColor: 'blue'},{paddingHorizontal: 5},]}
               placeholderStyle={styles.placeholderStyle}
               selectedTextStyle={styles.selectedTextStyle}
               inputSearchStyle={styles.inputSearchStyle}
@@ -246,7 +246,7 @@ const DropScreen = ({item}) => {
         <View style={styles.inputContainer}>
           <View style={styles.dropDownStyle}>
             <Dropdown
-              style={[styles.dropdown, isFocus && {borderColor: 'blue'}]}
+              style={[styles.dropdown, isFocus && {borderColor: 'blue'},{paddingHorizontal: 5},]}
               placeholderStyle={styles.placeholderStyle}
               selectedTextStyle={styles.selectedTextStyle}
               inputSearchStyle={styles.inputSearchStyle}
@@ -274,7 +274,7 @@ const DropScreen = ({item}) => {
         <View style={styles.inputContainer}>
           <View style={styles.dropDownStyle}>
             <Dropdown
-              style={[styles.dropdown, isFocus && {borderColor: 'blue'}]}
+              style={[styles.dropdown, isFocus && {borderColor: 'blue'}, {paddingHorizontal: 5},]}
               placeholderStyle={styles.placeholderStyle}
               selectedTextStyle={styles.selectedTextStyle}
               inputSearchStyle={styles.inputSearchStyle}
@@ -296,7 +296,7 @@ const DropScreen = ({item}) => {
         <View style={styles.inputContainer}>
           <View style={styles.dropDownStyle}>
             <Dropdown
-              style={[styles.dropdown, isFocus && {borderColor: 'blue'}]}
+              style={[styles.dropdown, isFocus && {borderColor: 'blue'},{paddingHorizontal: 5},]}
               placeholderStyle={styles.placeholderStyle}
               selectedTextStyle={styles.selectedTextStyle}
               inputSearchStyle={styles.inputSearchStyle}
@@ -319,7 +319,7 @@ const DropScreen = ({item}) => {
         <View style={styles.inputContainer}>
           <View style={styles.dropDownStyle}>
             <Dropdown
-              style={[styles.dropdown, isFocus && {borderColor: 'blue'}]}
+              style={[styles.dropdown, isFocus && {borderColor: 'blue'},{paddingHorizontal: 5},]}
               placeholderStyle={styles.placeholderStyle}
               selectedTextStyle={styles.selectedTextStyle}
               inputSearchStyle={styles.inputSearchStyle}
@@ -338,15 +338,20 @@ const DropScreen = ({item}) => {
             />
           </View>
         </View>
-        <View style={styles.inputContainer}>
+        <View style={{marginBottom: 5, marginTop: 10}}>
           <View style={styles.deliveryDateContainer}>
             <TouchableOpacity
-              style={{flexDirection: 'row', alignItems: 'center'}}
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                paddingHorizontal: 5
+              }}
               onPress={() => {
                 setOpenEnquiryLostDate(true);
               }}>
               <Text style={{paddingVertical: 7}}>
-                Enquiry Lost Date{' :- '}
+                Enquiry Lost Date {':- '}
                 {enquiryLostDate === ''
                   ? new Date().toISOString().slice(0, 10)
                   : enquiryLostDate}
@@ -427,6 +432,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#2980B9',
     padding: 5,
     marginVertical: 10,
+    alignItems: 'center'
   },
   deliveryDateContainer: {
     width: '100%',
@@ -438,7 +444,6 @@ const styles = StyleSheet.create({
   dateImg: {
     width: 22,
     height: 22,
-    marginHorizontal: 125,
   },
   retailImg: {
     width: 22,

@@ -464,11 +464,17 @@ const DetailEnquiry = ({route}) => {
             }}>{`${manufacturer} ${modal} ${variant}`}</Text>
 
           <View style={{marginBottom: 5}}>
-            <Text style={styles.label}>Enquiry Primary Source *</Text>
+            <Text style={[styles.label, {marginBottom: 5}]}>
+              Enquiry Primary Source *
+            </Text>
             <View style={styles.enquirySourceContainer}>
               {/* {renderLabel()} */}
               <Dropdown
-                style={[styles.dropdown, isFocus && {borderColor: 'blue'}]}
+                style={[
+                  styles.dropdown,
+                  isFocus && {borderColor: 'blue'},
+                  {paddingHorizontal: 5},
+                ]}
                 placeholderStyle={styles.placeholderStyle}
                 selectedTextStyle={styles.selectedTextStyle}
                 inputSearchStyle={styles.inputSearchStyle}
@@ -488,9 +494,12 @@ const DetailEnquiry = ({route}) => {
             </View>
           </View>
           <View style={{marginBottom: 5}}>
-            <Text style={styles.label}>Expected Delivery Date *</Text>
+            <Text style={[styles.label, {marginBottom: 5}]}>
+              Expected Delivery Date *
+            </Text>
             <View style={styles.deliveryDateContainer}>
               <TouchableOpacity
+                style={{paddingHorizontal: 5}}
                 onPress={() => {
                   setOpenExpDeliveryDate(true);
                 }}>
@@ -518,7 +527,7 @@ const DetailEnquiry = ({route}) => {
           {modalVisible && (
             <View>
               <View style={styles.expandedView}>
-                <Text style={styles.modalTitle}>Add Details *</Text>
+                <Text style={styles.modalTitle}>Select Details *</Text>
                 <View style={styles.sourceContainer}>
                   <View style={styles.enquirySourceContainer}>
                     {/* {renderLabel()} */}
@@ -526,6 +535,7 @@ const DetailEnquiry = ({route}) => {
                       style={[
                         styles.dropdown,
                         isFocus && {borderColor: 'blue'},
+                        {paddingHorizontal: 5}
                       ]}
                       placeholderStyle={styles.placeholderStyle}
                       selectedTextStyle={styles.selectedTextStyle}
@@ -552,6 +562,7 @@ const DetailEnquiry = ({route}) => {
                       style={[
                         styles.dropdown,
                         isFocus && {borderColor: 'blue'},
+                        {paddingHorizontal: 5}
                       ]}
                       placeholderStyle={styles.placeholderStyle}
                       selectedTextStyle={styles.selectedTextStyle}
@@ -578,6 +589,7 @@ const DetailEnquiry = ({route}) => {
                       style={[
                         styles.dropdown,
                         isFocus && {borderColor: 'blue'},
+                        {paddingHorizontal: 5}
                       ]}
                       placeholderStyle={styles.placeholderStyle}
                       selectedTextStyle={styles.selectedTextStyle}
@@ -600,13 +612,18 @@ const DetailEnquiry = ({route}) => {
 
                 <View style={{marginBottom: 5}}>
                   <View style={styles.deliveryDateContainer}>
-                    <Text style={styles.label}>Manufactur Year *</Text>
                     <TouchableOpacity
-                      style={{flexDirection: 'row', alignItems: 'center'}}
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        paddingHorizontal: 5,
+                      }}
                       onPress={() => {
                         setOpenManufacturer(true);
                       }}>
                       <Text style={{paddingVertical: 7}}>
+                        Manufactur Year {':- '}
                         {manuYearDate === ''
                           ? new Date().toISOString().slice(0, 10)
                           : manuYearDate}
@@ -959,7 +976,6 @@ const styles = StyleSheet.create({
   dateImg: {
     width: 22,
     height: 22,
-    marginHorizontal: 258,
   },
 });
 export default DetailEnquiry;

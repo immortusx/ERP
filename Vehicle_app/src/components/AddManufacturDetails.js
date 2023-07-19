@@ -175,7 +175,7 @@ const AddManufacturDetails = ({route}) => {
           <View style={styles.inputContainer}>
             {/* {renderLabel()} */}
             <Dropdown
-              style={[styles.dropdown, isFocus && {borderColor: 'blue'}]}
+              style={[styles.dropdown, isFocus && {borderColor: 'blue'},{paddingHorizontal: 5}]}
               placeholderStyle={styles.placeholderStyle}
               selectedTextStyle={styles.selectedTextStyle}
               inputSearchStyle={styles.inputSearchStyle}
@@ -200,7 +200,7 @@ const AddManufacturDetails = ({route}) => {
           <View style={styles.inputContainer}>
             {/* {renderLabel()} */}
             <Dropdown
-              style={[styles.dropdown, isFocus && {borderColor: 'blue'}]}
+              style={[styles.dropdown, isFocus && {borderColor: 'blue'},{paddingHorizontal: 5}]}
               placeholderStyle={styles.placeholderStyle}
               selectedTextStyle={styles.selectedTextStyle}
               inputSearchStyle={styles.inputSearchStyle}
@@ -224,7 +224,7 @@ const AddManufacturDetails = ({route}) => {
           <View style={styles.inputContainer}>
             {/* {renderLabel()} */}
             <Dropdown
-              style={[styles.dropdown, isFocus && {borderColor: 'blue'}]}
+              style={[styles.dropdown, isFocus && {borderColor: 'blue'},{paddingHorizontal: 5}]}
               placeholderStyle={styles.placeholderStyle}
               selectedTextStyle={styles.selectedTextStyle}
               inputSearchStyle={styles.inputSearchStyle}

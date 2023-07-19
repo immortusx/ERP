@@ -853,6 +853,27 @@ router.post("/set-lost-enquiry/:id", tokenCheck, async (req, res) => {
   }
 });
 
+//=================Get Old Tractor Data============//
+router.get("/get-old-tractor-data/:id", tokenCheck, async (req, res) => {
+  console.log(">>>>>>>>>/get-old-tractor-data/");
+  try {
+    const customer_id = req.params.id;
+    console.log(customer_id);
+    const urlNew = `SELECT * FROM manufactur_details WHERE enquiry_id = (SELECT id FROM enquiries WHERE customer_id = ${customer_id})`;
+    await db.query(urlNew, (err, result) => {
+      if (err) {
+        console.log({ isSuccess: false, result: err });
+        res.send({ isSuccess: false, result: "error" });
+      } else {
+        console.log({ isSuccess: true, result: result });
+        res.send({ isSuccess: true, result: result });
+      }
+    });
+  } catch (err) {
+    console.log(err);
+  }
+});
+
 //=================Get Enquiry Location List============//
 router.get("/get-enquiry-location-list", tokenCheck, async (req, res) => {
   console.log(">>>>>>>>>get-enquiry-location");
@@ -867,4 +888,5 @@ router.get("/get-enquiry-location-list", tokenCheck, async (req, res) => {
     }
   });
 });
+
 module.exports = router;

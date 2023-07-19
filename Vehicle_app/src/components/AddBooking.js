@@ -1,4 +1,11 @@
-import {View, Text, StyleSheet, Image} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  ScrollView,
+  Pressable,
+} from 'react-native';
 import React, {useState, useEffect} from 'react';
 import {TextInput, TouchableOpacity} from 'react-native-gesture-handler';
 import {Dropdown} from 'react-native-element-dropdown';
@@ -7,14 +14,25 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {API_URL} from '@env';
 import moment from 'moment';
+import CustomRadioButton from './subCom/CustomRadioButton';
+import RadioButtons from './subCom/RadioButtons';
 
 const AddBooking = ({item}) => {
   const [isFocus, setIsFocus] = useState(false);
   const [modal, setModal] = useState(null);
   const [manufacturer, setManufacturer] = useState('');
   const [variant, setVariant] = useState('');
+  const [condition, setCondtion] = useState(null);
   const [finance, setFinance] = useState('');
+  const [customerId, setCustomerId] = useState(null);
+  const [oldManufacturer, setOldManufacturer] = useState(null);
+  const [oldModal, setOldModal] = useState(null);
+  const [oldVariant, setOldVariant] = useState(null);
+  const [manuYearDate, setManuYearDate] = useState('');
+  const [openManuYearDate, setOpenManufacturer] = useState(false);
   const [bank, setBank] = useState('');
+  const [selectedOption, setSelectedOption] = useState('Exchange No');
+  const [modalVisible, setModalVisible] = useState(false);
   const [openExpDeliveryDate, setOpenExpDeliveryDate] = useState(false);
   const [openRetailDate, setOpenRetailDate] = useState(false);
   const [expDeliveryDate, setExpDeliveryDate] = useState('');
@@ -27,10 +45,17 @@ const AddBooking = ({item}) => {
     phone: '',
     chassisno: '',
   });
+  const [oldTractorData, setOldTractorData] = useState({
+    purchasePrice: '',
+    marketPrice: '',
+    oldChassiNo: '',
+  });
+  const options = ['Exchange Yes', 'Exchange No'];
 
   useEffect(() => {
     if (item) {
       setEnquiryData(item);
+      setCustomerId(item.id);
     }
   }, [item]);
   const manufacturItem = manufacturerData.map(item => ({
@@ -59,16 +84,38 @@ const AddBooking = ({item}) => {
     {label: 'ICICI Bank', value: '4'},
     {label: 'Axis Bank', value: '5'},
   ];
+  const conditionType = [
+    {label: 'Good', value: 'Good'},
+    {label: 'Below Average', value: 'Below Average'},
+    {label: 'Average', value: 'Average'},
+    {label: 'Vey Good', value: 'Vey Good'},
+  ];
+  const handleSelectedOption = option => {
+    console.log(option, 'selct');
+    setSelectedOption(option);
+    if (option === 'Exchange Yes') {
+      setModalVisible(true);
+    } else if (option === 'Exchange No') {
+      setModalVisible(false);
+    }
+  };
   const handleCalendarDate = selectedDate => {
     console.log(selectedDate.dateString, 'deliverydate');
     console.log(selectedDate, 'deliverydate');
     setExpDeliveryDate(selectedDate.dateString);
     setOpenExpDeliveryDate(false);
   };
+  const handleManufacturYearDate = selectedDate => {
+    console.log(selectedDate.dateString, 'manufacturee');
+    console.log(selectedDate, 'manufacturee');
+    setManuYearDate(selectedDate.dateString);
+    setOpenManufacturer(false);
+  };
   const handleRetailDate = selectedDate => {
     setRetailDate(selectedDate.dateString);
     setOpenRetailDate(false);
   };
+
   useEffect(() => {
     const getManufacturer = async () => {
       const url = `${API_URL}/api/master/get-allmanufacturer`;
@@ -147,182 +194,431 @@ const AddBooking = ({item}) => {
       [field]: value,
     }));
   };
+  const onchangeText = (value, field) => {
+    setOldTractorData(prefield => ({
+      ...prefield,
+      [field]: value,
+    }));
+  };
+
+  useEffect(() => {
+    if (modalVisible) {
+      const getoldTractorData = async () => {
+        const customer_id = customerId;
+        const url = `${API_URL}/api/enquiry/get-old-tractor-data/${customer_id}`;
+        console.log('closing enqury', url);
+        const token = await AsyncStorage.getItem('rbacToken');
+        const config = {
+          headers: {
+            token: token ? token : '',
+          },
+        };
+        console.log(config);
+        await axios.get(url, config).then(response => {
+          console.log(response.data, 'oldData');
+          return response.data;
+        });
+      };
+      getoldTractorData();
+    }
+  }, [modalVisible]);
+  const handleModalData = () => {
+    console.log(oldTractorData);
+    console.log(
+      oldManufacturer,
+      oldModal,
+      oldVariant,
+      manuYearDate,
+      condition,
+      'aaaaaa',
+    );
+  };
   const submitDelivery = () => {
     console.log(deliveryData);
     console.log(modal, variant, finance, bank, expDeliveryDate, retailDate);
   };
   return (
-    <View style={styles.container}>
-      <View style={styles.contentContainer}>
-        <TouchableOpacity style={styles.deliveryName}>
-          <Text style={styles.header}>
-            Delivery :- {enquiryData.first_name} {enquiryData.last_name} ,
-            Enquiry. {moment(enquiryData.date).format('Do MMMM YYYY')}
-          </Text>
-        </TouchableOpacity>
-        <View style={styles.inputContainer}>
-          {/* <Text style={styles.label}>Phone Number *</Text> */}
-          <TextInput
-            style={styles.inputField}
-            placeholder="Enter Phone Number"
-            onChangeText={value => onChangeInputField(value, 'phone')}
-          />
-        </View>
-        <View style={styles.inputContainer}>
-          <View style={styles.dropDownStyle}>
-            <Dropdown
-              style={[styles.dropdown, isFocus && {borderColor: 'blue'}]}
-              placeholderStyle={styles.placeholderStyle}
-              selectedTextStyle={styles.selectedTextStyle}
-              inputSearchStyle={styles.inputSearchStyle}
-              iconStyle={styles.iconStyle}
-              data={modalItem}
-              search
-              maxHeight={200}
-              labelField="label"
-              valueField="value"
-              placeholder={!isFocus ? 'Select Modal' : ' '}
-              searchPlaceholder="Search..."
-              value={modal}
-              onChange={item => {
-                setModal(item.value);
-              }}
-            />
-          </View>
-        </View>
-        <View style={styles.inputContainer}>
-          <View style={styles.dropDownStyle}>
-            <Dropdown
-              style={[styles.dropdown, isFocus && {borderColor: 'blue'}]}
-              placeholderStyle={styles.placeholderStyle}
-              selectedTextStyle={styles.selectedTextStyle}
-              inputSearchStyle={styles.inputSearchStyle}
-              iconStyle={styles.iconStyle}
-              data={variantItem}
-              search
-              maxHeight={200}
-              labelField="label"
-              valueField="value"
-              placeholder={!isFocus ? 'Select Variant' : ' '}
-              searchPlaceholder="Search..."
-              value={variant}
-              onChange={item => {
-                setVariant(item.value);
-              }}
-            />
-          </View>
-        </View>
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.inputField}
-            placeholder="Enter Chassis No"
-            onChangeText={value => onChangeInputField(value, 'chassisno')}
-          />
-        </View>
-        <View style={styles.inputContainer}>
-          <View style={styles.dropDownStyle}>
-            <Dropdown
-              style={[styles.dropdown, isFocus && {borderColor: 'blue'}]}
-              placeholderStyle={styles.placeholderStyle}
-              selectedTextStyle={styles.selectedTextStyle}
-              inputSearchStyle={styles.inputSearchStyle}
-              iconStyle={styles.iconStyle}
-              data={modeOfFinance}
-              search
-              maxHeight={200}
-              labelField="label"
-              valueField="value"
-              placeholder={!isFocus ? 'Select Mode Of Finance' : ' '}
-              searchPlaceholder="Search..."
-              value={finance}
-              onChange={item => {
-                setFinance(item.value);
-              }}
-            />
-          </View>
-        </View>
-
-        <View style={styles.inputContainer}>
-          <View style={styles.dropDownStyle}>
-            <Dropdown
-              style={[styles.dropdown, isFocus && {borderColor: 'blue'}]}
-              placeholderStyle={styles.placeholderStyle}
-              selectedTextStyle={styles.selectedTextStyle}
-              inputSearchStyle={styles.inputSearchStyle}
-              iconStyle={styles.iconStyle}
-              data={bankName}
-              search
-              maxHeight={200}
-              labelField="label"
-              valueField="value"
-              placeholder={!isFocus ? 'Select Bank' : ' '}
-              searchPlaceholder="Search..."
-              value={bank}
-              onChange={item => {
-                setBank(item.value);
-              }}
-            />
-          </View>
-        </View>
-        <View style={styles.inputContainer}>
-          <View style={styles.deliveryDateContainer}>
-            <TouchableOpacity
-              style={{flexDirection: 'row', alignItems: 'center'}}
-              onPress={() => {
-                setOpenExpDeliveryDate(true);
-              }}>
-              <Text style={{paddingVertical: 7}}>
-                Delivery Date{' :- '}
-                {expDeliveryDate === ''
-                  ? new Date().toISOString().slice(0, 10)
-                  : expDeliveryDate}
-              </Text>
-              <Image
-                style={styles.dateImg}
-                source={require('../../assets/date.png')}
-              />
-            </TouchableOpacity>
-            <Calendars
-              showModal={openExpDeliveryDate}
-              selectedDate={expDeliveryDate}
-              handleCalendarDate={handleCalendarDate}
-            />
-          </View>
-        </View>
-        <View style={styles.inputContainer}>
-          <View style={styles.deliveryDateContainer}>
-            <TouchableOpacity
-              style={{flexDirection: 'row', alignItems: 'center'}}
-              onPress={() => {
-                setOpenRetailDate(true);
-              }}>
-              <Text style={{paddingVertical: 7}}>
-                Target Retail Date{' :- '}
-                {retailDate === ''
-                  ? new Date().toISOString().slice(0, 10)
-                  : retailDate}
-              </Text>
-              <Image
-                style={styles.retailImg}
-                source={require('../../assets/date.png')}
-              />
-            </TouchableOpacity>
-            <Calendars
-              showModal={openRetailDate}
-              selectedDate={retailDate}
-              handleCalendarDate={handleRetailDate}
-            />
-          </View>
-        </View>
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={styles.deliveryButton}
-            onPress={submitDelivery}>
-            <Text style={styles.deliveryButtonText}>Save Delivery</Text>
+    <ScrollView>
+      <View style={styles.container}>
+        <View style={styles.contentContainer}>
+          <TouchableOpacity style={styles.deliveryName}>
+            <Text style={styles.header}>
+              Delivery :- {enquiryData.first_name} {enquiryData.last_name} ,
+              Enquiry. {moment(enquiryData.date).format('Do MMMM YYYY')}
+            </Text>
           </TouchableOpacity>
+          <View style={styles.inputContainer}>
+            {/* <Text style={styles.label}>Phone Number *</Text> */}
+            <TextInput
+              style={styles.inputField}
+              placeholder="Enter Phone Number"
+              onChangeText={value => onChangeInputField(value, 'phone')}
+            />
+          </View>
+          <View style={styles.inputContainer}>
+            <View style={styles.dropDownStyle}>
+              <Dropdown
+                style={[
+                  styles.dropdown,
+                  isFocus && {borderColor: 'blue'},
+                  {paddingHorizontal: 5},
+                ]}
+                placeholderStyle={styles.placeholderStyle}
+                selectedTextStyle={styles.selectedTextStyle}
+                inputSearchStyle={styles.inputSearchStyle}
+                iconStyle={styles.iconStyle}
+                data={modalItem}
+                search
+                maxHeight={200}
+                labelField="label"
+                valueField="value"
+                placeholder={!isFocus ? 'Select Modal' : ' '}
+                searchPlaceholder="Search..."
+                value={modal}
+                onChange={item => {
+                  setModal(item.value);
+                }}
+              />
+            </View>
+          </View>
+          <View style={styles.inputContainer}>
+            <View style={styles.dropDownStyle}>
+              <Dropdown
+                style={[
+                  styles.dropdown,
+                  isFocus && {borderColor: 'blue'},
+                  {paddingHorizontal: 5},
+                ]}
+                placeholderStyle={styles.placeholderStyle}
+                selectedTextStyle={styles.selectedTextStyle}
+                inputSearchStyle={styles.inputSearchStyle}
+                iconStyle={styles.iconStyle}
+                data={variantItem}
+                search
+                maxHeight={200}
+                labelField="label"
+                valueField="value"
+                placeholder={!isFocus ? 'Select Variant' : ' '}
+                searchPlaceholder="Search..."
+                value={variant}
+                onChange={item => {
+                  setVariant(item.value);
+                }}
+              />
+            </View>
+          </View>
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.inputField}
+              placeholder="Enter Chassis No"
+              onChangeText={value => onChangeInputField(value, 'chassisno')}
+            />
+          </View>
+          <View style={styles.inputContainer}>
+            <View style={styles.dropDownStyle}>
+              <Dropdown
+                style={[
+                  styles.dropdown,
+                  isFocus && {borderColor: 'blue'},
+                  {paddingHorizontal: 5},
+                ]}
+                placeholderStyle={styles.placeholderStyle}
+                selectedTextStyle={styles.selectedTextStyle}
+                inputSearchStyle={styles.inputSearchStyle}
+                iconStyle={styles.iconStyle}
+                data={modeOfFinance}
+                search
+                maxHeight={200}
+                labelField="label"
+                valueField="value"
+                placeholder={!isFocus ? 'Select Mode Of Finance' : ' '}
+                searchPlaceholder="Search..."
+                value={finance}
+                onChange={item => {
+                  setFinance(item.value);
+                }}
+              />
+            </View>
+          </View>
+
+          <View style={styles.inputContainer}>
+            <View style={styles.dropDownStyle}>
+              <Dropdown
+                style={[
+                  styles.dropdown,
+                  isFocus && {borderColor: 'blue'},
+                  {paddingHorizontal: 5},
+                ]}
+                placeholderStyle={styles.placeholderStyle}
+                selectedTextStyle={styles.selectedTextStyle}
+                inputSearchStyle={styles.inputSearchStyle}
+                iconStyle={styles.iconStyle}
+                data={bankName}
+                search
+                maxHeight={200}
+                labelField="label"
+                valueField="value"
+                placeholder={!isFocus ? 'Select Bank' : ' '}
+                searchPlaceholder="Search..."
+                value={bank}
+                onChange={item => {
+                  setBank(item.value);
+                }}
+              />
+            </View>
+          </View>
+          <View style={{marginBottom: 5, marginTop: 10}}>
+            <View style={styles.deliveryDateContainer}>
+              <TouchableOpacity
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  paddingHorizontal: 5,
+                }}
+                onPress={() => {
+                  setOpenExpDeliveryDate(true);
+                }}>
+                <Text style={{paddingVertical: 7}}>
+                  Delivery Date {':- '}
+                  {expDeliveryDate === ''
+                    ? new Date().toISOString().slice(0, 10)
+                    : expDeliveryDate}
+                </Text>
+                <Image
+                  style={styles.dateImg}
+                  source={require('../../assets/date.png')}
+                />
+              </TouchableOpacity>
+              <Calendars
+                showModal={openExpDeliveryDate}
+                selectedDate={expDeliveryDate}
+                handleCalendarDate={handleCalendarDate}
+              />
+            </View>
+          </View>
+          <View style={{marginBottom: 5}}>
+            <View style={styles.deliveryDateContainer}>
+              <TouchableOpacity
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  paddingHorizontal: 5,
+                }}
+                onPress={() => {
+                  setOpenRetailDate(true);
+                }}>
+                <Text style={{paddingVertical: 7}}>
+                  Target Retail Price {':- '}
+                  {retailDate === ''
+                    ? new Date().toISOString().slice(0, 10)
+                    : retailDate}
+                </Text>
+                <Image
+                  style={styles.dateImg}
+                  source={require('../../assets/date.png')}
+                />
+              </TouchableOpacity>
+              <Calendars
+                showModal={openRetailDate}
+                selectedDate={retailDate}
+                handleCalendarDate={handleRetailDate}
+              />
+            </View>
+          </View>
+          <View style={styles.inputContainer}>
+            <RadioButtons
+              options={options}
+              selectedOption={selectedOption}
+              onSelect={handleSelectedOption}
+            />
+          </View>
+          {modalVisible && (
+            <View>
+              <View style={styles.expandedView}>
+                <Text style={styles.modalTitle}>Select Details *</Text>
+                <View style={styles.sourceContainer}>
+                  <View style={styles.enquirySourceContainer}>
+                    {/* {renderLabel()} */}
+                    <Dropdown
+                      style={[
+                        styles.dropdown,
+                        isFocus && {borderColor: 'blue'},
+                        {paddingHorizontal: 5},
+                      ]}
+                      placeholderStyle={styles.placeholderStyle}
+                      selectedTextStyle={styles.selectedTextStyle}
+                      inputSearchStyle={styles.inputSearchStyle}
+                      iconStyle={styles.iconStyle}
+                      data={manufacturItem}
+                      search
+                      maxHeight={300}
+                      labelField="label"
+                      valueField="value"
+                      placeholder={!isFocus ? 'Select Manufactur' : ' '}
+                      searchPlaceholder="Search..."
+                      value={oldManufacturer}
+                      onChange={item => {
+                        setOldManufacturer(item.value);
+                      }}
+                    />
+                  </View>
+                </View>
+                <View style={styles.sourceContainer}>
+                  <View style={styles.enquirySourceContainer}>
+                    {/* {renderLabel()} */}
+                    <Dropdown
+                      style={[
+                        styles.dropdown,
+                        isFocus && {borderColor: 'blue'},
+                        {paddingHorizontal: 5},
+                      ]}
+                      placeholderStyle={styles.placeholderStyle}
+                      selectedTextStyle={styles.selectedTextStyle}
+                      inputSearchStyle={styles.inputSearchStyle}
+                      iconStyle={styles.iconStyle}
+                      data={modalItem}
+                      search
+                      maxHeight={300}
+                      labelField="label"
+                      valueField="value"
+                      placeholder={!isFocus ? 'Select Modal' : ' '}
+                      searchPlaceholder="Search..."
+                      value={oldModal}
+                      onChange={item => {
+                        setOldModal(item.value);
+                      }}
+                    />
+                  </View>
+                </View>
+                <View style={styles.sourceContainer}>
+                  <View style={styles.enquirySourceContainer}>
+                    {/* {renderLabel()} */}
+                    <Dropdown
+                      style={[
+                        styles.dropdown,
+                        isFocus && {borderColor: 'blue'},
+                        {paddingHorizontal: 5},
+                      ]}
+                      placeholderStyle={styles.placeholderStyle}
+                      selectedTextStyle={styles.selectedTextStyle}
+                      inputSearchStyle={styles.inputSearchStyle}
+                      iconStyle={styles.iconStyle}
+                      data={variantItem}
+                      search
+                      maxHeight={300}
+                      labelField="label"
+                      valueField="value"
+                      placeholder={!isFocus ? 'Select Variant' : ' '}
+                      searchPlaceholder="Search..."
+                      value={oldVariant}
+                      onChange={item => {
+                        setOldVariant(item.value);
+                      }}
+                    />
+                  </View>
+                </View>
+
+                <View style={{marginBottom: 5}}>
+                  <View style={styles.deliveryDateContainer}>
+                    <TouchableOpacity
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        paddingHorizontal: 5,
+                      }}
+                      onPress={() => {
+                        setOpenManufacturer(true);
+                      }}>
+                      <Text style={{paddingVertical: 7}}>
+                        Manufactur Year {':- '}
+                        {manuYearDate === ''
+                          ? new Date().toISOString().slice(0, 10)
+                          : manuYearDate}
+                      </Text>
+                      <Image
+                        style={styles.dateImg}
+                        source={require('../../assets/date.png')}
+                      />
+                    </TouchableOpacity>
+                    <Calendars
+                      showModal={openManuYearDate}
+                      selectedDate={manuYearDate}
+                      handleCalendarDate={handleManufacturYearDate}
+                    />
+                  </View>
+                </View>
+
+                <View style={styles.sourceContainer}>
+                  <View style={styles.enquirySourceContainer}>
+                    {/* {renderLabel()} */}
+                    <Dropdown
+                      style={[
+                        styles.dropdown,
+                        isFocus && {borderColor: 'blue'},
+                        {paddingHorizontal: 5},
+                      ]}
+                      placeholderStyle={styles.placeholderStyle}
+                      selectedTextStyle={styles.selectedTextStyle}
+                      inputSearchStyle={styles.inputSearchStyle}
+                      iconStyle={styles.iconStyle}
+                      data={conditionType}
+                      search
+                      maxHeight={300}
+                      labelField="label"
+                      valueField="value"
+                      placeholder={!isFocus ? 'Select Condition' : ' '}
+                      searchPlaceholder="Search..."
+                      value={condition}
+                      onChange={item => {
+                        setCondtion(item.value);
+                      }}
+                    />
+                  </View>
+                </View>
+                <View style={styles.inputContainer}>
+                  <TextInput
+                    style={styles.inputField}
+                    placeholder="Dealer Purchase Price"
+                    onChangeText={value => onchangeText(value, 'purcahsePrice')}
+                  />
+                </View>
+                <View style={styles.inputContainer}>
+                  <TextInput
+                    style={styles.inputField}
+                    placeholder="Market Price(Rs.)"
+                    onChangeText={value => onchangeText(value, 'marketPrice')}
+                  />
+                </View>
+                <View style={styles.inputContainer}>
+                  <TextInput
+                    style={styles.inputField}
+                    placeholder="Old Tractor Chassis No"
+                    onChangeText={value => onchangeText(value, 'oldChassisNo')}
+                  />
+                </View>
+                <View style={styles.centeredButton}>
+                  <TouchableOpacity
+                    style={styles.modern}
+                    onPress={handleModalData}>
+                    <Text style={styles.buttonText}>Add Details</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          )}
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity
+              style={styles.deliveryButton}
+              onPress={submitDelivery}>
+              <Text style={styles.deliveryButtonText}>Save Delivery</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -344,6 +640,7 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     marginHorizontal: 17,
+    flex: 1,
   },
   header: {
     color: 'white',
@@ -384,7 +681,6 @@ const styles = StyleSheet.create({
   dateImg: {
     width: 22,
     height: 22,
-    marginHorizontal: 160,
   },
   retailImg: {
     width: 22,
@@ -404,7 +700,38 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   buttonContainer: {
-    top: 30
-  }
+    marginVertical: 10,
+  },
+  expandedView: {},
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 8,
+  },
+  enquirySourceContainer: {
+    marginBottom: 10,
+    borderColor: '#0984DF',
+    borderWidth: 1,
+    borderRadius: 5,
+  },
+  sourceContainer: {
+    marginBottom: 5,
+    width: '100%',
+  },
+  centeredButton: {
+    alignItems: 'center',
+    marginVertical: 10,
+  },
+  modern: {
+    backgroundColor: '#2E86C1',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 8,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
 });
 export default AddBooking;
