@@ -7,10 +7,12 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {API_URL} from '@env';
 import moment from 'moment';
+import SweetSuccessAlert from './subCom/SweetSuccessAlert';
 
 const DropScreen = ({item}) => {
   const [isFocus, setIsFocus] = useState(false);
   const [modal, setModal] = useState(null);
+  const [isShow, setIsShow] = useState(false);
   const [manufacturer, setManufacturer] = useState('');
   const [variant, setVariant] = useState('');
   const [finance, setFinance] = useState('');
@@ -63,18 +65,6 @@ const DropScreen = ({item}) => {
     value: item.id,
   }));
 
-  const modeOfFinance = [
-    {label: 'Cash', value: '1'},
-    {label: 'Credit Card', value: '2'},
-    {label: 'Debid Card', value: '3'},
-  ];
-  const bankName = [
-    {label: 'State Bank Of India', value: '1'},
-    {label: 'Bank Of Baroda', value: '2'},
-    {label: 'Kotak Mahindra Bank', value: '3'},
-    {label: 'ICICI Bank', value: '4'},
-    {label: 'Axis Bank', value: '5'},
-  ];
   const handleCalendarDate = selectedDate => {
     console.log(selectedDate.dateString, 'lost');
     setEnquiryLostDate(selectedDate.dateString);
@@ -192,7 +182,7 @@ const DropScreen = ({item}) => {
         variant: variant,
         commercialReason: commercialReason,
         nonCommercialReason: nonCommercialReason,
-        enquiryLostDate: enquiryLostDate
+        enquiryLostDate: enquiryLostDate,
       };
       if (customerId) {
         const url = `${API_URL}/api/enquiry/set-lost-enquiry/${customerId}`;
@@ -205,11 +195,18 @@ const DropScreen = ({item}) => {
         };
         console.log(config);
         await axios.post(url, formData, config).then(response => {
-          if (response) {
-            console.log(response.data, 'lost enqiury');
-            setCommercialData(response.data.result);
+          if (response && response.data.isSuccess === true) {
+            console.log(response.data.isSuccess, '');
+            console.log('Lost Enquiry Saved');
+            setIsShow(true);
+            // return response.data;
           }
         });
+        setManufacturer(null);
+        setModal(null);
+        setVariant(null);
+        setCommercialReason(null);
+        setNonCommercialReason(null);
       }
     } else {
       console.log('Please Select from Options');
@@ -375,6 +372,9 @@ const DropScreen = ({item}) => {
           </TouchableOpacity>
         </View>
       </View>
+      {isShow && (
+        <SweetSuccessAlert message={'Lost Enquiry Saved'} modalShow={isShow} />
+      )}
     </View>
   );
 };
