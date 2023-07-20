@@ -250,7 +250,7 @@ const FastEnquiry = () => {
             <View style={styles.enquirySourceContainer}>
               {/* {renderLabel()} */}
               <Dropdown
-                style={[styles.dropdown, isFocus && {borderColor: 'blue'}]}
+                style={[styles.dropdown, isFocus && {borderColor: 'blue'},{paddingHorizontal: 5}]}
                 placeholderStyle={styles.placeholderStyle}
                 selectedTextStyle={styles.selectedTextStyle}
                 inputSearchStyle={styles.inputSearchStyle}
@@ -264,15 +264,9 @@ const FastEnquiry = () => {
                 placeholder={!isFocus ? 'Select Taluka' : ' '}
                 searchPlaceholder="Search..."
                 value={taluka}
-                onFocus={() => setIsFocus(true)}
-                onBlur={() => setIsFocus(false)}
                 onChange={item => {
                   setTaluka(item.value);
-                  setIsFocus(false);
                 }}
-                // renderLeftIcon={() => (
-                //   <Text>{isFocus ? 'blue' : 'black'}</Text>
-                // )}
               />
             </View>
           </View>
@@ -281,7 +275,7 @@ const FastEnquiry = () => {
             <View style={styles.enquirySourceContainer}>
               {/* {renderLabel()} */}
               <Dropdown
-                style={[styles.dropdown, isFocus && {borderColor: 'blue'}]}
+                style={[styles.dropdown, isFocus && {borderColor: 'blue'},{paddingHorizontal: 5},]}
                 placeholderStyle={styles.placeholderStyle}
                 selectedTextStyle={styles.selectedTextStyle}
                 inputSearchStyle={styles.inputSearchStyle}
@@ -294,15 +288,9 @@ const FastEnquiry = () => {
                 placeholder={!isFocus ? 'Select Village' : ' '}
                 searchPlaceholder="Search..."
                 value={village}
-                onFocus={() => setIsFocus(true)}
-                onBlur={() => setIsFocus(false)}
                 onChange={item => {
                   setVillage(item.value);
-                  setIsFocus(false);
                 }}
-                // renderLeftIcon={() => (
-                //   <Text>{isFocus ? 'blue' : 'black'}</Text>
-                // )}
               />
             </View>
           </View>

@@ -164,14 +164,13 @@ const FollowUpScreen = ({item}) => {
           />
         </View>
         <TouchableOpacity style={styles.saveButton} onPress={handleSaveDetails}>
-          <Text style={styles.buttonText}>Save Details</Text>
+          <Text style={styles.buttonText}>Save Follow Up Details</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.callBodyContainer}>
         <Text style={{fontWeight: 'bold', marginHorizontal: 10}}>
           Schedule Details
         </Text>
-        <Text style={{marginHorizontal: 10}}>New</Text>
         {loading ? (
           <CustomLoadingSpinner />
         ) : scheduleDetails && scheduleDetails.length === 0 ? (
@@ -222,7 +221,7 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     marginHorizontal: 15,
-    marginVertical: 10,
+    // marginVertical: 10,
   },
   fieldContainer: {
     marginBottom: 20,
@@ -230,7 +229,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     fontWeight: 'bold',
-    marginBottom: 8,
+    // marginBottom: 8,
   },
   input: {
     borderWidth: 1,
