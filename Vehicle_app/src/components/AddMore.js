@@ -14,6 +14,11 @@ import {getEnquiryData} from '../redux/slice/getEnquirySlice';
 import {useNavigation} from '@react-navigation/native';
 import CustomLoadingSpinner from './subCom/CustomLoadingSpinner';
 import {Linking} from 'react-native';
+import moment from 'moment';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {API_URL} from '@env';
+
 const AddMore = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -58,32 +63,44 @@ const AddMore = () => {
     return <CustomLoadingSpinner />;
   }
 
+  const handleTodayEnquiry = async () => {
+    console.log('today enquiries....');
+  };
+  const handleNewEnquiry = async () => {
+    console.log('New enquiries....');
+  };
+  const handleLastMonthEnquiry = async () => {
+    console.log('LastMonth enquiries....');
+  };
   return (
     <View style={styles.container}>
       <View style={styles.boxContainer}>
         <Text style={styles.historyText}>Enquiry Details</Text>
       </View>
       <View style={styles.wrapper}>
-        <View style={styles.newContainer}>
-          <TouchableOpacity onPress={getNewEnquiry}>
-            <Image
-              style={styles.newImg}
-              source={require('../../assets/new.png')}
-            />
-          </TouchableOpacity>
-        </View>
-        <TouchableOpacity style={[styles.buttonStyle, styles.todayButton]}>
-          <Text style={[styles.buttonText, {paddingHorizontal: 17}]}>
+        <TouchableOpacity
+          style={[styles.buttonStyle, styles.newButton]}
+          onPress={() => {
+            handleNewEnquiry();
+          }}>
+          <Text style={[styles.buttonText, {paddingHorizontal: 25}]}>New</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.buttonStyle, styles.todayButton]}
+          onPress={() => {
+            handleTodayEnquiry();
+          }}>
+          <Text style={[styles.buttonText, {paddingHorizontal: 20}]}>
             Today
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.buttonStyle, styles.weekButton]}>
-          <Text style={[styles.buttonText, {paddingHorizontal: 10}]}>
-            Last Week
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.buttonStyle, styles.monthButton]}>
-          <Text style={[styles.buttonText, {paddingHorizontal: 10}]}>
+
+        <TouchableOpacity
+          style={[styles.buttonStyle, styles.monthButton]}
+          onPress={() => {
+            handleLastMonthEnquiry();
+          }}>
+          <Text style={[styles.buttonText, {paddingHorizontal: 15}]}>
             Last Month
           </Text>
         </TouchableOpacity>
@@ -157,20 +174,24 @@ const AddMore = () => {
                   <View style={styles.rightDataStyle}>
                     <View style={styles.daysContainer}>
                       <TouchableOpacity style={styles.dayBack}>
-                        <Text style={styles.dayText}>
-                          {Math.floor(
-                            (new Date() - new Date(item.date)) /
-                              (1000 * 60 * 60 * 24),
-                          ) === 0
-                            ? 'Today'
-                            : Math.floor(
-                                (new Date() - new Date(item.date)) /
-                                  (1000 * 60 * 60 * 24),
-                              ) + ' Day'}
+                        <Text style={styles.dateText}>
+                          {item.last_follow_up_date
+                            ? moment(item.last_follow_up_date).format('LL')
+                            : 'Not Followed'}
                         </Text>
                       </TouchableOpacity>
                     </View>
-                    <Text style={styles.dateText}>30 JULY 2023</Text>
+                    <Text style={styles.dayText}>
+                      {Math.floor(
+                        (new Date() - new Date(item.date)) /
+                          (1000 * 60 * 60 * 24),
+                      ) === 0
+                        ? 'Today'
+                        : Math.floor(
+                            (new Date() - new Date(item.date)) /
+                              (1000 * 60 * 60 * 24),
+                          ) + ' Days'}
+                    </Text>
                     <TouchableOpacity
                       onPress={() => {
                         handleSheduleCall(item);
@@ -236,9 +257,9 @@ const styles = StyleSheet.create({
   wrapper: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingHorizontal: 10,
+    paddingHorizontal: 12,
     marginVertical: 1,
-    marginBottom: 6,
+    marginBottom: 4,
   },
   buttonStyle: {
     paddingVertical: 10,
@@ -254,11 +275,11 @@ const styles = StyleSheet.create({
   todayButton: {
     backgroundColor: '#E67E22',
   },
-  weekButton: {
-    backgroundColor: '#EB984E',
+  newButton: {
+    backgroundColor: '#CA6F1E',
   },
   monthButton: {
-    backgroundColor: '#F0B27A',
+    backgroundColor: '#E67E22',
   },
   personImg: {
     width: 20,
@@ -306,23 +327,27 @@ const styles = StyleSheet.create({
   },
   daysContainer: {
     position: 'absolute',
-    top: -25,
+    top: -30,
     right: -10,
   },
   dateText: {
     marginBottom: 4,
     color: '#21618C',
+    fontSize: 10,
+    fontWeight: 'bold',
   },
   discussionText: {
     color: 'gray',
   },
   dayText: {
-    color: 'white',
-    fontSize: 11,
+    top: -9,
+    right: -6,
+    color: '#A93226',
+    fontSize: 12,
     fontWeight: 'bold',
   },
   dayBack: {
-    backgroundColor: '#2E86C1',
+    // backgroundColor: '#2E86C1',
     borderRadius: 30,
     color: 'white',
     padding: 2,
@@ -333,6 +358,7 @@ const styles = StyleSheet.create({
     borderColor: '#138D75',
     borderWidth: 0.1,
     paddingHorizontal: 5,
+    right: -9,
   },
   discussionText: {
     color: 'white',

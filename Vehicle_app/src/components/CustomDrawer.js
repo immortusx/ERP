@@ -54,7 +54,7 @@ const CustomDrawer = props => {
           source={require('../../assets/sidecover.jpg')}
           style={{padding: 30}}>
           <Image
-            source={require('../../assets/cover.jpg')}
+            source={require('../../assets/user.jpg')}
             style={{
               height: 80,
               width: 80,
