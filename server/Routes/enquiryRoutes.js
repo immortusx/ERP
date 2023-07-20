@@ -903,6 +903,15 @@ router.post("/set-new-booking/:id", tokenCheck, async (req, res) => {
       deliveryDate,
       retailDate,
       selectedOption,
+
+      maker,
+      modalName,
+      variantName,
+      manuYearDate,
+      tractorCondtion,
+      purchasePrice,
+      marketPrice,
+      oldChassisNo,
     } = req.body;
     const customer_id = req.params.id;
     await db.query(
@@ -916,28 +925,60 @@ router.post("/set-new-booking/:id", tokenCheck, async (req, res) => {
           // res.send({ isSuccess: true, result: result });
           const enquiry_id = enquiryResult[0].id;
           console.log(enquiry_id);
-          const lostEnquirySql = `INSERT INTO booking (customer_id, enquiry_id, phone_number, modal, variant, chassis_no, mode_of_finance, bank_name, delivery_date, retail_date) VALUES (?,?,?,?,?,?,?,?,?,?)`;
+          const bookingEnquirySql = `INSERT INTO booking (customer_id, enquiry_id, phone_number, modal, variant, chassis_no, mode_of_finance, bank_name, delivery_date, retail_date) VALUES (?,?,?,?,?,?,?,?,?,?)`;
           await db.query(
-            lostEnquirySql,
+            bookingEnquirySql,
             [
               customer_id,
               enquiry_id,
               phone_number,
-              chassis_no,
               modal,
               variant,
+              chassis_no,
               mode_of_finance,
               bank_name,
               deliveryDate,
               retailDate,
             ],
-            (err, result) => {
+            async (err, result) => {
               if (err) {
                 console.log({ isSuccess: false, result: err });
                 res.send({ isSuccess: false, result: "error" });
               } else {
                 console.log({ isSuccess: true, result: result });
-                res.send({ isSuccess: true, result: result });
+                if (selectedOption === "Exchange Yes") {
+                  const oldTractorSql = `INSERT INTO old_tractor_details (customer_id, enquiry_id, maker, modal, variant, manufactur_year, tractor_condition, dealer_purcahse_price, market_price, old_tractor_chassis_no) VALUES (?,?,?,?,?,?,?,?,?,?)`;
+                  await db.query(
+                    oldTractorSql,
+                    [
+                      customer_id,
+                      enquiry_id,
+                      maker,
+                      modalName,
+                      variantName,
+                      manuYearDate,
+                      tractorCondtion,
+                      purchasePrice,
+                      marketPrice,
+                      oldChassisNo,
+                    ],
+                    (err, exchangeResult) => {
+                      if (err) {
+                        console.log({ isSuccess: false, result: err });
+                        res.send({ isSuccess: false, result: "error" });
+                      } else {
+                        console.log({ isSuccess: true, result: oldTractorSql });
+                        res.send({
+                          isSuccess: true,
+                          result: "Booking Succesfully",
+                        });
+                      }
+                    }
+                  );
+                } else {
+                  console.log({ isSuccess: true, result: bookingEnquirySql });
+                  res.send({ isSuccess: true, result: "Booking Successfully" });
+                }
               }
             }
           );
