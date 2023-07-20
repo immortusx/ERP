@@ -323,10 +323,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  customerContainer: {
-    marginTop: 20,
-    paddingHorizontal: 10,
-  },
   dateText: {
     marginBottom: 10,
     borderColor: '#0984DF',
@@ -389,6 +385,7 @@ const styles = StyleSheet.create({
   },
   customerContainer: {
     paddingHorizontal: 15,
+    height: 500
   },
   inputContainer: {
     marginBottom: 10,
