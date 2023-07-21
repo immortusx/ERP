@@ -177,7 +177,7 @@ export default function AddAssignArea() {
          id: areaAssign[0].id,
          category: categoryData.value,
          distributionType: selectedDistributionType.value,
-         village: selectedOptionVillage.map((villageData) => villageData.value),
+         value: selectedOptionVillage.map((villageData) => villageData.value).join(",")
        });
 
        return acc;
