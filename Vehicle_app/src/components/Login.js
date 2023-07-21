@@ -77,7 +77,6 @@ const Login = ({navigation}) => {
       if (loginState.result.message === 'success') {
         setIsLoading(true);
         console.log(loginState.result.result.tokenIs);
-        console.log(loginState.result.result,'<<<<<<<<<<<<<<');
         AsyncStorage.setItem(
           'branchesList',
           JSON.stringify(loginState.result.result.branchResult),
