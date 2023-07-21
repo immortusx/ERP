@@ -167,39 +167,32 @@ export default function AddAssignArea() {
    console.log("selectedCtaegory", selectedCtaegory);
    console.log("selectedOptionVillage", selectedOptionVillage);
 
-   let tempAr = [];
-
    if (selectedCtaegory.length > 0 && selectedOptionVillage.length > 0) {
-     // Iterate over each selected category
-     selectedCtaegory.forEach((categoryData) => {
-       // Get the selected villages for the current category
-       const selectedVillagesForCategory = selectedOptionVillage.filter(
+     const groupedData = selectedCtaegory.reduce((acc, categoryData) => {
+       selectedOptionVillage.filter(
          (villageData) => villageData.categoryId === categoryData.value
        );
 
-       // Create an object representing the category and its selected villages
-       const categoryObject = {
+       acc.push({
          id: areaAssign[0].id,
          category: categoryData.value,
          distributionType: selectedDistributionType.value,
-         villages: selectedVillagesForCategory.map(
-           (villageData) => villageData.value
-         ),
-         // Add other properties related to the category if needed
-       };
+         village: selectedOptionVillage.map((villageData) => villageData.value),
+       });
 
-       tempAr.push(categoryObject);
-     });
+       return acc;
+     }, []);
 
-     console.log("tempAr", tempAr);
+     console.log("groupedData", groupedData);
 
-     // Now, you have the form data as an array of objects in tempAr
+     // Now, you have the form data as an array of objects in groupedData
      // Each object in the array represents a category and its selected villages
      // You can dispatch or handle it as needed.
      // For example, dispatch the form data to a Redux action to save it to the database.
-     dispatch(addassigneAreaToDb(tempAr));
+     dispatch(addassigneAreaToDb(groupedData));
    }
  }
+
 
 
   function handlCancel() {
