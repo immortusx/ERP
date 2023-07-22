@@ -11,12 +11,10 @@ import SlideshowIcon from "@mui/icons-material/Slideshow";
 import DownloadIcon from "@mui/icons-material/Download";
 import AutoDeleteIcon from "@mui/icons-material/AutoDelete";
 import DoubleArrowIcon from "@mui/icons-material/DoubleArrow";
-import { getAllVillageAction } from "./Master/Village/getEditeVillage";
 
 import { faEllipsisV } from "@fortawesome/free-solid-svg-icons/faEllipsisV";
 
 import Checkbox from "@mui/material/Checkbox";
-import IconButton from "@mui/material/IconButton";
 import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from "@mui/icons-material/Clear";
 
@@ -24,9 +22,7 @@ import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import Axios from "axios";
 import moment from "moment";
 
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
-import Box from "@mui/material/Box";
+
 import "../styles/Users.css";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { setShowMessage } from "../redux/slices/notificationSlice";
@@ -68,13 +64,12 @@ export default function Employees() {
   const employeeListState = useSelector(
     (state) => state.getemployeeListSlice.employeeListState
   );
-  const [allUser, setallUser] = useState([]);
-  const [areaAssign, setareaAssign] = useState([]);
-  const [enquireCtaegory, setEnquiryCtaegory] = useState([]);
+ 
   const [assigneAreaPerUser, setAssignedAreaPerUser] = useState([]);
+
   const handleEditArea = async (ev) => {
-    //console.log(ev, "evvvvvv")
-    const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/edit-areaAssignUserById/${ev.id}/${ev.category_id}`;
+    console.log(ev, "evvvvvv");
+    const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/edit-areaAssignUserById/${ev.user_id}`;
     const config = {
       headers: {
         token: localStorage.getItem("rbacToken"),
@@ -83,148 +78,60 @@ export default function Employees() {
 
     const response = await Axios.get(url, config);
     if (response.data?.isSuccess) {
-      const combinedArrayForIndividualUser = response.data.result.reduce(
-        (result, obj) => {
-          const existingObj = result.find((item) => item.id === obj.id);
-          console.log(existingObj, "existingObj");
-          if (existingObj) {
-            if (!existingObj.names.includes(obj.name)) {
-              existingObj.names.push(obj.name);
-            }
-            if (!existingObj.nameId.includes(obj.distribution_id)) {
-              existingObj.nameId.push(obj.distribution_id);
-            }
-            // if (!existingObj.categoryName.includes(obj.category_name)) {
-            //     existingObj.categoryName.push(obj.category_name);
-            // }
-            // if (!existingObj.distributionType.includes(obj.distribution_type)) {
-            //     existingObj.distributionType.push(obj.distribution_type);
-            // }
-          } else {
-            result.push({
-              id: obj.id,
-              categoryName: obj.category_name,
-              distributionType: obj.distribution_type,
-              first_name: obj.first_name,
-              last_name: obj.last_name,
-              phone_number: obj.phone_number,
-              names: [obj.name],
-              nameId: [obj.distribution_id],
-              category_id: obj.category_id,
-              distribution_type: obj.dType,
-            });
-          }
-          return result;
-        },
-        []
-      );
+      console.log("response.data", response.data.result);
+      // const combinedArrayForIndividualUser = response.data.result;
+      // const combinedArrayForIndividualUser = response.data.result.reduce(
+      //   (result, obj) => {
+      //     const existingObj = result.find((item) => item.id === obj.id);
+      //     console.log(existingObj, "existingObj");
+      //     if (existingObj) {
+      //       if (!existingObj.names.includes(obj.name)) {
+      //         existingObj.names.push(obj.name);
+      //       }
+      //       if (!existingObj.nameId.includes(obj.distribution_id)) {
+      //         existingObj.nameId.push(obj.distribution_id);
+      //       }
+      //       if (!existingObj.categoryName.includes(obj.category_name)) {
+      //           existingObj.categoryName.push(obj.category_name);
+      //       }
+      //       if (!existingObj.distributionType.includes(obj.distribution_type)) {
+      //           existingObj.distributionType.push(obj.distribution_type);
+      //       }
+      //     }
+      //      else {
+      //       console.log("sdfghjkljcyetge7rye78w6784y785857y37453878")
+      //       result.push({
+      //         id: obj.id,
+      //         categoryName: [obj.category_name],
+      //         distributionType: [obj.distribution_type],
+      //         first_name: [obj.first_name],
+      //         last_name: [obj.last_name],
+      //         phone_number: [obj.phone_number],
+      //         names: [obj.name],
+      //         nameId: [obj.distribution_id],
+      //         category_id: obj.category_id,
+      //         distribution_type: obj.dType,
+      //       });
+      //     }
+      //     return result;
+      //   },
+      //   []
+      // );
 
-      setAssignedAreaPerUser(combinedArrayForIndividualUser);
+      setAssignedAreaPerUser(response.data.result);
       console.log(
-        combinedArrayForIndividualUser[0],
+        response.data.result[0],
         "combinedArrayForIndividualUsercombinedArrayForIndividualUser"
       );
-      //console.log(assigneAreaPerUser,"assigneAreaPerUserassigneAreaPerUserassigneAreaPerUserassigneAreaPerUser")
+      console.log(
+        assigneAreaPerUser,
+        "assigneAreaPerUserassigneAreaPerUserassigneAreaPerUserassigneAreaPerUser"
+      );
       navigate("/sale/areaAssign/addAsignArea", {
-        state: { assigneAreaPerUser: combinedArrayForIndividualUser },
+        state: { assigneAreaPerUser: response.data.result },
       });
     }
   };
-
-  async function getEnquiryCategoryFromDb() {
-    const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/get-enquiry-categories`;
-    const config = {
-      headers: {
-        token: localStorage.getItem("rbacToken"),
-      },
-    };
-    await Axios.get(url, config).then((response) => {
-      if (response.data?.isSuccess) {
-        setEnquiryCtaegory(response.data.result);
-      }
-    });
-  }
-
-  async function getAreaAssignUserFromDb() {
-    const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/get-areaAssignUser`;
-    const config = {
-      headers: {
-        token: localStorage.getItem("rbacToken"),
-      },
-    };
-    await Axios.get(url, config).then((response) => {
-      if (response.data?.isSuccess) {
-        console.log(
-          response.data.result,
-          "response.data.resultresponse.data.result5555555555555"
-        );
-        function combineObjects(array) {
-          const combinedObjects = {};
-
-          // Iterate through the array
-          array.forEach((obj) => {
-            const key = obj.category_name + "_" + obj.id;
-
-            // Create or update the combined object
-            if (combinedObjects.hasOwnProperty(key)) {
-              combinedObjects[key] = { ...combinedObjects[key], ...obj };
-            } else {
-              combinedObjects[key] = obj;
-            }
-          });
-
-          // Convert combined objects back to an array
-          const result = Object.values(combinedObjects);
-
-          return result;
-        }
-
-        // Call the function with the array of objects
-        const combinedArray = combineObjects(response.data.result);
-
-        // Output the combined array
-        //console.log(combinedArray, "&&&&&&&&&&&&&&&&&&&&77777");
-
-        setareaAssign(combinedArray);
-      }
-    });
-  }
-  async function getAllUserFromDb() {
-    const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/get-allUser`;
-    const config = {
-      headers: {
-        token: localStorage.getItem("rbacToken"),
-      },
-    };
-    await Axios.get(url, config).then((response) => {
-      if (response.data?.isSuccess) {
-        setallUser(response.data.result);
-        //console.log(combinedArray, "areaassign result66666666666666")
-        //console.log(areaAssign, "areaassign result0000000")
-      }
-    });
-  }
-
-  // useEffect(() => {
-  //   getAllVillageAction()
-  //     .then((data) => {
-  //       console.log(data, "All villageeeee");
-  //       setAllVillageData(data.result);
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error in getAllVillageAction:", error);
-  //     });
-  //   getEnquiryCategoryFromDb();
-  //   // setSelectedVillagesList(areaAssign[0].names)
-  //   // setSelecteddTypeList(areaAssign[0].distributionType)
-  //   // setSelectedCategoryList(areaAssign[0].categoryName)
-  // }, []);
-
-  useEffect(() => {
-    getAreaAssignUserFromDb();
-    getAllUserFromDb();
-    getEnquiryCategoryFromDb();
-  }, []);
 
   const columns = [
     {
@@ -399,36 +306,16 @@ export default function Employees() {
             >
               <AccessTimeOutlinedIcon />
             </button>
-            <button
-              // onClick={() => {
-              //   editActionCall(params.row);
-              // }}
-              className="myActionBtn m-1"
-            >
+            <button className="myActionBtn m-1">
               <SlideshowIcon />
             </button>
-            <button
-              // onClick={() => {
-              //   editActionCall(params.row);
-              // }}
-              className="myActionBtn m-1"
-            >
+            <button className="myActionBtn m-1">
               <DownloadIcon />
             </button>
-            <button
-              // onClick={() => {
-              //   editActionCall(params.row);
-              // }}
-              className="myActionBtn m-1"
-            >
+            <button className="myActionBtn m-1">
               <AutoDeleteIcon />
             </button>
-            <button
-              // onClick={() => {
-              //   editActionCall(params.row);
-              // }}
-              className="myActionBtn m-1"
-            >
+            <button className="myActionBtn m-1">
               <DoubleArrowIcon />
             </button>
           </div>

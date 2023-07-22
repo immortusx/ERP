@@ -10,7 +10,6 @@ import "../styles/HomeScreen.css";
 
 import Header from "./Header";
 import Users from "./Users";
-import Employees from "./Employees";
 import AddUser from "./AddUser";
 import AddEmployee from "./AddEmployee";
 import AddRole from "./AddRole";
@@ -25,12 +24,11 @@ import Profile from "./Profile";
 import Enquiry from "./Enquiry";
 import Products from "./Products";
 import Master from "./Master";
+import Employees from "./Employees";
 import AreaAssignListList from "./AreaAssignListList";
-import EmployeeAddAssignArea from "./EmployeeAssignArea";
 import AddAssignArea from "./AddAssignArea";
 import logo from "../assets/svg/logo.svg";
 import logoT from "../assets/svg/logofinal.svg";
-
 import { useSelector, useDispatch } from "react-redux";
 import {
   getProfileData,
@@ -775,11 +773,8 @@ export default function HomeScreen() {
               element={<AddAssignArea />}
               exact
             />
-            <Route
-              path="sale/areaAssign/addAsignArea"
-              element={<EmployeeAddAssignArea />}
-              exact
-            />
+           
+           
             <Route
               path="administration/configuration"
               element={
