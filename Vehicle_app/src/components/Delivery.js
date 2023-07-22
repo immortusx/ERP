@@ -38,6 +38,7 @@ const DeliveryScreen = () => {
       };
       console.log(config);
       await axios.get(url, config).then(response => {
+        setResultData(response.data.result);
         console.log(response.data, 'delivery data');
       });
     };

@@ -1079,7 +1079,7 @@ router.get("/get-area-sale-person/:id", tokenCheck, async (req, res) => {
 
 //==============Get Delivery Data===============//
 router.get("/get-delivery-data", tokenCheck, async (req, res) => {
-  console.log(">>>>>>>/get-delivery-data", req.params.id);
+  console.log(">>>>>>>/get-delivery-data");
   try {
     // const userId = req.params.id;
     const urlNew = `select * from enquiries where enquiry_stage = 'DELIVERY'`;
@@ -1095,5 +1095,23 @@ router.get("/get-delivery-data", tokenCheck, async (req, res) => {
   } catch (err) {
     console.log(err);
   }
+});
+
+//====================Get enquiries List By Sales Person==================//
+router.get("/get-enquiries-by-salesperson", tokenCheck, async (req, res) => {
+  console.log(">>>>>>>>>/get-enquiries-by-salesperson", req.myData);
+  let branchId = req.myData.branchId;
+  let isSuperAdmin = req.myData.isSuperAdmin;
+  let userId = req.myData.userId;
+  const urlNew = `CALL sp_get_enquiries_list_by_salesperson(${branchId},${isSuperAdmin}, ${userId})`;
+  await db.query(urlNew, async (err, result) => {
+    if (err) {
+      console.log({ isSuccess: false, result: err });
+      res.send({ isSuccess: false, result: "error" });
+    } else {
+      console.log({ isSuccess: "success", result: urlNew });
+      res.send({ isSuccess: "success", result: result[0] });
+    }
+  });
 });
 module.exports = router;
