@@ -381,7 +381,6 @@ const DetailEnquiry = ({route}) => {
               placeholder="Enter First Name"
               autoCapitalize="none"
               keyboardType="default"
-              textContentType="firstname"
               defaultValue={enquiryData.firstname || ''}
               onChangeText={value => onChangeHandler(value, 'firstname')}
             />
@@ -393,7 +392,6 @@ const DetailEnquiry = ({route}) => {
               placeholder="Enter Last Name"
               autoCapitalize="none"
               keyboardType="default"
-              textContentType="lastname"
               defaultValue={enquiryData.lastname || ''}
               onChangeText={value => onChangeHandler(value, 'lastname')}
             />
@@ -405,7 +403,6 @@ const DetailEnquiry = ({route}) => {
               placeholder="Enter Phone Number"
               autoCapitalize="none"
               keyboardType="default"
-              textContentType="phone"
               defaultValue={enquiryData.phone || ''}
               onChangeText={value => onChangeHandler(value, 'phone')}
             />
@@ -417,7 +414,6 @@ const DetailEnquiry = ({route}) => {
               placeholder="Enter WhatsApp Number"
               autoCapitalize="none"
               keyboardType="default"
-              textContentType="whatsappno"
               defaultValue={enquiryData.whatsappno || ''}
               onChangeText={value => onChangeHandler(value, 'whatsappno')}
             />

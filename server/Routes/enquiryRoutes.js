@@ -101,7 +101,7 @@ router.get("/get-enquiries", tokenCheck, async (req, res) => {
   let branchId = req.myData.branchId;
   let isSuperAdmin = req.myData.isSuperAdmin;
   let userId = req.myData.userId;
-  const urlNew = `CALL sp_get_enquiries_list(${branchId},${isSuperAdmin})`;
+  const urlNew = `CALL sp_get_enquiries_list(${branchId},${isSuperAdmin}, ${userId})`;
   await db.query(urlNew, async (err, result) => {
     if (err) {
       console.log({ isSuccess: false, result: err });
@@ -860,6 +860,20 @@ router.post("/set-lost-enquiry/:id", tokenCheck, async (req, res) => {
       enquiryLostDate,
     } = req.body;
     const customer_id = req.params.id;
+    const setEnquiryStage = async () => {
+      const enquiry_stage = "LOST";
+      const stageSql = `UPDATE enquiries SET enquiry_stage = ? WHERE customer_id = ${customer_id}`;
+      await db.query(stageSql, [enquiry_stage], (err, result) => {
+        if (err) {
+          console.log({ isSuccess: false, result: err });
+          res.send({ isSuccess: false, result: "error" });
+        } else {
+          console.log({ isSuccess: true, result: stageSql });
+          console.log({ isSuccess: true, result: "Enquiry stage updated" });
+          // res.send({ isSuccess: true, result: result });
+        }
+      });
+    };
     await db.query(
       `SELECT id FROM enquiries WHERE customer_id = ${customer_id}`,
       async (err, enquiryResult) => {
@@ -890,6 +904,7 @@ router.post("/set-lost-enquiry/:id", tokenCheck, async (req, res) => {
                 res.send({ isSuccess: false, result: "error" });
               } else {
                 console.log({ isSuccess: true, result: result });
+                setEnquiryStage();
                 res.send({ isSuccess: true, result: result });
               }
             }
@@ -950,6 +965,20 @@ router.post("/set-new-booking/:id", tokenCheck, async (req, res) => {
       oldChassisNo,
     } = req.body;
     const customer_id = req.params.id;
+    const setEnquiryStage = async () => {
+      const enquiry_stage = "DELIVERY";
+      const stageSql = `UPDATE enquiries SET enquiry_stage = ? WHERE customer_id = ${customer_id}`;
+      await db.query(stageSql, [enquiry_stage], (err, result) => {
+        if (err) {
+          console.log({ isSuccess: false, result: err });
+          res.send({ isSuccess: false, result: "error" });
+        } else {
+          console.log({ isSuccess: true, result: stageSql });
+          console.log({ isSuccess: true, result: "Enquiry stage updated" });
+          // res.send({ isSuccess: true, result: result });
+        }
+      });
+    };
     await db.query(
       `SELECT id FROM enquiries WHERE customer_id = ${customer_id}`,
       async (err, enquiryResult) => {
@@ -1004,6 +1033,7 @@ router.post("/set-new-booking/:id", tokenCheck, async (req, res) => {
                         res.send({ isSuccess: false, result: "error" });
                       } else {
                         console.log({ isSuccess: true, result: oldTractorSql });
+                        setEnquiryStage();
                         res.send({
                           isSuccess: true,
                           result: "Booking Succesfully",
@@ -1013,6 +1043,7 @@ router.post("/set-new-booking/:id", tokenCheck, async (req, res) => {
                   );
                 } else {
                   console.log({ isSuccess: true, result: bookingEnquirySql });
+                  setEnquiryStage();
                   res.send({ isSuccess: true, result: "Booking Successfully" });
                 }
               }
@@ -1032,6 +1063,26 @@ router.get("/get-area-sale-person/:id", tokenCheck, async (req, res) => {
   try {
     const userId = req.params.id;
     const urlNew = `SELECT * FROM area_assign_user WHERE user_id = ${userId}`;
+    await db.query(urlNew, async (err, result) => {
+      if (err) {
+        console.log({ isSuccess: false, result: err });
+        res.send({ isSuccess: false, result: "error" });
+      } else {
+        console.log({ isSuccess: true, result: urlNew });
+        res.send({ isSuccess: true, result: result });
+      }
+    });
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+//==============Get Delivery Data===============//
+router.get("/get-delivery-data", tokenCheck, async (req, res) => {
+  console.log(">>>>>>>/get-delivery-data", req.params.id);
+  try {
+    // const userId = req.params.id;
+    const urlNew = `select * from enquiries where enquiry_stage = 'DELIVERY'`;
     await db.query(urlNew, async (err, result) => {
       if (err) {
         console.log({ isSuccess: false, result: err });

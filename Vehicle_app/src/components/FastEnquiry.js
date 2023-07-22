@@ -224,7 +224,6 @@ const FastEnquiry = () => {
               style={styles.inputStyle}
               placeholder="Enter Customer Name"
               autoCapitalize="none"
-              keyboardType="customer"
               onChangeText={value => onChangeHandler(value, 'customer')}
             />
           </View>
@@ -234,7 +233,6 @@ const FastEnquiry = () => {
               style={styles.inputStyle}
               placeholder="Enter Phone Number"
               autoCapitalize="none"
-              keyboardType="phone"
               onChangeText={value => onChangeHandler(value, 'phone')}
             />
           </View>
@@ -244,7 +242,6 @@ const FastEnquiry = () => {
               style={styles.inputStyle}
               placeholder="Enter WhatsApp Number"
               autoCapitalize="none"
-              keyboardType="whatsappno"
               onChangeText={value => onChangeHandler(value, 'whatsappno')}
             />
           </View>
