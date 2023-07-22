@@ -6,7 +6,7 @@ async function tokenCheck(req, res, next) {
     let currentToken = req.headers.token
     const isAuthId = await verifyToken(currentToken)
     if (isAuthId && isAuthId.id) {
-
+        
         const url = `select CONCAT('[',GROUP_CONCAT(role_id),']') as roles_array  from  users as f inner join branch_department_user s on s.user_id = f.id  where f.id = ${isAuthId.id}`
         console.log('url', url);
         await db.query(url, async (err, result) => {

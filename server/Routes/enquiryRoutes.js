@@ -101,7 +101,7 @@ router.get("/get-enquiries", tokenCheck, async (req, res) => {
   let branchId = req.myData.branchId;
   let isSuperAdmin = req.myData.isSuperAdmin;
   let userId = req.myData.userId;
-  const urlNew = `CALL sp_get_enquiries_list(${branchId},${isSuperAdmin})`;
+  const urlNew = `CALL sp_get_enquiries_list(${branchId},${isSuperAdmin}, ${userId})`;
   await db.query(urlNew, async (err, result) => {
     if (err) {
       console.log({ isSuccess: false, result: err });
@@ -350,46 +350,63 @@ router.post("/set-new-fast-enquiry", tokenCheck, async (req, res) => {
     const whatsapp_number = req.body.whatsapp_number;
     const village = req.body.village;
     const taluka = req.body.taluka;
-    console.log(first_name, phone_number, whatsapp_number, village, taluka);
 
     const branch_id = req.body.branchId;
-    const salesperson_id = 20;
+    const categoryId = 1;
 
-    const fastSql = `INSERT INTO customers (first_name, phone_number, whatsapp_number, taluka, village) VALUES (?,?,?,?,?)`;
-    await db.query(
-      fastSql,
-      [first_name, phone_number, whatsapp_number, taluka, village],
-      async (err, fastEnquiry) => {
-        if (err) {
-          console.log({ isSuccess: false, result: err });
-          res.send({ isSuccess: false, result: "error" });
-        } else {
-          console.log({ isSuccess: true, result: "success" });
-          // res.send({ isSuccess: true, result: fastEnquiry });
-          const customer_id = fastEnquiry.insertId;
-          const enquiryDate = new Date()
-            .toISOString()
-            .slice(0, 19)
-            .replace("T", " ");
-          console.log(enquiryDate);
-          console.log(customer_id);
-          const enquirySql = `INSERT INTO enquiries (branch_id, salesperson_id, customer_id, date) VALUES (?,?,?,?)`;
+    const salePersonSql = `CALL sp_get_user_sale_person(${village}, ${categoryId})`;
+    await db.query(salePersonSql, async (err, salePersonDetails) => {
+      if (err) {
+        console.log({ isSuccess: false, result: err });
+        res.send({ isSuccess: false, result: "error" });
+      } else {
+        console.log({ isSuccess: true, result: salePersonSql });
+        // res.send({ isSuccess: true, result: result });
+        // console.log({ isSuccess: true, result: salePersonDetails });
+
+        const userData = salePersonDetails[0][0];
+        const salesperson_id = userData ? userData.userId : 20;
+        console.log(salesperson_id, "userId");
+
+        if (salesperson_id) {
+          const fastSql = `INSERT INTO customers (first_name, phone_number, whatsapp_number, taluka, village) VALUES (?,?,?,?,?)`;
           await db.query(
-            enquirySql,
-            [branch_id, salesperson_id, customer_id, enquiryDate],
-            (err, enquiryResult) => {
+            fastSql,
+            [first_name, phone_number, whatsapp_number, taluka, village],
+            async (err, fastEnquiry) => {
               if (err) {
                 console.log({ isSuccess: false, result: err });
                 res.send({ isSuccess: false, result: "error" });
               } else {
-                console.log({ isSuccess: true, result: enquiryResult });
-                res.send({ isSuccess: true, result: "success" });
+                console.log({ isSuccess: true, result: "success" });
+                // res.send({ isSuccess: true, result: fastEnquiry });
+                const customer_id = fastEnquiry.insertId;
+                const enquiryDate = new Date()
+                  .toISOString()
+                  .slice(0, 19)
+                  .replace("T", " ");
+                console.log(enquiryDate);
+                console.log(customer_id);
+                const enquirySql = `INSERT INTO enquiries (branch_id, salesperson_id, customer_id, date) VALUES (?,?,?,?)`;
+                await db.query(
+                  enquirySql,
+                  [branch_id, salesperson_id, customer_id, enquiryDate],
+                  (err, enquiryResult) => {
+                    if (err) {
+                      console.log({ isSuccess: false, result: err });
+                      res.send({ isSuccess: false, result: "error" });
+                    } else {
+                      console.log({ isSuccess: true, result: enquiryResult });
+                      res.send({ isSuccess: true, result: "success" });
+                    }
+                  }
+                );
               }
             }
           );
         }
       }
-    );
+    });
   } catch (err) {
     console.log(err);
     console.log({ isSuccess: false, result: "error" });
@@ -407,7 +424,6 @@ router.post("/set-new-detail-enquiry", tokenCheck, async (req, res) => {
     const whatsapp_number = req.body.whatsapp_number;
 
     const branch_id = req.body.branchId;
-    const salesperson_id = 20;
 
     const state = req.body.state;
     const district = req.body.district;
@@ -426,105 +442,125 @@ router.post("/set-new-detail-enquiry", tokenCheck, async (req, res) => {
     const condition_of = req.body.condition_of;
     const sourceOfEnquiry = 26;
     const old_tractor = req.body.old_tractor;
+    const categoryId = 1;
 
-    const fastSql = `INSERT INTO customers (first_name, last_name, phone_number, whatsapp_number, state, district, taluka, village) VALUES (?,?,?,?,?,?,?,?)`;
-    await db.query(
-      fastSql,
-      [
-        first_name,
-        last_name,
-        phone_number,
-        whatsapp_number,
-        state,
-        district,
-        taluka,
-        village,
-      ],
-      async (err, fastEnquiry) => {
-        if (err) {
-          console.log({ isSuccess: false, result: err });
-          res.send({ isSuccess: false, result: "error" });
-        } else {
-          console.log({ isSuccess: true, result: "success" });
-          // res.send({ isSuccess: true, result: fastEnquiry });
-          const customer_id = fastEnquiry.insertId;
-          const enquiryDate = new Date()
-            .toISOString()
-            .slice(0, 19)
-            .replace("T", " ");
-          console.log(enquiryDate);
-          console.log(customer_id);
-          const enquirySql = `INSERT INTO enquiries (branch_id, salesperson_id, customer_id, date, delivery_date, enquiry_source_id) VALUES (?,?,?,?,?,?)`;
+    const salePersonSql = `CALL sp_get_user_sale_person(${village}, ${categoryId})`;
+    await db.query(salePersonSql, async (err, salePersonDetails) => {
+      if (err) {
+        console.log({ isSuccess: false, result: err });
+        res.send({ isSuccess: false, result: "error" });
+      } else {
+        console.log({ isSuccess: true, result: salePersonSql });
+        // res.send({ isSuccess: true, result: result });
+        // console.log({ isSuccess: true, result: salePersonDetails });
+
+        const userData = salePersonDetails[0][0];
+        const salesperson_id = userData ? userData.userId : 20;
+        console.log(salesperson_id, "userId");
+
+        if (salesperson_id) {
+          const fastSql = `INSERT INTO customers (first_name, last_name, phone_number, whatsapp_number, state, district, taluka, village) VALUES (?,?,?,?,?,?,?,?)`;
           await db.query(
-            enquirySql,
+            fastSql,
             [
-              branch_id,
-              salesperson_id,
-              customer_id,
-              enquiryDate,
-              deliveryDate,
-              sourceOfEnquiry,
+              first_name,
+              last_name,
+              phone_number,
+              whatsapp_number,
+              state,
+              district,
+              taluka,
+              village,
             ],
-            async (err, enquiryResult) => {
+            async (err, fastEnquiry) => {
               if (err) {
                 console.log({ isSuccess: false, result: err });
                 res.send({ isSuccess: false, result: "error" });
-              } else if (enquiryResult && enquiryResult.insertId) {
-                console.log({ isSuccess: "success", result: enquirySql });
-                const enquiryId = enquiryResult.insertId;
-                const enquiryProductSql = `INSERT INTO enquiry_products (enquiry_id, manufacturer, modal, variant) VALUES (?,?,?,?)`;
+              } else {
+                console.log({ isSuccess: true, result: "success" });
+                // res.send({ isSuccess: true, result: fastEnquiry });
+                const customer_id = fastEnquiry.insertId;
+                const enquiryDate = new Date()
+                  .toISOString()
+                  .slice(0, 19)
+                  .replace("T", " ");
+                console.log(enquiryDate);
+                console.log(customer_id);
+                const enquirySql = `INSERT INTO enquiries (branch_id, salesperson_id, customer_id, date, delivery_date, enquiry_source_id) VALUES (?,?,?,?,?,?)`;
                 await db.query(
-                  enquiryProductSql,
-                  [enquiryId, manufacturer, modal, variant],
-                  async (err, productResult) => {
+                  enquirySql,
+                  [
+                    branch_id,
+                    salesperson_id,
+                    customer_id,
+                    enquiryDate,
+                    deliveryDate,
+                    sourceOfEnquiry,
+                  ],
+                  async (err, enquiryResult) => {
                     if (err) {
-                      console.log(err);
-                    } else {
-                      console.log({
-                        isSuccess: "success",
-                        result: enquiryProductSql,
-                      });
-
-                      if (
-                        maker &&
-                        modalName &&
-                        variantName &&
-                        year &&
-                        condition_of
-                      ) {
-                        const newYearOfManufactur = await getDateInFormate(
-                          year
-                        );
-                        const urlSql = `INSERT INTO manufactur_details (enquiry_id, maker, modalName, variantName, year_of_manufactur, condition_of, old_tractor) VALUES(?, ?, ?, ?, ?, ?, ?)`;
-                        await db.query(
-                          urlSql,
-                          [
-                            enquiryId,
-                            maker,
-                            modalName,
-                            variantName,
-                            newYearOfManufactur,
-                            condition_of,
-                            old_tractor,
-                          ],
-                          (err, result) => {
-                            if (err) {
-                              console.log(err);
+                      console.log({ isSuccess: false, result: err });
+                      res.send({ isSuccess: false, result: "error" });
+                    } else if (enquiryResult && enquiryResult.insertId) {
+                      console.log({ isSuccess: "success", result: enquirySql });
+                      const enquiryId = enquiryResult.insertId;
+                      const enquiryProductSql = `INSERT INTO enquiry_products (enquiry_id, manufacturer, modal, variant) VALUES (?,?,?,?)`;
+                      await db.query(
+                        enquiryProductSql,
+                        [enquiryId, manufacturer, modal, variant],
+                        async (err, productResult) => {
+                          if (err) {
+                            console.log(err);
+                          } else {
+                            console.log({
+                              isSuccess: "success",
+                              result: enquiryProductSql,
+                            });
+                            if (
+                              maker &&
+                              modalName &&
+                              variantName &&
+                              year &&
+                              condition_of
+                            ) {
+                              const newYearOfManufactur =
+                                await getDateInFormate(year);
+                              const urlSql = `INSERT INTO manufactur_details (enquiry_id, maker, modalName, variantName, year_of_manufactur, condition_of, old_tractor) VALUES(?, ?, ?, ?, ?, ?, ?)`;
+                              await db.query(
+                                urlSql,
+                                [
+                                  enquiryId,
+                                  maker,
+                                  modalName,
+                                  variantName,
+                                  newYearOfManufactur,
+                                  condition_of,
+                                  old_tractor,
+                                ],
+                                (err, result) => {
+                                  if (err) {
+                                    console.log(err);
+                                  } else {
+                                    console.log({
+                                      isSuccess: "success",
+                                      result: urlSql,
+                                    });
+                                    res.send({
+                                      isSuccess: "success",
+                                      result: "success",
+                                    });
+                                  }
+                                }
+                              );
                             } else {
-                              console.log({
-                                isSuccess: "success",
-                                result: urlSql,
-                              });
                               res.send({
                                 isSuccess: "success",
                                 result: "success",
                               });
                             }
                           }
-                        );
-                      } else {
-                        res.send({ isSuccess: "success", result: "success" });
-                      }
+                        }
+                      );
                     }
                   }
                 );
@@ -533,7 +569,7 @@ router.post("/set-new-detail-enquiry", tokenCheck, async (req, res) => {
           );
         }
       }
-    );
+    });
   } catch (err) {
     console.log(err);
     console.log({ isSuccess: false, result: "error" });
@@ -824,6 +860,20 @@ router.post("/set-lost-enquiry/:id", tokenCheck, async (req, res) => {
       enquiryLostDate,
     } = req.body;
     const customer_id = req.params.id;
+    const setEnquiryStage = async () => {
+      const enquiry_stage = "LOST";
+      const stageSql = `UPDATE enquiries SET enquiry_stage = ? WHERE customer_id = ${customer_id}`;
+      await db.query(stageSql, [enquiry_stage], (err, result) => {
+        if (err) {
+          console.log({ isSuccess: false, result: err });
+          res.send({ isSuccess: false, result: "error" });
+        } else {
+          console.log({ isSuccess: true, result: stageSql });
+          console.log({ isSuccess: true, result: "Enquiry stage updated" });
+          // res.send({ isSuccess: true, result: result });
+        }
+      });
+    };
     await db.query(
       `SELECT id FROM enquiries WHERE customer_id = ${customer_id}`,
       async (err, enquiryResult) => {
@@ -854,6 +904,7 @@ router.post("/set-lost-enquiry/:id", tokenCheck, async (req, res) => {
                 res.send({ isSuccess: false, result: "error" });
               } else {
                 console.log({ isSuccess: true, result: result });
+                setEnquiryStage();
                 res.send({ isSuccess: true, result: result });
               }
             }
@@ -903,8 +954,31 @@ router.post("/set-new-booking/:id", tokenCheck, async (req, res) => {
       deliveryDate,
       retailDate,
       selectedOption,
+
+      maker,
+      modalName,
+      variantName,
+      manuYearDate,
+      tractorCondtion,
+      purchasePrice,
+      marketPrice,
+      oldChassisNo,
     } = req.body;
     const customer_id = req.params.id;
+    const setEnquiryStage = async () => {
+      const enquiry_stage = "DELIVERY";
+      const stageSql = `UPDATE enquiries SET enquiry_stage = ? WHERE customer_id = ${customer_id}`;
+      await db.query(stageSql, [enquiry_stage], (err, result) => {
+        if (err) {
+          console.log({ isSuccess: false, result: err });
+          res.send({ isSuccess: false, result: "error" });
+        } else {
+          console.log({ isSuccess: true, result: stageSql });
+          console.log({ isSuccess: true, result: "Enquiry stage updated" });
+          // res.send({ isSuccess: true, result: result });
+        }
+      });
+    };
     await db.query(
       `SELECT id FROM enquiries WHERE customer_id = ${customer_id}`,
       async (err, enquiryResult) => {
@@ -916,28 +990,62 @@ router.post("/set-new-booking/:id", tokenCheck, async (req, res) => {
           // res.send({ isSuccess: true, result: result });
           const enquiry_id = enquiryResult[0].id;
           console.log(enquiry_id);
-          const lostEnquirySql = `INSERT INTO booking (customer_id, enquiry_id, phone_number, modal, variant, chassis_no, mode_of_finance, bank_name, delivery_date, retail_date) VALUES (?,?,?,?,?,?,?,?,?,?)`;
+          const bookingEnquirySql = `INSERT INTO booking (customer_id, enquiry_id, phone_number, modal, variant, chassis_no, mode_of_finance, bank_name, delivery_date, retail_date) VALUES (?,?,?,?,?,?,?,?,?,?)`;
           await db.query(
-            lostEnquirySql,
+            bookingEnquirySql,
             [
               customer_id,
               enquiry_id,
               phone_number,
-              chassis_no,
               modal,
               variant,
+              chassis_no,
               mode_of_finance,
               bank_name,
               deliveryDate,
               retailDate,
             ],
-            (err, result) => {
+            async (err, result) => {
               if (err) {
                 console.log({ isSuccess: false, result: err });
                 res.send({ isSuccess: false, result: "error" });
               } else {
                 console.log({ isSuccess: true, result: result });
-                res.send({ isSuccess: true, result: result });
+                if (selectedOption === "Exchange Yes") {
+                  const oldTractorSql = `INSERT INTO old_tractor_details (customer_id, enquiry_id, maker, modal, variant, manufactur_year, tractor_condition, dealer_purcahse_price, market_price, old_tractor_chassis_no) VALUES (?,?,?,?,?,?,?,?,?,?)`;
+                  await db.query(
+                    oldTractorSql,
+                    [
+                      customer_id,
+                      enquiry_id,
+                      maker,
+                      modalName,
+                      variantName,
+                      manuYearDate,
+                      tractorCondtion,
+                      purchasePrice,
+                      marketPrice,
+                      oldChassisNo,
+                    ],
+                    (err, exchangeResult) => {
+                      if (err) {
+                        console.log({ isSuccess: false, result: err });
+                        res.send({ isSuccess: false, result: "error" });
+                      } else {
+                        console.log({ isSuccess: true, result: oldTractorSql });
+                        setEnquiryStage();
+                        res.send({
+                          isSuccess: true,
+                          result: "Booking Succesfully",
+                        });
+                      }
+                    }
+                  );
+                } else {
+                  console.log({ isSuccess: true, result: bookingEnquirySql });
+                  setEnquiryStage();
+                  res.send({ isSuccess: true, result: "Booking Successfully" });
+                }
               }
             }
           );
@@ -949,4 +1057,61 @@ router.post("/set-new-booking/:id", tokenCheck, async (req, res) => {
   }
 });
 
+//=============Get Area DSP================//
+router.get("/get-area-sale-person/:id", tokenCheck, async (req, res) => {
+  console.log(">>>>>>>/get-area-sale-person/:id", req.params.id);
+  try {
+    const userId = req.params.id;
+    const urlNew = `SELECT * FROM area_assign_user WHERE user_id = ${userId}`;
+    await db.query(urlNew, async (err, result) => {
+      if (err) {
+        console.log({ isSuccess: false, result: err });
+        res.send({ isSuccess: false, result: "error" });
+      } else {
+        console.log({ isSuccess: true, result: urlNew });
+        res.send({ isSuccess: true, result: result });
+      }
+    });
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+//==============Get Delivery Data===============//
+router.get("/get-delivery-data", tokenCheck, async (req, res) => {
+  console.log(">>>>>>>/get-delivery-data");
+  try {
+    // const userId = req.params.id;
+    const urlNew = `select * from enquiries where enquiry_stage = 'DELIVERY'`;
+    await db.query(urlNew, async (err, result) => {
+      if (err) {
+        console.log({ isSuccess: false, result: err });
+        res.send({ isSuccess: false, result: "error" });
+      } else {
+        console.log({ isSuccess: true, result: urlNew });
+        res.send({ isSuccess: true, result: result });
+      }
+    });
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+//====================Get enquiries List By Sales Person==================//
+router.get("/get-enquiries-by-salesperson", tokenCheck, async (req, res) => {
+  console.log(">>>>>>>>>/get-enquiries-by-salesperson", req.myData);
+  let branchId = req.myData.branchId;
+  let isSuperAdmin = req.myData.isSuperAdmin;
+  let userId = req.myData.userId;
+  const urlNew = `CALL sp_get_enquiries_list_by_salesperson(${branchId},${isSuperAdmin}, ${userId})`;
+  await db.query(urlNew, async (err, result) => {
+    if (err) {
+      console.log({ isSuccess: false, result: err });
+      res.send({ isSuccess: false, result: "error" });
+    } else {
+      console.log({ isSuccess: "success", result: urlNew });
+      res.send({ isSuccess: "success", result: result[0] });
+    }
+  });
+});
 module.exports = router;

@@ -1,38 +1,154 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Text,
+  FlatList,
+  ScrollView,
+  TouchableOpacity,
+  Image,
+  TouchableWithoutFeedback,
+} from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
+import {getEnquiryData} from '../redux/slice/getEnquirySlice';
+import {useNavigation} from '@react-navigation/native';
+import CustomLoadingSpinner from './subCom/CustomLoadingSpinner';
+import {Linking} from 'react-native';
+import moment from 'moment';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {API_URL} from '@env';
 
-const DeliveryScreen = ({ navigation }) => {
-  const deliveryData = [
-    { id: '1', title: 'Delivery Item 1' },
-    { id: '2', title: 'Delivery Item 2' },
-    { id: '3', title: 'Delivery Item 3' },
-  ];
+const DeliveryScreen = () => {
+  const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const [resultData, setResultData] = useState([]);
+  const getEnquiryState = useSelector(state => state.getEnquiryState);
+  const {isFetching, isSuccess, isError, result} = getEnquiryState;
 
-  const handleConfirmDelivery = (deliveryId) => {
-    console.log("Delivery")
-    navigation.navigate('ConfirmationScreen');
+  useEffect(() => {
+    const getEnquiryData = async () => {
+      const url = `${API_URL}/api/enquiry/get-delivery-data`;
+      console.log('get delivery data', url);
+      const token = await AsyncStorage.getItem('rbacToken');
+      const config = {
+        headers: {
+          token: token ? token : '',
+        },
+      };
+      console.log(config);
+      await axios.get(url, config).then(response => {
+        setResultData(response.data.result);
+        console.log(response.data, 'delivery data');
+      });
+    };
+    getEnquiryData();
+  }, []);
+
+  useEffect(() => {
+    const getEnquiry = () => {
+      dispatch(getEnquiryData());
+    };
+    getEnquiry();
+  }, []);
+
+  useEffect(() => {
+    if (result) {
+      setResultData(result.result);
+    }
+  }, [result]);
+
+  const makePhoneCall = mobileNumber => {
+    console.log('Calling...', mobileNumber);
+    Linking.openURL(`tel:${mobileNumber}`);
   };
 
-  const renderItem = ({ item }) => (
-    <TouchableOpacity
-      style={styles.deliveryItem}
-      onPress={() => handleConfirmDelivery(item.id)}
-    >
-      <Text style={styles.deliveryTitle}>{item.title}</Text>
-    </TouchableOpacity>
-  );
+  const openAdditonalEnquiry = item => {
+    console.log(item, '>>>>>>>>>>>>>>>.');
+    // navigation.navigate('Additional Details', {item: item});
+  };
+
+  if (isFetching) {
+    return <CustomLoadingSpinner />;
+  }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Delivery Screen</Text>
-      <Text style={styles.description}>
-        Confirm the delivery of the package.
-      </Text>
       <FlatList
-        data={deliveryData}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
-        style={styles.deliveryList}
+        data={resultData}
+        renderItem={({item, index}) => {
+          return (
+            <ScrollView>
+              <TouchableWithoutFeedback
+                onPress={() => {
+                  openAdditonalEnquiry(item);
+                }}>
+                <View key={index} style={styles.enquiryBox}>
+                  <View style={styles.dataStyle}>
+                    <Text style={styles.label}>
+                      <Image
+                        style={styles.personImg}
+                        source={require('../../assets/person.png')}
+                      />
+                      -{' '}
+                      {item.first_name +
+                        (item.last_name ? ' ' + item.last_name : '')}
+                    </Text>
+                    <TouchableOpacity
+                      onPress={() => {
+                        makePhoneCall(item.phone_number);
+                      }}>
+                      <Text style={styles.label}>
+                        <Image
+                          style={styles.personImg}
+                          source={require('../../assets/phone.png')}
+                        />
+                        - {item.phone_number}
+                      </Text>
+                    </TouchableOpacity>
+
+                    <Text style={styles.label}>
+                      <Image
+                        style={styles.personImg}
+                        source={require('../../assets/product.png')}
+                      />
+                      - {item.product ? item.product : 'Worldtrac/90 Rx 4WD'}
+                    </Text>
+                  </View>
+                  {/* <View style={styles.rightDataStyle}>
+                    <View style={styles.daysContainer}>
+                      <TouchableOpacity style={styles.dayBack}>
+                        <Text style={styles.dateText}>
+                          {item.last_follow_up_date
+                            ? moment(item.last_follow_up_date).format('LL')
+                            : 'Not Followed'}
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                    <Text style={styles.dayText}>
+                      {Math.floor(
+                        (new Date() - new Date(item.date)) /
+                          (1000 * 60 * 60 * 24),
+                      ) === 0
+                        ? 'Today'
+                        : Math.floor(
+                            (new Date() - new Date(item.date)) /
+                              (1000 * 60 * 60 * 24),
+                          ) + ' Days'}
+                    </Text>
+                    <TouchableOpacity
+                      onPress={() => {
+                        handleSheduleCall(item);
+                      }}
+                      style={styles.discussionButton}>
+                      <Text style={styles.discussionText}>Follow Up</Text>
+                    </TouchableOpacity>
+                  </View> */}
+                </View>
+              </TouchableWithoutFeedback>
+            </ScrollView>
+          );
+        }}
       />
     </View>
   );
@@ -41,30 +157,98 @@ const DeliveryScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5EEF8'
+    backgroundColor: '#F5EEF8',
   },
-  title: {
-    fontSize: 24,
+
+  label: {
+    fontSize: 16,
     fontWeight: 'bold',
-    marginBottom: 20,
+    marginBottom: 5,
   },
-  description: {
-    fontSize: 16,
+  content: {
+    fontSize: 14,
+    marginBottom: 10,
+  },
+  personImg: {
+    width: 20,
+    height: 20,
+  },
+  newImg: {
+    width: 30,
+    height: 30,
+  },
+  newContainer: {
+    alignItems: 'center',
+    margin: 2,
+  },
+  enquiryBox: {
+    marginTop: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 7,
+    width: '95%',
+    backgroundColor: 'white',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    marginHorizontal: 10,
+    borderRadius: 5,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+  },
+  dataStyle: {
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    flex: 1,
+  },
+  rightDataStyle: {
+    flexDirection: 'column',
+    alignItems: 'flex-end',
+    flexShrink: 1,
+    marginLeft: 16,
+  },
+  daysContainer: {
+    position: 'absolute',
+    top: -30,
+    right: -10,
+  },
+  dateText: {
+    marginBottom: 4,
+    color: '#21618C',
+    fontSize: 10,
+    fontWeight: 'bold',
+  },
+
+  dayText: {
+    top: -9,
+    right: -6,
+    color: '#A93226',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  dayBack: {
+    // backgroundColor: '#2E86C1',
+    borderRadius: 30,
+    color: 'white',
+    padding: 2,
+  },
+  discussionButton: {
+    backgroundColor: '#2ECC71',
+    borderRadius: 20,
+    borderColor: '#138D75',
+    borderWidth: 0.1,
+    paddingHorizontal: 5,
+    right: -9,
+  },
+  discussionText: {
+    color: 'white',
     textAlign: 'center',
-    marginBottom: 40,
-  },
-  deliveryList: {
-    width: '100%',
-  },
-  deliveryItem: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
-  },
-  deliveryTitle: {
-    fontSize: 16,
   },
 });
 

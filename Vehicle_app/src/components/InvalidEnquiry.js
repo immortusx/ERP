@@ -18,6 +18,7 @@ import axios from 'axios';
 import moment from 'moment';
 import ConfirmationDialog from './subCom/ConfirmationDialog';
 import {useNavigation} from '@react-navigation/native';
+import { getEnquiryData } from '../redux/slice/getEnquirySlice';
 
 const InvalidEnquiry = ({item}) => {
   //   const {item} = route.params;
@@ -66,6 +67,7 @@ const InvalidEnquiry = ({item}) => {
         console.log(response.data, 'closing');
         if (response.data) {
           setIsShow(true);
+          dispatch(getEnquiryData());
           navigation.navigate('AddMore');
         }
         return response.data;

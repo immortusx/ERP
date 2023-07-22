@@ -28,6 +28,10 @@ import {
 } from '../redux/slice/addFastEnquirySlice';
 import {getEnquiryData} from '../redux/slice/getEnquirySlice';
 import {useNavigation} from '@react-navigation/native';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {API_URL} from '@env';
+
 const FastEnquiry = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -43,6 +47,9 @@ const FastEnquiry = () => {
   );
   const {manufacturer, modal, variant} = useSelector(
     state => state.manufacturerDetails,
+  );
+  const profileData = useSelector(
+    state => state.getUserProfileSlice.profile.currentUserData.result,
   );
   const [currentDate, setCurrentDate] = useState(new Date());
   const [openCurentDate, setOpenCurrentDate] = useState(false);
@@ -88,8 +95,6 @@ const FastEnquiry = () => {
     {label: 'Vey Good', value: '4'},
   ];
 
-  let branch = 'New Keshav Tractors';
-  let dsp = 'Harilal Mehta';
   const handleSelect = option => {
     const selectedValue = option === 'Yes' ? 'Yes' : 'No';
     setSelectedOption(selectedValue);
@@ -113,14 +118,13 @@ const FastEnquiry = () => {
     }
   }, [result]);
 
-  useEffect(()=> {
-  
-    if(branchTaluka){
-      branchTaluka.map((taluka)=> {
-        setTaluka(taluka.id)
-      })
+  useEffect(() => {
+    if (branchTaluka) {
+      branchTaluka.map(taluka => {
+        setTaluka(taluka.id);
+      });
     }
-  },[branchTaluka])
+  }, [branchTaluka]);
   const formattedDeliveryDate = expDeliveryDate.toLocaleDateString();
   const handleReadValue = () => {
     console.log(selectedOption);
@@ -154,7 +158,7 @@ const FastEnquiry = () => {
       phone_number: enquiryData.phone,
       whatsapp_number: enquiryData.whatsappno,
       village: village,
-      taluka: taluka
+      taluka: taluka,
     };
     if (
       enquiryData.customer.length > 0 &&
@@ -170,7 +174,6 @@ const FastEnquiry = () => {
         whatsappno: '',
       });
       setVillage(null);
-      setTaluka(null);
     } else {
       console.warn('Please first fill the field*');
     }
@@ -206,7 +209,7 @@ const FastEnquiry = () => {
     }));
   };
   const openModal = () => {
-    console.log("____________");
+    console.log('____________');
     setShowModal(true);
   };
   return (
@@ -221,7 +224,6 @@ const FastEnquiry = () => {
               style={styles.inputStyle}
               placeholder="Enter Customer Name"
               autoCapitalize="none"
-              keyboardType="customer"
               onChangeText={value => onChangeHandler(value, 'customer')}
             />
           </View>
@@ -231,7 +233,6 @@ const FastEnquiry = () => {
               style={styles.inputStyle}
               placeholder="Enter Phone Number"
               autoCapitalize="none"
-              keyboardType="phone"
               onChangeText={value => onChangeHandler(value, 'phone')}
             />
           </View>
@@ -241,7 +242,6 @@ const FastEnquiry = () => {
               style={styles.inputStyle}
               placeholder="Enter WhatsApp Number"
               autoCapitalize="none"
-              keyboardType="whatsappno"
               onChangeText={value => onChangeHandler(value, 'whatsappno')}
             />
           </View>
@@ -250,7 +250,11 @@ const FastEnquiry = () => {
             <View style={styles.enquirySourceContainer}>
               {/* {renderLabel()} */}
               <Dropdown
-                style={[styles.dropdown, isFocus && {borderColor: 'blue'},{paddingHorizontal: 5}]}
+                style={[
+                  styles.dropdown,
+                  isFocus && {borderColor: 'blue'},
+                  {paddingHorizontal: 5},
+                ]}
                 placeholderStyle={styles.placeholderStyle}
                 selectedTextStyle={styles.selectedTextStyle}
                 inputSearchStyle={styles.inputSearchStyle}
@@ -275,7 +279,11 @@ const FastEnquiry = () => {
             <View style={styles.enquirySourceContainer}>
               {/* {renderLabel()} */}
               <Dropdown
-                style={[styles.dropdown, isFocus && {borderColor: 'blue'},{paddingHorizontal: 5},]}
+                style={[
+                  styles.dropdown,
+                  isFocus && {borderColor: 'blue'},
+                  {paddingHorizontal: 5},
+                ]}
                 placeholderStyle={styles.placeholderStyle}
                 selectedTextStyle={styles.selectedTextStyle}
                 inputSearchStyle={styles.inputSearchStyle}
@@ -300,7 +308,7 @@ const FastEnquiry = () => {
             <Text style={styles.submitButtonText}>Submit</Text>
           </TouchableOpacity>
         </View>
-        
+
         <SweetSuccessAlert message={message} modalShow={showModal} />
       </View>
     </ScrollView>
@@ -322,10 +330,6 @@ const styles = StyleSheet.create({
   dateStyle: {
     flexDirection: 'row',
     alignItems: 'center',
-  },
-  customerContainer: {
-    marginTop: 20,
-    paddingHorizontal: 10,
   },
   dateText: {
     marginBottom: 10,
@@ -389,6 +393,7 @@ const styles = StyleSheet.create({
   },
   customerContainer: {
     paddingHorizontal: 15,
+    height: 500,
   },
   inputContainer: {
     marginBottom: 10,

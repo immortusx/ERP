@@ -51,7 +51,7 @@ const AddBooking = ({item}) => {
   const [oldTractorData, setOldTractorData] = useState({
     purchasePrice: '',
     marketPrice: '',
-    oldChassiNo: '',
+    oldChassisNo: '',
   });
   const options = ['Exchange Yes', 'Exchange No'];
 
@@ -211,7 +211,7 @@ const AddBooking = ({item}) => {
       [field]: value,
     }));
   };
-  const onchangeText = (value, field) => {
+  const onChangeTextField = (value, field) => {
     setOldTractorData(prefield => ({
       ...prefield,
       [field]: value,
@@ -246,12 +246,10 @@ const AddBooking = ({item}) => {
   const handleModalData = () => {
     console.log(oldTractorData);
     console.log(
-      oldManufacturer,
-      oldModal,
-      oldVariant,
-      manuYearDate,
-      condition,
-      'aaaaaa',
+      oldTractorData.purchasePrice,
+      oldTractorData.marketPrice,
+      oldTractorData.oldChassisNo,
+      '<<<<<,,',
     );
   };
   const submitDelivery = async () => {
@@ -269,6 +267,14 @@ const AddBooking = ({item}) => {
         deliveryDate: expDeliveryDate,
         retailDate: retailDate,
         selectedOption: selectedOption,
+        maker: oldManufacturer,
+        modalName: oldModal,
+        variantName: oldVariant,
+        manuYearDate: manuYearDate,
+        tractorCondtion: condition,
+        purchasePrice: oldTractorData.purchasePrice,
+        marketPrice: oldTractorData.marketPrice,
+        oldChassisNo: oldTractorData.oldChassisNo,
       };
       const url = `${API_URL}/api/enquiry/set-new-booking/${customer_id}`;
       console.log('closing enqury', url);
@@ -283,7 +289,6 @@ const AddBooking = ({item}) => {
         if (response && response.data.isSuccess) {
           console.log(response.data, 'booking');
           setShowMessageModal(true);
-          
         }
       });
     } else {
@@ -635,21 +640,27 @@ const AddBooking = ({item}) => {
                   <TextInput
                     style={styles.inputField}
                     placeholder="Dealer Purchase Price"
-                    onChangeText={value => onchangeText(value, 'purcahsePrice')}
+                    onChangeText={value =>
+                      onChangeTextField(value, 'purchasePrice')
+                    }
                   />
                 </View>
                 <View style={styles.inputContainer}>
                   <TextInput
                     style={styles.inputField}
                     placeholder="Market Price(Rs.)"
-                    onChangeText={value => onchangeText(value, 'marketPrice')}
+                    onChangeText={value =>
+                      onChangeTextField(value, 'marketPrice')
+                    }
                   />
                 </View>
                 <View style={styles.inputContainer}>
                   <TextInput
                     style={styles.inputField}
                     placeholder="Old Tractor Chassis No"
-                    onChangeText={value => onchangeText(value, 'oldChassisNo')}
+                    onChangeText={value =>
+                      onChangeTextField(value, 'oldChassisNo')
+                    }
                   />
                 </View>
                 <View style={styles.centeredButton}>
