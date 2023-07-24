@@ -48,8 +48,6 @@ const DeliveryScreen = () => {
     getEnquiryData();
   }, []);
 
- 
-
   const makePhoneCall = mobileNumber => {
     console.log('Calling...', mobileNumber);
     Linking.openURL(`tel:${mobileNumber}`);
