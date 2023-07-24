@@ -1114,4 +1114,23 @@ router.get("/get-enquiries-by-salesperson", tokenCheck, async (req, res) => {
     }
   });
 });
+
+//====================Get enquiries by enquiry Type Or category==================//
+router.get("/get-enquiries-by-enquiry-category/:id", tokenCheck, async (req, res) => {
+ try{
+  const categoryId = req.params.id;
+  const urlNew =  `SELECT * FROM enquiries where enquiry_type_id = ${categoryId}`;
+  await db.query(urlNew, async (err, result) => {
+    if (err) {
+      console.log({ isSuccess: false, result: err });
+      res.send({ isSuccess: false, result: "error" });
+    } else {
+      console.log({ isSuccess: "success", result: urlNew });
+      res.send({ isSuccess: "success", result: result });
+    }
+  });
+ }catch(err){
+  console.log(err);
+ }
+});
 module.exports = router;

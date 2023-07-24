@@ -11,6 +11,7 @@ import AdditonalDetails from './components/AdditonalDetails';
 import ScheduleCall from './components/ScheduleCall';
 import FastEnquiry from './components/FastEnquiry';
 import DetailEnquiry from './components/DetailEnquiry';
+import EnquiryList from './components/EnquiryList';
 const Stack = createStackNavigator();
 const AppNavigator = () => {
   return (
@@ -100,6 +101,17 @@ const AppNavigator = () => {
         <Stack.Screen
           name="Edit Detail Enquiry"
           component={DetailEnquiry}
+          options={{
+            headerShown: true,
+            headerStyle: {
+              borderWidth: 0.9,
+              borderColor: 'grey',
+            },
+          }}
+        />
+         <Stack.Screen
+          name="Enquiry List"
+          component={EnquiryList}
           options={{
             headerShown: true,
             headerStyle: {

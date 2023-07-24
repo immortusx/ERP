@@ -107,18 +107,7 @@ const ScheduleCall = ({route}) => {
     setScheduleDate(selectedDate.dateString);
     setOpenScheduleDate(false);
   };
-  const handleBookingStage = () => {
-    setBookingStage(!bookingStage);
-  };
-  const handleDropStage = () => {
-    setDropStage(!dropStage);
-  };
-  const handleInvalidStage = () => {
-    setInvalidStage(!invalidStage);
-  };
-  const handleFollowUpStage = () => {
-    setFollowUpStage(!folloUpStage);
-  };
+
   const handleSelectedEnquiryStage = option => {
     // const selectedValue = option === 'Yes' ? 'Yes' : 'No';
     console.log(option, 'stage Enquiry');
