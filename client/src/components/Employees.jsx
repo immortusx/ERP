@@ -69,7 +69,7 @@ export default function Employees() {
 
   const handleEditArea = async (ev) => {
     console.log(ev, "evvvvvv");
-    const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/edit-areaAssignUserById/${ev.user_id}`;
+    const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/add-areaAssignUserById/${ev.user_id}`;
     const config = {
       headers: {
         token: localStorage.getItem("rbacToken"),
@@ -130,6 +130,9 @@ export default function Employees() {
       navigate("/sale/areaAssign/addAsignArea", {
         state: { assigneAreaPerUser: response.data.result },
       });
+    }else{
+      console.log("tttttttttttttttt")
+      navigate("/sale/areaAssign");
     }
   };
 

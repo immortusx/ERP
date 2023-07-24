@@ -770,11 +770,23 @@ export default function HomeScreen() {
             />
             <Route
               path="sale/areaAssign/addAsignArea"
-              element={<AddAssignArea />}
+              element={
+                <CheckPermission path="profile">
+                  <AddAssignArea workFor="forAdd" />
+                </CheckPermission>
+              }
               exact
             />
-           
-           
+            <Route
+              path="sale/areaAssign/editAsignArea"
+              element={
+                <CheckPermission path="profile">
+                  <AddAssignArea workFor="forEdit" />
+                </CheckPermission>
+              }
+              exact
+            />
+
             <Route
               path="administration/configuration"
               element={
