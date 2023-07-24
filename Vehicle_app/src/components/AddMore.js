@@ -168,7 +168,7 @@ const AddMore = () => {
                         style={styles.personImg}
                         source={require('../../assets/product.png')}
                       />
-                      - {item.product ? item.product : 'Worldtrac/90 Rx 4WD'}
+                      - {item.product ? item.product : 'Sonalika Sikander DLX'}
                     </Text>
                   </View>
                   <View style={styles.rightDataStyle}>

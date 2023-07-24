@@ -23,12 +23,13 @@ const DeliveryScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const [resultData, setResultData] = useState([]);
+  const [loading, setLoading] = useState(false);
   const getEnquiryState = useSelector(state => state.getEnquiryState);
   const {isFetching, isSuccess, isError, result} = getEnquiryState;
 
   useEffect(() => {
     const getEnquiryData = async () => {
-      const url = `${API_URL}/api/enquiry/get-delivery-data`;
+      const url = `${API_URL}/api/enquiry/get-delivery-list`;
       console.log('get delivery data', url);
       const token = await AsyncStorage.getItem('rbacToken');
       const config = {
@@ -36,27 +37,18 @@ const DeliveryScreen = () => {
           token: token ? token : '',
         },
       };
+      setLoading(true);
       console.log(config);
       await axios.get(url, config).then(response => {
-        setResultData(response.data.result);
-        console.log(response.data, 'delivery data');
+        setResultData(response.data.result[0]);
+        console.log(response.data.result[0], 'delivery data');
       });
+      setLoading(false);
     };
     getEnquiryData();
   }, []);
 
-  useEffect(() => {
-    const getEnquiry = () => {
-      dispatch(getEnquiryData());
-    };
-    getEnquiry();
-  }, []);
-
-  useEffect(() => {
-    if (result) {
-      setResultData(result.result);
-    }
-  }, [result]);
+ 
 
   const makePhoneCall = mobileNumber => {
     console.log('Calling...', mobileNumber);
@@ -68,7 +60,7 @@ const DeliveryScreen = () => {
     // navigation.navigate('Additional Details', {item: item});
   };
 
-  if (isFetching) {
+  if (loading) {
     return <CustomLoadingSpinner />;
   }
 
@@ -91,59 +83,42 @@ const DeliveryScreen = () => {
                         source={require('../../assets/person.png')}
                       />
                       -{' '}
-                      {item.first_name +
-                        (item.last_name ? ' ' + item.last_name : '')}
+                      {item.CustomerName}
                     </Text>
                     <TouchableOpacity
                       onPress={() => {
-                        makePhoneCall(item.phone_number);
+                        makePhoneCall(item.mobileNumber);
                       }}>
                       <Text style={styles.label}>
                         <Image
                           style={styles.personImg}
                           source={require('../../assets/phone.png')}
                         />
-                        - {item.phone_number}
+                        - {item.mobileNumber}
                       </Text>
                     </TouchableOpacity>
-
+                    <Text style={styles.label}>
+                    <Image
+                        style={styles.personImg}
+                        source={require('../../assets/delivery.png')}
+                      />
+                      - {moment(item.DeliveryDate).format('LL')}
+                    </Text>
+                    <Text style={styles.label}>
+                    <Image
+                        style={styles.personImg}
+                        source={require('../../assets/date.png')}
+                      />
+                      - {moment(item.RetailDatey).format('LL')}
+                    </Text>
                     <Text style={styles.label}>
                       <Image
                         style={styles.personImg}
                         source={require('../../assets/product.png')}
                       />
-                      - {item.product ? item.product : 'Worldtrac/90 Rx 4WD'}
+                      - {item.Product}
                     </Text>
                   </View>
-                  {/* <View style={styles.rightDataStyle}>
-                    <View style={styles.daysContainer}>
-                      <TouchableOpacity style={styles.dayBack}>
-                        <Text style={styles.dateText}>
-                          {item.last_follow_up_date
-                            ? moment(item.last_follow_up_date).format('LL')
-                            : 'Not Followed'}
-                        </Text>
-                      </TouchableOpacity>
-                    </View>
-                    <Text style={styles.dayText}>
-                      {Math.floor(
-                        (new Date() - new Date(item.date)) /
-                          (1000 * 60 * 60 * 24),
-                      ) === 0
-                        ? 'Today'
-                        : Math.floor(
-                            (new Date() - new Date(item.date)) /
-                              (1000 * 60 * 60 * 24),
-                          ) + ' Days'}
-                    </Text>
-                    <TouchableOpacity
-                      onPress={() => {
-                        handleSheduleCall(item);
-                      }}
-                      style={styles.discussionButton}>
-                      <Text style={styles.discussionText}>Follow Up</Text>
-                    </TouchableOpacity>
-                  </View> */}
                 </View>
               </TouchableWithoutFeedback>
             </ScrollView>

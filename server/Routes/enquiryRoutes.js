@@ -1077,12 +1077,12 @@ router.get("/get-area-sale-person/:id", tokenCheck, async (req, res) => {
   }
 });
 
-//==============Get Delivery Data===============//
-router.get("/get-delivery-data", tokenCheck, async (req, res) => {
-  console.log(">>>>>>>/get-delivery-data");
+//==============Get Delivery List===============//
+router.get("/get-delivery-list", tokenCheck, async (req, res) => {
+  console.log(">>>>>>>/get-delivery-list");
   try {
     // const userId = req.params.id;
-    const urlNew = `select * from enquiries where enquiry_stage = 'DELIVERY'`;
+    const urlNew = `CALL sp_get_delivery_list()`;
     await db.query(urlNew, async (err, result) => {
       if (err) {
         console.log({ isSuccess: false, result: err });
