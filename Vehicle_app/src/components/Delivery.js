@@ -57,7 +57,6 @@ const DeliveryScreen = () => {
 
   const openAdditonalEnquiry = item => {
     console.log(item, '>>>>>>>>>>>>>>>.');
-    // navigation.navigate('Additional Details', {item: item});
   };
 
   if (loading) {

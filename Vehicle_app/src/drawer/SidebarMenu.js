@@ -15,6 +15,7 @@ import Manage from '../components/Manage';
 import CustomDrawer from '../components/CustomDrawer';
 import DeliveryScreen from '../components/Delivery';
 import DropScreen from '../components/DropScreen';
+import EnquiryReport from '../components/EnquiryReport';
 const Drawer = createDrawerNavigator();
 const SidebarMenu = () => {
   const navigation = useNavigation();
@@ -72,6 +73,23 @@ const SidebarMenu = () => {
             <Image
               style={styles.personImg}
               source={require('../../assets/enquiry.png')}
+            />
+          ),
+        }}
+      />
+      <Drawer.Screen
+        name="Report"
+        component={EnquiryReport}
+        options={{
+          headerShown: true,
+          headerStyle: {
+            borderWidth: 0.9,
+            borderColor: 'grey',
+          },
+          drawerIcon: () => (
+            <Image
+              style={styles.personImg}
+              source={require('../../assets/report.png')}
             />
           ),
         }}
