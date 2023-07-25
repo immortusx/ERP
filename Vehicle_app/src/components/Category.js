@@ -67,23 +67,22 @@ const Category = () => {
 const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
-    justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0, 0, 0, 0)',
+    backgroundColor: 'white',
   },
   modalContent: {
     backgroundColor: 'white',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
     shadowColor: '#000',
     shadowOffset: {width: 0, height: -2},
     shadowOpacity: 0.3,
     shadowRadius: 2,
     paddingVertical: 20,
     paddingHorizontal: 15,
-    height: '100%',
+    marginVertical: 0.9
   },
   categoryItem: {
-    backgroundColor: '#0398A6',
+    backgroundColor: '#DFECFF',
     padding: 10,
     borderRadius: 3,
     marginBottom: 10,
@@ -91,12 +90,14 @@ const styles = StyleSheet.create({
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.3,
     shadowRadius: 4,
-    elevation: 3
+    elevation: 3,
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10
   },
   categoryText: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: 'white',
+    color: 'black',
   },
   categoryTitle: {
     marginBottom: 10,

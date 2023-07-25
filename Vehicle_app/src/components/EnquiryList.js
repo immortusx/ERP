@@ -3,9 +3,12 @@ import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {API_URL} from '@env';
+import {useNavigation} from '@react-navigation/native';
 
 const EnquiryList = ({route}) => {
   const {categoryId} = route?.params;
+  const [loading, setLoading] = useState(false);
+  const navigation = useNavigation();
 
   useEffect(() => {
     if (categoryId) {
@@ -22,16 +25,21 @@ const EnquiryList = ({route}) => {
         console.log(config);
         await axios.get(url, config).then(response => {
           console.log(response.data, 'category list');
-          setCategoryList(response.data.result);
+          // setCategoryList(response.data.result);
         });
         setLoading(false);
       };
       getNewTractorEnquiry();
     }
   }, [categoryId]);
+
+  const openEnquiryByVillage = categoryId => {
+    navigation.navigate('Village List', {categoryId: categoryId});
+  };
   return (
     <View style={styles.mainContainer}>
       <View style={styles.container}>
+        <Text style={styles.categoryTitle}>Enquiry By </Text>
         <TouchableOpacity style={styles.categoryItem}>
           <Text style={styles.categoryText}>General List</Text>
         </TouchableOpacity>
@@ -44,7 +52,11 @@ const EnquiryList = ({route}) => {
         <TouchableOpacity style={styles.categoryItem}>
           <Text style={styles.categoryText}>Monthly List</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.categoryItem}>
+        <TouchableOpacity
+          onPress={() => {
+            openEnquiryByVillage(categoryId);
+          }}
+          style={styles.categoryItem}>
           <Text style={styles.categoryText}>Village List</Text>
         </TouchableOpacity>
       </View>
@@ -64,25 +76,29 @@ const styles = StyleSheet.create({
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.25,
     elevation: 4,
-    marginHorizontal: 20,
-    marginVertical: 20,
-    borderRadius: 10
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    marginVertical: 0.9,
   },
   categoryItem: {
-    backgroundColor: '#0398A6',
+    backgroundColor: '#DFECFF',
     padding: 10,
-    borderRadius: 3,
     marginBottom: 10,
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 2},
     shadowRadius: 4,
     shadowOpacity: 0.3,
     shadowRadius: 4,
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10,
   },
   categoryText: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: 'white',
+    color: 'black',
+  },
+  categoryTitle: {
+    marginBottom: 10,
   },
 });
 export default EnquiryList;

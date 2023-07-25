@@ -219,7 +219,7 @@ const styles = StyleSheet.create({
     marginVertical: 4,
   },
   historyText: {
-    fontSize: 24,
+    fontSize: 12,
     fontWeight: 'bold',
     color: '#2E86C1',
     textAlign: 'center',
