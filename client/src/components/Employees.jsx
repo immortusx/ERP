@@ -67,72 +67,117 @@ export default function Employees() {
  
   const [assigneAreaPerUser, setAssignedAreaPerUser] = useState([]);
 
+  // const handleEditArea = async (ev) => {
+  //   console.log(ev, "evvvvvv");
+  //   const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/add-areaAssignUserById/${ev.user_id}`;
+  //   const config = {
+  //     headers: {
+  //       token: localStorage.getItem("rbacToken"),
+  //     },
+  //   };
+
+  //   const response = await Axios.get(url, config);
+  //   if (response.data?.isSuccess) {
+  //     console.log("response.data", response.data.result);
+  //     // const combinedArrayForIndividualUser = response.data.result;
+  //     // const combinedArrayForIndividualUser = response.data.result.reduce(
+  //     //   (result, obj) => {
+  //     //     const existingObj = result.find((item) => item.id === obj.id);
+  //     //     console.log(existingObj, "existingObj");
+  //     //     if (existingObj) {
+  //     //       if (!existingObj.names.includes(obj.name)) {
+  //     //         existingObj.names.push(obj.name);
+  //     //       }
+  //     //       if (!existingObj.nameId.includes(obj.distribution_id)) {
+  //     //         existingObj.nameId.push(obj.distribution_id);
+  //     //       }
+  //     //       if (!existingObj.categoryName.includes(obj.category_name)) {
+  //     //           existingObj.categoryName.push(obj.category_name);
+  //     //       }
+  //     //       if (!existingObj.distributionType.includes(obj.distribution_type)) {
+  //     //           existingObj.distributionType.push(obj.distribution_type);
+  //     //       }
+  //     //     }
+  //     //      else {
+  //     //       console.log("sdfghjkljcyetge7rye78w6784y785857y37453878")
+  //     //       result.push({
+  //     //         id: obj.id,
+  //     //         categoryName: [obj.category_name],
+  //     //         distributionType: [obj.distribution_type],
+  //     //         first_name: [obj.first_name],
+  //     //         last_name: [obj.last_name],
+  //     //         phone_number: [obj.phone_number],
+  //     //         names: [obj.name],
+  //     //         nameId: [obj.distribution_id],
+  //     //         category_id: obj.category_id,
+  //     //         distribution_type: obj.dType,
+  //     //       });
+  //     //     }
+  //     //     return result;
+  //     //   },
+  //     //   []
+  //     // );
+
+  //     setAssignedAreaPerUser(response.data.result);
+  //     console.log(
+  //       response.data.result[0],
+  //       "combinedArrayForIndividualUsercombinedArrayForIndividualUser"
+  //     );
+  //     console.log(
+  //       assigneAreaPerUser,
+  //       "assigneAreaPerUserassigneAreaPerUserassigneAreaPerUserassigneAreaPerUser"
+  //     );
+  //     navigate("/sale/areaAssign/addAsignArea", {
+  //       state: { assigneAreaPerUser: response.data.result },
+  //     });
+  //   }else{
+  //     console.log("tttttttttttttttt")
+  //     navigate("/sale/areaAssign");
+  //   }
+  // };
+
+ 
+
   const handleEditArea = async (ev) => {
-    console.log(ev, "evvvvvv");
-    const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/edit-areaAssignUserById/${ev.user_id}`;
-    const config = {
-      headers: {
-        token: localStorage.getItem("rbacToken"),
-      },
-    };
+    try {
+      console.log(ev, "evvvvvv");
 
-    const response = await Axios.get(url, config);
-    if (response.data?.isSuccess) {
-      console.log("response.data", response.data.result);
-      // const combinedArrayForIndividualUser = response.data.result;
-      // const combinedArrayForIndividualUser = response.data.result.reduce(
-      //   (result, obj) => {
-      //     const existingObj = result.find((item) => item.id === obj.id);
-      //     console.log(existingObj, "existingObj");
-      //     if (existingObj) {
-      //       if (!existingObj.names.includes(obj.name)) {
-      //         existingObj.names.push(obj.name);
-      //       }
-      //       if (!existingObj.nameId.includes(obj.distribution_id)) {
-      //         existingObj.nameId.push(obj.distribution_id);
-      //       }
-      //       if (!existingObj.categoryName.includes(obj.category_name)) {
-      //           existingObj.categoryName.push(obj.category_name);
-      //       }
-      //       if (!existingObj.distributionType.includes(obj.distribution_type)) {
-      //           existingObj.distributionType.push(obj.distribution_type);
-      //       }
-      //     }
-      //      else {
-      //       console.log("sdfghjkljcyetge7rye78w6784y785857y37453878")
-      //       result.push({
-      //         id: obj.id,
-      //         categoryName: [obj.category_name],
-      //         distributionType: [obj.distribution_type],
-      //         first_name: [obj.first_name],
-      //         last_name: [obj.last_name],
-      //         phone_number: [obj.phone_number],
-      //         names: [obj.name],
-      //         nameId: [obj.distribution_id],
-      //         category_id: obj.category_id,
-      //         distribution_type: obj.dType,
-      //       });
-      //     }
-      //     return result;
-      //   },
-      //   []
-      // );
+      const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/add-areaAssignUserById/${ev.user_id}`;
+      const config = {
+        headers: {
+          token: localStorage.getItem("rbacToken"),
+        },
+      };
 
-      setAssignedAreaPerUser(response.data.result);
-      console.log(
-        response.data.result[0],
-        "combinedArrayForIndividualUsercombinedArrayForIndividualUser"
-      );
-      console.log(
-        assigneAreaPerUser,
-        "assigneAreaPerUserassigneAreaPerUserassigneAreaPerUserassigneAreaPerUser"
-      );
-      navigate("/sale/areaAssign/addAsignArea", {
-        state: { assigneAreaPerUser: response.data.result },
-      });
+      const response = await Axios.get(url, config);
+
+      if (response.data && response.data.isSuccess) {
+        console.log("response.data", response.data.result);
+
+        setAssignedAreaPerUser(response.data.result);
+
+        console.log(
+          response.data.result[0],
+          "combinedArrayForIndividualUsercombinedArrayForIndividualUser"
+        );
+        console.log(
+          assigneAreaPerUser,
+          "assigneAreaPerUserassigneAreaPerUserassigneAreaPerUserassigneAreaPerUser"
+        );
+
+        navigate("/sale/areaAssign/addAsignArea", {
+          state: { assigneAreaPerUser: response.data.result },
+        });
+      } else {
+        console.log(
+          "No data received from the server or the request was not successful."
+        );
+        navigate("/sale/areaAssign");
+      }
+    } catch (error) {
+      console.error("An error occurred while fetching data:", error);
     }
   };
-
   const columns = [
     {
       field: "id",

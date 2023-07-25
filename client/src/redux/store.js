@@ -31,6 +31,7 @@ import addVillageSlice from './slices/Master/Village/addVillageSlice';
 import addManufacturerSlice from './slices/Master/Manufacturer/addManufacturerSlice';
 import addassigneAreaSlice from './slices/assignedAreaSlice'
 import editCategorySlice from './slices/Master/Category/editCategorySlice';
+import editassignareaSlice from './slices/editassignareaSlice';
 
 export const store = configureStore({
   reducer: {
@@ -50,6 +51,7 @@ export const store = configureStore({
     addAgency:addagencySlice,
     editDepartmentDataState : editDepartmentSlice,
     editCategoryDataState :editCategorySlice,
+    editassignareaDataState:editassignareaSlice,
     editAgencyDataState :editAgencySlice,
     enquiryState: enquirySlice,
     editRoleDataState: editRoleDataSlice,
