@@ -113,10 +113,34 @@ router.get("/get-employee-details/:id", tokenCheck, async (req, res) => {
 router.get("/get-employee-list", tokenCheck, async (req, res) => {
   try {
     await db.query(
-      `SELECT *
-      FROM users
-       RIGHT JOIN bank_details ON users.id = bank_details.user_id
-      WHERE users.user_type_id = 2 and is_delete = 0`,
+      // `SELECT *
+      // FROM users
+      //  RIGHT JOIN bank_details ON users.id = bank_details.user_id
+      // WHERE users.user_type_id = 2 and is_delete = 0`,
+
+
+      `select f.*,s.user_id,s.bank_name,s.bank_branch,s.account_number,s.account_type,s.ifsc_code  from users f inner join bank_details as s on s.user_id = f.id  WHERE f.user_type_id = 2 and is_delete = 0`,
+
+//       `SELECT
+//     f.*,
+//     s.user_id,
+//     s.bank_name,
+//     s.bank_branch,
+//     s.account_number,
+//     s.account_type,
+//     s.ifsc_code,
+//     (
+//         SELECT CONCAT('[', GROUP_CONCAT(DISTINCT category_id), ']')
+//         FROM area_assign_user
+//         WHERE user_id = f.id
+//     ) AS categories
+// FROM
+//     users f
+// INNER JOIN bank_details AS s ON s.user_id = f.id
+// WHERE
+//     f.user_type_id = 2 AND f.is_delete = 0;`,
+
+      // `select f.*,s.user_id,s.bank_name,s.bank_branch,s.account_number,s.account_type,s.ifsc_code , t.category_id from users f inner join bank_details as s on s.user_id = f.id left join area_assign_user as t on t.user_id = f.id WHERE f.user_type_id = 2 and is_delete = 0;`,
       (err, results) => {
         if (err) {
           console.log({ isSuccess: false, result: err });

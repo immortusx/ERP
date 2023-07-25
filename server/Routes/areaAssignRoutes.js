@@ -21,35 +21,79 @@ router.get('/get-allUser', tokenCheck, async (req, res) => {
   })
 })
 
-router.get('/get-areaAssignUser', tokenCheck, async (req, res) => {
-  console.log('>>>>>>>>>get-areaAssignUser', req.myData)
-  const urlNew = `CALL sp_areaAssign_user()`
-  await db.query(urlNew, async (err, result) => {
-    if (err) {
-      console.log({ isSuccess: false, result: err })
-      res.send({ isSuccess: false, result: 'error' })
-    } else {
-      console.log({ isSuccess: 'success', result: urlNew })
-      res.send({ isSuccess: 'success', result: result[0] })
-    }
-  })
+// router.get('/get-areaAssignUser', tokenCheck, async (req, res) => {
+//   console.log('>>>>>>>>>get-areaAssignUser', req.myData)
+//   const urlNew = `CALL sp_areaAssign_user()`
+//   await db.query(urlNew, async (err, result) => {
+//     if (err) {
+//       console.log({ isSuccess: false, result: err })
+//       res.send({ isSuccess: false, result: 'error' })
+//     } else {
+//       console.log({ isSuccess: 'success', result: urlNew })
+//       res.send({ isSuccess: 'success', result: result[0] })
+//     }
+//   })
+// })
+
+
+
+router.get("/add-areaAssignUserById/:id", tokenCheck, async (req, res) => {
+  try {
+    console.log(">>>>>>>>>edit-areaAssignUserById");
+    const userId = req.params.id;
+    const urlNew = `CALL sp_areaAssign_userPerId(${userId})`;
+    console.log(urlNew, "urlNew");
+
+    await db.query(urlNew, async (err, result) => {
+      if (err) {
+        console.log({ isSuccess: false, result: err });
+        res.send({ isSuccess: false, result: "error" });
+      } else {
+        console.log({ isSuccess: "success", result: urlNew });
+        if (result[0].length === 0) {
+          res.send({
+            isSuccess: false,
+            result: "No data available for the user.",
+          });
+        } else {
+          res.send({ isSuccess: true, result: result[0] });
+        }
+      }
+    });
+  } catch (error) {
+    console.error("An error occurred while fetching data:", error);
+    res.send({ isSuccess: false, result: "error" });
+  }
+});
+
+
+
+
+
+router.post('/edit-areaAssignUserById/:id', tokenCheck, async (req, res) => {
+  console.log('>>>>>>>>>edit-areaAssignUserById')
+   const userId = req.params.id;
+  try {
+    const result = `UPDATE area_assign_user SET distribution_id = '${value}', category_id = '${category}',distribution_type = '${distributionType}' WHERE  id = ${userId}`;
+    console.log(result, "result");
+    await db.query(result, async (err, newResult) => {
+      if (err) {
+        console.log({ isSuccess: false, result: err });
+        res.status(500).json({ isSuccess: false, result: "error" });
+      } else {
+        console.log({ isSuccess: true, result: "success" });
+        res.status(200).json({ isSuccess: true, result: "success" });
+      }
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ isSuccess: false, result: "error" });
+  }
 })
 
-router.get('/edit-areaAssignUserById/:id/:category', tokenCheck, async (req, res) => {
-  console.log('>>>>>>>>>edit-areaAssignUserById')
-  const userId = req.params.id
-  const category = req.params.category
-  const urlNew = `CALL sp_areaAssign_userPerId(${userId},${category})`
-  await db.query(urlNew, async (err, result) => {
-    if (err) {
-      console.log({ isSuccess: false, result: err })
-      res.send({ isSuccess: false, result: 'error' })
-    } else {
-      console.log({ isSuccess: 'success', result: urlNew })
-      res.send({ isSuccess: 'success', result: result[0] })
-    }
-  })
-})
+
+
+
 // router.post('/add-assigneArea', tokenCheck, async (req, res) => {
 //   console.log('>>>>>add-assigneArea');
 //   try {
@@ -110,6 +154,8 @@ router.get('/edit-areaAssignUserById/:id/:category', tokenCheck, async (req, res
 //     console.log(error);
 //   }
 // });
+
+
 
 // router.post('/add-assigneArea', tokenCheck, async (req, res) => {
 //   console.log('>>>>>add-assigneArea');
@@ -174,13 +220,13 @@ router.get('/edit-areaAssignUserById/:id/:category', tokenCheck, async (req, res
 router.post('/add-assigneArea', tokenCheck, async (req, res) => {
   console.log('>>>>>add-assigneArea');
   try {
-    const AreaAdd = req.body;
-    for (let index = 0; index < AreaAdd.length; index++) {
-      const sqlQuery2 = `DELETE FROM area_assign_user WHERE user_id=${AreaAdd[index].id} and distribution_type=${AreaAdd[index].distributionType} and category_id=${AreaAdd[index].category}` 
-      await db.query(sqlQuery2, async (err, result) => {
+    // const AreaAdd = req.body;
+    // for (let index = 0; index < AreaAdd.length; index++) {
+    //   const sqlQuery2 = `DELETE FROM area_assign_user WHERE user_id=${AreaAdd[index].id} and distribution_type=${AreaAdd[index].distributionType} and category_id=${AreaAdd[index].category}` 
+    //   await db.query(sqlQuery2, async (err, result) => {
 
-      })
-    }
+    //   })
+    // }
   
     const jsonDataAssignArea = JSON.stringify(req.body);
     console.log(jsonDataAssignArea, '>>>>>req.bodyadd-assigneArea');

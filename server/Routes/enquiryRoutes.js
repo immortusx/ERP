@@ -1077,7 +1077,7 @@ router.get("/get-area-sale-person/:id", tokenCheck, async (req, res) => {
   }
 });
 
-//==============Get Delivery Data===============//
+//==============Get Delivery List===============//
 router.get("/get-delivery-list", tokenCheck, async (req, res) => {
   console.log(">>>>>>>/get-delivery-list");
   try {

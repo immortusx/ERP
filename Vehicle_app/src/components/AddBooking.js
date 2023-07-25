@@ -17,8 +17,10 @@ import moment from 'moment';
 import CustomRadioButton from './subCom/CustomRadioButton';
 import RadioButtons from './subCom/RadioButtons';
 import SweetSuccessAlert from './subCom/SweetSuccessAlert';
+import { useNavigation } from '@react-navigation/native';
 
 const AddBooking = ({item}) => {
+  const navigation = useNavigation();
   const [isFocus, setIsFocus] = useState(false);
   const [modal, setModal] = useState(null);
   const [manufacturer, setManufacturer] = useState('');
@@ -289,6 +291,8 @@ const AddBooking = ({item}) => {
         if (response && response.data.isSuccess) {
           console.log(response.data, 'booking');
           setShowMessageModal(true);
+          navigation.navigate('Delivery');
+        
         }
       });
     } else {
