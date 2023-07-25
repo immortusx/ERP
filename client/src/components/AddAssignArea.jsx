@@ -233,36 +233,45 @@ export default function AddAssignArea({ workFor }) {
   //   dispatch(addassigneAreaToDb(selectedOptionVillage));
   // }
 
-  function handleSubmit() {
-    console.log("222222222222222222222222222222222");
-    console.log("selectedCtaegory", selectedCtaegory);
-    console.log("selectedOptionVillage", selectedOptionVillage);
+ function handleSubmit() {
+   console.log("222222222222222222222222222222222");
+   console.log("selectedCtaegory", selectedCtaegory);
+   console.log("selectedOptionVillage", selectedOptionVillage);
 
-    if (selectedCtaegory.length > 0 && selectedOptionVillage.length > 0) {
-      const groupedData = selectedCtaegory.reduce((acc, categoryData) => {
-        selectedOptionVillage.filter(
-          (villageData) => villageData.categoryId === categoryData.value
-        );
+   if (selectedCtaegory.length > 0 && selectedOptionVillage.length > 0) {
+     const groupedData = selectedCtaegory.reduce((acc, categoryData) => {
+       const filteredVillages = selectedOptionVillage.filter(
+         (villageData) => villageData.categoryId === categoryData.value
+       );
 
-        acc.push({
-          id: areaAssign[0].id,
-          category: categoryData.value,
-          distributionType: selectedDistributionType.value,
-          value: selectedOptionVillage
-            .map((villageData) => villageData.value)
-            .join(","),
-        });
+       acc.push({
+         id: areaAssign[0].id, // Make sure 'areaAssign' is defined and contains the desired value.
+         category: categoryData.value,
+         distributionType: selectedDistributionType.value,
+         value: filteredVillages
+           .map((villageData) => villageData.value)
+           .join(","),
+       });
 
-        return acc;
-      }, []);
+       return acc;
+     }, []);
+     console.log("groupedData", groupedData);
 
-      console.log("groupedData", groupedData);
-        // Perform the edit operation
-        editassignareaUpdateToDb(groupedData);
-        // Perform the new entry operation
-        dispatch(addassigneAreaToDb(groupedData));
-    }
-  }
+     if (workFor === "forEdit") {
+       // Assuming 'user_id' is a property of the 'areaAssign' object.
+       const updatedGroupedData = groupedData.map((data) => ({
+         ...data,
+         id: areaAssign[0].user_id,
+       }));
+console.log(updatedGroupedData, "updatedGroupedData");
+       dispatch(editassignareaUpdateToDb(updatedGroupedData));
+     } else {
+       // Perform the new entry operation
+       dispatch(addassigneAreaToDb(groupedData));
+     }
+   }
+ }
+
 
  
 
