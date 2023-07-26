@@ -1140,7 +1140,7 @@ router.get(
 
 //====================Get enquiries by village==================//
 router.post("/get-enquiry-by-village", tokenCheck, async (req, res) => {
-  console.log('/get-enquiry-by-village?????????', req.body);
+  console.log("/get-enquiry-by-village?????????", req.body);
   try {
     const { villageId, categoryId } = req.body;
     const urlNew = `CALL sp_get_enquiry_list_by_village(${villageId}, ${categoryId})`;
@@ -1151,6 +1151,51 @@ router.post("/get-enquiry-by-village", tokenCheck, async (req, res) => {
       } else {
         console.log({ isSuccess: "success", result: urlNew });
         res.send({ isSuccess: "success", result: result });
+      }
+    });
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+//========================Get CurrentDate Enquiry List======================//
+router.get("/get-current-date-enquiries", tokenCheck, async (req, res) => {
+  try {
+    console.log(">>>>>>>>>/get-current-date-enquiries", req.myData);
+    let branchId = req.myData.branchId;
+    let isSuperAdmin = req.myData.isSuperAdmin;
+    let userId = req.myData.userId;
+    const urlNew = `CALL sp_get_todays_enquiry_list()`;
+    await db.query(urlNew, async (err, result) => {
+      if (err) {
+        console.log({ isSuccess: false, result: err });
+        res.send({ isSuccess: false, result: "error" });
+      } else {
+        console.log({ isSuccess: "success", result: urlNew });
+        res.send({ isSuccess: "success", result: result[0] });
+      }
+    });
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+
+//========================Get Last Month Enquiry List======================//
+router.get("/get-last-month-enquiries", tokenCheck, async (req, res) => {
+  try {
+    console.log(">>>>>>>>>/get-last-month-enquiries", req.myData);
+    let branchId = req.myData.branchId;
+    let isSuperAdmin = req.myData.isSuperAdmin;
+    let userId = req.myData.userId;
+    const urlNew = `CALL sp_get_last_month_enquiry_list()`;
+    await db.query(urlNew, async (err, result) => {
+      if (err) {
+        console.log({ isSuccess: false, result: err });
+        res.send({ isSuccess: false, result: "error" });
+      } else {
+        console.log({ isSuccess: "success", result: urlNew });
+        res.send({ isSuccess: "success", result: result[0] });
       }
     });
   } catch (err) {

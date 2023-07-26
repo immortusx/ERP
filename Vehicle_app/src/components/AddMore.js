@@ -23,6 +23,7 @@ const AddMore = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const [resultData, setResultData] = useState([]);
+  const [loading, setLoading] = useState(false);
   const profileData = useSelector(
     state => state.getUserProfileSlice.profile.currentUserData.result,
   );
@@ -59,18 +60,68 @@ const AddMore = () => {
     navigation.navigate('Additional Details', {item: item});
   };
 
+  if(loading){
+    return <CustomLoadingSpinner />
+  }
   if (isFetching) {
     return <CustomLoadingSpinner />;
   }
 
   const handleTodayEnquiry = async () => {
     console.log('today enquiries....');
+    const url = `${API_URL}/api/enquiry/get-current-date-enquiries`;
+    console.log('get today enqiry', url);
+    const token = await AsyncStorage.getItem('rbacToken');
+    const config = {
+      headers: {
+        token: token ? token : '',
+      },
+    };
+    setLoading(true);
+    console.log(config);
+    await axios.get(url, config).then(response => {
+      console.log(response.data.result, 'enquiry today list');
+      // setVillageList(response.data.result);
+    });
+    setLoading(false);
   };
+
   const handleNewEnquiry = async () => {
     console.log('New enquiries....');
+    const url = `${API_URL}/api/enquiry/get-current-date-enquiries`;
+    console.log('get new enqiry', url);
+    const token = await AsyncStorage.getItem('rbacToken');
+    const config = {
+      headers: {
+        token: token ? token : '',
+      },
+    };
+    setLoading(true);
+    console.log(config);
+    await axios.get(url, config).then(response => {
+      console.log(response.data.result, 'enquiry today list');
+      // setVillageList(response.data.result);
+    });
+    setLoading(false);
+    
   };
   const handleLastMonthEnquiry = async () => {
     console.log('LastMonth enquiries....');
+    const url = `${API_URL}/api/enquiry/get-last-month-enquiries`;
+    console.log('get last enqiry', url);
+    const token = await AsyncStorage.getItem('rbacToken');
+    const config = {
+      headers: {
+        token: token ? token : '',
+      },
+    };
+    setLoading(true);
+    console.log(config);
+    await axios.get(url, config).then(response => {
+      console.log(response.data.result, 'enquiry lastmonth list');
+      // setVillageList(response.data.result);
+    });
+    setLoading(false)
   };
   return (
     <View style={styles.container}>

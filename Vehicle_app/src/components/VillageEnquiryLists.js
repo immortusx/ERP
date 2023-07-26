@@ -5,6 +5,7 @@ import {
   FlatList,
   TouchableWithoutFeedback,
   Image,
+  TouchableOpacity,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import axios from 'axios';
@@ -13,7 +14,7 @@ import {API_URL} from '@env';
 import CustomLoadingSpinner from './subCom/CustomLoadingSpinner';
 
 const VillageEnquiryLists = ({route}) => {
-  const {villageId, categoryId} = route.params;
+  const {villageId, categoryId, villageName} = route.params;
   const [enquiryList, setEnquiryList] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -48,6 +49,11 @@ const VillageEnquiryLists = ({route}) => {
   }
   return (
     <View style={styles.container}>
+      <View style={{marginHorizontal: 15}}>
+        <TouchableOpacity style={styles.touchableOpacityStyle}>
+          <Text style={styles.categoryTitle}>Village :- {villageName}</Text>
+        </TouchableOpacity>
+      </View>
       <FlatList
         data={enquiryList}
         renderItem={({item, index}) => {
@@ -134,6 +140,18 @@ const styles = StyleSheet.create({
   personImg: {
     width: 20,
     height: 20,
+  },
+  touchableOpacityStyle: {
+    backgroundColor: '#2471A3',
+    padding: 10,
+    borderRadius: 20,
+    marginVertical: 8,
+  },
+  categoryTitle: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'left',
+    fontSize: 16,
   },
 });
 export default VillageEnquiryLists;

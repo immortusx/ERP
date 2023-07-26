@@ -34,9 +34,11 @@ const EnquiryVillageList = ({route}) => {
     }
   }, [categoryId]);
 
-  const openEnquiryList = villageId => {
-    console.log(villageId, categoryId, '>>>>>>>>>>>>>>>>');
-    navigation.navigate('Available Enquiry', {villageId, categoryId});
+  const openEnquiryList = item => {
+    console.log(item.id, categoryId, '>>>>>>>>>>>>>>>>');
+    const villageId = item.id;
+    const villageName = item.name;
+    navigation.navigate('Available Enquiry', {villageId, categoryId, villageName});
   };
 
   if (loading) {
@@ -48,30 +50,32 @@ const EnquiryVillageList = ({route}) => {
         <TouchableOpacity style={styles.touchableOpacityStyle}>
           <Text style={styles.categoryTitle}>Village</Text>
         </TouchableOpacity>
-       <View style={{marginBottom: 40}}>
-       <FlatList
-          data={villageList}
-          renderItem={({item, index}) => {
-            return (
-              <TouchableOpacity
-                onPress={() => {
-                  openEnquiryList(item.id);
-                }}
-                key={index}
-                style={styles.categoryItem}>
-                <Text style={styles.categoryText}>{item.name}</Text>
-                <Text
-                  style={[
-                    styles.categoryText,
-                    item.total_data === 0 ? styles.notAvailable : styles.availableStyle,
-                  ]}>
-                  {item.total_data === 0 ? 'Not Available' : item.total_data}
-                </Text>
-              </TouchableOpacity>
-            );
-          }}
-        />
-       </View>
+        <View style={{marginBottom: 100}}>
+          <FlatList
+            data={villageList}
+            renderItem={({item, index}) => {
+              return (
+                <TouchableOpacity
+                  onPress={() => {
+                    openEnquiryList(item);
+                  }}
+                  key={index}
+                  style={styles.categoryItem}>
+                  <Text style={styles.categoryText}>{item.name}</Text>
+                  <Text
+                    style={[
+                      styles.categoryText,
+                      item.total_enquiries === 0
+                        ? styles.notAvailable
+                        : styles.availableStyle,
+                    ]}>
+                    {item.total_enquiries === 0 ? 'Not Available' : item.total_enquiries}
+                  </Text>
+                </TouchableOpacity>
+              );
+            }}
+          />
+        </View>
       </View>
     </View>
   );
@@ -132,6 +136,6 @@ const styles = StyleSheet.create({
   },
   availableStyle: {
     color: 'green',
-  }
+  },
 });
 export default EnquiryVillageList;
