@@ -43,7 +43,9 @@ const Category = () => {
   return (
     <View style={styles.modalContainer}>
       <View style={styles.modalContent}>
-        <Text style={styles.categoryTitle}>Category</Text>
+        <TouchableOpacity style={styles.touchableOpacityStyle}>
+          <Text style={styles.categoryTitle}>Category</Text>
+        </TouchableOpacity>
         <FlatList
           data={categoryList}
           renderItem={({item, index}) => {
@@ -67,19 +69,19 @@ const Category = () => {
 const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: '#F5EEF8',
   },
   modalContent: {
     backgroundColor: 'white',
+    paddingHorizontal: 20,
+    paddingVertical: 20,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.25,
+    elevation: 4,
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: -2},
-    shadowOpacity: 0.3,
-    shadowRadius: 2,
-    paddingVertical: 20,
-    paddingHorizontal: 15,
-    marginVertical: 0.9
+    marginVertical: 0.9,
   },
   categoryItem: {
     backgroundColor: '#DFECFF',
@@ -92,15 +94,24 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
     borderBottomLeftRadius: 10,
-    borderBottomRightRadius: 10
+    borderBottomRightRadius: 10,
   },
   categoryText: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: 'black',
+    color: '#1A5276',
+  },
+  touchableOpacityStyle: {
+    backgroundColor: '#2471A3',
+    padding: 10,
+    borderRadius: 20,
+    marginVertical: 8
   },
   categoryTitle: {
-    marginBottom: 10,
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'left',
+    fontSize: 16,
   },
 });
 

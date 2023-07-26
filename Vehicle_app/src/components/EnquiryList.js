@@ -39,7 +39,9 @@ const EnquiryList = ({route}) => {
   return (
     <View style={styles.mainContainer}>
       <View style={styles.container}>
-        <Text style={styles.categoryTitle}>Enquiry By </Text>
+        <TouchableOpacity style={styles.touchableOpacityStyle}>
+          <Text style={styles.categoryTitle}>Enquiry By</Text>
+        </TouchableOpacity>
         <TouchableOpacity style={styles.categoryItem}>
           <Text style={styles.categoryText}>General List</Text>
         </TouchableOpacity>
@@ -66,7 +68,7 @@ const EnquiryList = ({route}) => {
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: '#F5EEF8',
   },
   container: {
     backgroundColor: 'white',
@@ -95,10 +97,19 @@ const styles = StyleSheet.create({
   categoryText: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: 'black',
+    color: '#1A5276',
+  },
+  touchableOpacityStyle: {
+    backgroundColor: '#2471A3',
+    padding: 10,
+    borderRadius: 20,
+    marginVertical: 8,
   },
   categoryTitle: {
-    marginBottom: 10,
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'left',
+    fontSize: 16,
   },
 });
 export default EnquiryList;

@@ -71,7 +71,7 @@ const EnquiryReport = () => {
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: '#F5EEF8',
   },
   reportStyle: {
     backgroundColor: 'lightblue',
@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   enquiryStyle: {
-    width: 150,
+    width: 160,
     height: 100,
     backgroundColor: '#DFECFF',
     shadowColor: '#000',
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   deliveryStyle: {
-    width: 150,
+    width: 160,
     height: 100,
     backgroundColor: '#DFECFF',
     shadowColor: '#000',
@@ -144,19 +144,19 @@ const styles = StyleSheet.create({
   deliveryText: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: 'black',
+    color: '#1A5276',
     marginBottom: 10,
   },
   enquiryText: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: 'black',
+    color: '#1A5276',
     marginTop: 10,
   },
   lostText: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: 'black',
+    color: '#1A5276',
     marginTop: 10,
   },
   categoryContainer: {},

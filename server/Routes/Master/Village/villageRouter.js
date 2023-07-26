@@ -246,7 +246,12 @@ router.get("/get-Village-by-branchId/:id", tokenCheck, async (req, res) => {
                       res.send({ isSuccess: false, result: "error" });
                     } else {
                       console.log({ isSuccess: true, result: villageList });
-                      res.status(200).send({ isSuccess: true, result: {villageList, talukaName}});
+                      res
+                        .status(200)
+                        .send({
+                          isSuccess: true,
+                          result: { villageList, talukaName },
+                        });
                     }
                   }
                 );
@@ -256,6 +261,28 @@ router.get("/get-Village-by-branchId/:id", tokenCheck, async (req, res) => {
 
           // console.log({ isSuccess: true, result: villageByBranchId });
           // res.status(200).send({ isSuccess: true, result: villageByBranchId });
+        }
+      }
+    );
+  } catch (e) {
+    console.log(e);
+  }
+});
+
+// =====get Village by total Enquiry=====
+router.get("/get-allVillage-by-total-enquiry/:id", tokenCheck, async (req, res) => {
+  console.log(">>>>>/get-allVillage-by-total-enquiry");
+  try {
+    const categoryId = req.params.id;
+    await db.query(
+      `CALL sp_get_village_list_by_total_enquiry(${categoryId})`,
+      (err, allVillage) => {
+        if (err) {
+          console.log({ isSuccess: false, result: "error" });
+          res.send({ isSuccess: false, result: "error" });
+        } else {
+          console.log({ isSuccess: true, result: allVillage });
+          res.status(200).send({ isSuccess: true, result: allVillage });
         }
       }
     );
