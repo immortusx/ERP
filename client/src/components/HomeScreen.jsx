@@ -331,7 +331,7 @@ export default function HomeScreen() {
                           className={({ isActive }) =>
                             isActive ? "activeLink" : ""
                           }
-                          to="sale/areaAssign"
+                          to="sale/area-Assign"
                         >
                           Area Assign
                         </NavLink>
@@ -764,28 +764,20 @@ export default function HomeScreen() {
               exact
             />
             <Route
-              path="sale/areaAssign"
+              path="sale/area-Assign"
               element={<AreaAssignListList />}
               exact
             />
             <Route
-              path="sale/areaAssign/addAsignArea"
+              path="sale/area-Assign/add-AsignArea"
               element={
                 <CheckPermission path="profile">
-                  <AddAssignArea workFor="forAdd" />
+                  <AddAssignArea />
                 </CheckPermission>
               }
               exact
             />
-            <Route
-              path="sale/areaAssign/editAsignArea"
-              element={
-                <CheckPermission path="profile">
-                  <AddAssignArea workFor="forEdit" />
-                </CheckPermission>
-              }
-              exact
-            />
+           
 
             <Route
               path="administration/configuration"

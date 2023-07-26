@@ -22,14 +22,11 @@ import Select from "react-select";
 export default function AddAssignArea({ workFor }) {
   const location = useLocation();
   const areaAssign = location.state ? location.state.assigneAreaPerUser : [];
-  // console.log(areaAssign, "9999999999999999");
 
   const [selectedCategoryList, setSelectedCategoryList] = useState([]);
-  const [selecteddTypeList, setSelecteddTypeList] = useState([]);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [allVillageData, setAllVillageData] = useState([]);
-  //console.log(allVillageData, "allVillageData in assign area")
   const [selectedOptionVillage, setSelectedOptionVillage] = useState([]);
   const [selectedVillagesList, setSelectedVillagesList] = useState([]);
   const [selectedVillages, setSelectedVillages] = useState([]);
@@ -37,14 +34,8 @@ export default function AddAssignArea({ workFor }) {
   const [selectedDistributionType, setSelectedDistributionType] = useState([]);
   const [enquireCtaegory, setEnquiryCtaegory] = useState([]);
   const [show, setShow] = useState(0);
-  const [show1, setShow1] = useState(false);
   const [allUser, setallUser] = useState([]);
-  const [selectedOptionUser, setSelectedOptionUser] = useState();
-  const [assignData, setAssignData] = useState({
-    category_name: "",
-    name: "",
-    distribution_type: "",
-  });
+  const [selectedId, setSelectedId] = useState();
 
   const addAssignState = useSelector(
     (state) => state.addassigneAreaSlice.addassigneAreaState
@@ -53,13 +44,12 @@ export default function AddAssignArea({ workFor }) {
     (state) => state.editassignareaDataState.editassignareaData
   );
 
-  // console.log(addAssignState, "88888888");
   useEffect(() => {
     if (addAssignState.isSuccess) {
       if (addAssignState.message.isSuccess) {
         dispatch(setShowMessage("Area is assignrd"));
         dispatch(clearAddassigneAreaState());
-        navigate("/sale/areaAssign");
+        navigate("/sale/area-Assign");
         // clearInpHook()
       } else {
         dispatch(setShowMessage("Something is wrong"));
@@ -67,24 +57,7 @@ export default function AddAssignArea({ workFor }) {
     }
   }, [addAssignState]);
 
-  //  async function getassignid(id) {
-  //    console.log(id, "jjjjjjjjjjjjjjjjjjjj");
-  //    const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/get-areaAssignUser/${id}`;
-  //    const config = {
-  //      headers: {
-  //        token: localStorage.getItem("rbacToken"),
-  //      },
-  //    };
-  //    try {
-  //      const response = await Axios.get(url, config);
-  //      if (response.data.isSuccess && response.data.result) {
-  //       console.log(response,"editResult");
-  //        setAssignData(response.data.result);
-  //      }
-  //    } catch (error) {
-  //      console.log(error);
-  //    }
-  //  }
+  
 
   async function getAllUserFromDb() {
     const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/get-allUser`;
@@ -96,43 +69,10 @@ export default function AddAssignArea({ workFor }) {
     await Axios.get(url, config).then((response) => {
       if (response.data?.isSuccess) {
         setallUser(response.data.result);
-        // console.log(combinedArray, "areaassign result66666666666666")
-        // console.log(areaAssign, "areaassign result0000000")
       }
     });
   }
-  //  useEffect(() => {
-  //    if (editassignareaData.data) {
-  //      const id = editassignareaData.data.id;
-  //      console.log(id, "editassignareaData");
-  //     //  getassignid(id);
-  //    }
-  //  }, [editassignareaData]);
-  useEffect(() => {
-    if (workFor === "forEdit") {
-      if (editassignareaData.data === null) {
-        setTimeout(() => {
-          // navigate("/administration/configuration/category");
-          dispatch(setShowMessage("Please select a category"));
-        }, 1000);
-      } else {
-        console.log(
-          "editemployeeData2222222222222222222222222",
-          editassignareaData
-        );
-        setAssignData({
-          category_name: editassignareaData.data.category_name,
-          name: editassignareaData.data.name,
-          distribution_type: editassignareaData.data.distribution_type,
-        });
-      }
-    }
-    return () => {
-      if (workFor === "forEdit") {
-        dispatch(clearEditassignareaData());
-      }
-    };
-  }, [workFor, editassignareaData]);
+  
 
   useEffect(() => {
     getAllUserFromDb();
@@ -141,7 +81,6 @@ export default function AddAssignArea({ workFor }) {
   useEffect(() => {
     getAllVillageAction()
       .then((data) => {
-        console.log(data, "All villageeeee");
         setAllVillageData(data.result);
       })
       .catch((error) => {
@@ -150,19 +89,15 @@ export default function AddAssignArea({ workFor }) {
     getEnquiryCategoryFromDb();
     // setSelectedVillagesList(areaAssign[0].names)
     // setSelectedVillagesList(Array.from(areaAssign[0]?.names || []));
-    //console.log(areaAssign[0].names,"222222222222222")
-    // console.log(areaAssign[0].nameId,"111111111111111")
     // const names = areaAssign[0].names;
     // const nameId = areaAssign[0].nameId;
     // const combinedArray = names.map((value, index) => ({
     //   value: nameId[index],
     //   label: value,
     // }));
-    // console.log(combinedArray,"combinedArrayfor name and name id")
     // setSelectedVillagesList(combinedArray);
   }, []);
   // const handleChange = (selectedOption) => {
-  //   // console.log(selectedOption,"333333333")
   //   // setSelectedOptionVillage(selectedOption);
   //   // const newVillagesList = new Set(selectedVillagesList);
   //   // selectedOption.forEach((option) => {
@@ -171,16 +106,13 @@ export default function AddAssignArea({ workFor }) {
   //   // setSelectedVillagesList(newVillagesList);
   //   setSelectedOptionVillage(selectedOption);
   //   setSelectedVillagesList(selectedOption.map((option) => option));
-  //   //console.log(selectedVillagesList,"222222222222222")
   // };
 
   const handleChangeCategory = (selectedOption) => {
-    console.log("selectedOption", selectedOption);
     setSelectedCtaegory(selectedOption);
   };
 
   const handleChangeDistribution = (selectedOption) => {
-    console.log(selectedOption, "selectedOption");
     setSelectedDistributionType(selectedOption);
   };
   const categoryoptions = enquireCtaegory.map((category) => ({
@@ -200,128 +132,77 @@ export default function AddAssignArea({ workFor }) {
   // // };
   const handleShow = () => {
     setShow(1);
+    setSelectedId(areaAssign[0].user_id);
   };
 
   const handleClose = () => {
     setShow(0);
   };
-  const handleClose1 = () => {
-    console.log("close");
-    setShow1(false);
-  };
+
   const handleChangeVillage = (selectedOption) => {
     setSelectedOptionVillage(selectedOption);
   };
-  // const useroptions = allUser.map((user) => ({
-  //   value: user.id,
-  //   label: user.name,
-  // }));
+  
+  function handleSubmit() {
+    if (selectedCtaegory.length > 0 && selectedOptionVillage.length > 0) {
+      const groupedData = selectedCtaegory.reduce((acc, categoryData) => {
+        selectedOptionVillage.filter(
+          (villageData) => villageData.categoryId === categoryData.value
+        );
 
-  // const handleChangeUser = (selectedOption) => {
-  //   setSelectedOptionUser(selectedOption);
-  // };
-  // function handleSubmit() {
-  //   console.log("222222222222222222222222222222222");
-  //   for (let i = 0; i < selectedOptionVillage.length; i++) {
-  //     //  selectedOptionVillage[i].id = selectedOptionUser.value;
-  //     selectedOptionVillage[i].id = areaAssign[0].id;
-  //     selectedOptionVillage[i].category = selectedCtaegory.value;
-  //     selectedOptionVillage[i].distributionType =
-  //       selectedDistributionType.value;
-  //   }
-  //   console.log(selectedOptionVillage, "11111111111111111111");
-  //   dispatch(addassigneAreaToDb(selectedOptionVillage));
-  // }
+        acc.push({
+          id: selectedId,
+          category: categoryData.value,
+          value: selectedOptionVillage
+            .map((villageData) => villageData.value)
+            .join(","),
+        });
 
- function handleSubmit() {
-   console.log("222222222222222222222222222222222");
-   console.log("selectedCtaegory", selectedCtaegory);
-   console.log("selectedOptionVillage", selectedOptionVillage);
+        return acc;
+      }, []);
+      console.log("groupedData", groupedData);
 
-   if (selectedCtaegory.length > 0 && selectedOptionVillage.length > 0) {
-     const groupedData = selectedCtaegory.reduce((acc, categoryData) => {
-       const filteredVillages = selectedOptionVillage.filter(
-         (villageData) => villageData.categoryId === categoryData.value
-       );
-
-       acc.push({
-         id: areaAssign[0].id, // Make sure 'areaAssign' is defined and contains the desired value.
-         category: categoryData.value,
-         distributionType: selectedDistributionType.value,
-         value: filteredVillages
-           .map((villageData) => villageData.value)
-           .join(","),
-       });
-
-       return acc;
-     }, []);
-     console.log("groupedData", groupedData);
-
-     if (workFor === "forEdit") {
-       // Assuming 'user_id' is a property of the 'areaAssign' object.
-       const updatedGroupedData = groupedData.map((data) => ({
-         ...data,
-         id: areaAssign[0].user_id,
-       }));
-console.log(updatedGroupedData, "updatedGroupedData");
-       dispatch(editassignareaUpdateToDb(updatedGroupedData));
-     } else {
-       // Perform the new entry operation
-       dispatch(addassigneAreaToDb(groupedData));
-     }
-   }
- }
-
-
- 
+      if (show === 2) {
+        dispatch(editassignareaUpdateToDb(groupedData));
+      } else {
+        dispatch(addassigneAreaToDb(groupedData));
+      }
+    }
+  }
 
   const editActionCall = (data) => {
     setShow(2);
-    //  // setTableEditData(data);
-    console.log(data, "sssssssssssssssssss");
-    // console.log("editAssign");
     dispatch(setEdiassignareaData(data));
-    // console.log(setEdiassignareaData(data), "setEdiassignareaData(data)");
-    // console.log(data, "sdfghjkl;fghjkl;vb");
-    // console.log(data.category_name, "123456789");
-    setAssignData(data);
-    console.log("options", options);
-    console.log("categoryoptions", categoryoptions);
-
+    console.log("data", data);
+    setSelectedId(data.id);
     let newArr = [];
     if (data.distribution_id && data.distribution_id.length > 0) {
       newArr = data.distribution_id.split(",");
     }
     let tempAr = [];
     newArr.forEach((element) => {
-      console.log("element", element);
       if (options && options.length > 0) {
-        const data = options.find((item) => item.value ==element);
+        const data = options.find((item) => item.value == element);
         tempAr.push(data);
       }
-        setSelectedOptionVillage(tempAr);
-        console.log("tempAr", tempAr);
+      setSelectedOptionVillage(tempAr);
     });
     let newArry = [];
     if (data.category_name && data.category_name.length > 0) {
       newArry = data.category_name.split(",");
     }
-      let tempArr = [];
+    let tempArr = [];
     newArry.forEach((element) => {
-      console.log("elementcategory", element);
       if (categoryoptions && categoryoptions.length > 0) {
         const data = categoryoptions.find((item) => item.label == element);
         tempArr.push(data);
       }
       setSelectedCtaegory(tempArr);
-      console.log("tempArr", tempArr);
     });
-  
   };
 
   function handlCancel() {
-
-    navigate("/sale/areaAssign");
+    navigate("/sale/area-Assign");
   }
   async function getEnquiryCategoryFromDb() {
     const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/get-enquiry-categories`;
@@ -336,6 +217,13 @@ console.log(updatedGroupedData, "updatedGroupedData");
       }
     });
   }
+
+  useEffect(() => {
+    if (show === 0) {
+      setSelectedCtaegory([]);
+      setSelectedOptionVillage([]);
+    }
+  }, [show]);
 
   return (
     <>
@@ -354,6 +242,7 @@ console.log(updatedGroupedData, "updatedGroupedData");
                 <>
                   <p className="myInput inputElement">
                     {areaAssign[0].first_name} {areaAssign[0].last_name}
+                    {}
                   </p>
                 </>
               )}
@@ -404,7 +293,6 @@ console.log(updatedGroupedData, "updatedGroupedData");
               </thead>
               <tbody>
                 {areaAssign.map((item, index) => (
-                  // console.log(item, "444444444444444444444444"),
                   <tr key={index}>
                     <th scope="row">{index + 1}</th>
                     <td>
@@ -510,7 +398,7 @@ console.log(updatedGroupedData, "updatedGroupedData");
                 onChange={handleChangeCategory}
                 options={categoryoptions}
                 isSearchable={true}
-                isMulti
+                isMulti={show === 1 ? true : false}
                 placeholder="Search for a category..."
               />
               {/*<h5 className="mt-4 ">Select DistributionType</h5>
@@ -531,7 +419,6 @@ value={selectedDistributionType}
               />
             </div>
           </div>
-         
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
