@@ -22,8 +22,8 @@ export const editassignareaUpdateToDb = createAsyncThunk(
         token: localStorage.getItem("rbacToken"),
       },
     };
-    const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/edit-areaAssignUserById/${assignareaData.id}`;
-    console.logg(url,"url")
+    const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/edit-areaAssignUserById`;
+    console.log(url,"url")
     return await Axios.post(url, assignareaData, config).then((response) => {
       return response.data;
     });

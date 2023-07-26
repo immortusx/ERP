@@ -165,14 +165,16 @@ export default function Employees() {
           "assigneAreaPerUserassigneAreaPerUserassigneAreaPerUserassigneAreaPerUser"
         );
 
-        navigate("/sale/areaAssign/addAsignArea", {
+        navigate("/sale/area-Assign/add-AsignArea", {
           state: { assigneAreaPerUser: response.data.result },
         });
       } else {
         console.log(
           "No data received from the server or the request was not successful."
         );
-        navigate("/sale/areaAssign");
+        navigate("/sale/area-Assign", {
+          state: { assigneAreaPerUser: response.data.result },
+        });
       }
     } catch (error) {
       console.error("An error occurred while fetching data:", error);

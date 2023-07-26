@@ -90,20 +90,20 @@ export default function AreaAssignListList() {
     const distributionoptions = [
         { value: 1, label: 'Area wise' }
     ];
-    const deleteActionCall = (data) => {      
-        //console.log(data,"cccccccccccccccccccccccc")
-        setType("asignArea_delete");
-        setId(data.id);
-        setCategoryd(data.category_id);
-        setDId(data.dId);
-        setDeleteMessage(
-            `Are You Sure You Want To Delete The Assign Area of  '${data.first_name} ${data.last_name}'?`
-        );
-        setDisplayConfirmationModal(true);
-    };
-    const hideConfirmationModal = () => {
-        setDisplayConfirmationModal(false);
-    };
+    // const deleteActionCall = (data) => {      
+    //     //console.log(data,"cccccccccccccccccccccccc")
+    //     setType("asignArea_delete");
+    //     setId(data.id);
+    //     setCategoryd(data.category_id);
+    //     setDId(data.dId);
+    //     setDeleteMessage(
+    //         `Are You Sure You Want To Delete The Assign Area of  '${data.first_name} ${data.last_name}'?`
+    //     );
+    //     setDisplayConfirmationModal(true);
+    // };
+    // const hideConfirmationModal = () => {
+    //     setDisplayConfirmationModal(false);
+    // };
     
     async function getAreaAssignUserFromDb() {
         const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/get-areaAssignUser`;
@@ -164,6 +164,7 @@ export default function AreaAssignListList() {
         })
     }
     useEffect(() => {
+        handleShow()
         getAreaAssignUserFromDb()
         getAllUserFromDb()
     }, [])
@@ -193,71 +194,93 @@ export default function AreaAssignListList() {
             }
         })
     }
-    const handleEditArea = async (ev) => {
-        //console.log(ev, "evvvvvv")
-        const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/edit-areaAssignUserById/${ev.id}/${ev.category_id}`;
-        const config = {
-            headers: {
-                token: localStorage.getItem('rbacToken')
-            }
-        };
+    // const handleEditArea = async (ev) => {
+    //     //console.log(ev, "evvvvvv")
+    //     const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/edit-areaAssignUserById/${ev.id}/${ev.category_id}`;
+    //     const config = {
+    //         headers: {
+    //             token: localStorage.getItem('rbacToken')
+    //         }
+    //     };
 
 
-        const response = await Axios.get(url, config);
-        if (response.data?.isSuccess) {
-            const combinedArrayForIndividualUser = response.data.result.reduce((result, obj) => {
-                const existingObj = result.find(item => item.id === obj.id);
-                if (existingObj) {
-                    if (!existingObj.names.includes(obj.name)) {
-                        existingObj.names.push(obj.name);
-                    }
-                    if (!existingObj.nameId.includes(obj.distribution_id)) {
-                        existingObj.nameId.push(obj.distribution_id);
-                    }
-                    // if (!existingObj.categoryName.includes(obj.category_name)) {
-                    //     existingObj.categoryName.push(obj.category_name);
-                    // }
-                    // if (!existingObj.distributionType.includes(obj.distribution_type)) {
-                    //     existingObj.distributionType.push(obj.distribution_type);
-                    // }
-                } else {
-                    result.push({
-                        id: obj.id,
-                        categoryName: obj.category_name,
-                        distributionType: obj.distribution_type,
-                        first_name: obj.first_name,
-                        last_name: obj.last_name,
-                        phone_number: obj.phone_number,
-                        names: [obj.name],
-                        nameId: [obj.distribution_id],
-                        category_id: obj.category_id,
-                        distribution_type: obj.dType
-                    });
-                }
-                return result;
-            }, []);
+    //     const response = await Axios.get(url, config);
+    //     if (response.data?.isSuccess) {
+    //         const combinedArrayForIndividualUser = response.data.result.reduce((result, obj) => {
+    //             const existingObj = result.find(item => item.id === obj.id);
+    //             if (existingObj) {
+    //                 if (!existingObj.names.includes(obj.name)) {
+    //                     existingObj.names.push(obj.name);
+    //                 }
+    //                 if (!existingObj.nameId.includes(obj.distribution_id)) {
+    //                     existingObj.nameId.push(obj.distribution_id);
+    //                 }
+    //                 // if (!existingObj.categoryName.includes(obj.category_name)) {
+    //                 //     existingObj.categoryName.push(obj.category_name);
+    //                 // }
+    //                 // if (!existingObj.distributionType.includes(obj.distribution_type)) {
+    //                 //     existingObj.distributionType.push(obj.distribution_type);
+    //                 // }
+    //             } else {
+    //                 result.push({
+    //                     id: obj.id,
+    //                     categoryName: obj.category_name,
+    //                     distributionType: obj.distribution_type,
+    //                     first_name: obj.first_name,
+    //                     last_name: obj.last_name,
+    //                     phone_number: obj.phone_number,
+    //                     names: [obj.name],
+    //                     nameId: [obj.distribution_id],
+    //                     category_id: obj.category_id,
+    //                     distribution_type: obj.dType
+    //                 });
+    //             }
+    //             return result;
+    //         }, []);
 
-            setAssignedAreaPerUser(combinedArrayForIndividualUser)
-            console.log(combinedArrayForIndividualUser[0], "combinedArrayForIndividualUsercombinedArrayForIndividualUser")
-            //console.log(assigneAreaPerUser,"assigneAreaPerUserassigneAreaPerUserassigneAreaPerUserassigneAreaPerUser")   
-            navigate('/sale/areaAssign/addAsignArea', { state: { assigneAreaPerUser: combinedArrayForIndividualUser } })
-        }
-    }
-    const editeAssignAreaAction = async (Data) => {
+    //         setAssignedAreaPerUser(combinedArrayForIndividualUser)
+    //         console.log(combinedArrayForIndividualUser[0], "combinedArrayForIndividualUsercombinedArrayForIndividualUser")
+    //         //console.log(assigneAreaPerUser,"assigneAreaPerUserassigneAreaPerUserassigneAreaPerUserassigneAreaPerUser")   
+    //         navigate('/sale/area-Assign/add-AsignArea', { state: { assigneAreaPerUser: combinedArrayForIndividualUser } })
+    //     }
+    // }
+    // const editeAssignAreaAction = async (Data) => {
 
-    };
+    // };
     function handleSubmit() {
         console.log("222222222222222222222222222222222")
+        console.log(selectedOptionUser,"selectedOptionUser");
         for (let i = 0; i < selectedOptionVillage.length; i++) {
             selectedOptionVillage[i].id = selectedOptionUser.value;
             selectedOptionVillage[i].category = selectedCtaegory.value;
-            selectedOptionVillage[i].distributionType = selectedDistributionType.value;
+           selectedOptionVillage.map((villageData) =>{
+               const value = villageData.value
+                  console.log(value, "villageData");
+           } ).join(","); 
         }
-
-        dispatch(addassigneAreaToDb(selectedOptionVillage))
+        console.log(selectedOptionVillage, "selectedOptionVillage");
+        // dispatch(addassigneAreaToDb(selectedOptionVillage))
     }
-    const submitDelete = async (type, id,categoryd,dId) => {
-        //console.log(categoryd,dId,"categoryd,dIdcategoryd,dIdcategoryd,dIdcategoryd,dId")
+
+
+//  function handleSubmit() {
+//    console.log("222222222222222222222222222222222");
+
+//    for (let i = 0; i < selectedOptionVillage.length; i++) {
+//      selectedOptionVillage[i].id = selectedOptionUser.value;
+//      selectedOptionVillage[i].category = selectedCtaegory.value;
+
+//      const value = selectedOptionVillage[i].value;
+//      console.log(value, "villageData");
+//    }
+
+//    console.log(selectedOptionVillage, "selectedOptionVillage");
+//    dispatch(addassigneAreaToDb(selectedOptionVillage));
+//  }
+
+  
+ 
+ const submitDelete = async (type, id,categoryd,dId) => {
         const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/delete-area/${id}/${categoryd}/${dId}`;
         const config = {
           headers: {
@@ -279,7 +302,7 @@ export default function AreaAssignListList() {
     return (
 
         <>
-            <div className='my-3  d-flex align-items-end justify-content-end'>
+            {/*<div className='my-3  d-flex align-items-end justify-content-end'>
                 <div className='d-flex align-items-center' type='button'>
 
                     <h6 className='m-0 ps-1'>
@@ -293,7 +316,7 @@ export default function AreaAssignListList() {
 
                     </h6>
                 </div>
-            </div>
+    </div>*/}
             
 
             {/* new modal */}
@@ -312,7 +335,7 @@ export default function AreaAssignListList() {
                                 isSearchable={true}
                                 placeholder="Search for a user..."
                             />
-                        </div>
+</div>
                         <div className="row mt-5">
 
                             <h5>Select Category</h5>
