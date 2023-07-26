@@ -1116,21 +1116,91 @@ router.get("/get-enquiries-by-salesperson", tokenCheck, async (req, res) => {
 });
 
 //====================Get enquiries by enquiry Type Or category==================//
-router.get("/get-enquiries-by-enquiry-category/:id", tokenCheck, async (req, res) => {
- try{
-  const categoryId = req.params.id;
-  const urlNew =  `SELECT * FROM enquiries where enquiry_type_id = ${categoryId}`;
-  await db.query(urlNew, async (err, result) => {
-    if (err) {
-      console.log({ isSuccess: false, result: err });
-      res.send({ isSuccess: false, result: "error" });
-    } else {
-      console.log({ isSuccess: "success", result: urlNew });
-      res.send({ isSuccess: "success", result: result });
+router.get(
+  "/get-enquiries-by-enquiry-category/:id",
+  tokenCheck,
+  async (req, res) => {
+    try {
+      const categoryId = req.params.id;
+      const urlNew = `SELECT * FROM enquiries where enquiry_type_id = ${categoryId}`;
+      await db.query(urlNew, async (err, result) => {
+        if (err) {
+          console.log({ isSuccess: false, result: err });
+          res.send({ isSuccess: false, result: "error" });
+        } else {
+          console.log({ isSuccess: "success", result: urlNew });
+          res.send({ isSuccess: "success", result: result });
+        }
+      });
+    } catch (err) {
+      console.log(err);
     }
-  });
- }catch(err){
-  console.log(err);
- }
+  }
+);
+
+//====================Get enquiries by village==================//
+router.post("/get-enquiry-by-village", tokenCheck, async (req, res) => {
+  console.log("/get-enquiry-by-village?????????", req.body);
+  try {
+    const { villageId, categoryId } = req.body;
+    const urlNew = `CALL sp_get_enquiry_list_by_village(${villageId}, ${categoryId})`;
+    await db.query(urlNew, async (err, result) => {
+      if (err) {
+        console.log({ isSuccess: false, result: err });
+        res.send({ isSuccess: false, result: "error" });
+      } else {
+        console.log({ isSuccess: "success", result: urlNew });
+        res.send({ isSuccess: "success", result: result });
+      }
+    });
+  } catch (err) {
+    console.log(err);
+  }
 });
+
+//========================Get CurrentDate Enquiry List======================//
+router.get("/get-current-date-enquiries", tokenCheck, async (req, res) => {
+  try {
+    console.log(">>>>>>>>>/get-current-date-enquiries", req.myData);
+    let branchId = req.myData.branchId;
+    let isSuperAdmin = req.myData.isSuperAdmin;
+    let userId = req.myData.userId;
+    const urlNew = `CALL sp_get_todays_enquiry_list()`;
+    await db.query(urlNew, async (err, result) => {
+      if (err) {
+        console.log({ isSuccess: false, result: err });
+        res.send({ isSuccess: false, result: "error" });
+      } else {
+        console.log({ isSuccess: "success", result: urlNew });
+        res.send({ isSuccess: "success", result: result[0] });
+      }
+    });
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+
+//========================Get Last Month Enquiry List======================//
+router.get("/get-last-month-enquiries", tokenCheck, async (req, res) => {
+  try {
+    console.log(">>>>>>>>>/get-last-month-enquiries", req.myData);
+    let branchId = req.myData.branchId;
+    let isSuperAdmin = req.myData.isSuperAdmin;
+    let userId = req.myData.userId;
+    const urlNew = `CALL sp_get_last_month_enquiry_list()`;
+    await db.query(urlNew, async (err, result) => {
+      if (err) {
+        console.log({ isSuccess: false, result: err });
+        res.send({ isSuccess: false, result: "error" });
+      } else {
+        console.log({ isSuccess: "success", result: urlNew });
+        res.send({ isSuccess: "success", result: result[0] });
+      }
+    });
+  } catch (err) {
+    console.log(err);
+  }
+});
+
 module.exports = router;

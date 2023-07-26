@@ -1,16 +1,15 @@
 import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
 import React, {useState} from 'react';
-import Category from './Category';
+import {useNavigation} from '@react-navigation/native';
 
 const EnquiryReport = () => {
-  const [openCategory, setOpenCategory] = useState(false);
-
+  const navigation = useNavigation();
   const openEnquiryReport = () => {
-    setOpenCategory(true);
+    navigation.navigate('Category');
   };
 
   const openDlieveryreport = () => {
-    setOpenCategory(false);
+    navigation.navigate('Category');
   };
   return (
     <View style={styles.mainContainer}>
@@ -42,8 +41,29 @@ const EnquiryReport = () => {
             </TouchableOpacity>
           </View>
         </View>
+        <View style={styles.categoryContainer}>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity
+              style={styles.enquiryStyle}
+              onPress={openEnquiryReport}>
+              <Image
+                style={styles.enquiryIcon}
+                source={require('../../assets/booking.png')}
+              />
+              <Text style={styles.enquiryText}>Booking</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.deliveryStyle}
+              onPress={openDlieveryreport}>
+              <Image
+                style={styles.lostIcon}
+                source={require('../../assets/lost.png')}
+              />
+              <Text style={styles.lostText}>Lost</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
       </View>
-      {openCategory && <Category />}
     </View>
   );
 };
@@ -51,7 +71,7 @@ const EnquiryReport = () => {
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    backgroundColor: '#0398A6',
+    backgroundColor: '#F5EEF8',
   },
   reportStyle: {
     backgroundColor: 'lightblue',
@@ -66,9 +86,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   enquiryStyle: {
-    width: 150,
+    width: 160,
     height: 100,
-    backgroundColor: 'white',
+    backgroundColor: '#DFECFF',
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -84,9 +104,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   deliveryStyle: {
-    width: 150,
+    width: 160,
     height: 100,
-    backgroundColor: 'white',
+    backgroundColor: '#DFECFF',
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -116,16 +136,27 @@ const styles = StyleSheet.create({
     height: 45,
     justifyContent: 'center',
   },
+  lostIcon: {
+    width: 45,
+    height: 45,
+    justifyContent: 'center',
+  },
   deliveryText: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: 'black',
+    color: '#1A5276',
     marginBottom: 10,
   },
   enquiryText: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: 'black',
+    color: '#1A5276',
+    marginTop: 10,
+  },
+  lostText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#1A5276',
     marginTop: 10,
   },
   categoryContainer: {},

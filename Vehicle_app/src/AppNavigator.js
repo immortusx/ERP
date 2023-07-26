@@ -12,6 +12,10 @@ import ScheduleCall from './components/ScheduleCall';
 import FastEnquiry from './components/FastEnquiry';
 import DetailEnquiry from './components/DetailEnquiry';
 import DeliveryScreen from './components/Delivery';
+import EnquiryList from './components/EnquiryList';
+import EnquiryVillageList from './components/EnquiryVillageList';
+import Category from './components/Category';
+import VillageEnquiryLists from './components/VillageEnquiryLists';
 const Stack = createStackNavigator();
 const AppNavigator = () => {
   return (
@@ -87,7 +91,7 @@ const AppNavigator = () => {
             },
           }}
         />
-         <Stack.Screen
+        <Stack.Screen
           name="Detail Enquiry"
           component={DetailEnquiry}
           options={{
@@ -112,6 +116,50 @@ const AppNavigator = () => {
         <Stack.Screen
           name="Delivery"
           component={DeliveryScreen}
+          options={{
+            headerShown: true,
+            headerStyle: {
+              borderWidth: 0.9,
+              borderColor: 'grey',
+            },
+          }}
+        />
+        <Stack.Screen
+          name="Enquiry List"
+          component={EnquiryList}
+          options={{
+            headerShown: true,
+            headerStyle: {
+              borderWidth: 0.9,
+              borderColor: 'grey',
+            },
+          }}
+        />
+        <Stack.Screen
+          name="Village List"
+          component={EnquiryVillageList}
+          options={{
+            headerShown: true,
+            headerStyle: {
+              borderWidth: 0.9,
+              borderColor: 'grey',
+            },
+          }}
+        />
+        <Stack.Screen
+          name="Category"
+          component={Category}
+          options={{
+            headerShown: true,
+            headerStyle: {
+              borderWidth: 0.9,
+              borderColor: 'grey',
+            },
+          }}
+        />
+        <Stack.Screen
+          name="Available Enquiry"
+          component={VillageEnquiryLists}
           options={{
             headerShown: true,
             headerStyle: {

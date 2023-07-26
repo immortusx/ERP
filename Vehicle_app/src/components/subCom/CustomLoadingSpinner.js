@@ -1,12 +1,14 @@
 import React from 'react';
-import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
+import {View, Text, ActivityIndicator, StyleSheet, Modal} from 'react-native';
 
 const CustomLoadingSpinner = () => {
   return (
-    <View style={styles.container}>
-      <ActivityIndicator size="large" color="#2E86C1" />
-      <Text style={styles.text}>Loading...</Text>
-    </View>
+    <Modal visible={true} transparent={true} animationType='fade'>
+      <View style={styles.container}>
+        <ActivityIndicator size="large" color="#2E86C1" />
+        <Text style={styles.text}>Loading...</Text>
+      </View>
+    </Modal>
   );
 };
 
