@@ -6,6 +6,9 @@ import {
 import { setEditemployeeData } from "../redux/slices/editemployeeDataSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import PlayCircleIcon from "@mui/icons-material/PlayCircle";
+import ShopIcon from "@mui/icons-material/Shop";
+import IosShareIcon from "@mui/icons-material/IosShare";
 import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
 import SlideshowIcon from "@mui/icons-material/Slideshow";
 import DownloadIcon from "@mui/icons-material/Download";
@@ -351,19 +354,19 @@ export default function Employees() {
               }}
               className="myActionBtn m-1"
             >
+              <PlayCircleIcon />
+            </button>
+            <button className="myActionBtn m-1">
+              <ShopIcon />
+            </button>
+            <button className="myActionBtn m-1">
+              <IosShareIcon />
+            </button>
+            <button className="myActionBtn m-1">
               <AccessTimeOutlinedIcon />
             </button>
             <button className="myActionBtn m-1">
-              <SlideshowIcon />
-            </button>
-            <button className="myActionBtn m-1">
-              <DownloadIcon />
-            </button>
-            <button className="myActionBtn m-1">
               <AutoDeleteIcon />
-            </button>
-            <button className="myActionBtn m-1">
-              <DoubleArrowIcon />
             </button>
           </div>
         </div>
