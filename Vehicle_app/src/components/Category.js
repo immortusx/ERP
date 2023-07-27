@@ -7,7 +7,8 @@ import CustomLoadingSpinner from './subCom/CustomLoadingSpinner';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {useNavigation} from '@react-navigation/native';
 
-const Category = () => {
+const Category = ({route}) => {
+  const {item} = route.params;
   const navigation = useNavigation();
   const [categoryList, setCategoryList] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -33,8 +34,10 @@ const Category = () => {
     getCategoryList();
   }, []);
 
-  const openEnquiryList = categoryId => {
-    navigation.navigate('Enquiry List', {categoryId: categoryId});
+  const openAvailableEnquiry = categoryId => {
+    const villageId = item.id;
+    const villageName = item.name;
+    navigation.navigate('Available Enquiry', {categoryId, villageId, villageName});
   };
 
   if (loading) {
@@ -52,7 +55,7 @@ const Category = () => {
             return (
               <TouchableOpacity
                 onPress={() => {
-                  openEnquiryList(item.id);
+                  openAvailableEnquiry(item.id);
                 }}
                 key={index}
                 style={styles.categoryItem}>
@@ -105,7 +108,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#2471A3',
     padding: 10,
     borderRadius: 20,
-    marginVertical: 8
+    marginVertical: 8,
   },
   categoryTitle: {
     color: 'white',

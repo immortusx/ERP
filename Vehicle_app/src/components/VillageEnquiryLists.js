@@ -16,17 +16,19 @@ import CustomLoadingSpinner from './subCom/CustomLoadingSpinner';
 const VillageEnquiryLists = ({route}) => {
   const {villageId, categoryId, villageName} = route.params;
   const [enquiryList, setEnquiryList] = useState([]);
+  const [totalEnquiry, setTotalEnquriy] = useState(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (categoryId && villageId) {
+    if (villageId) {
+        console.log(villageId);
       const getEnquiry = async () => {
         const url = `${API_URL}/api/enquiry/get-enquiry-by-village`;
+        const formData = {
+            villageId: villageId,
+            categoryId: categoryId,
+        }
         console.log('get enquiries', url);
-        const formdata = {
-          categoryId: categoryId,
-          villageId: villageId,
-        };
         const token = await AsyncStorage.getItem('rbacToken');
         const config = {
           headers: {
@@ -35,15 +37,18 @@ const VillageEnquiryLists = ({route}) => {
         };
         setLoading(true);
         console.log(config);
-        await axios.post(url, formdata, config).then(response => {
-          console.log(response.data.result[0], 'enquiry List');
+        await axios.post(url, formData, config).then(response => {
+          console.log(response.data.result[0][0], 'enquiry List');
           setEnquiryList(response.data.result[0]);
+          if(response.data.result[0][0] !== undefined){
+                setTotalEnquriy(response.data.result[0][0].total_selected_data);
+          }
         });
         setLoading(false);
       };
       getEnquiry();
     }
-  }, [route]);
+  }, [villageId]);
   if (loading) {
     return <CustomLoadingSpinner />;
   }
@@ -51,7 +56,8 @@ const VillageEnquiryLists = ({route}) => {
     <View style={styles.container}>
       <View style={{marginHorizontal: 15}}>
         <TouchableOpacity style={styles.touchableOpacityStyle}>
-          <Text style={styles.categoryTitle}>Village :- {villageName}</Text>
+          <Text style={styles.categoryTitle}>{villageName}</Text>
+          <Text style={styles.categoryTitle}>{totalEnquiry ? totalEnquiry : '0'}</Text>
         </TouchableOpacity>
       </View>
       <FlatList
@@ -146,12 +152,15 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 20,
     marginVertical: 8,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   categoryTitle: {
     color: 'white',
     fontWeight: 'bold',
     textAlign: 'left',
     fontSize: 16,
+    marginHorizontal: 12
   },
 });
 export default VillageEnquiryLists;

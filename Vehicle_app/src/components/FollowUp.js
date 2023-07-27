@@ -150,6 +150,7 @@ const FollowUpScreen = ({item}) => {
               showModal={openScheduleDate}
               selectedDate={scheduleDate}
               handleCalendarDate={handleCalendarDate}
+              onClose={() => setOpenScheduleDate(false)}
             />
           </View>
         </View>

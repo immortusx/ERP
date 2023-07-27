@@ -6,36 +6,41 @@ import {API_URL} from '@env';
 import CustomLoadingSpinner from './subCom/CustomLoadingSpinner';
 import {useNavigation} from '@react-navigation/native';
 
-const EnquiryVillageList = () => {
-  // const {categoryId} = route.params;
+const VillageEnquiry = ({route}) => {
+  const {categoryId, villageId} = route.params;
   const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
   const [villageList, setVillageList] = useState([]);
 
   useEffect(() => {
-    const getVillageList = async () => {
-      const url = `${API_URL}/api/master/get-allVillage-by-total-enquiry`;
-      console.log('get cateogries', url);
-      const token = await AsyncStorage.getItem('rbacToken');
-      const config = {
-        headers: {
-          token: token ? token : '',
-        },
+    if (categoryId) {
+      const getVillageList = async () => {
+        const url = `${API_URL}/api/master/get-allVillage-by-total-enquiry/${categoryId}`;
+        console.log('get cateogries', url);
+        const token = await AsyncStorage.getItem('rbacToken');
+        const config = {
+          headers: {
+            token: token ? token : '',
+          },
+        };
+        setLoading(true);
+        console.log(config);
+        await axios.get(url, config).then(response => {
+          console.log(response.data.result[0], 'village list');
+          setVillageList(response.data.result[0]);
+        });
+        setLoading(false);
       };
-      setLoading(true);
-      console.log(config);
-      await axios.get(url, config).then(response => {
-        console.log(response.data.result[0], 'village list');
-        setVillageList(response.data.result[0]);
-      });
-      setLoading(false);
-    };
-    getVillageList();
-  }, []);
+      getVillageList();
+    }
+  }, [categoryId]);
 
-  const openCategory = item => {
-    console.log(item);
-    navigation.navigate('Category', {item});
+  const openAvailableEnquiry = villageName => {
+    navigation.navigate('Available Enquiry', {
+      villageId,
+      categoryId,
+      villageName,
+    });
   };
 
   if (loading) {
@@ -54,7 +59,7 @@ const EnquiryVillageList = () => {
               return (
                 <TouchableOpacity
                   onPress={() => {
-                    openCategory(item);
+                    openAvailableEnquiry(item.name);
                   }}
                   key={index}
                   style={styles.categoryItem}>
@@ -137,4 +142,4 @@ const styles = StyleSheet.create({
     color: 'green',
   },
 });
-export default EnquiryVillageList;
+export default VillageEnquiry;

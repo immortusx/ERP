@@ -5,11 +5,11 @@ import {useNavigation} from '@react-navigation/native';
 const EnquiryReport = () => {
   const navigation = useNavigation();
   const openEnquiryReport = () => {
-    navigation.navigate('Category');
+    navigation.navigate('Enquiry List');
   };
 
   const openDlieveryreport = () => {
-    navigation.navigate('Category');
+    navigation.navigate('Enquiry List');
   };
   return (
     <View style={styles.mainContainer}>

@@ -96,7 +96,7 @@ const AddBooking = ({item}) => {
     {label: 'Vey Good', value: 'Vey Good'},
   ];
   const handleSelectedOption = option => {
-    console.log(option, 'selct');
+    console.log(option, 'selected');
     setSelectedOption(option);
     if (option === 'Exchange Yes') {
       setModalVisible(true);
@@ -245,15 +245,8 @@ const AddBooking = ({item}) => {
       getoldTractorData();
     }
   }, [modalVisible]);
-  const handleModalData = () => {
-    console.log(oldTractorData);
-    console.log(
-      oldTractorData.purchasePrice,
-      oldTractorData.marketPrice,
-      oldTractorData.oldChassisNo,
-      '<<<<<,,',
-    );
-  };
+  
+  
   const submitDelivery = async () => {
     console.log(deliveryData);
     console.log(modal, variant, finance, bank, expDeliveryDate, retailDate);
@@ -456,6 +449,7 @@ const AddBooking = ({item}) => {
                 showModal={openExpDeliveryDate}
                 selectedDate={expDeliveryDate}
                 handleCalendarDate={handleCalendarDate}
+                onClose={() => setOpenExpDeliveryDate(false)}
               />
             </View>
           </View>
@@ -486,6 +480,7 @@ const AddBooking = ({item}) => {
                 showModal={openRetailDate}
                 selectedDate={retailDate}
                 handleCalendarDate={handleRetailDate}
+                onClose={() => setOpenRetailDate(false)}
               />
             </View>
           </View>
@@ -609,6 +604,7 @@ const AddBooking = ({item}) => {
                       showModal={openManuYearDate}
                       selectedDate={manuYearDate}
                       handleCalendarDate={handleManufacturYearDate}
+                      onClose={() => setOpenManufacturer(false)}
                     />
                   </View>
                 </View>
@@ -666,13 +662,6 @@ const AddBooking = ({item}) => {
                       onChangeTextField(value, 'oldChassisNo')
                     }
                   />
-                </View>
-                <View style={styles.centeredButton}>
-                  <TouchableOpacity
-                    style={styles.modern}
-                    onPress={handleModalData}>
-                    <Text style={styles.buttonText}>Add Details</Text>
-                  </TouchableOpacity>
                 </View>
               </View>
             </View>
