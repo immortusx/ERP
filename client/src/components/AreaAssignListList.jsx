@@ -259,7 +259,7 @@ export default function AreaAssignListList() {
            } ).join(","); 
         }
         console.log(selectedOptionVillage, "selectedOptionVillage");
-        // dispatch(addassigneAreaToDb(selectedOptionVillage))
+        dispatch(addassigneAreaToDb(selectedOptionVillage))
     }
 
 

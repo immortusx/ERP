@@ -41,12 +41,13 @@ export default function AddAssignArea({ workFor }) {
     (state) => state.addassigneAreaSlice.addassigneAreaState
   );
   const editassignareaData = useSelector(
-    (state) => state.editassignareaDataState.editassignareaData
+    (state) => state.editassignareaDataState.editassignareaSliceState
   );
 
   useEffect(() => {
     if (addAssignState.isSuccess) {
       if (addAssignState.message.isSuccess) {
+        console.log(addAssignState, "addAssignState");
         dispatch(setShowMessage("Area is assignrd"));
         dispatch(clearAddassigneAreaState());
         navigate("/sale/area-Assign");
@@ -56,8 +57,21 @@ export default function AddAssignArea({ workFor }) {
       }
     }
   }, [addAssignState]);
+   useEffect(() => {
+     if (editassignareaData.isSuccess) {
+       if (editassignareaData.message.isSuccess) {
+         console.log(editassignareaData, "editassignareaData");
+         dispatch(setShowMessage("Assign Area is updated"));
+         dispatch(clearEditassignareaState());
+          navigate("/administration/employees/editemployee");
+         //  clearInpHook();
+         //  clearaddaddAgency();
+       } else {
+         dispatch(setShowMessage("Something is wrong"));
+       }
+     }
+   }, [editassignareaData]);
 
-  
 
   async function getAllUserFromDb() {
     const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/get-allUser`;
@@ -72,7 +86,6 @@ export default function AddAssignArea({ workFor }) {
       }
     });
   }
-  
 
   useEffect(() => {
     getAllUserFromDb();
@@ -112,9 +125,9 @@ export default function AddAssignArea({ workFor }) {
     setSelectedCtaegory(selectedOption);
   };
 
-  const handleChangeDistribution = (selectedOption) => {
-    setSelectedDistributionType(selectedOption);
-  };
+  // const handleChangeDistribution = (selectedOption) => {
+  //   setSelectedDistributionType(selectedOption);
+  // };
   const categoryoptions = enquireCtaegory.map((category) => ({
     value: category.id,
     label: category.category_name,
@@ -142,7 +155,7 @@ export default function AddAssignArea({ workFor }) {
   const handleChangeVillage = (selectedOption) => {
     setSelectedOptionVillage(selectedOption);
   };
-  
+
   function handleSubmit() {
     if (selectedCtaegory.length > 0 && selectedOptionVillage.length > 0) {
       const groupedData = selectedCtaegory.reduce((acc, categoryData) => {
@@ -184,6 +197,7 @@ export default function AddAssignArea({ workFor }) {
       if (options && options.length > 0) {
         const data = options.find((item) => item.value == element);
         tempAr.push(data);
+        console.log(tempAr, "tempAr");
       }
       setSelectedOptionVillage(tempAr);
     });
@@ -202,6 +216,7 @@ export default function AddAssignArea({ workFor }) {
   };
 
   function handlCancel() {
+    console.log(selectedOptionVillage, "selectedOptionVillage");
     navigate("/sale/area-Assign");
   }
   async function getEnquiryCategoryFromDb() {
@@ -307,23 +322,30 @@ export default function AddAssignArea({ workFor }) {
                     </td>
                     <td>
                       {/* <Select
-                            isMulti
-                            options={options}
-                            value={selectedVillagesList.map((village) => ({
-                              value: village.value,
-                              label: village.label,
-                            }))}
-                            onChange={handleChange}
-                            isSearchable={true}
-                            filterOption={(option, inputValue) =>
-                              option.label
-                                .toLowerCase()
-                                .includes(inputValue.toLowerCase())
-                            }
-                          /> */}
-                      <ul className="border p-2 list-unstyled">
-                        <li>{item.name}</li>
-                      </ul>
+                        // isMulti
+                        value={selectedOptionVillage}
+                        // onChange={handleChange}
+                        // filterOption={(option, inputValue) =>
+                        //   option.label
+                        //     .toLowerCase()
+                        //     .includes(inputValue.toLowerCase())
+                        // }
+                        isDisabled={true}
+                      />*/}
+                      <Select
+                        isDisabled={true}
+                        defaultValue={() => {
+                          let newArr = item.name.split(",");
+                          let data = newArr.map((i) => {
+                            return { label: i, value:i.id };
+                          });
+                          console.log("data", data);
+                          return data;
+                        }}
+                        isSearchable={true}
+                        isMulti
+                        placeholder="Search for a village..."
+                      />
                     </td>
                     <td>
                       <button
