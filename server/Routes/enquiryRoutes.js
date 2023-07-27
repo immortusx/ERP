@@ -387,10 +387,10 @@ router.post("/set-new-fast-enquiry", tokenCheck, async (req, res) => {
                   .replace("T", " ");
                 console.log(enquiryDate);
                 console.log(customer_id);
-                const enquirySql = `INSERT INTO enquiries (branch_id, salesperson_id, customer_id, date) VALUES (?,?,?,?)`;
+                const enquirySql = `INSERT INTO enquiries (branch_id, enquiry_type_id, salesperson_id, customer_id, date) VALUES (?,?,?,?)`;
                 await db.query(
                   enquirySql,
-                  [branch_id, salesperson_id, customer_id, enquiryDate],
+                  [branch_id, categoryId, salesperson_id, customer_id, enquiryDate],
                   (err, enquiryResult) => {
                     if (err) {
                       console.log({ isSuccess: false, result: err });
@@ -486,11 +486,12 @@ router.post("/set-new-detail-enquiry", tokenCheck, async (req, res) => {
                   .replace("T", " ");
                 console.log(enquiryDate);
                 console.log(customer_id);
-                const enquirySql = `INSERT INTO enquiries (branch_id, salesperson_id, customer_id, date, delivery_date, enquiry_source_id) VALUES (?,?,?,?,?,?)`;
+                const enquirySql = `INSERT INTO enquiries (branch_id, enquiry_type_id, salesperson_id, customer_id, date, delivery_date, enquiry_source_id) VALUES (?,?,?,?,?,?,?)`;
                 await db.query(
                   enquirySql,
                   [
                     branch_id,
+                    categoryId,
                     salesperson_id,
                     customer_id,
                     enquiryDate,
@@ -1139,11 +1140,11 @@ router.get(
 );
 
 //====================Get enquiries by village==================//
-router.get("/get-enquiry-by-village/:id", tokenCheck, async (req, res) => {
-  console.log("/get-enquiry-by-village?????????", req.params.id);
+router.post("/get-enquiry-by-village", tokenCheck, async (req, res) => {
+  console.log("/get-enquiry-by-village?????????", req.body);
   try {
-    const villageId = req.params.id;
-    const urlNew = `CALL sp_get_enquiry_list_by_village(${villageId})`;
+    const {villageId, categoryId } = req.body;
+    const urlNew = `CALL sp_get_enquiry_list_by_village(${villageId}, ${categoryId})`;
     await db.query(urlNew, async (err, result) => {
       if (err) {
         console.log({ isSuccess: false, result: err });

@@ -5,36 +5,34 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {API_URL} from '@env';
 import {useNavigation} from '@react-navigation/native';
 
-const EnquiryList = ({route}) => {
-  const {categoryId} = route?.params;
+const EnquiryList = () => {
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
 
-  useEffect(() => {
-    if (categoryId) {
-      const getNewTractorEnquiry = async () => {
-        const url = `${API_URL}/api/enquiry/get-enquiries-by-enquiry-category/${categoryId}`;
-        console.log('get cateogries', url);
-        const token = await AsyncStorage.getItem('rbacToken');
-        const config = {
-          headers: {
-            token: token ? token : '',
-          },
-        };
-        setLoading(true);
-        console.log(config);
-        await axios.get(url, config).then(response => {
-          console.log(response.data, 'category list');
-          // setCategoryList(response.data.result);
-        });
-        setLoading(false);
-      };
-      getNewTractorEnquiry();
-    }
-  }, [categoryId]);
+  // useEffect(() => {
+  //     const getNewTractorEnquiry = async () => {
+  //       const url = `${API_URL}/api/enquiry/get-enquiries-by-enquiry-category/${categoryId}`;
+  //       console.log('get cateogries', url);
+  //       const token = await AsyncStorage.getItem('rbacToken');
+  //       const config = {
+  //         headers: {
+  //           token: token ? token : '',
+  //         },
+  //       };
+  //       setLoading(true);
+  //       console.log(config);
+  //       await axios.get(url, config).then(response => {
+  //         console.log(response.data, 'category list');
+  //         // setCategoryList(response.data.result);
+  //       });
+  //       setLoading(false);
+  //     };
+  //     getNewTractorEnquiry();
 
-  const openEnquiryByVillage = categoryId => {
-    navigation.navigate('Village List', {categoryId: categoryId});
+  // }, []);
+
+  const openEnquiryByVillage = () => {
+    navigation.navigate('Village List');
   };
   return (
     <View style={styles.mainContainer}>
@@ -55,9 +53,7 @@ const EnquiryList = ({route}) => {
           <Text style={styles.categoryText}>Monthly List</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => {
-            openEnquiryByVillage(categoryId);
-          }}
+          onPress={openEnquiryByVillage}
           style={styles.categoryItem}>
           <Text style={styles.categoryText}>Village List</Text>
         </TouchableOpacity>

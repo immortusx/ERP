@@ -270,12 +270,11 @@ router.get("/get-Village-by-branchId/:id", tokenCheck, async (req, res) => {
 });
 
 // =====get Village by total Enquiry=====
-router.get("/get-allVillage-by-total-enquiry/:id", tokenCheck, async (req, res) => {
+router.get("/get-allVillage-by-total-enquiry", tokenCheck, async (req, res) => {
   console.log(">>>>>/get-allVillage-by-total-enquiry");
   try {
-    const categoryId = req.params.id;
     await db.query(
-      `CALL sp_get_village_list_by_total_enquiry(${categoryId})`,
+      `CALL sp_get_village_list_by_total_enquiry()`,
       (err, allVillage) => {
         if (err) {
           console.log({ isSuccess: false, result: "error" });

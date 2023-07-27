@@ -96,7 +96,7 @@ const AddBooking = ({item}) => {
     {label: 'Vey Good', value: 'Vey Good'},
   ];
   const handleSelectedOption = option => {
-    console.log(option, 'selct');
+    console.log(option, 'selected');
     setSelectedOption(option);
     if (option === 'Exchange Yes') {
       setModalVisible(true);
