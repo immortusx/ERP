@@ -101,7 +101,7 @@ router.get("/get-enquiries", tokenCheck, async (req, res) => {
   let branchId = req.myData.branchId;
   let isSuperAdmin = req.myData.isSuperAdmin;
   let userId = req.myData.userId;
-  const urlNew = `CALL sp_get_enquiries_list(${branchId},${isSuperAdmin}, ${userId})`;
+  const urlNew = `CALL sp_get_enquiries_list(${branchId},${isSuperAdmin})`;
   await db.query(urlNew, async (err, result) => {
     if (err) {
       console.log({ isSuccess: false, result: err });
