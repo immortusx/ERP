@@ -1139,11 +1139,11 @@ router.get(
 );
 
 //====================Get enquiries by village==================//
-router.post("/get-enquiry-by-village", tokenCheck, async (req, res) => {
-  console.log("/get-enquiry-by-village?????????", req.body);
+router.get("/get-enquiry-by-village/:id", tokenCheck, async (req, res) => {
+  console.log("/get-enquiry-by-village?????????", req.params.id);
   try {
-    const { villageId, categoryId } = req.body;
-    const urlNew = `CALL sp_get_enquiry_list_by_village(${villageId}, ${categoryId})`;
+    const villageId = req.params.id;
+    const urlNew = `CALL sp_get_enquiry_list_by_village(${villageId})`;
     await db.query(urlNew, async (err, result) => {
       if (err) {
         console.log({ isSuccess: false, result: err });
@@ -1179,7 +1179,6 @@ router.get("/get-current-date-enquiries", tokenCheck, async (req, res) => {
     console.log(err);
   }
 });
-
 
 //========================Get Last Month Enquiry List======================//
 router.get("/get-last-month-enquiries", tokenCheck, async (req, res) => {

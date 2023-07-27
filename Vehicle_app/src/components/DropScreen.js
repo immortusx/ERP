@@ -365,6 +365,7 @@ const DropScreen = ({item}) => {
               showModal={openEnquiryLostDate}
               selectedDate={enquiryLostDate}
               handleCalendarDate={handleCalendarDate}
+              onClose={() => setOpenEnquiryLostDate(false)}
             />
           </View>
         </View>

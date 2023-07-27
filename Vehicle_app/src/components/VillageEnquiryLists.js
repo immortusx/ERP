@@ -19,14 +19,10 @@ const VillageEnquiryLists = ({route}) => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (categoryId && villageId) {
+    if (villageId) {
       const getEnquiry = async () => {
-        const url = `${API_URL}/api/enquiry/get-enquiry-by-village`;
+        const url = `${API_URL}/api/enquiry/get-enquiry-by-village/${villageId}`;
         console.log('get enquiries', url);
-        const formdata = {
-          categoryId: categoryId,
-          villageId: villageId,
-        };
         const token = await AsyncStorage.getItem('rbacToken');
         const config = {
           headers: {
@@ -35,7 +31,7 @@ const VillageEnquiryLists = ({route}) => {
         };
         setLoading(true);
         console.log(config);
-        await axios.post(url, formdata, config).then(response => {
+        await axios.get(url, config).then(response => {
           console.log(response.data.result[0], 'enquiry List');
           setEnquiryList(response.data.result[0]);
         });
@@ -43,7 +39,7 @@ const VillageEnquiryLists = ({route}) => {
       };
       getEnquiry();
     }
-  }, [route]);
+  }, [villageId]);
   if (loading) {
     return <CustomLoadingSpinner />;
   }

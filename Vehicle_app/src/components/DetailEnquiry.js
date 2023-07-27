@@ -279,11 +279,11 @@ const DetailEnquiry = ({route}) => {
       manufacturer: manufacturer,
       modal: modal,
       variant: variant,
-      maker: maker,
-      modalName: modalName,
-      variantName: variantName,
-      year: year,
-      condition_of: condition_of,
+      maker: oldManufacturer,
+      modalName: oldModal,
+      variantName: oldVariant,
+      year: manuYearDate,
+      condition_of: condition,
       sourceOfEnquiry: enquiry,
       old_tractor: selectedOption,
     };
@@ -509,6 +509,7 @@ const DetailEnquiry = ({route}) => {
                 showModal={openExpDeliveryDate}
                 selectedDate={expDeliveryDate}
                 handleCalendarDate={handleCalendarDate}
+                onClose={() => setOpenExpDeliveryDate(false)}
               />
             </View>
           </View>
@@ -633,7 +634,8 @@ const DetailEnquiry = ({route}) => {
                       showModal={openManuYearDate}
                       selectedDate={manuYearDate}
                       handleCalendarDate={handleManufacturYearDate}
-                    />
+                      onClose={() => setOpenManufacturer(false)}
+                      />
                   </View>
                 </View>
                 <View style={styles.sourceContainer}>
@@ -662,7 +664,7 @@ const DetailEnquiry = ({route}) => {
                     />
                   </View>
                 </View>
-                <View style={styles.buttonContainer}>
+                {/* <View style={styles.buttonContainer}>
                   <View style={styles.centeredButton}>
                     <Pressable
                       style={[
@@ -676,7 +678,7 @@ const DetailEnquiry = ({route}) => {
                       </Text>
                     </Pressable>
                   </View>
-                </View>
+                </View> */}
               </View>
             </View>
           )}

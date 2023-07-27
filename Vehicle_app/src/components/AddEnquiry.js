@@ -222,6 +222,7 @@ const AddEnquiry = ({navigation}) => {
                 showModal={openCurrentDateModal}
                 selectedDate={currentDate}
                 handleCalendarDate={handleCalendarDate}
+                onClose={() => setOpenCurrentDateModal(false)}
               />
               {/* <Modal
                 visible={showModal}
