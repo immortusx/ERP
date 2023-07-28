@@ -18,12 +18,17 @@ import moment from 'moment';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {API_URL} from '@env';
+import ToastMessage from './subCom/ToastMessage';
 
 const AddMore = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const [resultData, setResultData] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [enquiryType, setEnquiryType] = useState('All');
+  const [todayEnquiryList, setTodayEnquiryList] = useState([]);
+  const [newEnquiryList, setNewEnquiryList] = useState([]);
+  const [lastMonthEnquiryList, setLastMonthEnquiryList] = useState([]);
   const profileData = useSelector(
     state => state.getUserProfileSlice.profile.currentUserData.result,
   );
@@ -43,7 +48,9 @@ const AddMore = () => {
       setResultData(result.result);
     }
   }, [result]);
-
+  useEffect(() => {
+    setEnquiryType('All');
+  }, []);
   const handleSheduleCall = item => {
     navigation.navigate('Schedule Call', {item: item});
   };
@@ -60,8 +67,8 @@ const AddMore = () => {
     navigation.navigate('Additional Details', {item: item});
   };
 
-  if(loading){
-    return <CustomLoadingSpinner />
+  if (loading) {
+    return <CustomLoadingSpinner />;
   }
   if (isFetching) {
     return <CustomLoadingSpinner />;
@@ -81,7 +88,8 @@ const AddMore = () => {
     console.log(config);
     await axios.get(url, config).then(response => {
       console.log(response.data.result, 'enquiry today list');
-      // setVillageList(response.data.result);
+      // todayEnquiryList(response.data.result);
+      setEnquiryType('Today');
     });
     setLoading(false);
   };
@@ -100,10 +108,10 @@ const AddMore = () => {
     console.log(config);
     await axios.get(url, config).then(response => {
       console.log(response.data.result, 'enquiry today list');
-      // setVillageList(response.data.result);
+      // newEnquiryList(response.data.result);
+      setEnquiryType('New');
     });
     setLoading(false);
-    
   };
   const handleLastMonthEnquiry = async () => {
     console.log('LastMonth enquiries....');
@@ -119,9 +127,10 @@ const AddMore = () => {
     console.log(config);
     await axios.get(url, config).then(response => {
       console.log(response.data.result, 'enquiry lastmonth list');
-      // setVillageList(response.data.result);
+      setEnquiryType('Last Month');
+      // lastMonthEnquiryList(response.data.result);
     });
-    setLoading(false)
+    setLoading(false);
   };
   return (
     <View style={styles.container}>
@@ -156,16 +165,17 @@ const AddMore = () => {
           </Text>
         </TouchableOpacity>
       </View>
-      <FlatList
-        data={resultData}
-        renderItem={({item, index}) => {
-          return (
-            <ScrollView>
-              <TouchableWithoutFeedback
-                onPress={() => {
-                  openAdditonalEnquiry(item);
-                }}>
-                {/* <View key={index} style={styles.box}>
+      {enquiryType === 'All' && (
+        <FlatList
+          data={resultData}
+          renderItem={({item, index}) => {
+            return (
+              <ScrollView>
+                <TouchableWithoutFeedback
+                  onPress={() => {
+                    openAdditonalEnquiry(item);
+                  }}>
+                  {/* <View key={index} style={styles.box}>
                   <Text style={styles.label}>
                     <Image
                       style={styles.personImg}
@@ -190,73 +200,241 @@ const AddMore = () => {
                     - {item.product}
                   </Text>
                 </View> */}
-                <View key={index} style={styles.enquiryBox}>
-                  <View style={styles.dataStyle}>
-                    <Text style={styles.label}>
-                      <Image
-                        style={styles.personImg}
-                        source={require('../../assets/person.png')}
-                      />
-                      -{' '}
-                      {item.first_name +
-                        (item.last_name ? ' ' + item.last_name : '')}
-                    </Text>
-                    <TouchableOpacity
-                      onPress={() => {
-                        makePhoneCall(item.phone_number);
-                      }}>
+                  <View key={index} style={styles.enquiryBox}>
+                    <View style={styles.dataStyle}>
                       <Text style={styles.label}>
                         <Image
                           style={styles.personImg}
-                          source={require('../../assets/phone.png')}
+                          source={require('../../assets/person.png')}
                         />
-                        - {item.phone_number}
+                        -{' '}
+                        {item.first_name +
+                          (item.last_name ? ' ' + item.last_name : '')}
                       </Text>
-                    </TouchableOpacity>
-
-                    <Text style={styles.label}>
-                      <Image
-                        style={styles.personImg}
-                        source={require('../../assets/product.png')}
-                      />
-                      - {item.product ? item.product : 'Sonalika Sikander DLX'}
-                    </Text>
-                  </View>
-                  <View style={styles.rightDataStyle}>
-                    <View style={styles.daysContainer}>
-                      <TouchableOpacity style={styles.dayBack}>
-                        <Text style={styles.dateText}>
-                          {item.last_follow_up_date
-                            ? moment(item.last_follow_up_date).format('LL')
-                            : 'Not Followed'}
+                      <TouchableOpacity
+                        onPress={() => {
+                          makePhoneCall(item.phone_number);
+                        }}>
+                        <Text style={styles.label}>
+                          <Image
+                            style={styles.personImg}
+                            source={require('../../assets/phone.png')}
+                          />
+                          - {item.phone_number}
                         </Text>
                       </TouchableOpacity>
+
+                      <Text style={styles.label}>
+                        <Image
+                          style={styles.personImg}
+                          source={require('../../assets/product.png')}
+                        />
+                        -{' '}
+                        {item.product ? item.product : 'Sonalika Sikander DLX'}
+                      </Text>
                     </View>
-                    <Text style={styles.dayText}>
-                      {Math.floor(
-                        (new Date() - new Date(item.date)) /
-                          (1000 * 60 * 60 * 24),
-                      ) === 0
-                        ? 'Today'
-                        : Math.floor(
-                            (new Date() - new Date(item.date)) /
-                              (1000 * 60 * 60 * 24),
-                          ) + ' Days'}
-                    </Text>
-                    <TouchableOpacity
-                      onPress={() => {
-                        handleSheduleCall(item);
-                      }}
-                      style={styles.discussionButton}>
-                      <Text style={styles.discussionText}>Follow Up</Text>
-                    </TouchableOpacity>
+                    <View style={styles.rightDataStyle}>
+                      <View style={styles.daysContainer}>
+                        <TouchableOpacity style={styles.dayBack}>
+                          <Text style={styles.dateText}>
+                            {item.last_follow_up_date
+                              ? moment(item.last_follow_up_date).format('LL')
+                              : 'Not Followed'}
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                      <Text style={styles.dayText}>
+                        {Math.floor(
+                          (new Date() - new Date(item.date)) /
+                            (1000 * 60 * 60 * 24),
+                        ) === 0
+                          ? 'Today'
+                          : Math.floor(
+                              (new Date() - new Date(item.date)) /
+                                (1000 * 60 * 60 * 24),
+                            ) + ' Days'}
+                      </Text>
+                      <TouchableOpacity
+                        onPress={() => {
+                          handleSheduleCall(item);
+                        }}
+                        style={styles.discussionButton}>
+                        <Text style={styles.discussionText}>Follow Up</Text>
+                      </TouchableOpacity>
+                    </View>
                   </View>
-                </View>
-              </TouchableWithoutFeedback>
-            </ScrollView>
-          );
-        }}
-      />
+                </TouchableWithoutFeedback>
+              </ScrollView>
+            );
+          }}
+        />
+      )}
+      {enquiryType === 'Today' && (
+        <View>
+          {todayEnquiryList && todayEnquiryList.length > [] ? (
+            <FlatList
+              data={todayEnquiryList}
+              renderItem={({item, index}) => {
+                return (
+                  <TouchableWithoutFeedback>
+                    <View key={index} style={styles.enquiryBox}>
+                      <View style={styles.dataStyle}>
+                        <Text style={styles.label}>
+                          <Image
+                            style={styles.personImg}
+                            source={require('../../assets/person.png')}
+                          />
+                          -{' '}
+                          {item.first_name +
+                            (item.last_name ? ' ' + item.last_name : '')}
+                        </Text>
+                        <Text style={styles.label}>
+                          <Image
+                            style={styles.personImg}
+                            source={require('../../assets/phone.png')}
+                          />
+                          - {item.phone_number}
+                        </Text>
+                        <Text style={styles.label}>
+                          <Image
+                            style={styles.personImg}
+                            source={require('../../assets/whatsapp.png')}
+                          />
+                          - {item.whatsapp_number}
+                        </Text>
+                        <Text style={styles.label}>
+                          <Image
+                            style={styles.personImg}
+                            source={require('../../assets/email.png')}
+                          />
+                          - {item.email}
+                        </Text>
+                      </View>
+                    </View>
+                  </TouchableWithoutFeedback>
+                );
+              }}
+            />
+          ) : (
+            <ToastMessage
+              message="No Enquiry Found. Please Check After SomeTimes"
+              visible={showToast}
+              onClose={handleCloseToast}
+            />
+          )}
+        </View>
+      )}
+      {enquiryType === 'New' && (
+        <View>
+          {newEnquiryList && newEnquiryList.length > [] ? (
+            <FlatList
+              data={newEnquiryList}
+              renderItem={({item, index}) => {
+                return (
+                  <TouchableWithoutFeedback>
+                    <View key={index} style={styles.enquiryBox}>
+                      <View style={styles.dataStyle}>
+                        <Text style={styles.label}>
+                          <Image
+                            style={styles.personImg}
+                            source={require('../../assets/person.png')}
+                          />
+                          -{' '}
+                          {item.first_name +
+                            (item.last_name ? ' ' + item.last_name : '')}
+                        </Text>
+                        <Text style={styles.label}>
+                          <Image
+                            style={styles.personImg}
+                            source={require('../../assets/phone.png')}
+                          />
+                          - {item.phone_number}
+                        </Text>
+                        <Text style={styles.label}>
+                          <Image
+                            style={styles.personImg}
+                            source={require('../../assets/whatsapp.png')}
+                          />
+                          - {item.whatsapp_number}
+                        </Text>
+                        <Text style={styles.label}>
+                          <Image
+                            style={styles.personImg}
+                            source={require('../../assets/email.png')}
+                          />
+                          - {item.email}
+                        </Text>
+                      </View>
+                    </View>
+                  </TouchableWithoutFeedback>
+                );
+              }}
+            />
+          ) : (
+            <TouchableOpacity style={styles.noEnqiryBox}>
+              <Text style={styles.messagetext}>
+                New Enquiry not available rightnow. Please check after
+                sometimes.
+              </Text>
+            </TouchableOpacity>
+          )}
+        </View>
+      )}
+      {enquiryType === 'Last Month' && (
+        <View>
+          {lastMonthEnquiryList && lastMonthEnquiryList.length > [] ? (
+            <FlatList
+              data={lastMonthEnquiryList}
+              renderItem={({item, index}) => {
+                return (
+                  <TouchableWithoutFeedback>
+                    <View key={index} style={styles.enquiryBox}>
+                      <View style={styles.dataStyle}>
+                        <Text style={styles.label}>
+                          <Image
+                            style={styles.personImg}
+                            source={require('../../assets/person.png')}
+                          />
+                          -{' '}
+                          {item.first_name +
+                            (item.last_name ? ' ' + item.last_name : '')}
+                        </Text>
+                        <Text style={styles.label}>
+                          <Image
+                            style={styles.personImg}
+                            source={require('../../assets/phone.png')}
+                          />
+                          - {item.phone_number}
+                        </Text>
+                        <Text style={styles.label}>
+                          <Image
+                            style={styles.personImg}
+                            source={require('../../assets/whatsapp.png')}
+                          />
+                          - {item.whatsapp_number}
+                        </Text>
+                        <Text style={styles.label}>
+                          <Image
+                            style={styles.personImg}
+                            source={require('../../assets/email.png')}
+                          />
+                          - {item.email}
+                        </Text>
+                      </View>
+                    </View>
+                  </TouchableWithoutFeedback>
+                );
+              }}
+            />
+          ) : (
+            <TouchableOpacity style={styles.noEnqiryBox}>
+              <Text style={styles.messagetext}>
+                Last Month Enquiry not available. Please check Later
+              </Text>
+            </TouchableOpacity>
+          )}
+        </View>
+      )}
     </View>
   );
 };
@@ -414,6 +592,26 @@ const styles = StyleSheet.create({
   discussionText: {
     color: 'white',
     textAlign: 'center',
+  },
+  notAvailableText: {
+    fontSize: 18,
+    color: 'red',
+    fontStyle: 'italic',
+  },
+  noEnqiryBox: {
+    backgroundColor: 'lightcoral',
+    padding: 10,
+    borderRadius: 5,
+    marginHorizontal: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginVertical: 20,
+  },
+  messagetext: {
+    fontSize: 20,
+    color: 'white',
+    fontStyle: 'italic',
+    alignSelf: 'center',
   },
 });
 

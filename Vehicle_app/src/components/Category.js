@@ -12,32 +12,43 @@ const Category = ({route}) => {
   const navigation = useNavigation();
   const [categoryList, setCategoryList] = useState([]);
   const [loading, setLoading] = useState(false);
-
+  const [villageId, setVillageId] = useState(null);
+  const [totalEnquiry, setTotalEnquriy] = useState(null);
   useEffect(() => {
-    const getCategoryList = async () => {
-      const url = `${API_URL}/api/master/get-category-list`;
-      console.log('get cateogries', url);
-      const token = await AsyncStorage.getItem('rbacToken');
-      const config = {
-        headers: {
-          token: token ? token : '',
-        },
+    if (item) {
+      setVillageId(item.id);
+    }
+  }, [item]);
+  useEffect(() => {
+    if (villageId) {
+      const getCategoryList = async () => {
+        const url = `${API_URL}/api/master/get-category-list-with-total-enquiry/${villageId}`;
+        console.log('get cateogries', url);
+        const token = await AsyncStorage.getItem('rbacToken');
+        const config = {
+          headers: {
+            token: token ? token : '',
+          },
+        };
+        setLoading(true);
+        console.log(config);
+        await axios.get(url, config).then(response => {
+          console.log(response.data.result[0], 'category list');
+          setCategoryList(response.data.result[0]);
+        });
+        setLoading(false);
       };
-      setLoading(true);
-      console.log(config);
-      await axios.get(url, config).then(response => {
-        console.log(response.data, 'category list');
-        setCategoryList(response.data.result);
-      });
-      setLoading(false);
-    };
-    getCategoryList();
-  }, []);
+      getCategoryList();
+    }
+  }, [villageId]);
 
   const openAvailableEnquiry = categoryId => {
-    const villageId = item.id;
     const villageName = item.name;
-    navigation.navigate('Available Enquiry', {categoryId, villageId, villageName});
+    navigation.navigate('Available Enquiry', {
+      categoryId,
+      villageId,
+      villageName,
+    });
   };
 
   if (loading) {
@@ -49,21 +60,28 @@ const Category = ({route}) => {
         <TouchableOpacity style={styles.touchableOpacityStyle}>
           <Text style={styles.categoryTitle}>Category</Text>
         </TouchableOpacity>
-        <FlatList
-          data={categoryList}
-          renderItem={({item, index}) => {
-            return (
-              <TouchableOpacity
-                onPress={() => {
-                  openAvailableEnquiry(item.id);
-                }}
-                key={index}
-                style={styles.categoryItem}>
-                <Text style={styles.categoryText}>{item.category_name}</Text>
-              </TouchableOpacity>
-            );
-          }}
-        />
+        {categoryList && categoryList.length > [] ? (
+          <FlatList
+            data={categoryList}
+            renderItem={({item, index}) => {
+              return (
+                <TouchableOpacity
+                  onPress={() => {
+                    openAvailableEnquiry(item.id);
+                  }}
+                  key={index}
+                  style={styles.categoryItem}>
+                  <Text style={styles.categoryText}>{item.category_name}</Text>
+                  <Text style={styles.totalText}>
+                    {item.total_enquiries ? item.total_enquiries : '0'}
+                  </Text>
+                </TouchableOpacity>
+              );
+            }}
+          />
+        ) : (
+          <Text style={styles.notAvailableText}>Not Available</Text>
+        )}
       </View>
     </View>
   );
@@ -98,11 +116,18 @@ const styles = StyleSheet.create({
     elevation: 3,
     borderBottomLeftRadius: 10,
     borderBottomRightRadius: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   categoryText: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#1A5276',
+  },
+  totalText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: 'green',
   },
   touchableOpacityStyle: {
     backgroundColor: '#2471A3',
@@ -115,6 +140,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'left',
     fontSize: 16,
+  },
+  notAvailableText: {
+    fontSize: 18,
+    color: 'red',
+    fontStyle: 'italic',
+    alignSelf: 'center'
   },
 });
 
