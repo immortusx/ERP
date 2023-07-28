@@ -7,8 +7,9 @@ import {
   TouchableOpacity,
   Image,
   TouchableWithoutFeedback,
+  RefreshControl,
 } from 'react-native';
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {getEnquiryData} from '../redux/slice/getEnquirySlice';
 import {useNavigation} from '@react-navigation/native';
@@ -29,12 +30,21 @@ const AddMore = () => {
   const [todayEnquiryList, setTodayEnquiryList] = useState([]);
   const [newEnquiryList, setNewEnquiryList] = useState([]);
   const [lastMonthEnquiryList, setLastMonthEnquiryList] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
   const profileData = useSelector(
     state => state.getUserProfileSlice.profile.currentUserData.result,
   );
   const getEnquiryState = useSelector(state => state.getEnquiryState);
   const {isFetching, isSuccess, isError, result} = getEnquiryState;
 
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    setEnquiryType('All');
+    dispatch(getEnquiryData());
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  }, []);
   useEffect(() => {
     const getEnquiry = () => {
       dispatch(getEnquiryData());
@@ -127,6 +137,7 @@ const AddMore = () => {
     console.log(config);
     await axios.get(url, config).then(response => {
       console.log(response.data.result, 'enquiry lastmonth list');
+      setLastMonthEnquiryList(response.data.result);
       setEnquiryType('Last Month');
       // lastMonthEnquiryList(response.data.result);
     });
@@ -135,18 +146,32 @@ const AddMore = () => {
   return (
     <View style={styles.container}>
       <View style={styles.boxContainer}>
-        <Text style={styles.historyText}>Enquiry Details</Text>
+        <ScrollView
+          contentContainerStyle={styles.scrollViewContainer}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }>
+          <Text style={styles.historyText}>Enquiry Details</Text>
+        </ScrollView>
       </View>
       <View style={styles.wrapper}>
         <TouchableOpacity
-          style={[styles.buttonStyle, styles.newButton]}
+          style={[
+            styles.buttonStyle,
+            styles.newButton,
+            enquiryType === 'New' && styles.newActive,
+          ]}
           onPress={() => {
             handleNewEnquiry();
           }}>
           <Text style={[styles.buttonText, {paddingHorizontal: 25}]}>New</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.buttonStyle, styles.todayButton]}
+          style={[
+            styles.buttonStyle,
+            styles.todayButton,
+            enquiryType === 'Today' && styles.todayActive,
+          ]}
           onPress={() => {
             handleTodayEnquiry();
           }}>
@@ -156,7 +181,11 @@ const AddMore = () => {
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.buttonStyle, styles.monthButton]}
+          style={[
+            styles.buttonStyle,
+            styles.monthButton,
+            enquiryType === 'Last Month' && styles.lastMonthActive,
+          ]}
           onPress={() => {
             handleLastMonthEnquiry();
           }}>
@@ -165,6 +194,7 @@ const AddMore = () => {
           </Text>
         </TouchableOpacity>
       </View>
+
       {enquiryType === 'All' && (
         <FlatList
           data={resultData}
@@ -316,11 +346,13 @@ const AddMore = () => {
               }}
             />
           ) : (
-            <ToastMessage
-              message="No Enquiry Found. Please Check After SomeTimes"
-              visible={showToast}
-              onClose={handleCloseToast}
-            />
+            <View style={{marginLeft: 10}}>
+              <ToastMessage
+                message="No Enquiry Available for Today. Please Check Later"
+                visible={true}
+                onClose={false}
+              />
+            </View>
           )}
         </View>
       )}
@@ -371,12 +403,13 @@ const AddMore = () => {
               }}
             />
           ) : (
-            <TouchableOpacity style={styles.noEnqiryBox}>
-              <Text style={styles.messagetext}>
-                New Enquiry not available rightnow. Please check after
-                sometimes.
-              </Text>
-            </TouchableOpacity>
+            <View style={{marginLeft: 10}}>
+              <ToastMessage
+                message="New Enquiry Not found. Please Check After Sometimes"
+                visible={true}
+                onClose={false}
+              />
+            </View>
           )}
         </View>
       )}
@@ -406,20 +439,6 @@ const AddMore = () => {
                           />
                           - {item.phone_number}
                         </Text>
-                        <Text style={styles.label}>
-                          <Image
-                            style={styles.personImg}
-                            source={require('../../assets/whatsapp.png')}
-                          />
-                          - {item.whatsapp_number}
-                        </Text>
-                        <Text style={styles.label}>
-                          <Image
-                            style={styles.personImg}
-                            source={require('../../assets/email.png')}
-                          />
-                          - {item.email}
-                        </Text>
                       </View>
                     </View>
                   </TouchableWithoutFeedback>
@@ -427,11 +446,13 @@ const AddMore = () => {
               }}
             />
           ) : (
-            <TouchableOpacity style={styles.noEnqiryBox}>
-              <Text style={styles.messagetext}>
-                Last Month Enquiry not available. Please check Later
-              </Text>
-            </TouchableOpacity>
+            <View style={{marginLeft: 8}}>
+              <ToastMessage
+                message="Last Month Enquiry not found. Please Check Later"
+                visible={true}
+                onClose={false}
+              />
+            </View>
           )}
         </View>
       )}
@@ -612,6 +633,22 @@ const styles = StyleSheet.create({
     color: 'white',
     fontStyle: 'italic',
     alignSelf: 'center',
+  },
+  lastMonthActive: {
+    backgroundColor: 'lightgreen',
+    // borderColor: 'darkgreen',
+    // borderWidth: 2,
+    // borderRadius: 20,
+  },
+  newActive: {
+    backgroundColor: 'lightgreen',
+  },
+  todayActive: {
+    backgroundColor: 'lightgreen',
+  },
+  scrollViewContainer: {
+    flexGrow: 1,
+    backgroundColor: 'transparent',
   },
 });
 
