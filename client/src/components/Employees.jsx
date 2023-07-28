@@ -14,8 +14,9 @@ import SlideshowIcon from "@mui/icons-material/Slideshow";
 import DownloadIcon from "@mui/icons-material/Download";
 import AutoDeleteIcon from "@mui/icons-material/AutoDelete";
 import DoubleArrowIcon from "@mui/icons-material/DoubleArrow";
-
+import { setEdiassignareaData } from "../redux/slices/editassignareaSlice";
 import { faEllipsisV } from "@fortawesome/free-solid-svg-icons/faEllipsisV";
+import AreaAssignListList from "./AreaAssignListList";
 
 import Checkbox from "@mui/material/Checkbox";
 import CheckIcon from "@mui/icons-material/Check";
@@ -24,7 +25,6 @@ import ClearIcon from "@mui/icons-material/Clear";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import Axios from "axios";
 import moment from "moment";
-
 
 import "../styles/Users.css";
 import { Link, NavLink, useNavigate } from "react-router-dom";
@@ -64,11 +64,13 @@ export default function Employees() {
   const [deleteMessage, setDeleteMessage] = useState(null);
   const [type, setType] = useState(null);
   const [id, setId] = useState(null);
+  // const [name, setName] = useState();
   const employeeListState = useSelector(
     (state) => state.getemployeeListSlice.employeeListState
   );
- 
+
   const [assigneAreaPerUser, setAssignedAreaPerUser] = useState([]);
+  const [assigneAreaPerUserid, setAssignedAreaPerUserId] = useState([]);
 
   // const handleEditArea = async (ev) => {
   //   console.log(ev, "evvvvvv");
@@ -139,11 +141,11 @@ export default function Employees() {
   //   }
   // };
 
- 
-
+  const [showComponent, setShowComponent] = useState(false);
   const handleEditArea = async (ev) => {
     try {
       console.log(ev, "evvvvvv");
+      console.log(ev.user_id, "evvvvvv");
 
       const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/add-areaAssignUserById/${ev.user_id}`;
       const config = {
@@ -156,8 +158,10 @@ export default function Employees() {
 
       if (response.data && response.data.isSuccess) {
         console.log("response.data", response.data.result);
+        console.log("ev", ev);
 
-        setAssignedAreaPerUser(response.data.result);
+        setAssignedAreaPerUser(response.data.result, "response.data.result");
+        setAssignedAreaPerUserId(ev, "ev");
 
         console.log(
           response.data.result[0],
@@ -167,7 +171,6 @@ export default function Employees() {
           assigneAreaPerUser,
           "assigneAreaPerUserassigneAreaPerUserassigneAreaPerUserassigneAreaPerUser"
         );
-
         navigate("/sale/area-Assign/add-AsignArea", {
           state: { assigneAreaPerUser: response.data.result },
         });
@@ -175,13 +178,24 @@ export default function Employees() {
         console.log(
           "No data received from the server or the request was not successful."
         );
-        navigate("/sale/area-Assign", {
-          state: { assigneAreaPerUser: response.data.result },
-        });
+        setShowComponent(true);
+        console.log(ev.user_id, "ev");
+        // setName(ev.first_name+ " "+ev.last_name);
+        setId(ev.user_id);
+        // navigate("/sale/area-Assign", {
+        //   state: { assigneAreaPerUserid: ev },
+        // });
+        // navigate("/sale/area-Assign", {
+        //   state: { assigneAreaPerUser: response.data.result },
+        // });
       }
     } catch (error) {
       console.error("An error occurred while fetching data:", error);
     }
+  };
+
+  const hideareamodal = () => {
+    setShowComponent(false);
   };
   const columns = [
     {
@@ -519,6 +533,11 @@ export default function Employees() {
         type={type}
         id={id}
         message={deleteMessage}
+      />
+      <AreaAssignListList
+        showModal={showComponent}
+        hideModal={hideareamodal}
+      id={id}
       />
     </>
   );
