@@ -40,17 +40,9 @@ const EnquiryList = () => {
         <TouchableOpacity style={styles.touchableOpacityStyle}>
           <Text style={styles.categoryTitle}>Enquiry By</Text>
         </TouchableOpacity>
+        
         <TouchableOpacity style={styles.categoryItem}>
-          <Text style={styles.categoryText}>General List</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.categoryItem}>
-          <Text style={styles.categoryText}>Today List</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.categoryItem}>
-          <Text style={styles.categoryText}>Weekly List</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.categoryItem}>
-          <Text style={styles.categoryText}>Monthly List</Text>
+          <Text style={styles.categoryText}>Employee List</Text>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={openEnquiryByVillage}

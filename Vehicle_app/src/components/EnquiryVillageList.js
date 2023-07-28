@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
   modalContent: {
     backgroundColor: 'white',
     paddingHorizontal: 20,
-    paddingVertical: 20,
+    // paddingVertical: 20,
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.25,
@@ -96,6 +96,7 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
     marginVertical: 0.9,
+    paddingBottom: 20
   },
   categoryItem: {
     backgroundColor: '#DFECFF',
@@ -130,8 +131,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   notAvailable: {
-    color: '#943126',
     fontSize: 12,
+    color: 'red',
+    fontStyle: 'italic',
+    alignSelf: 'center'
   },
   availableStyle: {
     color: 'green',
