@@ -1,4 +1,11 @@
-import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  ImageBackground,
+} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import moment from 'moment';
@@ -9,213 +16,236 @@ const AdditonalDetails = ({route}) => {
   const handleSheduleCall = item => {
     navigation.navigate('Schedule Call', {item: item});
   };
-  const openEditEnquiry = (editData)=> {
-    navigation.navigate("Edit Detail Enquiry", {editData: editData});
-  }
+  const openEditEnquiry = editData => {
+    navigation.navigate('Edit Detail Enquiry', {editData: editData});
+  };
   return (
-    <View style={styles.userCard}>
-      <View style={styles.dataContainer}>
-        <View style={styles.boxContainer}>
-          <Text style={styles.historyText}>Customer Details</Text>
+    <View style={styles.mainContainer}>
+      <View style={styles.contentContainer}>
+        <View style={styles.borderStyle}>
           <View style={styles.imageContainer}>
             <TouchableOpacity
-            onPress={()=> {openEditEnquiry(item)}}>
+              onPress={() => {
+                openEditEnquiry(item);
+              }}>
               <Image
                 style={styles.editImg}
                 source={require('../../assets/edit.png')}
               />
             </TouchableOpacity>
           </View>
+          <View style={styles.nameContainer}>
+            <Text style={styles.nameStyle}>
+              {item.first_name + (item.last_name ? ' ' + item.last_name : '')}
+            </Text>
+            <Text style={styles.enquiryDate}>
+              {moment(item.date).format('LL')}
+            </Text>
+          </View>
+          <View style={styles.contactContainer}>
+            <View style={styles.leftContainer}>
+              <Text style={styles.contactInfo}>Phone</Text>
+              <Text style={styles.contactInfo}>whatsApp</Text>
+              <Text style={styles.contactInfo}>Email</Text>
+              <Text style={styles.contactInfo}>Product</Text>
+              <Text style={styles.contactInfo}>Enquiry Date</Text>
+              <Text style={styles.contactInfo}>Delivery Date</Text>
+              <Text style={styles.contactInfo}>Enquiry Source</Text>
+              <Text style={styles.contactInfo}>Sales Person</Text>
+              <Text style={styles.contactInfo}>District</Text>
+              <Text style={styles.contactInfo}>Taluka/Tehsil</Text>
+              <Text style={styles.contactInfo}>Village</Text>
+            </View>
+            <View style={styles.rightContainer}>
+              <Text style={[styles.contactInfo, styles.contactStyle]}>
+                {item.phone_number}
+              </Text>
+              <Text style={[styles.contactInfo, styles.contactStyle]}>
+                {item.whatsapp_number ? item.whatsapp_number : '98765432'}
+              </Text>
+              <Text style={[styles.contactInfo, styles.contactStyle]}>
+                {item.email ? item.email : 'john@email.com'}
+              </Text>
+              <Text style={[styles.contactInfo, styles.contactStyle]}>
+                {item.product ? item.product : 'Sonalika Tiger 2WD'}
+              </Text>
+              <Text style={[styles.contactInfo, styles.contactStyle]}>
+                {moment(item.date).format('LL')}
+              </Text>
+              <Text style={[styles.contactInfo, styles.contactStyle]}>
+                {moment(item.delivery_date).format('LL')}
+              </Text>
+              <Text style={[styles.contactInfo, styles.contactStyle]}>
+                {item.enquiry_source ? item.enquiry_source : 'N/A'}
+              </Text>
+              <Text style={[styles.contactInfo, styles.contactStyle]}>
+                {item.sales_person}
+              </Text>
+              <Text style={[styles.contactInfo, styles.contactStyle]}>
+                {item.district ? item.district : 'N/A'}
+              </Text>
+              <Text style={[styles.contactInfo, styles.contactStyle]}>
+                {item.taluka ? item.taluka : 'N/A'}
+              </Text>
+              <Text style={[styles.contactInfo, styles.contactStyle]}>
+                {item.village ? item.village : 'N/A'}
+              </Text>
+            </View>
+          </View>
         </View>
-        <View style={styles.mainContent}>
-          <Text style={styles.myName}>
+        {/* <View style={styles.userCard}>
+          <View style={styles.leftContainer}>
             <Image
-              style={styles.personImg}
               source={require('../../assets/person.png')}
+              style={styles.profilePic}
+              resizeMode="cover"
             />
-            - {item.first_name + (item.last_name ? ' ' + item.last_name : '')}
-          </Text>
+            <Text style={styles.username}>
+              {item.first_name + (item.last_name ? ' ' + item.last_name : '')}
+            </Text>
+          </View>
 
-          <Text style={styles.myName}>
-            <Image
-              style={styles.personImg}
-              source={require('../../assets/phone.png')}
-            />
-            - {item.phone_number}
-          </Text>
-          <Text style={styles.myName}>
-            <Image
-              style={styles.personImg}
-              source={require('../../assets/whatsapp.png')}
-            />
-            - {item.whatsapp_number}
-          </Text>
-          <Text style={styles.myName}>
-            <Image
-              style={styles.personImg}
-              source={require('../../assets/email.png')}
-            />
-            - {item.email}
-          </Text>
-          <Text style={styles.myName}>
-            <Image
-              style={styles.personImg}
-              source={require('../../assets/product.png')}
-            />
-            - {item.product}
-          </Text>
-          <Text style={styles.myName}>
-            <Image
-              style={styles.personImg}
-              source={require('../../assets/source.png')}
-            />
-            - {item.enquiry_source}
-          </Text>
-          <Text style={styles.myName}>
-            <Image
-              style={styles.personImg}
-              source={require('../../assets/date.png')}
-            />
-            - {moment(item.date).format('LL')}
-          </Text>
-          <Text style={styles.myName}>
-            <Image
-              style={styles.personImg}
-              source={require('../../assets/delivery.png')}
-            />
-            - {moment(item.delivery_date).format('LL')}
-          </Text>
-          <Text style={styles.myName}>
-            <Image
-              style={styles.personImg}
-              source={require('../../assets/salesperson.png')}
-            />
-            - {item.sales_person}
-          </Text>
-          <Text style={styles.myName}>
-            <Image
-              style={styles.personImg}
-              source={require('../../assets/district.png')}
-            />
-            - {item.district}
-          </Text>
-          <Text style={styles.myName}>
-            <Image
-              style={styles.personImg}
-              source={require('../../assets/location.png')}
-            />
-            - {item.taluka}
-          </Text>
-          <Text style={styles.myName}>
-            <Image
-              style={styles.personImg}
-              source={require('../../assets/location.png')}
-            />
-            - {item.village}
-          </Text>
-        </View>
-        <TouchableOpacity
-          onPress={() => {
-            handleSheduleCall(item);
-          }}
-          style={styles.followButtonContainer}>
-          <Text style={styles.followButtonText}>Follow Up</Text>
-        </TouchableOpacity>
+          <View style={styles.rightContainer}>
+            <View style={styles.contactInfoContainer}>
+              <Image
+                style={styles.icon}
+                source={require('../../assets/phone.png')}
+                resizeMode="contain"
+              />
+              <Text style={styles.contactInfo}>{item.phone_number}</Text>
+            </View>
+
+            <View style={styles.contactInfoContainer}>
+              <Image
+                style={styles.icon}
+                source={require('../../assets/email.png')}
+                resizeMode="contain"
+              />
+              <Text style={styles.contactInfo}>john.doe@example.com</Text>
+            </View>
+
+            <View style={styles.contactInfoContainer}>
+              <Image
+                style={styles.icon}
+                source={require('../../assets/whatsapp.png')}
+                resizeMode="contain"
+              />
+              <Text style={styles.contactInfo}>+1 (123) 456-7890</Text>
+            </View>
+
+            <Text style={styles.additionalDetails}>Enquiry details</Text>
+          </View>
+        </View> */}
       </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  userCard: {
+  mainContainer: {
     flex: 1,
-    backgroundColor: '#F5EEF8',
-    paddingHorizontal: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
+    // backgroundColor: '#A29BC5',
   },
-  dataContainer: {
-    width: '90%',
-    padding: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.90)',
-    textAlign: 'center',
-    shadowColor: 'grey',
-    borderRadius: 10,
-    shadowOffset: {width: 0, height: 0},
-    shadowOpacity: 0.5,
-    shadowRadius: 8,
-    elevation: 8,
-    marginVertical: 30,
+  headerText: {
+    color: 'white',
+    fontSize: 30,
+    fontWeight: 'bold',
+    marginVertical: 15,
+    marginHorizontal: 10,
+  },
+  contentContainer: {
+    backgroundColor: '#FFFFFF',
+    padding: 16,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    marginTop: 5,
+    flex: 1,
   },
   imageContainer: {
-    marginVertical: 0.2,
-  },
-  imageView: {
-    width: 100,
-    height: 100,
-  },
-  bioDataContainer: {
-    flexDirection: 'row',
-    marginVertical: 5,
-    justifyContent: 'space-evenly',
-  },
-  bioHeader: {
-    fontSize: 25,
-    fontWeight: 'bold',
-    color: 'black',
-  },
-  idNumber: {
-    fontSize: 25,
-    fontWeight: 'bold',
-    color: 'white',
-  },
-  mainContent: {
-    lineHeight: 0.5,
-    textAlign: 'left',
-    backgroundColor: 'white',
-    marginVertical: 20,
-  },
-  myName: {
-    fontSize: 20,
-    fontStyle: 'italic',
-    fontWeight: '500',
-    color: 'black',
-    marginBottom: 10,
-  },
-  historyText: {
-    fontWeight: 'bold',
-    color: '#2E86C1',
-    textTransform: 'uppercase',
-    letterSpacing: 2,
-    textDecorationLine: 'underline',
-    borderRadius: 22,
-  },
-  personImg: {
-    width: 20,
-    height: 20,
+    marginLeft: 'auto',
   },
   editImg: {
     width: 22,
     height: 22,
   },
-  followButtonContainer: {
-    backgroundColor: '#007AFF',
-    borderRadius: 20,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    alignItems: 'center',
+  userCard: {
+    flexDirection: 'row',
+    padding: 10,
+    marginVertical: 20,
+    borderColor: 'green',
+    borderWidth: 0.4,
   },
-  followButtonText: {
-    color: 'white',
+  leftContainer: {
+    flex: 1,
+    alignItems: 'flex-end',
+    marginRight: 15,
+  },
+  rightContainer: {
+    flex: 1,
+    marginLeft: 15,
+    alignItems: 'flex-start',
+  },
+  profilePic: {
+    width: 60,
+    height: 60,
+    borderRadius: 50,
+    marginBottom: 8,
+  },
+  username: {
     fontSize: 16,
     fontWeight: 'bold',
+    textAlign: 'center',
   },
-  boxContainer: {
+  contactInfo: {
+    fontSize: 16,
+    marginBottom: 10,
+    padding: 2,
+  },
+  contactStyle: {
+    fontWeight: 'bold',
+    color: 'black',
+  },
+  additionalDetails: {
+    fontSize: 14,
+    color: '#666666',
+    marginTop: 8,
+  },
+  personImg: {
+    width: 20,
+    height: 20,
+  },
+  contactInfoContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginBottom: 4,
   },
-  imageContainer: {
-    marginLeft: 'auto',
+  icon: {
+    width: 20,
+    height: 20,
+    marginRight: 8,
+  },
+  nameStyle: {
+    fontSize: 30,
+    textAlign: 'center',
+    color: 'black',
+    fontWeight: 'bold',
+  },
+  enquiryDate: {
+    textAlign: 'center',
+  },
+  contactContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 20,
+    justifyContent: 'center',
   },
 });
 export default AdditonalDetails;
