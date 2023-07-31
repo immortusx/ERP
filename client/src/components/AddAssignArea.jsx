@@ -19,9 +19,10 @@ import { getAllVillageAction } from "./Master/Village/getEditeVillage";
 import { Modal, Button } from "react-bootstrap";
 import Select from "react-select";
 
-export default function AddAssignArea({ workFor }) {
+export default function AddAssignArea() {
   const location = useLocation();
   const areaAssign = location.state ? location.state.assigneAreaPerUser : [];
+ 
 
   const [selectedCategoryList, setSelectedCategoryList] = useState([]);
   const navigate = useNavigate();
