@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Animated } from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {View, Text, StyleSheet, Animated} from 'react-native';
 
-const ToastMessage = ({ message, visible, duration = 3000, onClose }) => {
+const ToastMessage = ({message, visible, duration = 3000, onClose}) => {
   const [fadeAnim] = useState(new Animated.Value(0));
 
   useEffect(() => {
@@ -11,7 +11,6 @@ const ToastMessage = ({ message, visible, duration = 3000, onClose }) => {
         duration: 500,
         useNativeDriver: true,
       }).start(() => {
-        // Auto hide after 'duration' milliseconds
         setTimeout(() => {
           hideToast();
         }, duration);
@@ -32,7 +31,7 @@ const ToastMessage = ({ message, visible, duration = 3000, onClose }) => {
   };
 
   return (
-    <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
+    <Animated.View style={[styles.container, {opacity: fadeAnim}]}>
       <Text style={styles.message}>{message}</Text>
     </Animated.View>
   );
@@ -41,16 +40,17 @@ const ToastMessage = ({ message, visible, duration = 3000, onClose }) => {
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    bottom: 50,
-    left: 20,
-    right: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.8)',
     padding: 10,
     borderRadius: 8,
+    marginHorizontal: 20,
+    marginVertical: 10
   },
   message: {
-    color: 'white',
-    fontSize: 16,
+    color: 'red',
+    fontSize: 18,
     textAlign: 'center',
   },
 });
