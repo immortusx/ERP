@@ -105,7 +105,6 @@ router.post("/get-category-edit/:id", tokenCheck, async (req, res) => {
   }
 });
 
-
 router.get("/get-categorybyid/:id", tokenCheck, async (req, res) => {
   console.log(">>>>>/get-categorybyid");
   try {
@@ -130,5 +129,26 @@ router.get("/get-categorybyid/:id", tokenCheck, async (req, res) => {
   }
 });
 
+//=======================Get-category with Total Enquiry===================//
+router.get("/get-category-list-with-total-enquiry/:id", tokenCheck, async (req, res) => {
+    try {
+      const villageId = req.params.id;
+      await db.query(
+        `CALL sp_get_category_with_total_enquiry(${villageId})`,
+        (err, results) => {
+          if (err) {
+            console.log({ isSuccess: false, result: "error" });
+            res.send({ isSuccess: false, result: "error" });
+          } else {
+            console.log({ isSuccess: true, result: results });
+            res.status(200).send({ isSuccess: true, result: results });
+          }
+        }
+      );
+    } catch (e) {
+      console.log(e);
+    }
+  }
+);
 
 module.exports = router;

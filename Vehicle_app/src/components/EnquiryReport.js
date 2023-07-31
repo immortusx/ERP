@@ -30,7 +30,7 @@ const EnquiryReport = () => {
               />
               <Text style={styles.enquiryText}>Enquiry</Text>
             </TouchableOpacity>
-            <TouchableOpacity
+            {/* <TouchableOpacity
               style={styles.deliveryStyle}
               onPress={openDlieveryreport}>
               <Image
@@ -38,10 +38,10 @@ const EnquiryReport = () => {
                 source={require('../../assets/delivery.png')}
               />
               <Text style={styles.deliveryText}>Delivery</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
         </View>
-        <View style={styles.categoryContainer}>
+        {/* <View style={styles.categoryContainer}>
           <View style={styles.buttonContainer}>
             <TouchableOpacity
               style={styles.enquiryStyle}
@@ -62,7 +62,7 @@ const EnquiryReport = () => {
               <Text style={styles.lostText}>Lost</Text>
             </TouchableOpacity>
           </View>
-        </View>
+        </View> */}
       </View>
     </View>
   );
