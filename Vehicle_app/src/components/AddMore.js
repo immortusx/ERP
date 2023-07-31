@@ -20,6 +20,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {API_URL} from '@env';
 import ToastMessage from './subCom/ToastMessage';
+import ToastMessage from './subCom/ToastMessage';
 
 const AddMore = () => {
   const navigation = useNavigation();
@@ -61,6 +62,9 @@ const AddMore = () => {
   useEffect(() => {
     setEnquiryType('All');
   }, []);
+  useEffect(() => {
+    setEnquiryType('All');
+  }, []);
   const handleSheduleCall = item => {
     navigation.navigate('Schedule Call', {item: item});
   };
@@ -77,6 +81,8 @@ const AddMore = () => {
     navigation.navigate('Additional Details', {item: item});
   };
 
+  if (loading) {
+    return <CustomLoadingSpinner />;
   if (loading) {
     return <CustomLoadingSpinner />;
   }
@@ -100,6 +106,8 @@ const AddMore = () => {
       console.log(response.data.result, 'enquiry today list');
       // todayEnquiryList(response.data.result);
       setEnquiryType('Today');
+      // todayEnquiryList(response.data.result);
+      setEnquiryType('Today');
     });
     setLoading(false);
   };
@@ -118,6 +126,8 @@ const AddMore = () => {
     console.log(config);
     await axios.get(url, config).then(response => {
       console.log(response.data.result, 'enquiry today list');
+      // newEnquiryList(response.data.result);
+      setEnquiryType('New');
       // newEnquiryList(response.data.result);
       setEnquiryType('New');
     });
@@ -141,6 +151,7 @@ const AddMore = () => {
       setEnquiryType('Last Month');
       // lastMonthEnquiryList(response.data.result);
     });
+    setLoading(false);
     setLoading(false);
   };
   return (
@@ -649,6 +660,26 @@ const styles = StyleSheet.create({
   scrollViewContainer: {
     flexGrow: 1,
     backgroundColor: 'transparent',
+  },
+  notAvailableText: {
+    fontSize: 18,
+    color: 'red',
+    fontStyle: 'italic',
+  },
+  noEnqiryBox: {
+    backgroundColor: 'lightcoral',
+    padding: 10,
+    borderRadius: 5,
+    marginHorizontal: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginVertical: 20,
+  },
+  messagetext: {
+    fontSize: 20,
+    color: 'white',
+    fontStyle: 'italic',
+    alignSelf: 'center',
   },
 });
 
