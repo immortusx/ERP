@@ -1,18 +1,23 @@
-
-import React, { useState, useEffect, useMemo, useRef } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
-import { getUserListFromDb, clearUserListState } from '../redux/slices/getUserListSlice'
-import { setEditUserData } from '../redux/slices/editUserDataSlice'
-import { DataGrid, GridToolbar } from '@mui/x-data-grid';
-import Axios from 'axios'
-import moment from 'moment'
-import { Modal, Button } from 'react-bootstrap';
-import '../styles/Users.css'
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { getAllVillageAction } from './Master/Village/getEditeVillage'
-import Select from 'react-select';
-import { addassigneAreaToDb, clearAddassigneAreaState } from '../redux/slices/assignedAreaSlice'
-import { setShowMessage } from '../redux/slices/notificationSlice'
+import React, { useState, useEffect, useMemo, useRef } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  getUserListFromDb,
+  clearUserListState,
+} from "../redux/slices/getUserListSlice";
+import { setEditUserData } from "../redux/slices/editUserDataSlice";
+import { DataGrid, GridToolbar } from "@mui/x-data-grid";
+import Axios from "axios";
+import moment from "moment";
+import { Modal, Button } from "react-bootstrap";
+import "../styles/Users.css";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { getAllVillageAction } from "./Master/Village/getEditeVillage";
+import Select from "react-select";
+import {
+  addassigneAreaToDb,
+  clearAddassigneAreaState,
+} from "../redux/slices/assignedAreaSlice";
+import { setShowMessage } from "../redux/slices/notificationSlice";
 import AlertDeleteModal from "./AlertDelete/AlertDeleteModal";
 export default function AreaAssignListList({ showModal, hideModal, id }) {
   const [areaAssign, setareaAssign] = useState([]);
@@ -86,6 +91,9 @@ export default function AreaAssignListList({ showModal, hideModal, id }) {
     value: user.id,
     label: user.name,
   }));
+
+  const selectedUser = allUser.find((user) => user.id === id);
+
   const categoryoptions = enquireCtaegory.map((category) => ({
     value: category.id,
     label: category.category_name,
@@ -176,8 +184,8 @@ export default function AreaAssignListList({ showModal, hideModal, id }) {
     getAllUserFromDb();
     //  setSelectedId(areaAssignuser);
     // console.log(areaAssignuser.user_id, "areaAssignuser");
-    console.log(id, "id");
-    console.log(useroptions, "useroptions");
+
+    // console.log(useroptions, "useroptions");
   }, []);
   useEffect(() => {
     getAllVillageAction()
@@ -206,89 +214,55 @@ export default function AreaAssignListList({ showModal, hideModal, id }) {
       }
     });
   }
-  // const handleEditArea = async (ev) => {
-  //     //console.log(ev, "evvvvvv")
-  //     const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/edit-areaAssignUserById/${ev.id}/${ev.category_id}`;
-  //     const config = {
-  //         headers: {
-  //             token: localStorage.getItem('rbacToken')
-  //         }
-  //     };
-
-  //     const response = await Axios.get(url, config);
-  //     if (response.data?.isSuccess) {
-  //         const combinedArrayForIndividualUser = response.data.result.reduce((result, obj) => {
-  //             const existingObj = result.find(item => item.id === obj.id);
-  //             if (existingObj) {
-  //                 if (!existingObj.names.includes(obj.name)) {
-  //                     existingObj.names.push(obj.name);
-  //                 }
-  //                 if (!existingObj.nameId.includes(obj.distribution_id)) {
-  //                     existingObj.nameId.push(obj.distribution_id);
-  //                 }
-  //                 // if (!existingObj.categoryName.includes(obj.category_name)) {
-  //                 //     existingObj.categoryName.push(obj.category_name);
-  //                 // }
-  //                 // if (!existingObj.distributionType.includes(obj.distribution_type)) {
-  //                 //     existingObj.distributionType.push(obj.distribution_type);
-  //                 // }
-  //             } else {
-  //                 result.push({
-  //                     id: obj.id,
-  //                     categoryName: obj.category_name,
-  //                     distributionType: obj.distribution_type,
-  //                     first_name: obj.first_name,
-  //                     last_name: obj.last_name,
-  //                     phone_number: obj.phone_number,
-  //                     names: [obj.name],
-  //                     nameId: [obj.distribution_id],
-  //                     category_id: obj.category_id,
-  //                     distribution_type: obj.dType
-  //                 });
-  //             }
-  //             return result;
-  //         }, []);
-
-  //         setAssignedAreaPerUser(combinedArrayForIndividualUser)
-  //         console.log(combinedArrayForIndividualUser[0], "combinedArrayForIndividualUsercombinedArrayForIndividualUser")
-  //         //console.log(assigneAreaPerUser,"assigneAreaPerUserassigneAreaPerUserassigneAreaPerUserassigneAreaPerUser")
-  //         navigate('/sale/area-Assign/add-AsignArea', { state: { assigneAreaPerUser: combinedArrayForIndividualUser } })
-  //     }
-  // }
-  // const editeAssignAreaAction = async (Data) => {
-
-  // };
+  
   function handleSubmit() {
-    console.log("222222222222222222222222222222222");
+
     console.log(selectedOptionUser, "selectedOptionUser");
-    for (let i = 0; i < selectedOptionVillage.length; i++) {
-      selectedOptionVillage[i].id = selectedOptionUser.value;
-      selectedOptionVillage[i].category = selectedCtaegory.value;
-      selectedOptionVillage
-        .map((villageData) => {
-          const value = villageData.value;
-          console.log(value, "villageData");
-        })
-        .join(",");
-    }
-    console.log(selectedOptionVillage, "selectedOptionVillage");
-    dispatch(addassigneAreaToDb(selectedOptionVillage));
+    console.log(allUser, "allUser");
+  
+    let tempAr = [];
+    selectedOptionUser.forEach((userItem) => {
+      tempAr.push({
+        value: selectedOptionVillage
+          .map((villageData) => villageData.value)
+          .join(","),
+        id: userItem.value,
+        category: selectedCtaegory.value,
+      });
+    });
+
+    // console.log(tempAr, "tempAr");
+    // dispatch(addassigneAreaToDb(tempAr));
   }
+//   function handleSubmit() {
+//     // console.log("222222222222222222222222222222222");
+//     console.log(selectedOptionUser, "selectedOptionUser");
+//     // for (let i = 0; i < selectedOptionVillage.length; i++) {
+//     //   selectedOptionVillage[i].id = selectedUser.id;
+//     //   selectedOptionVillage[i].category = selectedCtaegory.value;
+//     //   //   selectedOptionVillage
+//     //   //     .map((villageData) => {
+//     //   //       const value = villageData.value;
+//     //   //       console.log(value, "villageData");
+//     //   //     })
+//     //   //     .join(",");
+//     //   selectedOptionVillage.map((villageData) => villageData.value).join(",");
+//     // }
+//     let tempAr = [];
+//     selectedOptionUser.forEach((userItem) => {
+//       tempAr.push({
+//         value: selectedOptionVillage
+//           .map((villageData) => villageData.value)
+//           .join(","),
+//         id: userItem.value,
+//         category: selectedCtaegory.value,
+//       });
+//     });
 
-  //  function handleSubmit() {
-  //    console.log("222222222222222222222222222222222");
-
-  //    for (let i = 0; i < selectedOptionVillage.length; i++) {
-  //      selectedOptionVillage[i].id = selectedOptionUser.value;
-  //      selectedOptionVillage[i].category = selectedCtaegory.value;
-
-  //      const value = selectedOptionVillage[i].value;
-  //      console.log(value, "villageData");
-  //    }
-
-  //    console.log(selectedOptionVillage, "selectedOptionVillage");
-  //    dispatch(addassigneAreaToDb(selectedOptionVillage));
-  //  }
+//     console.log(tempAr, "tempAr");
+//     // console.log(selectedOptionVillage, "selectedOptionVillage");
+//     dispatch(addassigneAreaToDb(tempAr));
+//   }
 
   const submitDelete = async (type, id, categoryd, dId) => {
     const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/delete-area/${id}/${categoryd}/${dId}`;
@@ -311,21 +285,30 @@ export default function AreaAssignListList({ showModal, hideModal, id }) {
   };
   return (
     <>
-      {/*<div className='my-3  d-flex align-items-end justify-content-end'>
-                <div className='d-flex align-items-center' type='button'>
-
-                    <h6 className='m-0 ps-1'>
-                        <button type="button" className="btn btn-primary" onClick={handleShow}>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-plus-circle" viewBox="0 0 16 16">
-                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
-                                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
-                            </svg>&nbsp;
-                           Add Assign Area
-                        </button>
-
-                    </h6>
-                </div>
-    </div>*/}
+     {/* <div className="my-3  d-flex align-items-end justify-content-end">
+        <div className="d-flex align-items-center" type="button">
+          <h6 className="m-0 ps-1">
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={handleShow}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                fill="currentColor"
+                className="bi bi-plus-circle"
+                viewBox="0 0 16 16"
+              >
+                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
+              </svg>
+              &nbsp; Add Assign Area
+            </button>
+          </h6>
+        </div>
+  </div> */}
 
       {/* new modal */}
       <Modal show={showModal} onHide={hideModal}>
@@ -338,17 +321,18 @@ export default function AreaAssignListList({ showModal, hideModal, id }) {
           <div className="">
             <div className="row mt-5">
               <h5>Select User</h5>
-              {/*  <Select
-              isSearchable={true}
-              placeholder="Search for a user..."
-            /> */}
               <Select
-                // defaultValue={headerName}
+                defaultValue={
+                  selectedUser
+                    ? { value: selectedUser.id, label: selectedUser.name }
+                    : null
+                }
                 // defaultValue={
                 //   areaAssignuser && {
                 //     label: `${areaAssignuser.first_name} ${areaAssignuser.last_name}`,
                 //   }
                 // }
+                isMulti
                 value={selectedOptionUser}
                 onChange={handleChangeUser}
                 options={useroptions}
@@ -392,6 +376,7 @@ export default function AreaAssignListList({ showModal, hideModal, id }) {
           </Button>
         </Modal.Footer>
       </Modal>
+      
     </>
   );
 }
