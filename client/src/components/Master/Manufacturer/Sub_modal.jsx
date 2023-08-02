@@ -26,7 +26,7 @@ export default function Variants() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const autoFocusRef = useRef(null);
-
+  const fileInputRef = useRef(null);
   const location = useLocation();
   const rowData = [location.state?.rowData];
   const [allMfacturerData, setAllMfacturerData] = useState([]);
@@ -36,6 +36,7 @@ export default function Variants() {
   const [loading, setLoading] = useState(false);
   const [variantList, setVariantList] = useState([]);
   const [modalId, setModalId] = useState(0);
+  const [variantFile, setVariantFile] = useState(null);
 
   //---- Delete Modal Variable -----//
   const [type, setType] = useState(null);
@@ -116,6 +117,7 @@ export default function Variants() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log(variantFile);
     const manufacturerNameData = rowData;
     const manufacturerModalVarData = modalRowsArr;
     console.log(manufacturerModalVarData, "var");
@@ -153,10 +155,12 @@ export default function Variants() {
             token: localStorage.getItem("rbacToken"),
           },
         };
+        const formData = new FormData();
         const requestData = {
           manufacturerModalVarData: manufacturerModalVarData,
           modalid: modalId,
           manufacturerId: manufacturerID,
+          variantFile: variantFile
         };
 
         await axios.post(url, requestData, config).then((response) => {
@@ -270,6 +274,11 @@ export default function Variants() {
         dispatch(setShowMessage("Modal Sucessfully Deleted."));
       }
     });
+  };
+  const handleFileChange = (e) => {
+    const selectedFile = fileInputRef.current.files[0];
+    console.log(selectedFile,'file>>>>>>>>>>>>');
+    setVariantFile(selectedFile);
   };
   return (
     <>
@@ -453,7 +462,7 @@ export default function Variants() {
       <Modal show={modalShow} onHide={handleClose}>
         <Modal.Header closeButton>
           <h5 className="modal-title" id="districtModalLabel">
-            ADD MODAL
+            ADD VARIANT
           </h5>
         </Modal.Header>
         <Modal.Body>
@@ -541,6 +550,26 @@ export default function Variants() {
                             </div>
                           </div>
                         ))}
+                      </div>
+                      <div className="row">
+                        <div className="col-12">
+                          <label
+                            htmlFor="exampleFormControlInput1"
+                            className="variant-label"
+                          >
+                            Attach File:
+                          </label>
+                          <input
+                            type="file"
+                            name="variantfile"
+                            id="exampleFormControlInput1"
+                            className="variant-control"
+                            ref={fileInputRef}
+                            onChange={(e) => {
+                              handleFileChange(e);
+                            }}
+                          />
+                        </div>
                       </div>
                     </div>
                   ))}

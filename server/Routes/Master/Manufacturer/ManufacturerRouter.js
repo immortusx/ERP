@@ -6,6 +6,7 @@ const { tokenCheck } = require("../../../Auth/TokenCheck");
 const { checkUserPermission } = require("../../../Auth/userPermission");
 
 const { db } = require("../../../Database/dbConfig");
+const uploadFile = require('../../../Utils/multerMiddaeware');
 
 const router = express.Router();
 
@@ -172,7 +173,8 @@ router.post('/addmodal', tokenCheck, async(req, res) => {
 });
 
 //==================addVariant===================
-router.post('/addvariant', tokenCheck, async (req, res) => {
+router.post('/addvariant', tokenCheck, uploadFile.single('variantFile'), async (req, res) => {
+  console.log(req.file,'v>>>>>>>>>>>>>>>>>');
   try {
     const { manufacturerModalVarData, modalid, manufacturerId } = req.body;
 
