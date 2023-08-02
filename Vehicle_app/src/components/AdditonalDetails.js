@@ -7,6 +7,7 @@ import {
   ImageBackground,
   Button,
   Linking,
+  ScrollView
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
@@ -33,6 +34,7 @@ const AdditonalDetails = ({route}) => {
   }
   return (
     <View style={styles.mainContainer}>
+      <ScrollView>
       <View style={styles.contentContainer}>
         <View style={styles.imageContainer}>
           <TouchableOpacity
@@ -161,6 +163,7 @@ const AdditonalDetails = ({route}) => {
           </TouchableOpacity>
         </View>
       </View>
+      </ScrollView>
     </View>
   );
 };
