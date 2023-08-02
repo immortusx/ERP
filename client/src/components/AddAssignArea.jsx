@@ -90,6 +90,7 @@ export default function AddAssignArea() {
 
   useEffect(() => {
     getAllUserFromDb();
+    console.log(allUser,"alluser")
   }, []);
 
   useEffect(() => {

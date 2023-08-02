@@ -31,6 +31,7 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import { setShowMessage } from "../redux/slices/notificationSlice";
 import AlertDeleteModal from "./AlertDelete/AlertDeleteModal";
 import axios from "axios";
+import { color } from "@mui/system";
 
 export default function Employees() {
   const [selectAll, setSelectAll] = useState(false);
@@ -196,6 +197,7 @@ export default function Employees() {
 
   const hideareamodal = () => {
     setShowComponent(false);
+    // console.log(id,"id")
   };
   const columns = [
     {
@@ -368,19 +370,7 @@ export default function Employees() {
               }}
               className="myActionBtn m-1"
             >
-              <PlayCircleIcon />
-            </button>
-            <button className="myActionBtn m-1">
-              <ShopIcon />
-            </button>
-            <button className="myActionBtn m-1">
-              <IosShareIcon />
-            </button>
-            <button className="myActionBtn m-1">
-              <AccessTimeOutlinedIcon />
-            </button>
-            <button className="myActionBtn m-1">
-              <AutoDeleteIcon />
+              <PlayCircleIcon color="secondary"  />
             </button>
           </div>
         </div>
