@@ -253,7 +253,13 @@ const AddMore = () => {
                           - {item.phone_number}
                         </Text>
                       </TouchableOpacity>
-
+                      <Text style={styles.label}>
+                        <Image
+                          style={styles.personImg}
+                          source={require('../../assets/categories.png')}
+                        />
+                        - {item.product ? item.product : 'New Tractor Enquiry'}
+                      </Text>
                       <Text style={styles.label}>
                         <Image
                           style={styles.personImg}
@@ -261,6 +267,21 @@ const AddMore = () => {
                         />
                         -{' '}
                         {item.product ? item.product : 'Sonalika Sikander DLX'}
+                      </Text>
+                      <Text style={styles.label}>
+                        <Image
+                          style={styles.personImg}
+                          source={require('../../assets/link.png')}
+                        />
+                        -{' '}
+                        {item.enquiry_source ? item.enquiry_source : 'On-site'}
+                      </Text>
+                      <Text style={styles.label}>
+                        <Image
+                          style={styles.personImg}
+                          source={require('../../assets/location.png')}
+                        />
+                        - {item.village ? item.village : 'Dhrangadhra'}
                       </Text>
                     </View>
                     <View style={styles.rightDataStyle}>
@@ -577,8 +598,10 @@ const styles = StyleSheet.create({
   },
   daysContainer: {
     position: 'absolute',
-    top: -30,
-    right: -10,
+    // top: -30,
+    // right: -10,
+    bottom: 85,
+    left: 10,
   },
   dateText: {
     marginBottom: 4,
