@@ -1,4 +1,14 @@
-import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  ImageBackground,
+  Button,
+  Linking,
+  ScrollView
+} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import moment from 'moment';
@@ -9,213 +19,328 @@ const AdditonalDetails = ({route}) => {
   const handleSheduleCall = item => {
     navigation.navigate('Schedule Call', {item: item});
   };
-  const openEditEnquiry = (editData)=> {
-    navigation.navigate("Edit Detail Enquiry", {editData: editData});
+  const openEditEnquiry = editData => {
+    navigation.navigate('Edit Detail Enquiry', {editData: editData});
+  };
+  const makePhoneCall = (mobileNumber)=> {
+    Linking.openURL(`tel:${mobileNumber}`);
+  }
+  const makeWhatsAppCall = (whatsAppNumber)=> {
+    Linking.openURL(`whatsapp://send?phone=${whatsAppNumber}`);
+  }
+  const sendMessage = (mobileNumber)=> {
+    let message = 'Hello sir, this is Test Message, ignore it';
+    Linking.openURL(`sms:${mobileNumber}?body=${message}`);
   }
   return (
-    <View style={styles.userCard}>
-      <View style={styles.dataContainer}>
-        <View style={styles.boxContainer}>
-          <Text style={styles.historyText}>Customer Details</Text>
-          <View style={styles.imageContainer}>
-            <TouchableOpacity
-            onPress={()=> {openEditEnquiry(item)}}>
+    <View style={styles.mainContainer}>
+      <ScrollView>
+      <View style={styles.contentContainer}>
+        <View style={styles.imageContainer}>
+          <TouchableOpacity
+            onPress={() => {
+              openEditEnquiry(item);
+            }}>
+            <Image
+              style={styles.editImg}
+              source={require('../../assets/edit.png')}
+            />
+          </TouchableOpacity>
+        </View>
+        <View style={styles.nameContainer}>
+          <Text style={styles.nameStyle}>
+            {item.first_name + (item.last_name ? ' ' + item.last_name : '')}
+          </Text>
+          <Text style={styles.enquiryDate}>
+            {moment(item.date).format('LL')}
+          </Text>
+        </View>
+        <View style={styles.contactContainer}>
+          <View style={styles.leftContainer}>
+            <Text style={styles.contactInfo}>Category</Text>
+            <Text style={styles.contactInfo}>Phone</Text>
+            <Text style={styles.contactInfo}>whatsApp</Text>
+            <Text style={styles.contactInfo}>Email</Text>
+            <Text style={styles.contactInfo}>Product</Text>
+            <Text style={styles.contactInfo}>Enquiry Date</Text>
+            <Text style={styles.contactInfo}>Delivery Date</Text>
+            <Text style={styles.contactInfo}>Enquiry Source</Text>
+            <Text style={styles.contactInfo}>Sales Person</Text>
+            <Text style={styles.contactInfo}>District</Text>
+            <Text style={styles.contactInfo}>Taluka/Tehsil</Text>
+            <Text style={styles.contactInfo}>Village</Text>
+          </View>
+          <View style={styles.rightContainer}>
+            <Text style={[styles.contactInfo, styles.contactStyle]}>N/A</Text>
+            <Text style={[styles.contactInfo, styles.contactStyle]}>
+              {item.phone_number}
+            </Text>
+            <Text style={[styles.contactInfo, styles.contactStyle]}>
+              {item.whatsapp_number ? item.whatsapp_number : '98765432'}
+            </Text>
+            <Text style={[styles.contactInfo, styles.contactStyle]}>
+              {item.email ? item.email : 'john@email.com'}
+            </Text>
+            <Text style={[styles.contactInfo, styles.contactStyle]}>
+              {item.product ? item.product : 'Sonalika Tiger 2WD'}
+            </Text>
+            <Text style={[styles.contactInfo, styles.contactStyle]}>
+              {moment(item.date).format('LL')}
+            </Text>
+            <Text style={[styles.contactInfo, styles.contactStyle]}>
+              {moment(item.delivery_date).format('LL')}
+            </Text>
+            <Text
+              style={[styles.contactInfo, styles.contactStyle, {fontSize: 15}]}>
+              {item.enquiry_source ? item.enquiry_source : 'N/A'}
+            </Text>
+            <Text style={[styles.contactInfo, styles.contactStyle]}>
+              {item.sales_person}
+            </Text>
+            <Text style={[styles.contactInfo, styles.contactStyle]}>
+              {item.district ? item.district : 'N/A'}
+            </Text>
+            <Text style={[styles.contactInfo, styles.contactStyle]}>
+              {item.taluka ? item.taluka : 'N/A'}
+            </Text>
+            <Text style={[styles.contactInfo, styles.contactStyle]}>
+              {item.village ? item.village : 'N/A'}
+            </Text>
+          </View>
+        </View>
+        <View style={styles.lastActivity}>
+          <Text style={styles.dayText}>Added : 5 Days</Text>
+          <Text style={styles.dayText}>Last Activity : Call</Text>
+        </View>
+        <View style={styles.followContainer}>
+          <View style={styles.stageDetail}>
+            <Text style={styles.followLabel}>Current Stage</Text>
+            <Text style={styles.followDetail}>Next Activity Plan</Text>
+            <Text style={styles.followLabel}>Follow Up Type</Text>
+            <Text style={styles.followDetail}>Call</Text>
+          </View>
+          <View style={styles.nextReminder}>
+            <Text style={styles.followLabel}>Followup Person</Text>
+            <Text style={styles.followDetail}> {item.sales_person}</Text>
+            <Text style={styles.followLabel}>Next Reminders</Text>
+            <Text style={styles.followDetail}>
+              {item.last_follow_up_date ? item.last_follow_up_date : 'N/A'}
+            </Text>
+          </View>
+        </View>
+        <View style={styles.recentStyle}>
+          <Text style={styles.followLabel}>Recent Notes:</Text>
+          <View style={styles.callIconStyle}>
+            <TouchableOpacity style={styles.greenButton} onPress={()=> {makePhoneCall(item.phone_number)}}>
               <Image
-                style={styles.editImg}
-                source={require('../../assets/edit.png')}
+                style={styles.iconImg}
+                source={require('../../assets/telephone.png')}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.greenButton} onPress={()=> {makeWhatsAppCall(item.phone_number)}}>
+              <Image
+                style={styles.iconImg}
+                source={require('../../assets/whatsapp.png')}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.greenButton} onPress={()=> {sendMessage(item.phone_number)}}>
+              <Image
+                style={styles.iconImg}
+                source={require('../../assets/chat.png')}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.greenButton}>
+              <Image
+                style={styles.iconImg}
+                source={require('../../assets/credit.png')}
               />
             </TouchableOpacity>
           </View>
         </View>
-        <View style={styles.mainContent}>
-          <Text style={styles.myName}>
-            <Image
-              style={styles.personImg}
-              source={require('../../assets/person.png')}
-            />
-            - {item.first_name + (item.last_name ? ' ' + item.last_name : '')}
-          </Text>
-
-          <Text style={styles.myName}>
-            <Image
-              style={styles.personImg}
-              source={require('../../assets/phone.png')}
-            />
-            - {item.phone_number}
-          </Text>
-          <Text style={styles.myName}>
-            <Image
-              style={styles.personImg}
-              source={require('../../assets/whatsapp.png')}
-            />
-            - {item.whatsapp_number}
-          </Text>
-          <Text style={styles.myName}>
-            <Image
-              style={styles.personImg}
-              source={require('../../assets/email.png')}
-            />
-            - {item.email}
-          </Text>
-          <Text style={styles.myName}>
-            <Image
-              style={styles.personImg}
-              source={require('../../assets/product.png')}
-            />
-            - {item.product}
-          </Text>
-          <Text style={styles.myName}>
-            <Image
-              style={styles.personImg}
-              source={require('../../assets/source.png')}
-            />
-            - {item.enquiry_source}
-          </Text>
-          <Text style={styles.myName}>
-            <Image
-              style={styles.personImg}
-              source={require('../../assets/date.png')}
-            />
-            - {moment(item.date).format('LL')}
-          </Text>
-          <Text style={styles.myName}>
-            <Image
-              style={styles.personImg}
-              source={require('../../assets/delivery.png')}
-            />
-            - {moment(item.delivery_date).format('LL')}
-          </Text>
-          <Text style={styles.myName}>
-            <Image
-              style={styles.personImg}
-              source={require('../../assets/salesperson.png')}
-            />
-            - {item.sales_person}
-          </Text>
-          <Text style={styles.myName}>
-            <Image
-              style={styles.personImg}
-              source={require('../../assets/district.png')}
-            />
-            - {item.district}
-          </Text>
-          <Text style={styles.myName}>
-            <Image
-              style={styles.personImg}
-              source={require('../../assets/location.png')}
-            />
-            - {item.taluka}
-          </Text>
-          <Text style={styles.myName}>
-            <Image
-              style={styles.personImg}
-              source={require('../../assets/location.png')}
-            />
-            - {item.village}
-          </Text>
+        <View>
+          <TouchableOpacity style={styles.followUpButton} onPress={()=> {handleSheduleCall(item)}}>
+            <Text style={styles.followupButton}>FOLLOW UP</Text>
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity
-          onPress={() => {
-            handleSheduleCall(item);
-          }}
-          style={styles.followButtonContainer}>
-          <Text style={styles.followButtonText}>Follow Up</Text>
-        </TouchableOpacity>
       </View>
+      </ScrollView>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  userCard: {
+  mainContainer: {
     flex: 1,
-    backgroundColor: '#F5EEF8',
-    paddingHorizontal: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
+    // backgroundColor: '#A29BC5',
   },
-  dataContainer: {
-    width: '90%',
-    padding: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.90)',
-    textAlign: 'center',
-    shadowColor: 'grey',
-    borderRadius: 10,
-    shadowOffset: {width: 0, height: 0},
-    shadowOpacity: 0.5,
-    shadowRadius: 8,
-    elevation: 8,
-    marginVertical: 30,
+  headerText: {
+    color: 'white',
+    fontSize: 30,
+    fontWeight: 'bold',
+    marginVertical: 10,
+    marginHorizontal: 10,
+  },
+  contentContainer: {
+    backgroundColor: '#FFFFFF',
+    padding: 16,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    flex: 1,
+    borderRadius: 20,
+    marginHorizontal: 8,
+    marginVertical: 5,
   },
   imageContainer: {
-    marginVertical: 0.2,
-  },
-  imageView: {
-    width: 100,
-    height: 100,
-  },
-  bioDataContainer: {
-    flexDirection: 'row',
-    marginVertical: 5,
-    justifyContent: 'space-evenly',
-  },
-  bioHeader: {
-    fontSize: 25,
-    fontWeight: 'bold',
-    color: 'black',
-  },
-  idNumber: {
-    fontSize: 25,
-    fontWeight: 'bold',
-    color: 'white',
-  },
-  mainContent: {
-    lineHeight: 0.5,
-    textAlign: 'left',
-    backgroundColor: 'white',
-    marginVertical: 20,
-  },
-  myName: {
-    fontSize: 20,
-    fontStyle: 'italic',
-    fontWeight: '500',
-    color: 'black',
-    marginBottom: 10,
-  },
-  historyText: {
-    fontWeight: 'bold',
-    color: '#2E86C1',
-    textTransform: 'uppercase',
-    letterSpacing: 2,
-    textDecorationLine: 'underline',
-    borderRadius: 22,
-  },
-  personImg: {
-    width: 20,
-    height: 20,
+    marginLeft: 'auto',
   },
   editImg: {
     width: 22,
     height: 22,
   },
-  followButtonContainer: {
-    backgroundColor: '#007AFF',
-    borderRadius: 20,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
+  userCard: {
+    flexDirection: 'row',
+    padding: 10,
+    marginVertical: 20,
+    borderColor: 'green',
+    borderWidth: 0.4,
+  },
+  leftContainer: {
+    flex: 1,
+    alignItems: 'flex-end',
+    marginRight: 10,
+  },
+  rightContainer: {
+    flex: 1,
+    alignItems: 'flex-start',
+  },
+  profilePic: {
+    width: 60,
+    height: 60,
+    borderRadius: 50,
+    marginBottom: 8,
+  },
+  username: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  contactInfo: {
+    fontSize: 16,
+    padding: 2,
+    color: 'black',
+  },
+  contactStyle: {
+    fontWeight: 'bold',
+    color: '#2E86C1',
+  },
+  additionalDetails: {
+    fontSize: 14,
+    color: '#666666',
+    marginTop: 8,
+  },
+  personImg: {
+    width: 20,
+    height: 20,
+  },
+  contactInfoContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  icon: {
+    width: 20,
+    height: 20,
+    marginRight: 8,
+  },
+  nameStyle: {
+    fontSize: 22,
+    textAlign: 'center',
+    color: 'black',
+    fontWeight: 'bold',
+    textTransform: 'capitalize'
+  },
+  enquiryDate: {
+    textAlign: 'center',
+  },
+  contactContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 20,
+    justifyContent: 'center',
+  },
+  followContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    backgroundColor: '#fff',
+    padding: 10,
+    borderRadius: 8,
+  },
+  stageDetail: {
+    flex: 1,
+    alignItems: 'flex-start',
+  },
+  nextReminder: {
+    flex: 1,
+    alignItems: 'flex-start',
+  },
+  followLabel: {
+    color: '#5DADE2',
+    marginTop: 5,
+  },
+  followDetail: {
+    color: 'black',
+  },
+  lastActivity: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
   },
-  followButtonText: {
+  dayText: {
+    color: 'red',
+  },
+  iconImg: {
+    width: 40,
+    height: 40,
+  },
+  callIconStyle: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+  },
+  recentStyle: {
+    marginVertical: 15,
+  },
+  greenButton: {
+    backgroundColor: 'green',
+    padding: 5,
+    borderRadius: 8,
+    marginTop: 10,
+  },
+  followUpButton: {
+    backgroundColor: '#3AA4F7',
+    borderRadius: 20,
+    padding: 10,
+    alignItems: 'center'
+  },
+  followupButton: {
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
-  },
-  boxContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  imageContainer: {
-    marginLeft: 'auto',
-  },
+  }
 });
 export default AdditonalDetails;

@@ -146,13 +146,7 @@ const AddMore = () => {
   return (
     <View style={styles.container}>
       <View style={styles.boxContainer}>
-        <ScrollView
-          contentContainerStyle={styles.scrollViewContainer}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }>
-          <Text style={styles.historyText}>Enquiry Details</Text>
-        </ScrollView>
+        <Text style={styles.historyText}>Enquiry Details</Text>
       </View>
       <View style={styles.wrapper}>
         <TouchableOpacity
@@ -198,14 +192,16 @@ const AddMore = () => {
       {enquiryType === 'All' && (
         <FlatList
           data={resultData}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
           renderItem={({item, index}) => {
             return (
-              <ScrollView>
-                <TouchableWithoutFeedback
-                  onPress={() => {
-                    openAdditonalEnquiry(item);
-                  }}>
-                  {/* <View key={index} style={styles.box}>
+              <TouchableWithoutFeedback
+                onPress={() => {
+                  openAdditonalEnquiry(item);
+                }}>
+                {/* <View key={index} style={styles.box}>
                   <Text style={styles.label}>
                     <Image
                       style={styles.personImg}
@@ -230,71 +226,96 @@ const AddMore = () => {
                     - {item.product}
                   </Text>
                 </View> */}
-                  <View key={index} style={styles.enquiryBox}>
-                    <View style={styles.dataStyle}>
-                      <Text style={styles.label}>
+                <View key={index} style={styles.enquiryBox}>
+                  <View style={styles.dataStyle}>
+                    <View style={styles.dataContainer}>
+                      <View style={styles.iconContainer}>
                         <Image
                           style={styles.personImg}
                           source={require('../../assets/person.png')}
                         />
-                        -{' '}
-                        {item.first_name +
-                          (item.last_name ? ' ' + item.last_name : '')}
-                      </Text>
-                      <TouchableOpacity
-                        onPress={() => {
-                          makePhoneCall(item.phone_number);
-                        }}>
-                        <Text style={styles.label}>
-                          <Image
-                            style={styles.personImg}
-                            source={require('../../assets/phone.png')}
-                          />
-                          - {item.phone_number}
-                        </Text>
-                      </TouchableOpacity>
-
-                      <Text style={styles.label}>
+                        <Image
+                          style={styles.personImg}
+                          source={require('../../assets/phone.png')}
+                        />
+                        <Image
+                          style={styles.personImg}
+                          source={require('../../assets/categories.png')}
+                        />
                         <Image
                           style={styles.personImg}
                           source={require('../../assets/product.png')}
                         />
-                        -{' '}
-                        {item.product ? item.product : 'Sonalika Sikander DLX'}
-                      </Text>
-                    </View>
-                    <View style={styles.rightDataStyle}>
-                      <View style={styles.daysContainer}>
-                        <TouchableOpacity style={styles.dayBack}>
-                          <Text style={styles.dateText}>
-                            {item.last_follow_up_date
-                              ? moment(item.last_follow_up_date).format('LL')
-                              : 'Not Followed'}
-                          </Text>
-                        </TouchableOpacity>
+                        <Image
+                          style={styles.personImg}
+                          source={require('../../assets/link.png')}
+                        />
+                        <Image
+                          style={styles.personImg}
+                          source={require('../../assets/location.png')}
+                        />
                       </View>
-                      <Text style={styles.dayText}>
-                        {Math.floor(
-                          (new Date() - new Date(item.date)) /
-                            (1000 * 60 * 60 * 24),
-                        ) === 0
-                          ? 'Today'
-                          : Math.floor(
-                              (new Date() - new Date(item.date)) /
-                                (1000 * 60 * 60 * 24),
-                            ) + ' Days'}
-                      </Text>
-                      <TouchableOpacity
-                        onPress={() => {
-                          handleSheduleCall(item);
-                        }}
-                        style={styles.discussionButton}>
-                        <Text style={styles.discussionText}>Follow Up</Text>
-                      </TouchableOpacity>
+                      <View style={styles.detailContainer}>
+                        <Text style={styles.label}>
+                          {item.first_name +
+                            (item.last_name ? ' ' + item.last_name : '')}
+                        </Text>
+                        <TouchableOpacity
+                          onPress={() => {
+                            makePhoneCall(item.phone_number);
+                          }}>
+                          <Text style={styles.label}>{item.phone_number}</Text>
+                        </TouchableOpacity>
+                        <Text style={styles.label}>
+                          {item.product ? item.product : 'New Tractor Enquiry'}
+                        </Text>
+                        <Text style={styles.label}>
+                          {item.product
+                            ? item.product
+                            : 'Sonalika Sikander DLX'}
+                        </Text>
+                        <Text style={styles.label}>
+                          {item.enquiry_source
+                            ? item.enquiry_source
+                            : 'On-site'}
+                        </Text>
+                        <Text style={styles.label}>
+                          {item.village ? item.village : 'Dhrangadhra'}
+                        </Text>
+                      </View>
                     </View>
                   </View>
-                </TouchableWithoutFeedback>
-              </ScrollView>
+                  <View style={styles.rightDataStyle}>
+                    <View style={styles.daysContainer}>
+                      <TouchableOpacity style={styles.dayBack}>
+                        <Text style={styles.dateText}>
+                          {item.last_follow_up_date
+                            ? moment(item.last_follow_up_date).format('LL')
+                            : 'Not Followed'}
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                    <Text style={styles.dayText}>
+                      {Math.floor(
+                        (new Date() - new Date(item.date)) /
+                          (1000 * 60 * 60 * 24),
+                      ) === 0
+                        ? 'Today'
+                        : Math.floor(
+                            (new Date() - new Date(item.date)) /
+                              (1000 * 60 * 60 * 24),
+                          ) + ' Days'}
+                    </Text>
+                    <TouchableOpacity
+                      onPress={() => {
+                        handleSheduleCall(item);
+                      }}
+                      style={styles.discussionButton}>
+                      <Text style={styles.discussionText}>Follow Up</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </TouchableWithoutFeedback>
             );
           }}
         />
@@ -304,6 +325,9 @@ const AddMore = () => {
           {todayEnquiryList && todayEnquiryList.length > [] ? (
             <FlatList
               data={todayEnquiryList}
+              refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+              }
               renderItem={({item, index}) => {
                 return (
                   <TouchableWithoutFeedback>
@@ -361,6 +385,9 @@ const AddMore = () => {
           {newEnquiryList && newEnquiryList.length > [] ? (
             <FlatList
               data={newEnquiryList}
+              refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+              }
               renderItem={({item, index}) => {
                 return (
                   <TouchableWithoutFeedback>
@@ -418,6 +445,9 @@ const AddMore = () => {
           {lastMonthEnquiryList && lastMonthEnquiryList.length > [] ? (
             <FlatList
               data={lastMonthEnquiryList}
+              refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+              }
               renderItem={({item, index}) => {
                 return (
                   <TouchableWithoutFeedback>
@@ -532,8 +562,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#E67E22',
   },
   personImg: {
-    width: 20,
-    height: 20,
+    width: 21,
+    height: 21,
+    marginRight: 8,
+    marginBottom: 5,
   },
   newImg: {
     width: 30,
@@ -577,8 +609,10 @@ const styles = StyleSheet.create({
   },
   daysContainer: {
     position: 'absolute',
-    top: -30,
-    right: -10,
+    // top: -30,
+    // right: -10,
+    bottom: 80,
+    left: 10,
   },
   dateText: {
     marginBottom: 4,
@@ -649,6 +683,15 @@ const styles = StyleSheet.create({
   scrollViewContainer: {
     flexGrow: 1,
     backgroundColor: 'transparent',
+  },
+  dataContainer: {
+    flexDirection: 'row',
+  },
+  iconContainer: {
+    alignItems: 'flex-start',
+  },
+  detailContainer: {
+    alignItems: 'flex-start',
   },
 });
 
