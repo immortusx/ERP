@@ -142,6 +142,7 @@ setAgencyData(parsedJson)
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("agencyData", agencyData);
+    console.log(agencyData.logo);
     const aname = agencyData.name;
     const acontact = agencyData.contact;
     const aemail = agencyData.email;

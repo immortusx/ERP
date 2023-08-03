@@ -26,7 +26,7 @@ export default function Variants() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const autoFocusRef = useRef(null);
-
+  const fileInputRef = useRef(null);
   const location = useLocation();
   const rowData = [location.state?.rowData];
   const [allMfacturerData, setAllMfacturerData] = useState([]);
@@ -36,6 +36,7 @@ export default function Variants() {
   const [loading, setLoading] = useState(false);
   const [variantList, setVariantList] = useState([]);
   const [modalId, setModalId] = useState(0);
+  const [variantFile, setVariantFile] = useState(null);
 
   //---- Delete Modal Variable -----//
   const [type, setType] = useState(null);
@@ -95,7 +96,6 @@ export default function Variants() {
   };
 
   const onVariantNameChange = (event, modalIndex, variantIndex) => {
-    console.log(event.target.value);
     setModalRowsArr((prevState) => {
       const updatedModalRowsArr = [...prevState];
       const modalRow = updatedModalRowsArr[modalIndex];
@@ -116,6 +116,7 @@ export default function Variants() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log(variantFile);
     const manufacturerNameData = rowData;
     const manufacturerModalVarData = modalRowsArr;
     console.log(manufacturerModalVarData, "var");
@@ -142,10 +143,11 @@ export default function Variants() {
       }
 
       if (modalId) {
-        console.log(firstBlankFieldIndex, "blank");
+        // console.log(firstBlankFieldIndex, "blank");
         // All fields are filled, submit the data #manufacturerId
-        console.log(manufacturerModalVarData, "varirantlist");
-        console.log(manufacturerNameData, "row");
+        // console.log(manufacturerNameData, "row");
+        console.log(manufacturerModalVarData[0].variants, "varirantlist");
+        const variantFile = manufacturerModalVarData[0].variants;
 
         const url = `${process.env.REACT_APP_NODE_URL}/api/master/addvariant`;
         const config = {
@@ -153,18 +155,23 @@ export default function Variants() {
             token: localStorage.getItem("rbacToken"),
           },
         };
-        const requestData = {
-          manufacturerModalVarData: manufacturerModalVarData,
-          modalid: modalId,
-          manufacturerId: manufacturerID,
-        };
+        const formData = new FormData();
+        for (let i = 0; i < variantFile.length; i++) {
+          const files = variantFile[i].variantFile;
+          const variant = variantFile[i].variantName;
+          console.log(files, "KKKKKK");
+          formData.append("variantFiles", files);
+          formData.append("variants", variant);
+        }
 
-        await axios.post(url, requestData, config).then((response) => {
+        formData.append("modalid", modalId);
+        formData.append("manufacturerId", manufacturerID);
+
+        await axios.post(url, formData, config).then((response) => {
           if (response.data && response.data.isSuccess) {
             dispatch(setShowMessage("Data Successfully Saved."));
             handleClose();
-            getVariantList();
-            // console.log(response.data.result)
+            // getVariantList();
           }
         });
       } else {
@@ -271,6 +278,22 @@ export default function Variants() {
       }
     });
   };
+  const handleFileChange = (e, modalIndex, variantIndex) => {
+    const files = e.target.files[0];
+    setModalRowsArr((prevState) => {
+      const updatedModalRowsArr = [...prevState];
+      const modalRow = updatedModalRowsArr[modalIndex];
+      const variantRow = modalRow.variants[variantIndex];
+      variantRow.variantFile = files;
+      return updatedModalRowsArr;
+    });
+  };
+  // const handleFileChange = (e) => {
+  //   const selectedFile = fileInputRef.current.files[0];
+  //   console.log(selectedFile, "file>>>>>>>>>>>>");
+  //   setVariantFile(selectedFile);
+  // };
+
   return (
     <>
       <div>
@@ -453,7 +476,7 @@ export default function Variants() {
       <Modal show={modalShow} onHide={handleClose}>
         <Modal.Header closeButton>
           <h5 className="modal-title" id="districtModalLabel">
-            ADD MODAL
+            ADD VARIANT
           </h5>
         </Modal.Header>
         <Modal.Body>
@@ -483,7 +506,7 @@ export default function Variants() {
                           htmlFor="exampleFormControlInput1"
                           className="form-label"
                         >
-                          Variant Name:
+                          Variant Name *
                         </label>
                         {modalRow.variants.map((variantRow, variantIndex) => (
                           <div
@@ -514,10 +537,33 @@ export default function Variants() {
                                     : null
                                 }
                               />
+                              <div className="mt-2">
+                                <label
+                                  htmlFor={`variantFile_${modalIndex}_${variantIndex}`}
+                                  className="variant-label"
+                                >
+                                  Attach File *
+                                </label>
+                                <input
+                                  type="file"
+                                  name={`variantfile_${modalIndex}_${variantIndex}`}
+                                  id={`variantFile_${modalIndex}_${variantIndex}`}
+                                  className="variant-control"
+                                  multiple // Allow multiple file selection
+                                  onChange={(e) => {
+                                    handleFileChange(
+                                      e,
+                                      modalIndex,
+                                      variantIndex
+                                    );
+                                  }}
+                                />
+                              </div>
                             </div>
-                            <div className="col-2">
+                            <div className="col-2 mx-auto my-auto">
                               {modalRow.variants.length === variantIndex + 1 ? (
                                 <Button
+                                  className="btn-lg"
                                   variant="primary rounded-circle"
                                   onClick={() =>
                                     onAddNewVariantHandler(modalIndex)
@@ -527,6 +573,7 @@ export default function Variants() {
                                 </Button>
                               ) : (
                                 <Button
+                                  className="btn-lg"
                                   variant="danger rounded-circle"
                                   onClick={() =>
                                     onRemoveVariantHandler(
