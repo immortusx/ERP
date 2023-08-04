@@ -214,55 +214,42 @@ export default function AreaAssignListList({ showModal, hideModal, id }) {
       }
     });
   }
-  
-  function handleSubmit() {
 
+  function handleSubmit() {
     console.log(selectedOptionUser, "selectedOptionUser");
+    console.log(selectedOptionVillage, "selectedOptionVillage");
+    console.log(selectedCtaegory, "selectedCtaegory");
     console.log(allUser, "allUser");
-  
-    let tempAr = [];
-    selectedOptionUser.forEach((userItem) => {
-      tempAr.push({
-        value: selectedOptionVillage
-          .map((villageData) => villageData.value)
-          .join(","),
-        id: userItem.value,
-        category: selectedCtaegory.value,
+    let myAr = [];
+    selectedOptionUser.map((singleUser) => {
+      selectedCtaegory.map((singleCategory) => {
+        selectedOptionVillage.map((singleVillage) => {
+          myAr.push({
+            id: singleUser.value,
+            category: singleCategory.value,
+            value: singleVillage.value,
+          });
+        });
       });
     });
+    console.log("myAr", myAr);
+    dispatch(addassigneAreaToDb(myAr));
+
+    // let tempAr = [];
+    // selectedOptionUser.forEach((userItem) => {
+    //   tempAr.push({
+    //     value: selectedOptionVillage.map((villageData) => villageData.value),
+    //     // value:selectedOptionVillage.value,
+    //     id: userItem.value,
+    //     category: selectedCtaegory.value,
+    //     category: selectedCtaegory.map((categoryData) => categoryData.value),
+    //   });
+    // });
 
     // console.log(tempAr, "tempAr");
-    // dispatch(addassigneAreaToDb(tempAr));
   }
-//   function handleSubmit() {
-//     // console.log("222222222222222222222222222222222");
-//     console.log(selectedOptionUser, "selectedOptionUser");
-//     // for (let i = 0; i < selectedOptionVillage.length; i++) {
-//     //   selectedOptionVillage[i].id = selectedUser.id;
-//     //   selectedOptionVillage[i].category = selectedCtaegory.value;
-//     //   //   selectedOptionVillage
-//     //   //     .map((villageData) => {
-//     //   //       const value = villageData.value;
-//     //   //       console.log(value, "villageData");
-//     //   //     })
-//     //   //     .join(",");
-//     //   selectedOptionVillage.map((villageData) => villageData.value).join(",");
-//     // }
-//     let tempAr = [];
-//     selectedOptionUser.forEach((userItem) => {
-//       tempAr.push({
-//         value: selectedOptionVillage
-//           .map((villageData) => villageData.value)
-//           .join(","),
-//         id: userItem.value,
-//         category: selectedCtaegory.value,
-//       });
-//     });
 
-//     console.log(tempAr, "tempAr");
-//     // console.log(selectedOptionVillage, "selectedOptionVillage");
-//     dispatch(addassigneAreaToDb(tempAr));
-//   }
+  
 
   const submitDelete = async (type, id, categoryd, dId) => {
     const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/delete-area/${id}/${categoryd}/${dId}`;
@@ -285,7 +272,7 @@ export default function AreaAssignListList({ showModal, hideModal, id }) {
   };
   return (
     <>
-     {/* <div className="my-3  d-flex align-items-end justify-content-end">
+      {/* <div className="my-3  d-flex align-items-end justify-content-end">
         <div className="d-flex align-items-center" type="button">
           <h6 className="m-0 ps-1">
             <button
@@ -345,6 +332,7 @@ export default function AreaAssignListList({ showModal, hideModal, id }) {
                 value={selectedCtaegory}
                 onChange={handleChangeCategory}
                 options={categoryoptions}
+                isMulti
                 placeholder="Search for a category..."
               />
 
@@ -376,7 +364,6 @@ export default function AreaAssignListList({ showModal, hideModal, id }) {
           </Button>
         </Modal.Footer>
       </Modal>
-      
     </>
   );
 }

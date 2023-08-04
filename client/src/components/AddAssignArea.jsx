@@ -22,8 +22,8 @@ import Select from "react-select";
 export default function AddAssignArea() {
   const location = useLocation();
   const areaAssign = location.state ? location.state.assigneAreaPerUser : [];
- 
 
+  console.log(areaAssign, "areaAssign");
   const [selectedCategoryList, setSelectedCategoryList] = useState([]);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -58,21 +58,20 @@ export default function AddAssignArea() {
       }
     }
   }, [addAssignState]);
-   useEffect(() => {
-     if (editassignareaData.isSuccess) {
-       if (editassignareaData.message.isSuccess) {
-         console.log(editassignareaData, "editassignareaData");
-         dispatch(setShowMessage("Assign Area is updated"));
-         dispatch(clearEditassignareaState());
-          navigate("/administration/employees/editemployee");
-         //  clearInpHook();
-         //  clearaddaddAgency();
-       } else {
-         dispatch(setShowMessage("Something is wrong"));
-       }
-     }
-   }, [editassignareaData]);
-
+  useEffect(() => {
+    if (editassignareaData.isSuccess) {
+      if (editassignareaData.message.isSuccess) {
+        console.log(editassignareaData, "editassignareaData");
+        dispatch(setShowMessage("Assign Area is updated"));
+        dispatch(clearEditassignareaState());
+        navigate("/administration/employees/editemployee");
+        //  clearInpHook();
+        //  clearaddaddAgency();
+      } else {
+        dispatch(setShowMessage("Something is wrong"));
+      }
+    }
+  }, [editassignareaData]);
 
   async function getAllUserFromDb() {
     const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/get-allUser`;
@@ -90,7 +89,7 @@ export default function AddAssignArea() {
 
   useEffect(() => {
     getAllUserFromDb();
-    console.log(allUser,"alluser")
+    console.log(allUser, "alluser");
   }, []);
 
   useEffect(() => {
@@ -147,7 +146,7 @@ export default function AddAssignArea() {
   // // };
   const handleShow = () => {
     setShow(1);
-    setSelectedId(areaAssign[0].user_id);
+    setSelectedId(areaAssign[0].userId);
   };
 
   const handleClose = () => {
@@ -164,22 +163,21 @@ export default function AddAssignArea() {
         selectedOptionVillage.filter(
           (villageData) => villageData.categoryId === categoryData.value
         );
-
+   selectedOptionVillage.map((singleVillage) => {
         acc.push({
           id: selectedId,
           category: categoryData.value,
-          value: selectedOptionVillage
-            .map((villageData) => villageData.value)
-            .join(","),
+          value: singleVillage.value,
         });
-
+      })
         return acc;
       }, []);
-      console.log("groupedData", groupedData);
-
+      
       if (show === 2) {
+        console.log("groupedData", groupedData);
         dispatch(editassignareaUpdateToDb(groupedData));
       } else {
+        console.log("groupedData", groupedData);
         dispatch(addassigneAreaToDb(groupedData));
       }
     }
@@ -189,32 +187,39 @@ export default function AddAssignArea() {
     setShow(2);
     dispatch(setEdiassignareaData(data));
     console.log("data", data);
+     console.log("data.id", data.id);
     setSelectedId(data.id);
     let newArr = [];
-    if (data.distribution_id && data.distribution_id.length > 0) {
-      newArr = data.distribution_id.split(",");
+    if (data.villageData && data.villageData.length > 0) {
+      newArr = data.villageData
     }
-    let tempAr = [];
-    newArr.forEach((element) => {
-      if (options && options.length > 0) {
-        const data = options.find((item) => item.value == element);
-        tempAr.push(data);
-        console.log(tempAr, "tempAr");
-      }
-      setSelectedOptionVillage(tempAr);
-    });
-    let newArry = [];
-    if (data.category_name && data.category_name.length > 0) {
-      newArry = data.category_name.split(",");
-    }
-    let tempArr = [];
-    newArry.forEach((element) => {
-      if (categoryoptions && categoryoptions.length > 0) {
-        const data = categoryoptions.find((item) => item.label == element);
-        tempArr.push(data);
-      }
-      setSelectedCtaegory(tempArr);
-    });
+    // let tempAr = [];
+    // newArr.forEach((element) => {
+    //   if (options && options.length > 0) {
+    //     const data = options.find((item) => item.value == element);
+    //     tempAr.push(data);
+    // }
+    // console.log(newArr, "newArr");
+    // setSelectedOptionVillage(newArr);
+    // });
+
+    console.log(newArr, "newArr");
+    setSelectedOptionVillage(newArr);
+    // let newArry = [];
+    // if (data.categoryData && data.categoryData.length > 0) {
+       const  newArry = data.categoryData;
+    // }
+    // let tempArr = [];
+    // newArry.forEach((element) => {
+    //   if (categoryoptions && categoryoptions.length > 0) {
+    //     const data = categoryoptions.find((item) => item.label == element);
+    //     tempArr.push(data);
+    //   }
+    //   setSelectedCtaegory(tempArr);
+    // });
+
+    console.log(newArry, "newArry");
+    setSelectedCtaegory(newArry);
   };
 
   function handlCancel() {
@@ -246,19 +251,19 @@ export default function AddAssignArea() {
     <>
       <div className="addUser myBorder bg-white rounded p-3">
         <main>
-          <div className=" row mt-3 m-0">
+          <div className=" row mt-3 ">
             <h3 className="myLabel">Assign Area</h3>
           </div>
           <div className="row mt-2">
             <h5 className="myLabel">User Information</h5>
           </div>
-          <div className=" row mt-2 m-0">
+          <div className=" row mt-2 ">
             <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
               <label className="myLabel"> Name </label>{" "}
               {areaAssign && (
                 <>
                   <p className="myInput inputElement">
-                    {areaAssign[0].first_name} {areaAssign[0].last_name}
+                    {areaAssign[0].fname} {areaAssign[0].lname}
                     {}
                   </p>
                 </>
@@ -270,7 +275,7 @@ export default function AddAssignArea() {
               {areaAssign && (
                 <>
                   <p className="myInput inputElement">
-                    {areaAssign[0].phone_number}
+                    {areaAssign[0].phonenumber}
                   </p>
                 </>
               )}
@@ -297,7 +302,7 @@ export default function AddAssignArea() {
             </section>
           </div>
 
-          <div className="row mt-5">
+          <div className="row mt-5 m-0">
             <table className="table">
               <thead>
                 <tr>
@@ -314,12 +319,12 @@ export default function AddAssignArea() {
                     <th scope="row">{index + 1}</th>
                     <td>
                       <ul>
-                        <li>{item.category_name}</li>
+                        <li>{item.categoryData.label}</li>
                       </ul>
                     </td>
                     <td>
                       <ul>
-                        <li>{item.dType}</li>
+                        <li>{item.distributiontype}</li>
                       </ul>
                     </td>
                     <td>
@@ -336,13 +341,19 @@ export default function AddAssignArea() {
                       />*/}
                       <Select
                         isDisabled={true}
+                        // defaultValue={() => {
+                        //   let newArr = item.name.split(",");
+                        //   let data = newArr.map((i) => {
+                        //     return { label: i, value:i.id };
+                        //   });
+                        //   console.log("data", data);
+                        //   return data;
+                        // }}
                         defaultValue={() => {
-                          let newArr = item.name.split(",");
-                          let data = newArr.map((i) => {
-                            return { label: i, value:i.id };
-                          });
-                          console.log("data", data);
-                          return data;
+                          const villages = item.villageData.map((village) => ({
+                            label: village.label,
+                          }));
+                          return villages;
                         }}
                         isSearchable={true}
                         isMulti
@@ -378,7 +389,7 @@ export default function AddAssignArea() {
 
           {/* =========table======= */}
 
-          <div className="row mt-3">
+          <div className="row mt-3 m-0">
             <button
               className="col-12 col-sm-5 col-lg-2 myBtn py-2"
               onClick={handleSubmit}
@@ -422,7 +433,8 @@ export default function AddAssignArea() {
                 onChange={handleChangeCategory}
                 options={categoryoptions}
                 isSearchable={true}
-                isMulti={show === 1 ? true : false}
+                isMulti
+                // isMulti={show === 1 ? true : false}
                 placeholder="Search for a category..."
               />
               {/*<h5 className="mt-4 ">Select DistributionType</h5>
