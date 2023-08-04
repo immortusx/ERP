@@ -156,14 +156,15 @@ export default function Variants() {
           },
         };
         const formData = new FormData();
+        const variantsArray = [];
         for (let i = 0; i < variantFile.length; i++) {
           const files = variantFile[i].variantFile;
           const variant = variantFile[i].variantName;
-          console.log(files, "KKKKKK");
+          variantsArray.push(variant);
           formData.append("variantFiles", files);
-          formData.append("variants", variant);
         }
 
+        formData.append("variants", JSON.stringify(variantsArray));
         formData.append("modalid", modalId);
         formData.append("manufacturerId", manufacturerID);
 
@@ -171,7 +172,7 @@ export default function Variants() {
           if (response.data && response.data.isSuccess) {
             dispatch(setShowMessage("Data Successfully Saved."));
             handleClose();
-            // getVariantList();
+            getVariantList();
           }
         });
       } else {
