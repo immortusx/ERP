@@ -65,14 +65,13 @@ export default function Employees() {
   const [deleteMessage, setDeleteMessage] = useState(null);
   const [type, setType] = useState(null);
   const [id, setId] = useState(null);
-  // const [name, setName] = useState();
   const employeeListState = useSelector(
     (state) => state.getemployeeListSlice.employeeListState
   );
 
   const [assigneAreaPerUser, setAssignedAreaPerUser] = useState([]);
   const [assigneAreaPerUserid, setAssignedAreaPerUserId] = useState([]);
-
+ const [showComponent, setShowComponent] = useState(false);
   // const handleEditArea = async (ev) => {
   //   console.log(ev, "evvvvvv");
   //   const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/add-areaAssignUserById/${ev.user_id}`;
@@ -142,58 +141,165 @@ export default function Employees() {
   //   }
   // };
 
-  const [showComponent, setShowComponent] = useState(false);
-  const handleEditArea = async (ev) => {
-    try {
-      console.log(ev, "evvvvvv");
-      console.log(ev.user_id, "evvvvvv");
+ 
+const handleEditArea = async (ev) => {
+  try {
+    console.log(ev, "evvvvvv");
+    console.log(ev.user_id, "evvvvvv");
 
-      const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/add-areaAssignUserById/${ev.user_id}`;
-      const config = {
-        headers: {
-          token: localStorage.getItem("rbacToken"),
-        },
-      };
+    const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/add-areaAssignUserById/${ev.user_id}`;
+    const config = {
+      headers: {
+        token: localStorage.getItem("rbacToken"),
+      },
+    };
 
-      const response = await Axios.get(url, config);
+    const response = await Axios.get(url, config);
 
-      if (response.data && response.data.isSuccess) {
-        console.log("response.data", response.data.result);
-        console.log("ev", ev);
+    if (response.data && response.data.isSuccess) {
+      console.log("response.data", response.data.result);
+      console.log("ev", ev);
 
-        setAssignedAreaPerUser(response.data.result, "response.data.result");
-        setAssignedAreaPerUserId(ev, "ev");
+      // Create an object to hold the grouped data
+      const groupedData = {};
 
-        console.log(
-          response.data.result[0],
-          "combinedArrayForIndividualUsercombinedArrayForIndividualUser"
-        );
-        console.log(
-          assigneAreaPerUser,
-          "assigneAreaPerUserassigneAreaPerUserassigneAreaPerUserassigneAreaPerUser"
-        );
-        navigate("/sale/area-Assign/add-AsignArea", {
-          state: { assigneAreaPerUser: response.data.result },
-        });
-      } else {
-        console.log(
-          "No data received from the server or the request was not successful."
-        );
-        setShowComponent(true);
-        console.log(ev.user_id, "ev");
-        // setName(ev.first_name+ " "+ev.last_name);
-        setId(ev.user_id);
-        // navigate("/sale/area-Assign", {
-        //   state: { assigneAreaPerUserid: ev },
-        // });
-        // navigate("/sale/area-Assign", {
-        //   state: { assigneAreaPerUser: response.data.result },
-        // });
+      for (const item of response.data.result) {
+        const {
+          id,
+          user_id,
+          category_id,
+          distribution_id,
+          dType,
+          first_name,
+          last_name,
+          phone_number,
+        } = item;
+
+        if (!groupedData[category_id]) {
+          groupedData[category_id] = {
+            id:id,
+            userId: user_id,
+            fname:first_name,
+            lname:last_name,
+            phonenumber:phone_number,
+            distributiontype: dType,
+            categoryData: { label: item.category_name, value: category_id },
+            villageData: [{ label: item.name, value: distribution_id }],
+          };
+        } else {
+          if (
+            !groupedData[category_id].villageData.some(
+              (village) => village.value === distribution_id
+            )
+          ) {
+            groupedData[category_id].villageData.push({
+              label: item.name,
+              value: distribution_id,
+            });
+          }
+        }
       }
-    } catch (error) {
-      console.error("An error occurred while fetching data:", error);
+
+      // {
+      //   userId:203,
+      //   categoryData :{label:'old tractor',value :1},
+      //   villageData : [
+      //     {label:'dubai',value :1},
+      //     {label:'london',value :1},
+      //   ]
+      // }
+
+      console.log(Object.values(groupedData));
+      // setAssignedAreaPerUser(
+      //   groupedData,
+      //   "response.data.result"
+      // );
+      //       setAssignedAreaPerUserId(ev, "ev");
+
+      // Save data to state or global context, if needed
+      // You can use the groupedData object as required
+
+      // Navigate to the target page with the data passed as state
+      // const history = useHistory();
+     navigate("/sale/area-Assign/add-AsignArea", 
+     {
+       state: { assigneAreaPerUser: Object.values(groupedData) },
+     }
+     );
+    } else {
+      console.log(
+        "No data received from the server or the request was not successful."
+      );
+      setShowComponent(true);
+      console.log(ev.user_id, "ev");
+      // setName(ev.first_name+ " "+ev.last_name);
+      setId(ev.user_id);
+      // navigate("/sale/area-Assign", {
+      //   state: { assigneAreaPerUserid: ev },
+      // });
+      // navigate("/sale/area-Assign", {
+      //   state: { assigneAreaPerUser: response.data.result },
+      // });
     }
-  };
+  } catch (error) {
+    console.error("An error occurred while fetching data:", error);
+  }
+};
+
+
+
+
+  // const handleEditArea = async (ev) => {
+  //   try {
+  //     console.log(ev, "evvvvvv");
+  //     console.log(ev.user_id, "evvvvvv");
+
+  //     const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/add-areaAssignUserById/${ev.user_id}`;
+  //     const config = {
+  //       headers: {
+  //         token: localStorage.getItem("rbacToken"),
+  //       },
+  //     };
+
+  //     const response = await Axios.get(url, config);
+
+  //     if (response.data && response.data.isSuccess) {
+  //       console.log("response.data", response.data.result);
+  //       console.log("ev", ev);
+
+  //       setAssignedAreaPerUser(response.data.result, "response.data.result");
+  //       setAssignedAreaPerUserId(ev, "ev");
+
+  //       console.log(
+  //         response.data.result[0],
+  //         "combinedArrayForIndividualUsercombinedArrayForIndividualUser"
+  //       );
+  //       console.log(
+  //         assigneAreaPerUser,
+  //         "assigneAreaPerUserassigneAreaPerUserassigneAreaPerUserassigneAreaPerUser"
+  //       );
+  //       navigate("/sale/area-Assign/add-AsignArea", {
+  //         state: { assigneAreaPerUser: response.data.result },
+  //       });
+  //     } else {
+  //       console.log(
+  //         "No data received from the server or the request was not successful."
+  //       );
+  //       setShowComponent(true);
+  //       console.log(ev.user_id, "ev");
+  //       // setName(ev.first_name+ " "+ev.last_name);
+  //       setId(ev.user_id);
+  //       // navigate("/sale/area-Assign", {
+  //       //   state: { assigneAreaPerUserid: ev },
+  //       // });
+  //       // navigate("/sale/area-Assign", {
+  //       //   state: { assigneAreaPerUser: response.data.result },
+  //       // });
+  //     }
+  //   } catch (error) {
+  //     console.error("An error occurred while fetching data:", error);
+  //   }
+  // };
 
   const hideareamodal = () => {
     setShowComponent(false);
@@ -374,6 +480,8 @@ export default function Employees() {
             </button>
           </div>
         </div>
+
+      
       ),
     },
   ];

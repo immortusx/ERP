@@ -72,6 +72,28 @@ router.post("/edit-areaAssignUserById", tokenCheck, async (req, res) => {
     res.status(500).json({ isSuccess: false, result: "error" });
   }
 });
+// router.post("/edit-areaAssignUserById", tokenCheck, async (req, res) => {
+//   console.log(">>>>>>>>>edit-areaAssignUserById");
+//   const { id, value, category } = req.body[0];
+//   //  const userId = req.params.id;
+//   console.log(req, "req");
+//   try {
+//     const result = `UPDATE area_assign_user SET distribution_id = '${value}', category_id = '${category}'  WHERE  id = '${id}'`;
+//     console.log(result, "result");
+//     await db.query(result, async (err, Result) => {
+//       if (err) {
+//         console.log({ isSuccess: false, result: err });
+//         res.status(500).json({ isSuccess: false, result: "error" });
+//       } else {
+//         console.log({ isSuccess: true, result: "success" });
+//         res.status(200).json({ isSuccess: true, result: "success" });
+//       }
+//     });
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).json({ isSuccess: false, result: "error" });
+//   }
+// });
 
 // router.post('/add-assigneArea', tokenCheck, async (req, res) => {
 //   console.log('>>>>>add-assigneArea');
