@@ -252,168 +252,57 @@ router.post(
   tokenCheck,
   uploadFile.array("variantFiles", 10),
   async (req, res) => {
-    // console.log(req.body, "v>>>>>>>>>>>>>>>>>");
     try {
       const { variants, modalid, manufacturerId } = req.body;
       const variantFiles = req.files;
       const variantArray = JSON.parse(variants);
       console.log(variantArray, "variants");
       console.log(variantFiles, "variantFiles");
-      // async.forEachOf(
-      //   variantArray,
-      //   (item, key, callback) => {
-      //     console.log(item, "KJJJ");
-      //     const sqlQuery = `INSERT INTO variant (variantName, modalid, manufacturerId) VALUES (?, ?, ?)`;
-      //     db.query(
-      //       sqlQuery,
-      //       [item, modalid, manufacturerId],
-      //       async (err, resultNew) => {
-      //         if (err) {
-      //           console.log({ isSuccess: true, result: err });
-      //           res.send({ isSuccess: true, result: "error" });
-      //         } else {
-      //           console.log({ isSuccess: true, result: resultNew.insertId });
-      //           if (resultNew.insertId) {
-      //             const documentSql = `INSERT INTO documents (table_name, table_entity_id, document_value, created_at) VALUES (?, ?, ?, ?)`;
-      //             for (let i = 0; i < variantFiles.length; i++) {
-      //               const file = variantFiles[i];
-      //               await db.query(documentSql, [
-      //                 "variant",
-      //                 resultNew.insertId,
-      //                 file.filename,
-      //                 new Date(),
-      //               ]);
-      //             }
-      //           }
-      //         }
-      //       }
-      //     );
-      //     callback();
-      //   },
-      //   (err) => {
-      //     if (err) {
-      //       console.log({ isSuccess: true, result: err });
-      //       res.send({ isSuccess: true, result: "error" });
-      //     } else {
-      //       console.log({ isSuccess: true, result: "success" });
-      //       res.send({ isSuccess: true, result: "success" });
-      //     }
-      //   }
-      // );
-
 
       const insertIdArray = [];
+      async.forEachOf(
+        variantArray,
+        (item, key, callback) => {
+          console.log(item, "KJJJ");
+          const sqlQuery = `INSERT INTO variant (variantName, modalid, manufacturerId) VALUES (?, ?, ?)`;
+          db.query(
+            sqlQuery,
+            [item, modalid, manufacturerId],
+            async (err, resultNew) => {
+              if (err) {
+                console.log({ isSuccess: true, result: err });
+                res.send({ isSuccess: true, result: "error" });
+              } else {
+                console.log({ isSuccess: true, result: resultNew.insertId });
+                if (resultNew.insertId) {
+                  insertIdArray.push(resultNew.insertId);
+                }
+              }
+              callback();
+            }
+          );
+        },
+        (err) => {
+          if (err) {
+            console.log({ isSuccess: true, result: err });
+            res.send({ isSuccess: true, result: "error" });
+          } else {
+            console.log(insertIdArray, "Array");
+            const documentSql = `INSERT INTO documents (table_entity_id, document_value, created_at) VALUES (?, ?, ?)`;
+            for (let i = 0; i < insertIdArray.length; i++) {
+              const insertId = insertIdArray[i];
+              for (let j = 0; j < variantFiles.length; j++) {
+                const file = variantFiles[j];
+                db.query(documentSql, [insertId, file.filename, new Date()]);
+              }
+            }
 
-async.forEachOf(
-  variantArray,
-  (item, key, callback) => {
-    console.log(item, "KJJJ");
-    const sqlQuery = `INSERT INTO variant (variantName, modalid, manufacturerId) VALUES (?, ?, ?)`;
-    db.query(
-      sqlQuery,
-      [item, modalid, manufacturerId],
-      async (err, resultNew) => {
-        if (err) {
-          console.log({ isSuccess: true, result: err });
-          res.send({ isSuccess: true, result: "error" });
-        } else {
-          console.log({ isSuccess: true, result: resultNew.insertId });
-          if (resultNew.insertId) {
-            // Push the insertId to the insertIdArray instead of inserting documents here
-            insertIdArray.push(resultNew.insertId);
+            console.log({ isSuccess: true, result: "success" });
+            res.send({ isSuccess: true, result: "success" });
           }
         }
-        callback();
-      }
-    );
-  },
-  (err) => {
-    if (err) {
-      console.log({ isSuccess: true, result: err });
-      res.send({ isSuccess: true, result: "error" });
-    } else {
-      console.log(insertIdArray, 'Array')
-      const documentSql = `INSERT INTO documents (table_entity_id, document_value, created_at) VALUES (?, ?, ?)`;
-      for (let i = 0; i < insertIdArray.length; i++) {
-        const insertId = insertIdArray[i];
-        for (let j = 0; j < variantFiles.length; j++) {
-          const file = variantFiles[j];
-          db.query(documentSql, [
-            insertId,
-            file.filename,
-            new Date(),
-          ]);
-        }
-      }
+      );
 
-      console.log({ isSuccess: true, result: "success" });
-      res.send({ isSuccess: true, result: "success" });
-    }
-  }
-);
-
-
-      // const insertedVariantIds = [];
-      // for (const variant of variants) {
-      //   const insertVariantQuery =
-      //     "INSERT INTO variant (variantName, modalid, manufacturerId) VALUES (?, ?, ?)";
-      //   const result = await db.query(insertVariantQuery, [
-      //     variant,
-      //     modalid,
-      //     manufacturerId,
-      //   ]);
-      //   insertedVariantIds.push(result.insertId);
-      //   console.log(result,'HHHHHHHHh')
-      // }
-
-      // for (let i = 0; i < variantFiles.length; i++) {
-      //   const file = variantFiles[i];
-      //   const documentSql = `INSERT INTO documents (table_name, table_entity_id, document_value, created_at) VALUES (?, ?, ?, ?)`;
-      //   await db.query(documentSql, [
-      //     "variant",
-      //     insertedVariantIds[i],
-      //     file.filename,
-      //     new Date(),
-      //   ]);
-      // }
-
-      // console.log(variantFiles, "Uploaded Files");
-      // for (const file of variantFiles){
-      //   console.log(file,'FILLLLLLLLllll')
-      // }
-      // const variantsArray = parsedManufacturerModalVarData[0].variants;
-      // const variantFile = req.file ? `/upload/${req.file.filename}` : "";
-      // if (!variantFile) {
-      //   throw new Error("Variant file not uploaded.");
-      // }
-      // const insertedID = [];
-      // for (const variant of variantsArray) {
-      //   const variantName = variant.variantName;
-
-      //   const variantQuery =
-      //     "INSERT INTO variant (variantName, modalid, manufacturerId) VALUES (?, ?, ?)";
-
-      //   const variantResult = await db.query(variantQuery, [
-      //     variantName,
-      //     modalid,
-      //     manufacturerId,
-      //   ]);
-
-      //   insertedID.push(variantResult.insertId);
-      //   console.log(insertedID, "IDDDDDDDDDD");
-      // }
-
-      // const table = "variant";
-      // const documentsSql = `INSERT INTO documents (table_name, table_entity_id, document_value, created_at) VALUES (?, ?, ?, ?)`;
-
-      // for (const id of insertedID) {
-      //   const currentDate = new Date();
-      //   const documentValue = variantFile;
-      //   await db.query(documentsSql, [table, id, documentValue, currentDate]);
-      // }
-      // console.log({ isSuccess: true, result: "Variants added successfully." });
-
-      // res.send({ isSuccess: true, result: "Variants added successfully." });
     } catch (err) {
       console.log("Error inserting variant", err);
       res
