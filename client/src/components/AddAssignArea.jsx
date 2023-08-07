@@ -11,6 +11,8 @@ import {
   editassignareaUpdateToDb,
 } from "../redux/slices/editassignareaSlice";
 
+import AlertDeleteModal from "./AlertDelete/AlertDeleteModal";
+
 import Axios from "axios";
 import { getToPathname } from "@remix-run/router";
 import { setShowMessage } from "../redux/slices/notificationSlice";
@@ -38,6 +40,14 @@ export default function AddAssignArea() {
   const [allUser, setallUser] = useState([]);
   const [selectedId, setSelectedId] = useState();
 
+  const [displayConfirmationModal, setDisplayConfirmationModal] =
+    useState(false);
+  const [deleteMessage, setDeleteMessage] = useState(null);
+  const [type, setType] = useState(null);
+  const [id, setId] = useState(null);
+  const [categoryd, setCategoryd] = useState(null);
+  const [dId, setDId] = useState(null);
+
   const addAssignState = useSelector(
     (state) => state.addassigneAreaSlice.addassigneAreaState
   );
@@ -45,14 +55,20 @@ export default function AddAssignArea() {
     (state) => state.editassignareaDataState.editassignareaSliceState
   );
 
+  function clearInpHook() {
+    setSelectedCtaegory([]);
+    setSelectedOptionVillage([]);
+  }
+
   useEffect(() => {
     if (addAssignState.isSuccess) {
       if (addAssignState.message.isSuccess) {
         console.log(addAssignState, "addAssignState");
         dispatch(setShowMessage("Area is assignrd"));
         dispatch(clearAddassigneAreaState());
-        navigate("/sale/area-Assign");
-        // clearInpHook()
+        //  navigate("/sale/area-Assign");
+        clearInpHook();
+        //  clearaddaddAgency();
       } else {
         dispatch(setShowMessage("Something is wrong"));
       }
@@ -64,8 +80,8 @@ export default function AddAssignArea() {
         console.log(editassignareaData, "editassignareaData");
         dispatch(setShowMessage("Assign Area is updated"));
         dispatch(clearEditassignareaState());
-        navigate("/administration/employees/editemployee");
-        //  clearInpHook();
+        // navigate("/sale/area-Assign");
+        clearInpHook();
         //  clearaddaddAgency();
       } else {
         dispatch(setShowMessage("Something is wrong"));
@@ -175,7 +191,7 @@ export default function AddAssignArea() {
         value: villageAr,
       });
     });
-      userAr.push({ id: selectedId, category: categoryAr });
+    userAr.push({ id: selectedId, category: categoryAr });
 
     if (show === 2) {
       console.log("userAr", userAr);
@@ -190,11 +206,11 @@ export default function AddAssignArea() {
     setShow(2);
     dispatch(setEdiassignareaData(data));
     console.log("data", data);
-     console.log("data.id", data.id);
+    console.log("data.id", data.id);
     setSelectedId(data.id);
     let newArr = [];
     if (data.villageData && data.villageData.length > 0) {
-      newArr = data.villageData
+      newArr = data.villageData;
     }
     // let tempAr = [];
     // newArr.forEach((element) => {
@@ -210,7 +226,7 @@ export default function AddAssignArea() {
     setSelectedOptionVillage(newArr);
     // let newArry = [];
     // if (data.categoryData && data.categoryData.length > 0) {
-       const  newArry = data.categoryData;
+    const newArry = data.categoryData;
     // }
     // let tempArr = [];
     // newArry.forEach((element) => {
@@ -224,6 +240,42 @@ export default function AddAssignArea() {
     console.log(newArry, "newArry");
     setSelectedCtaegory(newArry);
   };
+
+  const deleteActionCall = (data) => {
+      console.log(data,"cccccccccccccccccccccccc")
+      setType("asignArea_delete");
+      setId(data.id);
+      setCategoryd(data.categoryData);
+      setDId(data.villageData);
+      setDeleteMessage(
+        `Are You Sure You Want To Delete The Assign Area of  '${data.categoryData.label}'?`
+      );
+      setDisplayConfirmationModal(true);
+  };
+  const hideConfirmationModal = () => {
+      setDisplayConfirmationModal(false);
+  };
+
+
+   const submitDelete = async (type, id, categoryd, dId) => {
+     const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/delete-area/${id}/${categoryd}/${dId}`;
+     const config = {
+       headers: {
+         token: localStorage.getItem("rbacToken"),
+       },
+     };
+     await Axios.get(url, config).then((response) => {
+       if (response.data && response.data.isSuccess) {
+         console.log(response.data);
+         dispatch(setShowMessage("Assign Area Deleted"));
+         // dispatch(addRoleToDb());
+        //  setDisplayConfirmationModal(false);
+        //  getAreaAssignUserFromDb();
+       } else {
+         dispatch(setShowMessage("failed to delete"));
+       }
+     });
+   };
 
   function handlCancel() {
     console.log(selectedOptionVillage, "selectedOptionVillage");
@@ -383,6 +435,21 @@ export default function AddAssignArea() {
                           />
                         </svg>
                       </button>
+                      <button
+                        onClick={() => {
+                          deleteActionCall(item);
+                        }}
+                        className="myActionBtn m-1"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="currentColor"
+                          className="bi bi-trash3"
+                          viewBox="0 0 16 16"
+                        >
+                          <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5ZM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0H11Zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5h9.916Zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5Z" />
+                        </svg>
+                      </button>
                     </td>
                   </tr>
                 ))}
@@ -468,6 +535,15 @@ value={selectedDistributionType}
           </Button>
         </Modal.Footer>
       </Modal>
+
+      <AlertDeleteModal
+        showModal={displayConfirmationModal}
+        confirmModal={submitDelete}
+        hideModal={hideConfirmationModal}
+        type={type}
+        id={id}
+        message={deleteMessage}
+      />
     </>
   );
 }
