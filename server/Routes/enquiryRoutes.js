@@ -494,7 +494,7 @@ router.post("/set-new-detail-enquiry", tokenCheck, async (req, res) => {
                     categoryId,
                     salesperson_id,
                     customer_id,
-                    enquiryDate,
+                    new Date(),
                     deliveryDate,
                     sourceOfEnquiry,
                   ],
@@ -1189,6 +1189,28 @@ router.get("/get-last-month-enquiries", tokenCheck, async (req, res) => {
     let isSuperAdmin = req.myData.isSuperAdmin;
     let userId = req.myData.userId;
     const urlNew = `CALL sp_get_last_month_enquiry_list()`;
+    await db.query(urlNew, async (err, result) => {
+      if (err) {
+        console.log({ isSuccess: false, result: err });
+        res.send({ isSuccess: false, result: "error" });
+      } else {
+        console.log({ isSuccess: "success", result: urlNew });
+        res.send({ isSuccess: "success", result: result[0] });
+      }
+    });
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+//========================Get New (Not Followed) Enquiry List======================//
+router.get("/get-new-enquiries-list", tokenCheck, async (req, res) => {
+  try {
+    console.log(">>>>>>>>>/get-new-enquiries-list", req.myData);
+    let branchId = req.myData.branchId;
+    let isSuperAdmin = req.myData.isSuperAdmin;
+    let userId = req.myData.userId;
+    const urlNew = `CALL sp_get_new_enquiry_list()`;
     await db.query(urlNew, async (err, result) => {
       if (err) {
         console.log({ isSuccess: false, result: err });

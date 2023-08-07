@@ -9,6 +9,7 @@ import {
   Dimensions,
   Keyboard,
   Image,
+  ActivityIndicator,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useDispatch, useSelector} from 'react-redux';
@@ -173,7 +174,11 @@ const Login = ({navigation}) => {
           <Text style={styles.fpText}>Forgot Password?</Text>
           <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
             <Text style={styles.loginButtonText}>
-              {isLoading ? <LoadingSpinner isLoading={isLoading} messageText={"Signing You In..."}/> : 'Login'}
+              {isLoading ? (
+                <ActivityIndicator size="large" color="white" />
+              ) : (
+                'Login'
+              )}
             </Text>
           </TouchableOpacity>
           <Text style={styles.registerText}>

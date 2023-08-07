@@ -20,6 +20,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {API_URL} from '@env';
 import ToastMessage from './subCom/ToastMessage';
+import TimeAgo from './subCom/TImeAgo';
 
 const AddMore = () => {
   const navigation = useNavigation();
@@ -98,7 +99,7 @@ const AddMore = () => {
     console.log(config);
     await axios.get(url, config).then(response => {
       console.log(response.data.result, 'enquiry today list');
-      // todayEnquiryList(response.data.result);
+      setTodayEnquiryList(response.data.result);
       setEnquiryType('Today');
     });
     setLoading(false);
@@ -106,7 +107,7 @@ const AddMore = () => {
 
   const handleNewEnquiry = async () => {
     console.log('New enquiries....');
-    const url = `${API_URL}/api/enquiry/get-current-date-enquiries`;
+    const url = `${API_URL}/api/enquiry/get-new-enquiries-list`;
     console.log('get new enqiry', url);
     const token = await AsyncStorage.getItem('rbacToken');
     const config = {
@@ -118,7 +119,7 @@ const AddMore = () => {
     console.log(config);
     await axios.get(url, config).then(response => {
       console.log(response.data.result, 'enquiry today list');
-      // newEnquiryList(response.data.result);
+      setNewEnquiryList(response.data.result);
       setEnquiryType('New');
     });
     setLoading(false);
@@ -324,51 +325,134 @@ const AddMore = () => {
         <View>
           {todayEnquiryList && todayEnquiryList.length > [] ? (
             <FlatList
-              data={todayEnquiryList}
-              refreshControl={
-                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-              }
-              renderItem={({item, index}) => {
-                return (
-                  <TouchableWithoutFeedback>
-                    <View key={index} style={styles.enquiryBox}>
-                      <View style={styles.dataStyle}>
-                        <Text style={styles.label}>
+            data={todayEnquiryList}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+            renderItem={({item, index}) => {
+              return (
+                <TouchableWithoutFeedback
+                  onPress={() => {
+                    openAdditonalEnquiry(item);
+                  }}>
+                  {/* <View key={index} style={styles.box}>
+                    <Text style={styles.label}>
+                      <Image
+                        style={styles.personImg}
+                        source={require('../../assets/person.png')}
+                      />
+                      -{' '}
+                      {item.first_name +
+                        (item.last_name ? ' ' + item.last_name : '')}
+                    </Text>
+                    <Text style={styles.label}>
+                      <Image
+                        style={styles.personImg}
+                        source={require('../../assets/phone.png')}
+                      />
+                      - {item.phone_number}
+                    </Text>
+                    <Text style={styles.label}>
+                      <Image
+                        style={styles.personImg}
+                        source={require('../../assets/product.png')}
+                      />
+                      - {item.product}
+                    </Text>
+                  </View> */}
+                  <View key={index} style={styles.enquiryBox}>
+                    <View style={styles.dataStyle}>
+                      <View style={styles.dataContainer}>
+                        <View style={styles.iconContainer}>
                           <Image
                             style={styles.personImg}
                             source={require('../../assets/person.png')}
                           />
-                          -{' '}
-                          {item.first_name +
-                            (item.last_name ? ' ' + item.last_name : '')}
-                        </Text>
-                        <Text style={styles.label}>
                           <Image
                             style={styles.personImg}
                             source={require('../../assets/phone.png')}
                           />
-                          - {item.phone_number}
-                        </Text>
-                        <Text style={styles.label}>
                           <Image
                             style={styles.personImg}
-                            source={require('../../assets/whatsapp.png')}
+                            source={require('../../assets/categories.png')}
                           />
-                          - {item.whatsapp_number}
-                        </Text>
-                        <Text style={styles.label}>
                           <Image
                             style={styles.personImg}
-                            source={require('../../assets/email.png')}
+                            source={require('../../assets/product.png')}
                           />
-                          - {item.email}
-                        </Text>
+                          <Image
+                            style={styles.personImg}
+                            source={require('../../assets/link.png')}
+                          />
+                          <Image
+                            style={styles.personImg}
+                            source={require('../../assets/location.png')}
+                          />
+                        </View>
+                        <View style={styles.detailContainer}>
+                          <Text style={styles.label}>
+                            {item.first_name +
+                              (item.last_name ? ' ' + item.last_name : '')}
+                          </Text>
+                          <TouchableOpacity
+                            onPress={() => {
+                              makePhoneCall(item.phone_number);
+                            }}>
+                            <Text style={styles.label}>{item.phone_number}</Text>
+                          </TouchableOpacity>
+                          <Text style={styles.label}>
+                            {item.product ? item.product : 'New Tractor Enquiry'}
+                          </Text>
+                          <Text style={styles.label}>
+                            {item.product
+                              ? item.product
+                              : 'Sonalika Sikander DLX'}
+                          </Text>
+                          <Text style={styles.label}>
+                            {item.enquiry_source
+                              ? item.enquiry_source
+                              : 'On-site'}
+                          </Text>
+                          <Text style={styles.label}>
+                            {item.village ? item.village : 'Dhrangadhra'}
+                          </Text>
+                        </View>
                       </View>
                     </View>
-                  </TouchableWithoutFeedback>
-                );
-              }}
-            />
+                    <View style={styles.rightDataStyle}>
+                      <View style={styles.daysContainer}>
+                        <TouchableOpacity style={styles.dayBack}>
+                          <Text style={styles.dateText}>
+                            {item.last_follow_up_date
+                              ? moment(item.last_follow_up_date).format('LL')
+                              : 'Not Followed'}
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                      <Text style={styles.dayText}>
+                        {Math.floor(
+                          (new Date() - new Date(item.date)) /
+                            (1000 * 60 * 60 * 24),
+                        ) === 0
+                          ? 'Today'
+                          : Math.floor(
+                              (new Date() - new Date(item.date)) /
+                                (1000 * 60 * 60 * 24),
+                            ) + ' Days'}
+                      </Text>
+                      <TouchableOpacity
+                        onPress={() => {
+                          handleSheduleCall(item);
+                        }}
+                        style={styles.discussionButton}>
+                        <Text style={styles.discussionText}>Follow Up</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </TouchableWithoutFeedback>
+              );
+            }}
+          />
           ) : (
             <View style={{marginLeft: 10}}>
               <ToastMessage
@@ -384,51 +468,124 @@ const AddMore = () => {
         <View>
           {newEnquiryList && newEnquiryList.length > [] ? (
             <FlatList
-              data={newEnquiryList}
-              refreshControl={
-                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-              }
-              renderItem={({item, index}) => {
-                return (
-                  <TouchableWithoutFeedback>
-                    <View key={index} style={styles.enquiryBox}>
-                      <View style={styles.dataStyle}>
-                        <Text style={styles.label}>
+            data={todayEnquiryList}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+            renderItem={({item, index}) => {
+              return (
+                <TouchableWithoutFeedback
+                  onPress={() => {
+                    openAdditonalEnquiry(item);
+                  }}>
+                  {/* <View key={index} style={styles.box}>
+                    <Text style={styles.label}>
+                      <Image
+                        style={styles.personImg}
+                        source={require('../../assets/person.png')}
+                      />
+                      -{' '}
+                      {item.first_name +
+                        (item.last_name ? ' ' + item.last_name : '')}
+                    </Text>
+                    <Text style={styles.label}>
+                      <Image
+                        style={styles.personImg}
+                        source={require('../../assets/phone.png')}
+                      />
+                      - {item.phone_number}
+                    </Text>
+                    <Text style={styles.label}>
+                      <Image
+                        style={styles.personImg}
+                        source={require('../../assets/product.png')}
+                      />
+                      - {item.product}
+                    </Text>
+                  </View> */}
+                  <View key={index} style={styles.enquiryBox}>
+                    <View style={styles.dataStyle}>
+                      <View style={styles.dataContainer}>
+                        <View style={styles.iconContainer}>
                           <Image
                             style={styles.personImg}
                             source={require('../../assets/person.png')}
                           />
-                          -{' '}
-                          {item.first_name +
-                            (item.last_name ? ' ' + item.last_name : '')}
-                        </Text>
-                        <Text style={styles.label}>
                           <Image
                             style={styles.personImg}
                             source={require('../../assets/phone.png')}
                           />
-                          - {item.phone_number}
-                        </Text>
-                        <Text style={styles.label}>
                           <Image
                             style={styles.personImg}
-                            source={require('../../assets/whatsapp.png')}
+                            source={require('../../assets/categories.png')}
                           />
-                          - {item.whatsapp_number}
-                        </Text>
-                        <Text style={styles.label}>
                           <Image
                             style={styles.personImg}
-                            source={require('../../assets/email.png')}
+                            source={require('../../assets/product.png')}
                           />
-                          - {item.email}
-                        </Text>
+                          <Image
+                            style={styles.personImg}
+                            source={require('../../assets/link.png')}
+                          />
+                          <Image
+                            style={styles.personImg}
+                            source={require('../../assets/location.png')}
+                          />
+                        </View>
+                        <View style={styles.detailContainer}>
+                          <Text style={styles.label}>
+                            {item.first_name +
+                              (item.last_name ? ' ' + item.last_name : '')}
+                          </Text>
+                          <TouchableOpacity
+                            onPress={() => {
+                              makePhoneCall(item.phone_number);
+                            }}>
+                            <Text style={styles.label}>{item.phone_number}</Text>
+                          </TouchableOpacity>
+                          <Text style={styles.label}>
+                            {item.product ? item.product : 'New Tractor Enquiry'}
+                          </Text>
+                          <Text style={styles.label}>
+                            {item.product
+                              ? item.product
+                              : 'Sonalika Sikander DLX'}
+                          </Text>
+                          <Text style={styles.label}>
+                            {item.enquiry_source
+                              ? item.enquiry_source
+                              : 'On-site'}
+                          </Text>
+                          <Text style={styles.label}>
+                            {item.village ? item.village : 'Dhrangadhra'}
+                          </Text>
+                        </View>
                       </View>
                     </View>
-                  </TouchableWithoutFeedback>
-                );
-              }}
-            />
+                    <View style={styles.rightDataStyle}>
+                      <View style={styles.daysContainer}>
+                        <TouchableOpacity style={styles.dayBack}>
+                          <Text style={styles.dateText}>
+                            {item.last_follow_up_date
+                              ? moment(item.last_follow_up_date).format('LL')
+                              : 'Not Followed'}
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                      <TimeAgo date={item.date}/>
+                      <TouchableOpacity
+                        onPress={() => {
+                          handleSheduleCall(item);
+                        }}
+                        style={styles.discussionButton}>
+                        <Text style={styles.discussionText}>Follow Up</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </TouchableWithoutFeedback>
+              );
+            }}
+          />
           ) : (
             <View style={{marginLeft: 10}}>
               <ToastMessage
@@ -444,37 +601,134 @@ const AddMore = () => {
         <View>
           {lastMonthEnquiryList && lastMonthEnquiryList.length > [] ? (
             <FlatList
-              data={lastMonthEnquiryList}
-              refreshControl={
-                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-              }
-              renderItem={({item, index}) => {
-                return (
-                  <TouchableWithoutFeedback>
-                    <View key={index} style={styles.enquiryBox}>
-                      <View style={styles.dataStyle}>
-                        <Text style={styles.label}>
+            data={lastMonthEnquiryList}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+            renderItem={({item, index}) => {
+              return (
+                <TouchableWithoutFeedback
+                  onPress={() => {
+                    openAdditonalEnquiry(item);
+                  }}>
+                  {/* <View key={index} style={styles.box}>
+                    <Text style={styles.label}>
+                      <Image
+                        style={styles.personImg}
+                        source={require('../../assets/person.png')}
+                      />
+                      -{' '}
+                      {item.first_name +
+                        (item.last_name ? ' ' + item.last_name : '')}
+                    </Text>
+                    <Text style={styles.label}>
+                      <Image
+                        style={styles.personImg}
+                        source={require('../../assets/phone.png')}
+                      />
+                      - {item.phone_number}
+                    </Text>
+                    <Text style={styles.label}>
+                      <Image
+                        style={styles.personImg}
+                        source={require('../../assets/product.png')}
+                      />
+                      - {item.product}
+                    </Text>
+                  </View> */}
+                  <View key={index} style={styles.enquiryBox}>
+                    <View style={styles.dataStyle}>
+                      <View style={styles.dataContainer}>
+                        <View style={styles.iconContainer}>
                           <Image
                             style={styles.personImg}
                             source={require('../../assets/person.png')}
                           />
-                          -{' '}
-                          {item.first_name +
-                            (item.last_name ? ' ' + item.last_name : '')}
-                        </Text>
-                        <Text style={styles.label}>
                           <Image
                             style={styles.personImg}
                             source={require('../../assets/phone.png')}
                           />
-                          - {item.phone_number}
-                        </Text>
+                          <Image
+                            style={styles.personImg}
+                            source={require('../../assets/categories.png')}
+                          />
+                          <Image
+                            style={styles.personImg}
+                            source={require('../../assets/product.png')}
+                          />
+                          <Image
+                            style={styles.personImg}
+                            source={require('../../assets/link.png')}
+                          />
+                          <Image
+                            style={styles.personImg}
+                            source={require('../../assets/location.png')}
+                          />
+                        </View>
+                        <View style={styles.detailContainer}>
+                          <Text style={styles.label}>
+                            {item.first_name +
+                              (item.last_name ? ' ' + item.last_name : '')}
+                          </Text>
+                          <TouchableOpacity
+                            onPress={() => {
+                              makePhoneCall(item.phone_number);
+                            }}>
+                            <Text style={styles.label}>{item.phone_number}</Text>
+                          </TouchableOpacity>
+                          <Text style={styles.label}>
+                            {item.product ? item.product : 'New Tractor Enquiry'}
+                          </Text>
+                          <Text style={styles.label}>
+                            {item.product
+                              ? item.product
+                              : 'Sonalika Sikander DLX'}
+                          </Text>
+                          <Text style={styles.label}>
+                            {item.enquiry_source
+                              ? item.enquiry_source
+                              : 'On-site'}
+                          </Text>
+                          <Text style={styles.label}>
+                            {item.village ? item.village : 'Dhrangadhra'}
+                          </Text>
+                        </View>
                       </View>
                     </View>
-                  </TouchableWithoutFeedback>
-                );
-              }}
-            />
+                    <View style={styles.rightDataStyle}>
+                      <View style={styles.daysContainer}>
+                        <TouchableOpacity style={styles.dayBack}>
+                          <Text style={styles.dateText}>
+                            {item.last_follow_up_date
+                              ? moment(item.last_follow_up_date).format('LL')
+                              : 'Not Followed'}
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                      <Text style={styles.dayText}>
+                        {Math.floor(
+                          (new Date() - new Date(item.date)) /
+                            (1000 * 60 * 60 * 24),
+                        ) === 0
+                          ? 'Today'
+                          : Math.floor(
+                              (new Date() - new Date(item.date)) /
+                                (1000 * 60 * 60 * 24),
+                            ) + ' Days'}
+                      </Text>
+                      <TouchableOpacity
+                        onPress={() => {
+                          handleSheduleCall(item);
+                        }}
+                        style={styles.discussionButton}>
+                        <Text style={styles.discussionText}>Follow Up</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </TouchableWithoutFeedback>
+              );
+            }}
+          />
           ) : (
             <View style={{marginLeft: 8}}>
               <ToastMessage
@@ -611,8 +865,9 @@ const styles = StyleSheet.create({
     position: 'absolute',
     // top: -30,
     // right: -10,
-    bottom: 80,
+    bottom: 65,
     left: 10,
+    borderColor: 'green',
   },
   dateText: {
     marginBottom: 4,

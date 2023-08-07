@@ -33,7 +33,7 @@ const Category = ({route}) => {
         setLoading(true);
         console.log(config);
         await axios.get(url, config).then(response => {
-          console.log(response.data.result[0], 'category list');
+          console.log(response.data.result[0][0].total_enquiries, 'category list');
           setCategoryList(response.data.result[0]);
         });
         setLoading(false);
@@ -42,12 +42,15 @@ const Category = ({route}) => {
     }
   }, [villageId]);
 
-  const openAvailableEnquiry = categoryId => {
+  const openAvailableEnquiry = categoryData => {
     const villageName = item.name;
+    const categoryId = categoryData.id;
+    const totalEnquiry = categoryData.total_enquiries;
     navigation.navigate('Available Enquiry', {
       categoryId,
       villageId,
       villageName,
+      totalEnquiry
     });
   };
 
@@ -67,7 +70,7 @@ const Category = ({route}) => {
               return (
                 <TouchableOpacity
                   onPress={() => {
-                    openAvailableEnquiry(item.id);
+                    openAvailableEnquiry(item);
                   }}
                   key={index}
                   style={styles.categoryItem}>

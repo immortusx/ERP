@@ -7,7 +7,7 @@ import {
   ImageBackground,
   Button,
   Linking,
-  ScrollView
+  ScrollView,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
@@ -16,153 +16,210 @@ const AdditonalDetails = ({route}) => {
   const navigation = useNavigation();
   const {item} = route.params;
 
+  const whatsAppWelcomeMessage = `Welcome to New Keshav Tractors!
+    Hello ${item.first_name} ${item.last_name},
+    Thank you for connecting with New Keshav Tractors on WhatsApp. We're thrilled to have you as part of our tractor community.
+
+    About Us:
+      At New Keshav Tractors, we're dedicated to delivering cutting-edge tractors designed to empower farmers and enhance agricultural productivity. Our range of tractors is built with precision engineering and advanced technology.
+
+    Our Offerings:
+      Explore our diverse range of tractors, from compact models for small farms to heavy-duty machines for large-scale operations.
+      Enjoy superior performance, fuel efficiency, and durability with our state-of-the-art tractor designs.
+      Benefit from our excellent after-sales service and support, ensuring your tractor runs smoothly throughout its lifetime.
+
+    Stay Connected:
+      Have questions or need assistance? Feel free to ask us anything about our tractors, features, or services.
+      Stay tuned for the latest updates, tips, and offers that we'll be sharing exclusively with our WhatsApp community.
+
+    We're here to support you on your farming journey. Let's grow together!
+
+    Best regards,
+    The New Keshav Tractors Team.
+    `;
+  const phoneMessage = `Hello ${item.first_name} ${item.last_name},
+
+    Thank you for choosing Keshav tractors! We're delighted to have you as a valued customer. Our mission is to provide you with top-quality tractors and exceptional service.
+    If you have any questions or need assistance, feel free to ask. Our team is here to help you make the most of your new tractor. Stay connected with us for updates, tips, and more.
+
+    Best regards,
+    The Keshav Tractor Team`;
+
   const handleSheduleCall = item => {
     navigation.navigate('Schedule Call', {item: item});
   };
   const openEditEnquiry = editData => {
     navigation.navigate('Edit Detail Enquiry', {editData: editData});
   };
-  const makePhoneCall = (mobileNumber)=> {
+  const makePhoneCall = mobileNumber => {
     Linking.openURL(`tel:${mobileNumber}`);
-  }
-  const makeWhatsAppCall = (whatsAppNumber)=> {
-    Linking.openURL(`whatsapp://send?phone=${whatsAppNumber}`);
-  }
-  const sendMessage = (mobileNumber)=> {
-    let message = 'Hello sir, this is Test Message, ignore it';
-    Linking.openURL(`sms:${mobileNumber}?body=${message}`);
-  }
+  };
+  const sendWhatsAppMessage = whatsAppNumber => {
+    const encodedMessage = encodeURIComponent(whatsAppWelcomeMessage);
+    Linking.openURL(
+      `whatsapp://send?phone=${whatsAppNumber}&text=${encodedMessage}`,
+    )
+      .then(() => {
+        console.log('WhatsApp Opening....');
+      })
+      .catch(error => {
+        console.error('Whatsapp not Found. Please Install Whatsapp:', error);
+      });
+  };
+  const sendMessage = mobileNumber => {
+    Linking.openURL(`sms:${mobileNumber}?body=${phoneMessage}`);
+  };
   return (
     <View style={styles.mainContainer}>
       <ScrollView>
-      <View style={styles.contentContainer}>
-        <View style={styles.imageContainer}>
-          <TouchableOpacity
-            onPress={() => {
-              openEditEnquiry(item);
-            }}>
-            <Image
-              style={styles.editImg}
-              source={require('../../assets/edit.png')}
-            />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.nameContainer}>
-          <Text style={styles.nameStyle}>
-            {item.first_name + (item.last_name ? ' ' + item.last_name : '')}
-          </Text>
-          <Text style={styles.enquiryDate}>
-            {moment(item.date).format('LL')}
-          </Text>
-        </View>
-        <View style={styles.contactContainer}>
-          <View style={styles.leftContainer}>
-            <Text style={styles.contactInfo}>Category</Text>
-            <Text style={styles.contactInfo}>Phone</Text>
-            <Text style={styles.contactInfo}>whatsApp</Text>
-            <Text style={styles.contactInfo}>Email</Text>
-            <Text style={styles.contactInfo}>Product</Text>
-            <Text style={styles.contactInfo}>Enquiry Date</Text>
-            <Text style={styles.contactInfo}>Delivery Date</Text>
-            <Text style={styles.contactInfo}>Enquiry Source</Text>
-            <Text style={styles.contactInfo}>Sales Person</Text>
-            <Text style={styles.contactInfo}>District</Text>
-            <Text style={styles.contactInfo}>Taluka/Tehsil</Text>
-            <Text style={styles.contactInfo}>Village</Text>
+        <View style={styles.contentContainer}>
+          <View style={styles.imageContainer}>
+            <TouchableOpacity
+              onPress={() => {
+                openEditEnquiry(item);
+              }}>
+              <Image
+                style={styles.editImg}
+                source={require('../../assets/edit.png')}
+              />
+            </TouchableOpacity>
           </View>
-          <View style={styles.rightContainer}>
-            <Text style={[styles.contactInfo, styles.contactStyle]}>N/A</Text>
-            <Text style={[styles.contactInfo, styles.contactStyle]}>
-              {item.phone_number}
+          <View style={styles.nameContainer}>
+            <Text style={styles.nameStyle}>
+              {item.first_name + (item.last_name ? ' ' + item.last_name : '')}
             </Text>
-            <Text style={[styles.contactInfo, styles.contactStyle]}>
-              {item.whatsapp_number ? item.whatsapp_number : '98765432'}
-            </Text>
-            <Text style={[styles.contactInfo, styles.contactStyle]}>
-              {item.email ? item.email : 'john@email.com'}
-            </Text>
-            <Text style={[styles.contactInfo, styles.contactStyle]}>
-              {item.product ? item.product : 'Sonalika Tiger 2WD'}
-            </Text>
-            <Text style={[styles.contactInfo, styles.contactStyle]}>
+            <Text style={styles.enquiryDate}>
               {moment(item.date).format('LL')}
             </Text>
-            <Text style={[styles.contactInfo, styles.contactStyle]}>
-              {moment(item.delivery_date).format('LL')}
-            </Text>
-            <Text
-              style={[styles.contactInfo, styles.contactStyle, {fontSize: 15}]}>
-              {item.enquiry_source ? item.enquiry_source : 'N/A'}
-            </Text>
-            <Text style={[styles.contactInfo, styles.contactStyle]}>
-              {item.sales_person}
-            </Text>
-            <Text style={[styles.contactInfo, styles.contactStyle]}>
-              {item.district ? item.district : 'N/A'}
-            </Text>
-            <Text style={[styles.contactInfo, styles.contactStyle]}>
-              {item.taluka ? item.taluka : 'N/A'}
-            </Text>
-            <Text style={[styles.contactInfo, styles.contactStyle]}>
-              {item.village ? item.village : 'N/A'}
-            </Text>
+          </View>
+          <View style={styles.contactContainer}>
+            <View style={styles.leftContainer}>
+              <Text style={styles.contactInfo}>Category</Text>
+              <Text style={styles.contactInfo}>Phone</Text>
+              <Text style={styles.contactInfo}>whatsApp</Text>
+              <Text style={styles.contactInfo}>Email</Text>
+              <Text style={styles.contactInfo}>Product</Text>
+              <Text style={styles.contactInfo}>Enquiry Date</Text>
+              <Text style={styles.contactInfo}>Delivery Date</Text>
+              <Text style={styles.contactInfo}>Enquiry Source</Text>
+              <Text style={styles.contactInfo}>Sales Person</Text>
+              <Text style={styles.contactInfo}>District</Text>
+              <Text style={styles.contactInfo}>Taluka/Tehsil</Text>
+              <Text style={styles.contactInfo}>Village</Text>
+            </View>
+            <View style={styles.rightContainer}>
+              <Text style={[styles.contactInfo, styles.contactStyle]}>N/A</Text>
+              <Text style={[styles.contactInfo, styles.contactStyle]}>
+                {item.phone_number}
+              </Text>
+              <Text style={[styles.contactInfo, styles.contactStyle]}>
+                {item.whatsapp_number ? item.whatsapp_number : '98765432'}
+              </Text>
+              <Text style={[styles.contactInfo, styles.contactStyle]}>
+                {item.email ? item.email : 'john@email.com'}
+              </Text>
+              <Text style={[styles.contactInfo, styles.contactStyle]}>
+                {item.product ? item.product : 'Sonalika Tiger 2WD'}
+              </Text>
+              <Text style={[styles.contactInfo, styles.contactStyle]}>
+                {moment(item.date).format('LL')}
+              </Text>
+              <Text style={[styles.contactInfo, styles.contactStyle]}>
+                {moment(item.delivery_date).format('LL')}
+              </Text>
+              <Text
+                style={[
+                  styles.contactInfo,
+                  styles.contactStyle,
+                  {fontSize: 15},
+                ]}>
+                {item.enquiry_source ? item.enquiry_source : 'N/A'}
+              </Text>
+              <Text style={[styles.contactInfo, styles.contactStyle]}>
+                {item.sales_person}
+              </Text>
+              <Text style={[styles.contactInfo, styles.contactStyle]}>
+                {item.district ? item.district : 'N/A'}
+              </Text>
+              <Text style={[styles.contactInfo, styles.contactStyle]}>
+                {item.taluka ? item.taluka : 'N/A'}
+              </Text>
+              <Text style={[styles.contactInfo, styles.contactStyle]}>
+                {item.village ? item.village : 'N/A'}
+              </Text>
+            </View>
+          </View>
+          <View style={styles.lastActivity}>
+            <Text style={styles.dayText}>Added : 5 Days</Text>
+            <Text style={styles.dayText}>Last Activity : Call</Text>
+          </View>
+          <View style={styles.followContainer}>
+            <View style={styles.stageDetail}>
+              <Text style={styles.followLabel}>Current Stage</Text>
+              <Text style={styles.followDetail}>Next Activity Plan</Text>
+              <Text style={styles.followLabel}>Follow Up Type</Text>
+              <Text style={styles.followDetail}>Call</Text>
+            </View>
+            <View style={styles.nextReminder}>
+              <Text style={styles.followLabel}>Followup Person</Text>
+              <Text style={styles.followDetail}> {item.sales_person}</Text>
+              <Text style={styles.followLabel}>Next Reminders</Text>
+              <Text style={styles.followDetail}>
+                {item.last_follow_up_date ? item.last_follow_up_date : 'N/A'}
+              </Text>
+            </View>
+          </View>
+          <View style={styles.recentStyle}>
+            <Text style={styles.followLabel}>Recent Notes:</Text>
+            <View style={styles.callIconStyle}>
+              <TouchableOpacity
+                style={styles.greenButton}
+                onPress={() => {
+                  makePhoneCall(item.phone_number);
+                }}>
+                <Image
+                  style={styles.iconImg}
+                  source={require('../../assets/telephone.png')}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.greenButton}
+                onPress={() => {
+                  sendWhatsAppMessage(item.phone_number);
+                }}>
+                <Image
+                  style={styles.iconImg}
+                  source={require('../../assets/whatsapp.png')}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.greenButton}
+                onPress={() => {
+                  sendMessage(item.phone_number);
+                }}>
+                <Image
+                  style={styles.iconImg}
+                  source={require('../../assets/chat.png')}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.greenButton}>
+                <Image
+                  style={styles.iconImg}
+                  source={require('../../assets/credit.png')}
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+          <View>
+            <TouchableOpacity
+              style={styles.followUpButton}
+              onPress={() => {
+                handleSheduleCall(item);
+              }}>
+              <Text style={styles.followupButton}>FOLLOW UP</Text>
+            </TouchableOpacity>
           </View>
         </View>
-        <View style={styles.lastActivity}>
-          <Text style={styles.dayText}>Added : 5 Days</Text>
-          <Text style={styles.dayText}>Last Activity : Call</Text>
-        </View>
-        <View style={styles.followContainer}>
-          <View style={styles.stageDetail}>
-            <Text style={styles.followLabel}>Current Stage</Text>
-            <Text style={styles.followDetail}>Next Activity Plan</Text>
-            <Text style={styles.followLabel}>Follow Up Type</Text>
-            <Text style={styles.followDetail}>Call</Text>
-          </View>
-          <View style={styles.nextReminder}>
-            <Text style={styles.followLabel}>Followup Person</Text>
-            <Text style={styles.followDetail}> {item.sales_person}</Text>
-            <Text style={styles.followLabel}>Next Reminders</Text>
-            <Text style={styles.followDetail}>
-              {item.last_follow_up_date ? item.last_follow_up_date : 'N/A'}
-            </Text>
-          </View>
-        </View>
-        <View style={styles.recentStyle}>
-          <Text style={styles.followLabel}>Recent Notes:</Text>
-          <View style={styles.callIconStyle}>
-            <TouchableOpacity style={styles.greenButton} onPress={()=> {makePhoneCall(item.phone_number)}}>
-              <Image
-                style={styles.iconImg}
-                source={require('../../assets/telephone.png')}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.greenButton} onPress={()=> {makeWhatsAppCall(item.phone_number)}}>
-              <Image
-                style={styles.iconImg}
-                source={require('../../assets/whatsapp.png')}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.greenButton} onPress={()=> {sendMessage(item.phone_number)}}>
-              <Image
-                style={styles.iconImg}
-                source={require('../../assets/chat.png')}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.greenButton}>
-              <Image
-                style={styles.iconImg}
-                source={require('../../assets/credit.png')}
-              />
-            </TouchableOpacity>
-          </View>
-        </View>
-        <View>
-          <TouchableOpacity style={styles.followUpButton} onPress={()=> {handleSheduleCall(item)}}>
-            <Text style={styles.followupButton}>FOLLOW UP</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
       </ScrollView>
     </View>
   );
@@ -263,7 +320,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: 'black',
     fontWeight: 'bold',
-    textTransform: 'capitalize'
+    textTransform: 'capitalize',
   },
   enquiryDate: {
     textAlign: 'center',
@@ -335,12 +392,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#3AA4F7',
     borderRadius: 20,
     padding: 10,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   followupButton: {
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
-  }
+  },
 });
 export default AdditonalDetails;
