@@ -215,25 +215,65 @@ export default function AreaAssignListList({ showModal, hideModal, id }) {
     });
   }
 
+  //   function handleSubmit() {
+  //     console.log(selectedOptionUser, "selectedOptionUser");
+  //     console.log(selectedOptionVillage, "selectedOptionVillage");
+  //     console.log(selectedCtaegory, "selectedCtaegory");
+  //     console.log(allUser, "allUser");
+  //     let myAr = [];
+  //     selectedOptionUser.map((singleUser) => {
+  //       selectedCtaegory.map((singleCategory) => {
+  //         selectedOptionVillage.map((singleVillage) => {
+  //           myAr.push({
+  //             id: singleUser.value,
+  //             category: singleCategory.value,
+  //             value: singleVillage.value,
+  //           });
+  //         });
+  //       });
+  //     });
+  //     console.log("myAr", myAr);
+  //     dispatch(addassigneAreaToDb(myAr));
+
+  //     // let tempAr = [];
+  //     // selectedOptionUser.forEach((userItem) => {
+  //     //   tempAr.push({
+  //     //     value: selectedOptionVillage.map((villageData) => villageData.value),
+  //     //     // value:selectedOptionVillage.value,
+  //     //     id: userItem.value,
+  //     //     category: selectedCtaegory.value,
+  //     //     category: selectedCtaegory.map((categoryData) => categoryData.value),
+  //     //   });
+  //     // });
+
+  //     // console.log(tempAr, "tempAr");
+  //   }
+
   function handleSubmit() {
     console.log(selectedOptionUser, "selectedOptionUser");
     console.log(selectedOptionVillage, "selectedOptionVillage");
     console.log(selectedCtaegory, "selectedCtaegory");
     console.log(allUser, "allUser");
-    let myAr = [];
-    selectedOptionUser.map((singleUser) => {
-      selectedCtaegory.map((singleCategory) => {
-        selectedOptionVillage.map((singleVillage) => {
-          myAr.push({
-            id: singleUser.value,
-            category: singleCategory.value,
-            value: singleVillage.value,
-          });
-        });
+    let userAr = [];
+    let villageAr = [];
+    let categoryAr = [];
+
+    selectedOptionVillage.map((singleVillage) => {
+      villageAr.push({ value: singleVillage.value });
+    });
+    selectedCtaegory.map((singleCategory) => {
+      categoryAr.push({
+        category: singleCategory.value,
+        value: villageAr,
       });
     });
-    console.log("myAr", myAr);
-    dispatch(addassigneAreaToDb(myAr));
+    selectedOptionUser.map((singleUser) => {
+      userAr.push({ id: singleUser.value, category: categoryAr });
+    });
+
+    console.log("userAr", userAr);
+  
+    dispatch(addassigneAreaToDb(userAr));
 
     // let tempAr = [];
     // selectedOptionUser.forEach((userItem) => {
@@ -248,8 +288,6 @@ export default function AreaAssignListList({ showModal, hideModal, id }) {
 
     // console.log(tempAr, "tempAr");
   }
-
-  
 
   const submitDelete = async (type, id, categoryd, dId) => {
     const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/delete-area/${id}/${categoryd}/${dId}`;
@@ -314,11 +352,7 @@ export default function AreaAssignListList({ showModal, hideModal, id }) {
                     ? { value: selectedUser.id, label: selectedUser.name }
                     : null
                 }
-                // defaultValue={
-                //   areaAssignuser && {
-                //     label: `${areaAssignuser.first_name} ${areaAssignuser.last_name}`,
-                //   }
-                // }
+                
                 isMulti
                 value={selectedOptionUser}
                 onChange={handleChangeUser}

@@ -158,28 +158,31 @@ export default function AddAssignArea() {
   };
 
   function handleSubmit() {
-    if (selectedCtaegory.length > 0 && selectedOptionVillage.length > 0) {
-      const groupedData = selectedCtaegory.reduce((acc, categoryData) => {
-        selectedOptionVillage.filter(
-          (villageData) => villageData.categoryId === categoryData.value
-        );
-   selectedOptionVillage.map((singleVillage) => {
-        acc.push({
-          id: selectedId,
-          category: categoryData.value,
-          value: singleVillage.value,
-        });
-      })
-        return acc;
-      }, []);
-      
-      if (show === 2) {
-        console.log("groupedData", groupedData);
-        dispatch(editassignareaUpdateToDb(groupedData));
-      } else {
-        console.log("groupedData", groupedData);
-        dispatch(addassigneAreaToDb(groupedData));
-      }
+    console.log(selectedId, "selectedId");
+    console.log(selectedOptionVillage, "selectedOptionVillage");
+    console.log(selectedCtaegory, "selectedCtaegory");
+    console.log(allUser, "allUser");
+    let userAr = [];
+    let villageAr = [];
+    let categoryAr = [];
+
+    selectedOptionVillage.map((singleVillage) => {
+      villageAr.push({ value: singleVillage.value });
+    });
+    selectedCtaegory.map((singleCategory) => {
+      categoryAr.push({
+        category: singleCategory.value,
+        value: villageAr,
+      });
+    });
+      userAr.push({ id: selectedId, category: categoryAr });
+
+    if (show === 2) {
+      console.log("userAr", userAr);
+      dispatch(editassignareaUpdateToDb(userAr));
+    } else {
+      console.log("userAr", userAr);
+      dispatch(addassigneAreaToDb(userAr));
     }
   }
 

@@ -53,31 +53,52 @@ router.get("/add-areaAssignUserById/:id", tokenCheck, async (req, res) => {
 router.post("/edit-areaAssignUserById", tokenCheck, async (req, res) => {
   console.log(">>>>>>>>>edit-areaAssignUserById");
   const { id, value, category } = req.body[0];
-  //  const userId = req.params.id;
-  console.log(req, "req");
+  console.log(category, "category");
+  console.log(value, "value");
+
   try {
-    const result = `UPDATE area_assign_user SET distribution_id = '${value}', category_id = '${category}'  WHERE  id = '${id}'`;
-    console.log(result, "result");
-    await db.query(result, async (err, Result) => {
-      if (err) {
-        console.log({ isSuccess: false, result: err });
-        res.status(500).json({ isSuccess: false, result: "error" });
-      } else {
-        console.log({ isSuccess: true, result: "success" });
-        res.status(200).json({ isSuccess: true, result: "success" });
+    // Assuming category is an array of objects like [{ category: ..., value: ... }, ...]
+    for (const item of category) {
+      const categoryId = item.category;
+      const distributionValues = item.value;
+
+      // Iterate over the distributionValues array and process each value
+      for (const distributionValue of distributionValues) {
+        const distributionId = distributionValue.value;
+
+        // Now you can use categoryId and distributionId to update your database
+        const result = `UPDATE area_assign_user SET distribution_id = '${distributionId}', category_id = '${categoryId}' WHERE id = '${id}'`;
+console.log(result, "result");
+        await db.query(result, async (err, Result) => {
+          if (err) {
+            console.log({ isSuccess: false, result: err });
+            res.status(500).json({ isSuccess: false, result: "error" });
+          } else {
+            console.log({ isSuccess: true, result: "success" });
+          }
+        });
       }
-    });
+    }
+
+    res.status(200).json({ isSuccess: true, result: "success" });
   } catch (error) {
     console.log(error);
     res.status(500).json({ isSuccess: false, result: "error" });
   }
 });
+
+
+
+
 // router.post("/edit-areaAssignUserById", tokenCheck, async (req, res) => {
 //   console.log(">>>>>>>>>edit-areaAssignUserById");
 //   const { id, value, category } = req.body[0];
 //   //  const userId = req.params.id;
 //   console.log(req, "req");
+//   console.log(category, "category");
+//   console.log(value, "value");
 //   try {
+
 //     const result = `UPDATE area_assign_user SET distribution_id = '${value}', category_id = '${category}'  WHERE  id = '${id}'`;
 //     console.log(result, "result");
 //     await db.query(result, async (err, Result) => {
@@ -231,6 +252,7 @@ router.post("/add-assigneArea", tokenCheck, async (req, res) => {
     console.log(jsonDataAssignArea, ">>>>>req.bodyadd-assigneArea");
 
     const sqlQuery = `CALL sp_assigned_area_perUser('${jsonDataAssignArea}')`;
+    console.log(sqlQuery, "sqlQuery");
 
     await db.query(sqlQuery, async (err, result) => {
       if (err) {
