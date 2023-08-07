@@ -24,7 +24,7 @@ export default function AreaAssignListList({ showModal, hideModal, id }) {
   const [assigneAreaPerUser, setAssignedAreaPerUser] = useState([]);
   const [show, setShow] = useState(false);
   const [allUser, setallUser] = useState([]);
-  const [selectedOptionUser, setSelectedOptionUser] = useState();
+  const [selectedOptionUser, setSelectedOptionUser] = useState([]);
   const [selectedCtaegory, setselectedCtaegory] = useState();
   const [selectedOptionVillage, setSelectedOptionVillage] = useState(null);
   const [selectedDistributionType, setSelectedDistributionType] = useState([]);
@@ -51,7 +51,7 @@ export default function AreaAssignListList({ showModal, hideModal, id }) {
   useEffect(() => {
     if (addAssignState.isSuccess) {
       if (addAssignState.message.isSuccess) {
-        dispatch(setShowMessage("Area is assignrd"));
+        dispatch(setShowMessage("Area is assigned"));
         dispatch(clearAddassigneAreaState());
         setShow(false);
         getAreaAssignUserFromDb();
@@ -62,7 +62,7 @@ export default function AreaAssignListList({ showModal, hideModal, id }) {
     }
   }, [addAssignState]);
   function clearInpHook() {
-    setSelectedOptionUser("");
+    setSelectedOptionUser([]);
     setselectedCtaegory("");
     setSelectedDistributionType("");
     setSelectedOptionVillage(null);
@@ -74,7 +74,7 @@ export default function AreaAssignListList({ showModal, hideModal, id }) {
     setShow(true);
   };
   const handleChangeUser = (selectedOption) => {
-    console.log("selectedOption", selectedOption);
+    console.log("selectedOptionmm", selectedOption);
     setSelectedOptionUser(selectedOption);
   };
   const handleChangeCategory = (selectedOption) => {
@@ -117,7 +117,6 @@ export default function AreaAssignListList({ showModal, hideModal, id }) {
   // const hideConfirmationModal = () => {
   //     setDisplayConfirmationModal(false);
   // };
-
   async function getAreaAssignUserFromDb() {
     const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/get-areaAssignUser`;
     const config = {
@@ -272,7 +271,7 @@ export default function AreaAssignListList({ showModal, hideModal, id }) {
     });
 
     console.log("userAr", userAr);
-  
+
     dispatch(addassigneAreaToDb(userAr));
 
     // let tempAr = [];
@@ -288,6 +287,13 @@ export default function AreaAssignListList({ showModal, hideModal, id }) {
 
     // console.log(tempAr, "tempAr");
   }
+  useEffect(() => {
+    if (selectedUser) {
+      setSelectedOptionUser([
+        { value: selectedUser.id, label: selectedUser.name },
+      ]);
+    }
+  }, [selectedUser]);
 
   const submitDelete = async (type, id, categoryd, dId) => {
     const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/delete-area/${id}/${categoryd}/${dId}`;
@@ -347,12 +353,12 @@ export default function AreaAssignListList({ showModal, hideModal, id }) {
             <div className="row mt-5">
               <h5>Select User</h5>
               <Select
-                defaultValue={
-                  selectedUser
-                    ? { value: selectedUser.id, label: selectedUser.name }
-                    : null
-                }
-                
+                // defaultValue={
+                //   selectedUser
+                //     ? { value: selectedUser.id, label: selectedUser.name }
+                //     : null
+                // }
+
                 isMulti
                 value={selectedOptionUser}
                 onChange={handleChangeUser}
