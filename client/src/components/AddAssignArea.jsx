@@ -49,7 +49,7 @@ export default function AddAssignArea() {
     if (addAssignState.isSuccess) {
       if (addAssignState.message.isSuccess) {
         console.log(addAssignState, "addAssignState");
-        dispatch(setShowMessage("Area is assignrd"));
+        dispatch(setShowMessage("Area is assigned"));
         dispatch(clearAddassigneAreaState());
         navigate("/sale/area-Assign");
         // clearInpHook()
@@ -158,28 +158,33 @@ export default function AddAssignArea() {
   };
 
   function handleSubmit() {
-    if (selectedCtaegory.length > 0 && selectedOptionVillage.length > 0) {
-      const groupedData = selectedCtaegory.reduce((acc, categoryData) => {
-        selectedOptionVillage.filter(
-          (villageData) => villageData.categoryId === categoryData.value
-        );
-   selectedOptionVillage.map((singleVillage) => {
-        acc.push({
-          id: selectedId,
-          category: categoryData.value,
-          value: singleVillage.value,
+    console.log(selectedId, "selectedId");
+    console.log(selectedOptionVillage, "selectedOptionVillage");
+    console.log(selectedCtaegory, "selectedCtaegory");
+    console.log(allUser, "allUser");
+    let userAr = [];
+    let villageAr = [];
+    let categoryAr = [];
+
+    if (selectedCtaegory.length > 0) {
+      selectedOptionVillage.map((singleVillage) => {
+        villageAr.push({ value: singleVillage.value });
+      });
+      selectedCtaegory.map((singleCategory) => {
+        categoryAr.push({
+          category: singleCategory.value,
+          villageID: villageAr,
         });
-      })
-        return acc;
-      }, []);
-      
-      if (show === 2) {
-        console.log("groupedData", groupedData);
-        dispatch(editassignareaUpdateToDb(groupedData));
-      } else {
-        console.log("groupedData", groupedData);
-        dispatch(addassigneAreaToDb(groupedData));
-      }
+      });
+    }
+    userAr.push({ id: selectedId, category: categoryAr });
+
+    if (show === 2) {
+      console.log("userAr", userAr);
+      dispatch(editassignareaUpdateToDb(userAr));
+    } else {
+      console.log("userAr", userAr);
+      dispatch(addassigneAreaToDb(userAr));
     }
   }
 
@@ -187,11 +192,11 @@ export default function AddAssignArea() {
     setShow(2);
     dispatch(setEdiassignareaData(data));
     console.log("data", data);
-     console.log("data.id", data.id);
+    console.log("data.id", data.id);
     setSelectedId(data.id);
     let newArr = [];
     if (data.villageData && data.villageData.length > 0) {
-      newArr = data.villageData
+      newArr = data.villageData;
     }
     // let tempAr = [];
     // newArr.forEach((element) => {
@@ -207,7 +212,7 @@ export default function AddAssignArea() {
     setSelectedOptionVillage(newArr);
     // let newArry = [];
     // if (data.categoryData && data.categoryData.length > 0) {
-       const  newArry = data.categoryData;
+    const newArry = data.categoryData;
     // }
     // let tempArr = [];
     // newArry.forEach((element) => {

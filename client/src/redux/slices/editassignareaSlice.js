@@ -17,6 +17,7 @@ const initialState = {
 export const editassignareaUpdateToDb = createAsyncThunk(
   "editassignareaUpdateToDb/editassignareaSlice",
   async (assignareaData) => {
+    console.log(assignareaData,"edit Data..id")
     const config = {
       headers: {
         token: localStorage.getItem("rbacToken"),

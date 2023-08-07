@@ -24,7 +24,7 @@ export default function AreaAssignListList({ showModal, hideModal, id }) {
   const [assigneAreaPerUser, setAssignedAreaPerUser] = useState([]);
   const [show, setShow] = useState(false);
   const [allUser, setallUser] = useState([]);
-  const [selectedOptionUser, setSelectedOptionUser] = useState();
+  const [selectedOptionUser, setSelectedOptionUser] = useState([]);
   const [selectedCtaegory, setselectedCtaegory] = useState();
   const [selectedOptionVillage, setSelectedOptionVillage] = useState(null);
   const [selectedDistributionType, setSelectedDistributionType] = useState([]);
@@ -51,7 +51,7 @@ export default function AreaAssignListList({ showModal, hideModal, id }) {
   useEffect(() => {
     if (addAssignState.isSuccess) {
       if (addAssignState.message.isSuccess) {
-        dispatch(setShowMessage("Area is assignrd"));
+        dispatch(setShowMessage("Area is assigned"));
         dispatch(clearAddassigneAreaState());
         setShow(false);
         getAreaAssignUserFromDb();
@@ -62,7 +62,7 @@ export default function AreaAssignListList({ showModal, hideModal, id }) {
     }
   }, [addAssignState]);
   function clearInpHook() {
-    setSelectedOptionUser("");
+    setSelectedOptionUser([]);
     setselectedCtaegory("");
     setSelectedDistributionType("");
     setSelectedOptionVillage(null);
@@ -74,7 +74,7 @@ export default function AreaAssignListList({ showModal, hideModal, id }) {
     setShow(true);
   };
   const handleChangeUser = (selectedOption) => {
-    console.log("selectedOption", selectedOption);
+    console.log("selectedOptionmm", selectedOption);
     setSelectedOptionUser(selectedOption);
   };
   const handleChangeCategory = (selectedOption) => {
@@ -117,7 +117,6 @@ export default function AreaAssignListList({ showModal, hideModal, id }) {
   // const hideConfirmationModal = () => {
   //     setDisplayConfirmationModal(false);
   // };
-
   async function getAreaAssignUserFromDb() {
     const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/get-areaAssignUser`;
     const config = {
@@ -215,25 +214,65 @@ export default function AreaAssignListList({ showModal, hideModal, id }) {
     });
   }
 
+  //   function handleSubmit() {
+  //     console.log(selectedOptionUser, "selectedOptionUser");
+  //     console.log(selectedOptionVillage, "selectedOptionVillage");
+  //     console.log(selectedCtaegory, "selectedCtaegory");
+  //     console.log(allUser, "allUser");
+  //     let myAr = [];
+  //     selectedOptionUser.map((singleUser) => {
+  //       selectedCtaegory.map((singleCategory) => {
+  //         selectedOptionVillage.map((singleVillage) => {
+  //           myAr.push({
+  //             id: singleUser.value,
+  //             category: singleCategory.value,
+  //             value: singleVillage.value,
+  //           });
+  //         });
+  //       });
+  //     });
+  //     console.log("myAr", myAr);
+  //     dispatch(addassigneAreaToDb(myAr));
+
+  //     // let tempAr = [];
+  //     // selectedOptionUser.forEach((userItem) => {
+  //     //   tempAr.push({
+  //     //     value: selectedOptionVillage.map((villageData) => villageData.value),
+  //     //     // value:selectedOptionVillage.value,
+  //     //     id: userItem.value,
+  //     //     category: selectedCtaegory.value,
+  //     //     category: selectedCtaegory.map((categoryData) => categoryData.value),
+  //     //   });
+  //     // });
+
+  //     // console.log(tempAr, "tempAr");
+  //   }
+
   function handleSubmit() {
     console.log(selectedOptionUser, "selectedOptionUser");
     console.log(selectedOptionVillage, "selectedOptionVillage");
     console.log(selectedCtaegory, "selectedCtaegory");
     console.log(allUser, "allUser");
-    let myAr = [];
-    selectedOptionUser.map((singleUser) => {
-      selectedCtaegory.map((singleCategory) => {
-        selectedOptionVillage.map((singleVillage) => {
-          myAr.push({
-            id: singleUser.value,
-            category: singleCategory.value,
-            value: singleVillage.value,
-          });
-        });
+    let userAr = [];
+    let villageAr = [];
+    let categoryAr = [];
+
+    selectedOptionVillage.map((singleVillage) => {
+      villageAr.push({ value: singleVillage.value });
+    });
+    selectedCtaegory.map((singleCategory) => {
+      categoryAr.push({
+        category: singleCategory.value,
+        value: villageAr,
       });
     });
-    console.log("myAr", myAr);
-    dispatch(addassigneAreaToDb(myAr));
+    selectedOptionUser.map((singleUser) => {
+      userAr.push({ id: singleUser.value, category: categoryAr });
+    });
+
+    console.log("userAr", userAr);
+
+    dispatch(addassigneAreaToDb(userAr));
 
     // let tempAr = [];
     // selectedOptionUser.forEach((userItem) => {
@@ -248,8 +287,13 @@ export default function AreaAssignListList({ showModal, hideModal, id }) {
 
     // console.log(tempAr, "tempAr");
   }
-
-  
+  useEffect(() => {
+    if (selectedUser) {
+      setSelectedOptionUser([
+        { value: selectedUser.id, label: selectedUser.name },
+      ]);
+    }
+  }, [selectedUser]);
 
   const submitDelete = async (type, id, categoryd, dId) => {
     const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/delete-area/${id}/${categoryd}/${dId}`;
@@ -309,16 +353,12 @@ export default function AreaAssignListList({ showModal, hideModal, id }) {
             <div className="row mt-5">
               <h5>Select User</h5>
               <Select
-                defaultValue={
-                  selectedUser
-                    ? { value: selectedUser.id, label: selectedUser.name }
-                    : null
-                }
                 // defaultValue={
-                //   areaAssignuser && {
-                //     label: `${areaAssignuser.first_name} ${areaAssignuser.last_name}`,
-                //   }
+                //   selectedUser
+                //     ? { value: selectedUser.id, label: selectedUser.name }
+                //     : null
                 // }
+
                 isMulti
                 value={selectedOptionUser}
                 onChange={handleChangeUser}
