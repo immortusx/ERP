@@ -50,72 +50,44 @@ router.get("/add-areaAssignUserById/:id", tokenCheck, async (req, res) => {
   }
 });
 
-// router.post("/edit-areaAssignUserById", tokenCheck, async (req, res) => {
-//   console.log(">>>>>>>>>edit-areaAssignUserById");
-
-//   try {
-//     const dataToUpdate = req.body;
-//     const updatePromises = [];
-
-//     for (const item of dataToUpdate) {
-//       const { id, value, category } = item;
-
-//        const result = `UPDATE area_assign_user SET distribution_id = '${value}', category_id = '${category}'  WHERE  id = '${id}'`;
-//        console.log(result,"result")
-//       const values = [value, category, id];
-
-//       // Push the promise returned by pool.query() to the updatePromises array
-//       updatePromises.push(await db.query(result, values));
-//     }
-
-//     // Wait for all the updatePromises to resolve using Promise.all()
-//     await Promise.all(updatePromises);
-
-//     console.log("All updates successful");
-//     res.status(200).json({ isSuccess: true, result: "success" });
-//   } catch (error) {
-//     console.log("Error:", error);
-//     res.status(500).json({ isSuccess: false, result: "error" });
-//   }
-// });
-
 router.post("/edit-areaAssignUserById", tokenCheck, async (req, res) => {
   console.log(">>>>>>>>>edit-areaAssignUserById");
+  const { id, value, category } = req.body[0];
+  console.log(category, "category");
+  console.log(value, "value");
 
   try {
-    const dataToUpdate = req.body;
+    // Assuming category is an array of objects like [{ category: ..., value: ... }, ...]
+    for (const item of category) {
+      const categoryId = item.category;
+      const distributionValues = item.value;
 
-    for (const item of dataToUpdate) {
-      const { id, value, category } = item;
+      // Iterate over the distributionValues array and process each value
+      for (const distributionValue of distributionValues) {
+        const distributionId = distributionValue.value;
 
-      const result = `UPDATE area_assign_user SET distribution_id = '${value}', category_id = '${category}'  WHERE  id = '${id}'`;
-             console.log(result,"result")
-            const values = [value, category, id];
-
-      // Use async/await within an async function to wait for the db.query() call to complete.
-      await executeQuery(result, values);
+        // Now you can use categoryId and distributionId to update your database
+        const result = `UPDATE area_assign_user SET distribution_id = '${distributionId}', category_id = '${categoryId}' WHERE id = '${id}'`;
+console.log(result, "result");
+        await db.query(result, async (err, Result) => {
+          if (err) {
+            console.log({ isSuccess: false, result: err });
+            res.status(500).json({ isSuccess: false, result: "error" });
+          } else {
+            console.log({ isSuccess: true, result: "success" });
+          }
+        });
+      }
     }
 
-    console.log("All updates successful");
     res.status(200).json({ isSuccess: true, result: "success" });
   } catch (error) {
-    console.log("Error:", error);
+    console.log(error);
     res.status(500).json({ isSuccess: false, result: "error" });
   }
 });
 
-// Function to execute the database query and return a promise
-  function executeQuery(sql, values) {
-  return new Promise((resolve, reject) => {
-     db.query(sql, values, (err, result) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(result);
-      }
-    });
-  });
-}
+
 
 
 // router.post("/edit-areaAssignUserById", tokenCheck, async (req, res) => {
@@ -123,7 +95,10 @@ router.post("/edit-areaAssignUserById", tokenCheck, async (req, res) => {
 //   const { id, value, category } = req.body[0];
 //   //  const userId = req.params.id;
 //   console.log(req, "req");
+//   console.log(category, "category");
+//   console.log(value, "value");
 //   try {
+
 //     const result = `UPDATE area_assign_user SET distribution_id = '${value}', category_id = '${category}'  WHERE  id = '${id}'`;
 //     console.log(result, "result");
 //     await db.query(result, async (err, Result) => {

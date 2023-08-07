@@ -179,7 +179,7 @@ export default function AddAssignArea() {
 
     if (show === 2) {
       console.log("userAr", userAr);
-      // dispatch(editassignareaUpdateToDb(userAr));
+      dispatch(editassignareaUpdateToDb(userAr));
     } else {
       console.log("userAr", userAr);
       dispatch(addassigneAreaToDb(userAr));
