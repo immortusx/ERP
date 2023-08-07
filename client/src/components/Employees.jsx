@@ -72,74 +72,7 @@ export default function Employees() {
   const [assigneAreaPerUser, setAssignedAreaPerUser] = useState([]);
   const [assigneAreaPerUserid, setAssignedAreaPerUserId] = useState([]);
  const [showComponent, setShowComponent] = useState(false);
-  // const handleEditArea = async (ev) => {
-  //   console.log(ev, "evvvvvv");
-  //   const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/add-areaAssignUserById/${ev.user_id}`;
-  //   const config = {
-  //     headers: {
-  //       token: localStorage.getItem("rbacToken"),
-  //     },
-  //   };
-
-  //   const response = await Axios.get(url, config);
-  //   if (response.data?.isSuccess) {
-  //     console.log("response.data", response.data.result);
-  //     // const combinedArrayForIndividualUser = response.data.result;
-  //     // const combinedArrayForIndividualUser = response.data.result.reduce(
-  //     //   (result, obj) => {
-  //     //     const existingObj = result.find((item) => item.id === obj.id);
-  //     //     console.log(existingObj, "existingObj");
-  //     //     if (existingObj) {
-  //     //       if (!existingObj.names.includes(obj.name)) {
-  //     //         existingObj.names.push(obj.name);
-  //     //       }
-  //     //       if (!existingObj.nameId.includes(obj.distribution_id)) {
-  //     //         existingObj.nameId.push(obj.distribution_id);
-  //     //       }
-  //     //       if (!existingObj.categoryName.includes(obj.category_name)) {
-  //     //           existingObj.categoryName.push(obj.category_name);
-  //     //       }
-  //     //       if (!existingObj.distributionType.includes(obj.distribution_type)) {
-  //     //           existingObj.distributionType.push(obj.distribution_type);
-  //     //       }
-  //     //     }
-  //     //      else {
-  //     //       console.log("sdfghjkljcyetge7rye78w6784y785857y37453878")
-  //     //       result.push({
-  //     //         id: obj.id,
-  //     //         categoryName: [obj.category_name],
-  //     //         distributionType: [obj.distribution_type],
-  //     //         first_name: [obj.first_name],
-  //     //         last_name: [obj.last_name],
-  //     //         phone_number: [obj.phone_number],
-  //     //         names: [obj.name],
-  //     //         nameId: [obj.distribution_id],
-  //     //         category_id: obj.category_id,
-  //     //         distribution_type: obj.dType,
-  //     //       });
-  //     //     }
-  //     //     return result;
-  //     //   },
-  //     //   []
-  //     // );
-
-  //     setAssignedAreaPerUser(response.data.result);
-  //     console.log(
-  //       response.data.result[0],
-  //       "combinedArrayForIndividualUsercombinedArrayForIndividualUser"
-  //     );
-  //     console.log(
-  //       assigneAreaPerUser,
-  //       "assigneAreaPerUserassigneAreaPerUserassigneAreaPerUserassigneAreaPerUser"
-  //     );
-  //     navigate("/sale/areaAssign/addAsignArea", {
-  //       state: { assigneAreaPerUser: response.data.result },
-  //     });
-  //   }else{
-  //     console.log("tttttttttttttttt")
-  //     navigate("/sale/areaAssign");
-  //   }
-  // };
+ 
 
  
 const handleEditArea = async (ev) => {
@@ -160,7 +93,6 @@ const handleEditArea = async (ev) => {
       console.log("response.data", response.data.result);
       console.log("ev", ev);
 
-      // Create an object to hold the grouped data
       const groupedData = {};
 
       for (const item of response.data.result) {
@@ -200,27 +132,10 @@ const handleEditArea = async (ev) => {
         }
       }
 
-      // {
-      //   userId:203,
-      //   categoryData :{label:'old tractor',value :1},
-      //   villageData : [
-      //     {label:'dubai',value :1},
-      //     {label:'london',value :1},
-      //   ]
-      // }
+      
 
       console.log(Object.values(groupedData));
-      // setAssignedAreaPerUser(
-      //   groupedData,
-      //   "response.data.result"
-      // );
-      //       setAssignedAreaPerUserId(ev, "ev");
-
-      // Save data to state or global context, if needed
-      // You can use the groupedData object as required
-
-      // Navigate to the target page with the data passed as state
-      // const history = useHistory();
+      
      navigate("/sale/area-Assign/add-AsignArea", 
      {
        state: { assigneAreaPerUser: Object.values(groupedData) },
@@ -303,7 +218,6 @@ const handleEditArea = async (ev) => {
 
   const hideareamodal = () => {
     setShowComponent(false);
-    // console.log(id,"id")
   };
   const columns = [
     {
@@ -500,7 +414,6 @@ const handleEditArea = async (ev) => {
   //  }));
 
   useEffect(() => {
-    // console.log('employeeListState', employeeListState);
     dispatch(getemployeeListFromDb());
   }, []);
   useEffect(() => {
