@@ -468,7 +468,7 @@ const AddMore = () => {
         <View>
           {newEnquiryList && newEnquiryList.length > [] ? (
             <FlatList
-            data={todayEnquiryList}
+            data={newEnquiryList}
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }
