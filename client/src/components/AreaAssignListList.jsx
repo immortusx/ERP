@@ -93,6 +93,7 @@ export default function AreaAssignListList({ showModal, hideModal, id }) {
   }));
 
   const selectedUser = allUser.find((user) => user.id === id);
+//   console.log(selectedUser, "selectedUser");
 
   const categoryoptions = enquireCtaegory.map((category) => ({
     value: category.id,
@@ -272,6 +273,7 @@ export default function AreaAssignListList({ showModal, hideModal, id }) {
 
     console.log("userAr", userAr);
 
+
     dispatch(addassigneAreaToDb(userAr));
 
     // let tempAr = [];
@@ -353,12 +355,11 @@ export default function AreaAssignListList({ showModal, hideModal, id }) {
             <div className="row mt-5">
               <h5>Select User</h5>
               <Select
-                // defaultValue={
-                //   selectedUser
-                //     ? { value: selectedUser.id, label: selectedUser.name }
-                //     : null
-                // }
-
+                defaultValue={
+                  selectedUser
+                    ? { value: selectedUser.id, label: selectedUser.name }
+                    : null
+                }
                 isMulti
                 value={selectedOptionUser}
                 onChange={handleChangeUser}
