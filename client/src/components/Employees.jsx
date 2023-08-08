@@ -71,98 +71,89 @@ export default function Employees() {
 
   const [assigneAreaPerUser, setAssignedAreaPerUser] = useState([]);
   const [assigneAreaPerUserid, setAssignedAreaPerUserId] = useState([]);
- const [showComponent, setShowComponent] = useState(false);
- 
+  const [showComponent, setShowComponent] = useState(false);
 
- 
-const handleEditArea = async (ev) => {
-  try {
-    console.log(ev, "evvvvvv");
-    console.log(ev.user_id, "evvvvvv");
+  const handleEditArea = async (ev) => {
+    try {
+      console.log(ev, "evvvvvv");
+      console.log(ev.user_id, "evvvvvv");
 
-    const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/add-areaAssignUserById/${ev.user_id}`;
-    const config = {
-      headers: {
-        token: localStorage.getItem("rbacToken"),
-      },
-    };
+      const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/add-areaAssignUserById/${ev.user_id}`;
+      const config = {
+        headers: {
+          token: localStorage.getItem("rbacToken"),
+        },
+      };
 
-    const response = await Axios.get(url, config);
+      const response = await Axios.get(url, config);
 
-    if (response.data && response.data.isSuccess) {
-      console.log("response.data", response.data.result);
-      console.log("ev", ev);
+      if (response.data && response.data.isSuccess) {
+        console.log("response.data", response.data.result);
+        console.log("ev", ev);
 
-      const groupedData = {};
+        const groupedData = {};
 
-      for (const item of response.data.result) {
-        const {
-          id,
-          user_id,
-          category_id,
-          distribution_id,
-          dType,
-          first_name,
-          last_name,
-          phone_number,
-        } = item;
+        for (const item of response.data.result) {
+          const {
+            id,
+            user_id,
+            category_id,
+            distribution_id,
+            dType,
+            first_name,
+            last_name,
+            phone_number,
+          } = item;
 
-        if (!groupedData[category_id]) {
-          groupedData[category_id] = {
-            id:id,
-            userId: user_id,
-            fname:first_name,
-            lname:last_name,
-            phonenumber:phone_number,
-            distributiontype: dType,
-            categoryData: { label: item.category_name, value: category_id },
-            villageData: [{ label: item.name, value: distribution_id }],
-          };
-        } else {
-          if (
-            !groupedData[category_id].villageData.some(
-              (village) => village.value === distribution_id
-            )
-          ) {
-            groupedData[category_id].villageData.push({
-              label: item.name,
-              value: distribution_id,
-            });
+          if (!groupedData[category_id]) {
+            groupedData[category_id] = {
+              id: id,
+              userId: user_id,
+              fname: first_name,
+              lname: last_name,
+              phonenumber: phone_number,
+              distributiontype: dType,
+              categoryData: { label: item.category_name, value: category_id },
+              villageData: [{ label: item.name, value: distribution_id }],
+            };
+          } else {
+            if (
+              !groupedData[category_id].villageData.some(
+                (village) => village.value === distribution_id
+              )
+            ) {
+              groupedData[category_id].villageData.push({
+                label: item.name,
+                value: distribution_id,
+              });
+            }
           }
         }
+
+        console.log(Object.values(groupedData));
+
+        navigate("/sale/area-Assign/add-AsignArea", {
+          state: { assigneAreaPerUser: Object.values(groupedData) },
+        });
+      } else {
+        console.log(
+          "No data received from the server or the request was not successful."
+        );
+        setShowComponent(true);
+        console.log(ev.user_id, "ev");
+        // setName(ev.first_name+ " "+ev.last_name);
+        setId(ev.user_id);
+        // navigate("/sale/area-Assign", {
+        //   state: { assigneAreaPerUserid: ev },
+        // });
+        // navigate("/sale/area-Assign", {
+        //   state: { assigneAreaPerUser: response.data.result },
+        // });
       }
-
-      
-
-      console.log(Object.values(groupedData));
-      
-     navigate("/sale/area-Assign/add-AsignArea", 
-     {
-       state: { assigneAreaPerUser: Object.values(groupedData) },
-     }
-     );
-    } else {
-      console.log(
-        "No data received from the server or the request was not successful."
-      );
-      setShowComponent(true);
-      console.log(ev.user_id, "ev");
-      // setName(ev.first_name+ " "+ev.last_name);
-      setId(ev.user_id);
-      // navigate("/sale/area-Assign", {
-      //   state: { assigneAreaPerUserid: ev },
-      // });
-      // navigate("/sale/area-Assign", {
-      //   state: { assigneAreaPerUser: response.data.result },
-      // });
+    } catch (error) {
+      console.error("An error occurred while fetching data:", error);
     }
-  } catch (error) {
-    console.error("An error occurred while fetching data:", error);
-  }
-};
-
-
-
+  };
 
   // const handleEditArea = async (ev) => {
   //   try {
@@ -390,12 +381,10 @@ const handleEditArea = async (ev) => {
               }}
               className="myActionBtn m-1"
             >
-              <PlayCircleIcon color="secondary"  />
+              <PlayCircleIcon color="secondary" />
             </button>
           </div>
         </div>
-
-      
       ),
     },
   ];
@@ -548,7 +537,7 @@ const handleEditArea = async (ev) => {
       <AreaAssignListList
         showModal={showComponent}
         hideModal={hideareamodal}
-      id={id}
+        id={id}
       />
     </>
   );
