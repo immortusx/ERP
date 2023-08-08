@@ -64,7 +64,7 @@ export default function AddAssignArea() {
     if (addAssignState.isSuccess) {
       if (addAssignState.message.isSuccess) {
         console.log(addAssignState, "addAssignState");
-        dispatch(setShowMessage("Area is assignrd"));
+        dispatch(setShowMessage("Area is assigned"));
         dispatch(clearAddassigneAreaState());
         //  navigate("/sale/area-Assign");
         clearInpHook();
@@ -182,13 +182,15 @@ export default function AddAssignArea() {
     let villageAr = [];
     let categoryAr = [];
 
-    selectedOptionVillage.map((singleVillage) => {
-      villageAr.push({ value: singleVillage.value });
-    });
-    selectedCtaegory.map((singleCategory) => {
-      categoryAr.push({
-        category: singleCategory.value,
-        value: villageAr,
+    if (selectedCtaegory.length > 0) {
+      selectedOptionVillage.map((singleVillage) => {
+        villageAr.push({ value: singleVillage.value });
+      });
+      selectedCtaegory.map((singleCategory) => {
+        categoryAr.push({
+          category: singleCategory.value,
+          villageID: villageAr,
+        });
       });
     });
     userAr.push({ id: selectedId, category: categoryAr });
@@ -207,9 +209,11 @@ export default function AddAssignArea() {
     dispatch(setEdiassignareaData(data));
     console.log("data", data);
     console.log("data.id", data.id);
+    console.log("data.id", data.id);
     setSelectedId(data.id);
     let newArr = [];
     if (data.villageData && data.villageData.length > 0) {
+      newArr = data.villageData;
       newArr = data.villageData;
     }
     // let tempAr = [];
@@ -226,6 +230,7 @@ export default function AddAssignArea() {
     setSelectedOptionVillage(newArr);
     // let newArry = [];
     // if (data.categoryData && data.categoryData.length > 0) {
+    const newArry = data.categoryData;
     const newArry = data.categoryData;
     // }
     // let tempArr = [];
