@@ -192,7 +192,7 @@ export default function AddAssignArea() {
           villageID: villageAr,
         });
       });
-    });
+    }
     userAr.push({ id: selectedId, category: categoryAr });
 
     if (show === 2) {
@@ -230,7 +230,6 @@ export default function AddAssignArea() {
     setSelectedOptionVillage(newArr);
     // let newArry = [];
     // if (data.categoryData && data.categoryData.length > 0) {
-    const newArry = data.categoryData;
     const newArry = data.categoryData;
     // }
     // let tempArr = [];
