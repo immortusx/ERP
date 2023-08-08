@@ -13,6 +13,9 @@ const initialState = {
 }
 
 export const addassigneAreaToDb = createAsyncThunk('addassigneAreaToDb/addassigneAreaSlice', async (data) => {
+    const currentTimestamp = new Date().getTime();
+    const uniqueId = parseInt(currentTimestamp.toString(36).slice(-9), 36) % 1000000000;
+    data[0].group_id = uniqueId;
     console.log('in addassigneAreaSlice', data)
     const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/add-assigneArea`
     const config = {

@@ -139,6 +139,7 @@ export default function AddAssignArea() {
   // };
 
   const handleChangeCategory = (selectedOption) => {
+    console.log('selectedOption',selectedOption)
     setSelectedCtaegory(selectedOption);
   };
 
@@ -207,11 +208,12 @@ export default function AddAssignArea() {
   const editActionCall = (data) => {
     setShow(2);
     dispatch(setEdiassignareaData(data));
-    console.log("data", data);
+    console.log("group_id", data.group_id);
     console.log("data.id", data.id);
     console.log("data.id", data.id);
-    setSelectedId(data.id);
+    setSelectedId(data.group_id);
     let newArr = [];
+    console.log(data.villageData, 'JEUEUUUEU')
     if (data.villageData && data.villageData.length > 0) {
       newArr = data.villageData;
       newArr = data.villageData;
@@ -231,6 +233,7 @@ export default function AddAssignArea() {
     // let newArry = [];
     // if (data.categoryData && data.categoryData.length > 0) {
     const newArry = data.categoryData;
+    console.log(data.categoryData, 'catoegiru Dtaa')
     // }
     // let tempArr = [];
     // newArry.forEach((element) => {
@@ -242,7 +245,7 @@ export default function AddAssignArea() {
     // });
 
     console.log(newArry, "newArry");
-    setSelectedCtaegory(newArry);
+    setSelectedCtaegory([newArry]);
   };
 
   const deleteActionCall = (data) => {
