@@ -53,7 +53,7 @@ export default function AreaAssignListList({ showModal, hideModal, id }) {
       if (addAssignState.message.isSuccess) {
         dispatch(setShowMessage("Area is assigned"));
         dispatch(clearAddassigneAreaState());
-        setShow(false);
+        hideModal();
         getAreaAssignUserFromDb();
         clearInpHook();
       } else {

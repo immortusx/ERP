@@ -11,7 +11,6 @@ const initialState = {
     },
 
 }
-
 export const addassigneAreaToDb = createAsyncThunk('addassigneAreaToDb/addassigneAreaSlice', async (data) => {
     console.log('in addassigneAreaSlice', data)
     const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/add-assigneArea`
