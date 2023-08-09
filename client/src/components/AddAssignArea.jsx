@@ -81,6 +81,7 @@ export default function AddAssignArea() {
         console.log(editassignareaData, "editassignareaData");
         dispatch(setShowMessage("Assign Area is updated"));
         dispatch(clearEditassignareaState());
+        setShow(0);
         // navigate("/sale/area-Assign");
         clearInpHook();
         //  clearaddaddAgency();

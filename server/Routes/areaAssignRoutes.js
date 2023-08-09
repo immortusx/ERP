@@ -55,8 +55,6 @@ router.post("/edit-areaAssignUserById", tokenCheck, async (req, res) => {
   try {
     const { userId, id, category } = req.body[0];
     console.log(category, "category");
-    console.log(id, "groupt_id");
-
     const deleteSql = `DELETE FROM area_assign_user WHERE user_id = ${userId} AND category_id = ${id}`;
     await db.query(deleteSql, async (err, deleteResult) => {
       if (err) {
@@ -70,10 +68,10 @@ router.post("/edit-areaAssignUserById", tokenCheck, async (req, res) => {
           for (const item of villageID) {
             console.log(category);
             console.log(item, "hjf");
-            const insertTheNewSql = `INSERT INTO area_assign_user (user_id, distribution_id, distribution_type,  category_id, group_id) VALUES (?,?,?,?,?)`;
+            const insertTheNewSql = `INSERT INTO area_assign_user (user_id, distribution_id, distribution_type,  category_id) VALUES (?,?,?,?)`;
             await db.query(
               insertTheNewSql,
-              [userId, item.value, 1, category, 1],
+              [userId, item.value, 1, category],
               async (err, insertResult) => {
                 if (err) {
                   console.log({ isSuccess: false, result: err });
@@ -110,159 +108,12 @@ router.post("/edit-areaAssignUserById", tokenCheck, async (req, res) => {
     //     });
     //   }
     // }
-    // res.status(200).json({ isSuccess: true, result: "success" });
+    res.status(200).json({ isSuccess: true, result: "success" });
   } catch (error) {
     console.log(error);
     res.status(500).json({ isSuccess: false, result: "error" });
   }
 });
-
-// router.post("/edit-areaAssignUserById", tokenCheck, async (req, res) => {
-//   console.log(">>>>>>>>>edit-areaAssignUserById");
-//   const { id, value, category } = req.body[0];
-//   //  const userId = req.params.id;
-//   console.log(req, "req");
-//   console.log(category, "category");
-//   console.log(value, "value");
-//   try {
-
-//     const result = `UPDATE area_assign_user SET distribution_id = '${value}', category_id = '${category}'  WHERE  id = '${id}'`;
-//     console.log(result, "result");
-//     await db.query(result, async (err, Result) => {
-//       if (err) {
-//         console.log({ isSuccess: false, result: err });
-//         res.status(500).json({ isSuccess: false, result: "error" });
-//       } else {
-//         console.log({ isSuccess: true, result: "success" });
-//         res.status(200).json({ isSuccess: true, result: "success" });
-//       }
-//     });
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).json({ isSuccess: false, result: "error" });
-//   }
-// });
-
-// router.post('/add-assigneArea', tokenCheck, async (req, res) => {
-//   console.log('>>>>>add-assigneArea');
-//   try {
-//     const AreaAdd = req.body;
-//     let AreaResponse = ""
-//     for (let index = 0; index < AreaAdd.length; index++) {
-//       const url = `SELECT COUNT(*)
-//        FROM area_assign_user
-//        WHERE user_id = ${AreaAdd[index].id}
-//          AND distribution_id =  ${AreaAdd[index].value}
-//          AND distribution_type =  ${AreaAdd[index].distributionType}
-//          AND category_id = ${AreaAdd[index].category}`
-
-//       await db.query(url, async (err, result) => {
-//         if (err) {
-//           console.log({ isSuccess: false, err });
-//           res.send({ isSuccess: false, result: 'error' });
-//         } else if (result.length > 0) {
-//           console.log({ isSuccess: 'success', result: url });
-//           //res.send({ isSuccess: 'success', result: result[0] });
-//         } else {
-//           const url1 = ` INSERT INTO area_assign_user (user_id, distribution_id, distribution_type, category_id)
-//           VALUES (${AreaAdd[index].id}, ${AreaAdd[index].value}, ${AreaAdd[index].distributionType}, ${AreaAdd[index].category})`
-//           await db.query(url1, async (err, result) => {
-//             if (err) {
-//               console.log({ isSuccess: false, err });
-//               res.send({ isSuccess: false, result: 'error' });
-//             }
-//             else{
-//               AreaResponse = result[0];
-//             }
-//           })
-
-//         }
-
-//       })
-
-//     }
-//     console.log({ isSuccess: 'success', result: AreaResponse });
-//     res.send({ isSuccess: 'success', result: AreaResponse });
-//     //       res.send({ isSuccess: 'success', result: result[0] });
-//   //   const jsonDataAssignArea = JSON.stringify(req.body);
-//   //   console.log(jsonDataAssignArea, '>>>>>req.bodyadd-assigneArea');
-
-//   //   // const sqlQuery = `CALL sp_assigned_area_perUser('${jsonDataAssignArea}')`;
-//   //   const sqlQuery = `CALL sp_insert_assigned_area1('${jsonDataAssignArea}')`;
-
-//   //   await db.query(sqlQuery, async (err, result) => {
-//   //     if (err) {
-//   //       console.log({ isSuccess: false, err });
-//   //       res.send({ isSuccess: false, result: 'error' });
-//   //     } else {
-//   //       console.log({ isSuccess: 'success', result: sqlQuery });
-//   //       res.send({ isSuccess: 'success', result: result[0] });
-//   //     }
-//   //   });
-//   } catch (error) {
-//     console.log(error);
-//   }
-// });
-
-// router.post('/add-assigneArea', tokenCheck, async (req, res) => {
-//   console.log('>>>>>add-assigneArea');
-//   try {
-//     const AreaAdd = req.body;
-//     let AreaResponse = "";
-//     for (let index = 0; index < AreaAdd.length; index++) {
-//       const url = `SELECT COUNT(*) as count
-//        FROM area_assign_user
-//        WHERE user_id = ${AreaAdd[index].id}
-//          AND distribution_id = ${AreaAdd[index].value}
-//          AND distribution_type = ${AreaAdd[index].distributionType}
-//          AND category_id = ${AreaAdd[index].category}`;
-
-//       try {
-//         const result = await executeQuery(url);
-//         if (result[0].count == 0) {
-
-//           console.log("inelse")
-//           const url1 = ` INSERT INTO area_assign_user (user_id, distribution_id, distribution_type, category_id)
-//           VALUES (${AreaAdd[index].id}, ${AreaAdd[index].value}, ${AreaAdd[index].distributionType}, ${AreaAdd[index].category})`;
-//           try {
-//             const insertResult = await executeQuery(url1);
-//             //console.log(url1,"url1url1url1url1url1")
-//             AreaResponse = insertResult[0];
-//           } catch (error) {
-//             console.log({ isSuccess: false, error });
-//             res.send({ isSuccess: false, result: 'error' });
-//           }
-//         } else {
-//           console.log("inifff")
-//           console.log(result[0].count,"countttttt")
-//           console.log({ isSuccess: 'success', result: result[0] });
-//           // res.send({ isSuccess: 'success', result: result[0] });
-//         }
-//       } catch (error) {
-//         console.log({ isSuccess: false, error });
-//         res.send({ isSuccess: false, result: 'error' });
-//       }
-
-//     }
-//     console.log({ isSuccess: 'success', result: AreaResponse });
-
-//     res.send({ isSuccess: 'success', result: AreaResponse });
-//   } catch (error) {
-//     console.log(error);
-//   }
-// });
-
-// function executeQuery(query) {
-//   return new Promise((resolve, reject) => {
-//     db.query(query, (err, result) => {
-//       if (err) {
-//         reject(err);
-//       } else {
-//         resolve(result);
-//       }
-//     });
-//   });
-// }
 
 router.post("/add-assigneArea", tokenCheck, async (req, res) => {
   console.log(">>>>>add-assigneArea");

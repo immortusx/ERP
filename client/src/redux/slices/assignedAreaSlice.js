@@ -11,25 +11,7 @@ const initialState = {
     },
 
 }
-
-let counter = 0;
-
-function generateUniqueId() {
-  const currentTimestamp = new Date().getTime();
-  const randomValue = Math.floor(Math.random() * 100000);
-  const machineId = 35064;
-
-  const combinedValue = currentTimestamp + randomValue + machineId + counter;
-
-  const uniqueId = combinedValue % 100000;
-
-  counter++;
-
-  return uniqueId;
-}
 export const addassigneAreaToDb = createAsyncThunk('addassigneAreaToDb/addassigneAreaSlice', async (data) => {
-    const uniqueId = generateUniqueId();
-    data[0].group_id = uniqueId;
     console.log('in addassigneAreaSlice', data)
     const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/add-assigneArea`
     const config = {
