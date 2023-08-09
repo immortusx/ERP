@@ -75,7 +75,7 @@ export default function Employees() {
 
   const handleEditArea = async (ev) => {
     try {
-      console.log(ev, "evvvvvv");
+      // console.log(ev.group_id, "evvvvvv");
       console.log(ev.user_id, "evvvvvv");
 
       const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/add-areaAssignUserById/${ev.user_id}`;
@@ -103,11 +103,13 @@ export default function Employees() {
             first_name,
             last_name,
             phone_number,
+            group_id
           } = item;
 
           if (!groupedData[category_id]) {
             groupedData[category_id] = {
               id: id,
+              group_id: group_id,
               userId: user_id,
               fname: first_name,
               lname: last_name,

@@ -38,7 +38,8 @@ export default function AddAssignArea() {
   const [enquireCtaegory, setEnquiryCtaegory] = useState([]);
   const [show, setShow] = useState(0);
   const [allUser, setallUser] = useState([]);
-  const [selectedId, setSelectedId] = useState();
+  const [selectedId, setSelectedId] = useState(null);
+  const [userId, setUserId] = useState(null);
 
   const [displayConfirmationModal, setDisplayConfirmationModal] =
     useState(false);
@@ -80,6 +81,7 @@ export default function AddAssignArea() {
         console.log(editassignareaData, "editassignareaData");
         dispatch(setShowMessage("Assign Area is updated"));
         dispatch(clearEditassignareaState());
+        setShow(0);
         // navigate("/sale/area-Assign");
         clearInpHook();
         //  clearaddaddAgency();
@@ -139,6 +141,7 @@ export default function AddAssignArea() {
   // };
 
   const handleChangeCategory = (selectedOption) => {
+    console.log("selectedOption", selectedOption);
     setSelectedCtaegory(selectedOption);
   };
 
@@ -193,7 +196,7 @@ export default function AddAssignArea() {
         });
       });
     }
-    userAr.push({ id: selectedId, category: categoryAr });
+    userAr.push({ userId: userId, id: selectedId, category: categoryAr });
 
     if (show === 2) {
       console.log("userAr", userAr);
@@ -210,8 +213,10 @@ export default function AddAssignArea() {
     console.log("data", data);
     console.log("data.id", data.id);
     console.log("data.id", data.id);
-    setSelectedId(data.id);
+    setSelectedId(data.categoryData.value);
+    setUserId(data.userId);
     let newArr = [];
+    console.log(data.villageData, "JEUEUUUEU");
     if (data.villageData && data.villageData.length > 0) {
       newArr = data.villageData;
       newArr = data.villageData;
@@ -231,6 +236,7 @@ export default function AddAssignArea() {
     // let newArry = [];
     // if (data.categoryData && data.categoryData.length > 0) {
     const newArry = data.categoryData;
+    console.log(data.categoryData, "catoegiru Dtaa");
     // }
     // let tempArr = [];
     // newArry.forEach((element) => {
@@ -242,44 +248,43 @@ export default function AddAssignArea() {
     // });
 
     console.log(newArry, "newArry");
-    setSelectedCtaegory(newArry);
+    setSelectedCtaegory([newArry]);
   };
 
   const deleteActionCall = (data) => {
-      console.log(data,"cccccccccccccccccccccccc")
-      setType("asignArea_delete");
-      setId(data.id);
-      setCategoryd(data.categoryData);
-      setDId(data.villageData);
-      setDeleteMessage(
-        `Are You Sure You Want To Delete The Assign Area of  '${data.categoryData.label}'?`
-      );
-      setDisplayConfirmationModal(true);
+    console.log(data, "cccccccccccccccccccccccc");
+    setType("asignArea_delete");
+    setId(data.id);
+    setCategoryd(data.categoryData);
+    setDId(data.villageData);
+    setDeleteMessage(
+      `Are You Sure You Want To Delete The Assign Area of  '${data.categoryData.label}'?`
+    );
+    setDisplayConfirmationModal(true);
   };
   const hideConfirmationModal = () => {
-      setDisplayConfirmationModal(false);
+    setDisplayConfirmationModal(false);
   };
 
-
-   const submitDelete = async (type, id, categoryd, dId) => {
-     const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/delete-area/${id}/${categoryd}/${dId}`;
-     const config = {
-       headers: {
-         token: localStorage.getItem("rbacToken"),
-       },
-     };
-     await Axios.get(url, config).then((response) => {
-       if (response.data && response.data.isSuccess) {
-         console.log(response.data);
-         dispatch(setShowMessage("Assign Area Deleted"));
-         // dispatch(addRoleToDb());
+  const submitDelete = async (type, id, categoryd, dId) => {
+    const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/delete-area/${id}/${categoryd}/${dId}`;
+    const config = {
+      headers: {
+        token: localStorage.getItem("rbacToken"),
+      },
+    };
+    await Axios.get(url, config).then((response) => {
+      if (response.data && response.data.isSuccess) {
+        console.log(response.data);
+        dispatch(setShowMessage("Assign Area Deleted"));
+        // dispatch(addRoleToDb());
         //  setDisplayConfirmationModal(false);
         //  getAreaAssignUserFromDb();
-       } else {
-         dispatch(setShowMessage("failed to delete"));
-       }
-     });
-   };
+      } else {
+        dispatch(setShowMessage("failed to delete"));
+      }
+    });
+  };
 
   function handlCancel() {
     console.log(selectedOptionVillage, "selectedOptionVillage");
