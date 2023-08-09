@@ -66,7 +66,6 @@ export default function AddAssignArea() {
         console.log(addAssignState, "addAssignState");
         dispatch(setShowMessage("Area is assigned"));
         dispatch(clearAddassigneAreaState());
-        //  navigate("/sale/area-Assign");
         clearInpHook();
         //  clearaddaddAgency();
       } else {
@@ -80,7 +79,6 @@ export default function AddAssignArea() {
         console.log(editassignareaData, "editassignareaData");
         dispatch(setShowMessage("Assign Area is updated"));
         dispatch(clearEditassignareaState());
-        // navigate("/sale/area-Assign");
         clearInpHook();
         //  clearaddaddAgency();
       } else {
@@ -248,8 +246,8 @@ export default function AddAssignArea() {
   const deleteActionCall = (data) => {
       console.log(data,"cccccccccccccccccccccccc")
       setType("asignArea_delete");
-      setId(data.id);
-      setCategoryd(data.categoryData);
+      setId(data.userId);
+      setCategoryd(data.categoryData.value);
       setDId(data.villageData);
       setDeleteMessage(
         `Are You Sure You Want To Delete The Assign Area of  '${data.categoryData.label}'?`
@@ -262,7 +260,9 @@ export default function AddAssignArea() {
 
 
    const submitDelete = async (type, id, categoryd, dId) => {
-     const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/delete-area/${id}/${categoryd}/${dId}`;
+    //  const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/delete-area/${id}/${categoryd}/${dId}`;
+     const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/delete-area/${id}/${categoryd}`;
+     console.log(url, "url");
      const config = {
        headers: {
          token: localStorage.getItem("rbacToken"),
@@ -270,11 +270,11 @@ export default function AddAssignArea() {
      };
      await Axios.get(url, config).then((response) => {
        if (response.data && response.data.isSuccess) {
-         console.log(response.data);
          dispatch(setShowMessage("Assign Area Deleted"));
          // dispatch(addRoleToDb());
         //  setDisplayConfirmationModal(false);
         //  getAreaAssignUserFromDb();
+        
        } else {
          dispatch(setShowMessage("failed to delete"));
        }
@@ -283,7 +283,7 @@ export default function AddAssignArea() {
 
   function handlCancel() {
     console.log(selectedOptionVillage, "selectedOptionVillage");
-    navigate("/sale/area-Assign");
+    navigate("/administration/employees");
   }
   async function getEnquiryCategoryFromDb() {
     const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/get-enquiry-categories`;
@@ -546,6 +546,7 @@ value={selectedDistributionType}
         hideModal={hideConfirmationModal}
         type={type}
         id={id}
+        categoryd={categoryd}
         message={deleteMessage}
       />
     </>

@@ -53,20 +53,15 @@ router.get("/add-areaAssignUserById/:id", tokenCheck, async (req, res) => {
 router.post("/edit-areaAssignUserById", tokenCheck, async (req, res) => {
   console.log(">>>>>>>>>edit-areaAssignUserById");
   const { id, category } = req.body[0];
-  console.log(category, "category");
-  console.log(id, "id");
 
   try {
-    // Assuming category is an array of objects like [{ category: ..., value: ... }, ...]
     for (const item of category) {
       const categoryId = item.category;
       const distributionValues = item.villageID;
 
-      // Iterate over the distributionValues array and process each value
       for (const distributionValue of distributionValues) {
         const distributionId = distributionValue.value;
 
-        // Now you can use categoryId and distributionId to update your database
         const result = `UPDATE area_assign_user SET distribution_id = '${distributionId}', category_id = '${categoryId}' WHERE id = '${id}'`;
         console.log(result, "result");
         await db.query(result, async (err, Result) => {
@@ -265,12 +260,15 @@ router.post("/add-assigneArea", tokenCheck, async (req, res) => {
     console.log(error);
   }
 });
-router.get("/delete-area/:id/:category/:dId", tokenCheck, async (req, res) => {
+router.get("/delete-area/:id/:category", tokenCheck, async (req, res) => {
   try {
     const userId = req.params.id;
     const category = req.params.category;
     const dId = req.params.dId;
-    const sqlQuery = `DELETE FROM area_assign_user WHERE user_id=${userId} and distribution_type=${dId} and category_id=${category}`;
+    console.log(category, "category");
+    // const sqlQuery = `DELETE FROM area_assign_user WHERE user_id=${userId} and distribution_type=${dId} and category_id=${category}`;
+    const sqlQuery = `DELETE FROM area_assign_user WHERE user_id=${userId} and category_id=${category}`;
+    console.log(sqlQuery, "sqlQuery");
     await db.query(sqlQuery, async (err, newResult) => {
       if (err) {
         console.log({ isSuccess: false, result: err });
@@ -285,5 +283,25 @@ router.get("/delete-area/:id/:category/:dId", tokenCheck, async (req, res) => {
     console.log(e);
   }
 });
+// router.get("/delete-area/:id/:category/:dId", tokenCheck, async (req, res) => {
+//   try {
+//     const userId = req.params.id;
+//     const category = req.params.category;
+//     const dId = req.params.dId;
+//     const sqlQuery = `DELETE FROM area_assign_user WHERE user_id=${userId} and distribution_type=${dId} and category_id=${category}`;
+//     await db.query(sqlQuery, async (err, newResult) => {
+//       if (err) {
+//         console.log({ isSuccess: false, result: err });
+//         res.send({ isSuccess: false, result: "error" });
+//       } else {
+//         //console.log(newResult);
+//         console.log({ isSuccess: true, result: "deletesuccess" });
+//         res.send({ isSuccess: true, result: "deletesuccess" });
+//       }
+//     });
+//   } catch (e) {
+//     console.log(e);
+//   }
+// });
 
 module.exports = router;

@@ -45,6 +45,7 @@ export default function Addemployee({ workFor }) {
     password: "",
     phoneNumber: "",
     bloodgroup: "",
+    logo: null,
   });
   const [BankDetais, setBankDetais] = useState({
     bankname: "",
@@ -107,6 +108,7 @@ export default function Addemployee({ workFor }) {
     const email = employeeData.email;
     const pass = employeeData.password;
     const pN = employeeData.phoneNumber;
+    const alogo = employeeData.logo
     const bN = BankDetais.bankname;
     const bb = BankDetais.bankBranch;
     const an = BankDetais.accountNo;
@@ -115,8 +117,27 @@ export default function Addemployee({ workFor }) {
     const brd = jobdetails.branch;
     const dp = jobdetails.department;
     const bg = bloodgroup;
+    const ro = selectedRole;
     const bd = selectedDate;
+     const formData = new FormData();
+        formData.append("firstName", fN);
+        formData.append("lastName", lN);
+        formData.append("email", email);
+        formData.append("password", pass);
+        formData.append("phoneNumber", pN);
+        formData.append("bankname", bN);
+        formData.append("bankBranch", bb);
+        formData.append("accountNo", an);
+        formData.append("accountType", at);
+        formData.append("ifscCode", ic);
+        formData.append("branch", brd);
+        formData.append("department", dp);
+        formData.append("bloodgroup", bg);
+        formData.append("selectedRole", ro);
+        formData.append("logo", alogo);
 
+
+        console.log(formData, "formData");
     if (
       fN.length > 0 &&
       lN.length > 0 &&
@@ -130,6 +151,8 @@ export default function Addemployee({ workFor }) {
       bg.length > 0 &&
       brd.length > 0 &&
       dp.length > 0 &&
+      ro.length >0 &&
+      alogo !== null &&
       // bd.length > 0 &&
       (workFor === "forAdd" ? pass.length > 0 : true)
       //  &&
@@ -155,14 +178,14 @@ export default function Addemployee({ workFor }) {
 
       employeeData["selectedDate"] = selectedDate;
       employeeData["selectedRole"] = selectedRole;
-
+      
+console.log(selectedRole, "selectedRole");
       if (workFor === "forEdit") {
         employeeData["id"] = editemployeeData.user_id;
       //  console.log("editData", employeeData);
         dispatch(editemployeeUpdateToDb(employeeData));
       } else {
-        dispatch(addemployeeToDb(employeeData));
-       // console.log(addemployeeToDb, "addemployeeToDb");
+        dispatch(addemployeeToDb(formData));
       }
     } else {
       //console.log(workFor, "false");
@@ -205,6 +228,7 @@ export default function Addemployee({ workFor }) {
           password: "",
           phoneNumber: editemployeeData.phone_number,
           bloodgroup: editemployeeData.bloodgroup,
+          logo: editemployeeData.image,
         });
         setBankDetais({
           bankname: editemployeeData.bank_name,
@@ -226,6 +250,8 @@ export default function Addemployee({ workFor }) {
     };
   }, [workFor, editemployeeData]);
 
+ const fileInputRef = useRef(null);
+
   function clearInpHook() {
     setemployeeData({
       firstName: "",
@@ -234,7 +260,9 @@ export default function Addemployee({ workFor }) {
       password: "",
       phoneNumber: "",
       bloodgroup: "",
+      logo: null,
     });
+     fileInputRef.current.value = "";
     setBranchRoles({});
     setSelectedDate("");
     setBloodGroup("");
@@ -253,6 +281,7 @@ export default function Addemployee({ workFor }) {
     Array.from(allInp).forEach((item) => {
       item.value = "";
     });
+    
   }
   async function getRolesFromDb() {
     const url = `${process.env.REACT_APP_NODE_URL}/api/users/roles-list`;
@@ -394,9 +423,19 @@ export default function Addemployee({ workFor }) {
     navigate("/administration/employees");
   }
   function onChangeHandler(e) {
+
     const name = e.target.name;
     const value = e.target.value;
-    setemployeeData({ ...employeeData, [name]: value });
+    const files = e.target.files;
+    if(name === "logo")
+    {
+       setemployeeData({ ...employeeData, [name]: files[0] });
+       console.log(employeeData, "employeeData");
+    }else{
+
+      setemployeeData({ ...employeeData, [name]: value });
+       console.log(employeeData, "employeeData");
+    }
   }
   function onChangeBankDetais(e) {
     const name = e.target.name;
@@ -519,18 +558,45 @@ return (
         <h5 className="m-0">General Details</h5>
 
         <div className=" row mt-3 m-0">
-          <main className="px-3 d-flex align-items-center">
-            <input
-              type="checkbox"
-              className="myCheckBox inputElement"
-              onChange={(e) => {
-                onChangeHandler(e);
-              }}
-              name="enableemployee"
-            />
-            <label className="ms-2 myLabel" htmlFor="">
-              Enable employee{" "}
-            </label>
+          <main className="px-3 d-flex align-items-center ">
+            <div className="col-12 col-sm- 6 col-lg-4">
+              <input
+                type="checkbox"
+                className="myCheckBox inputElement"
+                onChange={(e) => {
+                  onChangeHandler(e);
+                }}
+                name="enableemployee"
+              />
+              <label className="ms-2 myLabel" htmlFor="">
+                Enable employee{" "}
+              </label>
+            </div>
+            <div className="d-flex flex-column col-12 col-sm-6 col-lg-4">
+              <label className="myLabel " htmlFor="logo">
+                Logo
+              </label>
+              <input
+                ref={fileInputRef}
+                onChange={(e) => {
+                  onChangeHandler(e);
+                }}
+                autoComplete="false"
+                type="file"
+                name="logo"
+              />
+            </div>
+            <div className="d-flex justify-content-end col-12 col-sm-6 col-lg-4">
+              {employeeData && (
+                <img
+                  src={`${process.env.REACT_APP_NODE_URL}/api${employeeData.logo}`}
+                  alt="logo"
+                  className="logo-image rounded-circle"
+                  height={100}
+                  width={100}
+                />
+              )}
+            </div>
           </main>
           <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
             <label className="myLabel" htmlFor="email">

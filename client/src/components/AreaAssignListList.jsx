@@ -294,8 +294,13 @@ export default function AreaAssignListList({ showModal, hideModal, id }) {
       setSelectedOptionUser([
         { value: selectedUser.id, label: selectedUser.name },
       ]);
+    }else{
+        setSelectedOptionUser([])
     }
+
+    console.log(selectedUser, "selectedUser");
   }, [selectedUser]);
+  
 
   const submitDelete = async (type, id, categoryd, dId) => {
     const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/delete-area/${id}/${categoryd}/${dId}`;

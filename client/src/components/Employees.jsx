@@ -7,6 +7,7 @@ import { setEditemployeeData } from "../redux/slices/editemployeeDataSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import PlayCircleIcon from "@mui/icons-material/PlayCircle";
+import { faEllipsisV } from "@fortawesome/free-solid-svg-icons/faEllipsisV";
 import ShopIcon from "@mui/icons-material/Shop";
 import IosShareIcon from "@mui/icons-material/IosShare";
 import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
@@ -15,7 +16,6 @@ import DownloadIcon from "@mui/icons-material/Download";
 import AutoDeleteIcon from "@mui/icons-material/AutoDelete";
 import DoubleArrowIcon from "@mui/icons-material/DoubleArrow";
 import { setEdiassignareaData } from "../redux/slices/editassignareaSlice";
-import { faEllipsisV } from "@fortawesome/free-solid-svg-icons/faEllipsisV";
 import AreaAssignListList from "./AreaAssignListList";
 
 import Checkbox from "@mui/material/Checkbox";
