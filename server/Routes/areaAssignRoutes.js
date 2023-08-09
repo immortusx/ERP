@@ -64,8 +64,8 @@ router.post("/edit-areaAssignUserById", tokenCheck, async (req, res) => {
         console.log({ isSuccess: true, result: deleteSql });
         // res.send({ isSuccess: true, result:  })
         for (const reqCategory of category) {
-          const { category, villageID } = reqCategory;
-          for (const item of villageID) {
+          const { category, value } = reqCategory;
+          for (const item of value) {
             console.log(category);
             console.log(item, "hjf");
             const insertTheNewSql = `INSERT INTO area_assign_user (user_id, distribution_id, distribution_type,  category_id) VALUES (?,?,?,?)`;

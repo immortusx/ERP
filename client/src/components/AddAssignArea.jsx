@@ -192,17 +192,17 @@ export default function AddAssignArea() {
       selectedCtaegory.map((singleCategory) => {
         categoryAr.push({
           category: singleCategory.value,
-          villageID: villageAr,
+          value: villageAr,
         });
       });
     }
-    userAr.push({ userId: userId, id: selectedId, category: categoryAr });
+    userAr.push({userId: userId, id: selectedId, category: categoryAr });
 
     if (show === 2) {
       console.log("userAr", userAr);
       dispatch(editassignareaUpdateToDb(userAr));
     } else {
-      console.log("userAr", userAr);
+      console.log("userArrr", userAr);
       dispatch(addassigneAreaToDb(userAr));
     }
   }
