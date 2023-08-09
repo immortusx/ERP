@@ -67,7 +67,6 @@ export default function AddAssignArea() {
         console.log(addAssignState, "addAssignState");
         dispatch(setShowMessage("Area is assigned"));
         dispatch(clearAddassigneAreaState());
-        //  navigate("/sale/area-Assign");
         clearInpHook();
         //  clearaddaddAgency();
       } else {
@@ -252,15 +251,15 @@ export default function AddAssignArea() {
   };
 
   const deleteActionCall = (data) => {
-    console.log(data, "cccccccccccccccccccccccc");
-    setType("asignArea_delete");
-    setId(data.id);
-    setCategoryd(data.categoryData);
-    setDId(data.villageData);
-    setDeleteMessage(
-      `Are You Sure You Want To Delete The Assign Area of  '${data.categoryData.label}'?`
-    );
-    setDisplayConfirmationModal(true);
+      console.log(data,"cccccccccccccccccccccccc")
+      setType("asignArea_delete");
+      setId(data.userId);
+      setCategoryd(data.categoryData.value);
+      setDId(data.villageData);
+      setDeleteMessage(
+        `Are You Sure You Want To Delete The Assign Area of  '${data.categoryData.label}'?`
+      );
+      setDisplayConfirmationModal(true);
   };
   const hideConfirmationModal = () => {
     setDisplayConfirmationModal(false);
@@ -288,7 +287,7 @@ export default function AddAssignArea() {
 
   function handlCancel() {
     console.log(selectedOptionVillage, "selectedOptionVillage");
-    navigate("/sale/area-Assign");
+    navigate("/administration/employees");
   }
   async function getEnquiryCategoryFromDb() {
     const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/get-enquiry-categories`;
@@ -551,6 +550,7 @@ value={selectedDistributionType}
         hideModal={hideConfirmationModal}
         type={type}
         id={id}
+        categoryd={categoryd}
         message={deleteMessage}
       />
     </>

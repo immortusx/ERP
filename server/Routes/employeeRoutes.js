@@ -6,14 +6,17 @@ const { checkUserPermission } = require("../Auth/userPermission");
 const { hasThePass, compareTheHass } = require("../Auth/Bcrypt");
 
 const { db } = require("../Database/dbConfig");
+const uploadFile = require("../Utils/multerMiddaeware");
 
 const router = express.Router();
 
 //================addEmployee===============//
-router.post("/add-employee", tokenCheck, async (req, res) => {
+router.post("/add-employee", tokenCheck,uploadFile.single("logo"), async (req, res) => {
   console.log(">>>>>employee");
-  console.log(req.body,"asjdxfkclgh");
+  console.log(req.file,"asjdxfkclgh");
+  console.log(req.body, "req.body ");
 
+ const logoImage = `/upload/${req.file.filename}`;
   const roleArr = req.body.role;
   const firstName = req.body.firstName;
   const lastName = req.body.lastName;
@@ -32,6 +35,7 @@ router.post("/add-employee", tokenCheck, async (req, res) => {
   const branch = req.body.branch;
   const selectedDate = moment(req.body.selectedDate).format("YYYY/MM/DD");
   const department = req.body.department;
+
   // const departmentId = 1;
   const user_type_id = 2;
 
@@ -43,11 +47,12 @@ router.post("/add-employee", tokenCheck, async (req, res) => {
     );
 
     if (newResult.length === 0) {
-      const result = await queryDatabase(
-        `INSERT INTO users(first_name, last_name, email, password, phone_number, bloodgroup, dob, user_type_id) VALUES('${firstName}', '${lastName}', '${email}', '${hashedPassword}', '${phoneNumber}', '${bloodgroup}', '${selectedDate}', '${user_type_id}')`
-      );
+      const url = `INSERT INTO users(first_name, last_name, email, password, phone_number, bloodgroup, dob, user_type_id,image) VALUES('${firstName}', '${lastName}', '${email}', '${hashedPassword}', '${phoneNumber}', '${bloodgroup}', '${selectedDate}', '${user_type_id}', '${logoImage}')`;
+      const result = await queryDatabase(url);
 
       const userId = result.insertId;
+      console.log(url, "url");
+      console.log("result *******",result);
 
       // for (const branchId of Object.keys(branchRole)) {
       //   const rolesAr = branchRole[branchId];
@@ -66,9 +71,7 @@ router.post("/add-employee", tokenCheck, async (req, res) => {
         `INSERT INTO bank_details (bank_name, bank_branch, account_number, account_type, ifsc_code, user_id) VALUES('${bankname}','${bankBranch}','${accountNo}','${accountType}','${ifscCode}','${userId}')`
       );
 
-    
-      
-
+  
       console.log({ isSuccess: true, result: "success" });
       res.send({ isSuccess: true, result: "success" });
     } else {
