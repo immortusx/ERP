@@ -67,6 +67,7 @@ export default function AddAssignArea() {
         console.log(addAssignState, "addAssignState");
         dispatch(setShowMessage("Area is assigned"));
         dispatch(clearAddassigneAreaState());
+        setShow(0);
         clearInpHook();
         //  clearaddaddAgency();
       } else {
@@ -255,7 +256,7 @@ export default function AddAssignArea() {
       setType("asignArea_delete");
       setId(data.userId);
       setCategoryd(data.categoryData.value);
-      setDId(data.villageData);
+      // setDId(data.villageData);
       setDeleteMessage(
         `Are You Sure You Want To Delete The Assign Area of  '${data.categoryData.label}'?`
       );
@@ -266,7 +267,7 @@ export default function AddAssignArea() {
   };
 
   const submitDelete = async (type, id, categoryd, dId) => {
-    const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/delete-area/${id}/${categoryd}/${dId}`;
+    const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/delete-area/${id}/${categoryd}`;
     const config = {
       headers: {
         token: localStorage.getItem("rbacToken"),
