@@ -53,62 +53,41 @@ router.get("/add-areaAssignUserById/:id", tokenCheck, async (req, res) => {
 router.post("/edit-areaAssignUserById", tokenCheck, async (req, res) => {
   console.log(">>>>>>>>>edit-areaAssignUserById", req.body);
   try {
-    const { id, category } = req.body[0];
+    const { userId, id, category } = req.body[0];
     console.log(category, "category");
     console.log(id, "groupt_id");
-    await db.query(
-      `SELECT * FROM  area_assign_user WHERE group_id = ${id}`,
-      async (err, result) => {
-        if (err) {
-          console.log({ isSuccess: false, result: err });
-          res.send({ isSuccess: false, result: "error" });
-        } else {
-          // console.log({ isSuccess: true, result: urlNew });
-          // res.send({ isSuccess: true, result: result[0] });
-          console.log(result[0], "existing data");
-          const user_id = result[0].user_id;
-          for (const reqCategory of category) {
-            const { category, villageID } = reqCategory;
-            for (const item of villageID) {
-              if (
-                result[0].category_id === category &&
-                result[0].distribution_id === item.value
-              ) {
-                console.log("Existing...");
-                console.log(category, item.value, "Matched");
-                const updateSql = `UPDATE area_assign_user SET distribution_id = '${item.value}' WHERE  group_id = '${result[0].group_id}'`;
-                await db.query(updateSql, async (err, updateResult) => {
-                  if (err) {
-                    console.log({ isSuccess: false, result: err });
-                    res.send({ isSuccess: false, result: "error" });
-                  } else {
-                    console.log({ isSuccess: "success", result: updateSql });
-                    res.send({ isSuccess: "success", result: "success" });
-                  }
-                });
-              } else {
-                console.log("Not Existing...");
-                console.log(category, item.value, "Not Matched");
-                const insertTheNewSql = `INSERT INTO area_assign_user (user_id, distribution_id, distribution_type,  category_id, group_id) VALUES (?,?,?,?,?)`;
-                await db.query(
-                  insertTheNewSql,
-                  [user_id, item.value, 1, category, result[0].group_id],
-                  async (err, insertResult) => {
-                    if (err) {
-                      console.log({ isSuccess: false, result: err });
-                      res.send({ isSuccess: false, result: "error" });
-                    } else {
-                      console.log({ isSuccess: true, result: insertTheNewSql });
-                      // res.send({ isSuccess: true, result: 'success' });
-                    }
-                  }
-                );
+
+    const deleteSql = `DELETE FROM area_assign_user WHERE user_id = ${userId} AND category_id = ${id}`;
+    await db.query(deleteSql, async (err, deleteResult) => {
+      if (err) {
+        console.log({ isSuccess: false, result: err });
+        res.send({ isSuccess: false, result: "error" });
+      } else {
+        console.log({ isSuccess: true, result: deleteSql });
+        // res.send({ isSuccess: true, result:  })
+        for (const reqCategory of category) {
+          const { category, villageID } = reqCategory;
+          for (const item of villageID) {
+            console.log(category);
+            console.log(item, "hjf");
+            const insertTheNewSql = `INSERT INTO area_assign_user (user_id, distribution_id, distribution_type,  category_id, group_id) VALUES (?,?,?,?,?)`;
+            await db.query(
+              insertTheNewSql,
+              [userId, item.value, 1, category, 1],
+              async (err, insertResult) => {
+                if (err) {
+                  console.log({ isSuccess: false, result: err });
+                  res.send({ isSuccess: false, result: "error" });
+                } else {
+                  console.log({ isSuccess: true, result: insertTheNewSql });
+                  // res.send({ isSuccess: true, result: 'success' });
+                }
               }
-            }
+            );
           }
         }
       }
-    );
+    });
     // Assuming category is an array of objects like [{ category: ..., value: ... }, ...]
     // for (const item of category) {
     //   const categoryId = item.category;
