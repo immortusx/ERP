@@ -68,6 +68,7 @@ export default function AddAssignArea() {
         dispatch(setShowMessage("Area is assigned"));
         dispatch(clearAddassigneAreaState());
         setShow(0);
+        navigate("/administration/employees");
         clearInpHook();
         //  clearaddaddAgency();
       } else {
@@ -82,7 +83,8 @@ export default function AddAssignArea() {
         dispatch(setShowMessage("Assign Area is updated"));
         dispatch(clearEditassignareaState());
         setShow(0);
-        // navigate("/sale/area-Assign");
+        navigate("/administration/employees");
+        // navigate("/sale/area-Assign")
         clearInpHook();
         //  clearaddaddAgency();
       } else {
