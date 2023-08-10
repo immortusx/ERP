@@ -62,6 +62,7 @@ import Roles from './Roles'
 import Tax from './Master/Tax/Tax'
 import Sub_Modal from "./Master/Manufacturer/Sub_modal";
 import Variants from "./Master/Manufacturer/Sub_modal";
+import Dashboard from "./Dashboard";
 
 const CheckPermission = ({ children, path }) => {
   // return checkList.includes(path) ? children : <Navigate to="../no-access" />
@@ -274,6 +275,18 @@ export default function HomeScreen() {
                           </NavLink>
                         </li>
                       )}
+                      {checkTabGrant(["profile"]) && (
+                        <li className="inLi">
+                          <NavLink
+                            className={({ isActive }) =>
+                              isActive ? "activeLink" : ""
+                            }
+                            to="home/dashboard"
+                          >
+                            Dashboard
+                          </NavLink>
+                        </li>
+                      )}
                       {/* {
                         checkTabGrant(['profile']) && <li className='inLi'>
                           <NavLink className={({ isActive }) => isActive ? 'activeLink' : ''} to="enquiry" >
@@ -326,16 +339,6 @@ export default function HomeScreen() {
                           </NavLink>
                         </li>
                       )}
-                      <li className="inLi">
-                        <NavLink
-                          className={({ isActive }) =>
-                            isActive ? "activeLink" : ""
-                          }
-                          to="sale/area-Assign"
-                        >
-                          Area Assign
-                        </NavLink>
-                      </li>
                     </ul>
                   </div>
                 </li>
@@ -653,7 +656,7 @@ export default function HomeScreen() {
                         fill="currentColor"
                         className="bi bi-x-lg"
                         viewBox="0 0 16 16"
-                      >
+                      >gg
                         <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" />
                       </svg>
                     </button>
@@ -1085,6 +1088,15 @@ export default function HomeScreen() {
               element={
                 <CheckPermission path="profile">
                   <Profile_list workFor="forEdit" />
+                </CheckPermission>
+              }
+              exact
+            />
+             <Route
+              path="home/dashboard"
+              element={
+                <CheckPermission path="profile">
+                  <Dashboard />
                 </CheckPermission>
               }
               exact
