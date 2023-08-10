@@ -415,6 +415,79 @@ select.myInput {
   color: #00a2ff;
 }
 
+.dashboard {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f7f7f7;
+  padding: 10px;
+}
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.left-container {
+  margin-right: 20px;
+}
+
+.right-container {
+  display: flex;
+  align-items: center;
+}
+.middle-container {
+  display: flex;
+  align-items: center;
+}
+
+.headingStyles {
+  margin: 0;
+  font-size: 18px;
+}
+
+.search-item {
+  margin-right: 10px;
+  padding: 5px;
+  border-radius: 4px;
+  background-color: #E5F1F9;
+  width: 400px;
+}
+
+.search-input {
+  border: none;
+  padding: 5px;
+  border-radius: 4px;
+  width: 355px
+}
+.enquiry-charts{
+  background-color: #55a6d8;
+  color: white;
+}
+.sales-charts {
+  background-color: #d89f55;
+  color: white;
+}
+.growth-item {
+  position: relative;
+  padding: 10px;
+  box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
+}
+
+.growth-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 100%;
+  background-color: #ffcc00;
+}
+
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
