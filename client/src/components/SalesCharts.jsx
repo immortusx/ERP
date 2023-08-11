@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import Chart from 'chart.js/auto';
 
-const SalesPieChart = () => {
+const SalesCharts = () => {
   useEffect(() => {
     const ctx = document.getElementById('salesPieChart').getContext('2d');
 
@@ -38,4 +38,4 @@ const SalesPieChart = () => {
   );
 };
 
-export default SalesPieChart;
+export default SalesCharts;

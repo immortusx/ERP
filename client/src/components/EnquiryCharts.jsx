@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import Chart from 'chart.js/auto';
 
-const EnquiryBookingChart = () => {
+const EnquiryCharts = () => {
   useEffect(() => {
     const ctx = document.getElementById('enquiryBookingChart').getContext('2d');
 
@@ -43,4 +43,4 @@ const EnquiryBookingChart = () => {
   );
 };
 
-export default EnquiryBookingChart;
+export default EnquiryCharts;

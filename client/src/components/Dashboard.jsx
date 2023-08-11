@@ -1,6 +1,7 @@
 import React from "react";
-import EnquiryBookingChart from "./EnquiryCharts";
-import SalesPieChart from "./SalesCharts";
+import EnquiryCharts from "./EnquiryCharts";
+import SalesCharts from "./SalesCharts";
+
 
 const Dashboard = () => {
   return (
@@ -62,11 +63,11 @@ const Dashboard = () => {
       <div className="row my-2">
         <div className="col-md-8 bg-white">
           <h6 className="enquiry-charts py-1 px-2">Enquiry</h6>
-          <EnquiryBookingChart />
+          <EnquiryCharts />
         </div>
         <div className="col-md-4 bg-white">
           <h6 className="sales-charts py-1 px-2">Sales</h6>
-          <SalesPieChart />
+          <SalesCharts />
         </div>
       </div>
       <div className="row my-2 justify-content-between">
