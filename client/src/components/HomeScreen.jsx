@@ -211,7 +211,7 @@ export default function HomeScreen() {
     }
   }
   const openDashboard = () => {
-    navigate("home/dashboard");
+    navigate("/home/dashboard");
   };
   useEffect(() => {
     let jsonData = localStorage.getItem("branchesList");
