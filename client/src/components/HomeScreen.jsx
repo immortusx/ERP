@@ -16,7 +16,7 @@ import AddRole from "./AddRole";
 import NoAuth from "./NoAuth";
 import EnquiryList from "./EnquiryList";
 import AddDepartment from "./AddDepartment";
-import AddCategory from "./AddCategory"
+import AddCategory from "./AddCategory";
 import AddAgency from "./AddAgency";
 import Sales from "./Sales";
 import Manage from "./Manage";
@@ -43,23 +43,33 @@ import {
   clearTokenBranchState,
 } from "../redux/slices/tokenBranchChangeSlice";
 
-import { useLocation, NavLink, Link, useNavigate, Navigate, BrowserRouter, Route, Routes, json } from "react-router-dom";
-import EnquiryCategories from './EnquiryCategories'
-import Branch from './Branch'
-import State_list from './Master/State/State_list'
-import District_list from './Master/District/District_list'
-import Village_list from './Master/Village/Village_list'
-import Taluka_list from './Master/Taluka/Taluka_list'
-import Plan_List from './Master/Plan/Part_List'
-import Part_List from './Master/Plan/Part_List'
-import BreadCrumb from './BreadCrumb/BreadCrumb'
-import Manufacturer_list from './Master/Manufacturer/Manufacturer_list';
-import Manufacturer_modal from './Master/Manufacturer/Manufacturer_modal';
-import Department_list from './Master/Department/Department_list';
+import {
+  useLocation,
+  NavLink,
+  Link,
+  useNavigate,
+  Navigate,
+  BrowserRouter,
+  Route,
+  Routes,
+  json,
+} from "react-router-dom";
+import EnquiryCategories from "./EnquiryCategories";
+import Branch from "./Branch";
+import State_list from "./Master/State/State_list";
+import District_list from "./Master/District/District_list";
+import Village_list from "./Master/Village/Village_list";
+import Taluka_list from "./Master/Taluka/Taluka_list";
+import Plan_List from "./Master/Plan/Part_List";
+import Part_List from "./Master/Plan/Part_List";
+import BreadCrumb from "./BreadCrumb/BreadCrumb";
+import Manufacturer_list from "./Master/Manufacturer/Manufacturer_list";
+import Manufacturer_modal from "./Master/Manufacturer/Manufacturer_modal";
+import Department_list from "./Master/Department/Department_list";
 import Category_list from "./Master/Category/Category_list";
 import Profile_list from "./Profile";
-import Roles from './Roles'
-import Tax from './Master/Tax/Tax'
+import Roles from "./Roles";
+import Tax from "./Master/Tax/Tax";
 import Sub_Modal from "./Master/Manufacturer/Sub_modal";
 import Variants from "./Master/Manufacturer/Sub_modal";
 import Dashboard from "./Dashboard";
@@ -200,6 +210,9 @@ export default function HomeScreen() {
       document.getElementById("root").classList.add("toggleSideBar");
     }
   }
+  const openDashboard = () => {
+    navigate("home/dashboard");
+  };
   useEffect(() => {
     let jsonData = localStorage.getItem("branchesList");
     let branchesList = JSON.parse(jsonData);
@@ -255,7 +268,7 @@ export default function HomeScreen() {
                     >
                       <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.707 1.5ZM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5 5 5Z" />
                     </svg>
-                    <span>Home</span>
+                    <span onClick={openDashboard}>Home</span>
                   </button>
                   <div
                     id="home-collapseOne"
@@ -656,7 +669,8 @@ export default function HomeScreen() {
                         fill="currentColor"
                         className="bi bi-x-lg"
                         viewBox="0 0 16 16"
-                      >gg
+                      >
+                        gg
                         <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" />
                       </svg>
                     </button>
@@ -780,7 +794,6 @@ export default function HomeScreen() {
               }
               exact
             />
-           
 
             <Route
               path="administration/configuration"
@@ -1092,7 +1105,7 @@ export default function HomeScreen() {
               }
               exact
             />
-             <Route
+            <Route
               path="home/dashboard"
               element={
                 <CheckPermission path="profile">

@@ -59,24 +59,26 @@ const Dashboard = () => {
         </div>
       </div>
       <div className="row my-2">
-        <div className="col-md-6 bg-white">
+        <div className="col-md-8 bg-white">
           <h6 className="enquiry-charts py-1 px-2">Enquiry</h6>
           <EnquiryBookingChart />
         </div>
-        <div className="col-md-6 bg-white">
+        <div className="col-md-4 bg-white">
           <h6 className="sales-charts py-1 px-2">Sales</h6>
           <SalesChart />
         </div>
       </div>
       <div className="row my-2 justify-content-between">
-        <div className="col-md-3 growth-item">Growth</div>
-        <div className="col-md-3 growth-item">Sales</div>
-        <div className="col-md-3 growth-item">Customer Service</div>
+        <div className="col-md-3 growth-item">Impressive 300% Growth</div>
+        <div className="col-md-3 growth-item">Record Sales (July)</div>
+        <div className="col-md-3 growth-item">
+          Excellent Customer Satisfaction
+        </div>
       </div>
       <div className="row my-2 justify-content-between">
-        <div className="col-md-3 growth-item">Growth</div>
-        <div className="col-md-3 growth-item">Sales</div>
-        <div className="col-md-3 growth-item">Customer Service</div>
+        <div className="col-md-3 growth-item">Optimal Payout Scaling</div>
+        <div className="col-md-3 growth-item">Strong Booking Numbers</div>
+        <div className="col-md-3 growth-item">Uninterrupted Availability</div>
       </div>
     </div>
   );
