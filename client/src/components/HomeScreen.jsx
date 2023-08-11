@@ -130,7 +130,7 @@ export default function HomeScreen() {
   }, []);
 
   useEffect(() => {
-    console.log("profileDataState", profileDataState);
+    console.log("profileDataState", profileDataState.currentUserData,'profile..........');
     if (
       profileDataState.isSuccess &&
       profileDataState.currentUserData.isSuccess
@@ -214,7 +214,7 @@ export default function HomeScreen() {
     navigate("/home/dashboard");
   };
   useEffect(() => {
-    let jsonData = localStorage.getItem("branchesList");
+    let jsonData = localStorage.getItem("dealersList");
     let branchesList = JSON.parse(jsonData);
     // set here branchesList
     setCurrentBranch(branchesList);
@@ -688,7 +688,7 @@ export default function HomeScreen() {
                         currentBranch.length > 0 &&
                         currentBranch.map((branch, index) => {
                           return (
-                            <option key={index} value={branch.id}>
+                            <option  className="branch-text-list" key={index} value={branch.id}>
                               {branch.name}
                             </option>
                           );

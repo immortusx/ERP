@@ -477,7 +477,53 @@ select.myInput {
   background-color: #ffffff;
 }
 
-.growth-item::before {
+
+.growth-vertical1::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 100%;
+  background-color: #D68910 ;
+}
+.growth-vertical2::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 100%;
+  background-color: #2471A3;
+}
+.growth-vertical3::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 100%;
+  background-color: #37af1e;
+}
+.growth-vertical4::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 100%;
+  background-color: #2E86C1;
+}
+.growth-vertical5::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 100%;
+  background-color: #0ACCEF;
+}
+.growth-vertical6::before {
   content: '';
   position: absolute;
   top: 0;
@@ -486,6 +532,7 @@ select.myInput {
   height: 100%;
   background-color: #ffcc00;
 }
+
 .bi-search:hover {
   transform: scale(1.1);
   transition: transform 0.2s ease-in-out;
@@ -502,8 +549,29 @@ select.myInput {
   transition: transform 0.2s ease-in-out;
   cursor: pointer;
 }
-
-
+.impressive-text {
+  color: #D68910;
+  font-weight: bold;
+}
+.strength-text {
+  color: rgb(109, 108, 108);
+  font-weight: bold;
+}
+.record-text {
+  color: #2471A3;
+  font-weight: bold;
+}
+.excellent-text {
+  color: #37af1e;
+  font-weight: bold;
+}
+.optimal-text {
+  color: #2E86C1;
+  font-weight: bold;
+}
+.branch-text-list {
+  text-transform: capitalize;
+}
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
