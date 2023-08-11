@@ -5,5 +5,85 @@
 }
 
 .myTbl td {
-    padding: 10px  !important;
+    padding: 10px !important;
+}
+
+.userd {
+    max-Width: 500px;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-Radius: 5px;
+    box-Shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+}
+.userd1{
+    max-Width: 500px;
+    margin: auto;
+    padding: 20px;
+    height: 452px;
+    border: 1px solid #ccc;
+    border-Radius: 5px;
+    box-Shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.userdet {
+    background-Color: #FAFAFA;
+    padding: 10px;
+    border-Radius: 5px;
+    box-Shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.sp {
+    font-Weight: 450;
+    color: grey;
+}
+
+.input-field {
+    width: 80%;
+    padding: 10px;
+    border: 2px solid rgb(152, 196, 212);
+    border-radius: 5px;
+    font-size: 16px;
+    margin-bottom: 10px;
+    transition: border-color 0.3s ease-in-out;
+    /* Smooth transition for border color */
+}
+
+/* Hover styles */
+.input-field:hover {
+    border-color: blue;
+    box-shadow: 0 0 5px rgba(0, 0, 255, 0.5);
+}
+
+
+/* Hover while typing styles */
+.hover-while-typing:hover {
+    border-color: green;
+    /* Additional styles specific to hover while typing */
+}
+
+.lbu {
+    display: block;
+    margin-Bottom: 5px;
+     font-Weight: 450;
+    color:grey;
+}
+
+h5 {
+    font-Weight: bold;
+}
+
+h3 {
+    font-weight: 500;
+    margin: auto;
+}
+
+.btnc{
+    background: #3090C7;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-Radius: 5px;
+    cursor: pointer;
 }

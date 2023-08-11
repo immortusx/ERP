@@ -297,7 +297,7 @@ export default function HomeScreen() {
                             }
                             to="home/homeprofile"
                           >
-                           Home Profile
+                           Profile
                           </NavLink>
                         </li>
                       )}
