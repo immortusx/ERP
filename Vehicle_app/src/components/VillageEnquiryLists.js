@@ -14,7 +14,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {API_URL} from '@env';
 import CustomLoadingSpinner from './subCom/CustomLoadingSpinner';
 import moment from 'moment';
+import { useNavigation } from '@react-navigation/native';
 const VillageEnquiryLists = ({route}) => {
+  const navigation = useNavigation();
   const {villageId, categoryId, villageName, totalEnquiry} = route.params;
   const [enquiryList, setEnquiryList] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -47,6 +49,13 @@ const VillageEnquiryLists = ({route}) => {
       getEnquiry();
     }
   }, [villageId]);
+  const openAdditonalEnquiry = item => {
+    console.log(item, '>>>>>>>>>>>>>>>.');
+    navigation.navigate('Additional Details', {item: item});
+  };
+  const handleSheduleCall = item => {
+    navigation.navigate('Schedule Call', {item: item});
+  };
   if (loading) {
     return <CustomLoadingSpinner />;
   }
@@ -66,7 +75,7 @@ const VillageEnquiryLists = ({route}) => {
           return (
             <TouchableWithoutFeedback
               onPress={() => {
-                // openAdditonalEnquiry(item);
+                openAdditonalEnquiry(item);
               }}>
               {/* <View key={index} style={styles.box}>
                   <Text style={styles.label}>
