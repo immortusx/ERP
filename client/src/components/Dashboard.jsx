@@ -1,6 +1,7 @@
 import React from "react";
 import EnquiryBookingChart from "./EnquiryCharts";
-import SalesChart from "./SalesCharts";
+import SalesPieChart from "./SalesCharts";
+
 const Dashboard = () => {
   return (
     <div>
@@ -65,7 +66,7 @@ const Dashboard = () => {
         </div>
         <div className="col-md-4 bg-white">
           <h6 className="sales-charts py-1 px-2">Sales</h6>
-          <SalesChart />
+          <SalesPieChart />
         </div>
       </div>
       <div className="row my-2 justify-content-between">
