@@ -206,47 +206,6 @@ const AddEnquiry = ({navigation}) => {
         <View style={styles.customerContainer}>
           <View style={styles.dateContainer}>
             <Text>Enquiry</Text>
-            <View style={styles.dateStyle}>
-              <Text>Select Date : </Text>
-              <TouchableOpacity
-                onPress={() => {
-                  setOpenCurrentDateModal(true);
-                }}>
-                <Text style={styles.dateText}>
-                  {currentDate === ''
-                    ? new Date().toISOString().slice(0, 10)
-                    : currentDate}
-                </Text>
-              </TouchableOpacity>
-              <Calendars
-                showModal={openCurrentDateModal}
-                selectedDate={currentDate}
-                handleCalendarDate={handleCalendarDate}
-                onClose={() => setOpenCurrentDateModal(false)}
-              />
-              {/* <Modal
-                visible={showModal}
-                animationType="fade"
-                transparent={true}>
-                <View style={styles.modalContainer}>
-                  <View style={styles.modalContent}>
-                    <Calendar
-                      style={{borderRadius: 10, elevation: 4, margin: 10}}
-                      onDayPress={date => {
-                        handleCalendarDate(date);
-                      }}
-                      markedDates={{
-                        [currentDate]: {
-                          selected: true,
-                          disableTouchEvent: true,
-                          selectedDotColor: 'orange',
-                        },
-                      }}
-                    />
-                  </View>
-                </View>
-              </Modal> */}
-            </View>
           </View>
           <View style={styles.wrapper}>
             <TouchableWithoutFeedback

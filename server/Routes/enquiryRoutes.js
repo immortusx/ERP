@@ -353,6 +353,7 @@ router.post("/set-new-fast-enquiry", tokenCheck, async (req, res) => {
 
     const branch_id = req.body.branchId;
     const categoryId = 1;
+    console.log(branch_id, "branchid");
 
     const salePersonSql = `CALL sp_get_user_sale_person(${village}, ${categoryId})`;
     await db.query(salePersonSql, async (err, salePersonDetails) => {
@@ -378,16 +379,11 @@ router.post("/set-new-fast-enquiry", tokenCheck, async (req, res) => {
                 console.log({ isSuccess: false, result: err });
                 res.send({ isSuccess: false, result: "error" });
               } else {
-                console.log({ isSuccess: true, result: "success" });
+                console.log({ isSuccess: true, result: fastSql });
                 // res.send({ isSuccess: true, result: fastEnquiry });
                 const customer_id = fastEnquiry.insertId;
-                const enquiryDate = new Date()
-                  .toISOString()
-                  .slice(0, 19)
-                  .replace("T", " ");
-                console.log(enquiryDate);
                 console.log(customer_id);
-                const enquirySql = `INSERT INTO enquiries (branch_id, enquiry_type_id, salesperson_id, customer_id, date) VALUES (?,?,?,?)`;
+                const enquirySql = `INSERT INTO enquiries (branch_id, enquiry_type_id, salesperson_id, customer_id, date) VALUES (?,?,?,?,?)`;
                 await db.query(
                   enquirySql,
                   [
@@ -395,14 +391,14 @@ router.post("/set-new-fast-enquiry", tokenCheck, async (req, res) => {
                     categoryId,
                     salesperson_id,
                     customer_id,
-                    enquiryDate,
+                    new Date(),
                   ],
                   (err, enquiryResult) => {
                     if (err) {
                       console.log({ isSuccess: false, result: err });
                       res.send({ isSuccess: false, result: "error" });
                     } else {
-                      console.log({ isSuccess: true, result: enquiryResult });
+                      console.log({ isSuccess: true, result: enquirySql });
                       res.send({ isSuccess: true, result: "success" });
                     }
                   }
