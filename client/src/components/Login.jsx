@@ -45,12 +45,13 @@ export default function Login() {
 
     useEffect(() => {
         if (loginState.isSuccess === true) {
+            console.log(loginState.result, 'loginresult>>>>>>');
             if (loginState.result.message == 'success') {
                 // taking first dealer for login 
 
-                localStorage.setItem('dealersList', JSON.stringify(loginState.result.result.dealerResult))
+                localStorage.setItem('dealersList', JSON.stringify(loginState.result.result.branchResult))
                 localStorage.setItem('rbacToken', loginState.result.result.tokenIs)
-                localStorage.setItem('currentDealerId', loginState.result.result.currentDealer)
+                localStorage.setItem('currentDealerId', loginState.result.result.currentBranch)
                 const token = localStorage.getItem('rbacToken')
                 if (!token) {
                     return

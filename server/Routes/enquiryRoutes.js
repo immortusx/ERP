@@ -405,7 +405,13 @@ router.post("/set-new-fast-enquiry", tokenCheck, async (req, res) => {
                 const enquirySql = `INSERT INTO enquiries (branch_id, enquiry_type_id, salesperson_id, customer_id, date) VALUES (?,?,?,?)`;
                 await db.query(
                   enquirySql,
-                  [branch_id, categoryId, salesperson_id, customer_id, enquiryDate],
+                  [
+                    branch_id,
+                    categoryId,
+                    salesperson_id,
+                    customer_id,
+                    enquiryDate,
+                  ],
                   (err, enquiryResult) => {
                     if (err) {
                       console.log({ isSuccess: false, result: err });
@@ -1158,7 +1164,7 @@ router.get(
 router.post("/get-enquiry-by-village", tokenCheck, async (req, res) => {
   console.log("/get-enquiry-by-village?????????", req.body);
   try {
-    const {villageId, categoryId } = req.body;
+    const { villageId, categoryId } = req.body;
     const urlNew = `CALL sp_get_enquiry_list_by_village(${villageId}, ${categoryId})`;
     await db.query(urlNew, async (err, result) => {
       if (err) {
@@ -1226,6 +1232,25 @@ router.get("/get-new-enquiries-list", tokenCheck, async (req, res) => {
     let isSuperAdmin = req.myData.isSuperAdmin;
     let userId = req.myData.userId;
     const urlNew = `CALL sp_get_new_enquiry_list()`;
+    await db.query(urlNew, async (err, result) => {
+      if (err) {
+        console.log({ isSuccess: false, result: err });
+        res.send({ isSuccess: false, result: "error" });
+      } else {
+        console.log({ isSuccess: "success", result: urlNew });
+        res.send({ isSuccess: "success", result: result[0] });
+      }
+    });
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+//====================get total enquiry-booking==================
+router.get("/get-total-enquiry-booking", tokenCheck, async (req, res) => {
+  try {
+    console.log(">>>>>>>>>/get-total-enquiry-booking");
+    const urlNew = `CALL sp_get_total_enquiry_booking()`;
     await db.query(urlNew, async (err, result) => {
       if (err) {
         console.log({ isSuccess: false, result: err });
