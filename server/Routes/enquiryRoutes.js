@@ -112,6 +112,21 @@ router.get("/get-enquiries", tokenCheck, async (req, res) => {
     }
   });
 });
+router.get("/get-enquiriesbyId/:id", tokenCheck, async (req, res) => {
+  console.log(">>>>>>>>>get-enquiries", req.myData);
+ const userId = req.params.id
+  const urlNew = "select * from enquiries where id =" +userId ;
+  console.log(urlNew, "urlNew");
+  await db.query(urlNew, async (err, result) => {
+    if (err) {
+      console.log({ isSuccess: false, result: err });
+      res.send({ isSuccess: false, result: "error" });
+    } else {
+      console.log({ isSuccess: "success", result: urlNew });
+      res.send({ isSuccess: "success", result: result[0] });
+    }
+  });
+});
 router.get("/get-dsp/:id", tokenCheck, async (req, res) => {
   console.log(">>>>>>>>>get-dsp", req.params);
   let branchId = req.params.id;
