@@ -73,6 +73,7 @@ import Tax from "./Master/Tax/Tax";
 import Sub_Modal from "./Master/Manufacturer/Sub_modal";
 import Variants from "./Master/Manufacturer/Sub_modal";
 import Dashboard from "./Dashboard";
+import UserProfile from "./UserProfile";
 
 const CheckPermission = ({ children, path }) => {
   // return checkList.includes(path) ? children : <Navigate to="../no-access" />
@@ -297,6 +298,19 @@ export default function HomeScreen() {
                             to="home/dashboard"
                           >
                             Dashboard
+                          </NavLink>
+                        </li>
+                      )}
+
+                    {checkTabGrant(["profile"]) && (
+                        <li className="inLi">
+                          <NavLink
+                            className={({ isActive }) =>
+                              isActive ? "activeLink" : ""
+                            }
+                            to="home/profile"
+                          >
+                           Profile
                           </NavLink>
                         </li>
                       )}
@@ -1110,6 +1124,15 @@ export default function HomeScreen() {
               element={
                 <CheckPermission path="profile">
                   <Dashboard />
+                </CheckPermission>
+              }
+              exact
+            />
+             <Route
+              path="home/profile"
+              element={
+                <CheckPermission path="profile">
+                  <UserProfile />
                 </CheckPermission>
               }
               exact
