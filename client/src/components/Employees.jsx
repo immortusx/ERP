@@ -157,57 +157,7 @@ export default function Employees() {
     }
   };
 
-  // const handleEditArea = async (ev) => {
-  //   try {
-  //     console.log(ev, "evvvvvv");
-  //     console.log(ev.user_id, "evvvvvv");
-
-  //     const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/add-areaAssignUserById/${ev.user_id}`;
-  //     const config = {
-  //       headers: {
-  //         token: localStorage.getItem("rbacToken"),
-  //       },
-  //     };
-
-  //     const response = await Axios.get(url, config);
-
-  //     if (response.data && response.data.isSuccess) {
-  //       console.log("response.data", response.data.result);
-  //       console.log("ev", ev);
-
-  //       setAssignedAreaPerUser(response.data.result, "response.data.result");
-  //       setAssignedAreaPerUserId(ev, "ev");
-
-  //       console.log(
-  //         response.data.result[0],
-  //         "combinedArrayForIndividualUsercombinedArrayForIndividualUser"
-  //       );
-  //       console.log(
-  //         assigneAreaPerUser,
-  //         "assigneAreaPerUserassigneAreaPerUserassigneAreaPerUserassigneAreaPerUser"
-  //       );
-  //       navigate("/sale/area-Assign/add-AsignArea", {
-  //         state: { assigneAreaPerUser: response.data.result },
-  //       });
-  //     } else {
-  //       console.log(
-  //         "No data received from the server or the request was not successful."
-  //       );
-  //       setShowComponent(true);
-  //       console.log(ev.user_id, "ev");
-  //       // setName(ev.first_name+ " "+ev.last_name);
-  //       setId(ev.user_id);
-  //       // navigate("/sale/area-Assign", {
-  //       //   state: { assigneAreaPerUserid: ev },
-  //       // });
-  //       // navigate("/sale/area-Assign", {
-  //       //   state: { assigneAreaPerUser: response.data.result },
-  //       // });
-  //     }
-  //   } catch (error) {
-  //     console.error("An error occurred while fetching data:", error);
-  //   }
-  // };
+ 
 
   const hideareamodal = () => {
     setShowComponent(false);

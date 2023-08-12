@@ -254,6 +254,7 @@ export default function Enquiry({ workFor }) {
       },
     };
     await axios.get(url, config).then((response) => {
+      
       if (response.data) {
         if (response.data.isSuccess) {
           console.log("response.data", response.data);

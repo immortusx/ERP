@@ -215,40 +215,7 @@ export default function AreaAssignListList({ showModal, hideModal, id }) {
     });
   }
 
-  //   function handleSubmit() {
-  //     console.log(selectedOptionUser, "selectedOptionUser");
-  //     console.log(selectedOptionVillage, "selectedOptionVillage");
-  //     console.log(selectedCtaegory, "selectedCtaegory");
-  //     console.log(allUser, "allUser");
-  //     let myAr = [];
-  //     selectedOptionUser.map((singleUser) => {
-  //       selectedCtaegory.map((singleCategory) => {
-  //         selectedOptionVillage.map((singleVillage) => {
-  //           myAr.push({
-  //             id: singleUser.value,
-  //             category: singleCategory.value,
-  //             value: singleVillage.value,
-  //           });
-  //         });
-  //       });
-  //     });
-  //     console.log("myAr", myAr);
-  //     dispatch(addassigneAreaToDb(myAr));
-
-  //     // let tempAr = [];
-  //     // selectedOptionUser.forEach((userItem) => {
-  //     //   tempAr.push({
-  //     //     value: selectedOptionVillage.map((villageData) => villageData.value),
-  //     //     // value:selectedOptionVillage.value,
-  //     //     id: userItem.value,
-  //     //     category: selectedCtaegory.value,
-  //     //     category: selectedCtaegory.map((categoryData) => categoryData.value),
-  //     //   });
-  //     // });
-
-  //     // console.log(tempAr, "tempAr");
-  //   }
-
+  
   function handleSubmit() {
     console.log(selectedOptionUser, "selectedOptionUser");
     console.log(selectedOptionVillage, "selectedOptionVillage");

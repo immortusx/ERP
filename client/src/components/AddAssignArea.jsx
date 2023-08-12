@@ -223,31 +223,14 @@ export default function AddAssignArea() {
       newArr = data.villageData;
       newArr = data.villageData;
     }
-    // let tempAr = [];
-    // newArr.forEach((element) => {
-    //   if (options && options.length > 0) {
-    //     const data = options.find((item) => item.value == element);
-    //     tempAr.push(data);
-    // }
-    // console.log(newArr, "newArr");
-    // setSelectedOptionVillage(newArr);
-    // });
+   
 
     console.log(newArr, "newArr");
     setSelectedOptionVillage(newArr);
-    // let newArry = [];
-    // if (data.categoryData && data.categoryData.length > 0) {
+    
     const newArry = data.categoryData;
     console.log(data.categoryData, "catoegiru Dtaa");
-    // }
-    // let tempArr = [];
-    // newArry.forEach((element) => {
-    //   if (categoryoptions && categoryoptions.length > 0) {
-    //     const data = categoryoptions.find((item) => item.label == element);
-    //     tempArr.push(data);
-    //   }
-    //   setSelectedCtaegory(tempArr);
-    // });
+   
 
     console.log(newArry, "newArry");
     setSelectedCtaegory([newArry]);
@@ -279,9 +262,7 @@ export default function AddAssignArea() {
       if (response.data && response.data.isSuccess) {
         console.log(response.data);
         dispatch(setShowMessage("Assign Area Deleted"));
-        // dispatch(addRoleToDb());
-        //  setDisplayConfirmationModal(false);
-        //  getAreaAssignUserFromDb();
+      
       } else {
         dispatch(setShowMessage("failed to delete"));
       }
