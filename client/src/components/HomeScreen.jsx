@@ -1178,7 +1178,7 @@ export default function HomeScreen() {
               exact
             />
 
-            <Route path="*" element={<Navigate to="/home/profile" />} />
+            <Route path="*" element={<Navigate to="/home" />} />
           </Routes>
         </div>
       </main>
