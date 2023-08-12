@@ -2,7 +2,6 @@ import React from "react";
 import EnquiryCharts from "./EnquiryCharts";
 import SalesCharts from "./SalesCharts";
 
-
 const Dashboard = () => {
   return (
     <div>
@@ -71,16 +70,32 @@ const Dashboard = () => {
         </div>
       </div>
       <div className="row my-2 justify-content-between">
-        <div className="col-md-3 growth-item">Impressive 300% Growth</div>
-        <div className="col-md-3 growth-item">Record Sales (July)</div>
-        <div className="col-md-3 growth-item">
-          Excellent Customer Satisfaction
+        <div className="col-md-3 growth-item growth-vertical1">
+          <h6 className="impressive-text">Impressive</h6>
+          <h5 className="strength-text">300% Growth</h5>
+        </div>
+        <div className="col-md-3 growth-item growth-vertical2">
+          <h6 className="record-text">Record Sales</h6>
+          <h5 className="strength-text">(July)</h5>
+        </div>
+        <div className="col-md-3 growth-item growth-vertical3">
+          <h6 className="excellent-text">Excellent Customer Satisfaction</h6>
+          <h5 className="strength-text">Superlative</h5>
         </div>
       </div>
       <div className="row my-2 justify-content-between">
-        <div className="col-md-3 growth-item">Optimal Payout Scaling</div>
-        <div className="col-md-3 growth-item">Strong Booking Numbers</div>
-        <div className="col-md-3 growth-item">Uninterrupted Availability</div>
+        <div className="col-md-3 growth-item growth-vertical4">
+          <h6 className="optimal-text">Optimal Payout Scaling</h6>
+          <h5 className="strength-text">Peak</h5>
+        </div>
+        <div className="col-md-3 growth-item growth-vertical5">
+          <h6 className="strong-text">Strong Booking Numbers</h6>
+          <h5 className="strength-text">Solid</h5>
+        </div>
+        <div className="col-md-3 growth-item growth-vertical6">
+          <h6 className="available-text"> Uninterrupted Availability</h6>
+          <h5 className="strength-text">Steady</h5>
+        </div>
       </div>
     </div>
   );
