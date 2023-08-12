@@ -295,7 +295,7 @@ export default function HomeScreen() {
                             className={({ isActive }) =>
                               isActive ? "activeLink" : ""
                             }
-                            to="home/homeprofile"
+                            to="home/profile"
                           >
                            Profile
                           </NavLink>
@@ -1116,7 +1116,7 @@ export default function HomeScreen() {
               exact
             />
              <Route
-              path="home/homeprofile"
+              path="home/profile"
               element={
                 <CheckPermission path="profile">
                   <UserProfile />

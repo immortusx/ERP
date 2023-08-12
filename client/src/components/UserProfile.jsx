@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import "../styles/Users.css";
-
+import axios from 'axios';
+import { setShowMessage } from "../redux/slices/notificationSlice";
 const UserProfile = () => {
+    const dispatch = useDispatch();
     const profileDataState = useSelector((state) => state.profileData.profile);
     const [inputValue, setInputValue] = useState('');
     const [isTyping, setIsTyping] = useState(false);
@@ -10,41 +12,89 @@ const UserProfile = () => {
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-    //    console.log('currentPasswor')
-        if (newPassword !== confirmPassword) {
-          console.log("New password and confirm password don't match.");
-          return;
-        }
-        console.log('Current Password:', currentPassword);
-        console.log('New Password:', newPassword);
-        console.log('Confirm Password:', confirmPassword);
-    
-        // Here you would make an API request to change the password
-        // You can use a library like Axios for this
-        // Example: axios.post('/api/change-password', { currentPassword, newPassword });
-      };
-  
-
-    useEffect(() => {
-        // console.log('userdetails');
-        // console.log(profileDataState.currentUserData.result.email, 'state');
-        setUserData({
-            firstName: profileDataState.currentUserData.result.first_name,
-            lastName: profileDataState.currentUserData.result.last_name,
-            email: profileDataState.currentUserData.result.email,
-            phoneNumber: profileDataState.currentUserData.result.phone_number,
-        })
-    }, [profileDataState])
-
+    const [validationMessage, setValidationMessage] = useState('');
     const [userData, setUserData] = useState({
         firstName: '',
         lastName: '',
         email: '',
         phoneNumber: '',
     })
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (newPassword !== confirmPassword) {
+            setValidationMessage("New password and confirm password don't match.");
+            return;
+        } else {
+            try {
+                console.log("Helo");
+                const url = `${process.env.REACT_APP_NODE_URL}/api/users/changepassword`;
+                const config = {
+                    headers: {
+                        token: localStorage.getItem("rbacToken"),
+                    },
+                };
+                const data = {
+                    currentPassword: currentPassword,
+                    confirmPassword: confirmPassword,
+                    email: userData.email
+                };
+
+                const response = await axios.post(url, data, config).then((response) => {
+                    if (response.data && response.data.isSuccess === true) {
+                        dispatch(setShowMessage("Password Changed Successfully!"))                        
+
+                    }
+                })
+
+                // console.log("Password change response:", response.data);
+
+                // Handle any further actions or feedback based on the API response
+
+            } catch (error) {
+                console.error("Error changing password:", error);
+                // Handle error, show error message, etc.
+            }
+
+
+        }
+
+
+        // if (!validatePassword(newPassword)) {
+        //     setValidationMessage("Password must meet the criteria (e.g., at least 8 characters, uppercase, lowercase, numbers, special characters).");
+        //     return;
+        // }
+        setValidationMessage('');
+
+        console.log("handleSubmit");
+        console.log('Current Password:', currentPassword);
+        console.log('New Password:', newPassword);
+        console.log('Confirm Password:', confirmPassword);
+
+        // Here you would make an API request to change the password
+        // You can use a library like Axios for this
+        // Example: axios.post('/api/change-password', { currentPassword, newPassword });
+    };
+    const validatePassword = (password) => {
+        // Implement your password validation criteria here
+        return password.length >= 8 && /[A-Z]/.test(password) && /\d/.test(password) && /[!@#$%^&*]/.test(password);
+    };
+
+
+    useEffect(() => {
+        if (profileDataState.currentUserData && profileDataState.currentUserData.result) {
+            setUserData({
+                firstName: profileDataState.currentUserData.result.first_name,
+                lastName: profileDataState.currentUserData.result.last_name,
+                email: profileDataState.currentUserData.result.email,
+                phoneNumber: profileDataState.currentUserData.result.phone_number,
+            })
+        }
+        // console.log('userdetails');
+        // console.log(profileDataState.currentUserData.result.email, 'state');
+
+    }, [profileDataState])
+
+
 
 
 
@@ -94,7 +144,7 @@ const UserProfile = () => {
                         <div className="userd col-md-6" >
                             <h5>Change Password</h5>
 
-                            <form onSubmit={handleSubmit}>
+                            <form>
                                 <label className="lbu">Email</label>
                                 <input
                                     value={userData.email}
@@ -133,9 +183,13 @@ const UserProfile = () => {
                                     className={`input-field ${isTyping ? 'hover-while-typing' : ''}`}
                                     value={confirmPassword}
                                     onChange={(e) => setConfirmPassword(e.target.value)}
-                                    />
+                                />
                             </div>
-                            <button type="submit" className="btnc" >Change Password</button>
+                            {validationMessage && (
+                                <p style={{ color: 'red' }}>{validationMessage}</p>
+                            )}
+
+                            <button onClick={handleSubmit} className="btnc" >Change Password</button>
                         </div>
                     </form>
                 </div>
