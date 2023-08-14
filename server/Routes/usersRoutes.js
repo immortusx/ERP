@@ -53,7 +53,7 @@ router.get('/get-user-details/:id', tokenCheck, async (req, res) => {
   const userId = req.params.id
   const urlNew = `call sp_user_details_branches_roles( ${userId}) `
   db.query(urlNew, async (err, result) => {
-    console.log(result,"result")
+    console.log(result, "result")
     console.log('result[0][0].branchesRole ***********', result[0][0].branchesRole)
     let data = JSON.parse(result[0][0].branchesRole)
     console.log('result[0]', data)
@@ -189,8 +189,8 @@ router.post('/add-user', tokenCheck, checkUserPermission('add-user'), async (req
   const branchRole = req.body.branchRole
   const departmentId = 1
   const user_type_id = 1;
-  
-  
+
+
 
   const hassPass = await hasThePass(password)
 
@@ -241,7 +241,7 @@ router.post('/add-user', tokenCheck, checkUserPermission('add-user'), async (req
 router.get("/delete-user/:id", tokenCheck, async (req, res) => {
   try {
     const userId = req.params.id;
-    console.log(userId,"ggggggggggggggggggggggggggg");
+    console.log(userId, "ggggggggggggggggggggggggggg");
     const newUrl =
       "SELECT * FROM users where is_delete = 0 and id=" + userId;
     await db.query(newUrl, async (err, newResult) => {
@@ -269,5 +269,47 @@ router.get("/delete-user/:id", tokenCheck, async (req, res) => {
     console.log(e);
   }
 });
+
+router.post('/changepassword', tokenCheck, async (req, res) => {
+  console.log('>>>>>addUser');
+
+  console.log(req.body);
+
+  const email = req.body.email
+  const currentPassword = req.body.currentPassword
+  const confirmPassword = req.body.confirmPassword
+
+  const hassPass = await hasThePass(currentPassword)
+
+
+  const newUrl = `SELECT * FROM users where email = '${req.body.email}'; `
+
+  await db.query(newUrl, async (err, newResult) => {
+    console.log(newResult)
+    console.log(newResult[0].password, 'storedPassword');
+    // console.log(hassPass, 'currentPaasowd')
+    // compareTheHass(hassPass, newResult[0].password).
+    const hassPass = await hasThePass(confirmPassword)
+    const passwordsMatch = await compareTheHass(currentPassword, newResult[0].password);
+    if (passwordsMatch) {
+      console.log(passwordsMatch, 'pass')
+      const updateQuery = `UPDATE users SET password = ? WHERE email = '${email}'`;
+      await db.query(updateQuery, [hassPass], async (err, result) => {
+        if (err) {
+          console.log({ isSuccess: false, result: err });
+          res.send({ isSuccess: false, result: 'error' });
+        } else {
+          console.log({ isSuccess: true, result: 'Paasword Changed Successfully' });
+          res.send({ isSuccess: true, result: 'Password Changed Successfully' });
+        }
+      });
+    } else {
+      console.log(passwordsMatch, 'not match')
+    }
+  })
+})
+
+
+
 
 module.exports = router;

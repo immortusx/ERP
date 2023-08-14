@@ -572,6 +572,14 @@ select.myInput {
 .branch-text-list {
   text-transform: capitalize;
 }
+.strong-text {
+  color: #0ACCEF;
+  font-weight: bold;
+}
+.available-text {
+  color: #ffcc00;
+  font-weight: bold;
+}
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
