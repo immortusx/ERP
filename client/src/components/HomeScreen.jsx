@@ -27,6 +27,7 @@ import Master from "./Master";
 import Employees from "./Employees";
 import AreaAssignListList from "./AreaAssignListList";
 import AddAssignArea from "./AddAssignArea";
+import WorkAssign from "./Master/Work Assign/WorkAssign";
 import logo from "../assets/svg/logo.svg";
 import logoT from "../assets/svg/logofinal.svg";
 import { useSelector, useDispatch } from "react-redux";
@@ -74,6 +75,8 @@ import Sub_Modal from "./Master/Manufacturer/Sub_modal";
 import Variants from "./Master/Manufacturer/Sub_modal";
 import Dashboard from "./Dashboard";
 import UserProfile from "./UserProfile";
+import Report from "./Report";
+
 
 const CheckPermission = ({ children, path }) => {
   // return checkList.includes(path) ? children : <Navigate to="../no-access" />
@@ -557,6 +560,18 @@ export default function HomeScreen() {
                           </NavLink>
                         </li>
                       )}
+                        {checkTabGrant(["users"]) && (
+                        <li className="inLi">
+                          <NavLink
+                            className={({ isActive }) =>
+                              isActive ? "activeLink" : ""
+                            }
+                            to="administration/report"
+                          >
+                            Report
+                          </NavLink>
+                        </li>
+                      )}
 
                       {/*need to remove this */}
                       {/* {
@@ -923,6 +938,24 @@ export default function HomeScreen() {
               element={
                 <CheckPermission path="profile">
                   <Tax />
+                </CheckPermission>
+              }
+              exact
+            />
+            <Route
+              path="administration/report"
+              element={
+                <CheckPermission path="users">
+                  <Report />
+                </CheckPermission>
+              }
+              exact
+            />
+             <Route
+              path="administration/report/WorkAssign"
+              element={
+                <CheckPermission path="profile">
+                  <WorkAssign />
                 </CheckPermission>
               }
               exact
