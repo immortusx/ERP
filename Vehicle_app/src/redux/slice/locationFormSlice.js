@@ -3,8 +3,6 @@ import { createSlice } from '@reduxjs/toolkit';
 const locationFormSlice = createSlice({
   name: 'locationForm',
   initialState: {
-    state: '',
-    district: '',
     taluka: '',
     village: '',
   },
@@ -14,8 +12,6 @@ const locationFormSlice = createSlice({
     },
     clearLocationForm: (state) => {
       return {
-        state: '',
-        district: '',
         taluka: '',
         village: '',
       };

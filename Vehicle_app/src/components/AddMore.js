@@ -58,7 +58,7 @@ const AddMore = () => {
 
   useEffect(() => {
     if (result) {
-      console.log(result.result, 'tttttttttt');
+      // console.log(result.result, 'tttttttttt');
       setResultData(result.result);
     }
   }, [result]);
@@ -210,31 +210,6 @@ const AddMore = () => {
                 onPress={() => {
                   openAdditonalEnquiry(item);
                 }}>
-                {/* <View key={index} style={styles.box}>
-                  <Text style={styles.label}>
-                    <Image
-                      style={styles.personImg}
-                      source={require('../../assets/person.png')}
-                    />
-                    -{' '}
-                    {item.first_name +
-                      (item.last_name ? ' ' + item.last_name : '')}
-                  </Text>
-                  <Text style={styles.label}>
-                    <Image
-                      style={styles.personImg}
-                      source={require('../../assets/phone.png')}
-                    />
-                    - {item.phone_number}
-                  </Text>
-                  <Text style={styles.label}>
-                    <Image
-                      style={styles.personImg}
-                      source={require('../../assets/product.png')}
-                    />
-                    - {item.product}
-                  </Text>
-                </View> */}
                 <View key={index} style={styles.enquiryBox}>
                   <View style={styles.dataStyle}>
                     <View style={styles.dataContainer}>

@@ -70,8 +70,6 @@ const AddLocation = ({route}) => {
   useEffect(() => {
     if (editData) {
       console.log(editData, 'editLocationdd');
-      setState(editData.state_id);
-      setDistrict(editData.district_id);
       setTaluka(editData.taluka_id);
       setVillage(editData.village_id);
     }
@@ -87,10 +85,54 @@ const AddLocation = ({route}) => {
     return null;
   };
 
+  // useEffect(() => {
+  //   const getStateList = async () => {
+  //     const url = `${API_URL}/api/get-state-list`;
+  //     console.log('get state', url);
+  //     const token = await AsyncStorage.getItem('rbacToken');
+  //     const config = {
+  //       headers: {
+  //         token: token ? token : '',
+  //       },
+  //     };
+  //     console.log(config);
+  //     await axios.get(url, config).then(response => {
+  //       if (response) {
+  //         // console.log(response.data.result,'data');
+  //         setResultData(response.data.result);
+  //       }
+  //     });
+  //   };
+  //   getStateList();
+  // }, []);
+
+  // useEffect(() => {
+  //   if (state) {
+  //     const getEnquiryDistrict = async () => {
+  //       const url = `${API_URL}/api/get-district-list/${state}`;
+  //       console.log('get district', url);
+  //       const token = await AsyncStorage.getItem('rbacToken');
+  //       const config = {
+  //         headers: {
+  //           token: token ? token : '',
+  //         },
+  //       };
+  //       console.log(config);
+  //       await axios.get(url, config).then(response => {
+  //         if (response) {
+  //           console.log(response.data.result, 'data');
+  //           setDisrictResult(response.data.result);
+  //         }
+  //       });
+  //     };
+  //     getEnquiryDistrict();
+  //   }
+  // }, [state]);
+
   useEffect(() => {
-    const getStateList = async () => {
-      const url = `${API_URL}/api/get-state-list`;
-      console.log('get state', url);
+    const getTaluka = async () => {
+      const url = `${API_URL}/api/get-taluka-list`;
+      console.log('get taluka', url);
       const token = await AsyncStorage.getItem('rbacToken');
       const config = {
         headers: {
@@ -100,58 +142,12 @@ const AddLocation = ({route}) => {
       console.log(config);
       await axios.get(url, config).then(response => {
         if (response) {
-          // console.log(response.data.result,'data');
-          setResultData(response.data.result);
+          setTalukaResult(response.data.result);
         }
       });
     };
-    getStateList();
+    getTaluka();
   }, []);
-
-  useEffect(() => {
-    if (state) {
-      const getEnquiryDistrict = async () => {
-        const url = `${API_URL}/api/get-district-list/${state}`;
-        console.log('get district', url);
-        const token = await AsyncStorage.getItem('rbacToken');
-        const config = {
-          headers: {
-            token: token ? token : '',
-          },
-        };
-        console.log(config);
-        await axios.get(url, config).then(response => {
-          if (response) {
-            console.log(response.data.result, 'data');
-            setDisrictResult(response.data.result);
-          }
-        });
-      };
-      getEnquiryDistrict();
-    }
-  }, [state]);
-
-  useEffect(() => {
-    if (district) {
-      const getTaluka = async () => {
-        const url = `${API_URL}/api/get-taluka-list/${district}`;
-        console.log('get taluka', url);
-        const token = await AsyncStorage.getItem('rbacToken');
-        const config = {
-          headers: {
-            token: token ? token : '',
-          },
-        };
-        console.log(config);
-        await axios.get(url, config).then(response => {
-          if (response) {
-            setTalukaResult(response.data.result);
-          }
-        });
-      };
-      getTaluka();
-    }
-  }, [district]);
 
   useEffect(() => {
     if (taluka) {
@@ -167,7 +163,7 @@ const AddLocation = ({route}) => {
         console.log(config);
         await axios.get(url, config).then(response => {
           if (response) {
-            console.log(response.data,'villllll');
+            console.log(response.data, 'villllll');
             setVillageresult(response.data.result);
           }
         });
@@ -177,18 +173,16 @@ const AddLocation = ({route}) => {
   }, [taluka]);
 
   const saveLocation = () => {
-    console.log(state, district, taluka, village);
+    console.log(taluka, village);
     console.log(taluka, 'id');
 
     dispatch(
       saveLocationForm({
-        state: state,
-        district: district,
         taluka: taluka,
         village: village,
       }),
     );
-    setMessage("Location Added");
+    setMessage('Location Added');
     openModal();
     navigation.goBack();
   };
@@ -199,60 +193,17 @@ const AddLocation = ({route}) => {
     <View style={styles.container}>
       <View style={styles.customerContainer}>
         <Text style={styles.mainHeader}>Customer Location</Text>
-        <View style={{marginBottom: 5}}>
-          <Text style={styles.label}>State *</Text>
-          <View style={styles.inputContainer}>
-            {/* {renderLabel()} */}
-            <Dropdown
-              style={[styles.dropdown, isFocus && {borderColor: 'blue'}, {paddingHorizontal: 5}]}
-              placeholderStyle={styles.placeholderStyle}
-              selectedTextStyle={styles.selectedTextStyle}
-              inputSearchStyle={styles.inputSearchStyle}
-              iconStyle={styles.iconStyle}
-              data={stateData}
-              search
-              maxHeight={300}
-              labelField="label"
-              valueField="value"
-              placeholder={!isFocus ? 'Select State' : ' '}
-              searchPlaceholder="Search..."
-              value={state}
-              onChange={item => {
-                setState(item.value);
-              }}
-            />
-          </View>
-        </View>
-        <View style={{marginBottom: 5}}>
-          <Text style={styles.label}>District *</Text>
-          <View style={styles.inputContainer}>
-            {/* {renderLabel()} */}
-            <Dropdown
-              style={[styles.dropdown, isFocus && {borderColor: 'blue'},{paddingHorizontal: 5}]}
-              placeholderStyle={styles.placeholderStyle}
-              selectedTextStyle={styles.selectedTextStyle}
-              inputSearchStyle={styles.inputSearchStyle}
-              iconStyle={styles.iconStyle}
-              data={districtData}
-              search
-              maxHeight={300}
-              labelField="label"
-              valueField="value"
-              placeholder={!isFocus ? 'Select District' : ' '}
-              searchPlaceholder="Search..."
-              value={district}
-              onChange={item => {
-                setDistrict(item.value);
-              }}
-            />
-          </View>
-        </View>
+
         <View style={{marginBottom: 5}}>
           <Text style={styles.label}>Taluka *</Text>
           <View style={styles.inputContainer}>
             {/* {renderLabel()} */}
             <Dropdown
-              style={[styles.dropdown, isFocus && {borderColor: 'blue'},{paddingHorizontal: 5}]}
+              style={[
+                styles.dropdown,
+                isFocus && {borderColor: 'blue'},
+                {paddingHorizontal: 5},
+              ]}
               placeholderStyle={styles.placeholderStyle}
               selectedTextStyle={styles.selectedTextStyle}
               inputSearchStyle={styles.inputSearchStyle}
@@ -276,7 +227,11 @@ const AddLocation = ({route}) => {
           <View style={styles.inputContainer}>
             {/* {renderLabel()} */}
             <Dropdown
-              style={[styles.dropdown, isFocus && {borderColor: 'blue'},{paddingHorizontal: 5}]}
+              style={[
+                styles.dropdown,
+                isFocus && {borderColor: 'blue'},
+                {paddingHorizontal: 5},
+              ]}
               placeholderStyle={styles.placeholderStyle}
               selectedTextStyle={styles.selectedTextStyle}
               inputSearchStyle={styles.inputSearchStyle}

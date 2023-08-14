@@ -427,22 +427,18 @@ router.post("/set-new-detail-enquiry", tokenCheck, async (req, res) => {
 
     const branch_id = req.body.branchId;
 
-    const state = req.body.state;
-    const district = req.body.district;
     const taluka = req.body.taluka;
     const village = req.body.village;
 
     const deliveryDate = req.body.deliveryDate;
-    const manufacturer = req.body.manufacturer;
     const modal = req.body.modal;
-    const variant = req.body.variant;
 
     const maker = req.body.maker;
     const modalName = req.body.modalName;
     const variantName = req.body.variantName;
     const year = req.body.year;
     const condition_of = req.body.condition_of;
-    const sourceOfEnquiry = 26;
+    const sourceOfEnquiry = req.body.sourceOfEnquiry ? req.body.sourceOfEnquiry : 31;
     const old_tractor = req.body.old_tractor;
     const categoryId = 1;
 
@@ -461,7 +457,7 @@ router.post("/set-new-detail-enquiry", tokenCheck, async (req, res) => {
         console.log(salesperson_id, "userId");
 
         if (salesperson_id) {
-          const fastSql = `INSERT INTO customers (first_name, last_name, phone_number, whatsapp_number, state, district, taluka, village) VALUES (?,?,?,?,?,?,?,?)`;
+          const fastSql = `INSERT INTO customers (first_name, last_name, phone_number, whatsapp_number, taluka, village) VALUES (?,?,?,?,?,?)`;
           await db.query(
             fastSql,
             [
@@ -469,8 +465,6 @@ router.post("/set-new-detail-enquiry", tokenCheck, async (req, res) => {
               last_name,
               phone_number,
               whatsapp_number,
-              state,
-              district,
               taluka,
               village,
             ],
@@ -507,10 +501,10 @@ router.post("/set-new-detail-enquiry", tokenCheck, async (req, res) => {
                     } else if (enquiryResult && enquiryResult.insertId) {
                       console.log({ isSuccess: "success", result: enquirySql });
                       const enquiryId = enquiryResult.insertId;
-                      const enquiryProductSql = `INSERT INTO enquiry_products (enquiry_id, manufacturer, modal, variant) VALUES (?,?,?,?)`;
+                      const enquiryProductSql = `INSERT INTO enquiry_products (enquiry_id, modal) VALUES (?,?)`;
                       await db.query(
                         enquiryProductSql,
-                        [enquiryId, manufacturer, modal, variant],
+                        [enquiryId, modal],
                         async (err, productResult) => {
                           if (err) {
                             console.log(err);
@@ -526,8 +520,7 @@ router.post("/set-new-detail-enquiry", tokenCheck, async (req, res) => {
                               year &&
                               condition_of
                             ) {
-                              const newYearOfManufactur =
-                                await getDateInFormate(year);
+                              
                               const urlSql = `INSERT INTO manufactur_details (enquiry_id, maker, modalName, variantName, year_of_manufactur, condition_of, old_tractor) VALUES(?, ?, ?, ?, ?, ?, ?)`;
                               await db.query(
                                 urlSql,
@@ -536,7 +529,7 @@ router.post("/set-new-detail-enquiry", tokenCheck, async (req, res) => {
                                   maker,
                                   modalName,
                                   variantName,
-                                  newYearOfManufactur,
+                                  year,
                                   condition_of,
                                   old_tractor,
                                 ],
@@ -592,8 +585,6 @@ router.post("/edit-new-detail-enquiry", tokenCheck, async (req, res) => {
     const branch_id = req.body.branchId;
     const salesperson_id = 20;
 
-    const state = req.body.state;
-    const district = req.body.district;
     const taluka = req.body.taluka;
     const village = req.body.village;
 
@@ -611,7 +602,7 @@ router.post("/edit-new-detail-enquiry", tokenCheck, async (req, res) => {
     const customer_id = req.body.customer_id;
     const old_tractor = req.body.old_tractor;
 
-    const fastSql = `UPDATE customers SET first_name = ?, last_name = ?, phone_number = ?, whatsapp_number = ?, state = ?, district = ?, taluka = ?, village = ? WHERE id = ${customer_id}`;
+    const fastSql = `UPDATE customers SET first_name = ?, last_name = ?, phone_number = ?, whatsapp_number = ?, taluka = ?, village = ? WHERE id = ${customer_id}`;
     await db.query(
       fastSql,
       [
@@ -619,8 +610,6 @@ router.post("/edit-new-detail-enquiry", tokenCheck, async (req, res) => {
         last_name,
         phone_number,
         whatsapp_number,
-        state,
-        district,
         taluka,
         village,
       ],
