@@ -2,7 +2,6 @@ import {View, Text, StyleSheet, Image} from 'react-native';
 import React from 'react';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import Home from './Home';
-import Test from '../components/Test';
 import AddLocation from '../components/AddLocation';
 import {useNavigation} from '@react-navigation/native';
 import Profile from '../components/Profile';
