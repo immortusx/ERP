@@ -33,11 +33,12 @@ import {
   setEditEnquiryDb,
 } from '../redux/slice/editEnquirySlice';
 import Calendars from './subCom/Calendars';
+import YearPicker from './subCom/YearPicker';
 const DetailEnquiry = ({route}) => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const locationForm = useSelector(state => state.locationForm);
-  const {state, district, taluka, village} = locationForm;
+  const {taluka, village} = locationForm;
   const enquiryState = useSelector(state => state.enquirySlice.enquiryState);
   const editEnquiryState = useSelector(
     state => state.editEnquirySlice.editEnquiryState,
@@ -45,9 +46,7 @@ const DetailEnquiry = ({route}) => {
   const {maker, modalName, variantName, year, condition_of} = useSelector(
     state => state.modalData,
   );
-  const {manufacturer, modal, variant} = useSelector(
-    state => state.manufacturerDetails,
-  );
+  const {modal} = useSelector(state => state.manufacturerDetails);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [editData, setEditData] = useState(null);
   const [openCurentDate, setOpenCurrentDate] = useState(false);
@@ -59,6 +58,7 @@ const DetailEnquiry = ({route}) => {
   const [isFocus, setIsFocus] = useState(false);
   const [message, setMessage] = useState('');
   const [enquiry, setEnquiry] = useState(null);
+  const [isPickerVisible, setIsPickerVisible] = useState(false);
   const [condition, setCondtion] = useState(null);
   const [selectedOption, setSelectedOption] = useState('No');
   const options = ['No', 'Yes'];
@@ -66,6 +66,7 @@ const DetailEnquiry = ({route}) => {
   const [oldManufacturer, setOldManufacturer] = useState(null);
   const [oldModal, setOldModal] = useState(null);
   const [oldVariant, setOldVariant] = useState(null);
+  const [showfield, setShowField] = useState(false);
   const [manufacturerData, setManufacurerData] = useState([]);
   const [modalData, setModalData] = useState([]);
   const [variantData, setVariantData] = useState([]);
@@ -79,6 +80,7 @@ const DetailEnquiry = ({route}) => {
     lastname: '',
     phone: '',
     whatsappno: '',
+    enquiry: '',
   });
 
   const manufacturItem = manufacturerData.map(item => ({
@@ -253,14 +255,18 @@ const DetailEnquiry = ({route}) => {
     }
   }, [enquiryState]);
 
+  const showtinputFiled = () => {
+    setShowField(true);
+  };
   const submitEnquiry = () => {
     console.log(selectedOption);
     console.log(editData, '@#@#edit');
-    const {firstname, lastname, phone, whatsappno} = enquiryData;
-    const {state, district, taluka, village} = locationForm;
-    console.log(state, district, taluka, village);
+    const {firstname, lastname, phone, whatsappno, enquiry} = enquiryData;
+    console.log(enquiry, 'Helommm');
+    const {taluka, village} = locationForm;
+    console.log(taluka, village);
     console.log(firstname, lastname, phone);
-    console.log(manufacturer, modal, variant);
+    console.log(modal);
     console.log(enquiry);
     // console.log(formattedDeliveryDate);
     console.log(condition, 'consdtion');
@@ -271,14 +277,16 @@ const DetailEnquiry = ({route}) => {
       last_name: lastname,
       phone_number: phone,
       whatsapp_number: whatsappno,
-      state: state,
-      district: district,
       taluka: taluka,
       village: village,
-      deliveryDate: expDeliveryDate !== '' ? new Date(expDeliveryDate).toISOString().slice(0, 19).replace('T', ' ') : new Date().toISOString().slice(0, 19).replace('T', ' '),
-      manufacturer: manufacturer,
+      deliveryDate:
+        expDeliveryDate !== ''
+          ? new Date(expDeliveryDate)
+              .toISOString()
+              .slice(0, 19)
+              .replace('T', ' ')
+          : new Date().toISOString().slice(0, 19).replace('T', ' '),
       modal: modal,
-      variant: variant,
       maker: oldManufacturer,
       modalName: oldModal,
       variantName: oldVariant,
@@ -320,7 +328,11 @@ const DetailEnquiry = ({route}) => {
       console.warn('Please first fill the field*');
     }
   };
-
+  const onYearSelect = year => {
+    console.log(year, 'year');
+    setManuYearDate(year);
+    setIsPickerVisible(false);
+  };
   const formattedCurrentDate = currentDate.toLocaleDateString();
   // const formattedManuYear = manuYearDate.toLocaleDateString();
 
@@ -437,7 +449,7 @@ const DetailEnquiry = ({route}) => {
             style={{
               color: '#A93226',
               fontSize: 12,
-            }}>{`${state} ${district} ${taluka} ${village}`}</Text>
+            }}>{`${taluka} ${village}`}</Text>
           <View editable={false} style={[styles.inputStyle, styles.optional]}>
             <View>
               <TouchableOpacity
@@ -457,37 +469,61 @@ const DetailEnquiry = ({route}) => {
             style={{
               color: '#A93226',
               fontSize: 12,
-            }}>{`${manufacturer} ${modal} ${variant}`}</Text>
+            }}>{`${modal}`}</Text>
 
           <View style={{marginBottom: 5}}>
             <Text style={[styles.label, {marginBottom: 5}]}>
-              Enquiry Primary Source *
-            </Text>
-            <View style={styles.enquirySourceContainer}>
-              {/* {renderLabel()} */}
-              <Dropdown
-                style={[
-                  styles.dropdown,
-                  isFocus && {borderColor: 'blue'},
-                  {paddingHorizontal: 5},
-                ]}
-                placeholderStyle={styles.placeholderStyle}
-                selectedTextStyle={styles.selectedTextStyle}
-                inputSearchStyle={styles.inputSearchStyle}
-                iconStyle={styles.iconStyle}
-                data={enquirySourceItem}
-                search
-                maxHeight={300}
-                labelField="label"
-                valueField="value"
-                placeholder={!isFocus ? 'Select Source' : ' '}
-                searchPlaceholder="Search..."
-                value={enquiry}
-                onChange={item => {
-                  setEnquiry(item.value);
+              Enquiry Primary Source *{' '}
+              <Text
+                onPress={() => {
+                  showfield ? setShowField(false) : setShowField(true);
                 }}
-              />
-            </View>
+                style={[styles.enterEnquiry, {color: '#3AA4F7'}]}>
+                Add{' '}
+                <Image
+                  style={[styles.plusImg, {width: 15, height: 15}]}
+                  source={require('../../assets/plus2.png')}
+                />
+              </Text>
+            </Text>
+            {showfield === true ? (
+              <View style={styles.inputContainer}>
+                <TextInput
+                  style={styles.inputStyle}
+                  placeholder="Enter Enquiry Source"
+                  autoCapitalize="none"
+                  keyboardType="default"
+                  // defaultValue={enquiryData.phone || ''}
+                  onChangeText={value => onChangeHandler(value, 'enquiry')}
+                />
+              </View>
+            ) : (
+              <View style={styles.enquirySourceContainer}>
+                {/* {renderLabel()} */}
+                <Dropdown
+                  style={[
+                    styles.dropdown,
+                    isFocus && {borderColor: 'blue'},
+                    {paddingHorizontal: 5},
+                  ]}
+                  placeholderStyle={styles.placeholderStyle}
+                  selectedTextStyle={styles.selectedTextStyle}
+                  inputSearchStyle={styles.inputSearchStyle}
+                  iconStyle={styles.iconStyle}
+                  data={enquirySourceItem}
+                  search
+                  maxHeight={300}
+                  labelField="label"
+                  valueField="value"
+                  placeholder={!isFocus ? 'Select Source' : ' '}
+                  searchPlaceholder="Search..."
+                  value={enquiry}
+                  onChange={item => {
+                    setEnquiry(item.value);
+                  }}
+                />
+              </View>
+            )}
           </View>
           <View style={{marginBottom: 5}}>
             <Text style={[styles.label, {marginBottom: 5}]}>
@@ -532,7 +568,7 @@ const DetailEnquiry = ({route}) => {
                       style={[
                         styles.dropdown,
                         isFocus && {borderColor: 'blue'},
-                        {paddingHorizontal: 5}
+                        {paddingHorizontal: 5},
                       ]}
                       placeholderStyle={styles.placeholderStyle}
                       selectedTextStyle={styles.selectedTextStyle}
@@ -559,7 +595,7 @@ const DetailEnquiry = ({route}) => {
                       style={[
                         styles.dropdown,
                         isFocus && {borderColor: 'blue'},
-                        {paddingHorizontal: 5}
+                        {paddingHorizontal: 5},
                       ]}
                       placeholderStyle={styles.placeholderStyle}
                       selectedTextStyle={styles.selectedTextStyle}
@@ -586,7 +622,7 @@ const DetailEnquiry = ({route}) => {
                       style={[
                         styles.dropdown,
                         isFocus && {borderColor: 'blue'},
-                        {paddingHorizontal: 5}
+                        {paddingHorizontal: 5},
                       ]}
                       placeholderStyle={styles.placeholderStyle}
                       selectedTextStyle={styles.selectedTextStyle}
@@ -608,34 +644,31 @@ const DetailEnquiry = ({route}) => {
                 </View>
 
                 <View style={{marginBottom: 5}}>
-                  <View style={styles.deliveryDateContainer}>
-                    <TouchableOpacity
-                      style={{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        paddingHorizontal: 5,
-                      }}
-                      onPress={() => {
-                        setOpenManufacturer(true);
-                      }}>
-                      <Text style={{paddingVertical: 7}}>
-                        Manufactur Year {':- '}
-                        {manuYearDate === ''
-                          ? new Date().toISOString().slice(0, 10)
-                          : manuYearDate}
-                      </Text>
-                      <Image
-                        style={styles.dateImg}
-                        source={require('../../assets/date.png')}
-                      />
-                    </TouchableOpacity>
-                    <Calendars
-                      showModal={openManuYearDate}
-                      selectedDate={manuYearDate}
-                      handleCalendarDate={handleManufacturYearDate}
-                      onClose={() => setOpenManufacturer(false)}
-                      />
+                  <View
+                    style={[
+                      styles.deliveryDateContainer,
+                      {paddingVertical: 7},
+                    ]}>
+                    <View>
+                      <View style={{flex: 1}}>
+                        <TouchableOpacity
+                          onPress={() => {
+                            setIsPickerVisible(true);
+                          }}>
+                          <Text style={{textAlign: 'left'}}>
+                            Manufactur Year{' :-'}
+                            {manuYearDate ? manuYearDate : 'Select Year'}
+                          </Text>
+                        </TouchableOpacity>
+                        <YearPicker
+                          visible={isPickerVisible}
+                          onYearSelect={onYearSelect}
+                          onClose={() => {
+                            setIsPickerVisible(false);
+                          }}
+                        />
+                      </View>
+                    </View>
                   </View>
                 </View>
                 <View style={styles.sourceContainer}>

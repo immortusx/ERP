@@ -66,7 +66,7 @@ const FastEnquiry = () => {
   const [selectedOption, setSelectedOption] = useState('No');
   const options = ['Yes', 'No'];
   const [resultData, setResultData] = useState([]);
-  const [branchTaluka, setBrnchTaluka] = useState([]);
+  const [branchTaluka, setBranchTaluka] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [oldVehicleData, setOldVehicleData] = useState({
     maker: '',
@@ -113,7 +113,7 @@ const FastEnquiry = () => {
   useEffect(() => {
     if (result) {
       const {talukaName, villageList} = result.result;
-      setBrnchTaluka(talukaName);
+      setBranchTaluka(talukaName);
       setResultData(villageList);
     }
   }, [result]);
@@ -261,7 +261,6 @@ const FastEnquiry = () => {
                 iconStyle={styles.iconStyle}
                 data={talukaData}
                 search
-                disable={true}
                 maxHeight={200}
                 labelField="label"
                 valueField="value"

@@ -278,6 +278,26 @@ router.get("/getmodal/:id", tokenCheck, async (req, res) => {
   }
 });
 
+//==========get All Modalist=============
+router.get("/getallmodallist", tokenCheck, async (req, res) => {
+  try {
+    await db.query(
+      `Select * FROM modal WHERE isActive = 1`,
+      (err, results) => {
+        if (err) {
+          console.log({ isSuccess: false, result: err });
+          res.send({ isSuccess: false, result: "error" });
+        } else {
+          console.log({ isSuccess: true, result: results });
+          res.send({ isSuccess: true, result: results });
+        }
+      }
+    );
+  } catch (err) {
+    console.log(err);
+  }
+});
+
 //===========getVariantList===========
 router.get("/getvariant/:id", tokenCheck, async (req, res) => {
   try {
