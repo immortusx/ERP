@@ -102,7 +102,7 @@ const AddMore = () => {
     setLoading(true);
     console.log(config);
     await axios.get(url, config).then(response => {
-      console.log(response.data.result, 'enquiry today list');
+      // console.log(response.data.result, 'enquiry today list');
       setTodayEnquiryList(response.data.result);
       setEnquiryType('Today');
     });
@@ -122,7 +122,7 @@ const AddMore = () => {
     setLoading(true);
     console.log(config);
     await axios.get(url, config).then(response => {
-      console.log(response.data.result, 'enquiry today list');
+      // console.log(response.data.result, 'enquiry today list');
       setNewEnquiryList(response.data.result);
       setEnquiryType('New');
     });
@@ -141,10 +141,9 @@ const AddMore = () => {
     setLoading(true);
     console.log(config);
     await axios.get(url, config).then(response => {
-      console.log(response.data.result, 'enquiry lastmonth list');
+      // console.log(response.data.result, 'enquiry lastmonth list');
       setLastMonthEnquiryList(response.data.result);
       setEnquiryType('Last Month');
-      // lastMonthEnquiryList(response.data.result);
     });
     setLoading(false);
   };
@@ -228,7 +227,7 @@ const AddMore = () => {
                         />
                         <Image
                           style={styles.personImg}
-                          source={require('../../assets/link.png')}
+                          source={require('../../assets/salesperson.png')}
                         />
                         <Image
                           style={styles.personImg}
@@ -252,9 +251,9 @@ const AddMore = () => {
                             : 'Sonalika Sikander DLX'}
                         </Text>
                         <Text style={styles.label}>
-                          {item.enquiry_source
-                            ? item.enquiry_source
-                            : 'On-site'}
+                          {item.sales_person
+                            ? item.sales_person
+                            : '-'}
                         </Text>
                         <Text style={styles.label}>
                           {item.village ? item.village : 'Dhrangadhra'}
@@ -301,31 +300,6 @@ const AddMore = () => {
                     onPress={() => {
                       openAdditonalEnquiry(item);
                     }}>
-                    {/* <View key={index} style={styles.box}>
-                    <Text style={styles.label}>
-                      <Image
-                        style={styles.personImg}
-                        source={require('../../assets/person.png')}
-                      />
-                      -{' '}
-                      {item.first_name +
-                        (item.last_name ? ' ' + item.last_name : '')}
-                    </Text>
-                    <Text style={styles.label}>
-                      <Image
-                        style={styles.personImg}
-                        source={require('../../assets/phone.png')}
-                      />
-                      - {item.phone_number}
-                    </Text>
-                    <Text style={styles.label}>
-                      <Image
-                        style={styles.personImg}
-                        source={require('../../assets/product.png')}
-                      />
-                      - {item.product}
-                    </Text>
-                  </View> */}
                     <View key={index} style={styles.enquiryBox}>
                       <View style={styles.dataStyle}>
                         <View style={styles.dataContainer}>
@@ -344,7 +318,7 @@ const AddMore = () => {
                             />
                             <Image
                               style={styles.personImg}
-                              source={require('../../assets/link.png')}
+                              source={require('../../assets/salesperson.png')}
                             />
                             <Image
                               style={styles.personImg}
@@ -370,9 +344,9 @@ const AddMore = () => {
                                 : 'Sonalika Sikander DLX'}
                             </Text>
                             <Text style={styles.label}>
-                              {item.enquiry_source
-                                ? item.enquiry_source
-                                : 'On-site'}
+                              {item.sales_person
+                                ? item.sales_person
+                                : '-'}
                             </Text>
                             <Text style={styles.label}>
                               {item.village ? item.village : 'Dhrangadhra'}
@@ -436,31 +410,6 @@ const AddMore = () => {
                     onPress={() => {
                       openAdditonalEnquiry(item);
                     }}>
-                    {/* <View key={index} style={styles.box}>
-                    <Text style={styles.label}>
-                      <Image
-                        style={styles.personImg}
-                        source={require('../../assets/person.png')}
-                      />
-                      -{' '}
-                      {item.first_name +
-                        (item.last_name ? ' ' + item.last_name : '')}
-                    </Text>
-                    <Text style={styles.label}>
-                      <Image
-                        style={styles.personImg}
-                        source={require('../../assets/phone.png')}
-                      />
-                      - {item.phone_number}
-                    </Text>
-                    <Text style={styles.label}>
-                      <Image
-                        style={styles.personImg}
-                        source={require('../../assets/product.png')}
-                      />
-                      - {item.product}
-                    </Text>
-                  </View> */}
                     <View key={index} style={styles.enquiryBox}>
                       <View style={styles.dataStyle}>
                         <View style={styles.dataContainer}>
@@ -479,7 +428,7 @@ const AddMore = () => {
                             />
                             <Image
                               style={styles.personImg}
-                              source={require('../../assets/link.png')}
+                              source={require('../../assets/salesperson.png')}
                             />
                             <Image
                               style={styles.personImg}
@@ -505,9 +454,9 @@ const AddMore = () => {
                                 : 'Sonalika Sikander DLX'}
                             </Text>
                             <Text style={styles.label}>
-                              {item.enquiry_source
-                                ? item.enquiry_source
-                                : 'On-site'}
+                              {item.sales_person
+                                ? item.sales_person
+                                : '-'}
                             </Text>
                             <Text style={styles.label}>
                               {item.village ? item.village : 'Dhrangadhra'}
@@ -571,31 +520,6 @@ const AddMore = () => {
                     onPress={() => {
                       openAdditonalEnquiry(item);
                     }}>
-                    {/* <View key={index} style={styles.box}>
-                    <Text style={styles.label}>
-                      <Image
-                        style={styles.personImg}
-                        source={require('../../assets/person.png')}
-                      />
-                      -{' '}
-                      {item.first_name +
-                        (item.last_name ? ' ' + item.last_name : '')}
-                    </Text>
-                    <Text style={styles.label}>
-                      <Image
-                        style={styles.personImg}
-                        source={require('../../assets/phone.png')}
-                      />
-                      - {item.phone_number}
-                    </Text>
-                    <Text style={styles.label}>
-                      <Image
-                        style={styles.personImg}
-                        source={require('../../assets/product.png')}
-                      />
-                      - {item.product}
-                    </Text>
-                  </View> */}
                     <View key={index} style={styles.enquiryBox}>
                       <View style={styles.dataStyle}>
                         <View style={styles.dataContainer}>
@@ -614,7 +538,7 @@ const AddMore = () => {
                             />
                             <Image
                               style={styles.personImg}
-                              source={require('../../assets/link.png')}
+                              source={require('../../assets/salesperson.png')}
                             />
                             <Image
                               style={styles.personImg}
@@ -640,9 +564,9 @@ const AddMore = () => {
                                 : 'Sonalika Sikander DLX'}
                             </Text>
                             <Text style={styles.label}>
-                              {item.enquiry_source
-                                ? item.enquiry_source
-                                : 'On-site'}
+                              {item.sales_person
+                                ? item.sales_person
+                                : '-'}
                             </Text>
                             <Text style={styles.label}>
                               {item.village ? item.village : 'Dhrangadhra'}
@@ -709,7 +633,7 @@ const AddMore = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5EEF8',
+    backgroundColor: '#EBF5FB',
   },
   boxContainer: {
     marginVertical: 4,

@@ -1,17 +1,17 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import {View, Text, TouchableOpacity, StyleSheet, Image} from 'react-native';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import AddEnquiry from '../components/AddEnquiry';
 import AddMore from '../components/AddMore';
 import AddBooking from '../components/AddBooking';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 
 const Bottom = createBottomTabNavigator();
 
 const BottomNavigator = () => {
   const navigation = useNavigation();
 
-  const handleNavigate = (path) => {
+  const handleNavigate = path => {
     navigation.navigate(path);
   };
 
@@ -19,9 +19,21 @@ const BottomNavigator = () => {
     <Bottom.Navigator
       initialRouteName="AddMore"
       tabBarStyle={styles.tabBar}
-      screenOptions={({ route }) => ({
+      screenOptions={({route}) => ({
+        // tabBarStyle: {
+        //   height: 50,
+        //   backgroundColor: 'green',
+        //   elevation: 5,
+        //   shadowColor: 'gray',
+        //   shadowOffset: {
+        //     width: 3,
+        //     height: 2,
+        //   },
+        //   shadowOpacity: 0.3,
+        //   shadowRadius: 3,
+        // },
         tabBarLabelStyle: [styles.tabBarLabel, styles.tabBarLabelSmall],
-        tabBarIcon: ({ focused }) => {
+        tabBarIcon: ({focused}) => {
           let iconName;
           if (route.name === 'AddEnquiry') {
             iconName = focused
@@ -39,8 +51,7 @@ const BottomNavigator = () => {
           return (
             <TouchableOpacity
               onPress={() => handleNavigate(route.name)}
-              style={styles.tabBarButton}
-            >
+              style={styles.tabBarButton}>
               <View style={styles.tabBarIconContainer}>
                 <Image style={styles.tabBarIcon} source={iconName} />
               </View>
@@ -48,22 +59,29 @@ const BottomNavigator = () => {
             </TouchableOpacity>
           );
         },
-        tabBarActiveTintColor: '#3AA4F7'
-      })}
-    >
-      <Bottom.Screen name="AddEnquiry" component={AddEnquiry} options={{headerShown: false,
-      tabBarLabel: 'Add Enquiry'}}/>
-      <Bottom.Screen name="AddMore" component={AddMore} options={{headerShown: false, 
-       tabBarLabel: 'Home'}}/>
-      <Bottom.Screen name="AddBooking" component={AddBooking} options={{headerShown: false,
-       tabBarLabel: 'Add Booking'}}/>
+        tabBarActiveTintColor: '#3AA4F7',
+      })}>
+      <Bottom.Screen
+        name="AddEnquiry"
+        component={AddEnquiry}
+        options={{headerShown: false, tabBarLabel: 'Add Enquiry'}}
+      />
+      <Bottom.Screen
+        name="AddMore"
+        component={AddMore}
+        options={{headerShown: false, tabBarLabel: 'Home'}}
+      />
+      <Bottom.Screen
+        name="AddBooking"
+        component={AddBooking}
+        options={{headerShown: false, tabBarLabel: 'Add Booking'}}
+      />
     </Bottom.Navigator>
   );
 };
 
 const styles = StyleSheet.create({
   tabBar: {
-    height: 80,
     justifyContent: 'center',
   },
   tabBarLabel: {
@@ -92,7 +110,6 @@ const styles = StyleSheet.create({
     color: 'white',
     textAlign: 'center',
     fontWeight: 'bold',
-    
   },
 });
 

@@ -34,6 +34,7 @@ import {
 } from '../redux/slice/editEnquirySlice';
 import Calendars from './subCom/Calendars';
 import YearPicker from './subCom/YearPicker';
+import MinDateCalendars from './subCom/MinDateCalendars';
 const DetailEnquiry = ({route}) => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
@@ -541,7 +542,7 @@ const DetailEnquiry = ({route}) => {
                     : expDeliveryDate}
                 </Text>
               </TouchableOpacity>
-              <Calendars
+              <MinDateCalendars
                 showModal={openExpDeliveryDate}
                 selectedDate={expDeliveryDate}
                 handleCalendarDate={handleCalendarDate}
@@ -697,21 +698,6 @@ const DetailEnquiry = ({route}) => {
                     />
                   </View>
                 </View>
-                {/* <View style={styles.buttonContainer}>
-                  <View style={styles.centeredButton}>
-                    <Pressable
-                      style={[
-                        styles.roundedButton,
-                        styles.saveButton,
-                        styles.smallButton,
-                      ]}
-                      onPress={handleModalData}>
-                      <Text style={[styles.buttonText, styles.smallButtonText]}>
-                        Add Details
-                      </Text>
-                    </Pressable>
-                  </View>
-                </View> */}
               </View>
             </View>
           )}

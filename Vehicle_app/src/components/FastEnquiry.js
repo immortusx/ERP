@@ -62,6 +62,7 @@ const FastEnquiry = () => {
   const [village, setVillage] = useState(null);
   const [taluka, setTaluka] = useState(null);
   const [message, setMessage] = useState('');
+  const [talukaResult, setTalukaResult] = useState([]);
   const [condition, setCondtion] = useState(null);
   const [selectedOption, setSelectedOption] = useState('No');
   const options = ['Yes', 'No'];
@@ -79,7 +80,7 @@ const FastEnquiry = () => {
     whatsappno: '',
   });
 
-  const talukaData = branchTaluka.map(taluka => ({
+  const talukaData = talukaResult.map(taluka => ({
     label: taluka.name,
     value: taluka.id,
   }));
@@ -94,6 +95,50 @@ const FastEnquiry = () => {
     {label: 'Average', value: '3'},
     {label: 'Vey Good', value: '4'},
   ];
+
+  useEffect(() => {
+    const getTaluka = async () => {
+      const url = `${API_URL}/api/get-taluka-list`;
+      console.log('get taluka', url);
+      const token = await AsyncStorage.getItem('rbacToken');
+      const config = {
+        headers: {
+          token: token ? token : '',
+        },
+      };
+      console.log(config);
+      await axios.get(url, config).then(response => {
+        if (response) {
+          // console.log(response.data.result, 'talukaid');
+          setTalukaResult(response.data.result);
+        }
+      });
+    };
+    getTaluka();
+  }, []);
+
+  useEffect(() => {
+    if (taluka) {
+      const getVillage = async () => {
+        const url = `${API_URL}/api/get-village-list/${taluka}`;
+        console.log('get taluka', url);
+        const token = await AsyncStorage.getItem('rbacToken');
+        const config = {
+          headers: {
+            token: token ? token : '',
+          },
+        };
+        console.log(config);
+        await axios.get(url, config).then(response => {
+          if (response) {
+            // console.log(response.data, 'villllll');
+            setResultData(response.data.result);
+          }
+        });
+      };
+      getVillage();
+    }
+  }, [taluka]);
 
   const handleSelect = option => {
     const selectedValue = option === 'Yes' ? 'Yes' : 'No';
@@ -144,7 +189,7 @@ const FastEnquiry = () => {
     if (fastEnquiryState && fastEnquiryState.isSuccess === true) {
       dispatch(clearFastEnquiryState());
       setMessage('Enquiry Submitted');
-      console.log('Enquiry submitted');
+      // console.log('Enquiry submitted');
       openModal();
       dispatch(getEnquiryData()).then(() => {
         navigation.navigate('AddMore');
