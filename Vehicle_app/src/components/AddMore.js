@@ -63,6 +63,7 @@ const AddMore = () => {
     }
   }, [result]);
   useEffect(() => {
+    dispatch(getEnquiryData());
     setEnquiryType('All');
   }, []);
   const handleSheduleCall = item => {
@@ -209,31 +210,6 @@ const AddMore = () => {
                 onPress={() => {
                   openAdditonalEnquiry(item);
                 }}>
-                {/* <View key={index} style={styles.box}>
-                  <Text style={styles.label}>
-                    <Image
-                      style={styles.personImg}
-                      source={require('../../assets/person.png')}
-                    />
-                    -{' '}
-                    {item.first_name +
-                      (item.last_name ? ' ' + item.last_name : '')}
-                  </Text>
-                  <Text style={styles.label}>
-                    <Image
-                      style={styles.personImg}
-                      source={require('../../assets/phone.png')}
-                    />
-                    - {item.phone_number}
-                  </Text>
-                  <Text style={styles.label}>
-                    <Image
-                      style={styles.personImg}
-                      source={require('../../assets/product.png')}
-                    />
-                    - {item.product}
-                  </Text>
-                </View> */}
                 <View key={index} style={styles.enquiryBox}>
                   <View style={styles.dataStyle}>
                     <View style={styles.dataContainer}>
@@ -245,10 +221,6 @@ const AddMore = () => {
                         <Image
                           style={styles.personImg}
                           source={require('../../assets/phone.png')}
-                        />
-                        <Image
-                          style={styles.personImg}
-                          source={require('../../assets/categories.png')}
                         />
                         <Image
                           style={styles.personImg}
@@ -274,9 +246,6 @@ const AddMore = () => {
                           }}>
                           <Text style={styles.label}>{item.phone_number}</Text>
                         </TouchableOpacity>
-                        <Text style={styles.label}>
-                          {item.product ? item.product : 'New Tractor Enquiry'}
-                        </Text>
                         <Text style={styles.label}>
                           {item.product
                             ? item.product
@@ -381,10 +350,6 @@ const AddMore = () => {
                             />
                             <Image
                               style={styles.personImg}
-                              source={require('../../assets/categories.png')}
-                            />
-                            <Image
-                              style={styles.personImg}
                               source={require('../../assets/product.png')}
                             />
                             <Image
@@ -412,11 +377,6 @@ const AddMore = () => {
                             <Text style={styles.label}>
                               {item.product
                                 ? item.product
-                                : 'New Tractor Enquiry'}
-                            </Text>
-                            <Text style={styles.label}>
-                              {item.product
-                                ? item.product
                                 : 'Sonalika Sikander DLX'}
                             </Text>
                             <Text style={styles.label}>
@@ -440,17 +400,8 @@ const AddMore = () => {
                             </Text>
                           </TouchableOpacity>
                         </View>
-                        <Text style={styles.dayText}>
-                          {Math.floor(
-                            (new Date() - new Date(item.date)) /
-                              (1000 * 60 * 60 * 24),
-                          ) === 0
-                            ? 'Today'
-                            : Math.floor(
-                                (new Date() - new Date(item.date)) /
-                                  (1000 * 60 * 60 * 24),
-                              ) + ' Days'}
-                        </Text>
+                        <TimeAgo date={item.date} />
+
                         <TouchableOpacity
                           onPress={() => {
                             handleSheduleCall(item);
@@ -535,10 +486,6 @@ const AddMore = () => {
                             />
                             <Image
                               style={styles.personImg}
-                              source={require('../../assets/categories.png')}
-                            />
-                            <Image
-                              style={styles.personImg}
                               source={require('../../assets/product.png')}
                             />
                             <Image
@@ -563,11 +510,6 @@ const AddMore = () => {
                                 {item.phone_number}
                               </Text>
                             </TouchableOpacity>
-                            <Text style={styles.label}>
-                              {item.product
-                                ? item.product
-                                : 'New Tractor Enquiry'}
-                            </Text>
                             <Text style={styles.label}>
                               {item.product
                                 ? item.product
@@ -679,10 +621,6 @@ const AddMore = () => {
                             />
                             <Image
                               style={styles.personImg}
-                              source={require('../../assets/categories.png')}
-                            />
-                            <Image
-                              style={styles.personImg}
                               source={require('../../assets/product.png')}
                             />
                             <Image
@@ -707,11 +645,6 @@ const AddMore = () => {
                                 {item.phone_number}
                               </Text>
                             </TouchableOpacity>
-                            <Text style={styles.label}>
-                              {item.product
-                                ? item.product
-                                : 'New Tractor Enquiry'}
-                            </Text>
                             <Text style={styles.label}>
                               {item.product
                                 ? item.product
@@ -905,7 +838,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     // top: -30,
     // right: -10,
-    bottom: 65,
+    bottom: 60,
     left: 10,
     borderColor: 'green',
   },

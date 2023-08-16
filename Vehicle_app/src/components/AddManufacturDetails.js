@@ -33,17 +33,8 @@ const AddManufacturDetails = ({route}) => {
   const [modal, setModal] = useState('');
   const [variant, setVariant] = useState('');
 
-  const manufacturItem = manufacturerData.map(item => ({
-    label: item.manufacturerName,
-    value: item.manufacturerId,
-  }));
-
   const modalItem = modalData.map(item => ({
     label: item.modalName,
-    value: item.id,
-  }));
-  const variantItem = variantData.map(item => ({
-    label: item.variantName,
     value: item.id,
   }));
 
@@ -58,12 +49,8 @@ const AddManufacturDetails = ({route}) => {
   useEffect(() => {
     if (editData) {
       console.log(editData, 'manuedetails....');
-      console.log(editData.manufacturer);
       console.log(editData.modal);
-      console.log(editData.variant);
-      setManufacturer(1);
       setModal(6);
-      setVariant(18);
     }
   }, [editData]);
   const renderLabel = () => {
@@ -76,10 +63,11 @@ const AddManufacturDetails = ({route}) => {
     }
     return null;
   };
+
   useEffect(() => {
-    const getManufacturer = async () => {
-      const url = `${API_URL}/api/master/get-allmanufacturer`;
-      console.log('get manufacturer', url);
+    const getModal = async () => {
+      const url = `${API_URL}/api/master/getallmodallist`;
+      console.log('get modal', url);
       const token = await AsyncStorage.getItem('rbacToken');
       const config = {
         headers: {
@@ -89,74 +77,18 @@ const AddManufacturDetails = ({route}) => {
       console.log(config);
       await axios.get(url, config).then(response => {
         if (response) {
-          console.log(response.data.result, 'mmmmmmmmmmmmmmmmmmmmm');
-          setManufacurerData(response.data.result);
+          console.log(response.data.result, 'modllllllllllllll');
+          setModalData(response.data.result);
         }
       });
     };
-    getManufacturer();
+    getModal();
   }, []);
-
-  useEffect(() => {
-    if (manufacturerData) {
-      setManufacturer(1);
-    }
-  }, [manufacturerData]);
-
-  useEffect(() => {
-    if (manufacturer) {
-      const getModal = async () => {
-        console.log(manufacturer, 'id');
-        const url = `${API_URL}/api/master/getmodal/${manufacturer}`;
-        console.log('get modal', url);
-        const token = await AsyncStorage.getItem('rbacToken');
-        const config = {
-          headers: {
-            token: token ? token : '',
-          },
-        };
-        console.log(config);
-        await axios.get(url, config).then(response => {
-          if (response) {
-            console.log(response.data.result, 'modllllllllllllll');
-            setModalData(response.data.result);
-          }
-        });
-      };
-      getModal();
-    }
-  }, [manufacturer]);
-
-  useEffect(() => {
-    if (modal) {
-      const getVariant = async () => {
-        console.log(modal, 'id');
-        const url = `${API_URL}/api/master/getvariant/${modal}`;
-        console.log('get variant', url);
-        const token = await AsyncStorage.getItem('rbacToken');
-        const config = {
-          headers: {
-            token: token ? token : '',
-          },
-        };
-        console.log(config);
-        await axios.get(url, config).then(response => {
-          if (response) {
-            console.log(response.data.result, 'vvvvvvvvvvvv');
-            setVariantData(response.data.result);
-          }
-        });
-      };
-      getVariant();
-    }
-  }, [modal]);
 
   const saveManufacturDetails = () => {
     dispatch(
       saveManufacturerDetails({
-        manufacturer,
         modal,
-        variant,
       }),
     );
     setMessage(' Manufacturer Added');
@@ -171,36 +103,15 @@ const AddManufacturDetails = ({route}) => {
       <View style={styles.customerContainer}>
         <Text style={styles.mainHeader}>Customer Details</Text>
         <View style={{marginBottom: 5}}>
-          <Text style={styles.label}>Manufacturer *</Text>
-          <View style={styles.inputContainer}>
-            {/* {renderLabel()} */}
-            <Dropdown
-              style={[styles.dropdown, isFocus && {borderColor: 'blue'},{paddingHorizontal: 5}]}
-              placeholderStyle={styles.placeholderStyle}
-              selectedTextStyle={styles.selectedTextStyle}
-              inputSearchStyle={styles.inputSearchStyle}
-              iconStyle={styles.iconStyle}
-              data={manufacturItem}
-              search
-              disable={true}
-              maxHeight={300}
-              labelField="label"
-              valueField="value"
-              placeholder={!isFocus ? 'Select Manufacturer' : ' '}
-              searchPlaceholder="Search..."
-              value={manufacturer}
-              onChange={item => {
-                setManufacturer(item.value);
-              }}
-            />
-          </View>
-        </View>
-        <View style={{marginBottom: 5}}>
           <Text style={styles.label}>Modal *</Text>
           <View style={styles.inputContainer}>
             {/* {renderLabel()} */}
             <Dropdown
-              style={[styles.dropdown, isFocus && {borderColor: 'blue'},{paddingHorizontal: 5}]}
+              style={[
+                styles.dropdown,
+                isFocus && {borderColor: 'blue'},
+                {paddingHorizontal: 5},
+              ]}
               placeholderStyle={styles.placeholderStyle}
               selectedTextStyle={styles.selectedTextStyle}
               inputSearchStyle={styles.inputSearchStyle}
@@ -215,30 +126,6 @@ const AddManufacturDetails = ({route}) => {
               value={modal}
               onChange={item => {
                 setModal(item.value);
-              }}
-            />
-          </View>
-        </View>
-        <View style={{marginBottom: 5}}>
-          <Text style={styles.label}>Variant *</Text>
-          <View style={styles.inputContainer}>
-            {/* {renderLabel()} */}
-            <Dropdown
-              style={[styles.dropdown, isFocus && {borderColor: 'blue'},{paddingHorizontal: 5}]}
-              placeholderStyle={styles.placeholderStyle}
-              selectedTextStyle={styles.selectedTextStyle}
-              inputSearchStyle={styles.inputSearchStyle}
-              iconStyle={styles.iconStyle}
-              data={variantItem}
-              search
-              maxHeight={300}
-              labelField="label"
-              valueField="value"
-              placeholder={!isFocus ? 'Select Variant' : ' '}
-              searchPlaceholder="Search..."
-              value={variant}
-              onChange={item => {
-                setVariant(item.value);
               }}
             />
           </View>

@@ -116,10 +116,6 @@ const VillageEnquiryLists = ({route}) => {
                       />
                       <Image
                         style={styles.personImg}
-                        source={require('../../assets/categories.png')}
-                      />
-                      <Image
-                        style={styles.personImg}
                         source={require('../../assets/product.png')}
                       />
                       <Image
@@ -142,9 +138,6 @@ const VillageEnquiryLists = ({route}) => {
                         }}>
                         <Text style={styles.label}>{item.phone_number}</Text>
                       </TouchableOpacity>
-                      <Text style={styles.label}>
-                        {item.product ? item.product : 'New Tractor Enquiry'}
-                      </Text>
                       <Text style={styles.label}>
                         {item.product ? item.product : 'Sonalika Sikander DLX'}
                       </Text>
@@ -271,7 +264,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     // top: -30,
     // right: -10,
-    bottom: 80,
+    bottom: 68,
     left: 10,
   },
   dateText: {
@@ -284,7 +277,7 @@ const styles = StyleSheet.create({
     color: 'gray',
   },
   dayText: {
-    top: -9,
+    top: -8,
     right: -6,
     color: '#A93226',
     fontSize: 12,
