@@ -34,19 +34,6 @@ const Login = ({navigation}) => {
       setLoginData(registerData => ({...loginData, password: value}));
     }
   };
-
-  useEffect(() => {
-    const checkLoginStatus = async () => {
-      const token = await AsyncStorage.getItem('rbacToken');
-      if (token) {
-        setLoggedIn(true);
-        console.log(token, 'Token Exist');
-        dispatch(getProfileData());
-        navigation.navigate('Main');
-      }
-    };
-    checkLoginStatus();
-  }, []);
   
   useEffect(() => {
     if (loginState.isSuccess === true) {
