@@ -11,10 +11,7 @@ const Report = () => {
                 </div>
                 <section>
                     <hr />
-                    <div className="mx-3 m-0">
-                        <h6 className="fw-bold myH9 m-0">BASIC SETUP</h6>
-                    </div>
-                    <hr />
+
                     <ul className="row m-0 px-2">
                         <li className="col-12 col-sm-4 col-md-3  d-flex align-items-center p-2">
                             <main
@@ -40,8 +37,9 @@ const Report = () => {
                                         />
                                     </svg>
                                 </div>
-                                <span className="ms-2">Work Assign</span>
+                                <span className="ms-2">Total Enquery</span>
                             </main>
+                            
                         </li>
                     </ul>
                 </section>

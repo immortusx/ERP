@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Axios from "axios";
 
 
@@ -10,28 +10,36 @@ const WorkAssign = () => {
     const [showComponent, setShowComponent] = useState(false);
     const currentBranch = localStorage.getItem("currentDealerId");
 
-    getDspList(currentBranch);
-    async function getDspList(currentBranch) {
-        const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/get-dsp/${currentBranch}`;
-        const config = {
-            headers: {
-                token: localStorage.getItem("rbacToken"),
-            },
-        };
+    useEffect(()=> {
+        console.log(newEnquiryList,'user idi')
+    
+    })
+    useEffect(() => {
+        if (currentBranch) {
+            async function getDspList() {
+                const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/get-dsp_enquerylist/${currentBranch}`;
+                const config = {
+                    headers: {
+                        token: localStorage.getItem("rbacToken"),
+                    },
+                };
 
-        await Axios.get(url, config).then((response) => {
-            if (response.data) {
-                if (response.data.isSuccess) {
-                    console.log("response.data", response.data);
-                    setNewEnquiryList((newEnquiryList) => ({
-                        ...newEnquiryList,
-                        ["listDsp"]: response.data.result,
-                    }));
+                await Axios.get(url, config).then((response) => {
+                    if (response.data) {
+                        if (response.data.isSuccess) {
+                            console.log("response.data", response.data);
+                            setNewEnquiryList((newEnquiryList) => ({
+                                ...newEnquiryList,
+                                ["listDsp"]: response.data.result,
+                            }));
 
-                }
+                        }
+                    }
+                });
             }
-        });
-    }
+            getDspList();
+        }
+    }, [currentBranch])
 
 
 
@@ -59,10 +67,10 @@ const WorkAssign = () => {
                                 >
                                     <div className="row">
                                         <div className="col-md-6 salpid1">
-                                            <h7>{user.first_name}</h7>
+                                            <h7>{user.first_name} {user.last_name}</h7>
                                         </div>
                                         <div className="col-md-6 d-flex justify-content-end salpid">
-                                            <h7>{user.id}</h7>
+                                            <h7>{user.totalenquery}</h7>
                                         </div>
 
                                     </div>
