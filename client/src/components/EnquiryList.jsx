@@ -23,7 +23,7 @@ import { setShowMessage } from "../redux/slices/notificationSlice";
 export default function EnquiryList() {
   const dispatch = useDispatch();
   const [enquiries, setEnquiries] = useState([]);
-  const [showComponent, setShowComponent] = useState(0);
+  const [showComponent, setShowComponent] = useState(false);
   const [customerId, setCustomerId] = useState(false);
   const [selecteduser, setSelectedUser] = useState({});
   const [newEnquiryList, setNewEnquiryList] = useState({
@@ -46,44 +46,62 @@ export default function EnquiryList() {
     setSelectAll(!selectAll);
   };
 
-  const handleChildCheckboxClick = (itemId) => {
-    const updatedRowsData = rowData.map((row) => {
-      if (row.id == itemId) {
-        return {
-          ...row,
-          checkbox: !row.checkbox,
-        };
-      }
-      return row;
-    });
-    setRowData(updatedRowsData);
-  };
+//   const handleChildCheckboxClick = (itemId) => {
+//     const updatedRowsData = rowData.map((row) => {
+//       if (row.id == itemId) {
+//         return {
+//           ...row,
+//           checkbox: !row.checkbox,
+//         };
+//       }
+//       return row;
+//     });
+//     setRowData(updatedRowsData);
+//   };
 
-  const label = { inputProps: { "aria-label": "Checkbox demo" } };
-  const hideModal = () => {
-    console.log(selecteduser, "selecteduser");
-    setShowComponent(0);
-  };
-  const handleworkAssign = () => {
-    setShowComponent(2);
-  };
+const [selectedItemIds, setSelectedItemIds] = useState([]);
+const handleChildCheckboxClick = (itemId) => {
+  const updatedRowsData = rowData.map((row) => {
+    if (row.id === itemId) {
+      return {
+        ...row,
+        checkbox: !row.checkbox,
+      };
+    }
+    return row;
+  });
+  setRowData(updatedRowsData);
 
-  const handleEditArea = async (ev) => {
-    try {
-      console.log(ev, "evvvvvv");
-      setCustomerId(ev.id);
-      setSelectedUser(ev.sales_person);
-      const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/get-enquiriesbyId/${ev.id}`;
+  // Update selected items array
+  const updatedSelectedItems = updatedRowsData
+    .filter((row) => row.checkbox)
+    .map((row) => row.id);
+console.log(updatedSelectedItems, "updatedSelectedItems");
+  setSelectedItemIds(updatedSelectedItems);
+};
+
+ const handleworkAssign = () => {
+     const selectedRowsData = rowData.filter((row) =>
+     selectedItemIds.includes(row.id)
+     );
+      console.log("evdata**********",selectedRowsData)
+      const ids = selectedRowsData.map((item) => item.id);
+      console.log(ids,"idss");
+     try {
+    //   console.log(ev, "evvvvvv");
+      setCustomerId(ids);
+      setSelectedUser(selectedRowsData.sales_person);
+      const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/get-multiple-enquiriesbyId/${ids}`;
       const config = {
         headers: {
           token: localStorage.getItem("rbacToken"),
         },
       };
 
-      const response = await Axios.get(url, config);
+      const response =  Axios.get(url, config);
       console.log(response.data, "data!!!!!!!!!!!");
       getDspList(currentBranch);
-      setShowComponent(1);
+     setShowComponent(true);
 
       if (response.data && response.data.isSuccess) {
         const resultData = response.data.result;
@@ -101,7 +119,66 @@ export default function EnquiryList() {
     } catch (error) {
       console.error("An error occurred while fetching data:", error);
     }
+    
+   
   };
+
+  async function editsalesperson(formData) {
+      const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/edit-salesperson-enquiry-data`;
+      const config = {
+          headers: {
+        token: localStorage.getItem("rbacToken"),
+      },
+    };
+    await Axios.post(url, formData, config).then((response) => {
+      if (response.data) {
+        // setRoles(response.data.result)
+        if (response.data && response.data.isSuccess) {
+          console.log(response.data.result, "result**********");
+          setNewEnquiryData(response.data.result);
+        }
+    }
+});
+}
+const label = { inputProps: { "aria-label": "Checkbox demo" } };
+const hideModal = () => {
+  setShowComponent(false);
+};
+
+//   const handleEditArea = async (ev) => {
+//     try {
+//       console.log(ev, "evvvvvv");
+//       setCustomerId(ev.id);
+//       setSelectedUser(ev.sales_person);
+//       const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/get-enquiriesbyId/${ev.id}`;
+//       const config = {
+//         headers: {
+//           token: localStorage.getItem("rbacToken"),
+//         },
+//       };
+
+//       const response = await Axios.get(url, config);
+//       console.log(response.data, "data!!!!!!!!!!!");
+//       getDspList(currentBranch);
+//       setShowComponent(1);
+
+//       if (response.data && response.data.isSuccess) {
+//         const resultData = response.data.result;
+//         console.log("Result Data:", resultData);
+//         resultData.forEach((enquiry) => {
+//           console.log("Enquiry ID:", enquiry.salesperson_id);
+
+//           setSelectedPerson(enquiry);
+//         });
+//       } else {
+//         console.log(
+//           "No data received from the server or the request was not successful."
+//         );
+//       }
+//     } catch (error) {
+//       console.error("An error occurred while fetching data:", error);
+//     }
+//   };
 
   async function getDspList(currentBranch) {
     const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/get-dsp/${currentBranch}`;
@@ -132,30 +209,30 @@ export default function EnquiryList() {
         customerId: customerId,
         salesperson_id: newEnquiryData.dsp,
       };
-      console.log(formData.salesperson_id, "formdata******");
+      console.log(formData, "formdata******");
       editsalesperson(formData);
     }
     dispatch(setShowMessage("Area is assigned"));
-    setShowComponent(0)
+    setShowComponent(false)
   }
 
-  async function editsalesperson(formData) {
-    const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/edit-new-enquiry-data`;
-    const config = {
-      headers: {
-        token: localStorage.getItem("rbacToken"),
-      },
-    };
-    await Axios.post(url, formData, config).then((response) => {
-      if (response.data) {
-        // setRoles(response.data.result)
-        if (response.data && response.data.isSuccess) {
-          console.log(response.data.result, "result**********");
-          setNewEnquiryData(response.data.result);
-        }
-      }
-    });
-  }
+//   async function editsalesperson(formData) {
+//     const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/edit-salesperson-enquiry-data`;
+//     const config = {
+//       headers: {
+//         token: localStorage.getItem("rbacToken"),
+//       },
+//     };
+//     await Axios.post(url, formData, config).then((response) => {
+//       if (response.data) {
+//         // setRoles(response.data.result)
+//         if (response.data && response.data.isSuccess) {
+//           console.log(response.data.result, "result**********");
+//           setNewEnquiryData(response.data.result);
+//         }
+//       }
+//     });
+//   }
 
   const columns = [
     {
@@ -337,7 +414,7 @@ export default function EnquiryList() {
             <button
               className="myActionBtn m-1"
               onClick={() => {
-                handleEditArea(params.row);
+                handleworkAssign(params.row);
               }}
             >
               <PersonIcon />
@@ -450,9 +527,9 @@ export default function EnquiryList() {
             <h6 className="m-0 ps-1">Add enquiry</h6>
           </div>
           <div
-            onClick={() => {
-              handleworkAssign();
-            }}
+            onClick={
+              handleworkAssign
+            }
             className="d-flex align-items-center px-1"
             type="button"
           >
@@ -511,7 +588,7 @@ export default function EnquiryList() {
       <Modal show={showComponent} onHide={hideModal}>
         <Modal.Header closeButton>
           <h5 className="modal-title" id="TalukaModalLabel">
-            {showComponent === 1 ? " Assign Sales Person" : " Work Assign "}
+           Work Assign 
           </h5>
         </Modal.Header>
         <Modal.Body>
