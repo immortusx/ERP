@@ -589,3 +589,26 @@ select.myInput {
     transform: rotate(360deg);
   }
 }
+.userd2{
+  margin: auto;
+  padding: 20px;
+  height: auto;
+  border: 1px solid #ccc;
+  border-Radius: 5px;
+  box-Shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.salpid {
+  display: flex;
+  justify-content: flex-end; /* Align content to the end */
+  align-items: center;
+  font-size: 20px;
+  font-weight: bold;
+}
+.salpid1 {
+  display: flex;
+  justify-content: flex-start; /* Align content to the end */
+  align-items: center;
+  font-weight: bold;
+  color: rgb(5, 4, 108);
+  font-size: 20px;
+}
