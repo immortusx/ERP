@@ -143,6 +143,21 @@ router.get("/get-dsp/:id", tokenCheck, async (req, res) => {
     }
   });
 });
+router.get("/get-dsp_list1/:id", tokenCheck, async (req, res) => {
+  console.log(">>>>>>>>>get-dsp", req.params);
+  let branchId = req.params.id;
+  let userId = req.myData.userId;
+  const urlNew = `CALL sp_get_dsp_list1(${branchId},${userId})`;
+  await db.query(urlNew, async (err, result) => {
+    if (err) {
+      console.log({ isSuccess: false, result: err });
+      res.send({ isSuccess: false, result: "error" });
+    } else {
+      console.log({ isSuccess: "success", result: result[0] });
+      res.send({ isSuccess: "success", result: result[0] });
+    }
+  });
+});
 router.get("/get-dsp_enquerylist/:id", tokenCheck, async (req, res) => {
   console.log(">>>>>>>>>get-dsp", req.params);
   let branchId = req.params.id;
@@ -171,6 +186,7 @@ router.get("/get-source-enquiry/:id", tokenCheck, async (req, res) => {
     }
   });
 });
+
 
 router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
   console.log(">>>>>>>>>set-new-enquiry-data", req.body);

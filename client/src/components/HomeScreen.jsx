@@ -27,7 +27,8 @@ import Master from "./Master";
 import Employees from "./Employees";
 import AreaAssignListList from "./AreaAssignListList";
 import AddAssignArea from "./AddAssignArea";
-import WorkAssign from "./Master/Work Assign/WorkAssign";
+import Total_Enquiry from "./Master/Work Assign/Total_Enquiry";
+import Work_Assign_Area from "./Master/Work Assign/Work_Assign_Area";
 import logo from "../assets/svg/logo.svg";
 import logoT from "../assets/svg/logofinal.svg";
 import { useSelector, useDispatch } from "react-redux";
@@ -952,10 +953,19 @@ export default function HomeScreen() {
               exact
             />
              <Route
-              path="administration/report/WorkAssign"
+              path="administration/report/Total_Enquiry"
               element={
                 <CheckPermission path="profile">
-                  <WorkAssign />
+                  <Total_Enquiry />
+                </CheckPermission>
+              }
+              exact
+            />
+             <Route
+              path="administration/report/Work_Assign_Area"
+              element={
+                <CheckPermission path="profile">
+                  <Work_Assign_Area />
                 </CheckPermission>
               }
               exact
