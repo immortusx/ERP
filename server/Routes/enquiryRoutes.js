@@ -115,7 +115,7 @@ router.get("/get-enquiries", tokenCheck, async (req, res) => {
 router.get("/get-enquiriesbyId/:id", tokenCheck, async (req, res) => {
   console.log(">>>>>>>>>get-enquiries", req.myData);
  const userId = req.params.id
-  const urlNew = "select * from enquiries where id =" +userId ;
+  const urlNew = "select * from enquiries where customer_id =" +userId ;
   console.log(urlNew, "urlNew");
   await db.query(urlNew, async (err, result) => {
     console.log(result, "result");
@@ -123,7 +123,7 @@ router.get("/get-enquiriesbyId/:id", tokenCheck, async (req, res) => {
       console.log({ isSuccess: false, result: err });
       res.send({ isSuccess: false, result: "error" });
     } else {
-      console.log({ isSuccess: "success", result: urlNew });
+      console.log({ isSuccess: "success", result: result});
       res.send({ isSuccess: "success", result: result });
     }
   });
@@ -153,6 +153,23 @@ router.get("/get-source-enquiry/:id", tokenCheck, async (req, res) => {
     } else {
       console.log({ isSuccess: "success", result: urlNew });
       res.send({ isSuccess: "success", result: result });
+    }
+  });
+});
+
+router.post("/edit-new-enquiry-data", tokenCheck, async (req, res) => {
+console.log('/editNew,', req.body);
+const customerId = req.body.customerId;
+const salesperson_id = req.body.salesperson_id;
+  const urlNew = `UPDATE enquiries SET  salesperson_id= '${salesperson_id}'  where customer_id = '${customerId}'`;
+  console.log(urlNew,"urlNew")
+  await db.query(urlNew, async (err, result) => {
+    if (err) {
+      console.log({ isSuccess: false, result: err });
+      res.send({ isSuccess: false, result: "error" });
+    } else {
+      console.log({ isSuccess: true, result: urlNew });
+      res.send({ isSuccess: true, result: "Success" });
     }
   });
 });
