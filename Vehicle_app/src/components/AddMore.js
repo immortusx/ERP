@@ -350,10 +350,6 @@ const AddMore = () => {
                             />
                             <Image
                               style={styles.personImg}
-                              source={require('../../assets/categories.png')}
-                            />
-                            <Image
-                              style={styles.personImg}
                               source={require('../../assets/product.png')}
                             />
                             <Image
@@ -378,11 +374,6 @@ const AddMore = () => {
                                 {item.phone_number}
                               </Text>
                             </TouchableOpacity>
-                            <Text style={styles.label}>
-                              {item.product
-                                ? item.product
-                                : 'New Tractor Enquiry'}
-                            </Text>
                             <Text style={styles.label}>
                               {item.product
                                 ? item.product
