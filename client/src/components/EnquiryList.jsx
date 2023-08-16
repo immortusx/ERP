@@ -12,20 +12,27 @@ import { Modal, Button } from "react-bootstrap";
 import Select from "react-select";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import PlayCircleIcon from "@mui/icons-material/PlayCircle";
+import PersonIcon from "@mui/icons-material/Person";
 import { faEllipsisV } from "@fortawesome/free-solid-svg-icons/faEllipsisV";
 
 import "../styles/Users.css";
 
 import Checkbox from "@mui/material/Checkbox";
 import { Link, NavLink, useNavigate } from "react-router-dom";
+import { setShowMessage } from "../redux/slices/notificationSlice";
 export default function EnquiryList() {
+  const dispatch = useDispatch();
   const [enquiries, setEnquiries] = useState([]);
-  const [showComponent, setShowComponent] = useState(false);
+  const [showComponent, setShowComponent] = useState(0);
+  const [customerId, setCustomerId] = useState(false);
+  const [selecteduser, setSelectedUser] = useState({});
   const [newEnquiryList, setNewEnquiryList] = useState({
     listDsp: [],
   });
-  const [selectedPerson, setSelectedPerson] = useState("");
+  const [newEnquiryData, setNewEnquiryData] = useState({
+    dsp: "",
+  });
+  const [selectedPerson, setSelectedPerson] = useState([]);
   const navigate = useNavigate();
   const currentBranch = localStorage.getItem("currentDealerId");
   console.log(currentBranch, "currentBranch*******");
@@ -54,13 +61,18 @@ export default function EnquiryList() {
 
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
   const hideModal = () => {
-    setShowComponent(false);
+    console.log(selecteduser, "selecteduser");
+    setShowComponent(0);
+  };
+  const handleworkAssign = () => {
+    setShowComponent(2);
   };
 
   const handleEditArea = async (ev) => {
     try {
       console.log(ev, "evvvvvv");
-
+      setCustomerId(ev.id);
+      setSelectedUser(ev.sales_person);
       const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/get-enquiriesbyId/${ev.id}`;
       const config = {
         headers: {
@@ -70,12 +82,17 @@ export default function EnquiryList() {
 
       const response = await Axios.get(url, config);
       console.log(response.data, "data!!!!!!!!!!!");
-      setShowComponent(true);
       getDspList(currentBranch);
+      setShowComponent(1);
 
       if (response.data && response.data.isSuccess) {
-         const resultData = response.data.result;
-         console.log("Result Data:", resultData);
+        const resultData = response.data.result;
+        console.log("Result Data:", resultData);
+        resultData.forEach((enquiry) => {
+          console.log("Enquiry ID:", enquiry.salesperson_id);
+
+          setSelectedPerson(enquiry);
+        });
       } else {
         console.log(
           "No data received from the server or the request was not successful."
@@ -108,43 +125,36 @@ export default function EnquiryList() {
 
   function handleSubmit() {
     console.log("form save");
-    //   console.log(selectedOptionUser, "selectedOptionUser");
-    //   console.log(selectedOptionVillage, "selectedOptionVillage");
-    //   console.log(selectedCtaegory, "selectedCtaegory");
-    //   console.log(allUser, "allUser");
-    //   let userAr = [];
-    //   let villageAr = [];
-    //   let categoryAr = [];
+    console.log("newEnquiryList", newEnquiryList);
+    if (newEnquiryData.dsp) {
+      console.log("newEnquiryData", newEnquiryData);
+      const formData = {
+        customerId: customerId,
+        salesperson_id: newEnquiryData.dsp,
+      };
+      console.log(formData.salesperson_id, "formdata******");
+      editsalesperson(formData);
+    }
+    dispatch(setShowMessage("Area is assigned"));
+    setShowComponent(0)
+  }
 
-    //   selectedOptionVillage.map((singleVillage) => {
-    //     villageAr.push({ value: singleVillage.value });
-    //   });
-    //   selectedCtaegory.map((singleCategory) => {
-    //     categoryAr.push({
-    //       category: singleCategory.value,
-    //       value: villageAr,
-    //     });
-    //   });
-    //   selectedOptionUser.map((singleUser) => {
-    //     userAr.push({ id: singleUser.value, category: categoryAr });
-    //   });
-
-    //   console.log("userAr", userAr);
-
-    //   dispatch(addassigneAreaToDb(userAr));
-
-    // let tempAr = [];
-    // selectedOptionUser.forEach((userItem) => {
-    //   tempAr.push({
-    //     value: selectedOptionVillage.map((villageData) => villageData.value),
-    //     // value:selectedOptionVillage.value,
-    //     id: userItem.value,
-    //     category: selectedCtaegory.value,
-    //     category: selectedCtaegory.map((categoryData) => categoryData.value),
-    //   });
-    // });
-
-    // console.log(tempAr, "tempAr");
+  async function editsalesperson(formData) {
+    const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/edit-new-enquiry-data`;
+    const config = {
+      headers: {
+        token: localStorage.getItem("rbacToken"),
+      },
+    };
+    await Axios.post(url, formData, config).then((response) => {
+      if (response.data) {
+        // setRoles(response.data.result)
+        if (response.data && response.data.isSuccess) {
+          console.log(response.data.result, "result**********");
+          setNewEnquiryData(response.data.result);
+        }
+      }
+    });
   }
 
   const columns = [
@@ -330,7 +340,7 @@ export default function EnquiryList() {
                 handleEditArea(params.row);
               }}
             >
-              <PlayCircleIcon color="secondary" />
+              <PersonIcon />
             </button>
             <button
               onClick={() => {
@@ -393,11 +403,26 @@ export default function EnquiryList() {
     setRowData(rowsData);
   }, [enquiries, selectAll]);
 
-  const changeHandler = (selectedOption) => {
-    console.log("Selected Option:", selectedOption);
-
-    setSelectedPerson(selectedOption);
+  const changeHandler = (e) => {
+    console.log(e, "e**********");
+    const name = e.target.name;
+    const value = e.target.value;
+    console.log(
+      "in changeHandlerNewEnquiry <<name>>:",
+      name,
+      ", <<value>>:",
+      value
+    );
+    setNewEnquiryData((newEnquiryData) => ({
+      ...newEnquiryData,
+      [name]: value,
+    }));
   };
+  //   const changeHandler = (selectedOption) => {
+  //     console.log("Selected Option:", selectedOption);
+
+  //     setSelectedPerson(selectedOption);
+  //   };
 
   return (
     <div>
@@ -408,7 +433,7 @@ export default function EnquiryList() {
             onClick={() => {
               navigate("/sale/enquiryies/newenquiry");
             }}
-            className="d-flex align-items-center"
+            className="d-flex align-items-center px-1"
             type="button"
           >
             <svg
@@ -423,6 +448,16 @@ export default function EnquiryList() {
               <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
             </svg>
             <h6 className="m-0 ps-1">Add enquiry</h6>
+          </div>
+          <div
+            onClick={() => {
+              handleworkAssign();
+            }}
+            className="d-flex align-items-center px-1"
+            type="button"
+          >
+            <PersonIcon />
+            <h6 className="m-0 ps-1">Work Assign</h6>
           </div>
         </div>
 
@@ -476,22 +511,38 @@ export default function EnquiryList() {
       <Modal show={showComponent} onHide={hideModal}>
         <Modal.Header closeButton>
           <h5 className="modal-title" id="TalukaModalLabel">
-            Assign Seals Person
+            {showComponent === 1 ? " Assign Sales Person" : " Work Assign "}
           </h5>
         </Modal.Header>
         <Modal.Body>
           <div className="">
             <div className="row mt-5">
-              <h5>Select Seals Person</h5>
-              <Select
-                value={selectedPerson}
+              <h5>Select Sales Person</h5>
+
+              <select
                 onChange={changeHandler}
-                options={newEnquiryList.listDsp.map((i) => ({
-                  value: i.id,
-                  label: `${i.first_name} ${i.last_name}`,
-                }))}
-                placeholder="Search for sales Person..."
-              />
+                defaultValue={selecteduser}
+                name="dsp"
+                className="myInput inpClr "
+              >
+                <option value="0" className="myLabel">
+                  select Sales Person
+                </option>
+                {newEnquiryList.listDsp &&
+                  newEnquiryList.listDsp.length > 0 &&
+                  newEnquiryList.listDsp.map((person) => {
+                    const fullName = `${person.first_name} ${person.last_name}`;
+                    return (
+                      <option
+                        key={person.id}
+                        value={person.id}
+                        className="myLabel"
+                      >
+                        {fullName}
+                      </option>
+                    );
+                  })}
+              </select>
             </div>
           </div>
         </Modal.Body>

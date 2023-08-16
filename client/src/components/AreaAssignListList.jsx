@@ -93,7 +93,7 @@ export default function AreaAssignListList({ showModal, hideModal, id }) {
   }));
 
   const selectedUser = allUser.find((user) => user.id === id);
-//   console.log(selectedUser, "selectedUser");
+  console.log(allUser, "selectedUser");
 
   const categoryoptions = enquireCtaegory.map((category) => ({
     value: category.id,
@@ -155,9 +155,7 @@ export default function AreaAssignListList({ showModal, hideModal, id }) {
         // Call the function with the array of objects
         const combinedArray = combineObjects(response.data.result);
 
-        // Output the combined array
-        //console.log(combinedArray, "&&&&&&&&&&&&&&&&&&&&77777");
-
+       
         setareaAssign(combinedArray);
         console.log(combinedArray, "combinedArray");
       }
@@ -173,8 +171,7 @@ export default function AreaAssignListList({ showModal, hideModal, id }) {
     await Axios.get(url, config).then((response) => {
       if (response.data?.isSuccess) {
         setallUser(response.data.result);
-        //console.log(combinedArray, "areaassign result66666666666666")
-        //console.log(areaAssign, "areaassign result0000000")
+      
       }
     });
   }
@@ -182,10 +179,7 @@ export default function AreaAssignListList({ showModal, hideModal, id }) {
     // handleShow()
     getAreaAssignUserFromDb();
     getAllUserFromDb();
-    //  setSelectedId(areaAssignuser);
-    // console.log(areaAssignuser.user_id, "areaAssignuser");
-
-    // console.log(useroptions, "useroptions");
+   ;
   }, []);
   useEffect(() => {
     getAllVillageAction()
