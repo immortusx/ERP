@@ -1,7 +1,7 @@
-import { View, Text, ImageBackground, StyleSheet } from 'react-native';
-import React, { useEffect } from 'react';
+import {View, Text, ImageBackground, StyleSheet} from 'react-native';
+import React, {useEffect} from 'react';
 
-const Splash = ({ navigation }) => {
+const Splash = ({navigation}) => {
   useEffect(() => {
     setTimeout(() => {
       navigation.navigate('Login');
@@ -12,8 +12,7 @@ const Splash = ({ navigation }) => {
     <View style={styles.container}>
       <ImageBackground
         source={require('../../assets/cover.jpg')}
-        style={styles.image}
-      >
+        style={styles.image}>
         <Text style={styles.text}>New Keshav Tractors</Text>
       </ImageBackground>
     </View>
