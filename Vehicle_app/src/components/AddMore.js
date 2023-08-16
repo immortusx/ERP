@@ -409,17 +409,8 @@ const AddMore = () => {
                             </Text>
                           </TouchableOpacity>
                         </View>
-                        <Text style={styles.dayText}>
-                          {Math.floor(
-                            (new Date() - new Date(item.date)) /
-                              (1000 * 60 * 60 * 24),
-                          ) === 0
-                            ? 'Today'
-                            : Math.floor(
-                                (new Date() - new Date(item.date)) /
-                                  (1000 * 60 * 60 * 24),
-                              ) + ' Days'}
-                        </Text>
+                        <TimeAgo date={item.date} />
+
                         <TouchableOpacity
                           onPress={() => {
                             handleSheduleCall(item);
