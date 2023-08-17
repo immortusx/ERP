@@ -20,6 +20,7 @@ import LoadingSpinner from './subCom/LoadingSpinner';
 const Login = ({navigation}) => {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoggedIn, setLoggedIn] = useState(false);
   const loginState = useSelector(state => state.getLoginSlice.loginState);
   const [loginData, setLoginData] = useState({
     email: '',
@@ -33,46 +34,7 @@ const Login = ({navigation}) => {
       setLoginData(registerData => ({...loginData, password: value}));
     }
   };
-
-  //for loginState
-  // useEffect(() => {
-  //   if (loginState.isSuccess === true) {
-  //     if (loginState.result.message === 'success') {
-  //       setIsLoading(true);
-  //       console.log(loginState.result.result.tokenIs);
-  //       AsyncStorage.setItem(
-  //         'branchesList',
-  //         JSON.stringify(loginState.result.result.branchResult)
-  //       );
-  //       AsyncStorage.setItem(
-  //         'currentBranchId',
-  //         JSON.stringify(loginState.result.result.currentBranch)
-  //       );
-  //       AsyncStorage.setItem('rbacToken', loginState.result.result.tokenIs);
-  //       AsyncStorage.getItem('rbacToken').then(token => {
-  //         setIsLoading(false);
-  //         if (!token) {
-  //           return;
-  //         }
-  //         console.log(token, 'token_--__--he');
-  //         navigation.navigate('Main');
-  //         setLoginData({
-  //           email: '',
-  //           password: '',
-  //         });
-  //       });
-  //     } else if (loginState.result.message !== 'success') {
-  //       console.log('Credentials are wrong');
-  //       alert('Credentials are wrong');
-  //       // dispatch(setShowMessage("Credentials are wrong"));
-  //     } else {
-  //       console.log('Something is wrong');
-  //       // dispatch(setShowMessage("Something is wrong"));
-  //     }
-  //   }
-  //   console.log('loginState', loginState);
-  // }, [loginState]);
-
+  
   useEffect(() => {
     if (loginState.isSuccess === true) {
       if (loginState.result.message === 'success') {
@@ -100,6 +62,7 @@ const Login = ({navigation}) => {
             password: '',
           });
         });
+        setLoggedIn(true);
       } else if (loginState.result.message !== 'success') {
         console.log('Credentials are wrong');
         alert('Credentials are wrong');

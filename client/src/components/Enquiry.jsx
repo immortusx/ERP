@@ -661,6 +661,7 @@ export default function Enquiry({ workFor }) {
   }
 
   function changeHandlerNewEnquiry(e) {
+    console.log(e,"e***************")
     const name = e.target.name;
     const value = e.target.value;
     console.log(
