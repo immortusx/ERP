@@ -143,6 +143,21 @@ router.get("/get-dsp/:id", tokenCheck, async (req, res) => {
     }
   });
 });
+router.get("/get-work-assign-village-list/:id", tokenCheck, async (req, res) => {
+  console.log(">>>>>>>>>get-dsp", req.params);
+  let branchId = req.params.id;
+  let userId = req.myData.userId;
+  const urlNew = `CALL sp_get_work_assign_village_list(${branchId},${userId})`;
+  await db.query(urlNew, async (err, result) => {
+    if (err) {
+      console.log({ isSuccess: false, result: err });
+      res.send({ isSuccess: false, result: "error" });
+    } else {
+      console.log({ isSuccess: "success", result: result[0] });
+      res.send({ isSuccess: "success", result: result[0] });
+    }
+  });
+});
 router.get("/get-dsp_enquerylist/:id", tokenCheck, async (req, res) => {
   console.log(">>>>>>>>>get-dsp", req.params);
   let branchId = req.params.id;
@@ -568,7 +583,7 @@ router.post("/set-new-detail-enquiry", tokenCheck, async (req, res) => {
                               year &&
                               condition_of
                             ) {
-                              
+
                               const urlSql = `INSERT INTO manufactur_details (enquiry_id, maker, modalName, variantName, year_of_manufactur, condition_of, old_tractor) VALUES(?, ?, ?, ?, ?, ?, ?)`;
                               await db.query(
                                 urlSql,

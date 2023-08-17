@@ -612,3 +612,16 @@ select.myInput {
   color: rgb(5, 4, 108);
   font-size: 20px;
 }
+.userd3{
+  margin: auto;
+  padding: 20px;
+  height: auto;
+  border: 1px solid #ccc;
+  border-Radius: 5px;
+  box-Shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.custom-header {
+  background-color: rgb(44, 43, 105);
+  color: white;
+  font-weight: bold;
+}
