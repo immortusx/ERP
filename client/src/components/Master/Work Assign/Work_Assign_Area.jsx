@@ -42,7 +42,7 @@ const Work_Assign_Area = () => {
             align: "center",
             headerName: "No",
             minWidth: 80,
-            flex: 1,
+            flex: 0.1,
         },
         {
             field: "person_name",
@@ -55,8 +55,8 @@ const Work_Assign_Area = () => {
         },
         {
             field: "category_name",
-            headerAlign: "left",
-            align: "left",
+            headerAlign: "center",
+            align: "center",
             headerClassName: "custom-header",
             headerName: "Category Name",
             minWidth: 200,
@@ -64,8 +64,8 @@ const Work_Assign_Area = () => {
         },
         {
             field: "Village_name",
-            headerAlign: "left",
-            align: "left",
+            headerAlign: "center",
+            align: "center",
             headerClassName: "custom-header",
             headerName: "Assign Village Name",
             minWidth: 200,
@@ -79,17 +79,31 @@ const Work_Assign_Area = () => {
                 rows={rowData}
                 columns={columns}
                 getRowId={(params) => {
-                    return params.id; // Use the index as the row ID
+                    return params.rowNumber
                 }}
-                className="rounded"
-                style={{
-                    fontFamily: "Poppins",
-                    padding: 5,
-                    backgroundColor: "white",
-                }}
+                className='rounded'
+                style={{ fontFamily: 'Poppins', padding: 5, backgroundColor: 'white', }}
                 pageSizeOptions={[5, 10, 25]}
-            // ... (other DataGrid props)
+                initialState={{
+                    pagination: { paginationModel: { pageSize: 10 } },
+                }}
+                components={{
+                    Toolbar: GridToolbar,
+                    NoRowsOverlay: () => (
+                        <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <span>There is no Users with current branch</span>
+                        </div>)
+                }}
+                componentsProps={{
+                    toolbar: {
+                        position: 'right',
+                        style: { fontFamily: 'Poppins', alignSelf: 'end' },
+                    },
+                }}
+                rowSelection={false}
+                autoPageSize={false}
             />
+
         </div>
     );
 };
