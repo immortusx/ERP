@@ -114,8 +114,8 @@ router.get("/get-enquiries", tokenCheck, async (req, res) => {
 });
 router.get("/get-enquiriesbyId/:id", tokenCheck, async (req, res) => {
   console.log(">>>>>>>>>get-enquiries", req.myData);
- const userId = req.params.id
-  const urlNew = "select * from enquiries where id =" +userId ;
+  const userId = req.params.id
+  const urlNew = "select * from enquiries where id =" + userId;
   console.log(urlNew, "urlNew");
   await db.query(urlNew, async (err, result) => {
     console.log(result, "result");
@@ -143,11 +143,11 @@ router.get("/get-dsp/:id", tokenCheck, async (req, res) => {
     }
   });
 });
-router.get("/get-dsp_list1/:id", tokenCheck, async (req, res) => {
+router.get("/get-work-assign-village-list/:id", tokenCheck, async (req, res) => {
   console.log(">>>>>>>>>get-dsp", req.params);
   let branchId = req.params.id;
   let userId = req.myData.userId;
-  const urlNew = `CALL sp_get_dsp_list1(${branchId},${userId})`;
+  const urlNew = `CALL sp_get_work_assign_village_list(${branchId},${userId})`;
   await db.query(urlNew, async (err, result) => {
     if (err) {
       console.log({ isSuccess: false, result: err });
@@ -567,7 +567,7 @@ router.post("/set-new-detail-enquiry", tokenCheck, async (req, res) => {
                               year &&
                               condition_of
                             ) {
-                              
+
                               const urlSql = `INSERT INTO manufactur_details (enquiry_id, maker, modalName, variantName, year_of_manufactur, condition_of, old_tractor) VALUES(?, ?, ?, ?, ?, ?, ?)`;
                               await db.query(
                                 urlSql,
