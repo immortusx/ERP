@@ -292,7 +292,7 @@ export default function HomeScreen() {
                           </NavLink>
                         </li>
                       )}
-                      {checkTabGrant(["profile"]) && (
+                      {checkTabGrant(["dashboard"]) && (
                         <li className="inLi">
                           <NavLink
                             className={({ isActive }) =>
