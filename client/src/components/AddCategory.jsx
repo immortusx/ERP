@@ -5,6 +5,7 @@ import {
   addCategoryToDb,
   clearaddCategory,
 } from "../redux/slices/Master/Category/addCategorySlice";
+import { getCategoryFeatureFromDb } from "../redux/slices/getcategoryfeactureSice";
 import { clearEditcategoryData,clearEditcategoryState,editcategoryUpdateToDb } from "../redux/slices/Master/Category/editCategorySlice";
 import { setShowMessage } from "../redux/slices/notificationSlice";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -12,10 +13,12 @@ import Department from "./singleComponents/villageCom/Department";
 
 export default function AddCategory({ workFor }) {
   const [dept, setDept] = useState([]);
+   const [featuresList, setFeaturesList] = useState([]);
   const [categoryData, setCategoryData] = useState({
     category_name: "",
     category_description: "",
     department: "",
+    chehkedFeature:[],
   });
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -26,16 +29,59 @@ export default function AddCategory({ workFor }) {
    const editcategoryData = useSelector(
      (state) => state.editCategoryDataState.editcategoryData
    );
-
+ const featuresState = useSelector(
+   (state) => state.categoryfeaturesListState.featuresState
+ );
   function clearInpHook() {
     setCategoryData({
       category_name: "",
       category_description: "",
       department: "",
+      chehkedFeature: [],
     });
   }
 
+    function onChangeHandle(data, id) {
+      let tempAr = [];
+      const value = data.target.value;
+      const name = data.target.name;
+      const checked = data.target.checked;
+console.log(categoryData, "categoryData");
+      categoryData.chehkedFeature.forEach((i) => {
+        tempAr.push(i);
+      });
+      if (id === undefined) {
+        setCategoryData((featureData) => ({ ...featureData, [name]: value }));
+      } else {
+        if (checked) {
+          tempAr.push(id);
+          setCategoryData((featureData) => ({
+            ...featureData,
+            chehkedFeature: tempAr,
+          }));
+        } else {
+          tempAr = tempAr.filter((i) => {
+            return i != id;
+          });
+          setCategoryData((featureData) => ({
+            ...featureData,
+            chehkedFeature: tempAr,
+          }));
+        }
+      }
+    }
 
+  useEffect(() => {
+    if (featuresState.isSuccess) {
+      if (featuresState.data.isSuccess) {
+        setFeaturesList(featuresState.data.result);
+      }
+    }
+  }, [featuresState]);
+
+useEffect(() => {
+  dispatch(getCategoryFeatureFromDb());
+}, []);
 
   useEffect(() => {
     if (editcategorySliceState.isSuccess) {
@@ -67,6 +113,7 @@ export default function AddCategory({ workFor }) {
           category_name: editcategoryData.data.category_name,
           category_description: editcategoryData.data.category_description,
           department: editcategoryData.data.department,
+          // chehkedFeature: editcategoryData.data.chehkedFeature,
         });
       }
     }
@@ -178,8 +225,9 @@ dispatch(editcategoryUpdateToDb(categoryData));
         category_name: "",
         category_description: "",
         department: "",
+        chehkedFeature:[],
         // console.log(categoryData, "categoryData");
-    });
+      });
   };
 
   function handlCancel() {
@@ -224,7 +272,7 @@ dispatch(editcategoryUpdateToDb(categoryData));
               Category description
             </label>
             <textarea
-            value={categoryData.category_description}
+              value={categoryData.category_description}
               rows="5"
               className="myInput inputElement"
               autoComplete="false"
@@ -234,6 +282,32 @@ dispatch(editcategoryUpdateToDb(categoryData));
               type="text"
               name="category_description"
             />
+          </section>
+          <section className="d-flex mt-3 flex-column col-12 featureTree">
+            <ul className="mt-3 m-0 ">
+              {featuresList &&
+                featuresList.length > 0 &&
+                featuresList.map((data, index) => {
+                  console.log(data,"data")
+                  return (
+                    <li key={index} className="">
+                      <div className="pb-3 d-flex align-items-center">
+                        <input
+                          type="checkbox"
+                          className="myCheckBox inputElement"
+                          onChange={(e) => {
+                            onChangeHandle(e, data.id);
+                          }}
+                          name={`${data.feature}Inp`}
+                        />
+                        <label className="ms-2 myLabel" htmlFor="">
+                          {data.name}
+                        </label>
+                      </div>
+                    </li>
+                  );
+                })}
+            </ul>
           </section>
 
           <section className="d-flex mt-3 flex-column flex-sm-row">
