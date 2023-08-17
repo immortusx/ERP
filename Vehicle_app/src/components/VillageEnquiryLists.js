@@ -15,6 +15,7 @@ import {API_URL} from '@env';
 import CustomLoadingSpinner from './subCom/CustomLoadingSpinner';
 import moment from 'moment';
 import { useNavigation } from '@react-navigation/native';
+import TimeAgo from './subCom/TImeAgo';
 const VillageEnquiryLists = ({route}) => {
   const navigation = useNavigation();
   const {villageId, categoryId, villageName, totalEnquiry} = route.params;
@@ -120,7 +121,7 @@ const VillageEnquiryLists = ({route}) => {
                       />
                       <Image
                         style={styles.personImg}
-                        source={require('../../assets/link.png')}
+                        source={require('../../assets/salesperson.png')}
                       />
                       <Image
                         style={styles.personImg}
@@ -142,7 +143,7 @@ const VillageEnquiryLists = ({route}) => {
                         {item.product ? item.product : 'Sonalika Sikander DLX'}
                       </Text>
                       <Text style={styles.label}>
-                        {item.enquiry_source ? item.enquiry_source : 'On-site'}
+                        {item.sales_person ? item.sales_person : '-'}
                       </Text>
                       <Text style={styles.label}>
                         {item.village ? item.village : 'Dhrangadhra'}
@@ -160,17 +161,7 @@ const VillageEnquiryLists = ({route}) => {
                       </Text>
                     </TouchableOpacity>
                   </View>
-                  <Text style={styles.dayText}>
-                    {Math.floor(
-                      (new Date() - new Date(item.date)) /
-                        (1000 * 60 * 60 * 24),
-                    ) === 0
-                      ? 'Today'
-                      : Math.floor(
-                          (new Date() - new Date(item.date)) /
-                            (1000 * 60 * 60 * 24),
-                        ) + ' Days'}
-                  </Text>
+                  <TimeAgo date={item.date} />
                   <TouchableOpacity
                     onPress={() => {
                       handleSheduleCall(item);

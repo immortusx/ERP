@@ -62,6 +62,7 @@ const FastEnquiry = () => {
   const [village, setVillage] = useState(null);
   const [taluka, setTaluka] = useState(null);
   const [message, setMessage] = useState('');
+  const [talukaResult, setTalukaResult] = useState([]);
   const [condition, setCondtion] = useState(null);
   const [selectedOption, setSelectedOption] = useState('No');
   const options = ['Yes', 'No'];
@@ -79,7 +80,7 @@ const FastEnquiry = () => {
     whatsappno: '',
   });
 
-  const talukaData = branchTaluka.map(taluka => ({
+  const talukaData = talukaResult.map(taluka => ({
     label: taluka.name,
     value: taluka.id,
   }));
@@ -94,6 +95,50 @@ const FastEnquiry = () => {
     {label: 'Average', value: '3'},
     {label: 'Vey Good', value: '4'},
   ];
+
+  useEffect(() => {
+    const getTaluka = async () => {
+      const url = `${API_URL}/api/get-taluka-list`;
+      console.log('get taluka', url);
+      const token = await AsyncStorage.getItem('rbacToken');
+      const config = {
+        headers: {
+          token: token ? token : '',
+        },
+      };
+      console.log(config);
+      await axios.get(url, config).then(response => {
+        if (response) {
+          // console.log(response.data.result, 'talukaid');
+          setTalukaResult(response.data.result);
+        }
+      });
+    };
+    getTaluka();
+  }, []);
+
+  useEffect(() => {
+    if (taluka) {
+      const getVillage = async () => {
+        const url = `${API_URL}/api/get-village-list/${taluka}`;
+        console.log('get taluka', url);
+        const token = await AsyncStorage.getItem('rbacToken');
+        const config = {
+          headers: {
+            token: token ? token : '',
+          },
+        };
+        console.log(config);
+        await axios.get(url, config).then(response => {
+          if (response) {
+            // console.log(response.data, 'villllll');
+            setResultData(response.data.result);
+          }
+        });
+      };
+      getVillage();
+    }
+  }, [taluka]);
 
   const handleSelect = option => {
     const selectedValue = option === 'Yes' ? 'Yes' : 'No';
@@ -144,7 +189,7 @@ const FastEnquiry = () => {
     if (fastEnquiryState && fastEnquiryState.isSuccess === true) {
       dispatch(clearFastEnquiryState());
       setMessage('Enquiry Submitted');
-      console.log('Enquiry submitted');
+      // console.log('Enquiry submitted');
       openModal();
       dispatch(getEnquiryData()).then(() => {
         navigation.navigate('AddMore');
@@ -216,8 +261,16 @@ const FastEnquiry = () => {
     <ScrollView>
       <View style={styles.container}>
         <View style={styles.customerContainer}>
-          <Text style={styles.mainHeader}>Customer Details</Text>
-
+          <View style={styles.categoryBox}>
+            <View style={styles.leftSide}>
+              <Text style={styles.mainHeader}>Customer Details</Text>
+            </View>
+            <View style={styles.rightSide}>
+              <TouchableOpacity style={styles.categoryContainer}>
+                <Text style={styles.categoryText}>Select Category</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Customer Name *</Text>
             <TextInput
@@ -574,6 +627,36 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 14,
     fontWeight: 'bold',
+  },
+  categoryBox: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 10,
+    backgroundColor: '#f0f0f0',
+  },
+  leftSide: {
+    flex: 1,
+    marginRight: 10,
+  },
+  rightSide: {
+    flex: 1,
+    marginLeft: 10,
+    alignItems: 'flex-end',
+  },
+  mainHeader: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  categoryContainer: {
+    backgroundColor: '#007bff',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 4,
+  },
+  categoryText: {
+    color: '#ffffff',
+    fontSize: 16,
   },
 });
 export default FastEnquiry;
