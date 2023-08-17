@@ -386,7 +386,16 @@ const DetailEnquiry = ({route}) => {
     <ScrollView>
       <View style={styles.container}>
         <View style={styles.customerContainer}>
-          <Text style={styles.mainHeader}>Customer Details</Text>
+        <View style={styles.categoryBox}>
+            <View style={styles.leftSide}>
+              <Text style={styles.mainHeader}>Customer Details</Text>
+            </View>
+            <View style={styles.rightSide}>
+              <TouchableOpacity style={styles.categoryContainer}>
+                <Text style={styles.categoryText}>Select Category</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
           <View style={styles.inputContainer}>
             <Text style={styles.label}>First Name *</Text>
             <TextInput
@@ -993,6 +1002,36 @@ const styles = StyleSheet.create({
   dateImg: {
     width: 22,
     height: 22,
+  },
+  categoryBox: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 10,
+    backgroundColor: '#f0f0f0',
+  },
+  leftSide: {
+    flex: 1,
+    marginRight: 10,
+  },
+  rightSide: {
+    flex: 1,
+    marginLeft: 10,
+    alignItems: 'flex-end',
+  },
+  mainHeader: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  categoryContainer: {
+    backgroundColor: '#007bff',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 4,
+  },
+  categoryText: {
+    color: '#ffffff',
+    fontSize: 16,
   },
 });
 export default DetailEnquiry;
