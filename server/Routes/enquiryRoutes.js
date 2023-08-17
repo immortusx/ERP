@@ -191,30 +191,23 @@ router.get("/get-source-enquiry/:id", tokenCheck, async (req, res) => {
   });
 });
 
-// router.post("/edit-salesperson-enquiry-data", tokenCheck, async (req, res) => {
-//   console.log("/editNew,", req.body);
-//   const customerId = req.body.customerId;
-//   const salesperson_id = req.body.salesperson_id;
-//   const urlNew = `UPDATE enquiries SET  salesperson_id= '${salesperson_id}'  where customer_id = '${customerId}'`;
-//   console.log(urlNew, "urlNew");
-//   await db.query(urlNew, async (err, result) => {
-//     if (err) {
-//       console.log({ isSuccess: false, result: err });
-//       res.send({ isSuccess: false, result: "error" });
-//     } else {
-//       console.log({ isSuccess: true, result: urlNew });
-//       res.send({ isSuccess: true, result: "Success" });
-//     }
-//   });
-// });
+
+
+
 router.post("/edit-salesperson-enquiry-data", tokenCheck, async (req, res) => {
   console.log("/editNew,", req.body);
-  const customerIds = req.body.customerId; // An array of customer IDs
+  const customerIds = req.body.customerId; // Array of customer IDs or a single customer ID
   const salesperson_id = req.body.salesperson_id;
 
-  const customerIdList = customerIds.join("','"); // Join the IDs with commas and single quotes
+  let urlNew = "";
 
-  const urlNew = `UPDATE enquiries SET salesperson_id = '${salesperson_id}' WHERE customer_id IN ('${customerIdList}')`;
+  if (Array.isArray(customerIds)) {
+    const customerIdList = customerIds.join("','");
+    urlNew = `UPDATE enquiries SET salesperson_id = '${salesperson_id}' WHERE customer_id IN ('${customerIdList}')`;
+  } else {
+    urlNew = `UPDATE enquiries SET salesperson_id = '${salesperson_id}' WHERE customer_id = '${customerIds}'`;
+  }
+
   console.log(urlNew, "urlNew");
 
   await db.query(urlNew, async (err, result) => {
@@ -227,6 +220,8 @@ router.post("/edit-salesperson-enquiry-data", tokenCheck, async (req, res) => {
     }
   });
 });
+
+
 
 router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
   console.log(">>>>>>>>>set-new-enquiry-data", req.body);
