@@ -9,6 +9,7 @@ import getemployeeListSlice from './slices/getemployeeListSlice'
 import profileDataSlice from './slices/profileSlice'
 import AdminSlice from './slices/adminSlice'
 import getFeatureSlice from './slices/getFeatureSlice'
+import getcategoryfeactureSice from './slices/getcategoryfeactureSice';
 import addRoleSlice from './slices/addRoleSlice'
 import notificationSlice from './slices/notificationSlice'
 import addDepartmentSlice from './slices/Master/Department/addDepartmentSlice';
@@ -44,6 +45,7 @@ export const store = configureStore({
     getUserListSlice: getUserListSlice,
     getemployeeListSlice: getemployeeListSlice,
     featuresListState: getFeatureSlice,
+    categoryfeaturesListState:getcategoryfeactureSice,
     addRoleState: addRoleSlice,
     notificationState: notificationSlice,
     editUserDataState: editUserDataSlice,

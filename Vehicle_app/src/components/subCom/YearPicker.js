@@ -52,7 +52,6 @@ const YearPicker = ({visible, onClose, onYearSelect}) => {
   );
 };
 
-// ...styles remain unchanged
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,

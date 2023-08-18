@@ -112,10 +112,28 @@ router.get("/get-enquiries", tokenCheck, async (req, res) => {
     }
   });
 });
-router.get("/get-enquiriesbyId/:id", tokenCheck, async (req, res) => {
+// router.get("/get-enquiriesbyId/:id", tokenCheck, async (req, res) => {
+//   console.log(">>>>>>>>>get-enquiries", req.myData);
+//  const userId = req.params.id
+//   const urlNew = "select * from enquiries where customer_id =" +userId ;
+//   console.log(urlNew, "urlNew");
+//   await db.query(urlNew, async (err, result) => {
+//     console.log(result, "result");
+//     if (err) {
+//       console.log({ isSuccess: false, result: err });
+//       res.send({ isSuccess: false, result: "error" });
+//     } else {
+//       console.log({ isSuccess: "success", result: result});
+//       res.send({ isSuccess: "success", result: result });
+//     }
+//   });
+// });
+router.get("/get-multiple-enquiriesbyId/:ids", tokenCheck, async (req, res) => {
   console.log(">>>>>>>>>get-enquiries", req.myData);
- const userId = req.params.id
-  const urlNew = "select * from enquiries where customer_id =" +userId ;
+  const userIds = req.params.ids.split(","); // Split the comma-separated IDs into an array
+  const urlNew = `select * from enquiries where customer_id IN (${userIds.join(
+    ","
+  )})`;
   console.log(urlNew, "urlNew");
   await db.query(urlNew, async (err, result) => {
     console.log(result, "result");
@@ -123,11 +141,12 @@ router.get("/get-enquiriesbyId/:id", tokenCheck, async (req, res) => {
       console.log({ isSuccess: false, result: err });
       res.send({ isSuccess: false, result: "error" });
     } else {
-      console.log({ isSuccess: "success", result: result});
+      console.log({ isSuccess: "success", result: result });
       res.send({ isSuccess: "success", result: result });
     }
   });
 });
+
 router.get("/get-dsp/:id", tokenCheck, async (req, res) => {
   console.log(">>>>>>>>>get-dsp", req.params);
   let branchId = req.params.id;
@@ -187,12 +206,25 @@ router.get("/get-source-enquiry/:id", tokenCheck, async (req, res) => {
   });
 });
 
-router.post("/edit-new-enquiry-data", tokenCheck, async (req, res) => {
-console.log('/editNew,', req.body);
-const customerId = req.body.customerId;
-const salesperson_id = req.body.salesperson_id;
-  const urlNew = `UPDATE enquiries SET  salesperson_id= '${salesperson_id}'  where customer_id = '${customerId}'`;
-  console.log(urlNew,"urlNew")
+
+
+
+router.post("/edit-salesperson-enquiry-data", tokenCheck, async (req, res) => {
+  console.log("/editNew,", req.body);
+  const customerIds = req.body.customerId; // Array of customer IDs or a single customer ID
+  const salesperson_id = req.body.salesperson_id;
+
+  let urlNew = "";
+
+  if (Array.isArray(customerIds)) {
+    const customerIdList = customerIds.join("','");
+    urlNew = `UPDATE enquiries SET salesperson_id = '${salesperson_id}' WHERE customer_id IN ('${customerIdList}')`;
+  } else {
+    urlNew = `UPDATE enquiries SET salesperson_id = '${salesperson_id}' WHERE customer_id = '${customerIds}'`;
+  }
+
+  console.log(urlNew, "urlNew");
+
   await db.query(urlNew, async (err, result) => {
     if (err) {
       console.log({ isSuccess: false, result: err });
@@ -203,6 +235,8 @@ const salesperson_id = req.body.salesperson_id;
     }
   });
 });
+
+
 
 router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
   console.log(">>>>>>>>>set-new-enquiry-data", req.body);
