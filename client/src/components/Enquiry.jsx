@@ -735,7 +735,7 @@ export default function Enquiry({ workFor }) {
         {workFor === "newEnquiry" ? "New Enquiry" : "Enquiry"}
       </h5>
 
-      {workFor !== "newEnquiry" && (
+      {workFor === "newEnquiry" && (
         <>
           <div className="row mt-3 m-0">
             <div className="d-flex align-items-end justify-content-end">
@@ -814,7 +814,7 @@ export default function Enquiry({ workFor }) {
         </>
       )}
 
-      {workFor === "newEnquiry" && (
+      {workFor !== "newEnquiry" && (
         <>
           <div className="row mt-2 m-0">
             <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
