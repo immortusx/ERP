@@ -620,8 +620,3 @@ select.myInput {
   border-Radius: 5px;
   box-Shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
-.custom-header {
-  background-color: rgb(44, 43, 105);
-  color: white;
-  font-weight: bold;
-}
