@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
 import Axios from "axios";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
+import Checkbox from '@mui/material/Checkbox'
 
 const Work_Assign_Area = () => {
     const [rowData, setRowData] = useState([]);
     const currentBranch = localStorage.getItem("currentDealerId");
+    let [lastSalesperson, setLastSalesperson] = useState(null);
+    const [villagelist, setAllVillageList] = useState([]);
 
+   
     useEffect(() => {
         if (currentBranch) {
             async function getDspList() {
@@ -18,12 +22,13 @@ const Work_Assign_Area = () => {
 
                 const response = await Axios.get(url, config);
                 if (response.data && response.data.isSuccess) {
+                    console.log(response.data.result,'ddddddddddd')
                     const formattedData = response.data.result.map((user, index) => ({
                         id: index + 1,
                         rowNumber: index + 1,
                         person_name: user.salesperson,
                         category_name: user.category_name,
-                        Village_name: user.village_name,
+                        Village_name: user.village_names,
                     }));
 
                     setRowData(formattedData);
@@ -34,16 +39,49 @@ const Work_Assign_Area = () => {
         }
     }, [currentBranch]);
 
+    const[selectAll,setSelectAll]=useState(false);
+    
+    const handleHeaderCheckboxClick=()=>{
+        setSelectAll(!selectAll);
+    }
+  
+    const handleChildCheckboxClick=(itemId)=>{
+        const updatedRowsData=rowData.map((row)=>{
+            if(row.id==itemId){
+                return{
+                    ...row,
+                    checkbox:!row.checkbox,
+                };
+            }
+            return row;
+        });
+        setRowData(updatedRowsData);
+    }
+
+
+const label = { inputProps: { "aria-label": "Checkbox demo" } };
+
+
     const columns = [
         {
             field: "rowNumber",
-            headerClassName: "custom-header",
-            headerAlign: "center",
-            align: "center",
-            headerName: "No",
-            minWidth: 80,
-            flex: 0.1,
-        },
+            headerName: (
+              <Checkbox
+                {...label}
+                checked={selectAll}
+                onClick={handleHeaderCheckboxClick}
+              />
+            ),
+            minWidth: 90,
+            // flex: 1,
+            renderCell: (params) => (
+              <Checkbox
+                {...label}
+                checked={params.row.checkbox}
+                onClick={() => handleChildCheckboxClick(params.row.id)}
+              />
+            ),
+          },
         {
             field: "person_name",
             headerAlign: "center",
@@ -52,11 +90,22 @@ const Work_Assign_Area = () => {
             headerName: "Sales Person Name",
             minWidth: 200,
             flex: 1,
+            renderCell: (params) => {
+                if (params.value !== lastSalesperson) {
+                    lastSalesperson = params.value;
+                    return (
+                        <div style={{ fontWeight: 'bold' }}>
+                            {params.value}
+                        </div>
+                    );
+                }
+                return null;
+            },
         },
         {
             field: "category_name",
-            headerAlign: "center",
-            align: "center",
+            headerAlign: "left",
+            align: "left",
             headerClassName: "custom-header",
             headerName: "Category Name",
             minWidth: 200,
@@ -64,14 +113,22 @@ const Work_Assign_Area = () => {
         },
         {
             field: "Village_name",
-            headerAlign: "center",
-            align: "center",
+            headerAlign: "left",
+            align: "left",
             headerClassName: "custom-header",
             headerName: "Assign Village Name",
             minWidth: 200,
             flex: 1,
         },
     ];
+    useEffect(() => {
+        const rowsData = villagelist.map((item, index) => ({
+          ...item,
+          rowNumber: index + 1,
+          checkbox: selectAll,
+        }));
+        setRowData(rowsData);
+      }, [villagelist,selectAll]);
 
     return (
         <div>
@@ -85,6 +142,7 @@ const Work_Assign_Area = () => {
                 style={{ fontFamily: 'Poppins', padding: 5, backgroundColor: 'white', }}
                 pageSizeOptions={[5, 10, 25]}
                 initialState={{
+                    ...villagelist.initialState,
                     pagination: { paginationModel: { pageSize: 10 } },
                 }}
                 components={{
