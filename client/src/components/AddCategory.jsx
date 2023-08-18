@@ -202,20 +202,22 @@ useEffect(() => {
 
    const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(categoryData, "categoryData");
     const categoryname = categoryData.category_name;
     const categorydescription = categoryData.category_description;
     const categorydepartment = categoryData.department;
+    const categorychehkedFeature = categoryData.chehkedFeature;
     if (
       categoryname.length > 0 &&
       categorydescription !== "" &&
-      categorydepartment !== ""
-    ) {
-     if (workFor === "forEdit")
-     {
-categoryData["id"] = editcategoryData.data.id;
-dispatch(editcategoryUpdateToDb(categoryData));
-     }else{
+      categorydepartment !== "" &&
+      categorychehkedFeature !== []
+      ) {
+        if (workFor === "forEdit")
+        {
+          categoryData["id"] = editcategoryData.data.id;
+          dispatch(editcategoryUpdateToDb(categoryData));
+        }else{
+          console.log(categoryData, "categoryData");
        dispatch(addCategoryToDb(categoryData));
      } 
     } else {
