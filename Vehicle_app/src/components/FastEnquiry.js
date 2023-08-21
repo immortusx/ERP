@@ -262,13 +262,36 @@ const FastEnquiry = () => {
       <View style={styles.container}>
         <View style={styles.customerContainer}>
           <View style={styles.categoryBox}>
-            <View style={styles.leftSide}>
-              <Text style={styles.mainHeader}>Customer Details</Text>
-            </View>
-            <View style={styles.rightSide}>
-              <TouchableOpacity style={styles.categoryContainer}>
-                <Text style={styles.categoryText}>Select Category</Text>
-              </TouchableOpacity>
+            <View>
+              <Text
+                style={{fontWeight: 'bold', color: '#2E86C1', marginBottom: 5}}>
+                Category
+              </Text>
+              <View style={styles.enquirySourceContainer}>
+                {/* {renderLabel()} */}
+                <Dropdown
+                  style={[
+                    styles.dropdown,
+                    isFocus && {borderColor: 'blue'},
+                    {paddingHorizontal: 5},
+                  ]}
+                  placeholderStyle={styles.placeholderStyle}
+                  selectedTextStyle={styles.selectedTextStyle}
+                  inputSearchStyle={styles.inputSearchStyle}
+                  iconStyle={styles.iconStyle}
+                  data={talukaData}
+                  search
+                  maxHeight={200}
+                  labelField="label"
+                  valueField="value"
+                  placeholder={!isFocus ? 'Select Category' : ' '}
+                  searchPlaceholder="Search..."
+                  value={taluka}
+                  onChange={item => {
+                    setTaluka(item.value);
+                  }}
+                />
+              </View>
             </View>
           </View>
           <View style={styles.inputContainer}>
@@ -629,11 +652,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   categoryBox: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 10,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#EAF2F8',
   },
   leftSide: {
     flex: 1,
