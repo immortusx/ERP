@@ -3,7 +3,7 @@ import Axios from "axios";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import Checkbox from '@mui/material/Checkbox'
-
+import AreaAssignListList from "../../AreaAssignListList";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import PlayCircleIcon from "@mui/icons-material/PlayCircle";
 import { faEllipsisV } from "@fortawesome/free-solid-svg-icons/faEllipsisV";
@@ -12,13 +12,12 @@ const Work_Assign_Area = () => {
     const [id, setId] = useState(null);
     const [rowData, setRowData] = useState([]);
     const currentBranch = localStorage.getItem("currentDealerId");
-    let [lastSalesperson, setLastSalesperson] = useState(null);
     const [showComponent, setShowComponent] = useState(false);
     const [villagelist, setAllVillageList] = useState([]);
+    const [workAssignData, setWOrkAssignData] = useState([]);
 
 
     useEffect(() => {
-        setLastSalesperson(null);
         if (currentBranch) {
             async function getDspList() {
                 const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/get-work-assign-village-list/${currentBranch}`;
@@ -30,27 +29,31 @@ const Work_Assign_Area = () => {
 
                 const response = await Axios.get(url, config);
                 if (response.data && response.data.isSuccess) {
-                    console.log(response.data.result, 'ddddddddddd')
                     const formattedData = response.data.result.map((user, index) => ({
-                        id: index + 1,
                         rowNumber: index + 1,
                         person_name: user.salesperson,
                         category_name: user.category_name,
                         Village_name: user.village_names,
+                        user_id: user.user_id
                     }));
 
-                    setRowData(formattedData);
+                    setWOrkAssignData(formattedData);
                 }
             }
 
             getDspList();
         }
-    }, [currentBranch, rowData]);
+    }, [currentBranch]);
+
+    const hideareamodal = () => {
+        setShowComponent(false);
+    };
 
     const handleEditArea = async (ev) => {
+
         try {
             // console.log(ev.group_id, "evvvvvv");
-            console.log(ev.user_id, "evvvvvv");
+            console.log(ev, "evvvvvv");
 
             const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/add-areaAssignUserById/${ev.user_id}`;
             const config = {
@@ -132,14 +135,21 @@ const Work_Assign_Area = () => {
     };
 
     const [selectAll, setSelectAll] = useState(false);
-
     const handleHeaderCheckboxClick = () => {
         setSelectAll(!selectAll);
     }
 
+    // const handleHeaderCheckboxClick = () => {
+    //     const updatedRowsData = rowData.map((row) => ({
+    //         ...row,
+    //         checkbox: !selectAll,
+    //     }));
+    //     setRowData(updatedRowsData);
+    //     setSelectAll(!selectAll);
+    // };
     const handleChildCheckboxClick = (itemId) => {
         const updatedRowsData = rowData.map((row) => {
-            if (row.id == itemId) {
+            if (row.rowNumber === itemId) {
                 return {
                     ...row,
                     checkbox: !row.checkbox,
@@ -148,8 +158,7 @@ const Work_Assign_Area = () => {
             return row;
         });
         setRowData(updatedRowsData);
-    }
-
+    };
 
     const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
@@ -165,16 +174,14 @@ const Work_Assign_Area = () => {
                 />
             ),
             minWidth: 90,
-            // flex: 1,
             renderCell: (params) => (
                 <Checkbox
                     {...label}
                     checked={params.row.checkbox}
-                    onClick={() => handleChildCheckboxClick(params.row.id)}
+                    onClick={() => handleChildCheckboxClick(params.row.rowNumber)}
                 />
             ),
-        },
-        {
+        }, {
             field: "person_name",
             headerAlign: "center",
             align: "center",
@@ -183,15 +190,13 @@ const Work_Assign_Area = () => {
             minWidth: 200,
             flex: 1,
             renderCell: (params) => {
-                if (params.value !== lastSalesperson) {
-                    lastSalesperson = params.value;
-                    return (
-                        <div style={{ fontWeight: 'bold' }}>
-                            {params.value}
-                        </div>
-                    );
-                }
-                return null;
+
+                return (
+                    <div style={{ fontWeight: 'bold' }}>
+                        {params.value}
+                    </div>
+                );
+
             },
         },
         {
@@ -210,7 +215,7 @@ const Work_Assign_Area = () => {
             headerClassName: "custom-header",
             headerName: "Assign Village Name",
             minWidth: 200,
-            flex: 1,
+            flex: 1.2,
         },
         {
             field: "menu",
@@ -241,50 +246,59 @@ const Work_Assign_Area = () => {
             ),
         },
     ];
+
     useEffect(() => {
-        const rowsData = villagelist.map((item, index) => ({
-            ...item,
-            rowNumber: index + 1,
-            checkbox: selectAll,
+        const rowsData = workAssignData.map((item, index) => ({
+          ...item,
+          rowNumber: index + 1,
+          checkbox: selectAll,
         }));
         setRowData(rowsData);
-    }, [villagelist, selectAll]);
+      }, [workAssignData, selectAll]);
+
 
     return (
-        <div className="tableMenuHover"
-        style={{ height: "85vh", width: "100%" }}>
-           
-            <DataGrid
-                rows={rowData}
-                columns={columns}
-                getRowId={(params) => {
-                    return params.rowNumber
-                }}
-                className='rounded'
-                style={{ fontFamily: 'Poppins', padding: 5, backgroundColor: 'white', }}
-                pageSizeOptions={[5, 10, 25]}
-                initialState={{
-                    ...villagelist.initialState,
-                    pagination: { paginationModel: { pageSize: 10 } },
-                }}
-                components={{
-                    Toolbar: GridToolbar,
-                    NoRowsOverlay: () => (
-                        <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <span>There is no Users with current branch</span>
-                        </div>)
-                }}
-                componentsProps={{
-                    toolbar: {
-                        position: 'right',
-                        style: { fontFamily: 'Poppins', alignSelf: 'end' },
-                    },
-                }}
-                rowSelection={false}
-                autoPageSize={false}
-            />
+        <>
+            <div className="tableMenuHover"
+                style={{ height: "85vh", width: "100%" }}>
 
-        </div>
+                <DataGrid
+                    rows={rowData}
+                    columns={columns}
+                    getRowId={(params) => {
+                        return params.rowNumber
+                    }}
+                    className='rounded'
+                    style={{ fontFamily: 'Poppins', padding: 5, backgroundColor: 'white', }}
+                    pageSizeOptions={[5, 10, 25]}
+                    initialState={{
+                        ...workAssignData.initialState,
+                        pagination: { paginationModel: { pageSize: 10 } },
+                    }}
+                    components={{
+                        Toolbar: GridToolbar,
+                        NoRowsOverlay: () => (
+                            <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                <span>There is no Users with current branch</span>
+                            </div>)
+                    }}
+                    componentsProps={{
+                        toolbar: {
+                            position: 'right',
+                            style: { fontFamily: 'Poppins', alignSelf: 'end' },
+                        },
+                    }}
+                    rowSelection={false}
+                    autoPageSize={false}
+                />
+
+            </div>
+            <AreaAssignListList
+                showModal={showComponent}
+                hideModal={hideareamodal}
+                id={id}
+            />
+        </>
     );
 };
 
