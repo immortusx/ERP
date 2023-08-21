@@ -449,7 +449,7 @@ router.post("/set-new-fast-enquiry", tokenCheck, async (req, res) => {
     const taluka = req.body.taluka;
 
     const branch_id = req.body.branchId;
-    const categoryId = 1;
+    const categoryId = req.body.category;
     console.log(branch_id, "branchid");
 
     const salePersonSql = `CALL sp_get_user_sale_person(${village}, ${categoryId})`;
@@ -537,7 +537,7 @@ router.post("/set-new-detail-enquiry", tokenCheck, async (req, res) => {
     const condition_of = req.body.condition_of;
     const sourceOfEnquiry = req.body.sourceOfEnquiry ? req.body.sourceOfEnquiry : 31;
     const old_tractor = req.body.old_tractor;
-    const categoryId = 1;
+    const categoryId = req.body.category;
 
     const salePersonSql = `CALL sp_get_user_sale_person(${village}, ${categoryId})`;
     await db.query(salePersonSql, async (err, salePersonDetails) => {

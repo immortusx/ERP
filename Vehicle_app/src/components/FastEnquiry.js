@@ -57,16 +57,20 @@ const FastEnquiry = () => {
   const [openExpDeliveryDate, setOpenExpDeliveryDate] = useState(false);
   const [manuYearDate, setManuYearDate] = useState(new Date());
   const [openManuYearDate, setOPenManuYearDate] = useState(false);
+  const [categoryData, setCategoryData] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [isFocus, setIsFocus] = useState(false);
   const [village, setVillage] = useState(null);
   const [taluka, setTaluka] = useState(null);
   const [message, setMessage] = useState('');
+  const [salePerson, setSalePerson] = useState('');
   const [talukaResult, setTalukaResult] = useState([]);
   const [condition, setCondtion] = useState(null);
   const [selectedOption, setSelectedOption] = useState('No');
   const options = ['Yes', 'No'];
+  const [category, setCategory] = useState(null);
   const [resultData, setResultData] = useState([]);
+  const [salePersonData, setSalePersonData] = useState([]);
   const [branchTaluka, setBranchTaluka] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [oldVehicleData, setOldVehicleData] = useState({
@@ -88,6 +92,10 @@ const FastEnquiry = () => {
     label: village.name,
     value: village.id,
   }));
+  const categoryList = categoryData.map(category => ({
+    label: category.category_name,
+    value: category.id,
+  }));
 
   const conditionType = [
     {label: 'Good', value: '1'},
@@ -96,6 +104,36 @@ const FastEnquiry = () => {
     {label: 'Vey Good', value: '4'},
   ];
 
+  useEffect(() => {
+    if (village) {
+      const getAssignedPerson = async () => {
+        const url = `${API_URL}/api/retrieve-area-assigned-person/${category}/${village}`;
+        console.log('get assigned person', url);
+        const token = await AsyncStorage.getItem('rbacToken');
+        const config = {
+          headers: {
+            token: token ? token : '',
+          },
+        };
+        console.log(config);
+        await axios.get(url, config).then(response => {
+          if (response) {
+            console.log(response.data.result, 'assigned person');
+            setSalePersonData(response.data.result);
+          }
+        });
+      };
+      getAssignedPerson();
+    }
+  }, [village]);
+
+  useEffect(() => {
+    if (salePersonData.length > []) {
+      setSalePerson(salePersonData[0].salesperson);
+    } else {
+      setSalePerson('Area Not Assigned');
+    }
+  }, [salePersonData]);
   useEffect(() => {
     const getTaluka = async () => {
       const url = `${API_URL}/api/get-taluka-list`;
@@ -186,6 +224,16 @@ const FastEnquiry = () => {
   };
 
   useEffect(() => {
+    if (categoryData) {
+      categoryData.map(item => {
+        if (item.id === 1) {
+          setCategory(item.id);
+        }
+      });
+    }
+  }, [categoryData]);
+
+  useEffect(() => {
     if (fastEnquiryState && fastEnquiryState.isSuccess === true) {
       dispatch(clearFastEnquiryState());
       setMessage('Enquiry Submitted');
@@ -204,6 +252,7 @@ const FastEnquiry = () => {
       whatsapp_number: enquiryData.whatsappno,
       village: village,
       taluka: taluka,
+      category: category,
     };
     if (
       enquiryData.customer.length > 0 &&
@@ -224,6 +273,26 @@ const FastEnquiry = () => {
     }
   };
 
+  useEffect(() => {
+    const getCategory = async () => {
+      const url = `${API_URL}/api/enquiry/get-enquiry-categories`;
+      console.log('get category', url);
+      const token = await AsyncStorage.getItem('rbacToken');
+      const config = {
+        headers: {
+          token: token ? token : '',
+        },
+      };
+      console.log(config);
+      await axios.get(url, config).then(response => {
+        if (response) {
+          // console.log(response.data.result, 'category List');
+          setCategoryData(response.data.result);
+        }
+      });
+    };
+    getCategory();
+  }, []);
   const formattedCurrentDate = currentDate.toLocaleDateString();
   const formattedManuYear = manuYearDate.toLocaleDateString();
   const handleModalData = () => {
@@ -279,16 +348,16 @@ const FastEnquiry = () => {
                   selectedTextStyle={styles.selectedTextStyle}
                   inputSearchStyle={styles.inputSearchStyle}
                   iconStyle={styles.iconStyle}
-                  data={talukaData}
+                  data={categoryList}
                   search
                   maxHeight={200}
                   labelField="label"
                   valueField="value"
                   placeholder={!isFocus ? 'Select Category' : ' '}
                   searchPlaceholder="Search..."
-                  value={taluka}
+                  value={category}
                   onChange={item => {
-                    setTaluka(item.value);
+                    setCategory(item.value);
                   }}
                 />
               </View>
@@ -376,9 +445,19 @@ const FastEnquiry = () => {
                 }}
               />
             </View>
+
+            {salePerson !== 'Area Not Assigned' ? (
+              <Text style={{color: 'green', fontWeight: '400'}}>
+                Salesperson :- {salePerson ? salePerson.toUpperCase() : ''}
+              </Text>
+            ) : (
+              <Text style={{color: 'green', fontWeight: '400'}}>
+                {/* Salesperson :- {salePerson ? salePerson.toUpperCase() : ''} */}
+              </Text>
+            )}
           </View>
         </View>
-        <View style={{paddingHorizontal: 15}}>
+        <View style={{paddingHorizontal: 15, marginTop: 20}}>
           <TouchableOpacity style={styles.submitButton} onPress={submitEnquiry}>
             <Text style={styles.submitButtonText}>Submit</Text>
           </TouchableOpacity>
@@ -653,6 +732,7 @@ const styles = StyleSheet.create({
   },
   categoryBox: {
     backgroundColor: '#EAF2F8',
+    padding: 5,
   },
   leftSide: {
     flex: 1,
