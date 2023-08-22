@@ -40,7 +40,7 @@ export default function Enquiry({ workFor }) {
     state: "",
     city: "",
     district: "",
-    taluko: "",
+    tehsil: "",
     village: "",
     mobileNumber: "",
     brand: "",
@@ -171,7 +171,7 @@ export default function Enquiry({ workFor }) {
       state: "",
       city: "",
       district: "",
-      taluko: "",
+      tehsil: "",
       village: "",
       mobileNumber: "",
       brand: "",
@@ -393,11 +393,17 @@ export default function Enquiry({ workFor }) {
   useEffect(() => {
     console.log("enquiryState changes", enquiryState);
   }, [enquiryState]);
-  function handleSubmit() {
+  async function handleSubmit() {
     console.log("enquiryData", enquiryData);
     console.log("currentCategoryData", currentCategoryData);
-
-    // dispatch(setEnquiryDb(enquiryData))
+    const branchId = await localStorage.getItem('currentDealerId');
+    
+    enquiryData.branchId = branchId;
+    
+    console.log(enquiryData, 'enquierekjjjjjjjj');
+    dispatch(setEnquiryDb(enquiryData))
+     dispatch(setShowMessage("Enquiry is registered"));
+     navigate("/sale/enquiryies");
   }
 
   function getSelectedFields(data) {

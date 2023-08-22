@@ -28,7 +28,7 @@ router.post("/add-category", tokenCheck, async (req, res) => {
           async.forEachOf(
             chehkedFeature,
             (item, key, callback) => {
-              const sqlQuery = `INSERT INTO category_field(category_id, field_id,type) VALUES('${result.insertId}', '${item}', "enquiry")`;
+              const sqlQuery = `INSERT INTO enquiry_category_field(category_id, field_id,type) VALUES('${result.insertId}', '${item}' ,"enquiry")`;
               db.query(sqlQuery, (err, result) => {
                 if (err) {
                   console.log({ isSuccess: true, result: err });
@@ -143,25 +143,25 @@ router.post("/delete-category", tokenCheck, async (req, res) => {
   }
 });
 
-router.get(
-  "/get-category-features",
-  tokenCheck,
-  checkUserPermission("roles"),
-  async (req, res) => {
-    console.log(">>>>>get-features");
-    const urlNew = `SELECT * FROM enquiry_fields `;
-    console.log(urlNew, "urlNew");
-    await db.query(urlNew, (err, result) => {
-      if (err) {
-        console.log({ isSuccess: false, result: "error" });
-        res.send({ isSuccess: false, result: "error" });
-      } else {
-        console.log({ isSuccess: true, result: result });
-        res.send({ isSuccess: true, result: result });
-      }
-    });
-  }
-);
+// router.get(
+//   "/get-category-features",
+//   tokenCheck,
+//   checkUserPermission("roles"),
+//   async (req, res) => {
+//     console.log(">>>>>get-features");
+//     const urlNew = `SELECT * FROM enquiry_fields `;
+//     console.log(urlNew, "urlNew");
+//     await db.query(urlNew, (err, result) => {
+//       if (err) {
+//         console.log({ isSuccess: false, result: "error" });
+//         res.send({ isSuccess: false, result: "error" });
+//       } else {
+//         console.log({ isSuccess: true, result: result });
+//         res.send({ isSuccess: true, result: result });
+//       }
+//     });
+//   }
+// );
 
 router.post("/get-category-edit/:id", tokenCheck, async (req, res) => {
   console.log(">>>>>get-roles");

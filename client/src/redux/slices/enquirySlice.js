@@ -11,12 +11,24 @@ const initialState = {
 
 }
 
+// export const setEnquiryDb = createAsyncThunk('setEnquiryDb/enquirySlice', async (data) => {
+//     console.log('data', data)
+//     const url = `${process.env.REACT_APP_NODE_URL}/api/setEnquiryDb`
+//     // return await Axios.get(url).then((response) => {
+//     //     return response.data
+//     // })
+// })
 export const setEnquiryDb = createAsyncThunk('setEnquiryDb/enquirySlice', async (data) => {
     console.log('data', data)
-    const url = `${process.env.REACT_APP_NODE_URL}/api/setEnquiryDb`
-    // return await Axios.get(url).then((response) => {
-    //     return response.data
-    // })
+    const config = {
+      headers: {
+        token: localStorage.getItem("rbacToken"),
+      },
+    };
+    const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/set-new-enquiry-data`;
+    return await Axios.post(url,data,config).then((response) => {
+        return response.data
+    })
 })
 const enquirySlice = createSlice({
     name: 'enquiryState',
