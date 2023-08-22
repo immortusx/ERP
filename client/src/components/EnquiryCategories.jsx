@@ -134,7 +134,7 @@ export default function EnquiryCategories() {
         console.log('allFields', allFields);
         console.log('currentCategoryData', currentCategoryData);
         console.log('zcsdc', currentCategoryData.fields.find(i => { return i.field_name == 'First Name' }) != undefined);
-        dispatch(enquiryFieldSaveDB(sendObj))
+        // dispatch(enquiryFieldSaveDB(sendObj))
 
     }
     function cancelBtn() {

@@ -13,7 +13,7 @@ const initialState = {
 export const getCategoryFeatureFromDb = createAsyncThunk(
   "getFeatureCategoryFromDb/getCategoryFeatureSlice",
   async (userData) => {
-    const url = `${process.env.REACT_APP_NODE_URL}/api/master/get-category-features`;
+    const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/get-categories-fields`;
     const config = {
       headers: {
         token: localStorage.getItem("rbacToken"),
