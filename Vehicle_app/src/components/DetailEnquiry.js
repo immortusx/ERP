@@ -10,6 +10,7 @@ import {
   Alert,
   Pressable,
   Modal,
+  ActivityIndicator,
 } from 'react-native';
 import React, {useState, useEffect} from 'react';
 import DatePicker from 'react-native-date-picker';
@@ -47,7 +48,7 @@ const DetailEnquiry = ({route}) => {
   const {maker, modalName, variantName, year, condition_of} = useSelector(
     state => state.modalData,
   );
-  const {modal} = useSelector(state => state.manufacturerDetails);
+  // const {modal} = useSelector(state => state.manufacturerDetails);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [editData, setEditData] = useState(null);
   const [openCurentDate, setOpenCurrentDate] = useState(false);
@@ -66,6 +67,7 @@ const DetailEnquiry = ({route}) => {
   const [selectedOption, setSelectedOption] = useState('No');
   const options = ['No', 'Yes'];
   const [category, setCategory] = useState(null);
+  const [modal, setModal] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [oldManufacturer, setOldManufacturer] = useState(null);
   const [oldModal, setOldModal] = useState(null);
@@ -73,7 +75,9 @@ const DetailEnquiry = ({route}) => {
   const [showfield, setShowField] = useState(false);
   const [manufacturerData, setManufacurerData] = useState([]);
   const [salePerson, setSalePerson] = useState('');
+  const [loading, setLoading] = useState(false);
   const [modalData, setModalData] = useState([]);
+  const [modalList, setModalList] = useState([]);
   const [variantData, setVariantData] = useState([]);
   const [oldVehicleData, setOldVehicleData] = useState({
     maker: '',
@@ -105,6 +109,10 @@ const DetailEnquiry = ({route}) => {
     label: category.category_name,
     value: category.id,
   }));
+  const modalsList = modalList.map(item => ({
+    label: item.modalName,
+    value: item.id,
+  }));
 
   const enquirySourceItem = [
     {label: 'Digital', value: '25'},
@@ -132,6 +140,7 @@ const DetailEnquiry = ({route}) => {
             token: token ? token : '',
           },
         };
+        setLoading(true);
         console.log(config);
         await axios.get(url, config).then(response => {
           if (response) {
@@ -139,6 +148,7 @@ const DetailEnquiry = ({route}) => {
             setSalePersonData(response.data.result);
           }
         });
+        setLoading(false);
       };
       getAssignedPerson();
     }
@@ -323,22 +333,9 @@ const DetailEnquiry = ({route}) => {
     }
   }, [enquiryState]);
 
-  const showtinputFiled = () => {
-    setShowField(true);
-  };
   const submitEnquiry = () => {
-    console.log(selectedOption);
-    console.log(editData, '@#@#edit');
     const {firstname, lastname, phone, whatsappno, enquiry} = enquiryData;
-    console.log(enquiry, 'Helommm');
     const {taluka, village} = locationForm;
-    console.log(taluka, village);
-    console.log(firstname, lastname, phone);
-    console.log(modal);
-    console.log(enquiry);
-    // console.log(formattedDeliveryDate);
-    console.log(condition, 'consdtion');
-    console.log(maker, modalName, variantName, year, condition_of);
 
     const formData = {
       first_name: firstname,
@@ -366,10 +363,6 @@ const DetailEnquiry = ({route}) => {
     };
     if (
       enquiryData.firstname.length > 0
-      // &&
-      // enquiryData.lastname.length > 0 &&
-      // enquiryData.phone.length > 0 &&
-      // enquiryData.whatsappno.length > 0
     ) {
       if (editData) {
         console.log('Edit Enquiry');
@@ -403,7 +396,6 @@ const DetailEnquiry = ({route}) => {
     setIsPickerVisible(false);
   };
   const formattedCurrentDate = currentDate.toLocaleDateString();
-  // const formattedManuYear = manuYearDate.toLocaleDateString();
 
   const handleModalData = () => {
     console.log(oldManufacturer, oldModal, oldVariant, manuYearDate, condition);
@@ -429,6 +421,26 @@ const DetailEnquiry = ({route}) => {
       [field]: value,
     }));
   };
+  useEffect(() => {
+    const getModal = async () => {
+      const url = `${API_URL}/api/master/getallmodallist`;
+      console.log('get modal', url);
+      const token = await AsyncStorage.getItem('rbacToken');
+      const config = {
+        headers: {
+          token: token ? token : '',
+        },
+      };
+      console.log(config);
+      await axios.get(url, config).then(response => {
+        if (response) {
+          console.log(response.data.result, 'modllllllllllllll');
+          setModalList(response.data.result);
+        }
+      });
+    };
+    getModal();
+  }, []);
   const handleCalendarDate = selectedDate => {
     console.log(selectedDate.dateString, 'deliverydate');
     console.log(selectedDate, 'deliverydate');
@@ -546,32 +558,46 @@ const DetailEnquiry = ({route}) => {
               </TouchableOpacity>
             </View>
           </View>
-          {salePerson && (
+          {loading ? (
+            <ActivityIndicator
+              style={{alignItems: 'flex-start'}}
+              size={12}
+              color="#3498DB"
+            />
+          ) : (
             <Text style={{color: 'green', fontWeight: '400'}}>
-              Salesperson :- {salePerson ? salePerson.toUpperCase() : ''}
+              {salePerson
+                ? 'Sales Person :-' + ' ' + salePerson.toUpperCase()
+                : ''}
             </Text>
           )}
-          <View editable={false} style={[styles.inputStyle, styles.optional]}>
-            <View>
-              <TouchableOpacity
-                style={styles.centeredContainer}
-                onPress={() => {
-                  openManufactureDetails(editData);
-                }}>
-                <Image
-                  style={styles.plusImg}
-                  source={require('../../assets/plus2.png')}
-                />
-                <Text style={styles.textMore}>Add Manufacturer Details</Text>
-              </TouchableOpacity>
+          <View style={{marginBottom: 5}}>
+            <Text style={[styles.label, {marginBottom: 5}]}>Modal *</Text>
+            <View style={styles.enquirySourceContainer}>
+              <Dropdown
+                style={[
+                  styles.dropdown,
+                  isFocus && {borderColor: 'blue'},
+                  {paddingHorizontal: 5},
+                ]}
+                placeholderStyle={styles.placeholderStyle}
+                selectedTextStyle={styles.selectedTextStyle}
+                inputSearchStyle={styles.inputSearchStyle}
+                iconStyle={styles.iconStyle}
+                data={modalsList}
+                search
+                maxHeight={300}
+                labelField="label"
+                valueField="value"
+                placeholder={!isFocus ? 'Select Modal' : ' '}
+                searchPlaceholder="Search..."
+                value={modal}
+                onChange={item => {
+                  setModal(item.value);
+                }}
+              />
             </View>
           </View>
-          <Text
-            style={{
-              color: '#A93226',
-              fontSize: 12,
-            }}>{`${modal}`}</Text>
-
           <View style={{marginBottom: 5}}>
             <Text style={[styles.label, {marginBottom: 5}]}>
               Enquiry Primary Source *{' '}
@@ -802,7 +828,7 @@ const DetailEnquiry = ({route}) => {
             </View>
           )}
         </View>
-        <View style={{paddingHorizontal: 15}}>
+        <View style={{paddingHorizontal: 15, marginTop: 15}}>
           <TouchableOpacity style={styles.submitButton} onPress={submitEnquiry}>
             <Text style={styles.submitButtonText}>
               {editData ? 'Edit Enquiry' : 'Submit'}

@@ -10,6 +10,7 @@ import {
   Alert,
   Pressable,
   Modal,
+  ActivityIndicator,
 } from 'react-native';
 import React, {useState, useEffect} from 'react';
 import DatePicker from 'react-native-date-picker';
@@ -69,6 +70,7 @@ const FastEnquiry = () => {
   const [selectedOption, setSelectedOption] = useState('No');
   const options = ['Yes', 'No'];
   const [category, setCategory] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [resultData, setResultData] = useState([]);
   const [salePersonData, setSalePersonData] = useState([]);
   const [branchTaluka, setBranchTaluka] = useState([]);
@@ -115,6 +117,7 @@ const FastEnquiry = () => {
             token: token ? token : '',
           },
         };
+        setLoading(true);
         console.log(config);
         await axios.get(url, config).then(response => {
           if (response) {
@@ -122,6 +125,7 @@ const FastEnquiry = () => {
             setSalePersonData(response.data.result);
           }
         });
+        setLoading(false);
       };
       getAssignedPerson();
     }
@@ -130,8 +134,6 @@ const FastEnquiry = () => {
   useEffect(() => {
     if (salePersonData.length > []) {
       setSalePerson(salePersonData[0].salesperson);
-    } else {
-      setSalePerson('Area Not Assigned');
     }
   }, [salePersonData]);
   useEffect(() => {
@@ -326,6 +328,7 @@ const FastEnquiry = () => {
     console.log('____________');
     setShowModal(true);
   };
+
   return (
     <ScrollView>
       <View style={styles.container}>
@@ -445,14 +448,17 @@ const FastEnquiry = () => {
                 }}
               />
             </View>
-
-            {salePerson !== 'Area Not Assigned' ? (
-              <Text style={{color: 'green', fontWeight: '400'}}>
-                Salesperson :- {salePerson ? salePerson.toUpperCase() : ''}
-              </Text>
+            {loading ? (
+              <ActivityIndicator
+                style={{alignItems: 'flex-start'}}
+                size={12}
+                color="#3498DB"
+              />
             ) : (
               <Text style={{color: 'green', fontWeight: '400'}}>
-                {/* Salesperson :- {salePerson ? salePerson.toUpperCase() : ''} */}
+                {salePerson
+                  ? 'Sales Person :-' + ' ' + salePerson.toUpperCase()
+                  : ''}
               </Text>
             )}
           </View>
