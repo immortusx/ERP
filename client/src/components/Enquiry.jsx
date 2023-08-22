@@ -731,16 +731,16 @@ export default function Enquiry({ workFor }) {
   return (
     <main className="bg-white p-3 rounded">
       <h5 className="m-0">
-        {workFor === "newEnquiry" ? "New Enquiry" : "Enquiry"}
+        {workFor === "Enquiry" ? "Enquiry" : "New Enquiry"}
       </h5>
 
-      {workFor === "newEnquiry" && (
+      {workFor === "Enquiry" && (
         <>
           <div className="row mt-3 m-0">
             <div className="d-flex align-items-end justify-content-end">
               <div
                 onClick={() => {
-                  navigate("/home/new-enquiry");
+                  navigate("/sale/enquiryies/newenquiry");
                 }}
                 className="d-flex align-items-center"
                 type="button"
@@ -813,7 +813,7 @@ export default function Enquiry({ workFor }) {
         </>
       )}
 
-      {workFor !== "newEnquiry" && (
+      {workFor === "newEnquiry" && (
         <>
           <div className="row mt-2 m-0">
             <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
