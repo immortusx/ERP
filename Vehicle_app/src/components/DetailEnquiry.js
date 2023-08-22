@@ -828,7 +828,7 @@ const DetailEnquiry = ({route}) => {
             </View>
           )}
         </View>
-        <View style={{paddingHorizontal: 15, marginTop: 15}}>
+        <View style={{paddingHorizontal: 15, top: 20}}>
           <TouchableOpacity style={styles.submitButton} onPress={submitEnquiry}>
             <Text style={styles.submitButtonText}>
               {editData ? 'Edit Enquiry' : 'Submit'}
