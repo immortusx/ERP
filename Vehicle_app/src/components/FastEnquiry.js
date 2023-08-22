@@ -75,6 +75,10 @@ const FastEnquiry = () => {
   const [salePersonData, setSalePersonData] = useState([]);
   const [branchTaluka, setBranchTaluka] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
+  const [currentCategoryData, setcurrentCategoryData] = useState({
+    id: '',
+    fields: [],
+  });
   const [oldVehicleData, setOldVehicleData] = useState({
     maker: '',
     modalName: '',
@@ -106,6 +110,166 @@ const FastEnquiry = () => {
     {label: 'Vey Good', value: '4'},
   ];
 
+  const getCurrentCategoriesField = async categoryId => {
+    const url = `${API_URL}/api/enquiry/get-current-fields/${categoryId}`;
+    console.log('get field', url);
+    const token = await AsyncStorage.getItem('rbacToken');
+    const config = {
+      headers: {
+        token: token ? token : '',
+      },
+    };
+    console.log(config);
+    await axios.get(url, config).then(response => {
+      if (response) {
+        // console.log(response.data.result, 'category field');
+        setcurrentCategoryData(categoryfieldData => ({
+          ...categoryfieldData,
+          fields: response.data.result,
+        }));
+      }
+    });
+  };
+
+  useEffect(() => {
+    if (category) {
+      if (category != 0) {
+        setcurrentCategoryData(currentCategoryField => ({
+          ...currentCategoryField,
+          id: category,
+        }));
+        getCurrentCategoriesField(category);
+      }
+    }
+  }, [category]);
+
+  const getSelectedFields = data => {
+    switch (data.field) {
+      case 'firstName': {
+        return (
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Customer Name *</Text>
+            <TextInput
+              style={styles.inputStyle}
+              placeholder="Enter Customer Name"
+              autoCapitalize="none"
+              onChangeText={value => onChangeHandler(value, 'customer')}
+            />
+          </View>
+        );
+        break;
+      }
+      case 'mobileNumber': {
+        return (
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Phone Number *</Text>
+            <TextInput
+              style={styles.inputStyle}
+              placeholder="Enter Phone Number"
+              autoCapitalize="none"
+              onChangeText={value => onChangeHandler(value, 'phone')}
+            />
+          </View>
+        );
+        break;
+      }
+      case 'whatsappNumber': {
+        return (
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>WhatsApp Number *</Text>
+            <TextInput
+              style={styles.inputStyle}
+              placeholder="Enter WhatsApp Number"
+              autoCapitalize="none"
+              onChangeText={value => onChangeHandler(value, 'whatsappno')}
+            />
+          </View>
+        );
+        break;
+      }
+      case 'taluko': {
+        return (
+          <View style={{marginBottom: 5}}>
+            <Text style={styles.label}>Select Taluka *</Text>
+            <View style={styles.enquirySourceContainer}>
+              {/* {renderLabel()} */}
+              <Dropdown
+                style={[
+                  styles.dropdown,
+                  isFocus && {borderColor: 'blue'},
+                  {paddingHorizontal: 5},
+                ]}
+                placeholderStyle={styles.placeholderStyle}
+                selectedTextStyle={styles.selectedTextStyle}
+                inputSearchStyle={styles.inputSearchStyle}
+                iconStyle={styles.iconStyle}
+                data={talukaData}
+                search
+                maxHeight={200}
+                labelField="label"
+                valueField="value"
+                placeholder={!isFocus ? 'Select Taluka' : ' '}
+                searchPlaceholder="Search..."
+                value={taluka}
+                onChange={item => {
+                  setTaluka(item.value);
+                }}
+              />
+            </View>
+          </View>
+        );
+        break;
+      }
+      case 'village': {
+        return (
+          <>
+            <View style={{marginBottom: 5}}>
+              <Text style={styles.label}>Select Village *</Text>
+              <View style={styles.enquirySourceContainer}>
+                {/* {renderLabel()} */}
+                <Dropdown
+                  style={[
+                    styles.dropdown,
+                    isFocus && {borderColor: 'blue'},
+                    {paddingHorizontal: 5},
+                  ]}
+                  placeholderStyle={styles.placeholderStyle}
+                  selectedTextStyle={styles.selectedTextStyle}
+                  inputSearchStyle={styles.inputSearchStyle}
+                  iconStyle={styles.iconStyle}
+                  data={villageData}
+                  search
+                  maxHeight={200}
+                  labelField="label"
+                  valueField="value"
+                  placeholder={!isFocus ? 'Select Village' : ' '}
+                  searchPlaceholder="Search..."
+                  value={village}
+                  onChange={item => {
+                    setVillage(item.value);
+                  }}
+                />
+              </View>
+              {loading ? (
+                <ActivityIndicator
+                  style={{alignItems: 'flex-start'}}
+                  size={12}
+                  color="#3498DB"
+                />
+              ) : (
+                <Text style={{color: 'green', fontWeight: '400'}}>
+                  {salePerson
+                    ? 'Sales Person :-' + ' ' + salePerson.toUpperCase()
+                    : ''}
+                </Text>
+              )}
+            </View>
+          </>
+        );
+        break;
+      }
+    }
+  };
   useEffect(() => {
     if (village) {
       const getAssignedPerson = async () => {
@@ -366,102 +530,20 @@ const FastEnquiry = () => {
               </View>
             </View>
           </View>
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Customer Name *</Text>
-            <TextInput
-              style={styles.inputStyle}
-              placeholder="Enter Customer Name"
-              autoCapitalize="none"
-              onChangeText={value => onChangeHandler(value, 'customer')}
-            />
-          </View>
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Phone Number *</Text>
-            <TextInput
-              style={styles.inputStyle}
-              placeholder="Enter Phone Number"
-              autoCapitalize="none"
-              onChangeText={value => onChangeHandler(value, 'phone')}
-            />
-          </View>
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>WhatsApp Number *</Text>
-            <TextInput
-              style={styles.inputStyle}
-              placeholder="Enter WhatsApp Number"
-              autoCapitalize="none"
-              onChangeText={value => onChangeHandler(value, 'whatsappno')}
-            />
-          </View>
-          <View style={{marginBottom: 5}}>
-            <Text style={styles.label}>Select Taluka *</Text>
-            <View style={styles.enquirySourceContainer}>
-              {/* {renderLabel()} */}
-              <Dropdown
-                style={[
-                  styles.dropdown,
-                  isFocus && {borderColor: 'blue'},
-                  {paddingHorizontal: 5},
-                ]}
-                placeholderStyle={styles.placeholderStyle}
-                selectedTextStyle={styles.selectedTextStyle}
-                inputSearchStyle={styles.inputSearchStyle}
-                iconStyle={styles.iconStyle}
-                data={talukaData}
-                search
-                maxHeight={200}
-                labelField="label"
-                valueField="value"
-                placeholder={!isFocus ? 'Select Taluka' : ' '}
-                searchPlaceholder="Search..."
-                value={taluka}
-                onChange={item => {
-                  setTaluka(item.value);
-                }}
-              />
+          {category != '' && currentCategoryData.id != '' && (
+            <View>
+              {currentCategoryData.fields.length > 0 ? (
+                currentCategoryData.fields.map(item => {
+                  return getSelectedFields(item);
+                })
+              ) : (
+                <Text
+                  style={{color: 'grey', fontSize: 16, textAlign: 'center'}}>
+                  There are no selected fields
+                </Text>
+              )}
             </View>
-          </View>
-          <View style={{marginBottom: 5}}>
-            <Text style={styles.label}>Select Village *</Text>
-            <View style={styles.enquirySourceContainer}>
-              {/* {renderLabel()} */}
-              <Dropdown
-                style={[
-                  styles.dropdown,
-                  isFocus && {borderColor: 'blue'},
-                  {paddingHorizontal: 5},
-                ]}
-                placeholderStyle={styles.placeholderStyle}
-                selectedTextStyle={styles.selectedTextStyle}
-                inputSearchStyle={styles.inputSearchStyle}
-                iconStyle={styles.iconStyle}
-                data={villageData}
-                search
-                maxHeight={200}
-                labelField="label"
-                valueField="value"
-                placeholder={!isFocus ? 'Select Village' : ' '}
-                searchPlaceholder="Search..."
-                value={village}
-                onChange={item => {
-                  setVillage(item.value);
-                }}
-              />
-            </View>
-            {loading ? (
-              <ActivityIndicator
-                style={{alignItems: 'flex-start'}}
-                size={12}
-                color="#3498DB"
-              />
-            ) : (
-              <Text style={{color: 'green', fontWeight: '400'}}>
-                {salePerson
-                  ? 'Sales Person :-' + ' ' + salePerson.toUpperCase()
-                  : ''}
-              </Text>
-            )}
-          </View>
+          )}
         </View>
         <View style={{paddingHorizontal: 15, marginTop: 20}}>
           <TouchableOpacity style={styles.submitButton} onPress={submitEnquiry}>

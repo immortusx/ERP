@@ -254,7 +254,6 @@ export default function Enquiry({ workFor }) {
       },
     };
     await axios.get(url, config).then((response) => {
-      
       if (response.data) {
         if (response.data.isSuccess) {
           console.log("response.data", response.data);
@@ -710,19 +709,19 @@ export default function Enquiry({ workFor }) {
       return { ...pre, state: val };
     });
   };
-  
+
   const onSelectedDistrict = (val) => {
     setNewEnquiryData((pre) => {
       return { ...pre, district: val };
     });
   };
-  
+
   const onSelectedTaluka = (val) => {
     setNewEnquiryData((pre) => {
       return { ...pre, tehsil: val };
     });
   };
-  
+
   const onSelectedVillage = (val) => {
     setNewEnquiryData((pre) => {
       return { ...pre, village: val };
@@ -933,8 +932,10 @@ export default function Enquiry({ workFor }) {
               onSelectedTaluka={onSelectedTaluka}
               districtId={newEnquiryData.district}
             />
-            <Village onSelectedVillage={onSelectedVillage}
-            talukaId={newEnquiryData.tehsil}/>
+            <Village
+              onSelectedVillage={onSelectedVillage}
+              talukaId={newEnquiryData.tehsil}
+            />
             {/* <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
                             <label className='myLabel' htmlFor="email">Select District *</label>
                             <select onChange={changeHandlerNewEnquiry} className='inpClr myInput' name="district">

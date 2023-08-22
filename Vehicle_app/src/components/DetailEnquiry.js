@@ -79,6 +79,10 @@ const DetailEnquiry = ({route}) => {
   const [modalData, setModalData] = useState([]);
   const [modalList, setModalList] = useState([]);
   const [variantData, setVariantData] = useState([]);
+  const [currentCategoryData, setcurrentCategoryData] = useState({
+    id: '',
+    fields: [],
+  });
   const [oldVehicleData, setOldVehicleData] = useState({
     maker: '',
     modalName: '',
@@ -190,6 +194,419 @@ const DetailEnquiry = ({route}) => {
     };
     getCategory();
   }, []);
+
+  const getCurrentCategoriesField = async categoryId => {
+    const url = `${API_URL}/api/enquiry/get-current-fields/${categoryId}`;
+    console.log('get field', url);
+    const token = await AsyncStorage.getItem('rbacToken');
+    const config = {
+      headers: {
+        token: token ? token : '',
+      },
+    };
+    console.log(config);
+    await axios.get(url, config).then(response => {
+      if (response) {
+        // console.log(response.data.result, 'category field');
+        setcurrentCategoryData(categoryfieldData => ({
+          ...categoryfieldData,
+          fields: response.data.result,
+        }));
+      }
+    });
+  };
+  const getSelectedFields = data => {
+    switch (data.field) {
+      case 'firstName': {
+        return (
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>First Name *</Text>
+            <TextInput
+              style={styles.inputStyle}
+              placeholder="Enter First Name"
+              autoCapitalize="none"
+              keyboardType="default"
+              defaultValue={enquiryData.firstname || ''}
+              onChangeText={value => onChangeHandler(value, 'firstname')}
+            />
+          </View>
+        );
+        break;
+      }
+      case 'lastName': {
+        return (
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Last Name *</Text>
+            <TextInput
+              style={styles.inputStyle}
+              placeholder="Enter Last Name"
+              autoCapitalize="none"
+              keyboardType="default"
+              defaultValue={enquiryData.lastname || ''}
+              onChangeText={value => onChangeHandler(value, 'lastname')}
+            />
+          </View>
+        );
+        break;
+      }
+      case 'mobileNumber': {
+        return (
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Phone Number *</Text>
+            <TextInput
+              style={styles.inputStyle}
+              placeholder="Enter Phone Number"
+              autoCapitalize="none"
+              keyboardType="default"
+              defaultValue={enquiryData.phone || ''}
+              onChangeText={value => onChangeHandler(value, 'phone')}
+            />
+          </View>
+        );
+        break;
+      }
+      case 'whatsappNumber': {
+        return (
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>WhatsApp Number *</Text>
+            <TextInput
+              style={styles.inputStyle}
+              placeholder="Enter WhatsApp Number"
+              autoCapitalize="none"
+              keyboardType="default"
+              defaultValue={enquiryData.whatsappno || ''}
+              onChangeText={value => onChangeHandler(value, 'whatsappno')}
+            />
+          </View>
+        );
+        break;
+      }
+      case 'location': {
+        return (
+          <>
+            <View editable={false} style={[styles.inputStyle, styles.optional]}>
+              <View>
+                <TouchableOpacity
+                  style={styles.centeredContainer}
+                  onPress={() => {
+                    openAddLocation(editData);
+                  }}>
+                  <Image
+                    style={styles.plusImg}
+                    source={require('../../assets/plus2.png')}
+                  />
+                  <Text style={styles.textMore}>Add Location (Optional)</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+            {loading ? (
+              <ActivityIndicator
+                style={{alignItems: 'flex-start'}}
+                size={12}
+                color="#3498DB"
+              />
+            ) : (
+              <Text style={{color: 'green', fontWeight: '400'}}>
+                {salePerson
+                  ? 'Sales Person :-' + ' ' + salePerson.toUpperCase()
+                  : ''}
+              </Text>
+            )}
+          </>
+        );
+        break;
+      }
+      case 'modal': {
+        return (
+          <View style={{marginBottom: 5}}>
+            <Text style={[styles.label, {marginBottom: 5}]}>Modal *</Text>
+            <View style={styles.enquirySourceContainer}>
+              <Dropdown
+                style={[
+                  styles.dropdown,
+                  isFocus && {borderColor: 'blue'},
+                  {paddingHorizontal: 5},
+                ]}
+                placeholderStyle={styles.placeholderStyle}
+                selectedTextStyle={styles.selectedTextStyle}
+                inputSearchStyle={styles.inputSearchStyle}
+                iconStyle={styles.iconStyle}
+                data={modalsList}
+                search
+                maxHeight={300}
+                labelField="label"
+                valueField="value"
+                placeholder={!isFocus ? 'Select Modal' : ' '}
+                searchPlaceholder="Search..."
+                value={modal}
+                onChange={item => {
+                  setModal(item.value);
+                }}
+              />
+            </View>
+          </View>
+        );
+        break;
+      }
+      case 'sourceOfInquiry': {
+        return (
+          <View style={{marginBottom: 5}}>
+            <Text style={[styles.label, {marginBottom: 5}]}>
+              Enquiry Primary Source *{' '}
+              <Text
+                onPress={() => {
+                  showfield ? setShowField(false) : setShowField(true);
+                }}
+                style={[styles.enterEnquiry, {color: '#3AA4F7'}]}>
+                Add{' '}
+                <Image
+                  style={[styles.plusImg, {width: 15, height: 15}]}
+                  source={require('../../assets/plus2.png')}
+                />
+              </Text>
+            </Text>
+            {showfield === true ? (
+              <View style={styles.inputContainer}>
+                <TextInput
+                  style={styles.inputStyle}
+                  placeholder="Enter Enquiry Source"
+                  autoCapitalize="none"
+                  keyboardType="default"
+                  // defaultValue={enquiryData.phone || ''}
+                  onChangeText={value => onChangeHandler(value, 'enquiry')}
+                />
+              </View>
+            ) : (
+              <View style={styles.enquirySourceContainer}>
+                {/* {renderLabel()} */}
+                <Dropdown
+                  style={[
+                    styles.dropdown,
+                    isFocus && {borderColor: 'blue'},
+                    {paddingHorizontal: 5},
+                  ]}
+                  placeholderStyle={styles.placeholderStyle}
+                  selectedTextStyle={styles.selectedTextStyle}
+                  inputSearchStyle={styles.inputSearchStyle}
+                  iconStyle={styles.iconStyle}
+                  data={enquirySourceItem}
+                  search
+                  maxHeight={300}
+                  labelField="label"
+                  valueField="value"
+                  placeholder={!isFocus ? 'Select Source' : ' '}
+                  searchPlaceholder="Search..."
+                  value={enquiry}
+                  onChange={item => {
+                    setEnquiry(item.value);
+                  }}
+                />
+              </View>
+            )}
+          </View>
+        );
+        break;
+      }
+      case 'deliveryDate': {
+        return (
+          <View style={{marginBottom: 5}}>
+            <Text style={[styles.label, {marginBottom: 5}]}>
+              Expected Delivery Date *
+            </Text>
+            <View style={styles.deliveryDateContainer}>
+              <TouchableOpacity
+                style={{paddingHorizontal: 5}}
+                onPress={() => {
+                  setOpenExpDeliveryDate(true);
+                }}>
+                <Text style={{paddingVertical: 7}}>
+                  {expDeliveryDate === ''
+                    ? new Date().toISOString().slice(0, 10)
+                    : expDeliveryDate}
+                </Text>
+              </TouchableOpacity>
+              <MinDateCalendars
+                showModal={openExpDeliveryDate}
+                selectedDate={expDeliveryDate}
+                handleCalendarDate={handleCalendarDate}
+                onClose={() => setOpenExpDeliveryDate(false)}
+              />
+            </View>
+          </View>
+        );
+        break;
+      }
+      case 'oldTractor': {
+        return (
+          <>
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>Old Tractor Owned ?</Text>
+              <CustomRadioButton
+                options={options}
+                selectedOption={selectedOption}
+                onSelect={handleSelect}
+              />
+            </View>
+            {modalVisible && (
+              <View>
+                <View style={styles.expandedView}>
+                  <Text style={styles.modalTitle}>Select Details *</Text>
+                  <View style={styles.sourceContainer}>
+                    <View style={styles.enquirySourceContainer}>
+                      {/* {renderLabel()} */}
+                      <Dropdown
+                        style={[
+                          styles.dropdown,
+                          isFocus && {borderColor: 'blue'},
+                          {paddingHorizontal: 5},
+                        ]}
+                        placeholderStyle={styles.placeholderStyle}
+                        selectedTextStyle={styles.selectedTextStyle}
+                        inputSearchStyle={styles.inputSearchStyle}
+                        iconStyle={styles.iconStyle}
+                        data={manufacturItem}
+                        search
+                        maxHeight={300}
+                        labelField="label"
+                        valueField="value"
+                        placeholder={!isFocus ? 'Select Manufactur' : ' '}
+                        searchPlaceholder="Search..."
+                        value={oldManufacturer}
+                        onChange={item => {
+                          setOldManufacturer(item.value);
+                        }}
+                      />
+                    </View>
+                  </View>
+                  <View style={styles.sourceContainer}>
+                    <View style={styles.enquirySourceContainer}>
+                      {/* {renderLabel()} */}
+                      <Dropdown
+                        style={[
+                          styles.dropdown,
+                          isFocus && {borderColor: 'blue'},
+                          {paddingHorizontal: 5},
+                        ]}
+                        placeholderStyle={styles.placeholderStyle}
+                        selectedTextStyle={styles.selectedTextStyle}
+                        inputSearchStyle={styles.inputSearchStyle}
+                        iconStyle={styles.iconStyle}
+                        data={modalItem}
+                        search
+                        maxHeight={300}
+                        labelField="label"
+                        valueField="value"
+                        placeholder={!isFocus ? 'Select Modal' : ' '}
+                        searchPlaceholder="Search..."
+                        value={oldModal}
+                        onChange={item => {
+                          setOldModal(item.value);
+                        }}
+                      />
+                    </View>
+                  </View>
+                  <View style={styles.sourceContainer}>
+                    <View style={styles.enquirySourceContainer}>
+                      {/* {renderLabel()} */}
+                      <Dropdown
+                        style={[
+                          styles.dropdown,
+                          isFocus && {borderColor: 'blue'},
+                          {paddingHorizontal: 5},
+                        ]}
+                        placeholderStyle={styles.placeholderStyle}
+                        selectedTextStyle={styles.selectedTextStyle}
+                        inputSearchStyle={styles.inputSearchStyle}
+                        iconStyle={styles.iconStyle}
+                        data={variantItem}
+                        search
+                        maxHeight={300}
+                        labelField="label"
+                        valueField="value"
+                        placeholder={!isFocus ? 'Select Variant' : ' '}
+                        searchPlaceholder="Search..."
+                        value={oldVariant}
+                        onChange={item => {
+                          setOldVariant(item.value);
+                        }}
+                      />
+                    </View>
+                  </View>
+
+                  <View style={{marginBottom: 5}}>
+                    <View
+                      style={[
+                        styles.deliveryDateContainer,
+                        {paddingVertical: 7},
+                      ]}>
+                      <View>
+                        <View style={{flex: 1}}>
+                          <TouchableOpacity
+                            onPress={() => {
+                              setIsPickerVisible(true);
+                            }}>
+                            <Text style={{textAlign: 'left'}}>
+                              Manufactur Year{' :-'}
+                              {manuYearDate ? manuYearDate : 'Select Year'}
+                            </Text>
+                          </TouchableOpacity>
+                          <YearPicker
+                            visible={isPickerVisible}
+                            onYearSelect={onYearSelect}
+                            onClose={() => {
+                              setIsPickerVisible(false);
+                            }}
+                          />
+                        </View>
+                      </View>
+                    </View>
+                  </View>
+                  <View style={styles.sourceContainer}>
+                    <View style={styles.enquirySourceContainer}>
+                      {/* {renderLabel()} */}
+                      <Dropdown
+                        style={[
+                          styles.dropdown,
+                          isFocus && {borderColor: 'blue'},
+                        ]}
+                        placeholderStyle={styles.placeholderStyle}
+                        selectedTextStyle={styles.selectedTextStyle}
+                        inputSearchStyle={styles.inputSearchStyle}
+                        iconStyle={styles.iconStyle}
+                        data={conditionType}
+                        search
+                        maxHeight={300}
+                        labelField="label"
+                        valueField="value"
+                        placeholder={!isFocus ? 'Select Condition' : ' '}
+                        searchPlaceholder="Search..."
+                        value={condition}
+                        onChange={item => {
+                          setCondtion(item.value);
+                        }}
+                      />
+                    </View>
+                  </View>
+                </View>
+              </View>
+            )}
+          </>
+        );
+        break;
+      }
+    }
+  };
+  useEffect(() => {
+    if (category) {
+      if (category != 0) {
+        setcurrentCategoryData(currentCategoryField => ({
+          ...currentCategoryField,
+          id: category,
+        }));
+        getCurrentCategoriesField(category);
+      }
+    }
+  }, [category]);
 
   useEffect(() => {
     if (modalVisible) {
@@ -361,9 +778,7 @@ const DetailEnquiry = ({route}) => {
       sourceOfEnquiry: enquiry,
       old_tractor: selectedOption,
     };
-    if (
-      enquiryData.firstname.length > 0
-    ) {
+    if (enquiryData.firstname.length > 0) {
       if (editData) {
         console.log('Edit Enquiry');
         formData.customer_id = editData.id;
@@ -434,7 +849,7 @@ const DetailEnquiry = ({route}) => {
       console.log(config);
       await axios.get(url, config).then(response => {
         if (response) {
-          console.log(response.data.result, 'modllllllllllllll');
+          // console.log(response.data.result, 'modllllllllllllll');
           setModalList(response.data.result);
         }
       });
@@ -499,332 +914,18 @@ const DetailEnquiry = ({route}) => {
               </View>
             </View>
           </View>
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>First Name *</Text>
-            <TextInput
-              style={styles.inputStyle}
-              placeholder="Enter First Name"
-              autoCapitalize="none"
-              keyboardType="default"
-              defaultValue={enquiryData.firstname || ''}
-              onChangeText={value => onChangeHandler(value, 'firstname')}
-            />
-          </View>
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Last Name *</Text>
-            <TextInput
-              style={styles.inputStyle}
-              placeholder="Enter Last Name"
-              autoCapitalize="none"
-              keyboardType="default"
-              defaultValue={enquiryData.lastname || ''}
-              onChangeText={value => onChangeHandler(value, 'lastname')}
-            />
-          </View>
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Phone Number *</Text>
-            <TextInput
-              style={styles.inputStyle}
-              placeholder="Enter Phone Number"
-              autoCapitalize="none"
-              keyboardType="default"
-              defaultValue={enquiryData.phone || ''}
-              onChangeText={value => onChangeHandler(value, 'phone')}
-            />
-          </View>
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>WhatsApp Number *</Text>
-            <TextInput
-              style={styles.inputStyle}
-              placeholder="Enter WhatsApp Number"
-              autoCapitalize="none"
-              keyboardType="default"
-              defaultValue={enquiryData.whatsappno || ''}
-              onChangeText={value => onChangeHandler(value, 'whatsappno')}
-            />
-          </View>
-          <View editable={false} style={[styles.inputStyle, styles.optional]}>
+          {category != '' && currentCategoryData.id != '' && (
             <View>
-              <TouchableOpacity
-                style={styles.centeredContainer}
-                onPress={() => {
-                  openAddLocation(editData);
-                }}>
-                <Image
-                  style={styles.plusImg}
-                  source={require('../../assets/plus2.png')}
-                />
-                <Text style={styles.textMore}>Add Location (Optional)</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-          {loading ? (
-            <ActivityIndicator
-              style={{alignItems: 'flex-start'}}
-              size={12}
-              color="#3498DB"
-            />
-          ) : (
-            <Text style={{color: 'green', fontWeight: '400'}}>
-              {salePerson
-                ? 'Sales Person :-' + ' ' + salePerson.toUpperCase()
-                : ''}
-            </Text>
-          )}
-          <View style={{marginBottom: 5}}>
-            <Text style={[styles.label, {marginBottom: 5}]}>Modal *</Text>
-            <View style={styles.enquirySourceContainer}>
-              <Dropdown
-                style={[
-                  styles.dropdown,
-                  isFocus && {borderColor: 'blue'},
-                  {paddingHorizontal: 5},
-                ]}
-                placeholderStyle={styles.placeholderStyle}
-                selectedTextStyle={styles.selectedTextStyle}
-                inputSearchStyle={styles.inputSearchStyle}
-                iconStyle={styles.iconStyle}
-                data={modalsList}
-                search
-                maxHeight={300}
-                labelField="label"
-                valueField="value"
-                placeholder={!isFocus ? 'Select Modal' : ' '}
-                searchPlaceholder="Search..."
-                value={modal}
-                onChange={item => {
-                  setModal(item.value);
-                }}
-              />
-            </View>
-          </View>
-          <View style={{marginBottom: 5}}>
-            <Text style={[styles.label, {marginBottom: 5}]}>
-              Enquiry Primary Source *{' '}
-              <Text
-                onPress={() => {
-                  showfield ? setShowField(false) : setShowField(true);
-                }}
-                style={[styles.enterEnquiry, {color: '#3AA4F7'}]}>
-                Add{' '}
-                <Image
-                  style={[styles.plusImg, {width: 15, height: 15}]}
-                  source={require('../../assets/plus2.png')}
-                />
-              </Text>
-            </Text>
-            {showfield === true ? (
-              <View style={styles.inputContainer}>
-                <TextInput
-                  style={styles.inputStyle}
-                  placeholder="Enter Enquiry Source"
-                  autoCapitalize="none"
-                  keyboardType="default"
-                  // defaultValue={enquiryData.phone || ''}
-                  onChangeText={value => onChangeHandler(value, 'enquiry')}
-                />
-              </View>
-            ) : (
-              <View style={styles.enquirySourceContainer}>
-                {/* {renderLabel()} */}
-                <Dropdown
-                  style={[
-                    styles.dropdown,
-                    isFocus && {borderColor: 'blue'},
-                    {paddingHorizontal: 5},
-                  ]}
-                  placeholderStyle={styles.placeholderStyle}
-                  selectedTextStyle={styles.selectedTextStyle}
-                  inputSearchStyle={styles.inputSearchStyle}
-                  iconStyle={styles.iconStyle}
-                  data={enquirySourceItem}
-                  search
-                  maxHeight={300}
-                  labelField="label"
-                  valueField="value"
-                  placeholder={!isFocus ? 'Select Source' : ' '}
-                  searchPlaceholder="Search..."
-                  value={enquiry}
-                  onChange={item => {
-                    setEnquiry(item.value);
-                  }}
-                />
-              </View>
-            )}
-          </View>
-          <View style={{marginBottom: 5}}>
-            <Text style={[styles.label, {marginBottom: 5}]}>
-              Expected Delivery Date *
-            </Text>
-            <View style={styles.deliveryDateContainer}>
-              <TouchableOpacity
-                style={{paddingHorizontal: 5}}
-                onPress={() => {
-                  setOpenExpDeliveryDate(true);
-                }}>
-                <Text style={{paddingVertical: 7}}>
-                  {expDeliveryDate === ''
-                    ? new Date().toISOString().slice(0, 10)
-                    : expDeliveryDate}
+              {currentCategoryData.fields.length > 0 ? (
+                currentCategoryData.fields.map(item => {
+                  return getSelectedFields(item);
+                })
+              ) : (
+                <Text
+                  style={{color: 'grey', fontSize: 16, textAlign: 'center'}}>
+                  There are no selected fields
                 </Text>
-              </TouchableOpacity>
-              <MinDateCalendars
-                showModal={openExpDeliveryDate}
-                selectedDate={expDeliveryDate}
-                handleCalendarDate={handleCalendarDate}
-                onClose={() => setOpenExpDeliveryDate(false)}
-              />
-            </View>
-          </View>
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Old Tractor Owned ?</Text>
-            <CustomRadioButton
-              options={options}
-              selectedOption={selectedOption}
-              onSelect={handleSelect}
-            />
-          </View>
-          {modalVisible && (
-            <View>
-              <View style={styles.expandedView}>
-                <Text style={styles.modalTitle}>Select Details *</Text>
-                <View style={styles.sourceContainer}>
-                  <View style={styles.enquirySourceContainer}>
-                    {/* {renderLabel()} */}
-                    <Dropdown
-                      style={[
-                        styles.dropdown,
-                        isFocus && {borderColor: 'blue'},
-                        {paddingHorizontal: 5},
-                      ]}
-                      placeholderStyle={styles.placeholderStyle}
-                      selectedTextStyle={styles.selectedTextStyle}
-                      inputSearchStyle={styles.inputSearchStyle}
-                      iconStyle={styles.iconStyle}
-                      data={manufacturItem}
-                      search
-                      maxHeight={300}
-                      labelField="label"
-                      valueField="value"
-                      placeholder={!isFocus ? 'Select Manufactur' : ' '}
-                      searchPlaceholder="Search..."
-                      value={oldManufacturer}
-                      onChange={item => {
-                        setOldManufacturer(item.value);
-                      }}
-                    />
-                  </View>
-                </View>
-                <View style={styles.sourceContainer}>
-                  <View style={styles.enquirySourceContainer}>
-                    {/* {renderLabel()} */}
-                    <Dropdown
-                      style={[
-                        styles.dropdown,
-                        isFocus && {borderColor: 'blue'},
-                        {paddingHorizontal: 5},
-                      ]}
-                      placeholderStyle={styles.placeholderStyle}
-                      selectedTextStyle={styles.selectedTextStyle}
-                      inputSearchStyle={styles.inputSearchStyle}
-                      iconStyle={styles.iconStyle}
-                      data={modalItem}
-                      search
-                      maxHeight={300}
-                      labelField="label"
-                      valueField="value"
-                      placeholder={!isFocus ? 'Select Modal' : ' '}
-                      searchPlaceholder="Search..."
-                      value={oldModal}
-                      onChange={item => {
-                        setOldModal(item.value);
-                      }}
-                    />
-                  </View>
-                </View>
-                <View style={styles.sourceContainer}>
-                  <View style={styles.enquirySourceContainer}>
-                    {/* {renderLabel()} */}
-                    <Dropdown
-                      style={[
-                        styles.dropdown,
-                        isFocus && {borderColor: 'blue'},
-                        {paddingHorizontal: 5},
-                      ]}
-                      placeholderStyle={styles.placeholderStyle}
-                      selectedTextStyle={styles.selectedTextStyle}
-                      inputSearchStyle={styles.inputSearchStyle}
-                      iconStyle={styles.iconStyle}
-                      data={variantItem}
-                      search
-                      maxHeight={300}
-                      labelField="label"
-                      valueField="value"
-                      placeholder={!isFocus ? 'Select Variant' : ' '}
-                      searchPlaceholder="Search..."
-                      value={oldVariant}
-                      onChange={item => {
-                        setOldVariant(item.value);
-                      }}
-                    />
-                  </View>
-                </View>
-
-                <View style={{marginBottom: 5}}>
-                  <View
-                    style={[
-                      styles.deliveryDateContainer,
-                      {paddingVertical: 7},
-                    ]}>
-                    <View>
-                      <View style={{flex: 1}}>
-                        <TouchableOpacity
-                          onPress={() => {
-                            setIsPickerVisible(true);
-                          }}>
-                          <Text style={{textAlign: 'left'}}>
-                            Manufactur Year{' :-'}
-                            {manuYearDate ? manuYearDate : 'Select Year'}
-                          </Text>
-                        </TouchableOpacity>
-                        <YearPicker
-                          visible={isPickerVisible}
-                          onYearSelect={onYearSelect}
-                          onClose={() => {
-                            setIsPickerVisible(false);
-                          }}
-                        />
-                      </View>
-                    </View>
-                  </View>
-                </View>
-                <View style={styles.sourceContainer}>
-                  <View style={styles.enquirySourceContainer}>
-                    {/* {renderLabel()} */}
-                    <Dropdown
-                      style={[
-                        styles.dropdown,
-                        isFocus && {borderColor: 'blue'},
-                      ]}
-                      placeholderStyle={styles.placeholderStyle}
-                      selectedTextStyle={styles.selectedTextStyle}
-                      inputSearchStyle={styles.inputSearchStyle}
-                      iconStyle={styles.iconStyle}
-                      data={conditionType}
-                      search
-                      maxHeight={300}
-                      labelField="label"
-                      valueField="value"
-                      placeholder={!isFocus ? 'Select Condition' : ' '}
-                      searchPlaceholder="Search..."
-                      value={condition}
-                      onChange={item => {
-                        setCondtion(item.value);
-                      }}
-                    />
-                  </View>
-                </View>
-              </View>
+              )}
             </View>
           )}
         </View>
