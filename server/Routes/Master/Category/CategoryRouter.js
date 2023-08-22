@@ -10,9 +10,11 @@ const router = express.Router();
 
 //=====Add-category======
 router.post("/add-category", tokenCheck, async (req, res) => {
-  const { category_name, category_description, department } = req.body;
+  const { category_name, category_description, department, chehkedFeature } =
+    req.body;
   const addPartSql =
     "INSERT INTO `enquiry_category` (category_name, category_description, department) VALUES (?,?,?)";
+  console.log(addPartSql, "addPartSql");
 
   await db.query(
     addPartSql,
@@ -22,12 +24,70 @@ router.post("/add-category", tokenCheck, async (req, res) => {
         console.log({ isSuccess: false, result: err });
         res.send({ isSuccess: false, result: "error" });
       } else {
-        console.log({ isSuccess: true, result: "success" });
-        res.send({ isSuccess: true, result: "success" });
+        if (result.insertId) {
+          async.forEachOf(
+            chehkedFeature,
+            (item, key, callback) => {
+              const sqlQuery = `INSERT INTO category_field(category_id, field_id,type) VALUES('${result.insertId}', '${item}', "enquiry")`;
+              db.query(sqlQuery, (err, result) => {
+                if (err) {
+                  console.log({ isSuccess: true, result: err });
+                  res.send({ isSuccess: true, result: "error" });
+                }
+              });
+              callback();
+            },
+            (err) => {
+              if (err) {
+                console.log({ isSuccess: true, result: err });
+                res.send({ isSuccess: true, result: "error" });
+              } else {
+                console.log({ isSuccess: true, result: "success" });
+                res.send({ isSuccess: true, result: "success" });
+              }
+            }
+          );
+        }
       }
     }
   );
 });
+
+// router.post("/add-category", tokenCheck, async (req, res) => {
+//   const { category_name, category_description, department, chehkedFeature } =
+//     req.body;
+//   const addPartSql =
+//     "INSERT INTO `enquiry_category` (category_name, category_description, department) VALUES (?,?,?)";
+//   console.log(addPartSql, "addPartSql");
+
+//   await db.query(
+//     addPartSql,
+//     [category_name, category_description, department],
+//     async (err, result) => {
+//       if (err) {
+//         console.log({ isSuccess: false, result: err });
+//         res.send({ isSuccess: false, result: "error" });
+//       } else {
+//         if (result.insertId) {
+//           const category_id = result.insertId;
+//           const serializedFeatures = JSON.stringify(chehkedFeature);
+
+//           const sqlQuery = `INSERT INTO category_features(category_id, feature_id) VALUES('${category_id}', '${serializedFeatures}')`;
+//           console.log(sqlQuery, "sqlQuery");
+//           db.query(sqlQuery, (err, result) => {
+//             if (err) {
+//               console.log({ isSuccess: true, result: err });
+//               res.send({ isSuccess: true, result: "error" });
+//             } else {
+//               console.log({ isSuccess: true, result: "success" });
+//               res.send({ isSuccess: true, result: "success" });
+//             }
+//           });
+//         }
+//       }
+//     }
+//   );
+// });
 
 //=====Get-category======
 router.get("/get-category-list", tokenCheck, async (req, res) => {
@@ -82,7 +142,6 @@ router.post("/delete-category", tokenCheck, async (req, res) => {
     console.log(e);
   }
 });
-
 
 router.get(
   "/get-category-features",
@@ -151,7 +210,10 @@ router.get("/get-categorybyid/:id", tokenCheck, async (req, res) => {
 });
 
 //=======================Get-category with Total Enquiry===================//
-router.get("/get-category-list-with-total-enquiry/:id", tokenCheck, async (req, res) => {
+router.get(
+  "/get-category-list-with-total-enquiry/:id",
+  tokenCheck,
+  async (req, res) => {
     try {
       const villageId = req.params.id;
       await db.query(

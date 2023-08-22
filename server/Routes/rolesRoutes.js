@@ -82,7 +82,8 @@ router.post('/add-role', tokenCheck, checkUserPermission('add-role'), async (req
                         }
                     })
                     callback();
-                }, (err) => {
+                },
+                 (err) => {
                     if (err) {
                         console.log({ isSuccess: true, result: err })
                         res.send({ isSuccess: true, result: 'error' })

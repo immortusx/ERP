@@ -229,6 +229,7 @@ const getRoleEmp = async()=>{
            //console.log('featureDatanewwwww', featureData);
         if (workFor === 'addRole') {
             if (featureData.roleName != '' && featureData.checkedFeatures.length > 0) {
+                console.log(updatedObject, "updatedObject");
                 dispatch(addRoleToDb(updatedObject))
             } else {
                 dispatch(setShowMessage('Please fill all the field'))
