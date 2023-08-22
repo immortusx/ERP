@@ -56,19 +56,23 @@ const DetailEnquiry = ({route}) => {
   const [manuYearDate, setManuYearDate] = useState('');
   const [openManuYearDate, setOpenManufacturer] = useState(false);
   const [showMessageModal, setShowMessageModal] = useState(false);
+  const [salePersonData, setSalePersonData] = useState([]);
   const [isFocus, setIsFocus] = useState(false);
   const [message, setMessage] = useState('');
   const [enquiry, setEnquiry] = useState(null);
   const [isPickerVisible, setIsPickerVisible] = useState(false);
   const [condition, setCondtion] = useState(null);
+  const [categoryData, setCategoryData] = useState([]);
   const [selectedOption, setSelectedOption] = useState('No');
   const options = ['No', 'Yes'];
+  const [category, setCategory] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [oldManufacturer, setOldManufacturer] = useState(null);
   const [oldModal, setOldModal] = useState(null);
   const [oldVariant, setOldVariant] = useState(null);
   const [showfield, setShowField] = useState(false);
   const [manufacturerData, setManufacurerData] = useState([]);
+  const [salePerson, setSalePerson] = useState('');
   const [modalData, setModalData] = useState([]);
   const [variantData, setVariantData] = useState([]);
   const [oldVehicleData, setOldVehicleData] = useState({
@@ -97,6 +101,11 @@ const DetailEnquiry = ({route}) => {
     label: item.variantName,
     value: item.id,
   }));
+  const categoryList = categoryData.map(category => ({
+    label: category.category_name,
+    value: category.id,
+  }));
+
   const enquirySourceItem = [
     {label: 'Digital', value: '25'},
     {label: 'Telemarketing', value: '26'},
@@ -112,6 +121,34 @@ const DetailEnquiry = ({route}) => {
     {label: 'Vey Good', value: 'Vey Good'},
   ];
 
+  useEffect(() => {
+    if (village) {
+      const getAssignedPerson = async () => {
+        const url = `${API_URL}/api/retrieve-area-assigned-person/${category}/${village}`;
+        console.log('get assigned person', url);
+        const token = await AsyncStorage.getItem('rbacToken');
+        const config = {
+          headers: {
+            token: token ? token : '',
+          },
+        };
+        console.log(config);
+        await axios.get(url, config).then(response => {
+          if (response) {
+            // console.log(response.data.result[0].salesperson, 'assigned person');
+            setSalePersonData(response.data.result);
+          }
+        });
+      };
+      getAssignedPerson();
+    }
+  }, [village]);
+
+  useEffect(() => {
+    if (salePersonData.length > []) {
+      setSalePerson(salePersonData[0].salesperson);
+    }
+  }, [salePersonData]);
   const handleSelect = option => {
     const selectedValue = option === 'Yes' ? 'Yes' : 'No';
     setSelectedOption(selectedValue);
@@ -122,6 +159,27 @@ const DetailEnquiry = ({route}) => {
       setModalVisible(false);
     }
   };
+
+  useEffect(() => {
+    const getCategory = async () => {
+      const url = `${API_URL}/api/enquiry/get-enquiry-categories`;
+      console.log('get category', url);
+      const token = await AsyncStorage.getItem('rbacToken');
+      const config = {
+        headers: {
+          token: token ? token : '',
+        },
+      };
+      console.log(config);
+      await axios.get(url, config).then(response => {
+        if (response) {
+          // console.log(response.data.result, 'category List');
+          setCategoryData(response.data.result);
+        }
+      });
+    };
+    getCategory();
+  }, []);
 
   useEffect(() => {
     if (modalVisible) {
@@ -209,6 +267,15 @@ const DetailEnquiry = ({route}) => {
     }
   }, [editData]);
   // const formattedDeliveryDate = expDeliveryDate.toLocaleDateString();
+  useEffect(() => {
+    if (categoryData) {
+      categoryData.map(item => {
+        if (item.id === 1) {
+          setCategory(item.id);
+        }
+      });
+    }
+  }, [categoryData]);
   const handleReadValue = () => {
     console.log(selectedOption);
   };
@@ -280,6 +347,7 @@ const DetailEnquiry = ({route}) => {
       whatsapp_number: whatsappno,
       taluka: taluka,
       village: village,
+      category: category,
       deliveryDate:
         expDeliveryDate !== ''
           ? new Date(expDeliveryDate)
@@ -386,14 +454,37 @@ const DetailEnquiry = ({route}) => {
     <ScrollView>
       <View style={styles.container}>
         <View style={styles.customerContainer}>
-        <View style={styles.categoryBox}>
-            <View style={styles.leftSide}>
-              <Text style={styles.mainHeader}>Customer Details</Text>
-            </View>
-            <View style={styles.rightSide}>
-              <TouchableOpacity style={styles.categoryContainer}>
-                <Text style={styles.categoryText}>Select Category</Text>
-              </TouchableOpacity>
+          <View style={styles.categoryBox}>
+            <View>
+              <Text
+                style={{fontWeight: 'bold', color: '#2E86C1', marginBottom: 5}}>
+                Category
+              </Text>
+              <View style={styles.enquirySourceContainer}>
+                {/* {renderLabel()} */}
+                <Dropdown
+                  style={[
+                    styles.dropdown,
+                    isFocus && {borderColor: 'blue'},
+                    {paddingHorizontal: 5},
+                  ]}
+                  placeholderStyle={styles.placeholderStyle}
+                  selectedTextStyle={styles.selectedTextStyle}
+                  inputSearchStyle={styles.inputSearchStyle}
+                  iconStyle={styles.iconStyle}
+                  data={categoryList}
+                  search
+                  maxHeight={200}
+                  labelField="label"
+                  valueField="value"
+                  placeholder={!isFocus ? 'Select Category' : ' '}
+                  searchPlaceholder="Search..."
+                  value={category}
+                  onChange={item => {
+                    setCategory(item.value);
+                  }}
+                />
+              </View>
             </View>
           </View>
           <View style={styles.inputContainer}>
@@ -455,11 +546,11 @@ const DetailEnquiry = ({route}) => {
               </TouchableOpacity>
             </View>
           </View>
-          <Text
-            style={{
-              color: '#A93226',
-              fontSize: 12,
-            }}>{`${taluka} ${village}`}</Text>
+          {salePerson && (
+            <Text style={{color: 'green', fontWeight: '400'}}>
+              Salesperson :- {salePerson ? salePerson.toUpperCase() : ''}
+            </Text>
+          )}
           <View editable={false} style={[styles.inputStyle, styles.optional]}>
             <View>
               <TouchableOpacity
@@ -1004,11 +1095,8 @@ const styles = StyleSheet.create({
     height: 22,
   },
   categoryBox: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 10,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#EAF2F8',
+    padding: 5,
   },
   leftSide: {
     flex: 1,
