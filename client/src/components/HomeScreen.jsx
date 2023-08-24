@@ -77,6 +77,8 @@ import Variants from "./Master/Manufacturer/Sub_modal";
 import Dashboard from "./Dashboard";
 import UserProfile from "./UserProfile";
 import Report from "./Report";
+import Task from "./Task";
+import AddTask from "./AddTask";
 
 
 const CheckPermission = ({ children, path }) => {
@@ -953,7 +955,7 @@ export default function HomeScreen() {
               exact
             />
              <Route
-              path="administration/report/Total_Enquiry"
+              path="administration/report/Total-Enquiry"
               element={
                 <CheckPermission path="profile">
                   <Total_Enquiry />
@@ -962,7 +964,7 @@ export default function HomeScreen() {
               exact
             />
              <Route
-              path="administration/report/Work_Assign_Area"
+              path="administration/report/Work-Assign-Area"
               element={
                 <CheckPermission path="profile">
                   <Work_Assign_Area />
@@ -1148,6 +1150,24 @@ export default function HomeScreen() {
               element={
                 <CheckPermission path="branch">
                   <Branch workFor="editBranch" />
+                </CheckPermission>
+              }
+              exact
+            />
+             <Route
+              path="administration/configuration/Task"
+              element={
+                <CheckPermission path="profile">
+                  <Task workFor="Task" />
+                </CheckPermission>
+              }
+              exact
+            />
+            <Route
+              path="administration/configuration/Task/Add-Task"
+              element={
+                <CheckPermission path="profile">
+                  <AddTask workFor="addTask" />
                 </CheckPermission>
               }
               exact

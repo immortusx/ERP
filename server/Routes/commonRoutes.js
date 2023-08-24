@@ -64,4 +64,36 @@ router.get('/get-village-list/:id', tokenCheck, async (req, res) => {
     })
 })
 
+
+router.get('/get-task_types-list', tokenCheck, async (req, res) => {
+    console.log('>>>>>/get-task_types-list');
+    const id = req.params.id;
+    const url = `SELECT * FROM task_types`;
+    await db.query(url, async (err, result) => {
+        if (err) {
+            console.log({ isSuccess: true, result: err })
+            res.send({ isSuccess: true, result: 'error' })
+        } else {
+            console.log({ isSuccess: true, result: url })
+            res.send({ isSuccess: true, result: result })
+        }
+    })
+})
+router.get('/get-tasks-list/:id', tokenCheck, async (req, res) => {
+    console.log('>>>>>/get-tasks-list');
+    const id = req.params.id;
+    console.log(id, 'tasktypeid');
+    const url = `SELECT * FROM tasks where tasktype_id=${id}`;
+    await db.query(url, async (err, result) => {
+        if (err) {
+            console.log({ isSuccess: true, result: err })
+            res.send({ isSuccess: true, result: 'error' })
+        } else {
+            console.log({ isSuccess: true, result: url })
+            res.send({ isSuccess: true, result: result })
+        }
+    })
+})
+
+
 module.exports = router;
