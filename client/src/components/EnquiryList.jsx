@@ -466,6 +466,7 @@ export default function EnquiryList() {
           <div
             onClick={() => {
               navigate("/sale/enquiryies/enquiry");
+              
             }}
             className="d-flex align-items-center px-1"
             type="button"

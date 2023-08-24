@@ -108,6 +108,24 @@ router.get("/get-category-list", tokenCheck, async (req, res) => {
     console.log(e);
   }
 });
+router.get("/get-selected-category-field", tokenCheck, async (req, res) => {
+  try {
+    await db.query(
+      "SELECT * FROM enquiry_fields WHERE field = 'firstName' OR field = 'mobileNumber'",
+      (err, results) => {
+        if (err) {
+          console.log({ isSuccess: false, result: "error" });
+          res.send({ isSuccess: false, result: "error" });
+        } else {
+          console.log({ isSuccess: true, result: results });
+          res.status(200).send({ isSuccess: true, result: results });
+        }
+      }
+    );
+  } catch (e) {
+    console.log(e);
+  }
+});
 
 // ==== Delete category data By Id === //
 router.post("/delete-category", tokenCheck, async (req, res) => {
