@@ -1,37 +1,44 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import  Axios from "axios";
+import Axios from "axios";
 import {
   addCategoryToDb,
   clearaddCategory,
 } from "../redux/slices/Master/Category/addCategorySlice";
 import { getCategoryFeatureFromDb } from "../redux/slices/getcategoryfeactureSice";
-import { clearEditcategoryData,clearEditcategoryState,editcategoryUpdateToDb } from "../redux/slices/Master/Category/editCategorySlice";
+import {
+  clearEditcategoryData,
+  clearEditcategoryState,
+  editcategoryUpdateToDb,
+} from "../redux/slices/Master/Category/editCategorySlice";
 import { setShowMessage } from "../redux/slices/notificationSlice";
 import { useLocation, useNavigate } from "react-router-dom";
 import Department from "./singleComponents/villageCom/Department";
 
 export default function AddCategory({ workFor }) {
   const [dept, setDept] = useState([]);
-   const [featuresList, setFeaturesList] = useState([]);
+  const [featuresList, setFeaturesList] = useState([]);
+  const [checkField, setCheckField] = useState([]);
+  // const [checkFieldItem, setCheckFieldItem] = useState(true);
+  const [checkFieldItem, setCheckFieldItem] = useState([]);
   const [categoryData, setCategoryData] = useState({
     category_name: "",
     category_description: "",
     department: "",
-    chehkedFeature:[],
+    chehkedFeature: [],
   });
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const addCategory = useSelector((state) => state.addCategory.addCategory);
-   const { editcategorySliceState } = useSelector(
-     (state) => state.editCategoryDataState
-   );
-   const editcategoryData = useSelector(
-     (state) => state.editCategoryDataState.editcategoryData
-   );
- const featuresState = useSelector(
-   (state) => state.categoryfeaturesListState.featuresState
- );
+  const { editcategorySliceState } = useSelector(
+    (state) => state.editCategoryDataState
+  );
+  const editcategoryData = useSelector(
+    (state) => state.editCategoryDataState.editcategoryData
+  );
+  const featuresState = useSelector(
+    (state) => state.categoryfeaturesListState.featuresState
+  );
   function clearInpHook() {
     setCategoryData({
       category_name: "",
@@ -41,51 +48,120 @@ export default function AddCategory({ workFor }) {
     });
   }
 
-    function onChangeHandle(data, id) {
-      let tempAr = [];
-      const value = data.target.value;
-      const name = data.target.name;
-      const checked = data.target.checked;
-console.log(categoryData, "categoryData");
-      categoryData.chehkedFeature.forEach((i) => {
-        tempAr.push(i);
-      });
-      if (id === undefined) {
-        setCategoryData((featureData) => ({ ...featureData, [name]: value }));
-      } else {
-        if (checked) {
-          tempAr.push(id);
-          setCategoryData((featureData) => ({
-            ...featureData,
-            chehkedFeature: tempAr,
-          }));
-        } else {
-          tempAr = tempAr.filter((i) => {
-            return i != id;
-          });
-          setCategoryData((featureData) => ({
-            ...featureData,
-            chehkedFeature: tempAr,
-          }));
-        }
-      }
+  // function onChangeHandle(data, id) {
+  //   console.log(data, "fhdfh");
+  //   console.log(id, "fhddddfh");
+  //   let tempAr = [];
+  //   // const value = data.target.value;
+  //   // const name = data.target.name;
+  //   const checked = data.target.checked ;
+
+  //   console.log(checked, "checked");
+  //   categoryData.chehkedFeature.forEach((i) => {
+  //     tempAr.push(i);
+  //   });
+  //   // if (id === undefined) {
+  //   //   setCategoryData((featureData) => ({ ...featureData, [name]: value }));
+  //   // } else {
+  //     if (checked) {
+  //       tempAr.push(id);
+  //       console.log(tempAr, "tempAr");
+  //       setCategoryData((featureData) => ({
+  //         ...featureData,
+  //         chehkedFeature: tempAr,
+  //       }));
+  //     } else {
+  //       tempAr = tempAr.filter((i) => {
+  //         return i != id;
+  //       });
+  //       setCategoryData((featureData) => ({
+  //         ...featureData,
+  //         chehkedFeature: tempAr,
+  //       }));
+  //     }
+  //   // }
+  // }
+
+
+
+
+function onChangeHandle(data, id) {
+  const checked = data.target.checked;
+  const disabled = data.target.disabled;
+
+  // Update the featuresList
+  const updatedFeaturesList = featuresList.map((item) => {
+    if (item.id === id) {
+      return { ...item, isChecked: checked, disabled: disabled };
     }
+    return item;
+  });
+
+  setFeaturesList(updatedFeaturesList);
+
+  // Rest of your code (if needed)
+  let tempAr = [];
+  updatedFeaturesList.forEach((item) => {
+    if (item.isChecked) {
+      tempAr.push(item.id);
+    }
+  });
+  console.log(tempAr, "tempAr");
+
+  setCategoryData((featureData) => ({
+    ...featureData,
+    chehkedFeature: tempAr,
+  }));
+}
+
+
+  // useEffect(() => {
+  //   if (featuresState.isSuccess) {
+  //     if (featuresState.data.isSuccess) {
+  //       setFeaturesList(featuresState.data.result);
+  //     }
+  //   }
+  // }, [featuresState]);
+
+ useEffect(() => {
+   if (featuresState.isSuccess) {
+     if (featuresState.data.isSuccess) {
+       const updatedFeaturesList = featuresState.data.result.map((item) => {
+         if (checkFieldItem.includes(item.id)) {
+           // Set isChecked to true for IDs included in checkFieldItem
+           return { ...item, isChecked: true , disabled: true};
+         } else {
+           // Set isChecked to false for other IDs
+           return { ...item, isChecked: false, disabled:false };
+         }
+       });
+       console.log(updatedFeaturesList, "updatedFeaturesList");
+       setFeaturesList(updatedFeaturesList);
+
+       let tempAr = [];
+       updatedFeaturesList.forEach((item) => {
+         if (item.isChecked) {
+           tempAr.push(item.id);
+         }
+       });
+       console.log(tempAr, "tempAr");
+
+       setCategoryData((featureData) => ({
+         ...featureData,
+         chehkedFeature: tempAr,
+       }));
+     }
+   }
+ }, [featuresState, checkFieldItem]);
+
+
 
   useEffect(() => {
-    if (featuresState.isSuccess) {
-      if (featuresState.data.isSuccess) {
-        setFeaturesList(featuresState.data.result);
-      }
-    }
-  }, [featuresState]);
-
-useEffect(() => {
-  dispatch(getCategoryFeatureFromDb());
-}, []);
+    dispatch(getCategoryFeatureFromDb());
+  }, []);
 
   useEffect(() => {
     if (editcategorySliceState.isSuccess) {
-      console.log(editcategorySliceState, "editdepartmentSliceState");
       if (editcategorySliceState.message.result === "success") {
         dispatch(setShowMessage("Data is Updated"));
         clearInpHook();
@@ -105,10 +181,6 @@ useEffect(() => {
           dispatch(setShowMessage("Please select a category"));
         }, 1000);
       } else {
-        console.log(
-          "editemployeeData2222222222222222222222222",
-          editcategoryData
-        );
         setCategoryData({
           category_name: editcategoryData.data.category_name,
           category_description: editcategoryData.data.category_description,
@@ -125,7 +197,6 @@ useEffect(() => {
   }, [workFor, editcategoryData]);
 
   async function getcategoryid(id) {
-    console.log(id, "jjjjjjjjjjjjjjjjjjjj");
     const url = `${process.env.REACT_APP_NODE_URL}/api/master/get-categorybyid/${id}`;
     const config = {
       headers: {
@@ -145,7 +216,6 @@ useEffect(() => {
   useEffect(() => {
     if (workFor === "forEdit" && editcategoryData && editcategoryData.data) {
       const id = editcategoryData.data.id;
-      console.log(id, "categorydata");
       getcategoryid(id);
     }
   }, []);
@@ -175,8 +245,6 @@ useEffect(() => {
       if (response.data.isSuccess) {
         const data = response.data.result;
         setDept(data);
-
-        console.log(data, "dept");
       }
     });
   }
@@ -186,21 +254,18 @@ useEffect(() => {
   }, []);
   const onSelectedState = (value) => {
     setCategoryData((categoryData) => ({ ...categoryData, department: value }));
-    console.log(value,"valueeeeeeeeeeeeeee");
   };
 
   const onChangeHandler = (e) => {
     const { name, value } = e.target;
-    console.log("categoryData", categoryData);
+
     setCategoryData((categoryData) => ({
       ...categoryData,
       [name]: value,
     }));
   };
 
-   
-
-   const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const categoryname = categoryData.category_name;
     const categorydescription = categoryData.category_description;
@@ -211,29 +276,53 @@ useEffect(() => {
       categorydescription !== "" &&
       categorydepartment !== "" &&
       categorychehkedFeature !== []
-      ) {
-        if (workFor === "forEdit")
-        {
-          categoryData["id"] = editcategoryData.data.id;
-          dispatch(editcategoryUpdateToDb(categoryData));
-        }else{
-          console.log(categoryData, "categoryData");
-       dispatch(addCategoryToDb(categoryData));
-     } 
+    ) {
+      if (workFor === "forEdit") {
+        categoryData["id"] = editcategoryData.data.id;
+        console.log(categoryData, "categoryData");
+        dispatch(editcategoryUpdateToDb(categoryData));
+      } else {
+        // dispatch(addCategoryToDb(categoryData));
+      }
     } else {
       dispatch(setShowMessage("All field must be field"));
     }
-      setCategoryData({
-        category_name: "",
-        category_description: "",
-        department: "",
-        chehkedFeature:[],
-        // console.log(categoryData, "categoryData");
-      });
+    setCategoryData({
+      category_name: "",
+      category_description: "",
+      department: "",
+      chehkedFeature: [],
+    });
   };
+
+  
+  const getselectedData = () => {
+    const newurl = `${process.env.REACT_APP_NODE_URL}/api/master/get-selected-category-field`;
+    const config = {
+      headers: {
+        token: localStorage.getItem("rbacToken"),
+      },
+    };
+    Axios.get(newurl, config).then((response) => {
+      if (response) {
+        if (response.data.isSuccess) {
+          setCheckField(response.data.result);
+        }
+      }
+    });
+  };
+  useEffect(() => {
+    getselectedData();
+  }, []);
+
+  useEffect(() => {
+    const selectedIds = checkField.map((item) => item.id);
+    setCheckFieldItem(selectedIds);
+  }, [checkField]);
 
   function handlCancel() {
     navigate("/administration/configuration/category");
+    // console.log(featuresList, "featuresList");
     clearInpHook();
   }
 
@@ -290,12 +379,13 @@ useEffect(() => {
               {featuresList &&
                 featuresList.length > 0 &&
                 featuresList.map((data, index) => {
-                  console.log(data,"data")
                   return (
                     <li key={index} className="">
                       <div className="pb-3 d-flex align-items-center">
                         <input
                           type="checkbox"
+                          checked={data.isChecked}
+                          disabled={data.disabled}
                           className="myCheckBox inputElement"
                           onChange={(e) => {
                             onChangeHandle(e, data.id);
