@@ -86,10 +86,10 @@ function App() {
           {
             // adminExist?.result.result == true ?
             checkAdminExist ? <>
+              <Route path="/" element={<Navigate to='/login' />} exact />
               <Route path="/login" element={<Login />} exact />
               <Route path="/*" element={<PublicRoute > <HomeScreen /></PublicRoute>} />
               {/* <Route path="/*" element={<Navigate to='/login' />} exact /> */}
-              {/* <Route path="/" element={<Navigate to='/login' />} exact /> */}
             </> : <>
              <Route path="/" element={<Registration />} exact />
              <Route path="/registration" element={<Registration />} exact />
