@@ -28,6 +28,7 @@ export default function Enquiry({ workFor }) {
   );
 
   const [categoriesList, setCategoriesList] = useState([]);
+    const [selectedCategory, setSelectedCategory] = useState("");
   const [currentCategoryData, setCurrentCategoryData] = useState({
     id: "",
     fields: [],
@@ -378,6 +379,19 @@ export default function Enquiry({ workFor }) {
       }
     });
   }
+
+useEffect((e) => {
+  if (categoriesList.length > 0) {
+   const firstCategoryId = categoriesList[0].id.toString();
+    setSelectedCategory(firstCategoryId);
+    setEnquiryData((enquiryData) => ({
+      ...enquiryData,
+      category: firstCategoryId,
+    }));
+  }
+}, [categoriesList]);
+  
+
   useEffect(() => {
     console.log("enquiryData", enquiryData);
     const idIs = enquiryData.category;
@@ -390,20 +404,21 @@ export default function Enquiry({ workFor }) {
       getFieldCurrentCategories(idIs);
     }
   }, [enquiryData.category]);
+
   useEffect(() => {
     console.log("enquiryState changes", enquiryState);
   }, [enquiryState]);
   async function handleSubmit() {
     console.log("enquiryData", enquiryData);
     console.log("currentCategoryData", currentCategoryData);
-    const branchId = await localStorage.getItem('currentDealerId');
-    
+    const branchId = await localStorage.getItem("currentDealerId");
+
     enquiryData.branchId = branchId;
-    
-    console.log(enquiryData, 'enquierekjjjjjjjj');
-    dispatch(setEnquiryDb(enquiryData))
-     dispatch(setShowMessage("Enquiry is registered"));
-     navigate("/sale/enquiryies");
+
+    console.log(enquiryData, "enquierekjjjjjjjj");
+    dispatch(setEnquiryDb(enquiryData));
+    dispatch(setShowMessage("Enquiry is registered"));
+    navigate("/sale/enquiryies");
   }
 
   function getSelectedFields(data) {
@@ -774,9 +789,9 @@ export default function Enquiry({ workFor }) {
                 className="myInput"
                 name="category"
               >
-                <option value="" className="myLabel">
+                {/* <option value="" className="myLabel">
                   select category
-                </option>
+              </option> */}
                 {categoriesList.length > 0 &&
                   categoriesList.map((item, index) => {
                     return (
@@ -814,6 +829,7 @@ export default function Enquiry({ workFor }) {
                 )}
               </div>
             </>
+         
           )}
         </>
       )}
