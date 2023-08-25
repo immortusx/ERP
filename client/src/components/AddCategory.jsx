@@ -19,7 +19,8 @@ export default function AddCategory({ workFor }) {
   const [dept, setDept] = useState([]);
   const [featuresList, setFeaturesList] = useState([]);
   const [checkField, setCheckField] = useState([]);
-  const [checkFieldItem, setCheckFieldItem] = useState(true);
+  // const [checkFieldItem, setCheckFieldItem] = useState(true);
+  const [checkFieldItem, setCheckFieldItem] = useState([]);
   const [categoryData, setCategoryData] = useState({
     category_name: "",
     category_description: "",
@@ -278,10 +279,10 @@ function onChangeHandle(data, id) {
     ) {
       if (workFor === "forEdit") {
         categoryData["id"] = editcategoryData.data.id;
+        console.log(categoryData, "categoryData");
         dispatch(editcategoryUpdateToDb(categoryData));
       } else {
-        console.log(categoryData, "categoryData");
-        dispatch(addCategoryToDb(categoryData));
+        // dispatch(addCategoryToDb(categoryData));
       }
     } else {
       dispatch(setShowMessage("All field must be field"));
