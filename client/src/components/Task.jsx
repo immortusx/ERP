@@ -2,18 +2,51 @@ import React, { useEffect, useState } from "react";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import Checkbox from '@mui/material/Checkbox'
 import { Link, NavLink, useNavigate } from "react-router-dom";
-
+import Axios from "axios";
+import moment from "moment";
 const Task = () => {
 
    const [rowData, setRowData] = useState([]);
    const [selectAll, setSelectAll] = useState(false);
    const [taskData, setTaskData] = useState([]);
    const navigate = useNavigate();
-
+   const currentBranch = localStorage.getItem("currentDealerId");
 
    const handleHeaderCheckboxClick = () => {
       setSelectAll(!selectAll);
    }
+   useEffect(() => {
+
+          async function getTaskList() {
+              const url = `${process.env.REACT_APP_NODE_URL}/api/get-task-list`;
+              const config = {
+                  headers: {
+                      token: localStorage.getItem("rbacToken"),
+                  },
+              };
+
+              const response = await Axios.get(url, config);
+              if (response.data && response.data.isSuccess) {
+                  const formattedData = response.data.result.map((user, index) => ({
+                      rowNumber: index + 1,
+                      employee: user.employee,
+                      tasktype: user.tasktype_name,
+                      task: user.task_name,
+                      taskcount: user.taskcount,
+                      startdate: moment(user.startdate).format('LL'),
+                      enddate: moment(user.enddate).format('LL')
+                      
+                  }));
+
+                  setTaskData(formattedData);
+                  console.log(formattedData,"hdshsfduf")
+              }
+          }
+
+          getTaskList();
+      
+  }, []);
+
 
    const handleChildCheckboxClick = (itemId) => {
       const updatedRowsData = rowData.map((row) => {
@@ -85,10 +118,18 @@ const Task = () => {
          flex: 1,
       },
       {
-         field: "category",
+         field: "startdate",
          headerAlign: "left",
          align: "left",
-         headerName: "Category",
+         headerName: "Start Date",
+         minWidth: 250,
+         flex: 1,
+      },
+      {
+         field: "enddate",
+         headerAlign: "left",
+         align: "left",
+         headerName: "End Date",
          minWidth: 250,
          flex: 1,
       },

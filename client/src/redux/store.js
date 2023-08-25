@@ -33,6 +33,7 @@ import addManufacturerSlice from './slices/Master/Manufacturer/addManufacturerSl
 import addassigneAreaSlice from './slices/assignedAreaSlice'
 import editCategorySlice from './slices/Master/Category/editCategorySlice';
 import editassignareaSlice from './slices/editassignareaSlice';
+import addTaskSlice from './slices/addTaskSlice';
 
 export const store = configureStore({
   reducer: {
@@ -69,5 +70,6 @@ export const store = configureStore({
     addVillageSlice: addVillageSlice,
     addManufacturerSlice: addManufacturerSlice,
     addassigneAreaSlice: addassigneAreaSlice,
+    addTaskSlice: addTaskSlice
   },
 });  

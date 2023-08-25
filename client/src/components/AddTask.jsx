@@ -1,25 +1,26 @@
 import React, { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import Axios from "axios";
+import { useNavigate } from 'react-router-dom'
 import { setShowMessage } from '../redux/slices/notificationSlice'
 import { useSelector, useDispatch } from 'react-redux'
+import { addTaskToDb, clearAddTaskState } from '../redux/slices/addTaskSlice'
 
 const AddTask = ({ workFor }) => {
+  const navigate = useNavigate()
   const dispatch = useDispatch()
-  const [startDate, setStartDate] = useState(""); // State for Start Date
-  const [endDate, setEndDate] = useState("");     // State for End Date
+  const [startDate, setStartDate] = useState(null); // State for Start Date
+  const [endDate, setEndDate] = useState(null);     // State for End Date
   const [employees, setEmployees] = useState(null);
-  const [employeess, setEmployeess] = useState(null);
-  const [taskTypes, setTaskTypes] = useState([null]);
-  const [tasks, setTasks] = useState([null]);
-  const [category, setCategory] = useState([null]);
-  const [taskCount, setTaskCount] = useState();
+  const [taskTypes, setTaskTypes] = useState(null);
+  const [tasks, setTasks] = useState(null);
+  const [taskCount, setTaskCount] = useState(null);
   const currentBranch = localStorage.getItem("currentDealerId");
+  const addTaskState = useSelector(state => state.addTaskSlice.addTaskState)
   const [newAddTask, setNewAddTask] = useState({
     listDsp: [],
-    listTasktype:[],
-    listTask:[],
-    listCategory:[],
+    listTasktype: [],
+    listTask: [],
   });
 
   const [taskData, setTaskData] = useState({
@@ -27,7 +28,9 @@ const AddTask = ({ workFor }) => {
     tasktype: "",
     task: "",
     taskcount: "",
-    taskcategory: "",
+    startDate: "",
+    endDate: "",
+
   });
   const handleStartDateChange = (date) => {
     setStartDate(date);
@@ -66,10 +69,7 @@ const AddTask = ({ workFor }) => {
     console.log(e, 'fjg');
     setEmployees(e.target.value);
   }
-  const onChangeEmployees = (e) => {
-    console.log(e, 'fjg');
-    setEmployeess(e.target.value);
-  }
+
 
   useEffect(() => {
     if (currentBranch) {
@@ -96,14 +96,11 @@ const AddTask = ({ workFor }) => {
       getlistTasktype();
     }
   }, [currentBranch])
-  
+
   const onChangeTasktype = (e) => {
     console.log(e.target.value, 'fjtrr');
     setTaskTypes(e.target.value);
   }
-
-  
-
   useEffect(() => {
     if (taskTypes) {
       async function getlistTask() {
@@ -128,72 +125,52 @@ const AddTask = ({ workFor }) => {
       getlistTask();
     }
   }, [taskTypes])
-  
+
   const onChangeTask = (e) => {
     console.log(e.target.value, 'fjhhhhhhg');
     setTasks(e.target.value);
-  }
-
-  useEffect(() => {
-    if (currentBranch) {
-      async function getlistCategory() {
-        const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/get-enquiry-categories`;
-        const config = {
-          headers: {
-            token: localStorage.getItem("rbacToken"),
-          },
-        };
-        await Axios.get(url, config).then((response) => {
-          if (response.data) {
-            if (response.data.isSuccess) {
-              console.log("response", response.data);
-              setNewAddTask((newAddTask) => ({
-                ...newAddTask,
-                ["listCategory"]: response.data.result,
-              }));
-
-            }
-          }
-        });
-      }
-      getlistCategory();
-    }
-  }, [currentBranch])
-  
-  const onChangeCategory = (e) => {
-    console.log(e, 'fjhhhhhhg');
-    setCategory(e.target.value);
   }
 
   const onChangeTaskCount = (e) => {
     console.log(e, 'fjhhhhhhg');
     setTaskCount(e.target.value);
   }
+  // useEffect(() => {
+  //   if (addTaskState) {
+  //     console.log(addTaskState, ' adddd')
+  //   }
+  // }, [addTaskState])
   const handleSubmit = async () => {
-  // Prepare the data to send to the server
-  const emp = taskData.employee;
-  const typ = taskData.tasktype;
-  const tk = taskData.task;
-  const tc = taskData.taskcount;
-  const tcg = taskData.taskcategory;
+    const data = {};
+    data.employees = employees;
+    data.taskTypes = taskTypes;
+    data.tasks = tasks;
+    data.taskCount = taskCount;
+    data.startDate = startDate;
+    data.endDate = endDate;
 
-  if (
-    emp.length > 0 &&
-    typ.length > 0 &&
-    tk.length > 0 &&
-    tc.length > 0 &&
-    tcg.length > 0 &&
-    (workFor === "forAdd" )
-    // &&
-    // Object.keys(branchRoles).length > 0
-  ) {
-    // All fields are filled, you can proceed with your logic here.
-  } else {
-    dispatch(setShowMessage("All fields must be filled"));
+    if (workFor === "addTask") {
+      console.log(employees, taskTypes, tasks, taskCount, startDate, endDate, 'dtfaaaa');
+      dispatch(addTaskToDb(data))
+    } else {
+      dispatch(setShowMessage("All fields must be filled"));
+    }
   }
-}
 
 
+
+  useEffect(() => {
+    if (addTaskState && addTaskState.isSuccess) {
+      console.log(addTaskState, ' adddd')
+      if (addTaskState.isSuccess === true) {
+        dispatch(setShowMessage('User is created'))
+        dispatch(clearAddTaskState())
+        navigate('/administration/configuration/Task')
+      } else {
+        dispatch(setShowMessage('Something is wrong!'))
+      }
+    }
+  }, [addTaskState])
   return (
     <div className='addUser  bg-white rounded p-3'>
       <main>
@@ -240,8 +217,8 @@ const AddTask = ({ workFor }) => {
                   const tasktypes = `${i.tasktype_name}`;
                   return (
                     <option
-                    key={i.tasktype_id} 
-                    value={i.tasktype_id} 
+                      key={i.tasktype_id}
+                      value={i.tasktype_id}
                       className="myLabel"
                     >
                       {tasktypes}
@@ -251,12 +228,12 @@ const AddTask = ({ workFor }) => {
             </select>
           </section>
           <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
-            <label className="myLabel" htmlFor="taskType">
+            <label className="myLabel" htmlFor="task">
               Task
             </label>
-            <select onChange={onChangeTask} className="myInput" name="taskType" value={tasks}>
+            <select onChange={onChangeTask} className="myInput" name="task" value={tasks}>
               <option value="" className="myLabel">
-                Select Task 
+                Select Task
               </option>
               {newAddTask.listTask &&
                 newAddTask.listTask.length > 0 &&
@@ -264,8 +241,8 @@ const AddTask = ({ workFor }) => {
                   const tasks = `${i.task_name}`;
                   return (
                     <option
-                    key={i.id} 
-                    value={i.id} 
+                      key={i.id}
+                      value={i.id}
                       className="myLabel"
                     >
                       {tasks}
@@ -279,15 +256,15 @@ const AddTask = ({ workFor }) => {
 
         <div className=' row mt-3 m-0'>
           <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
-            <label className="myLabel" htmlFor="employee">
+            <label className="myLabel" htmlFor="taskCount">
               Task Count
             </label>
-            <input className='myInput inputElement' autoComplete='false' type="text" name="firstName" onChange={onChangeTaskCount} value={taskCount}/>
+            <input className='myInput inputElement' autoComplete='false' type="text" name="taskCount" onChange={onChangeTaskCount} value={taskCount} />
 
           </section>
 
           <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
-            <label className="myLabel" htmlFor="employee">
+            <label className="myLabel" htmlFor="startDate">
               Start Date
             </label>
             <DatePicker
@@ -302,7 +279,7 @@ const AddTask = ({ workFor }) => {
 
 
           <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
-            <label className="myLabel" htmlFor="employee">
+            <label className="myLabel" htmlFor="endDate">
               End Date
             </label>
             <DatePicker
@@ -316,56 +293,7 @@ const AddTask = ({ workFor }) => {
           </section>
 
         </div>
-        <div className=' row mt-3 m-0'>
-          <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
-            <label className="myLabel" htmlFor="employee">
-              Select Employee
-            </label>
-            <select onChange={onChangeEmployees} className="myInput" name="employee" value={employeess}>
-              <option value="" className="myLabel">
-                Select Employee
-              </option>
-              {newAddTask.listDsp &&
-                newAddTask.listDsp.length > 0 &&
-                newAddTask.listDsp.map((user) => {
-                  const fullName = `${user.first_name} ${user.last_name}`;
-                  return (
-                    <option
-                      key={user.id}
-                      value={user.id}
-                      className="myLabel"
-                    >
-                      {fullName}
-                    </option>
-                  );
-                })}
-            </select>
-          </section>
-          <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
-            <label className="myLabel" htmlFor="category">
-              Select Category
-            </label>
-            <select className="myInput" name="category" onChange={onChangeCategory} value={category}>
-              <option value="" className="myLabel">
-                Select Employee First
-              </option>
-              {newAddTask.listCategory &&
-                newAddTask.listCategory.length > 0 &&
-                newAddTask.listCategory.map((i) => {
-                  const fullName = `${i.category_name}`;
-                  return (
-                    <option
-                      key={i.id}
-                      value={i.id}
-                      className="myLabel"
-                    >
-                      {fullName}
-                    </option>
-                  );
-                })}
-            </select>
-          </section>
-        </div>
+
       </main>
 
       <section className="d-flex mt-3  flex-column flex-sm-row">

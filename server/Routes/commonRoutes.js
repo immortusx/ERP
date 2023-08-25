@@ -95,5 +95,47 @@ router.get('/get-tasks-list/:id', tokenCheck, async (req, res) => {
     })
 })
 
+router.post('/addtask-data', tokenCheck, async (req, res) => {
+    try {
+        console.log('/addtask-data>>>>>>>>>>>>', req.body);
+        const employees = req.body.employees;
+        const taskType = req.body.taskTypes;
+        const tasks = req.body.tasks;
+        const taskCount = req.body.taskCount;
+        const startDate = req.body.startDate.split('T')[0]; // Extract the date part
+        const endDate = req.body.endDate.split('T')[0]; // Extract the date part
+
+        const url = `INSERT INTO addtask_data (employee, tasktype, task, taskcount, startdate, enddate) VALUES ('${employees}','${taskType}','${tasks}','${taskCount}','${startDate}','${endDate}')`;
+
+        console.log("url", url);
+
+        await db.query(url, async (err, result) => {
+            if (err) {
+                console.log({ isSuccess: false, result: err });
+                res.send({ isSuccess: false, result: "error" });
+            } else {
+                console.log({ isSuccess: true, result: 'Task Add Successfully' });
+                res.send({ isSuccess: true, result: 'Task Add Successfully' });
+            }
+        });
+    } catch (err) {
+        console.log(err);
+    }
+})
+
+router.get("/get-task-list", tokenCheck, async (req, res) => {
+    console.log(">>>>>>>>>get-task-list");
+    const urlNew = `CALL sp_get_task_list()`;
+    await db.query(urlNew, async (err, result) => {
+        if (err) {
+            console.log({ isSuccess: false, result: err });
+            res.send({ isSuccess: false, result: "error" });
+        } else {
+            console.log({ isSuccess: "success", result: result[0] });
+            res.send({ isSuccess: "success", result: result[0] });
+        }
+    });
+});
+
 
 module.exports = router;
