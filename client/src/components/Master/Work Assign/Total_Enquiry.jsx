@@ -9,11 +9,6 @@ const WorkAssign = () => {
     });
     const [showComponent, setShowComponent] = useState(false);
     const currentBranch = localStorage.getItem("currentDealerId");
-
-    useEffect(()=> {
-        console.log(newEnquiryList,'user idi')
-    
-    })
     useEffect(() => {
         if (currentBranch) {
             async function getDspList() {
@@ -27,7 +22,6 @@ const WorkAssign = () => {
                 await Axios.get(url, config).then((response) => {
                     if (response.data) {
                         if (response.data.isSuccess) {
-                            console.log("response.data", response.data);
                             setNewEnquiryList((newEnquiryList) => ({
                                 ...newEnquiryList,
                                 ["listDsp"]: response.data.result,
