@@ -177,7 +177,7 @@ setAgencyData(parsedJson)
 
           <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
             <label className="myLabel" htmlFor="email">
-              name
+              Name *
             </label>
             <input
               value={agencyData.name}
@@ -193,7 +193,7 @@ setAgencyData(parsedJson)
 
           <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
             <label className="myLabel" htmlFor="email">
-              person
+              Person *
             </label>
             <input
               value={agencyData.contact}
@@ -210,7 +210,7 @@ setAgencyData(parsedJson)
         <div className=" row m-0">
           <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
             <label className="myLabel" htmlFor="email">
-              Email
+              Email *
             </label>
             <input
               value={agencyData.email}
@@ -227,7 +227,7 @@ setAgencyData(parsedJson)
             <div class="mb-3">
               <label for="formFile" className="myLabel" htmlFor="logo">
                 {" "}
-                Logo
+                Logo *
               </label>
               <input
                 className="form-control"

@@ -266,6 +266,7 @@ function onChangeHandle(data, id) {
   };
 
   const handleSubmit = async (e) => {
+    console.log(categoryData, 'cateogry Da')
     e.preventDefault();
     const categoryname = categoryData.category_name;
     const categorydescription = categoryData.category_description;
@@ -274,15 +275,14 @@ function onChangeHandle(data, id) {
     if (
       categoryname.length > 0 &&
       categorydescription !== "" &&
-      categorydepartment !== "" &&
-      categorychehkedFeature !== []
+      categorydepartment !== ""
     ) {
       if (workFor === "forEdit") {
         categoryData["id"] = editcategoryData.data.id;
         console.log(categoryData, "categoryData");
         dispatch(editcategoryUpdateToDb(categoryData));
       } else {
-        // dispatch(addCategoryToDb(categoryData));
+        dispatch(addCategoryToDb(categoryData));
       }
     } else {
       dispatch(setShowMessage("All field must be field"));
@@ -336,7 +336,7 @@ function onChangeHandle(data, id) {
 
           <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
             <label className="myLabel" htmlFor="email">
-              Category name
+              Category Name *
             </label>
             <input
               value={categoryData.category_name}
@@ -360,7 +360,7 @@ function onChangeHandle(data, id) {
         <div className=" row m-0">
           <section className="d-flex mt-3 flex-column col-12">
             <label className="myLabel" htmlFor="email">
-              Category description
+              Category Description *
             </label>
             <textarea
               value={categoryData.category_description}
