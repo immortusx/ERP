@@ -280,9 +280,9 @@ function onChangeHandle(data, id) {
       if (workFor === "forEdit") {
         categoryData["id"] = editcategoryData.data.id;
         console.log(categoryData, "categoryData");
-        dispatch(editcategoryUpdateToDb(categoryData));
+        // dispatch(editcategoryUpdateToDb(categoryData));
       } else {
-        // dispatch(addCategoryToDb(categoryData));
+        dispatch(addCategoryToDb(categoryData));
       }
     } else {
       dispatch(setShowMessage("All field must be field"));
