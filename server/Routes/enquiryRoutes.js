@@ -162,12 +162,13 @@ router.get("/get-dsp/:id", tokenCheck, async (req, res) => {
     }
   });
 });
+router.get("/get-dsp-by-village/:id")
 router.get("/get-work-assign-village-list/:id", tokenCheck, async (req, res) => {
   console.log(">>>>>>>>>get-dsp", req.params);
-  let branchId = req.params.id;
-  let userId = req.myData.userId;
-  const urlNew = `CALL sp_get_work_assign_village_list(${branchId},${userId})`;
-  await db.query(urlNew, async (err, result) => {
+  let village = req.params.id;
+  let categoryId = req.myData.categoryId;
+   const salePersonSql = `CALL sp_get_user_sale_person(${village}, ${categoryId})`;
+  await db.query(salePersonSql, async (err, result) => {
     if (err) {
       console.log({ isSuccess: false, result: err });
       res.send({ isSuccess: false, result: "error" });
@@ -244,8 +245,9 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
 
   const fristName = req.body.firstName || null;
   const lastName = req.body.lastName || null;
-  const middleName = req.body.fatherName || null;
+  const fatherName = req.body.fatherName || null;
   const phoneNumber = req.body.mobileNumber || null;
+  const whatsappNumber = req.body.whatsappNumber || null;
   const email = req.body.emailId || null;
   const isActive = 1;
   const state = req.body.state || null;
@@ -254,7 +256,7 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
   const block = req.body.block || null;
   const village = req.body.village || null;
 
-  const maker = req.body.maker || null;
+  const maker = req.body.make || null;
   const modalName = req.body.modalName || null;
   const variantName = req.body.variantName || null;
   const year = req.body.year || null;
@@ -270,7 +272,7 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
   const sourceOfEnquiry = req.body.sourceOfEnquiry || null;
 
   // const url = `INSERT INTO customers (first_name, middle_name, last_name, phone_number, email, is_active, state, district, taluka, block, village) VALUES ('${fristName}','${middleName}','${lastName}','${phoneNumber}','${email}','${isActive}','${state}','${district}','${taluka}','${block}','${village}')`;
-  const url = `INSERT INTO customers (first_name,last_name, phone_number, email, is_active, state, district, taluka, village) VALUES ('${fristName}','${lastName}','${phoneNumber}','${email}','${isActive}','${state}','${district}','${taluka}','${village}')`;
+  const url = `INSERT INTO customers (first_name,middle_name,last_name, phone_number,whatsapp_number, email, is_active, state, district, taluka, village) VALUES ('${fristName}','${fatherName}','${lastName}','${phoneNumber}','${whatsappNumber}','${email}','${isActive}','${state}','${district}','${taluka}','${village}')`;
 
   console.log("url", url);
 
@@ -285,7 +287,7 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
       const newDeliveryDate = await getDateInFormate(deliveryDate);
 
       // const urlNew = `INSERT INTO enquiries (branch_id, enquiry_type_id, salesperson_id, customer_id, product_id, date, delivery_date, enquiry_source_id, visitReason) VALUES('${branchId}','${enquiryTypeId}','${dsp}','${insertedId}','${model}','${newEnquiryDate}','${newDeliveryDate}','${sourceOfEnquiry}','${visitReason}')`;
-      const urlNew = `INSERT INTO enquiries (branch_id, enquiry_type_id, customer_id, date, delivery_date, enquiry_source_id, visitReason) VALUES('${branchId}','${enquiryTypeId}','${insertedId}','${newEnquiryDate}','${newDeliveryDate}','${sourceOfEnquiry}','${visitReason}')`;
+      const urlNew = `INSERT INTO enquiries (branch_id, enquiry_type_id,salesperson_id, customer_id, date, delivery_date, enquiry_source_id, visitReason) VALUES('${branchId}','${enquiryTypeId}','${dsp}','${insertedId}','${newEnquiryDate}','${newDeliveryDate}','${sourceOfEnquiry}','${visitReason}')`;
       await db.query(urlNew, async (err, result) => {
         if (err) {
           console.log({ isSuccess: false, result: err });
@@ -301,7 +303,7 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
             undefined
           ) {
             const newYearOfManufactur = await getDateInFormate(year);
-            const urlSql = `INSERT INTO manufactur_details (enquiry_id, maker, modalName, variantName, year_of_manufactur, condition_of) VALUES('${result.insertId}', '${maker}', '${modalName}', '${variantName}', '${newYearOfManufactur}', '${condition_of}')`;
+            const urlSql = `INSERT INTO manufactur_details (enquiry_id, maker, modalName, variantName, year_of_manufactur, condition_of) VALUES('${result.insertId}', '${maker}', '${model}', '${variantName}', '${newYearOfManufactur}', '${condition_of}')`;
             await db.query(urlSql, (err, result) => {
               if (err) {
                 console.log(err);

@@ -158,25 +158,6 @@ router.post("/delete-category", tokenCheck, async (req, res) => {
   }
 });
 
-// router.get(
-//   "/get-category-features",
-//   tokenCheck,
-//   checkUserPermission("roles"),
-//   async (req, res) => {
-//     console.log(">>>>>get-features");
-//     const urlNew = `SELECT * FROM enquiry_fields `;
-//     console.log(urlNew, "urlNew");
-//     await db.query(urlNew, (err, result) => {
-//       if (err) {
-//         console.log({ isSuccess: false, result: "error" });
-//         res.send({ isSuccess: false, result: "error" });
-//       } else {
-//         console.log({ isSuccess: true, result: result });
-//         res.send({ isSuccess: true, result: result });
-//       }
-//     });
-//   }
-// );
 
 router.post("/get-category-edit/:id", tokenCheck, async (req, res) => {
   console.log(">>>>>get-roles");
@@ -194,11 +175,10 @@ router.post("/get-category-edit/:id", tokenCheck, async (req, res) => {
           console.log({ isSuccess: false, result: err });
           res.status(500).json({ isSuccess: false, result: "error" });
         } else {
-          if (newResult.insertId ) {
             async.forEachOf(
               chehkedFeature,
               (item, key, callback) => {
-                const sqlQuery = `UPDATE enquiry_category_field SET  field_id = '${item}', where category_id ='${id}' and type = "enquiry"`;
+                const sqlQuery = `UPDATE enquiry_category_field SET  field_id = '${item}' WHERE category_id ='${id}' `;
                 console.log(sqlQuery, "sqlQuery");
                 db.query(sqlQuery, (err, result) => {
                   if (err) {
@@ -218,7 +198,6 @@ router.post("/get-category-edit/:id", tokenCheck, async (req, res) => {
                 }
               }
             );
-          }
         }
       }
     );

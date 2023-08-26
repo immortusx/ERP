@@ -268,7 +268,7 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
     setRowData(rowsData);
   }, [partsList, selectAll]);
   const deleteActionCall = (data) => {
-    console.log(data.id, "fffffffffffffffffff");
+    console.log(data, "fffffffffffffffffff");
     setType("category_delete");
     setId(data.id);
     setDeleteMessage(
