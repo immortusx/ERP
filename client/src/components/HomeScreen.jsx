@@ -80,6 +80,7 @@ import Report from "./Report";
 
 
 const CheckPermission = ({ children, path }) => {
+  console.log(children, path, 'item');
   // return checkList.includes(path) ? children : <Navigate to="../no-access" />
   // return checkList.includes(path) ? children : <h3>No access</h3>
   const rolesArray = localStorage.getItem("rolesArray");
