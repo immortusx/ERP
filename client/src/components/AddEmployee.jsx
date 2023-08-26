@@ -955,7 +955,7 @@ export default function Addemployee({ workFor }) {
                           onChange={onChangeAccess}
                           // value={selectedRoleName}
                         >
-                          <option value="">Admin</option>
+                          <option value="">None</option>
                           {empRoles &&
                             empRoles.map((acc, index) => (
                               <option

@@ -1047,7 +1047,7 @@ export default function Enquiry({ workFor }) {
 
             <section className="d-flex mt-3 flex-column col-12 col-lg-5">
               <label className="myLabel" htmlFor="email">
-                Select category
+                Select category *
               </label>
               <select
                 onChange={changeHandler}

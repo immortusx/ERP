@@ -308,7 +308,7 @@ export default function HomeScreen() {
                         </li>
                       )}
 
-                    {checkTabGrant(["profile"]) && (
+                    {checkTabGrant(["user-profile"]) && (
                         <li className="inLi">
                           <NavLink
                             className={({ isActive }) =>
@@ -331,7 +331,7 @@ export default function HomeScreen() {
                   </div>
                 </li>
               )}
-              {checkTabGrant(["profile"]) && (
+              {checkTabGrant(["sales"]) && (
                 <li className="outLi">
                   <button
                     className="headBtn"
@@ -360,7 +360,7 @@ export default function HomeScreen() {
                     className="accordion-collapse collapse"
                   >
                     <ul className="inUl">
-                      {checkTabGrant(["profile"]) && (
+                      {checkTabGrant(["sales"]) && (
                         <li className="inLi">
                           <NavLink
                             className={({ isActive }) =>
@@ -376,7 +376,7 @@ export default function HomeScreen() {
                   </div>
                 </li>
               )}
-              {checkTabGrant(["products", "sales"]) && (
+              {checkTabGrant(['service']) && (
                 <li className="outLi">
                   <button
                     className="headBtn"
@@ -482,7 +482,9 @@ export default function HomeScreen() {
                 "roles",
                 "add-role",
                 "add-user",
+                "edit-user",
                 "users",
+                "configuration",
                 "branch",
                 "employee",
                 "add-employee",
@@ -539,7 +541,7 @@ export default function HomeScreen() {
                           </NavLink>
                         </li>
                       )}
-                      {checkTabGrant(["users"]) && (
+                      {checkTabGrant(["employee"]) && (
                         <li className="inLi">
                           <NavLink
                             className={({ isActive }) =>
@@ -551,7 +553,7 @@ export default function HomeScreen() {
                           </NavLink>
                         </li>
                       )}
-                      {checkTabGrant(["profile"]) && (
+                      {checkTabGrant(["configuration"]) && (
                         <li className="inLi">
                           <NavLink
                             className={({ isActive }) =>
@@ -563,7 +565,7 @@ export default function HomeScreen() {
                           </NavLink>
                         </li>
                       )}
-                        {checkTabGrant(["users"]) && (
+                        {checkTabGrant(["report"]) && (
                         <li className="inLi">
                           <NavLink
                             className={({ isActive }) =>

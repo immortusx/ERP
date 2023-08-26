@@ -604,7 +604,7 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
                         workFor !== 'branch' && <>
                             <div className='row mt-2 m-0'>
                                 <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
-                                    <label className='myLabel' htmlFor="email">Firm Name </label>
+                                    <label className='myLabel' htmlFor="email">Branch Name * </label>
                                     <input defaultValue={branchData.firmName} onChange={changeHandler} className='inpClr myInput inputElement' autoComplete='false' type="text" name="firmName" />
                                 </section>
                                 <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
