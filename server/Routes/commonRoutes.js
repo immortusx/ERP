@@ -143,5 +143,32 @@ router.get("/get-task-list", tokenCheck, async (req, res) => {
     });
 });
 
+//=====================Retrieve Assigned Sale Person===================//
+router.get(
+  "/retrieve-area-assigned-person/:category/:village",
+  tokenCheck,
+  async (req, res) => {
+    console.log(">>>>>/retrieve-area-assigned-person");
+    try {
+      const CategoryId = req.params.category;
+      const villageId = req.params.village;
+      const url = `CALL sp_retrieve_sales_person(${villageId}, ${CategoryId})`;
+
+      db.query(url, [villageId, CategoryId], async (err, result) => {
+        if (err) {
+          console.error(err);
+          res.status(500).json({ isSuccess: false, result: "error" });
+        } else {
+          console.log({ isSuccess: true, result: result });
+          res.status(200).json({ isSuccess: true, result: result[0] });
+        }
+      });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ isSuccess: false, result: "error" });
+    }
+  }
+);
+
 
 module.exports = router;
