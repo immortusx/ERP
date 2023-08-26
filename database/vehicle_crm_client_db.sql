@@ -1021,7 +1021,8 @@ CREATE TABLE `district` (
 --
 
 INSERT INTO `district` (`id`, `name`, `state_id`, `is_active`) VALUES
-(1, 'None', 1, b'1');
+(1, 'None', 1, b'1'),
+(2, 'Surendra Nagar', 2, b'1');
 
 -- --------------------------------------------------------
 
@@ -1291,24 +1292,25 @@ CREATE TABLE `features` (
 --
 
 INSERT INTO `features` (`id`, `page`, `index_no`, `feature`, `label`, `parent_Id`, `is_active`) VALUES
-(1, 1, '1.1', 'agency-profile', 'Agency', 0, b'00000000000'),
-(2, 1, '1.2', 'dashboard', 'Dashboard', 0, b'00000000000'),
-(3, 1, '1.3', 'user-profile', 'profile', 0, b'00000000001'),
-(4, 2, '2.1', 'sales', 'Sales', 0, b'00000000001'),
-(5, 3, '3.1', 'service', 'Services', 0, b'00000000001'),
-(6, 4, '3.1', 'manage', 'Manage', 0, b'00000000001'),
-(7, 5, '7.1', 'roles', 'Roles', 0, b'00000000001'),
-(8, 5, '6.1', 'add-role', 'Add role', 7, b'00000000001'),
-(9, 5, '1.1', 'users', 'Users', 0, b'00000000001'),
-(10, 5, '3.1', 'add-user', 'Add user', 1, b'00000000001'),
-(11, 5, '4.1', 'edit-user', 'Edit user', 1, b'00000000001'),
-(12, 5, '5.1', 'products', 'Products', 3, b'00000000001'),
-(13, 5, '2', 'configuration', 'Configuration', 3, b'00000000000'),
-(14, 5, '8.1', 'agency', 'Agency', 0, b'00000000001'),
-(15, 5, '11.1', 'branch', 'Branch', 0, b'00000000001'),
-(16, 5, '14', 'work-assign', 'Work Assign', 0, b'00000000000'),
-(17, 5, '21', 'employee', 'Employee', 0, b'00000000000'),
-(18, 5, '2', 'report', 'Report', 3, b'00000000000');
+(1, 1, '1.1', 'home', 'Home', 0, b'00000000000'),
+(2, 1, '1.2', 'agency-profile', 'Agency', 0, b'00000000000'),
+(3, 1, '1.3', 'dashboard', 'Dashboard', 0, b'00000000000'),
+(4, 1, '1.4', 'user-profile', 'profile', 0, b'00000000001'),
+(5, 2, '2.1', 'sales', 'Sales', 0, b'00000000001'),
+(6, 3, '3.1', 'service', 'Services', 0, b'00000000001'),
+(7, 4, '4.1', 'manage', 'Manage', 0, b'00000000001'),
+(8, 5, '5.1', 'roles', 'Roles', 0, b'00000000001'),
+(9, 5, '5.2', 'add-role', 'Add role', 7, b'00000000001'),
+(10, 5, '5.3', 'users', 'Users', 0, b'00000000001'),
+(11, 5, '5.4', 'add-user', 'Add user', 1, b'00000000001'),
+(12, 5, '5.5', 'edit-user', 'Edit user', 1, b'00000000001'),
+(13, 4, '4.2', 'products', 'Products', 3, b'00000000001'),
+(14, 5, '5.6', 'configuration', 'Configuration', 3, b'00000000000'),
+(15, 5, '5.7', 'agency', 'Agency', 0, b'00000000001'),
+(16, 5, '5.8', 'branch', 'Branch', 0, b'00000000001'),
+(17, 5, '5.9', 'work-assign', 'Work Assign', 0, b'00000000000'),
+(18, 5, '5.10', 'employee', 'Employee', 0, b'00000000000'),
+(19, 5, '5.11', 'report', 'Report', 3, b'00000000000');
 
 -- --------------------------------------------------------
 
@@ -1546,8 +1548,8 @@ CREATE TABLE `taluka` (
 --
 
 INSERT INTO `taluka` (`id`, `name`, `district_id`, `state_id`, `is_active`) VALUES
-(1, 'None', -1, -1, b'1'),
-(2, 'Dhrangadhra', 1, 1, b'1');
+(1, 'None', 1, 1, b'1'),
+(2, 'Dhrangadhra', 2, 2, b'1');
 
 -- --------------------------------------------------------
 
@@ -1719,7 +1721,7 @@ CREATE TABLE `village` (
 --
 
 INSERT INTO `village` (`id`, `name`, `taluka_id`, `district_id`, `state_id`, `is_active`) VALUES
-(-1, 'None', -1, -1, -1, b'1');
+(1, 'None', 1, 1, 1, b'1');
 
 
 --
