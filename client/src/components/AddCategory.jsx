@@ -82,38 +82,34 @@ export default function AddCategory({ workFor }) {
   //   // }
   // }
 
+  function onChangeHandle(data, id) {
+    const checked = data.target.checked;
+    const disabled = data.target.disabled;
 
+    // Update the featuresList
+    const updatedFeaturesList = featuresList.map((item) => {
+      if (item.id === id) {
+        return { ...item, isChecked: checked, disabled: disabled };
+      }
+      return item;
+    });
 
+    setFeaturesList(updatedFeaturesList);
 
-function onChangeHandle(data, id) {
-  const checked = data.target.checked;
-  const disabled = data.target.disabled;
+    // Rest of your code (if needed)
+    let tempAr = [];
+    updatedFeaturesList.forEach((item) => {
+      if (item.isChecked) {
+        tempAr.push(item.id);
+      }
+    });
+    console.log(tempAr, "tempAr");
 
-  // Update the featuresList
-  const updatedFeaturesList = featuresList.map((item) => {
-    if (item.id === id) {
-      return { ...item, isChecked: checked, disabled: disabled };
-    }
-    return item;
-  });
-
-  setFeaturesList(updatedFeaturesList);
-
-  // Rest of your code (if needed)
-  let tempAr = [];
-  updatedFeaturesList.forEach((item) => {
-    if (item.isChecked) {
-      tempAr.push(item.id);
-    }
-  });
-  console.log(tempAr, "tempAr");
-
-  setCategoryData((featureData) => ({
-    ...featureData,
-    chehkedFeature: tempAr,
-  }));
-}
-
+    setCategoryData((featureData) => ({
+      ...featureData,
+      chehkedFeature: tempAr,
+    }));
+  }
 
   // useEffect(() => {
   //   if (featuresState.isSuccess) {
@@ -123,38 +119,36 @@ function onChangeHandle(data, id) {
   //   }
   // }, [featuresState]);
 
- useEffect(() => {
-   if (featuresState.isSuccess) {
-     if (featuresState.data.isSuccess) {
-       const updatedFeaturesList = featuresState.data.result.map((item) => {
-         if (checkFieldItem.includes(item.id)) {
-           // Set isChecked to true for IDs included in checkFieldItem
-           return { ...item, isChecked: true , disabled: true};
-         } else {
-           // Set isChecked to false for other IDs
-           return { ...item, isChecked: false, disabled:false };
-         }
-       });
-       console.log(updatedFeaturesList, "updatedFeaturesList");
-       setFeaturesList(updatedFeaturesList);
+  useEffect(() => {
+    if (featuresState.isSuccess) {
+      if (featuresState.data.isSuccess) {
+        const updatedFeaturesList = featuresState.data.result.map((item) => {
+          if (checkFieldItem.includes(item.id)) {
+            // Set isChecked to true for IDs included in checkFieldItem
+            return { ...item, isChecked: true, disabled: true };
+          } else {
+            // Set isChecked to false for other IDs
+            return { ...item, isChecked: false, disabled: false };
+          }
+        });
+        console.log(updatedFeaturesList, "updatedFeaturesList");
+        setFeaturesList(updatedFeaturesList);
 
-       let tempAr = [];
-       updatedFeaturesList.forEach((item) => {
-         if (item.isChecked) {
-           tempAr.push(item.id);
-         }
-       });
-       console.log(tempAr, "tempAr");
+        let tempAr = [];
+        updatedFeaturesList.forEach((item) => {
+          if (item.isChecked) {
+            tempAr.push(item.id);
+          }
+        });
+        console.log(tempAr, "tempAr");
 
-       setCategoryData((featureData) => ({
-         ...featureData,
-         chehkedFeature: tempAr,
-       }));
-     }
-   }
- }, [featuresState, checkFieldItem]);
-
-
+        setCategoryData((featureData) => ({
+          ...featureData,
+          chehkedFeature: tempAr,
+        }));
+      }
+    }
+  }, [featuresState, checkFieldItem]);
 
   useEffect(() => {
     dispatch(getCategoryFeatureFromDb());
@@ -266,7 +260,7 @@ function onChangeHandle(data, id) {
   };
 
   const handleSubmit = async (e) => {
-    console.log(categoryData, 'cateogry Da')
+    console.log(categoryData, "cateogry Da");
     e.preventDefault();
     const categoryname = categoryData.category_name;
     const categorydescription = categoryData.category_description;
@@ -295,7 +289,6 @@ function onChangeHandle(data, id) {
     });
   };
 
-  
   const getselectedData = () => {
     const newurl = `${process.env.REACT_APP_NODE_URL}/api/master/get-selected-category-field`;
     const config = {

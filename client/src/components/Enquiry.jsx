@@ -786,7 +786,7 @@ export default function Enquiry({ workFor }) {
         );*/
         }
         break;
-      case "model":
+      case "modal":
         return (
           <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
             <label className="myLabel" htmlFor="email">
