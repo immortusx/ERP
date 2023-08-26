@@ -10,9 +10,11 @@ const router = express.Router();
 
 //=====Add-category======
 router.post("/add-category", tokenCheck, async (req, res) => {
-  const { category_name, category_description, department } = req.body;
+  const { category_name, category_description, department, chehkedFeature } =
+    req.body;
   const addPartSql =
     "INSERT INTO `enquiry_category` (category_name, category_description, department) VALUES (?,?,?)";
+  console.log(addPartSql, "addPartSql");
 
   await db.query(
     addPartSql,
@@ -22,12 +24,70 @@ router.post("/add-category", tokenCheck, async (req, res) => {
         console.log({ isSuccess: false, result: err });
         res.send({ isSuccess: false, result: "error" });
       } else {
-        console.log({ isSuccess: true, result: "success" });
-        res.send({ isSuccess: true, result: "success" });
+        if (result.insertId) {
+          async.forEachOf(
+            chehkedFeature,
+            (item, key, callback) => {
+              const sqlQuery = `INSERT INTO enquiry_category_field(category_id, field_id,type) VALUES('${result.insertId}', '${item}' ,"enquiry")`;
+              db.query(sqlQuery, (err, result) => {
+                if (err) {
+                  console.log({ isSuccess: true, result: err });
+                  res.send({ isSuccess: true, result: "error" });
+                }
+              });
+              callback();
+            },
+            (err) => {
+              if (err) {
+                console.log({ isSuccess: true, result: err });
+                res.send({ isSuccess: true, result: "error" });
+              } else {
+                console.log({ isSuccess: true, result: "success" });
+                res.send({ isSuccess: true, result: "success" });
+              }
+            }
+          );
+        }
       }
     }
   );
 });
+
+// router.post("/add-category", tokenCheck, async (req, res) => {
+//   const { category_name, category_description, department, chehkedFeature } =
+//     req.body;
+//   const addPartSql =
+//     "INSERT INTO `enquiry_category` (category_name, category_description, department) VALUES (?,?,?)";
+//   console.log(addPartSql, "addPartSql");
+
+//   await db.query(
+//     addPartSql,
+//     [category_name, category_description, department],
+//     async (err, result) => {
+//       if (err) {
+//         console.log({ isSuccess: false, result: err });
+//         res.send({ isSuccess: false, result: "error" });
+//       } else {
+//         if (result.insertId) {
+//           const category_id = result.insertId;
+//           const serializedFeatures = JSON.stringify(chehkedFeature);
+
+//           const sqlQuery = `INSERT INTO category_features(category_id, feature_id) VALUES('${category_id}', '${serializedFeatures}')`;
+//           console.log(sqlQuery, "sqlQuery");
+//           db.query(sqlQuery, (err, result) => {
+//             if (err) {
+//               console.log({ isSuccess: true, result: err });
+//               res.send({ isSuccess: true, result: "error" });
+//             } else {
+//               console.log({ isSuccess: true, result: "success" });
+//               res.send({ isSuccess: true, result: "success" });
+//             }
+//           });
+//         }
+//       }
+//     }
+//   );
+// });
 
 //=====Get-category======
 router.get("/get-category-list", tokenCheck, async (req, res) => {
@@ -48,15 +108,31 @@ router.get("/get-category-list", tokenCheck, async (req, res) => {
     console.log(e);
   }
 });
+router.get("/get-selected-category-field", tokenCheck, async (req, res) => {
+  try {
+    await db.query(
+      "SELECT * FROM enquiry_fields WHERE field = 'firstName' OR field = 'mobileNumber'",
+      (err, results) => {
+        if (err) {
+          console.log({ isSuccess: false, result: "error" });
+          res.send({ isSuccess: false, result: "error" });
+        } else {
+          console.log({ isSuccess: true, result: results });
+          res.status(200).send({ isSuccess: true, result: results });
+        }
+      }
+    );
+  } catch (e) {
+    console.log(e);
+  }
+});
 
 // ==== Delete category data By Id === //
 router.post("/delete-category", tokenCheck, async (req, res) => {
-  console.log(">>>>>/delete-category");
   try {
     const { id } = req.body;
 
     const newUrl = "SELECT * FROM enquiry_category where  id=" + id;
-    console.log("ghvgcgcfcf", id);
     await db.query(newUrl, async (err, newResult) => {
       if (err) {
         console.log({ isSuccess: false, result: err });
@@ -73,7 +149,6 @@ router.post("/delete-category", tokenCheck, async (req, res) => {
           }
         });
       } else {
-        console.log(newResult);
         console.log({ isSuccess: false, result: "notExist" });
         res.send({ isSuccess: false, result: "notExist" });
       }
@@ -83,43 +158,70 @@ router.post("/delete-category", tokenCheck, async (req, res) => {
   }
 });
 
-
-router.get(
-  "/get-category-features",
-  tokenCheck,
-  checkUserPermission("roles"),
-  async (req, res) => {
-    console.log(">>>>>get-features");
-    const urlNew = `SELECT * FROM enquiry_fields `;
-    console.log(urlNew, "urlNew");
-    await db.query(urlNew, (err, result) => {
-      if (err) {
-        console.log({ isSuccess: false, result: "error" });
-        res.send({ isSuccess: false, result: "error" });
-      } else {
-        console.log({ isSuccess: true, result: result });
-        res.send({ isSuccess: true, result: result });
-      }
-    });
-  }
-);
+// router.get(
+//   "/get-category-features",
+//   tokenCheck,
+//   checkUserPermission("roles"),
+//   async (req, res) => {
+//     console.log(">>>>>get-features");
+//     const urlNew = `SELECT * FROM enquiry_fields `;
+//     console.log(urlNew, "urlNew");
+//     await db.query(urlNew, (err, result) => {
+//       if (err) {
+//         console.log({ isSuccess: false, result: "error" });
+//         res.send({ isSuccess: false, result: "error" });
+//       } else {
+//         console.log({ isSuccess: true, result: result });
+//         res.send({ isSuccess: true, result: result });
+//       }
+//     });
+//   }
+// );
 
 router.post("/get-category-edit/:id", tokenCheck, async (req, res) => {
   console.log(">>>>>get-roles");
-  const { category_name, category_description, department } = req.body;
+ const { category_name, category_description, department, chehkedFeature } = req.body
   const id = req.params.id;
 
   try {
     const result = `UPDATE enquiry_category SET category_name = '${category_name}', category_description = '${category_description}',  department = '${department}' WHERE is_active = 1 and id = ${id}`;
-    await db.query(result, async (err, newResult) => {
-      if (err) {
-        console.log({ isSuccess: false, result: err });
-        res.status(500).json({ isSuccess: false, result: "error" });
-      } else {
-        console.log({ isSuccess: true, result: "success" });
-        res.status(200).json({ isSuccess: true, result: "success" });
+    console.log(result,"result")
+    await db.query(
+      result,
+      [category_name, category_description, department ,id],
+      async (err, newResult) => {
+        if (err) {
+          console.log({ isSuccess: false, result: err });
+          res.status(500).json({ isSuccess: false, result: "error" });
+        } else {
+          if (newResult.insertId ) {
+            async.forEachOf(
+              chehkedFeature,
+              (item, key, callback) => {
+                const sqlQuery = `UPDATE enquiry_category_field SET  field_id = '${item}', where category_id ='${id}' and type = "enquiry"`;
+                console.log(sqlQuery, "sqlQuery");
+                db.query(sqlQuery, (err, result) => {
+                  if (err) {
+                    console.log({ isSuccess: true, result: err });
+                    res.send({ isSuccess: true, result: "error" });
+                  }
+                });
+                callback();
+              },
+              (err) => {
+                if (err) {
+                  console.log({ isSuccess: true, result: err });
+                  res.send({ isSuccess: true, result: "error" });
+                } else {
+                  console.log({ isSuccess: true, result: "success" });
+                  res.send({ isSuccess: true, result: "success" });
+                }
+              }
+            );
+          }
+        }
       }
-    });
+    );
   } catch (error) {
     console.log(error);
     res.status(500).json({ isSuccess: false, result: "error" });
@@ -127,10 +229,8 @@ router.post("/get-category-edit/:id", tokenCheck, async (req, res) => {
 });
 
 router.get("/get-categorybyid/:id", tokenCheck, async (req, res) => {
-  console.log(">>>>>/get-categorybyid");
   try {
     const categorybyId = req.params.id;
-    console.log(categorybyId);
     await db.query(
       "SELECT * FROM enquiry_category where is_active = 1 and id=" +
         categorybyId,
@@ -151,7 +251,10 @@ router.get("/get-categorybyid/:id", tokenCheck, async (req, res) => {
 });
 
 //=======================Get-category with Total Enquiry===================//
-router.get("/get-category-list-with-total-enquiry/:id", tokenCheck, async (req, res) => {
+router.get(
+  "/get-category-list-with-total-enquiry/:id",
+  tokenCheck,
+  async (req, res) => {
     try {
       const villageId = req.params.id;
       await db.query(

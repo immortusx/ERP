@@ -163,7 +163,6 @@ const AddLocation = ({route}) => {
         console.log(config);
         await axios.get(url, config).then(response => {
           if (response) {
-            console.log(response.data, 'villllll');
             setVillageresult(response.data.result);
           }
         });

@@ -248,7 +248,7 @@ const AddMore = () => {
                         <Text style={styles.label}>
                           {item.product
                             ? item.product
-                            : 'Sonalika Sikander DLX'}
+                            : '-'}
                         </Text>
                         <Text style={styles.label}>
                           {item.sales_person

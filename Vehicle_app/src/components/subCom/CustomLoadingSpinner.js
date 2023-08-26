@@ -1,31 +1,21 @@
 import React from 'react';
-import { View, Text, ActivityIndicator, StyleSheet, Modal, TouchableOpacity } from 'react-native';
+import {View, Text, ActivityIndicator, StyleSheet, Modal} from 'react-native';
 
-const CustomLoadingSpinner = ({ visible }) => {
+const CustomLoadingSpinner = () => {
   return (
-    <Modal visible={visible} transparent={true} animationType='fade'>
-      <View style={styles.background}>
-        <View style={styles.container}>
-          <ActivityIndicator size="large" color="#2E86C1" />
-          <Text style={styles.text}>Loading...</Text>
-        </View>
+    <Modal visible={true} transparent={true} animationType='fade'>
+      <View style={styles.container}>
+        <ActivityIndicator size="large" color="#2E86C1" />
+        <Text style={styles.text}>Loading...</Text>
       </View>
     </Modal>
   );
 };
 
 const styles = StyleSheet.create({
-  background: {
+  container: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', 
-  },
-  container: {
-    width: '80%',
-    padding: 20,
-    backgroundColor: 'transparent',
-    borderRadius: 10,
     alignItems: 'center',
   },
   text: {

@@ -28,6 +28,7 @@ export default function Enquiry({ workFor }) {
   );
 
   const [categoriesList, setCategoriesList] = useState([]);
+    const [selectedCategory, setSelectedCategory] = useState("");
   const [currentCategoryData, setCurrentCategoryData] = useState({
     id: "",
     fields: [],
@@ -40,7 +41,7 @@ export default function Enquiry({ workFor }) {
     state: "",
     city: "",
     district: "",
-    taluko: "",
+    tehsil: "",
     village: "",
     mobileNumber: "",
     brand: "",
@@ -171,7 +172,7 @@ export default function Enquiry({ workFor }) {
       state: "",
       city: "",
       district: "",
-      taluko: "",
+      tehsil: "",
       village: "",
       mobileNumber: "",
       brand: "",
@@ -254,7 +255,6 @@ export default function Enquiry({ workFor }) {
       },
     };
     await axios.get(url, config).then((response) => {
-      
       if (response.data) {
         if (response.data.isSuccess) {
           console.log("response.data", response.data);
@@ -379,6 +379,19 @@ export default function Enquiry({ workFor }) {
       }
     });
   }
+
+useEffect((e) => {
+  if (categoriesList.length > 0) {
+   const firstCategoryId = categoriesList[0].id.toString();
+    setSelectedCategory(firstCategoryId);
+    setEnquiryData((enquiryData) => ({
+      ...enquiryData,
+      category: firstCategoryId,
+    }));
+  }
+}, [categoriesList]);
+  
+
   useEffect(() => {
     console.log("enquiryData", enquiryData);
     const idIs = enquiryData.category;
@@ -391,14 +404,21 @@ export default function Enquiry({ workFor }) {
       getFieldCurrentCategories(idIs);
     }
   }, [enquiryData.category]);
+
   useEffect(() => {
     console.log("enquiryState changes", enquiryState);
   }, [enquiryState]);
-  function handleSubmit() {
+  async function handleSubmit() {
     console.log("enquiryData", enquiryData);
     console.log("currentCategoryData", currentCategoryData);
+    const branchId = await localStorage.getItem("currentDealerId");
 
-    // dispatch(setEnquiryDb(enquiryData))
+    enquiryData.branchId = branchId;
+
+    console.log(enquiryData, "enquierekjjjjjjjj");
+    dispatch(setEnquiryDb(enquiryData));
+    dispatch(setShowMessage("Enquiry is registered"));
+    navigate("/sale/enquiryies");
   }
 
   function getSelectedFields(data) {
@@ -661,7 +681,6 @@ export default function Enquiry({ workFor }) {
   }
 
   function changeHandlerNewEnquiry(e) {
-    console.log(e,"e***************")
     const name = e.target.name;
     const value = e.target.value;
     console.log(
@@ -711,19 +730,19 @@ export default function Enquiry({ workFor }) {
       return { ...pre, state: val };
     });
   };
-  
+
   const onSelectedDistrict = (val) => {
     setNewEnquiryData((pre) => {
       return { ...pre, district: val };
     });
   };
-  
+
   const onSelectedTaluka = (val) => {
     setNewEnquiryData((pre) => {
       return { ...pre, tehsil: val };
     });
   };
-  
+
   const onSelectedVillage = (val) => {
     setNewEnquiryData((pre) => {
       return { ...pre, village: val };
@@ -732,16 +751,16 @@ export default function Enquiry({ workFor }) {
   return (
     <main className="bg-white p-3 rounded">
       <h5 className="m-0">
-        {workFor === "newEnquiry" ? "New Enquiry" : "Enquiry"}
+        {workFor === "Enquiry" ? "Enquiry" : "New Enquiry"}
       </h5>
 
-      {workFor === "newEnquiry" && (
+      {workFor === "Enquiry" && (
         <>
           <div className="row mt-3 m-0">
             <div className="d-flex align-items-end justify-content-end">
               <div
                 onClick={() => {
-                  navigate("/home/new-enquiry");
+                  navigate("/sale/enquiryies/newenquiry");
                 }}
                 className="d-flex align-items-center"
                 type="button"
@@ -770,9 +789,9 @@ export default function Enquiry({ workFor }) {
                 className="myInput"
                 name="category"
               >
-                <option value="" className="myLabel">
+                {/* <option value="" className="myLabel">
                   select category
-                </option>
+              </option> */}
                 {categoriesList.length > 0 &&
                   categoriesList.map((item, index) => {
                     return (
@@ -810,11 +829,12 @@ export default function Enquiry({ workFor }) {
                 )}
               </div>
             </>
+         
           )}
         </>
       )}
 
-      {workFor !== "newEnquiry" && (
+      {workFor === "newEnquiry" && (
         <>
           <div className="row mt-2 m-0">
             <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
@@ -934,8 +954,10 @@ export default function Enquiry({ workFor }) {
               onSelectedTaluka={onSelectedTaluka}
               districtId={newEnquiryData.district}
             />
-            <Village onSelectedVillage={onSelectedVillage}
-            talukaId={newEnquiryData.tehsil}/>
+            <Village
+              onSelectedVillage={onSelectedVillage}
+              talukaId={newEnquiryData.tehsil}
+            />
             {/* <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
                             <label className='myLabel' htmlFor="email">Select District *</label>
                             <select onChange={changeHandlerNewEnquiry} className='inpClr myInput' name="district">
