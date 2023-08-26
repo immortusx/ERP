@@ -94,7 +94,6 @@ router.get('/get-tasks-list/:id', tokenCheck, async (req, res) => {
         }
     })
 })
-
 router.post('/addtask-data', tokenCheck, async (req, res) => {
     try {
         console.log('/addtask-data>>>>>>>>>>>>', req.body);
@@ -105,23 +104,31 @@ router.post('/addtask-data', tokenCheck, async (req, res) => {
         const startDate = req.body.startDate.split('T')[0]; // Extract the date part
         const endDate = req.body.endDate.split('T')[0]; // Extract the date part
 
-        const url = `INSERT INTO addtask_data (employee, tasktype, task, taskcount, startdate, enddate) VALUES ('${employees}','${taskType}','${tasks}','${taskCount}','${startDate}','${endDate}')`;
+        const url = `INSERT INTO addtask_data (employee, tasktype, task, taskcount, startdate, enddate) VALUES (?,?,?,?,?,?)`;
 
         console.log("url", url);
 
-        await db.query(url, async (err, result) => {
-            if (err) {
+        for (const item of employees) {
+            console.log(item, 'item');
+
+            try {
+                await db.query(url, [item, taskType, tasks, taskCount, startDate, endDate]);
+                console.log({ isSuccess: true, result: 'Task Add Successfully' });
+            } catch (err) {
                 console.log({ isSuccess: false, result: err });
                 res.send({ isSuccess: false, result: "error" });
-            } else {
-                console.log({ isSuccess: true, result: 'Task Add Successfully' });
-                res.send({ isSuccess: true, result: 'Task Add Successfully' });
+                return; // Exit the loop and request handling on error
             }
-        });
+        }
+
+        res.send({ isSuccess: true, result: 'Task Add Successfully' });
+
     } catch (err) {
         console.log(err);
     }
-})
+});
+
+
 
 router.get("/get-task-list", tokenCheck, async (req, res) => {
     console.log(">>>>>>>>>get-task-list");

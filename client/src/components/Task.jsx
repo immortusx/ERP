@@ -151,7 +151,7 @@ const Task = () => {
          <div className="my-3  d-flex align-items-end justify-content-end">
             <div
                onClick={() => {
-                  navigate("/administration/configuration/Task/Add-Task");
+                  navigate("/administration/configuration/Task/AddTask");
                }}
                className="d-flex align-items-center"
                type="button"

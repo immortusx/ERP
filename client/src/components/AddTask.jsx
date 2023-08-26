@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import { setShowMessage } from '../redux/slices/notificationSlice'
 import { useSelector, useDispatch } from 'react-redux'
 import { addTaskToDb, clearAddTaskState } from '../redux/slices/addTaskSlice'
-
+import Select from 'react-select';
 const AddTask = ({ workFor }) => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
@@ -65,11 +65,14 @@ const AddTask = ({ workFor }) => {
       getDspList();
     }
   }, [currentBranch])
-  const onChangeEmployee = (e) => {
-    console.log(e, 'fjg');
-    setEmployees(e.target.value);
-  }
-
+  // const onChangeEmployee = (e) => {
+  //   console.log(e, 'fjg');
+  //   setEmployees(e.target.value);
+  // }
+  const onChangeEmployees = (selectedOptions) => {
+    // `selectedOptions` is an array of selected employee options
+    setEmployees(selectedOptions);
+  };
 
   useEffect(() => {
     if (currentBranch) {
@@ -141,29 +144,30 @@ const AddTask = ({ workFor }) => {
   //   }
   // }, [addTaskState])
   const handleSubmit = async () => {
-    const data = {};
-    data.employees = employees;
-    data.taskTypes = taskTypes;
-    data.tasks = tasks;
-    data.taskCount = taskCount;
-    data.startDate = startDate;
-    data.endDate = endDate;
+    const selectedEmployeeIds = employees.map(employee => employee.value);
+
+  const data = {
+    employees: selectedEmployeeIds, // Send the array of selected employee IDs
+    taskTypes: taskTypes,
+    tasks: tasks,
+    taskCount: taskCount,
+    startDate: startDate,
+    endDate: endDate
+  };
+
 
     if (workFor === "addTask") {
-      console.log(employees, taskTypes, tasks, taskCount, startDate, endDate, 'dtfaaaa');
-      dispatch(addTaskToDb(data))
+      console.log(selectedEmployeeIds, taskTypes, tasks, taskCount, startDate, endDate, 'dtfaaaa');
+      dispatch(addTaskToDb(data));
     } else {
       dispatch(setShowMessage("All fields must be filled"));
     }
   }
-
-
-
   useEffect(() => {
     if (addTaskState && addTaskState.isSuccess) {
       console.log(addTaskState, ' adddd')
       if (addTaskState.isSuccess === true) {
-        dispatch(setShowMessage('User is created'))
+        dispatch(setShowMessage('Data is added'))
         dispatch(clearAddTaskState())
         navigate('/administration/configuration/Task')
       } else {
@@ -183,25 +187,15 @@ const AddTask = ({ workFor }) => {
             <label className="myLabel" htmlFor="employee">
               Employee
             </label>
-            <select onChange={onChangeEmployee} className="myInput" name="employee" value={employees}>
-              <option value="" className="myLabel">
-                Select Employee
-              </option>
-              {newAddTask.listDsp &&
-                newAddTask.listDsp.length > 0 &&
-                newAddTask.listDsp.map((user) => {
-                  const fullName = `${user.first_name} ${user.last_name}`;
-                  return (
-                    <option
-                      key={user.id}
-                      value={user.id}
-                      className="myLabel"
-                    >
-                      {fullName}
-                    </option>
-                  );
-                })}
-            </select>
+            <Select
+              isMulti
+              options={newAddTask.listDsp.map(user => ({
+                value: user.id,
+                label: `${user.first_name} ${user.last_name}`,
+              }))}
+              onChange={onChangeEmployees}
+              value={employees}
+            />
           </section>
           <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
             <label className="myLabel" htmlFor="taskType">

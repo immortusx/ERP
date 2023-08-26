@@ -16,7 +16,7 @@ const Report = () => {
                         <li className="col-12 col-sm-4 col-md-3  d-flex align-items-center p-2">
                             <main
                                 onClick={() => {
-                                    navigate("/administration/report/Total-Enquiry");
+                                    navigate("/administration/report/TotalEnquiry");
                                 }}
                                 className="d-flex align-items-center"
                             >
@@ -47,7 +47,7 @@ const Report = () => {
                         <li className="col-12 col-sm-4 col-md-3  d-flex align-items-center p-2">
                             <main
                                 onClick={() => {
-                                    navigate("/administration/report/Work-Assign-Area");
+                                    navigate("/administration/report/WorkAssignArea");
                                 }}
                                 className="d-flex align-items-center"
                             >

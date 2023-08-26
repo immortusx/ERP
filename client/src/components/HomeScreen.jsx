@@ -955,7 +955,7 @@ export default function HomeScreen() {
               exact
             />
              <Route
-              path="administration/report/Total-Enquiry"
+              path="administration/report/TotalEnquiry"
               element={
                 <CheckPermission path="profile">
                   <Total_Enquiry />
@@ -964,7 +964,7 @@ export default function HomeScreen() {
               exact
             />
              <Route
-              path="administration/report/Work-Assign-Area"
+              path="administration/report/WorkAssignArea"
               element={
                 <CheckPermission path="profile">
                   <Work_Assign_Area />
@@ -1164,7 +1164,7 @@ export default function HomeScreen() {
               exact
             />
             <Route
-              path="administration/configuration/Task/Add-Task"
+              path="administration/configuration/Task/AddTask"
               element={
                 <CheckPermission path="profile">
                   <AddTask workFor="addTask" />
