@@ -28,7 +28,7 @@ export default function Enquiry({ workFor }) {
   );
 
   const [categoriesList, setCategoriesList] = useState([]);
-    const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
   const [currentCategoryData, setCurrentCategoryData] = useState({
     id: "",
     fields: [],
@@ -47,7 +47,7 @@ export default function Enquiry({ workFor }) {
     brand: "",
     whatsappNumber: "",
     visitReason: "",
-    sourceOfEnquiry: "",
+    // sourceOfEnquiry: "",
     modelYear: "",
   });
   const [newEnquiryData, setNewEnquiryData] = useState({
@@ -184,7 +184,6 @@ export default function Enquiry({ workFor }) {
   }
 
   useEffect(() => {
-    console.log("setNewEnquiryDataState", setNewEnquiryDataState);
     if (setNewEnquiryDataState.isSuccess) {
       if (setNewEnquiryDataState.data.isSuccess) {
         dispatch(clearNewEnquiryState());
@@ -196,7 +195,6 @@ export default function Enquiry({ workFor }) {
   }, [setNewEnquiryDataState]);
 
   async function getEnquiryCategories() {
-    console.log(">>>>>>getEnquiryCategories");
     const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/get-enquiry-categories`;
     const config = {
       headers: {
@@ -223,7 +221,6 @@ export default function Enquiry({ workFor }) {
       if (response.data) {
         if (response.data.isSuccess) {
           // setCategoriesList(response.data.result)
-          console.log(response.data.result);
 
           const { branches, manufacturers, primary_source, district } =
             response.data.result;
@@ -297,9 +294,6 @@ export default function Enquiry({ workFor }) {
     await axios.get(url, config).then((response) => {
       if (response.data) {
         if (response.data.isSuccess) {
-          console.log("response.data", response.data);
-          console.log(response.data.result);
-
           setNewEnquiryList((newEnquiryList) => ({
             ...newEnquiryList,
             ["listSourceOfEnquiry"]: response.data.result,
@@ -318,7 +312,6 @@ export default function Enquiry({ workFor }) {
     await axios.get(url, config).then((response) => {
       if (response.data) {
         if (response.data.isSuccess) {
-          console.log("response.data", response.data);
           console.log(response.data.result);
           setNewEnquiryList((newEnquiryList) => ({
             ...newEnquiryList,
@@ -338,7 +331,6 @@ export default function Enquiry({ workFor }) {
     await axios.get(url, config).then((response) => {
       if (response.data) {
         if (response.data.isSuccess) {
-          console.log("response.data", response.data);
           console.log(response.data.result);
           setNewEnquiryList((newEnquiryList) => ({
             ...newEnquiryList,
@@ -349,11 +341,11 @@ export default function Enquiry({ workFor }) {
     });
   }
   useEffect(() => {
-    if (workFor === "newEnquiry") {
-      getBranchs();
-    }
-    return;
-  }, [workFor]);
+    // if (workFor === "newEnquiry") {
+    getBranchs();
+    // }
+    // return;
+  }, []);
 
   useEffect(() => {
     getEnquiryCategories();
@@ -380,17 +372,19 @@ export default function Enquiry({ workFor }) {
     });
   }
 
-useEffect((e) => {
-  if (categoriesList.length > 0) {
-   const firstCategoryId = categoriesList[0].id.toString();
-    setSelectedCategory(firstCategoryId);
-    setEnquiryData((enquiryData) => ({
-      ...enquiryData,
-      category: firstCategoryId,
-    }));
-  }
-}, [categoriesList]);
-  
+  useEffect(
+    (e) => {
+      if (categoriesList.length > 0) {
+        const firstCategoryId = categoriesList[0].id.toString();
+        setSelectedCategory(firstCategoryId);
+        setEnquiryData((enquiryData) => ({
+          ...enquiryData,
+          category: firstCategoryId,
+        }));
+      }
+    },
+    [categoriesList]
+  );
 
   useEffect(() => {
     console.log("enquiryData", enquiryData);
@@ -412,21 +406,92 @@ useEffect((e) => {
     console.log("enquiryData", enquiryData);
     console.log("currentCategoryData", currentCategoryData);
     const branchId = await localStorage.getItem("currentDealerId");
-
+    const dsp = newEnquiryData.dsp;
+    const model = newEnquiryData.model;
+    const make = newEnquiryData.make;
+    const enquiryPrimarySource = newEnquiryData.enquiryPrimarySource;
+    const sourceOfEnquiry = newEnquiryData.sourceOfEnquiry;
+    const modeOfFinance = newEnquiryData.modeOfFinance;
+    const bank = newEnquiryData.bank;
+    const oldTractorOwned = newEnquiryData.oldTractorOwned;
     enquiryData.branchId = branchId;
+    enquiryData.dsp = dsp;
+    enquiryData.model = model;
+    enquiryData.make = make;
+    enquiryData.enquiryPrimarySource = enquiryPrimarySource;
+    enquiryData.sourceOfEnquiry = sourceOfEnquiry;
+    enquiryData.modeOfFinance = modeOfFinance;
+    enquiryData.bank = bank;
+    enquiryData.oldTractorOwned = oldTractorOwned;
 
     console.log(enquiryData, "enquierekjjjjjjjj");
     dispatch(setEnquiryDb(enquiryData));
     dispatch(setShowMessage("Enquiry is registered"));
-    navigate("/sale/enquiryies");
+    // navigate("/sale/enquiryies");
   }
 
   function getSelectedFields(data) {
     switch (data.field) {
+      case "branchId":
+        return (
+          <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
+            <label className="myLabel" htmlFor="email">
+              Select Branch *
+            </label>
+            <select
+              onChange={changeHandlerNewEnquiry}
+              className="myInput inpClr"
+              name="branchId"
+            >
+              <option value="0" className="myLabel">
+                select
+              </option>
+              {newEnquiryList.listBranch &&
+                newEnquiryList.listBranch.length > 0 &&
+                newEnquiryList.listBranch.map((i, index) => {
+                  return (
+                    <option key={index} value={i.id} className="myLabel">
+                      {i.name}
+                    </option>
+                  );
+                })}
+            </select>
+          </section>
+        );
+        break;
+      case "dsp":
+        return (
+          <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
+            <label className="myLabel" htmlFor="email">
+              Select DSP *
+            </label>
+            <select
+              onChange={changeHandlerNewEnquiry}
+              className="myInput inpClr"
+              name="dsp"
+            >
+              <option value="0" className="myLabel">
+                select
+              </option>
+              {newEnquiryList.listDsp &&
+                newEnquiryList.listDsp.length > 0 &&
+                newEnquiryList.listDsp.map((i, index) => {
+                  return (
+                    <option
+                      key={index}
+                      value={i.id}
+                      className="myLabel"
+                    >{`${i.first_name} ${i.last_name}`}</option>
+                  );
+                })}
+            </select>
+          </section>
+        );
+        break;
       case "firstName":
         return (
           <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
-            <label className="myLabel">First name</label>
+            <label className="myLabel">First name*</label>
             <input
               onChange={changeHandler}
               className="myInput inputElement"
@@ -440,7 +505,7 @@ useEffect((e) => {
       case "lastName":
         return (
           <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
-            <label className="myLabel">Last name</label>
+            <label className="myLabel">Last name*</label>
             <input
               onChange={changeHandler}
               className="myInput inputElement"
@@ -451,32 +516,44 @@ useEffect((e) => {
           </section>
         );
         break;
-
-      case "state":
+      case "fatherName":
         return (
           <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
-            <label className="myLabel" htmlFor="email">
-              Select state
-            </label>
-            <select onChange={changeHandler} className="myInput" name="state">
-              <option value="gujrat" className="myLabel">
-                Gujrat
-              </option>
-              <option value="madhyaPradesh" className="myLabel">
-                Madhya pradesh
-              </option>
-              <option value="maharashtra" className="myLabel">
-                Maharashtra
-              </option>
-            </select>
+            <label className="myLabel">Father name*</label>
+            <input
+              onChange={changeHandler}
+              className="myInput inputElement"
+              autoComplete="false"
+              type="text"
+              name="fatherName"
+            />
           </section>
         );
         break;
-      case "city":
+      case "email":
+        return (
+          <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
+            <label className="myLabel">Email*</label>
+            <input
+              onChange={changeHandler}
+              className="myInput inputElement"
+              autoComplete="false"
+              type="text"
+              name="emailId"
+            />
+          </section>
+        );
+        break;
+
+      case "state":
+        return <State onSelectedState={onSelectedStatedata} />;
+        break;
+        {
+          /* case "city":
         return (
           <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
             <label className="myLabel" htmlFor="email">
-              Select city
+              Select city*
             </label>
             <select onChange={changeHandler} className="myInput" name="city">
               <option value="ahemdabad" className="myLabel">
@@ -491,65 +568,110 @@ useEffect((e) => {
             </select>
           </section>
         );
-        break;
+        break;*/
+        }
       case "district":
         return (
-          <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
-            <label className="myLabel" htmlFor="email">
-              Select district
-            </label>
-            <select
-              onChange={changeHandler}
-              className="myInput"
-              name="district"
-            >
-              <option value="waghodia" className="myLabel">
-                Waghodia
-              </option>
-              <option value="padra" className="myLabel">
-                Padra
-              </option>
-              <option value="savli" className="myLabel">
-                Savli
-              </option>
-            </select>
-          </section>
+          <District
+            onSelectedDistrict={onSelectedDistrictdata}
+            stateId={enquiryData.state}
+          />
         );
         break;
 
       case "taluko":
         return (
-          <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
-            <label className="myLabel" htmlFor="email">
-              Select taluko
-            </label>
-            <select onChange={changeHandler} className="myInput" name="taluko">
-              <option value="gujrat" className="myLabel">
-                Karjan
-              </option>
-              <option value="madhyaPradesh" className="myLabel">
-                Dabhoi
-              </option>
-            </select>
-          </section>
+          <Taluka
+            onSelectedTaluka={onSelectedTalukadata}
+            districtId={enquiryData.district}
+          />
         );
         break;
       case "village":
         return (
+          <Village
+            onSelectedVillage={onSelectedVillagedata}
+            talukaId={enquiryData.tehsil}
+          />
+        );
+        break;
+      case "make":
+        return (
           <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
             <label className="myLabel" htmlFor="email">
-              Select village
+              Select Make *
             </label>
-            <select onChange={changeHandler} className="myInput" name="village">
-              <option value="a" className="myLabel">
-                a
+            <select
+              onChange={changeHandlerNewEnquiry}
+              className="inpClr myInput"
+              name="make"
+            >
+              <option value="0" className="myLabel">
+                select
               </option>
-              <option value="b" className="myLabel">
-                b
+              {newEnquiryList.listMake &&
+                newEnquiryList.listMake.length > 0 &&
+                newEnquiryList.listMake.map((i, index) => {
+                  return (
+                    <option key={index} value={i.id} className="myLabel">
+                      {i.name}
+                    </option>
+                  );
+                })}
+            </select>
+          </section>
+        );
+        break;
+      case "primarySource":
+        return (
+          <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
+            <label className="myLabel" htmlFor="email">
+              Enquiry Primary Source *
+            </label>
+            <select
+              onChange={changeHandlerNewEnquiry}
+              className="inpClr myInput"
+              name="enquiryPrimarySource"
+            >
+              <option value="0" className="myLabel">
+                select
               </option>
-              <option value="c" className="myLabel">
-                c
+              {newEnquiryList.listPrimarySource &&
+                newEnquiryList.listPrimarySource.length > 0 &&
+                newEnquiryList.listPrimarySource.map((i, index) => {
+                  return (
+                    <option key={index} value={i.id} className="myLabel">
+                      {i.name}
+                    </option>
+                  );
+                })}
+            </select>
+          </section>
+        );
+        break;
+      case "sourceOfEnquiry":
+        return (
+          <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
+            <label className="myLabel" htmlFor="email">
+              Select Source Of Enquiry *
+            </label>
+            <select
+              onChange={changeHandlerNewEnquiry}
+              className="inpClr myInput"
+              name="sourceOfEnquiry"
+            >
+              <option value="0" className="myLabel">
+                select
               </option>
+              {newEnquiryList.listSourceOfEnquiry &&
+                newEnquiryList.listSourceOfEnquiry.length > 0 &&
+                newEnquiryList.listSourceOfEnquiry.map((i, index) => {
+                  return (
+                    <option key={index} value={i.id} className="myLabel">
+                      {i.name}
+                    </option>
+                  );
+                })}
             </select>
           </section>
         );
@@ -588,22 +710,41 @@ useEffect((e) => {
           </section>
         );
         break;
-      case "visitReason":
+      case "oldTractor":
         return (
           <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
-            <label className="myLabel" htmlFor="email">
-              Visit reason
+            <label className="ms-1 myLabel" htmlFor="email">
+              Old Tractor Owned{" "}
             </label>
-            <input
-              onChange={changeHandler}
-              className="myInput inputElement"
-              autoComplete="false"
-              type="text"
-              name="visitReason"
-            />
+            <div className="d-flex">
+              <input
+                value="0"
+                onChange={changeHandler}
+                type="radio"
+                id="html"
+                name="oldTractorOwned"
+              />
+              <label className="ms-1 myLabel" htmlFor="email">
+                Yes
+              </label>
+              <input
+                defaultChecked
+                value="0"
+                onChange={changeHandler}
+                className="ms-3"
+                type="radio"
+                id="css"
+                name="oldTractorOwned"
+              />
+              <label className="ms-1 myLabel" htmlFor="email">
+                No
+              </label>
+            </div>
           </section>
         );
-        break;
+
+        {
+          /* break;
       case "sourceOfEnquiry":
         return (
           <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
@@ -642,26 +783,129 @@ useEffect((e) => {
               name="brand"
             />
           </section>
-        );
+        );*/
+        }
         break;
       case "model":
         return (
           <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
             <label className="myLabel" htmlFor="email">
-              Select model
+              Select Model *
             </label>
-            <input
-              onChange={changeHandler}
-              className="myInput inputElement"
-              autoComplete="false"
-              type="text"
+            <select
+              onChange={changeHandlerNewEnquiry}
+              className="inpClr myInput"
               name="model"
+            >
+              <option value="0" className="myLabel">
+                select
+              </option>
+              {newEnquiryList.listModel &&
+                newEnquiryList.listModel.length > 0 &&
+                newEnquiryList.listModel.map((i, index) => {
+                  return (
+                    <option key={index} value={i.id} className="myLabel">
+                      {i.name}
+                    </option>
+                  );
+                })}
+            </select>
+          </section>
+        );
+        break;
+      case "enquiryDate":
+        return (
+          <section className="datePicker d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
+            <label className="myLabel" htmlFor="email">
+              EnquiryDate *
+            </label>
+            <DatePicker
+              selected={newEnquiryData.enquiryDate}
+              onChange={(date) =>
+                setNewEnquiryData((newEnquiryData) => ({
+                  ...newEnquiryData,
+                  ["enquiryDate"]: date,
+                }))
+              }
             />
           </section>
         );
-
         break;
-      case "modelYear":
+      case "deliveryDate":
+        return (
+          <section className="datePicker d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
+            <label className="myLabel" htmlFor="email">
+              Expected Delivery Date
+            </label>
+            <DatePicker
+              selected={newEnquiryData.deliveryDate}
+              onChange={(date) =>
+                setNewEnquiryData((newEnquiryData) => ({
+                  ...newEnquiryData,
+                  ["deliveryDate"]: date,
+                }))
+              }
+            />
+          </section>
+        );
+        break;
+      case "modeOfFinance":
+        return (
+          <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
+            <label className="myLabel" htmlFor="email">
+              Select Mode Of Finance{" "}
+            </label>
+            <select
+              onChange={changeHandlerNewEnquiry}
+              className="inpClr myInput"
+              name="modeOfFinance"
+            >
+              <option value="0" className="myLabel">
+                select
+              </option>
+              {newEnquiryList.listModeOfFinance &&
+                newEnquiryList.listModeOfFinance.length > 0 &&
+                newEnquiryList.listModeOfFinance.map((i, index) => {
+                  return (
+                    <option key={index} value={i.name} className="myLabel">
+                      {i.name}
+                    </option>
+                  );
+                })}
+            </select>
+          </section>
+        );
+        break;
+      case "bank":
+        return (
+          <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
+            <label className="myLabel" htmlFor="email">
+              Select Bank{" "}
+            </label>
+            <select
+              onChange={changeHandlerNewEnquiry}
+              className="inpClr myInput"
+              name="bank"
+            >
+              <option value="0" className="myLabel">
+                select
+              </option>
+              {newEnquiryList.listBank &&
+                newEnquiryList.listBank.length > 0 &&
+                newEnquiryList.listBank.map((i, index) => {
+                  return (
+                    <option key={index} value={i.name} className="myLabel">
+                      {i.name}
+                    </option>
+                  );
+                })}
+            </select>
+          </section>
+        );
+        break;
+
+        {
+          /*case "modelYear":
         return (
           <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
             <label className="myLabel" htmlFor="email">
@@ -676,7 +920,8 @@ useEffect((e) => {
             />
           </section>
         );
-        break;
+        break;*/
+        }
     }
   }
 
@@ -730,9 +975,19 @@ useEffect((e) => {
       return { ...pre, state: val };
     });
   };
+  const onSelectedStatedata = (val) => {
+    setEnquiryData((pre) => {
+      return { ...pre, state: val };
+    });
+  };
 
   const onSelectedDistrict = (val) => {
     setNewEnquiryData((pre) => {
+      return { ...pre, district: val };
+    });
+  };
+  const onSelectedDistrictdata = (val) => {
+    setEnquiryData((pre) => {
       return { ...pre, district: val };
     });
   };
@@ -742,9 +997,19 @@ useEffect((e) => {
       return { ...pre, tehsil: val };
     });
   };
+  const onSelectedTalukadata = (val) => {
+    setEnquiryData((pre) => {
+      return { ...pre, tehsil: val };
+    });
+  };
 
   const onSelectedVillage = (val) => {
     setNewEnquiryData((pre) => {
+      return { ...pre, village: val };
+    });
+  };
+  const onSelectedVillagedata = (val) => {
+    setEnquiryData((pre) => {
       return { ...pre, village: val };
     });
   };
@@ -829,7 +1094,6 @@ useEffect((e) => {
                 )}
               </div>
             </>
-         
           )}
         </>
       )}
@@ -990,7 +1254,7 @@ useEffect((e) => {
                                     })
                                 }
                             </select>
-                        </section> */}
+                        </section> 
             <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
               <label className="myLabel" htmlFor="email">
                 Select Block *
@@ -1036,7 +1300,7 @@ useEffect((e) => {
                     );
                   })}
               </select>
-            </section>
+            </section>*/}
             <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
               <label className="myLabel" htmlFor="email">
                 Select Make *
