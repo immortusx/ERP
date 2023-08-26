@@ -39,7 +39,6 @@ const Task = () => {
                   }));
 
                   setTaskData(formattedData);
-                  console.log(formattedData,"hdshsfduf")
               }
           }
 

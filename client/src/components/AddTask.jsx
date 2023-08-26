@@ -52,7 +52,6 @@ const AddTask = ({ workFor }) => {
         await Axios.get(url, config).then((response) => {
           if (response.data) {
             if (response.data.isSuccess) {
-              console.log("response", response.data);
               setNewAddTask((newAddTask) => ({
                 ...newAddTask,
                 ["listDsp"]: response.data.result,
@@ -65,10 +64,7 @@ const AddTask = ({ workFor }) => {
       getDspList();
     }
   }, [currentBranch])
-  // const onChangeEmployee = (e) => {
-  //   console.log(e, 'fjg');
-  //   setEmployees(e.target.value);
-  // }
+  
   const onChangeEmployees = (selectedOptions) => {
     // `selectedOptions` is an array of selected employee options
     setEmployees(selectedOptions);
@@ -86,7 +82,6 @@ const AddTask = ({ workFor }) => {
         await Axios.get(url, config).then((response) => {
           if (response.data) {
             if (response.data.isSuccess) {
-              console.log("response ,cd", response.data);
               setNewAddTask((newAddTask) => ({
                 ...newAddTask,
                 ["listTasktype"]: response.data.result,
@@ -101,7 +96,6 @@ const AddTask = ({ workFor }) => {
   }, [currentBranch])
 
   const onChangeTasktype = (e) => {
-    console.log(e.target.value, 'fjtrr');
     setTaskTypes(e.target.value);
   }
   useEffect(() => {
@@ -116,7 +110,6 @@ const AddTask = ({ workFor }) => {
         await Axios.get(url, config).then((response) => {
           if (response.data) {
             if (response.data.isSuccess) {
-              console.log("response", response.data);
               setNewAddTask((newAddTask) => ({
                 ...newAddTask,
                 ["listTask"]: response.data.result,
@@ -130,19 +123,13 @@ const AddTask = ({ workFor }) => {
   }, [taskTypes])
 
   const onChangeTask = (e) => {
-    console.log(e.target.value, 'fjhhhhhhg');
     setTasks(e.target.value);
   }
 
   const onChangeTaskCount = (e) => {
-    console.log(e, 'fjhhhhhhg');
     setTaskCount(e.target.value);
   }
-  // useEffect(() => {
-  //   if (addTaskState) {
-  //     console.log(addTaskState, ' adddd')
-  //   }
-  // }, [addTaskState])
+
   const handleSubmit = async () => {
     const selectedEmployeeIds = employees.map(employee => employee.value);
 
@@ -157,7 +144,6 @@ const AddTask = ({ workFor }) => {
 
 
     if (workFor === "addTask") {
-      console.log(selectedEmployeeIds, taskTypes, tasks, taskCount, startDate, endDate, 'dtfaaaa');
       dispatch(addTaskToDb(data));
     } else {
       dispatch(setShowMessage("All fields must be filled"));
@@ -165,7 +151,6 @@ const AddTask = ({ workFor }) => {
   }
   useEffect(() => {
     if (addTaskState && addTaskState.isSuccess) {
-      console.log(addTaskState, ' adddd')
       if (addTaskState.isSuccess === true) {
         dispatch(setShowMessage('Data is added'))
         dispatch(clearAddTaskState())

@@ -52,9 +52,6 @@ const Work_Assign_Area = () => {
     const handleEditArea = async (ev) => {
 
         try {
-            // console.log(ev.group_id, "evvvvvv");
-            console.log(ev, "evvvvvv");
-
             const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/add-areaAssignUserById/${ev.user_id}`;
             const config = {
                 headers: {
@@ -65,8 +62,6 @@ const Work_Assign_Area = () => {
             const response = await Axios.get(url, config);
 
             if (response.data && response.data.isSuccess) {
-                console.log("response.data", response.data.result);
-                console.log("ev", ev);
 
                 const groupedData = {};
 
@@ -109,17 +104,11 @@ const Work_Assign_Area = () => {
                     }
                 }
 
-                console.log(Object.values(groupedData));
-
                 navigate("/sale/area-Assign/add-AsignArea", {
                     state: { assigneAreaPerUser: Object.values(groupedData) },
                 });
             } else {
-                console.log(
-                    "No data received from the server or the request was not successful."
-                );
                 setShowComponent(true);
-                console.log(ev.user_id, "ev");
                 // setName(ev.first_name+ " "+ev.last_name);
                 setId(ev.user_id);
                 // navigate("/sale/area-Assign", {
@@ -249,12 +238,12 @@ const Work_Assign_Area = () => {
 
     useEffect(() => {
         const rowsData = workAssignData.map((item, index) => ({
-          ...item,
-          rowNumber: index + 1,
-          checkbox: selectAll,
+            ...item,
+            rowNumber: index + 1,
+            checkbox: selectAll,
         }));
         setRowData(rowsData);
-      }, [workAssignData, selectAll]);
+    }, [workAssignData, selectAll]);
 
 
     return (
