@@ -982,30 +982,8 @@ CREATE TABLE `departments` (
 --
 
 INSERT INTO `departments` (`id`, `name`, `description`, `is_active`) VALUES
-(1, 'sales', 'all sales person are here', 1),
-(2, 'SARVIS', 'undefined', 1),
-(3, 'finance', NULL, 1),
-(4, 'operations', NULL, 1),
-(5, 'marketing', NULL, 0),
-(6, 'service', NULL, 0),
-(7, 'administration', NULL, 1),
-(18, 'laxmi ', 'patile', 0),
-(19, '', 'chaudhri', 0),
-(21, 'computer', 'science', 0),
-(22, 'sanjay', 'solanki', 0),
-(25, 'commerce', 'sdfghjdfg', 0),
-(26, 'arts', 'ZXcvb', 0),
-(27, 'math', 'SNDMFNFM', 0),
-(29, 'sanjaywrety', 'adsfgsdfg', 0),
-(30, 'AsdZFG', 'ASDZFX', 0),
-(31, 'ewrtyjkl', 'qwertyu', 0),
-(33, 'laxmiSADFG', 'ASDFGDSF', 0),
-(34, 'QWQEWRWEdsf', 'dfggfhgfhfhgfhf', 0),
-(36, 'ddd', 'vvvv', 0),
-(37, 'ankita', 'dfdgfgg', 0),
-(39, 'hfghgghg', 'dfsffdsfdfs', 0),
-(40, 'Tanmayk', 'fdgfgfgl', 1),
-(41, 'ddfds', 'dddds', 1);
+(1, 'None', 'Department is not selected', 1);
+
 
 -- --------------------------------------------------------
 
@@ -1043,7 +1021,7 @@ CREATE TABLE `district` (
 --
 
 INSERT INTO `district` (`id`, `name`, `state_id`, `is_active`) VALUES
-(1, 'Surendranagar', 1, b'1');
+(1, 'None', 1, b'1');
 
 -- --------------------------------------------------------
 
@@ -1256,14 +1234,14 @@ CREATE TABLE `enquiry_sources` (
 --
 
 INSERT INTO `enquiry_sources` (`id`, `name`, `primary_source_id`) VALUES
-(25, 'Web advertisement', 1),
-(26, 'App recommandation', 1),
-(27, 'Calling inquiry', 2),
-(28, 'Newspaper', 3),
-(29, 'News advertisement', 3),
-(30, 'Work shop visit', 4),
-(31, 'Show room visit', 4),
-(32, 'Reference', 5);
+(1, 'Web advertisement', 1),
+(2, 'App recommandation', 1),
+(3, 'Calling inquiry', 2),
+(4, 'Newspaper', 3),
+(5, 'News advertisement', 3),
+(6, 'Work shop visit', 4),
+(7, 'Show room visit', 4),
+(8, 'Reference', 5);
 
 -- --------------------------------------------------------
 
@@ -1313,22 +1291,24 @@ CREATE TABLE `features` (
 --
 
 INSERT INTO `features` (`id`, `page`, `index_no`, `feature`, `label`, `parent_Id`, `is_active`) VALUES
-(1, 1, '1.1', 'users', 'Users', 0, b'00000000001'),
-(2, 2, '2.1', 'profile', 'profile', 0, b'00000000001'),
-(3, 3, '3.1', 'add-user', 'Add user', 1, b'00000000001'),
-(4, 4, '4.1', 'edit-user', 'Edit user', 1, b'00000000001'),
-(5, 5, '5.1', 'products', 'Products', 3, b'00000000001'),
-(6, 6, '6.1', 'add-role', 'Add role', 7, b'00000000001'),
-(7, 7, '7.1', 'roles', 'Roles', 0, b'00000000001'),
-(8, 8, '8.1', 'agency', 'Agency', 0, b'00000000001'),
-(11, 9, '9.1', 'sales', 'Sales', 0, b'00000000001'),
-(12, 10, '10.1', 'manage', 'Manage', 0, b'00000000001'),
-(13, 11, '11.1', 'branch', 'Branch', 0, b'00000000001'),
-(14, 1, '1', 'dashboard', 'Dashboard', 0, b'00000000000'),
-(15, 12, '14', 'work assign', 'Work Assign', 0, b'00000000000'),
-(16, 1, '21', 'employee', 'Employee', 0, b'00000000000'),
-(17, 2, '2', 'configuration', 'Configuration', 3, b'00000000000'),
-(18, 2, '2', 'report', 'Report', 3, b'00000000000');
+(1, 1, '1.1', 'agency-profile', 'Agency', 0, b'00000000000'),
+(2, 1, '1.2', 'dashboard', 'Dashboard', 0, b'00000000000'),
+(3, 1, '1.3', 'user-profile', 'profile', 0, b'00000000001'),
+(4, 2, '2.1', 'sales', 'Sales', 0, b'00000000001'),
+(5, 3, '3.1', 'service', 'Services', 0, b'00000000001'),
+(6, 4, '3.1', 'manage', 'Manage', 0, b'00000000001'),
+(7, 5, '7.1', 'roles', 'Roles', 0, b'00000000001'),
+(8, 5, '6.1', 'add-role', 'Add role', 7, b'00000000001'),
+(9, 5, '1.1', 'users', 'Users', 0, b'00000000001'),
+(10, 5, '3.1', 'add-user', 'Add user', 1, b'00000000001'),
+(11, 5, '4.1', 'edit-user', 'Edit user', 1, b'00000000001'),
+(12, 5, '5.1', 'products', 'Products', 3, b'00000000001'),
+(13, 5, '2', 'configuration', 'Configuration', 3, b'00000000000'),
+(14, 5, '8.1', 'agency', 'Agency', 0, b'00000000001'),
+(15, 5, '11.1', 'branch', 'Branch', 0, b'00000000001'),
+(16, 5, '14', 'work-assign', 'Work Assign', 0, b'00000000000'),
+(17, 5, '21', 'employee', 'Employee', 0, b'00000000000'),
+(18, 5, '2', 'report', 'Report', 3, b'00000000000');
 
 -- --------------------------------------------------------
 
@@ -1497,153 +1477,19 @@ INSERT INTO `role_features` (`id`, `role_id`, `feature_id`) VALUES
 (3, 1, 3),
 (4, 1, 4),
 (5, 1, 5),
-(11, 1, 6),
-(47, 1, 7),
-(120, 28, 4),
-(121, 28, 12),
-(122, 28, 2),
-(146, 30, 6),
-(147, 30, 8),
-(148, 30, 11),
-(149, 30, 12),
-(150, 31, 1),
-(151, 31, 11),
-(155, 33, 1),
-(156, 33, 5),
-(157, 33, 11),
-(158, 34, 4),
-(159, 34, 7),
-(160, 35, 1),
-(161, 36, 2),
-(162, 36, 13),
-(163, 37, 11),
-(164, 38, 8),
-(165, 38, 12),
-(166, 39, 1),
-(171, 40, 4),
-(172, 41, 16),
-(175, 43, 1),
-(176, 44, 2),
-(181, 45, 11),
-(187, 29, 1),
-(188, 29, 11),
-(189, 29, 15),
-(190, 29, 16),
-(191, 5, 3),
-(192, 5, 4),
-(193, 5, 2),
-(194, 5, 1),
-(195, 5, 7),
-(196, 5, 8),
-(197, 5, 17),
-(198, 4, 5),
-(199, 4, 2),
-(200, 4, 12),
-(201, 4, 16),
-(202, 25, 5),
-(203, 25, 2),
-(204, 25, 11),
-(205, 25, 15),
-(206, 42, 15),
-(207, 42, 16),
-(208, 42, 17),
-(213, 46, 15),
-(214, 46, 16),
-(215, 46, 17),
-(222, 47, 14),
-(223, 47, 16),
-(238, 48, 4),
-(239, 48, 3),
-(240, 48, 2),
-(241, 48, 6),
-(242, 49, 1),
-(243, 49, 2),
-(244, 49, 3),
-(245, 49, 4),
-(246, 49, 5),
-(247, 49, 6),
-(248, 49, 7),
-(249, 49, 8),
-(250, 49, 11),
-(251, 49, 12),
-(252, 49, 13),
-(253, 49, 14),
-(254, 32, 1),
-(255, 32, 5),
-(256, 32, 13),
-(257, 32, 6),
-(258, 50, 6),
-(259, 51, 6),
-(260, 52, 6),
-(261, 53, 6),
-(262, 54, 6),
-(263, 55, 6),
-(264, 56, 6),
-(265, 57, 6),
-(266, 58, 6),
-(267, 59, 6),
-(268, 60, 6),
-(269, 61, 6),
-(270, 62, 6),
-(271, 63, 6),
-(272, 64, 6),
-(273, 65, 6),
-(274, 66, 1),
-(275, 66, 2),
-(276, 67, 1),
-(277, 67, 2),
-(278, 68, 1),
-(279, 68, 2),
-(280, 69, 1),
-(281, 69, 2),
-(282, 70, 1),
-(283, 71, 1),
-(284, 72, 1),
-(286, 73, 6),
-(287, 73, 1),
-(288, 73, 12),
-(296, 74, 1),
-(297, 74, 2),
-(298, 74, 3),
-(299, 74, 4),
-(300, 74, 5),
-(301, 74, 6),
-(302, 74, 7),
-(303, 75, 1),
-(304, 76, 1),
-(305, 77, 2),
-(306, 78, 1),
-(307, 78, 2),
-(308, 78, 3),
-(309, 78, 4),
-(310, 78, 5),
-(311, 78, 6),
-(312, 79, 1),
-(313, 80, 6),
-(314, 81, 6),
-(326, 2, 2),
-(327, 2, 3),
-(328, 2, 4),
-(329, 2, 5),
-(330, 2, 7),
-(331, 2, 6),
-(332, 2, 1),
-(333, 2, 8),
-(334, 2, 11),
-(335, 2, 12),
-(336, 2, 14),
-(337, 2, 13),
-(338, 2, 15),
-(339, 2, 16),
-(340, 2, 18),
-(345, 82, 1),
-(346, 83, 1),
-(347, 83, 2),
-(348, 83, 3),
-(352, 3, 2),
-(353, 3, 1),
-(354, 3, 5),
-(355, 3, 14);
+(6, 1, 6),
+(7, 1, 7),
+(8, 1, 8),
+(9, 1, 9),
+(10, 1, 10),
+(11, 1, 11),
+(12, 1, 12),
+(13, 1, 13),
+(14, 1, 14),
+(15, 1, 15),
+(16, 1, 16),
+(17, 1, 17),
+(18, 1, 18);
 
 -- --------------------------------------------------------
 
@@ -1678,7 +1524,8 @@ CREATE TABLE `state` (
 --
 
 INSERT INTO `state` (`state_id`, `state_name`, `description`, `is_active`) VALUES
-(1, 'Gujarat', 'Gujarat is a western Indian state known for its rich cultural heritage', b'1');
+(1, 'None', 'No state selected', b'1'),
+(2, 'Gujarat', 'Gujarat is a western Indian state known for its rich cultural heritage', b'1');
 
 -- --------------------------------------------------------
 
@@ -1699,7 +1546,8 @@ CREATE TABLE `taluka` (
 --
 
 INSERT INTO `taluka` (`id`, `name`, `district_id`, `state_id`, `is_active`) VALUES
-(1, 'Dhrangadhra', 1, 1, b'1');
+(1, 'None', -1, -1, b'1'),
+(2, 'Dhrangadhra', 1, 1, b'1');
 
 -- --------------------------------------------------------
 
@@ -1719,9 +1567,17 @@ CREATE TABLE `tasks` (
 --
 
 INSERT INTO `tasks` (`id`, `task_name`, `description`, `tasktype_id`) VALUES
-(1, 'Oil Change', 'Scheduled oil change for fleet vehicles.', 1),
-(2, 'Fuel Expense Tracking', 'Monitoring fuel expenses and analyzing trends.', 2),
-(3, 'Driver Training Program', 'Conducting driver training sessions for new hires.', 3);
+(1, 'Call', 'Call the customer.', 1),
+(2, 'SMS', 'Message the customer.', 1),
+(3, 'Whatsapp', 'Send details in whatsup.', 1),
+(4, 'Field Visit', 'Visit the customer', 1),
+(5, 'Cleaning service', 'Call the customer.', 2),
+(6, 'AMC Service', 'Message the customer.', 2),
+(7, 'Reparing', 'Send details in whatsup.', 2),
+(8, 'Loan', 'Send details in whatsup.', 3),
+(9, 'Insurence', 'Send details in whatsup.', 3),
+(10, 'RTO', 'Send details in whatsup.', 3);
+
 
 -- --------------------------------------------------------
 
@@ -1739,9 +1595,9 @@ CREATE TABLE `task_types` (
 --
 
 INSERT INTO `task_types` (`tasktype_id`, `tasktype_name`) VALUES
-(1, 'Maintenance and Repairs'),
-(2, 'Fuel Management'),
-(3, 'Driver Management');
+(1, 'Sales'),
+(2, 'Services'),
+(3, 'Government');
 
 -- --------------------------------------------------------
 
@@ -1863,9 +1719,8 @@ CREATE TABLE `village` (
 --
 
 INSERT INTO `village` (`id`, `name`, `taluka_id`, `district_id`, `state_id`, `is_active`) VALUES
-(1, 'Bharada', 1, 1, 1, b'1'),
-(2, 'Bharad', 1, 1, 1, b'1'),
-(3, 'Bavali', 1, 1, 1, b'1');
+(-1, 'None', -1, -1, -1, b'1');
+
 
 --
 -- Indexes for dumped tables
@@ -2207,7 +2062,7 @@ ALTER TABLE `booking`
 -- AUTO_INCREMENT for table `branches`
 --
 ALTER TABLE `branches`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;;
 
 --
 -- AUTO_INCREMENT for table `branches_new`
@@ -2243,19 +2098,19 @@ ALTER TABLE `customers`
 -- AUTO_INCREMENT for table `departments`
 --
 ALTER TABLE `departments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;;
 
 --
 -- AUTO_INCREMENT for table `distributionType`
 --
 ALTER TABLE `distributionType`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;;
 
 --
 -- AUTO_INCREMENT for table `district`
 --
 ALTER TABLE `district`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;;
 
 --
 -- AUTO_INCREMENT for table `documents`
@@ -2297,19 +2152,19 @@ ALTER TABLE `enquiry_data`
 -- AUTO_INCREMENT for table `enquiry_fields`
 --
 ALTER TABLE `enquiry_fields`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;;
 
 --
 -- AUTO_INCREMENT for table `enquiry_lost_reasons`
 --
 ALTER TABLE `enquiry_lost_reasons`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;;
 
 --
 -- AUTO_INCREMENT for table `enquiry_primary_sources`
 --
 ALTER TABLE `enquiry_primary_sources`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;;
 
 --
 -- AUTO_INCREMENT for table `enquiry_products`
@@ -2321,7 +2176,7 @@ ALTER TABLE `enquiry_products`
 -- AUTO_INCREMENT for table `enquiry_sources`
 --
 ALTER TABLE `enquiry_sources`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;;
 
 --
 -- AUTO_INCREMENT for table `enquiry_stages`
@@ -2339,7 +2194,7 @@ ALTER TABLE `enquiry_types`
 -- AUTO_INCREMENT for table `features`
 --
 ALTER TABLE `features`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;;
 
 --
 -- AUTO_INCREMENT for table `follow_up_details`
@@ -2393,13 +2248,13 @@ ALTER TABLE `products`
 -- AUTO_INCREMENT for table `roles`
 --
 ALTER TABLE `roles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;;
 
 --
 -- AUTO_INCREMENT for table `role_features`
 --
 ALTER TABLE `role_features`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=356;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;;
 
 --
 -- AUTO_INCREMENT for table `rto_detail`
@@ -2411,25 +2266,25 @@ ALTER TABLE `rto_detail`
 -- AUTO_INCREMENT for table `state`
 --
 ALTER TABLE `state`
-  MODIFY `state_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `state_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;;
 
 --
 -- AUTO_INCREMENT for table `taluka`
 --
 ALTER TABLE `taluka`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;;
 
 --
 -- AUTO_INCREMENT for table `taxes`
 --
 ALTER TABLE `taxes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;;
 
 --
 -- AUTO_INCREMENT for table `tax_details`
 --
 ALTER TABLE `tax_details`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -2441,7 +2296,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `user_types`
 --
 ALTER TABLE `user_types`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;;
 
 --
 -- AUTO_INCREMENT for table `variant`
@@ -2453,7 +2308,7 @@ ALTER TABLE `variant`
 -- AUTO_INCREMENT for table `village`
 --
 ALTER TABLE `village`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;;
 
 --
 -- Constraints for dumped tables
