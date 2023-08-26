@@ -16,6 +16,7 @@ const Taluka = ({ onSelectedTaluka = () => {}, districtId = '', talukaId = '' })
         };
         await axios.get(url, config).then((response) => {
             if (response.data.isSuccess) {
+                console.log(response, "response.data.result")
                 setTalukaList(response.data.result)
             }
         })
