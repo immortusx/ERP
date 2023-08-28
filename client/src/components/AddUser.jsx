@@ -4,6 +4,7 @@ import { addUserToDb, clearAddUserState } from '../redux/slices/addUserSlice'
 import { clearEditUserState, clearEditUserData, editUserUpdateToDb } from '../redux/slices/editUserDataSlice'
 import '../styles/AddUser.css'
 import Axios from 'axios'
+import { Modal, Button } from "react-bootstrap";
 import { getToPathname } from '@remix-run/router'
 import { setShowMessage } from '../redux/slices/notificationSlice'
 import { useNavigate } from 'react-router-dom'
@@ -50,7 +51,9 @@ export default function AddUser({ workFor }) {
             }
         }
     }, [editUserSliceState])
-
+    const redirectModal = () => {
+        navigate(-1);
+    };
     function handleSubmit() {
         console.log('userData', userData)
         console.log('branchRoles', branchRoles)
@@ -328,10 +331,20 @@ export default function AddUser({ workFor }) {
         <>
             <div className='addUser  bg-white rounded p-3'>
                 <main>
-                    <h5 className='m-0'>
-                        General Details
-                    </h5>
-
+                    <div className="d-flex align-items-center justify-content-between">
+                        <h5 className='m-0'>
+                            General Details
+                        </h5>
+                        <Button
+                            variant="btn btn-warning mx-1"
+                            style={{ width: '70px', height: '35px', fontSize: '14px', borderRadius: '20px' }}
+                            onClick={() => {
+                                redirectModal();
+                            }}
+                        >
+                            BACK
+                        </Button>
+                    </div>
                     <div className=' row mt-3 m-0'>
                         <main className='px-3 d-flex align-items-center'>
                             <input type='checkbox' className='myCheckBox inputElement' onChange={(e) => { onChangeHandler(e) }} name="enableUser" />

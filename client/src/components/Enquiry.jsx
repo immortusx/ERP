@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-
+import { Modal, Button } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -1013,15 +1013,21 @@ export default function Enquiry({ workFor }) {
       return { ...pre, village: val };
     });
   };
+
+  const redirectModal = () => {
+    navigate(-1);
+  };
+
   return (
     <main className="bg-white p-3 rounded">
       <h5 className="m-0">
         {workFor === "Enquiry" ? "Enquiry" : "New Enquiry"}
       </h5>
-
+     
+         
       {workFor === "Enquiry" && (
         <>
-          <div className="row mt-3 m-0">
+          <div className="row m-0">
             <div className="d-flex align-items-end justify-content-end">
               <div
                 onClick={() => {
@@ -1042,8 +1048,20 @@ export default function Enquiry({ workFor }) {
                   <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
                 </svg>
                 <h6 className="m-0 ps-1">New Enquiry</h6>
+                <Button
+                  variant="btn btn-warning mx-1"
+                  style={{ width: '70px', height: '35px', fontSize: '14px', borderRadius: '20px' }}
+                  onClick={() => {
+                    redirectModal();
+                  }}
+                >
+                  BACK
+                </Button>
               </div>
+
+
             </div>
+
 
             <section className="d-flex mt-3 flex-column col-12 col-lg-5">
               <label className="myLabel" htmlFor="email">
