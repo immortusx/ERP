@@ -1118,6 +1118,17 @@ export default function Enquiry({ workFor }) {
 
       {workFor === "newEnquiry" && (
         <>
+        <div className="d-flex align-items-end justify-content-end">
+            <Button
+              variant="btn btn-warning mx-1"
+              style={{ width: '70px', height: '35px', fontSize: '14px', borderRadius: '20px' }}
+              onClick={() => {
+                redirectModal();
+              }}
+            >
+              BACK
+            </Button>
+          </div>
           <div className="row mt-2 m-0">
             <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
               <label className="myLabel" htmlFor="email">
