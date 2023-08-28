@@ -43,8 +43,8 @@ router.get('/is-admin-exist', async (req, res) => {
   const url = `SELECT * from branch_department_user where role_id = 1`
   await db.query(url, async (err, result) => {
     if (err) {
-      console.log({ isSuccess: true, result: err })
-      res.send({ isSuccess: true, result: 'error' })
+      console.log({ isSuccess: false, result: err })
+      res.send({ isSuccess: false, result: 'error' })
     } else if (result.length > 0) {
       console.log({ isSuccess: true, result: true })
       res.send({ isSuccess: true, result: true })
