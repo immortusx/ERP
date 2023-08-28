@@ -48,6 +48,20 @@ router.get("/get-taluka-list", tokenCheck, async (req, res) => {
     }
   });
 });
+router.get("/get-taluka-list/:id", tokenCheck, async (req, res) => {
+  console.log(">>>>>get-taluka-list");
+  const id = req.params.id;
+  const url = `SELECT * FROM taluka where district_id = ${id} and is_active= '1'`;
+  await db.query(url, async (err, result) => {
+    if (err) {
+      console.log({ isSuccess: true, result: err });
+      res.send({ isSuccess: true, result: "error" });
+    } else {
+      console.log({ isSuccess: true, result: url });
+      res.send({ isSuccess: true, result: result });
+    }
+  });
+});
 router.get("/get-village-list/:id", tokenCheck, async (req, res) => {
   console.log(">>>>>get-village-list");
   const id = req.params.id;
