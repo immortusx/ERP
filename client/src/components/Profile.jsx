@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Axios from "axios";
@@ -35,7 +34,6 @@ export default function Profile_list({ workFor }) {
     fileInputRef.current.value = "";
   }
 
-
   const { editagencySliceState } = useSelector(
     (state) => state.editAgencyDataState
   );
@@ -46,7 +44,7 @@ export default function Profile_list({ workFor }) {
   useEffect(() => {
     if (editagencySliceState.isSuccess) {
       const result = editagencySliceState.message.result;
-      console.log(result,"result")
+      console.log(result, "result");
       if (result === "success") {
         dispatch(setShowMessage("Data is Updated"));
         clearInpHook();
@@ -56,77 +54,77 @@ export default function Profile_list({ workFor }) {
         console.log("Something is wrong!");
         dispatch(setShowMessage("Something is wrong!"));
       }
-  
     }
-    
   }, [editagencySliceState]);
 
-//    useEffect(() => {
-//      if (workFor === "forEdit") {
-//        if (editagencyData.data === null) {
-//          dispatch(setShowMessage("Please select a employee"));
-//          setTimeout(() => {
-//             // navigate("/administration/configuration/agency");
-//            console.log("asdfghjkdfghj");
-//          }, 1000);
-//        } else {
-//          console.log("editagencyData2222222222222222222222222", editagencyData);
-//          setAgencyData({
-//            name: editagencyData.data.name,
-//            contact: editagencyData.data.contact,
-//            email: editagencyData.data.email,
-//            logo: editagencyData.data.logo,
-//          });
-//        }
-//      }
-//      return () => {
-//        if (workFor === "forEdit") {
-//          dispatch(clearEditagencyData());
-//        }
-//      };
-//    }, [workFor, clearEditagencyData]);
+  //    useEffect(() => {
+  //      if (workFor === "forEdit") {
+  //        if (editagencyData.data === null) {
+  //          dispatch(setShowMessage("Please select a employee"));
+  //          setTimeout(() => {
+  //             // navigate("/administration/configuration/agency");
+  //            console.log("asdfghjkdfghj");
+  //          }, 1000);
+  //        } else {
+  //          console.log("editagencyData2222222222222222222222222", editagencyData);
+  //          setAgencyData({
+  //            name: editagencyData.data.name,
+  //            contact: editagencyData.data.contact,
+  //            email: editagencyData.data.email,
+  //            logo: editagencyData.data.logo,
+  //          });
+  //        }
+  //      }
+  //      return () => {
+  //        if (workFor === "forEdit") {
+  //          dispatch(clearEditagencyData());
+  //        }
+  //      };
+  //    }, [workFor, clearEditagencyData]);
 
-   async function getagencyid() {
-     console.log( "asdfghjklfdghjk");
-     const url = `${process.env.REACT_APP_NODE_URL}/api/agency/get-agencybyid`;
-     const config = {
-       headers: {
-         token: localStorage.getItem("rbacToken"),
-       },
-     };
-     try {
-       const response = await Axios.get(url, config);
-       if (response.data?.isSuccess) {
+  useEffect(()=> {
+    if(agencyData){
+      const logo = `${process.env.REACT_APP_NODE_URL}/api${agencyData.logo}`;
+      console.log(logo, 'logo')
+    }
+  },[agencyData])
+  async function getagencyid() {
+    const url = `${process.env.REACT_APP_NODE_URL}/api/agency/get-agencybyid`;
+    const config = {
+      headers: {
+        token: localStorage.getItem("rbacToken"),
+      },
+    };
+    try {
+      const response = await Axios.get(url, config);
+      if (response.data?.isSuccess) {
         console.log(response.data.result, "response.data");
-const agencyaary = response.data.result;
-const jsonObject = {};
+        const agencyaary = response.data.result;
+        const jsonObject = {};
 
-agencyaary.forEach((item) => {
-  jsonObject[item.key_name] = item.value;
-});
-const jsonOutput = JSON.stringify(jsonObject);
-console.log(jsonOutput);
+        agencyaary.forEach((item) => {
+          jsonObject[item.key_name] = item.value;
+        });
+        const jsonOutput = JSON.stringify(jsonObject);
+        console.log(jsonOutput);
 
-const parsedJson = JSON.parse(jsonOutput);
-console.log(parsedJson, "parsedJson");
-console.log(parsedJson.logo, "parsedJson.logo");
-setAgencyData(parsedJson)
-       }
-     } catch (error) {
-       console.log(error);
-     }
-   }
+        const parsedJson = JSON.parse(jsonOutput);
+        console.log(parsedJson, "parsedJson");
+        console.log(parsedJson.logo, "parsedJson.logo");
+        setAgencyData(parsedJson);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   useEffect(() => {
- 
-      getagencyid();
+    getagencyid();
   }, []);
-
-
 
   const onChangeHandler = (e) => {
     const { name, value, files } = e.target;
-    if (name === "logo" ) {
+    if (name === "logo") {
       setAgencyData((prevState) => ({
         ...prevState,
         [name]: files[0],
@@ -153,8 +151,12 @@ setAgencyData(parsedJson)
     formData.append("email", aemail);
     formData.append("logo", alogo);
 
-    if (  aname.length > 0 &&  acontact !== "" && aemail !== "" &&  alogo !== null
-) {
+    if (
+      aname.length > 0 &&
+      acontact !== "" &&
+      aemail !== "" &&
+      alogo !== null
+    ) {
       console.log("result save");
       console.log(workFor, "workfor");
       if (workFor === "forEdit") {
@@ -164,9 +166,9 @@ setAgencyData(parsedJson)
       dispatch(setShowMessage("All fields must be filled"));
     }
   };
-  
+
   function handlCancel() {
-     navigate("/administration/configuration");
+    navigate("/administration/configuration");
   }
 
   return (
@@ -246,7 +248,6 @@ setAgencyData(parsedJson)
                 className="logo-image"
                 height={50}
                 width={50}
-                
               />
             )}
           </section>
@@ -257,7 +258,7 @@ setAgencyData(parsedJson)
               onClick={handleSubmit}
               type="button"
             >
-              Edit 
+              {workFor === "forEdit" ? "Edit" : "Create"}
             </button>
 
             <button
@@ -273,9 +274,3 @@ setAgencyData(parsedJson)
     </div>
   );
 }
-
-
-
-
-
-

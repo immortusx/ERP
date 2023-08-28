@@ -29,8 +29,6 @@ import AreaAssignListList from "./AreaAssignListList";
 import AddAssignArea from "./AddAssignArea";
 import Total_Enquiry from "./Master/Work Assign/Total_Enquiry";
 import Work_Assign_Area from "./Master/Work Assign/Work_Assign_Area";
-import logo from "../assets/svg/logo.svg";
-import logoT from "../assets/svg/logofinal.svg";
 import { useSelector, useDispatch } from "react-redux";
 import {
   getProfileData,
@@ -79,8 +77,7 @@ import UserProfile from "./UserProfile";
 import Report from "./Report";
 import Task from "./Task";
 import AddTask from "./AddTask";
-
-
+import axios from "axios";
 const CheckPermission = ({ children, path }) => {
   // return checkList.includes(path) ? children : <Navigate to="../no-access" />
   // return checkList.includes(path) ? children : <h3>No access</h3>
@@ -96,21 +93,42 @@ export default function HomeScreen() {
   const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
-
   const bottomDiv = useRef();
   const adminAsideRef = useRef();
   const toggleBtnRef = useRef();
-
   const [bottomDivState, setBottomDivState] = useState(false);
   const [userPermissions, setUserPermissions] = useState([]);
   const [currentBranch, setCurrentBranch] = useState([]);
-
   const profileDataState = useSelector((state) => state.profileData.profile);
   const allState = useSelector((state) => state);
   const tokenBranchState = useSelector(
     (state) => state.tokenBranchChangeState.tokenBranchState
   );
-
+  const [agencyData, setAgencyData] = useState({
+    agencyName: "",
+    angencyLogo: null,
+  });
+  const agencyLogo = `${process.env.REACT_APP_NODE_URL}/api${agencyData.logo}`;
+  useEffect(() => {
+    const retrieveAgencyProfile = async () => {
+      const url = `${process.env.REACT_APP_NODE_URL}/api/agency/get-agencybyid`;
+      const config = {
+        headers: {
+          token: localStorage.getItem("rbacToken"),
+        },
+      };
+      await axios.get(url, config).then((response) => {
+        if (response && response.data) {
+          console.log(response.data.result[3].value);
+          setAgencyData({
+            agencyName: response.data.result[0].value,
+            angencyLogo: response.data.result[3].value,
+          });
+        }
+      });
+    };
+    retrieveAgencyProfile();
+  }, []);
   useEffect(() => {
     if (tokenBranchState.isSuccess) {
       if (tokenBranchState.data.isSuccess) {
@@ -137,7 +155,11 @@ export default function HomeScreen() {
   }, []);
 
   useEffect(() => {
-    console.log("profileDataState", profileDataState.currentUserData,'profile..........');
+    console.log(
+      "profileDataState",
+      profileDataState.currentUserData,
+      "profile.........."
+    );
     if (
       profileDataState.isSuccess &&
       profileDataState.currentUserData.isSuccess
@@ -253,8 +275,20 @@ export default function HomeScreen() {
         <main className="asideMain">
           <section className="outerSection">
             <div className="logoDiv">
-              <img className="logoB" src={logo} alt="Logo" />
-              <img className="logoT d-none" src={logoT} alt="Logo" />
+              <div className="row">
+                <div className="col-md-4">
+                  <img
+                    className="rounded-circle logoB"
+                    src={`${process.env.REACT_APP_NODE_URL}/api${agencyData.angencyLogo}`}
+                    alt="Agency"
+                    height={80}
+                    width={80}
+                  />
+                </div>
+                <div className="col-md-8">
+                  <h6 className="agnecy-style">{agencyData.agencyName}</h6>
+                </div>
+              </div>
             </div>
             <ul id="accordionExample" className="outUl">
               {checkTabGrant(["profile"]) && (
@@ -308,7 +342,7 @@ export default function HomeScreen() {
                         </li>
                       )}
 
-                    {checkTabGrant(["user-profile"]) && (
+                      {checkTabGrant(["user-profile"]) && (
                         <li className="inLi">
                           <NavLink
                             className={({ isActive }) =>
@@ -316,7 +350,7 @@ export default function HomeScreen() {
                             }
                             to="home/profile"
                           >
-                           Profile
+                            Profile
                           </NavLink>
                         </li>
                       )}
@@ -376,7 +410,7 @@ export default function HomeScreen() {
                   </div>
                 </li>
               )}
-              {checkTabGrant(['service']) && (
+              {checkTabGrant(["service"]) && (
                 <li className="outLi">
                   <button
                     className="headBtn"
@@ -565,7 +599,7 @@ export default function HomeScreen() {
                           </NavLink>
                         </li>
                       )}
-                        {checkTabGrant(["report"]) && (
+                      {checkTabGrant(["report"]) && (
                         <li className="inLi">
                           <NavLink
                             className={({ isActive }) =>
@@ -722,7 +756,11 @@ export default function HomeScreen() {
                         currentBranch.length > 0 &&
                         currentBranch.map((branch, index) => {
                           return (
-                            <option  className="branch-text-list" key={index} value={branch.id}>
+                            <option
+                              className="branch-text-list"
+                              key={index}
+                              value={branch.id}
+                            >
                               {branch.name}
                             </option>
                           );
@@ -965,7 +1003,7 @@ export default function HomeScreen() {
               }
               exact
             />
-             <Route
+            <Route
               path="administration/report/TotalEnquiry"
               element={
                 <CheckPermission path="profile">
@@ -974,7 +1012,7 @@ export default function HomeScreen() {
               }
               exact
             />
-             <Route
+            <Route
               path="administration/report/WorkAssignArea"
               element={
                 <CheckPermission path="profile">
@@ -1165,7 +1203,7 @@ export default function HomeScreen() {
               }
               exact
             />
-             <Route
+            <Route
               path="administration/configuration/Task"
               element={
                 <CheckPermission path="profile">
@@ -1202,7 +1240,7 @@ export default function HomeScreen() {
               }
               exact
             />
-             <Route
+            <Route
               path="home/profile"
               element={
                 <CheckPermission path="profile">
