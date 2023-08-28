@@ -269,24 +269,20 @@ export default function AddCategory({ workFor }) {
     if (
       categoryname.length > 0 &&
       categorydescription !== "" &&
-      categorydepartment !== ""
+      categorydepartment !== "" &&
+      categorychehkedFeature !== []
     ) {
       if (workFor === "forEdit") {
         categoryData["id"] = editcategoryData.data.id;
         console.log(categoryData, "categoryData");
-        // dispatch(editcategoryUpdateToDb(categoryData));
+        dispatch(editcategoryUpdateToDb(categoryData));
       } else {
         dispatch(addCategoryToDb(categoryData));
       }
     } else {
       dispatch(setShowMessage("All field must be field"));
     }
-    setCategoryData({
-      category_name: "",
-      category_description: "",
-      department: "",
-      chehkedFeature: [],
-    });
+   
   };
 
   const getselectedData = () => {
@@ -401,7 +397,7 @@ export default function AddCategory({ workFor }) {
               onClick={handleSubmit}
               type="button"
             >
-              {workFor === "forAdd" ? "Create Category" : "Edit Category"}
+              {workFor === "forAdd" ? "Create Category" : "Save"}
             </button>
             <button
               className="ms-0 ms-sm-3 mt-3 mt-sm-0 col-12 col-sm-5 col-lg-2 myBtn py-2"
