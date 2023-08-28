@@ -269,12 +269,13 @@ export default function AddCategory({ workFor }) {
     if (
       categoryname.length > 0 &&
       categorydescription !== "" &&
-      categorydepartment !== ""
+      categorydepartment !== "" &&
+      categorychehkedFeature !== []
     ) {
       if (workFor === "forEdit") {
         categoryData["id"] = editcategoryData.data.id;
         console.log(categoryData, "categoryData");
-        // dispatch(editcategoryUpdateToDb(categoryData));
+        dispatch(editcategoryUpdateToDb(categoryData));
       } else {
         dispatch(addCategoryToDb(categoryData));
       }
