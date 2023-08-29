@@ -43,12 +43,12 @@ getCategoryForm()
 
    const editeStateModal = (data) => {
      // setTableEditData(data);
-     console.log(data.id);
+     console.log(data,"dataaaaaaaaaaa");
      console.log("editEmployeee");
      dispatch(setEdicategoryData(data));
      console.log(setEdicategoryData(data));
      console.log(data,"sdfghjkl;fghjkl;vb")
-     navigate("/administration/configuration/category/editcategory");
+     navigate("/administration/configuration/category/editcategory", { state: data });
    };
 
 

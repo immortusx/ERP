@@ -19,6 +19,7 @@ export default function AddCategory({ workFor }) {
   const [dept, setDept] = useState([]);
   const [featuresList, setFeaturesList] = useState([]);
   const [checkField, setCheckField] = useState([]);
+  const [fielddata, setfielddata] = useState([]);
   // const [checkFieldItem, setCheckFieldItem] = useState(true);
   const [checkFieldItem, setCheckFieldItem] = useState([]);
   const [categoryData, setCategoryData] = useState({
@@ -110,7 +111,33 @@ export default function AddCategory({ workFor }) {
       chehkedFeature: tempAr,
     }));
   }
+  useEffect(() => {
+    if (fielddata && fielddata.length > 0) {
+      console.log(fielddata, "feisl");
+      const fields = fielddata.map((item)=>{
+        if(checkFieldItem.includes(item.id)){
+           // Set isChecked to true for IDs included in checkFieldItem
+            return { ...item, isChecked: true, disabled: true };
+          } else {
+            // Set isChecked to false for other IDs
+            return { ...item, isChecked: false, disabled: false };
+        }
 
+      });
+        console.log(fields, "fielddata");
+ let tempArry = [];
+ fields.forEach((item) => {
+   if (item.isChecked) {
+     tempArry.push(item.id);
+   }
+ });
+ console.log(tempArry, "tempArry");
+   setCategoryData((featureData) => ({
+     ...featureData,
+     chehkedFeature: tempArry,
+   }));
+    }
+  }, [fielddata]);
   // useEffect(() => {
   //   if (featuresState.isSuccess) {
   //     if (featuresState.data.isSuccess) {
@@ -179,7 +206,7 @@ export default function AddCategory({ workFor }) {
           category_name: editcategoryData.data.category_name,
           category_description: editcategoryData.data.category_description,
           department: editcategoryData.data.department,
-          // chehkedFeature: editcategoryData.data.chehkedFeature,
+          chehkedFeature: checkField,
         });
       }
     }
@@ -200,17 +227,38 @@ export default function AddCategory({ workFor }) {
     try {
       const response = await Axios.get(url, config);
       if (response.data?.isSuccess) {
+        console.log(response.data.result, "editData");
         setCategoryData(response.data.result);
       }
     } catch (error) {
       console.log(error);
     }
   }
+  const getCategoryField = async (id) => {
+    console.log(id, "new");
+    const suburl = `${process.env.REACT_APP_NODE_URL}/api/master/get-category-fields/${id}`;
+    console.log(suburl, "suburl");
+    const config = {
+      headers: {
+        token: localStorage.getItem("rbacToken"),
+      },
+    };
+    try {
+      const response = await Axios.get(suburl, config);
+      if (response.data?.isSuccess) {
+        console.log(response.data.result, "editData**************");
+        setfielddata(response.data.result);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     if (workFor === "forEdit" && editcategoryData && editcategoryData.data) {
       const id = editcategoryData.data.id;
       getcategoryid(id);
+      getCategoryField(id);
     }
   }, []);
 
@@ -282,7 +330,6 @@ export default function AddCategory({ workFor }) {
     } else {
       dispatch(setShowMessage("All field must be field"));
     }
-   
   };
 
   const getselectedData = () => {
@@ -295,6 +342,7 @@ export default function AddCategory({ workFor }) {
     Axios.get(newurl, config).then((response) => {
       if (response) {
         if (response.data.isSuccess) {
+          console.log(response.data.result, "response.data.result");
           setCheckField(response.data.result);
         }
       }
@@ -310,8 +358,8 @@ export default function AddCategory({ workFor }) {
   }, [checkField]);
 
   function handlCancel() {
-    navigate("/administration/configuration/category");
-    // console.log(featuresList, "featuresList");
+    // navigate("/administration/configuration/category");
+    console.log(categoryData, "categoryData");
     clearInpHook();
   }
 

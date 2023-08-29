@@ -16,7 +16,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 export default function AddRole({ workFor }) {
     const location = useLocation();
     const tableEditData = location.state
-   // console.log(tableEditData,"tableEditDatatableEditData")
+   console.log(tableEditData,"tableEditDatatableEditData")
     const [featuresList, setFeaturesList] = useState([])
     const [showRolesList, setShowRolesList] = useState([])
     const [checkedd, setChecked] = useState(false);

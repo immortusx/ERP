@@ -111,7 +111,7 @@ router.get("/get-category-list", tokenCheck, async (req, res) => {
 router.get("/get-selected-category-field", tokenCheck, async (req, res) => {
   try {
     await db.query(
-      "SELECT * FROM enquiry_fields WHERE field = 'firstName' OR field = 'mobileNumber'",
+      "SELECT * FROM enquiry_fields WHERE field = 'firstName' OR field = 'mobileNumber' OR field = 'state' OR field = 'district' OR field = 'taluko' OR field = 'village' OR field = 'dsp'",
       (err, results) => {
         if (err) {
           console.log({ isSuccess: false, result: "error" });
@@ -157,7 +157,21 @@ router.post("/delete-category", tokenCheck, async (req, res) => {
     console.log(e);
   }
 });
+router.get("/get-category-fields/:id", tokenCheck, async (req, res) => {
+  console.log(">>>>>get-category-fields", req.body.roleId);
 
+  const url = `select t.* from enquiry_category as f inner join enquiry_category_field as s on s.category_id = f.id inner join enquiry_fields as t on t.id = s.field_id where f.id = ${req.params.id} `;
+  console.log("url", url);
+  await db.query(url, async (err, result) => {
+    if (err) {
+      console.log({ isSuccess: true, result: err });
+      res.send({ isSuccess: true, result: "error" });
+    } else {
+      console.log({ isSuccess: true, result: url });
+      res.send({ isSuccess: true, result: result });
+    }
+  });
+});
 
 router.post("/get-category-edit/:id", tokenCheck, async (req, res) => {
   console.log(">>>>>get-roles");
