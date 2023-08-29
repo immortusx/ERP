@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Modal, Button } from "react-bootstrap";
+
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -19,7 +20,7 @@ import State from "./singleComponents/villageCom/state";
 import District from "./singleComponents/villageCom/District";
 import Taluka from "./singleComponents/villageCom/Taluka";
 import Village from "./singleComponents/villageCom/village";
-export default function Enquiry({ workFor }) {
+export default function Enquiry({ workFor, villageId }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const enquiryState = useSelector((state) => state.enquiryState.enquiryState);
@@ -28,6 +29,7 @@ export default function Enquiry({ workFor }) {
   );
 
   const [categoriesList, setCategoriesList] = useState([]);
+  const [categoryId, setCategoryId] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [currentCategoryData, setCurrentCategoryData] = useState({
     id: "",
@@ -134,32 +136,32 @@ export default function Enquiry({ workFor }) {
       }
     });
   }
-  function saveBtnCalled() {
-    console.log("newEnquiryList", newEnquiryList);
-    console.log("newEnquiryData", newEnquiryData);
-    if (
-      newEnquiryData.branchId &&
-      newEnquiryData.dsp &&
-      newEnquiryData.firstName &&
-      newEnquiryData.lastName &&
-      newEnquiryData.fatherName &&
-      newEnquiryData.mobileNumber &&
-      newEnquiryData.district &&
-      newEnquiryData.state &&
-      newEnquiryData.tehsil &&
-      newEnquiryData.block &&
-      newEnquiryData.village &&
-      newEnquiryData.make &&
-      newEnquiryData.model &&
-      newEnquiryData.enquiryPrimarySource &&
-      newEnquiryData.sourceOfEnquiry &&
-      newEnquiryData.enquiryDate
-    ) {
-      dispatch(setNewEnquiryDataDb(newEnquiryData));
-    } else {
-      dispatch(setShowMessage("Please fill mandatory fields"));
-    }
-  }
+  // function saveBtnCalled() {
+  //   console.log("newEnquiryList", newEnquiryList);
+  //   console.log("newEnquiryData", newEnquiryData);
+  //   if (
+  //     newEnquiryData.branchId &&
+  //     newEnquiryData.dsp &&
+  //     newEnquiryData.firstName &&
+  //     newEnquiryData.lastName &&
+  //     newEnquiryData.fatherName &&
+  //     newEnquiryData.mobileNumber &&
+  //     newEnquiryData.district &&
+  //     newEnquiryData.state &&
+  //     newEnquiryData.tehsil &&
+  //     newEnquiryData.block &&
+  //     newEnquiryData.village &&
+  //     newEnquiryData.make &&
+  //     newEnquiryData.model &&
+  //     newEnquiryData.enquiryPrimarySource &&
+  //     newEnquiryData.sourceOfEnquiry &&
+  //     newEnquiryData.enquiryDate
+  //   ) {
+  //     // dispatch(setNewEnquiryDataDb(newEnquiryData));
+  //   } else {
+  //     dispatch(setShowMessage("Please fill mandatory fields"));
+  //   }
+  // }
   function clearState() {
     setCurrentCategoryData({
       id: "",
@@ -244,26 +246,7 @@ export default function Enquiry({ workFor }) {
       }
     });
   }
-  async function getDspList(id) {
-    const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/get-dsp/${id}`;
-    const config = {
-      headers: {
-        token: localStorage.getItem("rbacToken"),
-      },
-    };
-    await axios.get(url, config).then((response) => {
-      if (response.data) {
-        if (response.data.isSuccess) {
-          console.log("response.data", response.data);
-          // setCategoriesList(response.data.result)
-          setNewEnquiryList((newEnquiryList) => ({
-            ...newEnquiryList,
-            ["listDsp"]: response.data.result,
-          }));
-        }
-      }
-    });
-  }
+
   async function getModelList(id) {
     const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/get-model/${id}`;
     const config = {
@@ -312,7 +295,6 @@ export default function Enquiry({ workFor }) {
     await axios.get(url, config).then((response) => {
       if (response.data) {
         if (response.data.isSuccess) {
-          console.log(response.data.result);
           setNewEnquiryList((newEnquiryList) => ({
             ...newEnquiryList,
             ["listTehsil"]: response.data.result,
@@ -331,7 +313,6 @@ export default function Enquiry({ workFor }) {
     await axios.get(url, config).then((response) => {
       if (response.data) {
         if (response.data.isSuccess) {
-          console.log(response.data.result);
           setNewEnquiryList((newEnquiryList) => ({
             ...newEnquiryList,
             ["listVillage"]: response.data.result,
@@ -353,6 +334,27 @@ export default function Enquiry({ workFor }) {
   function cancelHandler() {
     navigate("/sale/enquiryies");
   }
+  useEffect(() => {
+    const getDsplist = async () => {
+      const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/get-dsp-by-village/${enquiryData.village}/${categoryId}`;
+      const config = {
+        headers: {
+          token: localStorage.getItem("rbacToken"),
+        },
+      };
+      await axios.get(url, config).then((response) => {
+        if (response.data.isSuccess) {
+          console.log(response.data.result, "response.data.result");
+          setNewEnquiryList((newEnquiryList) => ({
+            ...newEnquiryList,
+            ["listDsp"]: response.data.result,
+          }));
+        }
+      });
+    };
+    getDsplist();
+  }, [enquiryData.village]);
+
   async function getFieldCurrentCategories(id) {
     const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/get-current-fields/${id}`;
     const config = {
@@ -389,21 +391,19 @@ export default function Enquiry({ workFor }) {
   useEffect(() => {
     console.log("enquiryData", enquiryData);
     const idIs = enquiryData.category;
+    console.log(idIs, "idddddddddddd");
 
     if (enquiryData.category != 0) {
       setCurrentCategoryData((currentCategoryData) => ({
         ...currentCategoryData,
         id: idIs,
       }));
+      setCategoryId(idIs);
       getFieldCurrentCategories(idIs);
     }
   }, [enquiryData.category]);
 
-  useEffect(() => {
-    console.log("enquiryState changes", enquiryState);
-  }, [enquiryState]);
   async function handleSubmit() {
-    console.log("enquiryData", enquiryData);
     console.log("currentCategoryData", currentCategoryData);
     const branchId = await localStorage.getItem("currentDealerId");
     const dsp = newEnquiryData.dsp;
@@ -479,9 +479,9 @@ export default function Enquiry({ workFor }) {
                   return (
                     <option
                       key={index}
-                      value={i.id}
+                      value={i.userId}
                       className="myLabel"
-                    >{`${i.first_name} ${i.last_name}`}</option>
+                    >{`${i.sale_person}`}</option>
                   );
                 })}
             </select>
@@ -942,9 +942,12 @@ export default function Enquiry({ workFor }) {
     } else {
       // setNewEnquiryData(newEnquiryData => ({ ...newEnquiryData, [name]: value }))
       switch (name) {
-        case "branchId":
-          getDspList(value);
-          break;
+        // case "village":
+        //   getDsplist(value);
+        //   break;
+        // case "branchId":
+        //   getDspList(value);
+        //   break;
         case "make":
           getModelList(value);
           break;
@@ -975,19 +978,9 @@ export default function Enquiry({ workFor }) {
       return { ...pre, state: val };
     });
   };
-  const onSelectedStatedata = (val) => {
-    setEnquiryData((pre) => {
-      return { ...pre, state: val };
-    });
-  };
 
   const onSelectedDistrict = (val) => {
     setNewEnquiryData((pre) => {
-      return { ...pre, district: val };
-    });
-  };
-  const onSelectedDistrictdata = (val) => {
-    setEnquiryData((pre) => {
       return { ...pre, district: val };
     });
   };
@@ -997,15 +990,27 @@ export default function Enquiry({ workFor }) {
       return { ...pre, tehsil: val };
     });
   };
-  const onSelectedTalukadata = (val) => {
-    setEnquiryData((pre) => {
-      return { ...pre, tehsil: val };
-    });
-  };
 
   const onSelectedVillage = (val) => {
     setNewEnquiryData((pre) => {
       return { ...pre, village: val };
+    });
+  };
+
+
+  const onSelectedStatedata = (val) => {
+    setEnquiryData((pre) => {
+      return { ...pre, state: val };
+    });
+  };
+  const onSelectedDistrictdata = (val) => {
+    setEnquiryData((pre) => {
+      return { ...pre, district: val };
+    });
+  };
+  const onSelectedTalukadata = (val) => {
+    setEnquiryData((pre) => {
+      return { ...pre, tehsil: val };
     });
   };
   const onSelectedVillagedata = (val) => {
@@ -1013,22 +1018,40 @@ export default function Enquiry({ workFor }) {
       return { ...pre, village: val };
     });
   };
-
   const redirectModal = () => {
     navigate(-1);
   };
 
+
   return (
     <main className="bg-white p-3 rounded">
+       <div className=" row m-0">
+          <div className="col-6">
       <h5 className="m-0">
         {workFor === "Enquiry" ? "Enquiry" : "New Enquiry"}
       </h5>
-     
-         
+      </div>
+      <div className="col-6 d-flex align-items-end justify-content-end">
+            <Button
+              variant="btn btn-warning mx-1"
+              style={{
+                width: '70px',
+                height: '35px',
+                fontSize: '14px',
+                borderRadius: '20px',
+              }}
+              onClick={() => {
+                redirectModal();
+              }}
+            >
+              BACK
+            </Button>
+          </div>
+
       {workFor === "Enquiry" && (
         <>
-          <div className="row m-0">
-            <div className="d-flex align-items-end justify-content-end">
+          <div className="row mt-3 m-0">
+            {/* <div className="d-flex align-items-end justify-content-end">
               <div
                 onClick={() => {
                   navigate("/sale/enquiryies/newenquiry");
@@ -1048,20 +1071,8 @@ export default function Enquiry({ workFor }) {
                   <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
                 </svg>
                 <h6 className="m-0 ps-1">New Enquiry</h6>
-                <Button
-                  variant="btn btn-warning mx-1"
-                  style={{ width: '70px', height: '35px', fontSize: '14px', borderRadius: '20px' }}
-                  onClick={() => {
-                    redirectModal();
-                  }}
-                >
-                  BACK
-                </Button>
               </div>
-
-
-            </div>
-
+              </div>*/}
 
             <section className="d-flex mt-3 flex-column col-12 col-lg-5">
               <label className="myLabel" htmlFor="email">
@@ -1116,19 +1127,8 @@ export default function Enquiry({ workFor }) {
         </>
       )}
 
-      {workFor === "newEnquiry" && (
+      {/* {workFor === "newEnquiry" && (
         <>
-        <div className="d-flex align-items-end justify-content-end">
-            <Button
-              variant="btn btn-warning mx-1"
-              style={{ width: '70px', height: '35px', fontSize: '14px', borderRadius: '20px' }}
-              onClick={() => {
-                redirectModal();
-              }}
-            >
-              BACK
-            </Button>
-          </div>
           <div className="row mt-2 m-0">
             <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
               <label className="myLabel" htmlFor="email">
@@ -1251,7 +1251,7 @@ export default function Enquiry({ workFor }) {
               onSelectedVillage={onSelectedVillage}
               talukaId={newEnquiryData.tehsil}
             />
-            {/* <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
+           <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
                             <label className='myLabel' htmlFor="email">Select District *</label>
                             <select onChange={changeHandlerNewEnquiry} className='inpClr myInput' name="district">
                                 <option value='0' className='myLabel'>select</option>
@@ -1329,7 +1329,7 @@ export default function Enquiry({ workFor }) {
                     );
                   })}
               </select>
-            </section>*/}
+            </section>
             <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
               <label className="myLabel" htmlFor="email">
                 Select Make *
@@ -1567,7 +1567,8 @@ export default function Enquiry({ workFor }) {
             </section>
           </div>
         </>
-      )}
+                )}*/}
+                </div>
     </main>
   );
 }
