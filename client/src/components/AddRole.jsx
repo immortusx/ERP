@@ -10,22 +10,22 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
-
+import { Modal, Button } from "react-bootstrap";
 
 
 export default function AddRole({ workFor }) {
     const location = useLocation();
     const tableEditData = location.state
-   // console.log(tableEditData,"tableEditDatatableEditData")
+    // console.log(tableEditData,"tableEditDatatableEditData")
     const [featuresList, setFeaturesList] = useState([])
     const [showRolesList, setShowRolesList] = useState([])
     const [checkedd, setChecked] = useState(false);
     const [role_emp, setRole_emp] = useState(0);
-   // console.log("ddddddd",checkedd)
+    // console.log("ddddddd",checkedd)
     const [currentRole, setCurrentRole] = useState({
         role: null,
         features: null,
-        
+
     })
 
     const [featureData, setFeatureData] = useState({
@@ -41,9 +41,9 @@ export default function AddRole({ workFor }) {
     const editRoleState = useSelector(state => state.editRoleDataState.editRoleSliceState)
 
     const handleCheckboxChange = () => {
-        setChecked(!checkedd);       
+        setChecked(!checkedd);
         setRole_emp(1)
-      };
+    };
 
     useEffect(() => {
         if (workFor === "forEdit") {
@@ -56,7 +56,7 @@ export default function AddRole({ workFor }) {
     }, [workFor])
 
     useEffect(() => {
-       // console.log('editRoleState', editRoleState);
+        // console.log('editRoleState', editRoleState);
         if (editRoleState.isSuccess) {
             if (editRoleState.message.isSuccess && editRoleState.message.result === 'success') {
                 dispatch(setShowMessage('Success'))
@@ -71,9 +71,9 @@ export default function AddRole({ workFor }) {
         setFeatureData({
             roleName: '',
             roleDescription: '',
-            checkedFeatures: [],           
+            checkedFeatures: [],
         })
-       // setChecked(false)
+        // setChecked(false)
         const allInp = document.getElementsByClassName('inputElement')
         Array.from(allInp).forEach((item) => {
             if (item.type === 'checkbox') {
@@ -83,29 +83,29 @@ export default function AddRole({ workFor }) {
             }
         })
     }
-useEffect(()=>{
-getRoleEmp();
-},[])
-const getRoleEmp = async()=>{
-    const RoleForEmp = tableEditData.id;
-    const url = `${process.env.REACT_APP_NODE_URL}/api/users/getRoleDesc/${RoleForEmp}`;
-    const config = {
-      headers: {
-        token: localStorage.getItem("rbacToken"),
-      },
-    };
-    await Axios.get(url, config).then((response) => {
-      if (response.data?.isSuccess) {
-        setRole_emp(response.data.result[0].role_emp);
-       // console.log(response.data.result, "6666666666666666666666666")
-        if(response.data.result[0].role_emp == 1){
-            setChecked(true)
-        }else{
-            setChecked(false)
-        }
-      }
-    });
-}
+    useEffect(() => {
+        getRoleEmp();
+    }, [])
+    const getRoleEmp = async () => {
+        const RoleForEmp = tableEditData.id;
+        const url = `${process.env.REACT_APP_NODE_URL}/api/users/getRoleDesc/${RoleForEmp}`;
+        const config = {
+            headers: {
+                token: localStorage.getItem("rbacToken"),
+            },
+        };
+        await Axios.get(url, config).then((response) => {
+            if (response.data?.isSuccess) {
+                setRole_emp(response.data.result[0].role_emp);
+                // console.log(response.data.result, "6666666666666666666666666")
+                if (response.data.result[0].role_emp == 1) {
+                    setChecked(true)
+                } else {
+                    setChecked(false)
+                }
+            }
+        });
+    }
     useEffect(() => {
         if (workFor === 'forEdit') {
             clearInpHook()
@@ -117,7 +117,7 @@ const getRoleEmp = async()=>{
                 })
             }
             if (currentRole.features !== null) {
-               // console.log('currentRole.features', currentRole.features)
+                // console.log('currentRole.features', currentRole.features)
                 let tempAr = [];
                 currentRole.features.forEach((target) => {
                     // console.log('getElementsByName', document.getElementsByName(`${target.feature}Inp`)[0]);
@@ -162,7 +162,7 @@ const getRoleEmp = async()=>{
     useEffect(() => {
         dispatch(getFeatureFromDb())
     }, [])
-   
+
     function onChangeHandler(data, id) {
         let tempAr = [];
         const value = data.target.value
@@ -198,7 +198,7 @@ const getRoleEmp = async()=>{
         await Axios.get(url, config).then((response) => {
             if (response.data?.isSuccess) {
                 setShowRolesList(response.data.result)
-               // console.log('get-roles-to-edit result>', response.data.result);
+                // console.log('get-roles-to-edit result>', response.data.result);
             }
         })
     }
@@ -212,21 +212,21 @@ const getRoleEmp = async()=>{
         await Axios.post(url, { roleId: roleId }, config).then((response) => {
             if (response.data?.isSuccess) {
                 // setShowRolesList(response.data.result)
-                setCurrentRole(currentRole => ({ ...currentRole, features: response.data.result }))              
+                setCurrentRole(currentRole => ({ ...currentRole, features: response.data.result }))
             }
         })
     }
     function handleSubmit() {
         //console.log('featureData', featureData);
         //console.log('currentRole', currentRole);
-       // console.log('role_emp', role_emp);
+        // console.log('role_emp', role_emp);
 
         const updatedObject = {
             ...featureData,
             role_emp: role_emp
-          };
-           //setFeatureData(updatedObject)
-           //console.log('featureDatanewwwww', featureData);
+        };
+        //setFeatureData(updatedObject)
+        //console.log('featureDatanewwwww', featureData);
         if (workFor === 'addRole') {
             if (featureData.roleName != '' && featureData.checkedFeatures.length > 0) {
                 console.log(updatedObject, "updatedObject");
@@ -237,10 +237,10 @@ const getRoleEmp = async()=>{
         } else {
             if (workFor === 'forEdit') {
                 //console.log("editnow")
-               // console.log(currentRole, 'current')
-              //  console.log(featureData.roleDescription)
-              //  console.log(featureData.checkedFeatures)
-              //  console.log(tableEditData.id)
+                // console.log(currentRole, 'current')
+                //  console.log(featureData.roleDescription)
+                //  console.log(featureData.checkedFeatures)
+                //  console.log(tableEditData.id)
                 if (currentRole != null) {
                     let myData = {
                         description: featureData.roleDescription,
@@ -287,10 +287,13 @@ const getRoleEmp = async()=>{
         }
     }, [])
 
+    const redirectModal = () => {
+        navigate(-1);
+    };
 
     return (
         <div className='addUser myBorder bg-white rounded p-3'>
-            <div className=' row mt-3 m-0'>
+            <div className=' row m-0'>
                 {
 
                     workFor === 'roles' && <div className='  d-flex align-items-end justify-content-end'>
@@ -302,12 +305,21 @@ const getRoleEmp = async()=>{
                             <h6 className='m-0 ps-1'>
                                 Add role
                             </h6>
+                            <Button
+                                variant="btn btn-warning mx-1"
+                                style={{ width: '70px', height: '35px', fontSize: '14px', borderRadius: '20px' }}
+                                onClick={() => {
+                                    redirectModal();
+                                }}
+                            >
+                                BACK
+                            </Button>
                         </div>
                     </div>
                 }
             </div>
             <main>
-                <div className=' row mt-3 m-0'>
+                <div className=' row m-0'>
                     <div className="d-flex justify-content-between">
                         <h5 className='m-0'>
                             {
@@ -321,6 +333,16 @@ const getRoleEmp = async()=>{
                                 onChange={handleCheckboxChange}
                             />
                             <label className='ms-1'>Role for Employee</label>
+
+                            <Button
+                                variant="btn btn-warning mx-1"
+                                style={{ width: '70px', height: '35px', fontSize: '14px', borderRadius: '20px' }}
+                                onClick={() => {
+                                    redirectModal();
+                                }}
+                            >
+                                BACK
+                            </Button>
                         </div>
                     </div>
 

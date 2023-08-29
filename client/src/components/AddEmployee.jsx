@@ -10,6 +10,7 @@ import {
   editemployeeUpdateToDb,
 } from "../redux/slices/editemployeeDataSlice";
 import "../styles/AddUser.css";
+import { Modal, Button } from "react-bootstrap";
 import Axios from "axios";
 import { getToPathname } from "@remix-run/router";
 import { setShowMessage } from "../redux/slices/notificationSlice";
@@ -98,6 +99,11 @@ export default function Addemployee({ workFor }) {
       }
     }
   }, [editemployeeSliceState]);
+
+
+  const redirectModal = () => {
+    navigate(-1);
+  };
 
   function handleSubmit() {
     // console.log("employeeData", employeeData);
@@ -562,7 +568,7 @@ export default function Addemployee({ workFor }) {
   function confirmClicked() {
     setPopUpScreen(false);
   }
-  const handleNoAccess = () => {};
+  const handleNoAccess = () => { };
   const onChangeAccess = async (e) => {
     const selectedValue = e.target.value;
     const [id, role] = selectedValue.split(",");
@@ -589,8 +595,20 @@ export default function Addemployee({ workFor }) {
     <>
       <div className="addemployee  bg-white rounded p-3">
         <main>
-          <h5 className="m-0">General Details</h5>
-
+          <div className="d-flex align-items-center justify-content-between">
+            <h5 className='m-0'>
+              General Details
+            </h5>
+            <Button
+              variant="btn btn-warning mx-1"
+              style={{ width: '70px', height: '35px', fontSize: '14px', borderRadius: '20px' }}
+              onClick={() => {
+                redirectModal();
+              }}
+            >
+              BACK
+            </Button>
+          </div>
           <div className=" row mt-3 m-0">
             <main className="px-3 d-flex align-items-center ">
               <div className="col-12 col-sm- 6 col-lg-4">
@@ -953,7 +971,7 @@ export default function Addemployee({ workFor }) {
                           id="access"
                           name="access"
                           onChange={onChangeAccess}
-                          // value={selectedRoleName}
+                        // value={selectedRoleName}
                         >
                           <option value="">None</option>
                           {empRoles &&

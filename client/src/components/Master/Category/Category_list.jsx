@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { Modal, Button } from "react-bootstrap";
 import Axios from "axios";
 import { getToPathname } from "@remix-run/router";
 import { getCategory } from "./getEditCategory";
@@ -308,6 +309,10 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
       return null;
     }
   };
+  const redirectModal = () => {
+    navigate(-1);
+  };
+
 
   return (
     <>
@@ -335,6 +340,16 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
               &nbsp; Add Category
             </button>
           </h6>
+          <Button
+              variant="btn btn-warning mx-1"
+              style={{ width: '75px', height: '40px', fontSize: '14px', borderRadius: '20px' }}
+              onClick={() => {
+                redirectModal();
+              }}
+            >
+              BACK
+            </Button>
+
         </div>
       </div>
       <div className="addUser myBorder bg-white rounded p-3">

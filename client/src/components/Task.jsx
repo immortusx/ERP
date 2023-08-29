@@ -4,6 +4,7 @@ import Checkbox from '@mui/material/Checkbox'
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import Axios from "axios";
 import moment from "moment";
+import { Modal, Button } from "react-bootstrap";
 const Task = () => {
 
    const [rowData, setRowData] = useState([]);
@@ -17,34 +18,34 @@ const Task = () => {
    }
    useEffect(() => {
 
-          async function getTaskList() {
-              const url = `${process.env.REACT_APP_NODE_URL}/api/get-task-list`;
-              const config = {
-                  headers: {
-                      token: localStorage.getItem("rbacToken"),
-                  },
-              };
+      async function getTaskList() {
+         const url = `${process.env.REACT_APP_NODE_URL}/api/get-task-list`;
+         const config = {
+            headers: {
+               token: localStorage.getItem("rbacToken"),
+            },
+         };
 
-              const response = await Axios.get(url, config);
-              if (response.data && response.data.isSuccess) {
-                  const formattedData = response.data.result.map((user, index) => ({
-                      rowNumber: index + 1,
-                      employee: user.employee,
-                      tasktype: user.tasktype_name,
-                      task: user.task_name,
-                      taskcount: user.taskcount,
-                      startdate: moment(user.startdate).format('LL'),
-                      enddate: moment(user.enddate).format('LL')
-                      
-                  }));
+         const response = await Axios.get(url, config);
+         if (response.data && response.data.isSuccess) {
+            const formattedData = response.data.result.map((user, index) => ({
+               rowNumber: index + 1,
+               employee: user.employee,
+               tasktype: user.tasktype_name,
+               task: user.task_name,
+               taskcount: user.taskcount,
+               startdate: moment(user.startdate).format('LL'),
+               enddate: moment(user.enddate).format('LL')
 
-                  setTaskData(formattedData);
-              }
-          }
+            }));
 
-          getTaskList();
-      
-  }, []);
+            setTaskData(formattedData);
+         }
+      }
+
+      getTaskList();
+
+   }, []);
 
 
    const handleChildCheckboxClick = (itemId) => {
@@ -142,7 +143,9 @@ const Task = () => {
       }));
       setRowData(rowsData);
    }, [taskData, selectAll]);
-
+   const redirectModal = () => {
+      navigate(-1);
+    };
 
    return (
       <div className="">
@@ -167,6 +170,15 @@ const Task = () => {
                   <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
                </svg>
                <h6 className="m-0 ps-1">Add Task</h6>
+               <Button
+                  variant="btn btn-warning mx-1"
+                  style={{ width: '70px', height: '35px', fontSize: '14px', borderRadius: '20px' }}
+                  onClick={() => {
+                     redirectModal();
+                  }}
+               >
+                  BACK
+               </Button>
             </div>
          </div>
 

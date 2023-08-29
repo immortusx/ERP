@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Axios from "axios";
+import { Modal, Button } from "react-bootstrap";
 import {
   addCategoryToDb,
   clearaddCategory,
@@ -314,15 +315,35 @@ export default function AddCategory({ workFor }) {
     // console.log(featuresList, "featuresList");
     clearInpHook();
   }
+  const redirectModal = () => {
+    navigate(-1);
+  };
 
   return (
     <div className="addUser myBorder bg-white rounded p-3">
       <main>
-        <div className=" row mt-3 m-0">
-          <h5 className="m-0">
-            {workFor === "forAdd" ? "Create Category" : "Edit Category"}
-          </h5>
-
+        <div className="row m-0">
+          <div className="col-6">
+            <h5 className="m-0">
+              {workFor === "forAdd" ? "Create Category" : "Edit Category"}
+            </h5>
+          </div>
+          <div className="col-6 d-flex align-items-end justify-content-end">
+            <Button
+              variant="btn btn-warning mx-1"
+              style={{
+                width: '70px',
+                height: '35px',
+                fontSize: '14px',
+                borderRadius: '20px',
+              }}
+              onClick={() => {
+                redirectModal();
+              }}
+            >
+              BACK
+            </Button>
+          </div>
           <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
             <label className="myLabel" htmlFor="email">
               Category Name *
@@ -408,7 +429,7 @@ export default function AddCategory({ workFor }) {
             </button>
           </section>
         </div>
-      </main>
-    </div>
+      </main >
+    </div >
   );
 }
