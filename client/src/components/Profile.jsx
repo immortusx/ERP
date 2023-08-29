@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Axios from "axios";
@@ -36,7 +35,6 @@ export default function Profile_list({ workFor }) {
     fileInputRef.current.value = "";
   }
 
-
   const { editagencySliceState } = useSelector(
     (state) => state.editAgencyDataState
   );
@@ -47,7 +45,7 @@ export default function Profile_list({ workFor }) {
   useEffect(() => {
     if (editagencySliceState.isSuccess) {
       const result = editagencySliceState.message.result;
-      console.log(result, "result")
+      console.log(result, "result");
       if (result === "success") {
         dispatch(setShowMessage("Data is Updated"));
         clearInpHook();
@@ -57,7 +55,6 @@ export default function Profile_list({ workFor }) {
         console.log("Something is wrong!");
         dispatch(setShowMessage("Something is wrong!"));
       }
-
     }
 
   }, [editagencySliceState]);
@@ -87,8 +84,13 @@ export default function Profile_list({ workFor }) {
   //      };
   //    }, [workFor, clearEditagencyData]);
 
+  useEffect(()=> {
+    if(agencyData){
+      const logo = `${process.env.REACT_APP_NODE_URL}/api${agencyData.logo}`;
+      console.log(logo, 'logo')
+    }
+  },[agencyData])
   async function getagencyid() {
-    console.log("asdfghjklfdghjk");
     const url = `${process.env.REACT_APP_NODE_URL}/api/agency/get-agencybyid`;
     const config = {
       headers: {
@@ -111,7 +113,7 @@ export default function Profile_list({ workFor }) {
         const parsedJson = JSON.parse(jsonOutput);
         console.log(parsedJson, "parsedJson");
         console.log(parsedJson.logo, "parsedJson.logo");
-        setAgencyData(parsedJson)
+        setAgencyData(parsedJson);
       }
     } catch (error) {
       console.log(error);
@@ -119,11 +121,8 @@ export default function Profile_list({ workFor }) {
   }
 
   useEffect(() => {
-
     getagencyid();
   }, []);
-
-
 
   const onChangeHandler = (e) => {
     const { name, value, files } = e.target;
@@ -154,7 +153,11 @@ export default function Profile_list({ workFor }) {
     formData.append("email", aemail);
     formData.append("logo", alogo);
 
-    if (aname.length > 0 && acontact !== "" && aemail !== "" && alogo !== null
+    if (
+      aname.length > 0 &&
+      acontact !== "" &&
+      aemail !== "" &&
+      alogo !== null
     ) {
       console.log("result save");
       console.log(workFor, "workfor");
@@ -264,7 +267,6 @@ export default function Profile_list({ workFor }) {
                 className="logo-image"
                 height={50}
                 width={50}
-
               />
             )}
           </section>
@@ -275,7 +277,7 @@ export default function Profile_list({ workFor }) {
               onClick={handleSubmit}
               type="button"
             >
-              Edit
+              {workFor === "forEdit" ? "Edit" : "Create"}
             </button>
 
             <button
@@ -291,9 +293,3 @@ export default function Profile_list({ workFor }) {
     </div>
   );
 }
-
-
-
-
-
-

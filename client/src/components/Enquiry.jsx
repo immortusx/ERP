@@ -1018,10 +1018,6 @@ export default function Enquiry({ workFor, villageId }) {
       return { ...pre, village: val };
     });
   };
-  const redirectModal = () => {
-    navigate(-1);
-  };
-
 
   return (
     <main className="bg-white p-3 rounded">
@@ -1568,7 +1564,6 @@ export default function Enquiry({ workFor, villageId }) {
           </div>
         </>
                 )}*/}
-                </div>
     </main>
   );
 }
