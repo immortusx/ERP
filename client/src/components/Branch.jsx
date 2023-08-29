@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react'
 import axios from 'axios'
+import Axios from 'axios'
 import { useNavigate } from 'react-router-dom'
+import AlertDeleteModal from './AlertDelete/AlertDeleteModal'
 import '../styles/Branch.css'
 import { Modal, Button } from "react-bootstrap";
 import CheckIcon from '@mui/icons-material/Check';
@@ -25,6 +27,11 @@ import Village from './singleComponents/villageCom/village'
 
 
 export default function Branch({ workFor }) {
+    const [displayConfirmationModal, setDisplayConfirmationModal] =
+        useState(false);
+    const [type, setType] = useState(null);
+    const [id, setId] = useState(null);
+    const [deleteMessage, setDeleteMessage] = useState(null);
     const dispatch = useDispatch()
     const [branchList, setBranchsList] = useState([])
     const [talukaList, setTalukaList] = useState([])
@@ -231,7 +238,12 @@ export default function Branch({ workFor }) {
                             </svg>
                         </button>
 
-                        <button disabled onClick={() => { deletActionCall(params.row) }} className='myActionBtn m-1'>
+                        <button
+                            onClick={() => {
+                                deleteActionCall(params.row);
+                            }}
+                            className="myActionBtn m-1"
+                        >
                             <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="bi bi-trash3" viewBox="0 0 16 16">
                                 <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5ZM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0H11Zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5h9.916Zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5Z" />
                             </svg>
@@ -328,10 +340,11 @@ export default function Branch({ workFor }) {
         e.currentTarget.firstChild.firstChild.checked = true
     }
 
-    function deletActionCall(data) {
-        deleteRecordFromDb(data.id)
+    // function deletActionCall(data) {
+    //     deleteRecordFromDb(data.id)
+    //     console.log(data.id,"idddd")
 
-    }
+    // }
     function editActionCall(data) {
         console.log(data.id, 'edit id')
         console.log('data ********', data)
@@ -388,29 +401,69 @@ export default function Branch({ workFor }) {
         })
 
     }
-    async function deleteRecordFromDb(id) {
+    // async function deleteRecordFromDb(id) {
+    //     const url = `${process.env.REACT_APP_NODE_URL}/api/branch/delete-branch/${id}`;
+    //     console.log(id,"Branch Id")
+    //     const config = {
+    //         headers: {
+    //             token: localStorage.getItem('rbacToken')
+    //         }
+    //     };
+    //     await axios.get(url, config).then((response) => {
+    //         if (response.data) {
+    //             if (response.data.isSuccess) {
+    //                 if (response.data.result === 'success') {
+    //                     dispatch(setShowMessage('Branch is deleted'))
+    //                     clearState()
+    //                     navigate('/administration/configuration')
+    //                     getBranchList()
+    //                 } else {
+    //                     dispatch(setShowMessage('Something is wrong'))
+    //                 }
+    //             }
+    //         }
+
+    //     })
+    // }
+    
+    const deleteActionCall = (data) => {
+        console.log(data, "fffffffffffffffffff");
+        setType("branch_delete");
+        setId(data.id);
+        setDeleteMessage(`Are You Sure You Want To Delete The category '${data.firmName}'?`);
+        console.log(setDeleteMessage, "hshhdhdhdh");
+        setDisplayConfirmationModal(true);
+    };
+
+    const hideConfirmationModal = () => {
+        setDisplayConfirmationModal(false);
+    };
+
+    const submitDelete = async (type, id) => {
         const url = `${process.env.REACT_APP_NODE_URL}/api/branch/delete-branch/${id}`;
         const config = {
             headers: {
-                token: localStorage.getItem('rbacToken')
-            }
+                token: localStorage.getItem("rbacToken"),
+            },
         };
-        await axios.get(url, config).then((response) => {
-            if (response.data) {
-                if (response.data.isSuccess) {
-                    if (response.data.result === 'success') {
-                        dispatch(setShowMessage('Branch is deactivated'))
-                        clearState()
-                        navigate('/administration/configuration')
-                        getBranchList()
-                    } else {
-                        dispatch(setShowMessage('Something is wrong'))
-                    }
-                }
-            }
 
-        })
-    }
+        try {
+            const response = await Axios.get(url, config);
+            console.log(response, "response.data");
+            if (response.data && response.data.isSuccess) {
+                console.log(response.data, "delete true");
+                dispatch(setShowMessage("Branch Deleted"));
+                getBranchList(); // Assuming getBranchList is defined
+                setDisplayConfirmationModal(false);
+            } else {
+                console.log(response.data, "false");
+                dispatch(setShowMessage("Failed to delete"));
+            }
+        } catch (error) {
+            console.error("Error while deleting branch:", error);
+            // Handle the error as needed.
+        }
+    };
     async function saveToDb(data) {
         const url = `${process.env.REACT_APP_NODE_URL}/api/branch/add-new-branch`;
         const config = {
@@ -583,7 +636,7 @@ export default function Branch({ workFor }) {
                                 </div>
 
                             </div>
-                           
+
                         }
 
                         {
@@ -620,11 +673,19 @@ export default function Branch({ workFor }) {
                                     rowSelection={false}
                                     autoPageSize={false}
                                 />
+                                <AlertDeleteModal
+                                    showModal={displayConfirmationModal}
+                                    confirmModal={submitDelete}
+                                    hideModal={hideConfirmationModal}
+                                    type={type}
+                                    id={id}
+                                    message={deleteMessage}
+                                />
                             </div>
                         }
                         {
                             workFor !== 'branch' && <>
-                               
+
                                 <div className='row mt-2 m-0'>
                                     <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
                                         <label className='myLabel' htmlFor="email">Branch Name * </label>
@@ -723,7 +784,7 @@ export default function Branch({ workFor }) {
                             </>
                         }
                     </div>
-                    </div>
+                </div>
             </main >
         </div>
     )
