@@ -1021,33 +1021,33 @@ export default function Enquiry({ workFor, villageId }) {
 
   return (
     <main className="bg-white p-3 rounded">
-       <div className=" row m-0">
-          <div className="col-6">
-      <h5 className="m-0">
-        {workFor === "Enquiry" ? "Enquiry" : "New Enquiry"}
-      </h5>
-      </div>
-      <div className="col-6 d-flex align-items-end justify-content-end">
-            <Button
-              variant="btn btn-warning mx-1"
-              style={{
-                width: '70px',
-                height: '35px',
-                fontSize: '14px',
-                borderRadius: '20px',
-              }}
-              onClick={() => {
-                redirectModal();
-              }}
-            >
-              BACK
-            </Button>
-          </div>
+      <div className=" row m-0">
+        <div className="col-6">
+          <h5 className="m-0">
+            {workFor === "Enquiry" ? "Enquiry" : "New Enquiry"}
+          </h5>
+        </div>
+        <div className="col-6 d-flex align-items-end justify-content-end">
+          <Button
+            variant="btn btn-warning mx-1"
+            style={{
+              width: '70px',
+              height: '35px',
+              fontSize: '14px',
+              borderRadius: '20px',
+            }}
+            onClick={() => {
+              redirectModal();
+            }}
+          >
+            BACK
+          </Button>
+        </div>
 
-      {workFor === "Enquiry" && (
-        <>
-          <div className="row mt-3 m-0">
-            {/* <div className="d-flex align-items-end justify-content-end">
+        {workFor === "Enquiry" && (
+          <>
+            <div className="row mt-3 m-0">
+              {/* <div className="d-flex align-items-end justify-content-end">
               <div
                 onClick={() => {
                   navigate("/sale/enquiryies/newenquiry");
@@ -1070,60 +1070,60 @@ export default function Enquiry({ workFor, villageId }) {
               </div>
               </div>*/}
 
-            <section className="d-flex mt-3 flex-column col-12 col-lg-5">
-              <label className="myLabel" htmlFor="email">
-                Select category *
-              </label>
-              <select
-                onChange={changeHandler}
-                className="myInput"
-                name="category"
-              >
-                {/* <option value="" className="myLabel">
+              <section className="d-flex mt-3 flex-column col-12 col-lg-5">
+                <label className="myLabel" htmlFor="email">
+                  Select category *
+                </label>
+                <select
+                  onChange={changeHandler}
+                  className="myInput"
+                  name="category"
+                >
+                  {/* <option value="" className="myLabel">
                   select category
               </option> */}
-                {categoriesList.length > 0 &&
-                  categoriesList.map((item, index) => {
-                    return (
-                      <option value={item.id} key={index} className="myLabel">
-                        {item.category_name}
-                      </option>
-                    );
-                  })}
-              </select>
-            </section>
-          </div>
-
-          {enquiryData.category != "" && currentCategoryData.id != "" && (
-            <>
-              <div className="row mt-2 m-0">
-                {currentCategoryData.fields.length > 0 ? (
-                  <>
-                    {currentCategoryData.fields.map((i) => {
-                      return getSelectedFields(i);
+                  {categoriesList.length > 0 &&
+                    categoriesList.map((item, index) => {
+                      return (
+                        <option value={item.id} key={index} className="myLabel">
+                          {item.category_name}
+                        </option>
+                      );
                     })}
-                  </>
-                ) : (
-                  <h6>There is no selected fields</h6>
-                )}
-                {currentCategoryData.fields.length > 0 && (
-                  <section className="d-flex pt-3 flex-column flex-sm-row">
-                    <button
-                      className="col-12 col-sm-5 col-lg-2 myBtn py-2"
-                      onClick={handleSubmit}
-                      type="button"
-                    >
-                      Submit{" "}
-                    </button>
-                  </section>
-                )}
-              </div>
-            </>
-          )}
-        </>
-      )}
+                </select>
+              </section>
+            </div>
 
-      {/* {workFor === "newEnquiry" && (
+            {enquiryData.category != "" && currentCategoryData.id != "" && (
+              <>
+                <div className="row mt-2 m-0">
+                  {currentCategoryData.fields.length > 0 ? (
+                    <>
+                      {currentCategoryData.fields.map((i) => {
+                        return getSelectedFields(i);
+                      })}
+                    </>
+                  ) : (
+                    <h6>There is no selected fields</h6>
+                  )}
+                  {currentCategoryData.fields.length > 0 && (
+                    <section className="d-flex pt-3 flex-column flex-sm-row">
+                      <button
+                        className="col-12 col-sm-5 col-lg-2 myBtn py-2"
+                        onClick={handleSubmit}
+                        type="button"
+                      >
+                        Submit{" "}
+                      </button>
+                    </section>
+                  )}
+                </div>
+              </>
+            )}
+          </>
+        )}
+
+        {/* {workFor === "newEnquiry" && (
         <>
           <div className="row mt-2 m-0">
             <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
@@ -1564,6 +1564,7 @@ export default function Enquiry({ workFor, villageId }) {
           </div>
         </>
                 )}*/}
+      </div>
     </main>
   );
 }
