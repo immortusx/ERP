@@ -44,7 +44,7 @@ export default function AddRole({ workFor }) {
         setChecked(!checkedd);
         setRole_emp(1)
     };
-
+   
     useEffect(() => {
         if (workFor === "forEdit") {
             setFeatureData({
@@ -62,6 +62,7 @@ export default function AddRole({ workFor }) {
                 dispatch(setShowMessage('Success'))
                 dispatch(clearEditRoleState())
                 clearInpHook()
+                navigate("/administration/roles");
             }
         }
 
