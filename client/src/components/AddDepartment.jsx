@@ -62,10 +62,6 @@ export default function AddDepartment({ workFor }) {
           dispatch(setShowMessage("Please select a department"));
         }, 1000);
       } else {
-        console.log(
-          "editemployeeData2222222222222222222222222",
-          editdepartmentData
-        );
         setDpData({
           name: editdepartmentData.data.name,
           description: editdepartmentData.data.description,
@@ -136,16 +132,16 @@ export default function AddDepartment({ workFor }) {
     console.log("dpData", dpData);
     const dname = dpData.name;
     const ddescription = dpData.description;
-    if (dname.length > 0 && ddescription !== "") {
-      if (workFor === "forEdit") {
-        dpData["id"] = editdepartmentData.data.id;
-        dispatch(editdepartmentUpdateToDb(dpData));
-      } else {
-        dispatch(addDepartmentToDb(dpData));
-      }
-    } else {
-      dispatch(setShowMessage("All field must be field"));
-    }
+    // if (dname.length > 0 && ddescription !== "") {
+    //   if (workFor === "forEdit") {
+    //     dpData["id"] = editdepartmentData.data.id;
+    //     dispatch(editdepartmentUpdateToDb(dpData));
+    //   } else {
+    //     dispatch(addDepartmentToDb(dpData));
+    //   }
+    // } else {
+    //   dispatch(setShowMessage("All field must be field"));
+    // }
     //  setDpData({
     //    name: "",
     //    description: "",

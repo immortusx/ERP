@@ -15,12 +15,13 @@ import { addDepartmentToDb } from "../../../redux/slices/Master/Department/addDe
 import { setEditdepartmentData } from "../../../redux/slices/Master/Department/editDepartmentSlice";
 
 export default function Department_list({ workFor }) {
-  const [partsList, setPartsList] = useState([]);
+  const [department, setDepartment] = useState([]);
   const [displayConfirmationModal, setDisplayConfirmationModal] =
     useState(false);
   const [deleteMessage, setDeleteMessage] = useState(null);
   const [type, setType] = useState(null);
   const [id, setId] = useState(null);
+  const [deleteDepartId,setDeleteDepartId]=useState(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -223,13 +224,13 @@ export default function Department_list({ workFor }) {
 
 
   useEffect(() => {
-    const rowsData = partsList.map((item, index) => ({
+    const rowsData = department.map((item, index) => ({
       ...item,
-      id: index + 1,
+      id: item.id,
       checkbox: selectAll,
     }));
     setRowData(rowsData);
-  }, [partsList, selectAll]);
+  }, [department, selectAll]);
 
   const editeStateModal = (data) => {
     // setTableEditData(data);
@@ -243,7 +244,7 @@ export default function Department_list({ workFor }) {
   const deleteActionCall = (data) => {
     console.log(data.id, "fffffffffffffffffff");
     setType("department_delete");
-    setId(data.id);
+    setDeleteDepartId(data.id);
     setDeleteMessage(
       `Are You Sure You Want To Delete The department '${data.name}'?`
     );
@@ -255,40 +256,38 @@ export default function Department_list({ workFor }) {
   };
 
   const submitDelete = async () => {
-    console.log(id, "iiiiiiiiiiiiiiii");
-    const url = `${process.env.REACT_APP_NODE_URL}/api/master/delete-department`;
-    const config = {
-      headers: {
-        token: localStorage.getItem("rbacToken"),
-      },
-    };
-    const requestData = {
-      id: id,
-    };
-    try {
-      const response = await Axios.post(url, requestData, config);
-      if (response.data?.isSuccess) {
-        getDepartmentForm();
-        dispatch(setShowMessage("Department Deleted"));
-        dispatch(addDepartmentToDb);
-        getDepartment();
-        setDisplayConfirmationModal(false);
-      } else {
-        dispatch(setShowMessage("failed to delete"));
+    if (deleteDepartId) {
+      console.log(id, "iiiiiiiiiiiiiiii");
+      const url = `${process.env.REACT_APP_NODE_URL}/api/master/delete-department/${deleteDepartId}`;
+      const config = {
+        headers: {
+          token: localStorage.getItem("rbacToken"),
+        },
+      };
+        try {
+          const response = await Axios.get(url, config);
+          console.log(response, "response.data");
+          if (response.data && response.data.isSuccess) {
+              console.log(response.data, "delete true");
+              dispatch(setShowMessage("Branch Deleted"));
+              getDepartmentForm();
+              setDisplayConfirmationModal(false);
+          } else {
+              console.log(response.data, "false");
+              dispatch(setShowMessage("Failed to delete"));
+          }
+      } catch (error) {
+          console.error("Error while deleting branch:", error);
+          // Handle the error as needed.
       }
-      return null;
-    } catch (error) {
-      console.error(error);
-      return null;
-    }
-  };
-
+  }
+};
 
   const getDepartmentForm = () => {
     getDepartment()
       .then((data) => {
         console.log("Response from getDepartment:", data.result);
-        setPartsList(data.result);
+        setDepartment(data.result);
       })
       .catch((error) => {
         console.error("Error in getDepartment:", error);
@@ -355,7 +354,7 @@ export default function Department_list({ workFor }) {
             }}
             pageSizeOptions={[5, 10, 25]}
             initialState={{
-              ...partsList.initialState,
+              ...department.initialState,
               pagination: { paginationModel: { pageSize: 10 } },
             }}
             components={{

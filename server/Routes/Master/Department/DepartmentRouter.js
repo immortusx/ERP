@@ -51,41 +51,58 @@ router.get("/get-department-list", tokenCheck, async (req, res) => {
 
 
 // ==== Delete department data By Id === //
-router.post("/delete-department", tokenCheck, async (req, res) => {
-  console.log(">>>>>/delete-department");
-  try {
-    const { id } = req.body;
+// router.post("/delete-department", tokenCheck, async (req, res) => {
+//   console.log(">>>>>/delete-department");
+//   try {
+//     const { id } = req.body;
 
-    const newUrl = "SELECT * FROM departments where  id=" + id;
-    console.log('ghvgcgcfcf',id);
-    await db.query(newUrl, async (err, newResult) => {
-      if (err) {
-        console.log({ isSuccess: false, result: err });
-        res.send({ isSuccess: false, result: "error" });
-      }
-       else if (newResult.length === 1) {
+//     const newUrl = "SELECT * FROM departments where  id=" + id;
+//     console.log('ghvgcgcfcf',id);
+//     await db.query(newUrl, async (err, newResult) => {
+//       if (err) {
+//         console.log({ isSuccess: false, result: err });
+//         res.send({ isSuccess: false, result: "error" });
+//       }
+//        else if (newResult.length === 1) {
 
-        const editurl = "UPDATE departments SET is_active = 0 WHERE  id=" + id;
-        await db.query(editurl, async (err, result) => {
-          if (err) {
-            console.log({ isSuccess: false, result: err })
-            res.send({ isSuccess: false, result: 'error' })
-          } else {
+//         const editurl = "UPDATE departments SET is_active = 0 WHERE  id=" + id;
+//         await db.query(editurl, async (err, result) => {
+//           if (err) {
+//             console.log({ isSuccess: false, result: err })
+//             res.send({ isSuccess: false, result: 'error' })
+//           } else {
 
-            res.send({ isSuccess: true, result: 'deletesuccess' })
-          }
-        })
-      }
-      else {
-        console.log(newResult);
-        console.log({ isSuccess: false, result: "notExist" });
-        res.send({ isSuccess: false, result: "notExist" });
-      }
-    });
-  } catch (e) {
-    console.log(e);
-  }
-});
+//             res.send({ isSuccess: true, result: 'deletesuccess' })
+//           }
+//         })
+//       }
+//       else {
+//         console.log(newResult);
+//         console.log({ isSuccess: false, result: "notExist" });
+//         res.send({ isSuccess: false, result: "notExist" });
+//       }
+//     });
+//   } catch (e) {
+//     console.log(e);
+//   }
+// });
+
+router.get('/delete-department/:id', async (req, res) => {
+  console.log('>>>>>delete-department');
+  console.log('req.params', req.params.id)
+  const url = `UPDATE departments SET is_active = '0' WHERE id = '${req.params.id}'`;
+  // console.log('url', url)
+
+  await db.query(url, async (err, updateData) => {
+    if (err) {
+      console.log({ isSuccess: false, result: err })
+      res.send({ isSuccess: false, result: 'err' })
+    } else {
+      console.log({ isSuccess: true, result: url })
+      res.send({ isSuccess: true, result: 'success' })
+    }
+  })
+})
 
 
 router.post("/get-department-edit/:id", tokenCheck, async (req, res) => {

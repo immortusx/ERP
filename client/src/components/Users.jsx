@@ -307,7 +307,7 @@ const [deleteMessage, setDeleteMessage] = useState(null);
       if (response.data && response.data.isSuccess) {
         
         console.log(response.data,"delete true");
-        dispatch(setShowMessage("Employee Deleted"));
+        dispatch(setShowMessage("User Deleted"));
         dispatch(getUserListFromDb())
         setDisplayConfirmationModal(false);
       }else{

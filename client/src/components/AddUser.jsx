@@ -44,7 +44,7 @@ export default function AddUser({ workFor }) {
                 dispatch(setShowMessage('User data is updated'))
                 clearInpHook()
                 dispatch(clearEditUserState())
-                navigate('/home/users')
+                navigate('/administration/users')
 
             } else {
                 dispatch(setShowMessage('Something is wrong!'))
