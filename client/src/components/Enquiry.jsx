@@ -427,7 +427,7 @@ export default function Enquiry({ workFor, villageId }) {
     console.log(enquiryData, "enquierekjjjjjjjj");
     dispatch(setEnquiryDb(enquiryData));
     dispatch(setShowMessage("Enquiry is registered"));
-    // navigate("/sale/enquiryies");
+    navigate("/sale/enquiryies");
   }
 
   function getSelectedFields(data) {
