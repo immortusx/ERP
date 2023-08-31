@@ -207,6 +207,9 @@
     display: block !important;
     margin: auto;
 }
+.toggleSideBar .asideMain .logoDiv .agency-style {
+    display: none;
+}
 
 .toggleSideBar .asideNav .outLi .show {
     display: none;

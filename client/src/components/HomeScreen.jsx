@@ -55,6 +55,8 @@ import {
   json,
 } from "react-router-dom";
 import EnquiryCategories from "./EnquiryCategories";
+import logo from "../assets/svg/logo.svg";
+import logoT from "../assets/svg/logofinal.svg";
 import Branch from "./Branch";
 import State_list from "./Master/State/State_list";
 import District_list from "./Master/District/District_list";
@@ -275,20 +277,22 @@ export default function HomeScreen() {
         <main className="asideMain">
           <section className="outerSection">
             <div className="logoDiv">
-              <div className="row">
-                <div className="col-md-4">
-                  <img
-                    className="rounded-circle logoB"
-                    src={`${process.env.REACT_APP_NODE_URL}/api${agencyData.angencyLogo}`}
-                    alt="Agency"
-                    height={80}
-                    width={80}
-                  />
-                </div>
-                <div className="col-md-8">
-                  <h6 className="agnecy-style">{agencyData.agencyName}</h6>
-                </div>
-              </div>
+              <img
+                className="rounded logoB"
+                src={`${process.env.REACT_APP_NODE_URL}/api${agencyData.angencyLogo}`}
+                alt="Agency"
+                height={100}
+                width={100}
+              />
+              <h6 className="agency-style">{agencyData.agencyName}</h6>
+
+              <img
+                className="logoT d-none rounded"
+                src={`${process.env.REACT_APP_NODE_URL}/api${agencyData.angencyLogo}`}
+                alt="Logo"
+                height={70}
+                width={70}
+              />
             </div>
             <ul id="accordionExample" className="outUl">
               {checkTabGrant(["profile"]) && (

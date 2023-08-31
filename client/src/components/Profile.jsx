@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import Axios from "axios";
 import { setShowMessage } from "../redux/slices/notificationSlice";
 import { useLocation, useNavigate } from "react-router-dom";
+import { Modal, Button } from "react-bootstrap";
 // import {
 //   addAgencyToDb,
 //   clearaddaddAgency,
@@ -55,6 +56,7 @@ export default function Profile_list({ workFor }) {
         dispatch(setShowMessage("Something is wrong!"));
       }
     }
+
   }, [editagencySliceState]);
 
   //    useEffect(() => {
@@ -171,11 +173,28 @@ export default function Profile_list({ workFor }) {
     navigate("/administration/configuration");
   }
 
+  const redirectModal = () => {
+    navigate(-1);
+  };
+
   return (
     <div className="addUser myBorder bg-white rounded p-3">
       <main>
-        <div className=" row mt-3 m-0">
-          <h5 className="m-0"> Agency</h5>
+        <div className=" row m-0">
+          <div className="col-md-6">
+            <h5 className="myLabel">Agency</h5>
+          </div>
+          <div className="col-md-6 d-flex justify-content-end align-items-end">
+            <Button
+              variant="btn btn-warning mx-1"
+              style={{ width: '70px', height: '35px', fontSize: '14px', borderRadius: '20px' }}
+              onClick={() => {
+                redirectModal();
+              }}
+            >
+              BACK
+            </Button>
+          </div>
 
           <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
             <label className="myLabel" htmlFor="email">

@@ -7,6 +7,8 @@ import AreaAssignListList from "../../AreaAssignListList";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import PlayCircleIcon from "@mui/icons-material/PlayCircle";
 import { faEllipsisV } from "@fortawesome/free-solid-svg-icons/faEllipsisV";
+import { Modal, Button } from "react-bootstrap";
+
 const Work_Assign_Area = () => {
     const navigate = useNavigate();
     const [id, setId] = useState(null);
@@ -128,6 +130,10 @@ const Work_Assign_Area = () => {
         setSelectAll(!selectAll);
     }
 
+    const redirectModal = () => {
+        navigate(-1);
+      };
+
     // const handleHeaderCheckboxClick = () => {
     //     const updatedRowsData = rowData.map((row) => ({
     //         ...row,
@@ -248,6 +254,18 @@ const Work_Assign_Area = () => {
 
     return (
         <>
+            <div className="my-3  d-flex align-items-end justify-content-end">
+                <Button
+                    variant="btn btn-warning mx-1"
+                    style={{ width: '70px', height: '35px', fontSize: '14px', borderRadius: '20px' }}
+                    onClick={() => {
+                        redirectModal();
+                    }}
+                >
+                    BACK
+                </Button>
+
+            </div>
             <div className="tableMenuHover"
                 style={{ height: "85vh", width: "100%" }}>
 

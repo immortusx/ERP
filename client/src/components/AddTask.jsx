@@ -6,6 +6,7 @@ import { setShowMessage } from '../redux/slices/notificationSlice'
 import { useSelector, useDispatch } from 'react-redux'
 import { addTaskToDb, clearAddTaskState } from '../redux/slices/addTaskSlice'
 import Select from 'react-select';
+import { Modal, Button } from "react-bootstrap";
 const AddTask = ({ workFor }) => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
@@ -39,6 +40,10 @@ const AddTask = ({ workFor }) => {
   const handleEndDateChange = (date) => {
     setEndDate(date);
   };
+  const redirectModal = () => {
+    navigate(-1);
+  };
+
 
   useEffect(() => {
     if (currentBranch) {
@@ -64,7 +69,7 @@ const AddTask = ({ workFor }) => {
       getDspList();
     }
   }, [currentBranch])
-  
+
   const onChangeEmployees = (selectedOptions) => {
     // `selectedOptions` is an array of selected employee options
     setEmployees(selectedOptions);
@@ -133,14 +138,14 @@ const AddTask = ({ workFor }) => {
   const handleSubmit = async () => {
     const selectedEmployeeIds = employees.map(employee => employee.value);
 
-  const data = {
-    employees: selectedEmployeeIds, // Send the array of selected employee IDs
-    taskTypes: taskTypes,
-    tasks: tasks,
-    taskCount: taskCount,
-    startDate: startDate,
-    endDate: endDate
-  };
+    const data = {
+      employees: selectedEmployeeIds, // Send the array of selected employee IDs
+      taskTypes: taskTypes,
+      tasks: tasks,
+      taskCount: taskCount,
+      startDate: startDate,
+      endDate: endDate
+    };
 
 
     if (workFor === "addTask") {
@@ -163,10 +168,29 @@ const AddTask = ({ workFor }) => {
   return (
     <div className='addUser  bg-white rounded p-3'>
       <main>
-        <h5 className='m-0'>
-          Add Task Management
-        </h5>
-
+        <div className="row m-0">
+          <div className="col-6">
+            <h5 className='m-0'>
+              Add Task Management
+            </h5>
+          </div>
+          <div className="col-6 d-flex align-items-end justify-content-end">
+            <Button
+              variant="btn btn-warning mx-1"
+              style={{
+                width: '70px',
+                height: '35px',
+                fontSize: '14px',
+                borderRadius: '20px',
+              }}
+              onClick={() => {
+                redirectModal();
+              }}
+            >
+              BACK
+            </Button>
+          </div>
+        </div>
         <div className=' row mt-3 m-0'>
           <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
             <label className="myLabel" htmlFor="employee">

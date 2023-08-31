@@ -76,6 +76,10 @@ export default function AddAssignArea() {
       }
     }
   }, [addAssignState]);
+  const redirectModal = () => {
+    navigate(-1);
+  };
+
   useEffect(() => {
     if (editassignareaData.isSuccess) {
       if (editassignareaData.message.isSuccess) {
@@ -198,7 +202,7 @@ export default function AddAssignArea() {
         });
       });
     }
-    userAr.push({userId: userId, id: selectedId, category: categoryAr });
+    userAr.push({ userId: userId, id: selectedId, category: categoryAr });
 
     if (show === 2) {
       console.log("userAr", userAr);
@@ -223,29 +227,29 @@ export default function AddAssignArea() {
       newArr = data.villageData;
       newArr = data.villageData;
     }
-   
+
 
     console.log(newArr, "newArr");
     setSelectedOptionVillage(newArr);
-    
+
     const newArry = data.categoryData;
     console.log(data.categoryData, "catoegiru Dtaa");
-   
+
 
     console.log(newArry, "newArry");
     setSelectedCtaegory([newArry]);
   };
 
   const deleteActionCall = (data) => {
-      console.log(data,"cccccccccccccccccccccccc")
-      setType("asignArea_delete");
-      setId(data.userId);
-      setCategoryd(data.categoryData.value);
-      // setDId(data.villageData);
-      setDeleteMessage(
-        `Are You Sure You Want To Delete The Assign Area of  '${data.categoryData.label}'?`
-      );
-      setDisplayConfirmationModal(true);
+    console.log(data, "cccccccccccccccccccccccc")
+    setType("asignArea_delete");
+    setId(data.userId);
+    setCategoryd(data.categoryData.value);
+    // setDId(data.villageData);
+    setDeleteMessage(
+      `Are You Sure You Want To Delete The Assign Area of  '${data.categoryData.label}'?`
+    );
+    setDisplayConfirmationModal(true);
   };
   const hideConfirmationModal = () => {
     setDisplayConfirmationModal(false);
@@ -262,7 +266,7 @@ export default function AddAssignArea() {
       if (response.data && response.data.isSuccess) {
         console.log(response.data);
         dispatch(setShowMessage("Assign Area Deleted"));
-      
+
       } else {
         dispatch(setShowMessage("failed to delete"));
       }
@@ -298,12 +302,27 @@ export default function AddAssignArea() {
     <>
       <div className="addUser myBorder bg-white rounded p-3">
         <main>
-          <div className=" row mt-3 ">
-            <h3 className="myLabel">Assign Area</h3>
+
+          <div className="row">
+            <div className="col-md-6">
+              <h3 className="myLabel">Assign Area</h3>
+            </div>
+            <div className="col-md-6 d-flex justify-content-end align-items-end">
+              <Button
+                variant="btn btn-warning mx-1"
+                style={{ width: '70px', height: '35px', fontSize: '14px', borderRadius: '20px' }}
+                onClick={() => {
+                  redirectModal();
+                }}
+              >
+                BACK
+              </Button>
+            </div>
           </div>
           <div className="row mt-2">
             <h5 className="myLabel">User Information</h5>
           </div>
+
           <div className=" row mt-2 ">
             <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
               <label className="myLabel"> Name </label>{" "}
@@ -311,7 +330,7 @@ export default function AddAssignArea() {
                 <>
                   <p className="myInput inputElement">
                     {areaAssign[0].fname} {areaAssign[0].lname}
-                    {}
+                    { }
                   </p>
                 </>
               )}

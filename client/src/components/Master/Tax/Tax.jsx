@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-
 import Checkbox from '@mui/material/Checkbox'
 import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
@@ -19,6 +18,7 @@ import Village from '../../singleComponents/villageCom/village';
 import District from '../../singleComponents/villageCom/District';
 const Tax = () => {
     const location = useLocation();
+    const navigate = useNavigate();
     const modalStatus = location.state;
     const [selectedTax, setSelectedTax] = useState('');
     const [Percentage, setPercentage] = useState('');
@@ -60,6 +60,9 @@ const Tax = () => {
     //     setTaxesList([...taxesList, newTax]);
     //     setModalState(false);
     // };
+    const redirectModal = () => {
+        navigate(-1);
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -154,49 +157,49 @@ const Tax = () => {
     //         flex: 1,
     //     },
 
-    const[selectAll,setSelectAll]=useState(false);
-  const[rowData,setRowData]=useState([]);
-  
-  const handleHeaderCheckboxClick=()=>{
-      setSelectAll(!selectAll);
-  }
+    const [selectAll, setSelectAll] = useState(false);
+    const [rowData, setRowData] = useState([]);
 
-  const handleChildCheckboxClick=(itemId)=>{
-      const updatedRowsData=rowData.map((row)=>{
-          if(row.id==itemId){
-              return{
-                  ...row,
-                  checkbox:!row.checkbox,
-              };
-          }
-          return row;
-      });
-      setRowData(updatedRowsData);
-  }
+    const handleHeaderCheckboxClick = () => {
+        setSelectAll(!selectAll);
+    }
 
-
-const label = { inputProps: { "aria-label": "Checkbox demo" } };
+    const handleChildCheckboxClick = (itemId) => {
+        const updatedRowsData = rowData.map((row) => {
+            if (row.id == itemId) {
+                return {
+                    ...row,
+                    checkbox: !row.checkbox,
+                };
+            }
+            return row;
+        });
+        setRowData(updatedRowsData);
+    }
 
 
-  const columns = [
-      {
-          field: "id",
-          headerName: (
-            <Checkbox
-              {...label}
-              checked={selectAll}
-              onClick={handleHeaderCheckboxClick}
-            />
-          ),
-          minWidth: 90,
-          // flex: 1,
-          renderCell: (params) => (
-            <Checkbox
-              {...label}
-              checked={params.row.checkbox}
-              onClick={() => handleChildCheckboxClick(params.row.id)}
-            />
-          ),
+    const label = { inputProps: { "aria-label": "Checkbox demo" } };
+
+
+    const columns = [
+        {
+            field: "id",
+            headerName: (
+                <Checkbox
+                    {...label}
+                    checked={selectAll}
+                    onClick={handleHeaderCheckboxClick}
+                />
+            ),
+            minWidth: 90,
+            // flex: 1,
+            renderCell: (params) => (
+                <Checkbox
+                    {...label}
+                    checked={params.row.checkbox}
+                    onClick={() => handleChildCheckboxClick(params.row.id)}
+                />
+            ),
         },
 
         {
@@ -278,31 +281,31 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
             // flex: 1,
             position: "sticky",
             renderCell: (params) => (
-              <div className="d-flex justify-content-center dotHover">
-                <FontAwesomeIcon icon={faEllipsisV} />
-                <div className="expandDiv">
-                <button className='myActionBtn m-1'
-                        onClick={() => { editeStateModal(params.row) }}
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="bi bi-pencil-square" viewBox="0 0 16 16">
-                            <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
-                            <path fillRule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
-                        </svg>
-                    </button>
+                <div className="d-flex justify-content-center dotHover">
+                    <FontAwesomeIcon icon={faEllipsisV} />
+                    <div className="expandDiv">
+                        <button className='myActionBtn m-1'
+                            onClick={() => { editeStateModal(params.row) }}
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="bi bi-pencil-square" viewBox="0 0 16 16">
+                                <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                                <path fillRule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
-              </div>
             ),
-          },
+        },
     ];
 
     useEffect(() => {
         const rowsData = taxesList.map((item, index) => ({
-          ...item,
-          id: index + 1,
-          checkbox: selectAll,
+            ...item,
+            id: index + 1,
+            checkbox: selectAll,
         }));
         setRowData(rowsData);
-      }, [taxesList, selectAll]);
+    }, [taxesList, selectAll]);
 
     return (
         <>
@@ -335,6 +338,15 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
                         <h6 className='m-0 ps-1'>
                             Add Tax
                         </h6>
+                        <Button
+                            variant="btn btn-warning mx-1"
+                            style={{ width: '70px', height: '35px', fontSize: '14px', borderRadius: '20px' }}
+                            onClick={() => {
+                                redirectModal();
+                            }}
+                        >
+                            BACK
+                        </Button>
                     </div>
                 </div>
                 <div className='mt-4 tableMenuHover' style={{ height: '80vh', width: '100%' }}>
