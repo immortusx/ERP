@@ -17,7 +17,7 @@ import { addDepartmentToDb } from "../../../redux/slices/Master/Department/addDe
 import { setEdicategoryData } from "../../../redux/slices/Master/Category/editCategorySlice";
 
 export default function Category_list({ workFor }) {
-  const [partsList, setPartsList] = useState([]);
+  const [categoryList, setCategoryList] = useState([]);
   const [displayConfirmationModal, setDisplayConfirmationModal] =
     useState(false);
   const [deleteMessage, setDeleteMessage] = useState(null);
@@ -30,7 +30,7 @@ export default function Category_list({ workFor }) {
  getCategory()
    .then((data) => {
      console.log("Response from getCategory:", data.result);
-     setPartsList(data.result);
+     setCategoryList(data.result);
    })
    .catch((error) => {
      console.error("Error in getCategory:", error);
@@ -43,12 +43,7 @@ getCategoryForm()
   }, []);
 
    const editeStateModal = (data) => {
-     // setTableEditData(data);
-     console.log(data,"dataaaaaaaaaaa");
-     console.log("editEmployeee");
      dispatch(setEdicategoryData(data));
-     console.log(setEdicategoryData(data));
-     console.log(data,"sdfghjkl;fghjkl;vb")
      navigate("/administration/configuration/category/editcategory", { state: data });
    };
 
@@ -261,15 +256,19 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
   ];
   
   useEffect(() => {
-    const rowsData = partsList.map((item, index) => ({
+    const rowsData = categoryList.map((item) => ({
       ...item,
-      id: index + 1,
+      id: item.id,
       checkbox: selectAll,
     }));
     setRowData(rowsData);
-  }, [partsList, selectAll]);
+  }, [categoryList, selectAll]);
+  useEffect(()=> {
+    if(categoryList && categoryList.length > 0){
+      console.log(categoryList, 'partList');
+    }
+  },[categoryList])
   const deleteActionCall = (data) => {
-    console.log(data, "fffffffffffffffffff");
     setType("category_delete");
     setId(data.id);
     setDeleteMessage(
@@ -368,7 +367,7 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
             }}
             pageSizeOptions={[5, 10, 25]}
             initialState={{
-              ...partsList.initialState,
+              ...categoryList.initialState,
               pagination: { paginationModel: { pageSize: 10 } },
             }}
             components={{

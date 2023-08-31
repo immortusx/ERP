@@ -20,7 +20,7 @@ export default function AddCategory({ workFor }) {
   const [dept, setDept] = useState([]);
   const [featuresList, setFeaturesList] = useState([]);
   const [checkField, setCheckField] = useState([]);
-  const [fielddata, setfielddata] = useState([]);
+  const [fieldData, setFieldData] = useState([]);
   // const [checkFieldItem, setCheckFieldItem] = useState(true);
   const [checkFieldItem, setCheckFieldItem] = useState([]);
   const [categoryData, setCategoryData] = useState({
@@ -112,33 +112,7 @@ export default function AddCategory({ workFor }) {
       chehkedFeature: tempAr,
     }));
   }
-  useEffect(() => {
-    if (fielddata && fielddata.length > 0) {
-      console.log(fielddata, "feisl");
-      const fields = fielddata.map((item)=>{
-        if(checkFieldItem.includes(item.id)){
-           // Set isChecked to true for IDs included in checkFieldItem
-            return { ...item, isChecked: true, disabled: true };
-          } else {
-            // Set isChecked to false for other IDs
-            return { ...item, isChecked: false, disabled: false };
-        }
 
-      });
-        console.log(fields, "fielddata");
- let tempArry = [];
- fields.forEach((item) => {
-   if (item.isChecked) {
-     tempArry.push(item.id);
-   }
- });
- console.log(tempArry, "tempArry");
-   setCategoryData((featureData) => ({
-     ...featureData,
-     chehkedFeature: tempArry,
-   }));
-    }
-  }, [fielddata]);
   // useEffect(() => {
   //   if (featuresState.isSuccess) {
   //     if (featuresState.data.isSuccess) {
@@ -152,14 +126,17 @@ export default function AddCategory({ workFor }) {
       if (featuresState.data.isSuccess) {
         const updatedFeaturesList = featuresState.data.result.map((item) => {
           if (checkFieldItem.includes(item.id)) {
-            // Set isChecked to true for IDs included in checkFieldItem
-            return { ...item, isChecked: true, disabled: true };
+            //   // Set isChecked to true for IDs included in checkFieldItem
+            if (1 === item.id) {
+              return { ...item, isChecked: true, disabled: false };
+            } else {
+              return { ...item, isChecked: true, disabled: true };
+            }
           } else {
             // Set isChecked to false for other IDs
             return { ...item, isChecked: false, disabled: false };
           }
         });
-        console.log(updatedFeaturesList, "updatedFeaturesList");
         setFeaturesList(updatedFeaturesList);
 
         let tempAr = [];
@@ -235,23 +212,25 @@ export default function AddCategory({ workFor }) {
       console.log(error);
     }
   }
-  const getCategoryField = async (id) => {
-    console.log(id, "new");
-    const suburl = `${process.env.REACT_APP_NODE_URL}/api/master/get-category-fields/${id}`;
-    console.log(suburl, "suburl");
-    const config = {
-      headers: {
-        token: localStorage.getItem("rbacToken"),
-      },
-    };
-    try {
-      const response = await Axios.get(suburl, config);
-      if (response.data?.isSuccess) {
-        console.log(response.data.result, "editData**************");
-        setfielddata(response.data.result);
+  const getCategoryField = async (categoryId) => {
+    console.log(categoryId, "categoryIs");
+    if (categoryId) {
+      const suburl = `${process.env.REACT_APP_NODE_URL}/api/master/get-category-fields/${categoryId}`;
+      console.log(suburl, "suburl");
+      const config = {
+        headers: {
+          token: localStorage.getItem("rbacToken"),
+        },
+      };
+      try {
+        const response = await Axios.get(suburl, config);
+        if (response.data?.isSuccess) {
+          console.log(response.data.result, "selectedFrild");
+          setFieldData(response.data.result);
+        }
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
     }
   };
 
@@ -354,9 +333,17 @@ export default function AddCategory({ workFor }) {
   }, []);
 
   useEffect(() => {
-    const selectedIds = checkField.map((item) => item.id);
-    setCheckFieldItem(selectedIds);
-  }, [checkField]);
+    if (checkField && fieldData) {
+      const selectedIds = [
+        ...checkField.map((item) => item.id),
+        ...fieldData.map((item) => item.field_id),
+      ];
+      setCheckFieldItem((prevCheckFieldItem) => [
+        ...prevCheckFieldItem,
+        ...selectedIds,
+      ]);
+    }
+  }, [checkField, fieldData]);
 
   function handlCancel() {
     // navigate("/administration/configuration/category");
@@ -380,10 +367,10 @@ export default function AddCategory({ workFor }) {
             <Button
               variant="btn btn-warning mx-1"
               style={{
-                width: '70px',
-                height: '35px',
-                fontSize: '14px',
-                borderRadius: '20px',
+                width: "70px",
+                height: "35px",
+                fontSize: "14px",
+                borderRadius: "20px",
               }}
               onClick={() => {
                 redirectModal();
@@ -477,7 +464,7 @@ export default function AddCategory({ workFor }) {
             </button>
           </section>
         </div>
-      </main >
-    </div >
+      </main>
+    </div>
   );
 }
