@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.get('/get-branch-data', async (req, res) => {
   console.log('>>>>>get-branch-data');
-  const url = `SELECT * FROM branches; `
+  const url = `SELECT * FROM branches WHERE is_active != 0`;
   await db.query(url, async (err, getBranchs) => {
     if (err) {
       console.log({ isSuccess: false, result: err })

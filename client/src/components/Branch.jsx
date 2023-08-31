@@ -38,6 +38,7 @@ export default function Branch({ workFor }) {
     const [villageList, setVillageList] = useState([])
     const [stateList, setStateList] = useState([])
     const [districtList, setDistrictList] = useState([])
+    const [branchDeleteId, setBranchDeleteId] = useState(null);
     const [branchData, setBranchData] = useState({
         address: "",
         code: "",
@@ -425,13 +426,13 @@ export default function Branch({ workFor }) {
 
     //     })
     // }
-    
+
     const deleteActionCall = (data) => {
         console.log(data, "fffffffffffffffffff");
         setType("branch_delete");
-        setId(data.id);
-        setDeleteMessage(`Are You Sure You Want To Delete The category '${data.firmName}'?`);
-        console.log(setDeleteMessage, "hshhdhdhdh");
+        console.log(data.id);
+        setBranchDeleteId(data.id);
+        setDeleteMessage(`Are You Sure You Want To Delete The branch '${data.name}'?`);
         setDisplayConfirmationModal(true);
     };
 
@@ -439,29 +440,31 @@ export default function Branch({ workFor }) {
         setDisplayConfirmationModal(false);
     };
 
-    const submitDelete = async (type, id) => {
-        const url = `${process.env.REACT_APP_NODE_URL}/api/branch/delete-branch/${id}`;
-        const config = {
-            headers: {
-                token: localStorage.getItem("rbacToken"),
-            },
-        };
+    const submitDelete = async () => {
+        if (branchDeleteId) {
+            const url = `${process.env.REACT_APP_NODE_URL}/api/branch/delete-branch/${branchDeleteId}`;
+            const config = {
+                headers: {
+                    token: localStorage.getItem("rbacToken"),
+                },
+            };
 
-        try {
-            const response = await Axios.get(url, config);
-            console.log(response, "response.data");
-            if (response.data && response.data.isSuccess) {
-                console.log(response.data, "delete true");
-                dispatch(setShowMessage("Branch Deleted"));
-                getBranchList(); // Assuming getBranchList is defined
-                setDisplayConfirmationModal(false);
-            } else {
-                console.log(response.data, "false");
-                dispatch(setShowMessage("Failed to delete"));
+            try {
+                const response = await Axios.get(url, config);
+                console.log(response, "response.data");
+                if (response.data && response.data.isSuccess) {
+                    console.log(response.data, "delete true");
+                    dispatch(setShowMessage("Branch Deleted"));
+                    getBranchList();
+                    setDisplayConfirmationModal(false);
+                } else {
+                    console.log(response.data, "false");
+                    dispatch(setShowMessage("Failed to delete"));
+                }
+            } catch (error) {
+                console.error("Error while deleting branch:", error);
+                // Handle the error as needed.
             }
-        } catch (error) {
-            console.error("Error while deleting branch:", error);
-            // Handle the error as needed.
         }
     };
     async function saveToDb(data) {
