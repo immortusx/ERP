@@ -131,34 +131,30 @@ router.get("/get-employee-details/:id", tokenCheck, async (req, res) => {
 router.get("/get-employee-list", tokenCheck, async (req, res) => {
   try {
     await db.query(
-      // `SELECT *
-      // FROM users
-      //  RIGHT JOIN bank_details ON users.id = bank_details.user_id
-      // WHERE users.user_type_id = 2 and is_delete = 0`,
-
-      // `select f.*,s.user_id,s.bank_name,s.bank_branch,s.account_number,s.account_type,s.ifsc_code  from users f inner join bank_details as s on s.user_id = f.id  WHERE f.user_type_id = 2 and is_delete = 0`,
-      `select f.*,s.user_id,s.bank_name,s.bank_branch,s.account_number,s.account_type,s.ifsc_code, d.document_id,  d.document_value  from users f inner join bank_details as s on s.user_id = f.id left join documents AS d ON d.table_entity_id = f.id    WHERE f.user_type_id = 2 and is_delete = 0`,
-
-      //       `SELECT
-      //     f.*,
-      //     s.user_id,
-      //     s.bank_name,
-      //     s.bank_branch,
-      //     s.account_number,
-      //     s.account_type,
-      //     s.ifsc_code,
-      //     (
-      //         SELECT CONCAT('[', GROUP_CONCAT(DISTINCT category_id), ']')
-      //         FROM area_assign_user
-      //         WHERE user_id = f.id
-      //     ) AS categories
-      // FROM
-      //     users f
-      // INNER JOIN bank_details AS s ON s.user_id = f.id
-      // WHERE
-      //     f.user_type_id = 2 AND f.is_delete = 0;`,
-
-      // `select f.*,s.user_id,s.bank_name,s.bank_branch,s.account_number,s.account_type,s.ifsc_code , t.category_id from users f inner join bank_details as s on s.user_id = f.id left join area_assign_user as t on t.user_id = f.id WHERE f.user_type_id = 2 and is_delete = 0;`,
+      `SELECT
+     f.*,
+     s.user_id,
+     s.bank_name,
+     s.bank_branch,
+     s.account_number,
+     s.account_type,
+     s.ifsc_code,
+     d.document_id,
+     d.document_value,
+     ddu.branch_id,
+     ddu.department_id,
+     ddu.role_id
+ FROM
+     users AS f
+ INNER JOIN
+     bank_details AS s ON s.user_id = f.id
+     inner join
+      employee_detail  AS ddu ON ddu.user_id=f.id
+ LEFT JOIN
+     documents AS d ON d.table_entity_id = f.id
+ WHERE
+     f.user_type_id = 2
+     AND f.is_delete = 0`,
       (err, results) => {
         if (err) {
           console.log({ isSuccess: false, result: err });
@@ -214,32 +210,13 @@ router.post(
       console.log(result, "result");
 
       const userId = result.insertId;
-
-      // for (const branchId of Object.keys(branchRole)) {
-      //   const rolesAr = branchRole[branchId];
-      //   for (const roleId of rolesAr) {
-      //     await queryDatabase(
-      //       `UPDATE branch_department_user
-      //       SET branch_id = '${branchId}',
-      //           department_id = '${departmentId}',
-      //           user_id = '${id}',
-      //           role_id = '${roleId}'
-      //       WHERE user_id = '${id}'`
-      //     );
-      //   }
-      // }
       console.log("document_id:", document_id);
       const suburl = `UPDATE  documents SET document_value ='${logoImage}' WHERE  document_id =${document_id}`;
       await queryDatabase(suburl);
       console.log(suburl, "suburl");
-      // await queryDatabase(
-      //   `INSERT INTO employee_detail(branch_id, department_id, user_id,role_id) VALUES('${branch}','${department}','${userId}','${role}')`
-      // );
-
       const employeeqry = `UPDATE employee_detail SET branch_id = '${branch}', department_id = '${department}', role_id = '${role}' WHERE user_id = '${id}'`;
 
       await queryDatabase(employeeqry);
-      console.log(employeeqry, "employeeqry555555555555555");
       await queryDatabase(
         `UPDATE bank_details SET bank_name = '${bankname}', bank_branch = '${bankBranch}', account_number = '${accountNo}', account_type = '${accountType}', ifsc_code = '${ifscCode}' WHERE user_id = '${id}'`
       );
