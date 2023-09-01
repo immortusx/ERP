@@ -462,6 +462,7 @@ export default function Roles({ workFor }) {
     },
   ];
   const editeStateModal = (data) => {
+    console.log(data,"data")
     // setTableEditData(data);
     navigate("/administration/roles/editrole", { state: data });
   };

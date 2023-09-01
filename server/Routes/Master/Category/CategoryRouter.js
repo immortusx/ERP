@@ -93,7 +93,7 @@ router.post("/add-category", tokenCheck, async (req, res) => {
 router.get("/get-category-list", tokenCheck, async (req, res) => {
   try {
     await db.query(
-      "SELECT * FROM enquiry_category where is_active != 0",
+      "SELECT * FROM enquiry_category where is_active = 1",
       (err, results) => {
         if (err) {
           console.log({ isSuccess: false, result: "error" });
@@ -111,7 +111,7 @@ router.get("/get-category-list", tokenCheck, async (req, res) => {
 router.get("/get-selected-category-field", tokenCheck, async (req, res) => {
   try {
     await db.query(
-      "SELECT * FROM enquiry_fields WHERE field = 'firstName' OR field = 'mobileNumber'",
+      "SELECT * FROM enquiry_fields WHERE field = 'firstName' OR field = 'mobileNumber' OR field = 'state' OR field = 'district' OR field = 'taluko' OR field = 'village' OR field = 'dsp'",
       (err, results) => {
         if (err) {
           console.log({ isSuccess: false, result: "error" });
@@ -128,91 +128,95 @@ router.get("/get-selected-category-field", tokenCheck, async (req, res) => {
 });
 
 // ==== Delete category data By Id === //
-// router.post("/delete-category", tokenCheck, async (req, res) => {
-//   try {
-//     const { id } = req.body;
+router.post("/delete-category", tokenCheck, async (req, res) => {
+  try {
+    const { id } = req.body;
 
-//     const newUrl = "SELECT * FROM enquiry_category where  id=" + id;
-//     await db.query(newUrl, async (err, newResult) => {
-//       if (err) {
-//         console.log({ isSuccess: false, result: err });
-//         res.send({ isSuccess: false, result: "error" });
-//       } else if (newResult.length === 1) {
-//         const editurl =
-//           "UPDATE enquiry_category SET is_active = 0 WHERE  id=" + id;
-//         await db.query(editurl, async (err, result) => {
-//           if (err) {
-//             console.log({ isSuccess: false, result: err });
-//             res.send({ isSuccess: false, result: "error" });
-//           } else {
-//             res.send({ isSuccess: true, result: "deletesuccess" });
-//           }
-//         });
-//       } else {
-//         console.log({ isSuccess: false, result: "notExist" });
-//         res.send({ isSuccess: false, result: "notExist" });
-//       }
-//     });
-//   } catch (e) {
-//     console.log(e);
-//   }
-// });
-router.get('/delete-category/:id', async (req, res) => {
-  console.log('>>>>>delete-branch');
-  console.log('req.params', req.params.id)
-  const url = `UPDATE enquiry_category SET is_active = '0' WHERE id = '${req.params.id}'`;
-  // console.log('url', url)
-
-  await db.query(url, async (err, updateData) => {
-    if (err) {
-      console.log({ isSuccess: false, result: err })
-      res.send({ isSuccess: false, result: 'err' })
-    } else {
-      console.log({ isSuccess: true, result: url })
-      res.send({ isSuccess: true, result: 'success' })
-    }
-  })
-})
+    const newUrl = "SELECT * FROM enquiry_category where  id=" + id;
+    await db.query(newUrl, async (err, newResult) => {
+      if (err) {
+        console.log({ isSuccess: false, result: err });
+        res.send({ isSuccess: false, result: "error" });
+      } else if (newResult.length === 1) {
+        const editurl =
+          "UPDATE enquiry_category SET is_active = 0 WHERE  id=" + id;
+        await db.query(editurl, async (err, result) => {
+          if (err) {
+            console.log({ isSuccess: false, result: err });
+            res.send({ isSuccess: false, result: "error" });
+          } else {
+            res.send({ isSuccess: true, result: "deletesuccess" });
+          }
+        });
+      } else {
+        console.log({ isSuccess: false, result: "notExist" });
+        res.send({ isSuccess: false, result: "notExist" });
+      }
+    });
+  } catch (e) {
+    console.log(e);
+  }
+});
+router.get("/get-category-fields/:id", tokenCheck, async (req, res) => {
+  console.log(">>>>>get-category-fields", req.body.roleId);
+  try {
+    const categoryId = req.params.id;
+    const url = `CALL sp_get_selected_enquiry_fields_by_category(${categoryId})`;
+    console.log("url", url);
+    await db.query(url, async (err, result) => {
+      if (err) {
+        console.log({ isSuccess: true, result: err });
+        res.send({ isSuccess: true, result: "error" });
+      } else {
+        console.log({ isSuccess: true, result: url });
+        res.send({ isSuccess: true, result: result[0] });
+      }
+    });
+  } catch (err) {
+    console.log(err);
+  }
+});
 
 router.post("/get-category-edit/:id", tokenCheck, async (req, res) => {
   console.log(">>>>>get-roles");
- const { category_name, category_description, department, chehkedFeature } = req.body
+  const { category_name, category_description, department, chehkedFeature } =
+    req.body;
   const id = req.params.id;
 
   try {
     const result = `UPDATE enquiry_category SET category_name = '${category_name}', category_description = '${category_description}',  department = '${department}' WHERE is_active = 1 and id = ${id}`;
-    console.log(result,"result")
+    console.log(result, "result");
     await db.query(
       result,
-      [category_name, category_description, department ,id],
+      [category_name, category_description, department, id],
       async (err, newResult) => {
         if (err) {
           console.log({ isSuccess: false, result: err });
           res.status(500).json({ isSuccess: false, result: "error" });
         } else {
-            async.forEachOf(
-              chehkedFeature,
-              (item, key, callback) => {
-                const sqlQuery = `UPDATE enquiry_category_field SET  field_id = '${item}' WHERE category_id ='${id}' `;
-                console.log(sqlQuery, "sqlQuery");
-                db.query(sqlQuery, (err, result) => {
-                  if (err) {
-                    console.log({ isSuccess: true, result: err });
-                    res.send({ isSuccess: true, result: "error" });
-                  }
-                });
-                callback();
-              },
-              (err) => {
+          async.forEachOf(
+            chehkedFeature,
+            (item, key, callback) => {
+              const sqlQuery = `UPDATE enquiry_category_field SET  field_id = '${item}' WHERE category_id ='${id}' `;
+              console.log(sqlQuery, "sqlQuery");
+              db.query(sqlQuery, (err, result) => {
                 if (err) {
                   console.log({ isSuccess: true, result: err });
                   res.send({ isSuccess: true, result: "error" });
-                } else {
-                  console.log({ isSuccess: true, result: "success" });
-                  res.send({ isSuccess: true, result: "success" });
                 }
+              });
+              callback();
+            },
+            (err) => {
+              if (err) {
+                console.log({ isSuccess: true, result: err });
+                res.send({ isSuccess: true, result: "error" });
+              } else {
+                console.log({ isSuccess: true, result: "success" });
+                res.send({ isSuccess: true, result: "success" });
               }
-            );
+            }
+          );
         }
       }
     );

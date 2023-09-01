@@ -604,113 +604,120 @@ export default function Branch({ workFor }) {
     return (
         <div className='bg-white rounded p-3'>
             <main>
-                <div className=" row m-0">
-                    <div className="col-6">
-                        <h5 className='m-0'>{workFor === 'branch' ? 'Branch' : workFor === 'addBranch' ? 'New Branch' : 'Edit Branch'}</h5>
-                    </div>
-                    <div className="col-6 d-flex align-items-end justify-content-end">
-                        <Button
-                            variant="btn btn-warning mx-1"
-                            style={{
-                                width: '70px',
-                                height: '35px',
-                                fontSize: '14px',
-                                borderRadius: '20px',
-                            }}
-                            onClick={() => {
-                                redirectModal();
-                            }}
-                        >
-                            BACK
-                        </Button>
-                    </div>
-                    <div className='row m-0'>
-                        {
 
-                            workFor === 'branch' && <div className='mb-3  d-flex align-items-end justify-content-end'>
-                                <div onClick={() => { navigate('/administration/configuration/branch/add-branch') }} className='d-flex align-items-center' type='button'>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-plus-circle" viewBox="0 0 16 16">
-                                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
-                                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
-                                    </svg>
-                                    <h6 className='m-0 ps-1'>
-                                        New branch
-                                    </h6>
-                                </div>
 
+                <h5 className='m-0'>{workFor === 'branch' ? 'Branch' : workFor === 'addBranch' ? 'New Branch' : 'Edit Branch'}</h5>
+
+                <div className='row m-0'>
+                    {
+
+                        workFor === 'branch' && <div className='mb-3  d-flex align-items-end justify-content-end'>
+                            <div onClick={() => { navigate('/administration/configuration/branch/add-branch') }} className='d-flex align-items-center' type='button'>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-plus-circle" viewBox="0 0 16 16">
+                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
+                                </svg>
+                                <h6 className='m-0 ps-1'>
+                                    New branch
+                                </h6>
+                                <Button
+                                    variant="btn btn-warning mx-1"
+                                    style={{
+                                        width: '70px',
+                                        height: '35px',
+                                        fontSize: '14px',
+                                        borderRadius: '20px',
+                                    }}
+                                    onClick={() => {
+                                        redirectModal();
+                                    }}
+                                >
+                                    BACK
+                                </Button>
                             </div>
 
-                        }
+                        </div>
 
-                        {
+                    }
+
+                    {
 
 
-                            workFor === 'branch' && <div className='tableMenuHover' style={{ height: '85vh', width: '100%' }}>
+                        workFor === 'branch' && <div className='tableMenuHover' style={{ height: '85vh', width: '100%' }}>
 
-                                <DataGrid
-                                    rows={rowData}
-                                    columns={columns}
-                                    getRowId={(params) => {
-                                        return params.rowNumber
+                            <DataGrid
+                                rows={rowData}
+                                columns={columns}
+                                getRowId={(params) => {
+                                    return params.rowNumber
+                                }}
+                                className='rounded'
+                                style={{ fontFamily: 'Poppins', padding: 5, backgroundColor: 'white', }}
+                                pageSizeOptions={[5, 10, 25]}
+                                initialState={{
+                                    ...branchList.initialState,
+                                    pagination: { paginationModel: { pageSize: 10 } },
+                                }}
+                                components={{
+                                    Toolbar: GridToolbar,
+                                    NoRowsOverlay: () => (
+                                        <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                            <span>There is no Users with current branch</span>
+                                        </div>)
+                                }}
+                                componentsProps={{
+                                    toolbar: {
+                                        position: 'right',
+                                        style: { fontFamily: 'Poppins', alignSelf: 'end' },
+                                    },
+                                }}
+                                rowSelection={false}
+                                autoPageSize={false}
+                            />
+                        </div>
+                    }
+                    {
+                        workFor !== 'branch' && <>
+                            <div div className=" d-flex align-items-end justify-content-end">
+                                <Button
+                                    variant="btn btn-warning mx-1"
+                                    style={{
+                                        width: '70px',
+                                        height: '35px',
+                                        fontSize: '14px',
+                                        borderRadius: '20px',
                                     }}
-                                    className='rounded'
-                                    style={{ fontFamily: 'Poppins', padding: 5, backgroundColor: 'white', }}
-                                    pageSizeOptions={[5, 10, 25]}
-                                    initialState={{
-                                        ...branchList.initialState,
-                                        pagination: { paginationModel: { pageSize: 10 } },
+                                    onClick={() => {
+                                        redirectModal();
                                     }}
-                                    components={{
-                                        Toolbar: GridToolbar,
-                                        NoRowsOverlay: () => (
-                                            <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                                <span>There is no Users with current branch</span>
-                                            </div>)
-                                    }}
-                                    componentsProps={{
-                                        toolbar: {
-                                            position: 'right',
-                                            style: { fontFamily: 'Poppins', alignSelf: 'end' },
-                                        },
-                                    }}
-                                    rowSelection={false}
-                                    autoPageSize={false}
-                                />
-                                <AlertDeleteModal
-                                    showModal={displayConfirmationModal}
-                                    confirmModal={submitDelete}
-                                    hideModal={hideConfirmationModal}
-                                    type={type}
-                                    id={id}
-                                    message={deleteMessage}
-                                />
+                                >
+                                    BACK
+                                </Button>
                             </div>
-                        }
-                        {
-                            workFor !== 'branch' && <>
 
-                                <div className='row mt-2 m-0'>
-                                    <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
-                                        <label className='myLabel' htmlFor="email">Branch Name * </label>
-                                        <input defaultValue={branchData.firmName} onChange={changeHandler} className='inpClr myInput inputElement' autoComplete='false' type="text" name="firmName" />
-                                    </section>
-                                    <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
-                                        <label className='myLabel' htmlFor="email">G.S.T Number *</label>
-                                        <input defaultValue={branchData.gstNumber} onChange={changeHandler} className='inpClr myInput inputElement' autoComplete='false' type="text" name="gstNumber" />
-                                    </section>
-                                    <State onSelectedState={onSelectedState}
-                                        stateId={branchData.state} />
-                                    <District onSelectedDistrict={onSelectedDistrict}
-                                        stateId={branchData.state}
-                                        districtId={branchData.district} />
-                                    <Taluka onSelectedTaluka={onSelectedTaluka}
-                                        districtId={branchData.district}
-                                        talukaId={branchData.taluka} />
-                                    {/* <Village onSelectedVillage={onSelectedVillage}
+
+                            <div className='row mt-2 m-0'>
+                                <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
+                                    <label className='myLabel' htmlFor="email">Branch Name * </label>
+                                    <input defaultValue={branchData.firmName} onChange={changeHandler} className='inpClr myInput inputElement' autoComplete='false' type="text" name="firmName" />
+                                </section>
+                                <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
+                                    <label className='myLabel' htmlFor="email">G.S.T Number *</label>
+                                    <input defaultValue={branchData.gstNumber} onChange={changeHandler} className='inpClr myInput inputElement' autoComplete='false' type="text" name="gstNumber" />
+                                </section>
+                                <State onSelectedState={onSelectedState}
+                                    stateId={branchData.state} />
+                                <District onSelectedDistrict={onSelectedDistrict}
+                                    stateId={branchData.state}
+                                    districtId={branchData.district} />
+                                <Taluka onSelectedTaluka={onSelectedTaluka}
+                                    districtId={branchData.district}
+                                    talukaId={branchData.taluka} />
+                                {/* <Village onSelectedVillage={onSelectedVillage}
                                  talukaId={branchData.taluka}
                     villageId={branchData.village}/>*/}
 
-                                    {/* <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
+                                {/* <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
                                     <label className='myLabel' htmlFor="email">Select State </label>
                                     <select defaultValue={branchData.state} onChange={changeHandler} className='myInput inpClr' name="state">
                                         <option value='0' className='myLabel'>select</option>
@@ -754,41 +761,40 @@ export default function Branch({ workFor }) {
                                         }
                                     </select>
                                 </section> */}
-                                    <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
-                                        <label className='myLabel' htmlFor="email">Contact Person </label>
-                                        <input defaultValue={branchData.contactPerson} onChange={changeHandler} className='inpClr myInput inputElement' autoComplete='false' type="text" name="contactPerson" />
-                                    </section>
-                                    <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
-                                        <label className='myLabel' htmlFor="email">Mobile Number *</label>
-                                        <input defaultValue={branchData.mobileNumber} onChange={changeHandler} className='inpClr myInput inputElement' autoComplete='false' type="text" name="mobileNumber" />
-                                    </section>
-                                    <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
-                                        <label className='myLabel' htmlFor="email">Email *</label>
-                                        <input defaultValue={branchData.email} onChange={changeHandler} className='inpClr myInput inputElement' autoComplete='false' type="text" name="email" />
-                                    </section>
-                                    <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
-                                        <label className='myLabel' htmlFor="email">Code *</label>
-                                        <input defaultValue={branchData.code} onChange={changeHandler} className='inpClr myInput inputElement' autoComplete='false' type="text" name="code" />
-                                    </section>
-                                    <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
-                                        <label className='myLabel' htmlFor="email">Branch Address *</label>
-                                        <textarea defaultValue={branchData.address} onChange={changeHandler} className='inpClr myInput inputElement' rows='3' autoComplete='false' type="text" name="address" />
-                                    </section>
-                                    <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
-                                        <label className='myLabel' htmlFor="email">Description</label>
-                                        <textarea defaultValue={branchData.description} onChange={changeHandler} className='inpClr myInput inputElement' rows='3' autoComplete='false' type="text" name="description" />
-                                    </section>
-                                    <section className='d-flex pt-3 flex-column flex-sm-row'>
-                                        <button className='col-12 col-sm-3 col-lg-2 myBtn py-2' onClick={saveBtnCalled} type='button'>Save</button>
-                                        <button className='ms-0 ms-sm-3 mt-3 mt-sm-0 col-12 col-sm-3 col-lg-2 myBtn py-2' onClick={cancelHandler} type='button'>Cancel</button>
-                                    </section>
+                                <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
+                                    <label className='myLabel' htmlFor="email">Contact Person </label>
+                                    <input defaultValue={branchData.contactPerson} onChange={changeHandler} className='inpClr myInput inputElement' autoComplete='false' type="text" name="contactPerson" />
+                                </section>
+                                <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
+                                    <label className='myLabel' htmlFor="email">Mobile Number *</label>
+                                    <input defaultValue={branchData.mobileNumber} onChange={changeHandler} className='inpClr myInput inputElement' autoComplete='false' type="text" name="mobileNumber" />
+                                </section>
+                                <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
+                                    <label className='myLabel' htmlFor="email">Email *</label>
+                                    <input defaultValue={branchData.email} onChange={changeHandler} className='inpClr myInput inputElement' autoComplete='false' type="text" name="email" />
+                                </section>
+                                <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
+                                    <label className='myLabel' htmlFor="email">Code *</label>
+                                    <input defaultValue={branchData.code} onChange={changeHandler} className='inpClr myInput inputElement' autoComplete='false' type="text" name="code" />
+                                </section>
+                                <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
+                                    <label className='myLabel' htmlFor="email">Branch Address *</label>
+                                    <textarea defaultValue={branchData.address} onChange={changeHandler} className='inpClr myInput inputElement' rows='3' autoComplete='false' type="text" name="address" />
+                                </section>
+                                <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
+                                    <label className='myLabel' htmlFor="email">Description</label>
+                                    <textarea defaultValue={branchData.description} onChange={changeHandler} className='inpClr myInput inputElement' rows='3' autoComplete='false' type="text" name="description" />
+                                </section>
+                                <section className='d-flex pt-3 flex-column flex-sm-row'>
+                                    <button className='col-12 col-sm-3 col-lg-2 myBtn py-2' onClick={saveBtnCalled} type='button'>Save</button>
+                                    <button className='ms-0 ms-sm-3 mt-3 mt-sm-0 col-12 col-sm-3 col-lg-2 myBtn py-2' onClick={cancelHandler} type='button'>Cancel</button>
+                                </section>
 
-                                </div>
-                            </>
-                        }
-                    </div>
+                            </div>
+                        </>
+                    }
                 </div>
             </main >
-        </div>
+        </div >
     )
 }
