@@ -124,16 +124,15 @@ export default function AddCategory({ workFor }) {
   useEffect(() => {
     if (featuresState.isSuccess) {
       if (featuresState.data.isSuccess) {
+        const isMatchField = checkField.map((item) => item.id);
         const updatedFeaturesList = featuresState.data.result.map((item) => {
           if (checkFieldItem.includes(item.id)) {
-            //   // Set isChecked to true for IDs included in checkFieldItem
-            if (1 === item.id) {
+            if (!isMatchField.includes(item.id)) {
               return { ...item, isChecked: true, disabled: false };
             } else {
               return { ...item, isChecked: true, disabled: true };
             }
           } else {
-            // Set isChecked to false for other IDs
             return { ...item, isChecked: false, disabled: false };
           }
         });
