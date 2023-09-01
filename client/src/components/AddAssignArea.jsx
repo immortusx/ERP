@@ -255,7 +255,8 @@ export default function AddAssignArea() {
     setDisplayConfirmationModal(false);
   };
 
-  const submitDelete = async (type, id, categoryd, dId) => {
+  const submitDelete = async () => {
+    if(id,categoryd){
     const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/delete-area/${id}/${categoryd}`;
     const config = {
       headers: {
@@ -263,14 +264,12 @@ export default function AddAssignArea() {
       },
     };
     await Axios.get(url, config).then((response) => {
-      if (response.data && response.data.isSuccess) {
-        console.log(response.data);
-        dispatch(setShowMessage("Assign Area Deleted"));
-
-      } else {
-        dispatch(setShowMessage("failed to delete"));
-      }
+     if(response.data && response.data.result === "success"){
+      hideConfirmationModal();
+      navigate("/administration/employees");
+     }
     });
+  }
   };
 
   function handlCancel() {

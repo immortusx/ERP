@@ -142,11 +142,6 @@ export default function AddDepartment({ workFor }) {
     } else {
       dispatch(setShowMessage("All field must be field"));
     }
-     setDpData({
-       name: "",
-       description: "",
-     });
-       console.log(dpData, "dpdata");
   };
 
   function handlCancel() {
