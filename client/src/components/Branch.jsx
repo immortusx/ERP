@@ -542,7 +542,7 @@ export default function Branch({ workFor }) {
     useEffect(() => {
         const rowsData = branchList.map((item, index) => ({
             ...item,
-            rowNumber: index + 1,
+            rowNumber: item.id,
             checkbox: selectAll,
         }));
         setRowData(rowsData);
@@ -794,6 +794,14 @@ export default function Branch({ workFor }) {
                         </>
                     }
                 </div>
+                <AlertDeleteModal
+                    showModal={displayConfirmationModal}
+                    confirmModal={submitDelete}
+                    hideModal={hideConfirmationModal}
+                    type={type}
+                    id={branchDeleteId}
+                    message={deleteMessage}
+                />
             </main >
         </div >
     )
