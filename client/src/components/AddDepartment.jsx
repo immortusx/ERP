@@ -16,7 +16,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 export default function AddDepartment({ workFor }) {
   // const [editID, setEditID] = useState(0);
-  const [dpData, setDpData] = useState({
+  const [departmentData, setDepartmentData] = useState({
     name: "",
     description: "",
   });
@@ -34,7 +34,7 @@ export default function AddDepartment({ workFor }) {
   );
 
   function clearInpHook() {
-    setDpData({
+    setDepartmentData({
       name: "",
       description: "",
     });
@@ -45,7 +45,6 @@ export default function AddDepartment({ workFor }) {
       console.log(editdepartmentSliceState, "editdepartmentSliceState");
       if (editdepartmentSliceState.message.result === "success") {
         dispatch(setShowMessage("Data is Updated"));
-        clearInpHook();
         dispatch(clearEditdepartmentState());
         navigate("/administration/configuration/department");
       } else {
@@ -62,7 +61,7 @@ export default function AddDepartment({ workFor }) {
           dispatch(setShowMessage("Please select a department"));
         }, 1000);
       } else {
-        setDpData({
+        setDepartmentData({
           name: editdepartmentData.data.name,
           description: editdepartmentData.data.description,
         });
@@ -86,7 +85,7 @@ export default function AddDepartment({ workFor }) {
     try {
       const response = await Axios.get(url, config);
       if (response.data?.isSuccess) {
-        setDpData(response.data.result);
+        setDepartmentData(response.data.result);
       }
     } catch (error) {
       console.log(error);
@@ -94,24 +93,11 @@ export default function AddDepartment({ workFor }) {
   }
 
   useEffect(() => {
-    if (
-      workFor === "forEdit" &&
-      editdepartmentData &&
-      editdepartmentData.data
-    ) {
-      const id = editdepartmentData.data.id;
-      console.log(id, "IDDATA");
-      getdepartmentid(id);
-    }
-  }, []);
-
-  useEffect(() => {
     if (addDepartment.isSuccess) {
       if (addDepartment.message.isSuccess) {
         dispatch(setShowMessage("Department is created"));
         dispatch(clearaddDepartment());
         navigate("/administration/configuration/department");
-        clearInpHook();
         clearaddDepartment();
       } else {
         dispatch(setShowMessage("Something is wrong"));
@@ -121,37 +107,44 @@ export default function AddDepartment({ workFor }) {
 
   const onChangeHandler = (e) => {
     const { name, value } = e.target;
-    setDpData((prevState) => ({
+    setDepartmentData((prevState) => ({
       ...prevState,
       [name]: value,
     }));
   };
-
+  useEffect(() => {
+    if (workFor === 'forEdit') {
+      if (editdepartmentData && editdepartmentData.data.length > 0) {
+        setDepartmentData({
+          name: editdepartmentData.data.name,
+          description: editdepartmentData.data.description,
+        })
+      }
+    }
+  }, [workFor])
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("dpData", dpData);
-    const dname = dpData.name;
-    const ddescription = dpData.description;
-    // if (dname.length > 0 && ddescription !== "") {
-    //   if (workFor === "forEdit") {
-    //     dpData["id"] = editdepartmentData.data.id;
-    //     dispatch(editdepartmentUpdateToDb(dpData));
-    //   } else {
-    //     dispatch(addDepartmentToDb(dpData));
-    //   }
-    // } else {
-    //   dispatch(setShowMessage("All field must be field"));
-    // }
-    //  setDpData({
-    //    name: "",
-    //    description: "",
-    //  });
-    //    console.log(dpData, "dpdata");
+    console.log("departmentData", departmentData);
+    const dname = departmentData.name;
+    const ddescription = departmentData.description;
+    if (dname.length > 0 && ddescription !== "") {
+      if (workFor === "forEdit") {
+        departmentData["id"] = editdepartmentData.data.id;
+        dispatch(editdepartmentUpdateToDb(departmentData));
+      } else {
+        dispatch(addDepartmentToDb(departmentData));
+      }
+    } else {
+      dispatch(setShowMessage("All field must be field"));
+    }
+    setDepartmentData({
+      name: "",
+      description: "",
+    });
   };
 
   function handlCancel() {
     navigate("/administration/configuration/department");
-    clearInpHook();
   }
   const redirectModal = () => {
     navigate(-1);
@@ -188,7 +181,7 @@ export default function AddDepartment({ workFor }) {
               Department name
             </label>
             <input
-              value={dpData.name}
+              value={departmentData.name}
               className="myInput inputElement"
               autoComplete="false"
               onChange={(e) => {
@@ -205,7 +198,7 @@ export default function AddDepartment({ workFor }) {
               Department description
             </label>
             <textarea
-              value={dpData.description}
+              value={departmentData.description}
               rows="5"
               className="myInput inputElement"
               autoComplete="false"
