@@ -132,21 +132,16 @@ export default function AddDepartment({ workFor }) {
     console.log("dpData", dpData);
     const dname = dpData.name;
     const ddescription = dpData.description;
-    // if (dname.length > 0 && ddescription !== "") {
-    //   if (workFor === "forEdit") {
-    //     dpData["id"] = editdepartmentData.data.id;
-    //     dispatch(editdepartmentUpdateToDb(dpData));
-    //   } else {
-    //     dispatch(addDepartmentToDb(dpData));
-    //   }
-    // } else {
-    //   dispatch(setShowMessage("All field must be field"));
-    // }
-    //  setDpData({
-    //    name: "",
-    //    description: "",
-    //  });
-    //    console.log(dpData, "dpdata");
+    if (dname.length > 0 && ddescription !== "") {
+      if (workFor === "forEdit") {
+        dpData["id"] = editdepartmentData.data.id;
+        dispatch(editdepartmentUpdateToDb(dpData));
+      } else {
+        dispatch(addDepartmentToDb(dpData));
+      }
+    } else {
+      dispatch(setShowMessage("All field must be field"));
+    }
   };
 
   function handlCancel() {

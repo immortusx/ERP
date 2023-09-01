@@ -128,35 +128,22 @@ router.get("/get-selected-category-field", tokenCheck, async (req, res) => {
 });
 
 // ==== Delete category data By Id === //
-router.post("/delete-category", tokenCheck, async (req, res) => {
-  try {
-    const { id } = req.body;
+router.get('/delete-category/:id', async (req, res) => {
+  console.log('>>>>>delete-branch');
+  console.log('req.params', req.params.id)
+  const url = `UPDATE enquiry_category SET is_active = '0' WHERE id = '${req.params.id}'`;
+  // console.log('url', url)
 
-    const newUrl = "SELECT * FROM enquiry_category where  id=" + id;
-    await db.query(newUrl, async (err, newResult) => {
-      if (err) {
-        console.log({ isSuccess: false, result: err });
-        res.send({ isSuccess: false, result: "error" });
-      } else if (newResult.length === 1) {
-        const editurl =
-          "UPDATE enquiry_category SET is_active = 0 WHERE  id=" + id;
-        await db.query(editurl, async (err, result) => {
-          if (err) {
-            console.log({ isSuccess: false, result: err });
-            res.send({ isSuccess: false, result: "error" });
-          } else {
-            res.send({ isSuccess: true, result: "deletesuccess" });
-          }
-        });
-      } else {
-        console.log({ isSuccess: false, result: "notExist" });
-        res.send({ isSuccess: false, result: "notExist" });
-      }
-    });
-  } catch (e) {
-    console.log(e);
-  }
-});
+  await db.query(url, async (err, updateData) => {
+    if (err) {
+      console.log({ isSuccess: false, result: err })
+      res.send({ isSuccess: false, result: 'err' })
+    } else {
+      console.log({ isSuccess: true, result: url })
+      res.send({ isSuccess: true, result: 'success' })
+    }
+  })
+})
 router.get("/get-category-fields/:id", tokenCheck, async (req, res) => {
   console.log(">>>>>get-category-fields", req.body.roleId);
   try {
