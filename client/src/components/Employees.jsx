@@ -370,6 +370,7 @@ export default function Employees() {
   }, [employeeListState]);
   function editActionCall(data) {
     console.log(data.id);
+    console.log(data, 'respoe');
     console.log("editEmployeee");
     dispatch(setEditemployeeData(data));
     navigate("/administration/employees/editemployee");

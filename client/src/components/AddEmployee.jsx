@@ -62,7 +62,7 @@ export default function Addemployee({ workFor }) {
     branch: "",
     department: "",
   });
-  const [selectedDate, setSelectedDate] = useState("");
+  const [selectedDate, setSelectedDate] = useState(null);
   const [bloodgroup, setBloodGroup] = useState("");
   const bloodGroups = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
   const bankName = [
@@ -82,7 +82,7 @@ export default function Addemployee({ workFor }) {
   const [roleSelect, setRoleSelect] = useState("");
   const [selectedRole, setSelectedRole] = useState("");
   const [selectedRoleName, setSelectedRoleName] = useState("");
-
+  const [selectedFile, setSelectedFile] = [false];
   const selectInp = useRef();
   const selectedInp = useRef();
   const leftArrowBtn = useRef();
@@ -100,26 +100,17 @@ export default function Addemployee({ workFor }) {
     }
   }, [editemployeeSliceState]);
 
-
   const redirectModal = () => {
     navigate(-1);
   };
 
   function handleSubmit() {
-    // console.log("employeeData", employeeData);
-    // console.log("selectedDate", selectedDate);
-    // console.log("bloodgroup", bloodgroup);
-    // console.log("branchRoles", branchRoles);
-    // console.log("BankDetais", BankDetais);
-    // console.log("jobdetails", jobdetails);
     const fN = employeeData.firstName;
     const lN = employeeData.lastName;
     const email = employeeData.email;
     const pass = employeeData.password;
     const pN = employeeData.phoneNumber;
     const alogo = employeeprofilelogo.logo;
-    // const id = employeeData.user_id;
-    // const id = editemployeeData.user_id;
     const document_id = employeeprofilelogo.document_id;
     const bN = BankDetais.bankname;
     const bb = BankDetais.bankBranch;
@@ -147,47 +138,7 @@ export default function Addemployee({ workFor }) {
     formData.append("bloodgroup", bg);
     formData.append("selectedRole", ro);
     formData.append("logo", alogo);
-    // formData.append("id", id);
-
-    console.log(formData, "formData");
-    console.log("fN", fN);
-    console.log("lN", lN);
-    console.log("email", email);
-    console.log("pN", pN);
-    console.log("bN", bN);
-    console.log("bb", bb);
-    console.log("an", an);
-    console.log("at", at);
-    console.log("ic", ic);
-    console.log("bg", bg);
-    console.log("brd", brd);
-    console.log("dp", dp);
-    console.log("ro", ro);
-    console.log("alogo", alogo);
-    // console.log("id", id);
-    if (
-      fN.length > 0 &&
-      lN.length > 0 &&
-      email.length > 0 &&
-      pN.length > 0 &&
-      bN.length > 0 &&
-      bb.length > 0 &&
-      an.length > 0 &&
-      at.length > 0 &&
-      ic.length > 0 &&
-      bg.length > 0 &&
-      brd.length > 0 &&
-      dp.length > 0 &&
-      ro.length > 0 &&
-      alogo !== null &&
-      // id !== null &&
-      // bd.length > 0 &&
-      (workFor === "forAdd" ? pass.length > 0 : true)
-      //  &&
-      // Object.keys(branchRoles).length > 0
-    ) {
-      // employeeData["branchRole"] = branchRoles;
-      // console.log(workFor, "true");
+    if (workFor === "forAdd" ? pass.length > 0 : true) {
       employeeData["bankname"] = BankDetais.bankname;
 
       employeeData["bankBranch"] = BankDetais.bankBranch;
@@ -207,18 +158,12 @@ export default function Addemployee({ workFor }) {
       employeeData["selectedDate"] = selectedDate;
       employeeData["selectedRole"] = selectedRole;
       employeeData["logo"] = employeeprofilelogo.logo;
-      // employeeData["id"] = employeeData.user_id;
-      // employeeData["id"] = editemployeeData.user_id;
-
       if (workFor === "forEdit") {
         formData.append("document_id", editemployeeData.document_id);
         formData.append("id", editemployeeData.user_id);
         dispatch(editemployeeUpdateToDb(formData));
-        // navigate("/administration/employees");
       } else {
-        // console.log("employeeData.user_id", employeeData);
         dispatch(addemployeeToDb(formData));
-        //  navigate("/administration/employees");
       }
     } else {
       dispatch(setShowMessage("All field must be field"));
@@ -252,10 +197,6 @@ export default function Addemployee({ workFor }) {
           navigate("/administration/employees");
         }, 1000);
       } else {
-        console.log(
-          "editemployeeData2222222222222222222222222",
-          editemployeeData
-        );
         setemployeeData({
           firstName: editemployeeData.first_name,
           lastName: editemployeeData.last_name,
@@ -279,6 +220,9 @@ export default function Addemployee({ workFor }) {
           logo: editemployeeData.document_value,
           document_id: editemployeeData.document_id,
         });
+        setSelectedRole(editemployeeData.role_id);
+        const dateOfBirth = new Date(editemployeeData.dob);
+        setSelectedDate(dateOfBirth);
       }
     }
     return () => {
@@ -300,7 +244,7 @@ export default function Addemployee({ workFor }) {
       bloodgroup: "",
     });
     setBranchRoles({});
-    setSelectedDate("");
+    setSelectedDate(null);
     setBloodGroup("");
     setBankDetais({
       bankname: "",
@@ -484,6 +428,7 @@ export default function Addemployee({ workFor }) {
     setEmployeeProfilelogo({ ...employeeData, [name]: files[0] });
     console.log(employeeData, "employeeData");
   }
+  
   const onChangejobdetails = (e) => {
     const name = e.target.name;
     const value = e.target.value;
@@ -568,7 +513,7 @@ export default function Addemployee({ workFor }) {
   function confirmClicked() {
     setPopUpScreen(false);
   }
-  const handleNoAccess = () => { };
+  const handleNoAccess = () => {};
   const onChangeAccess = async (e) => {
     const selectedValue = e.target.value;
     const [id, role] = selectedValue.split(",");
@@ -596,12 +541,15 @@ export default function Addemployee({ workFor }) {
       <div className="addemployee  bg-white rounded p-3">
         <main>
           <div className="d-flex align-items-center justify-content-between">
-            <h5 className='m-0'>
-              General Details
-            </h5>
+            <h5 className="m-0">General Details</h5>
             <Button
               variant="btn btn-warning mx-1"
-              style={{ width: '70px', height: '35px', fontSize: '14px', borderRadius: '20px' }}
+              style={{
+                width: "70px",
+                height: "35px",
+                fontSize: "14px",
+                borderRadius: "20px",
+              }}
               onClick={() => {
                 redirectModal();
               }}
@@ -775,7 +723,7 @@ export default function Addemployee({ workFor }) {
                 id="branch"
                 name="branch"
                 onChange={onChangejobdetails}
-                value={jobdetails.value}
+                value={jobdetails.branch}
               >
                 <option value="">Select Branch Name</option>
                 {branches.map((branch, index) => (
@@ -971,15 +919,12 @@ export default function Addemployee({ workFor }) {
                           id="access"
                           name="access"
                           onChange={onChangeAccess}
-                        // value={selectedRoleName}
+                          value={selectedRole}
                         >
                           <option value="">None</option>
                           {empRoles &&
                             empRoles.map((acc, index) => (
-                              <option
-                                key={index}
-                                value={`${acc.id},${acc.role}`}
-                              >
+                              <option key={index} value={`${acc.id}`}>
                                 {acc.role}
                               </option>
                             ))}
