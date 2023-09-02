@@ -128,22 +128,22 @@ router.get("/get-selected-category-field", tokenCheck, async (req, res) => {
 });
 
 // ==== Delete category data By Id === //
-router.get('/delete-category/:id', async (req, res) => {
-  console.log('>>>>>delete-branch');
-  console.log('req.params', req.params.id)
+router.get("/delete-category/:id", async (req, res) => {
+  console.log(">>>>>delete-branch");
+  console.log("req.params", req.params.id);
   const url = `UPDATE enquiry_category SET is_active = '0' WHERE id = '${req.params.id}'`;
   // console.log('url', url)
 
   await db.query(url, async (err, updateData) => {
     if (err) {
-      console.log({ isSuccess: false, result: err })
-      res.send({ isSuccess: false, result: 'err' })
+      console.log({ isSuccess: false, result: err });
+      res.send({ isSuccess: false, result: "err" });
     } else {
-      console.log({ isSuccess: true, result: url })
-      res.send({ isSuccess: true, result: 'success' })
+      console.log({ isSuccess: true, result: url });
+      res.send({ isSuccess: true, result: "success" });
     }
-  })
-})
+  });
+});
 router.get("/get-category-fields/:id", tokenCheck, async (req, res) => {
   console.log(">>>>>get-category-fields", req.body.roleId);
   try {
@@ -164,42 +164,81 @@ router.get("/get-category-fields/:id", tokenCheck, async (req, res) => {
   }
 });
 
-router.post("/get-category-edit/:id", tokenCheck, async (req, res) => {
-  console.log(">>>>>get-roles");
+//=================Edit Category With Enquiry Fields========================//
+router.post("/edit-category/:id", tokenCheck, async (req, res) => {
+  console.log(">>>>>/edit-category/:id", req.body);
   const { category_name, category_description, department, chehkedFeature } =
     req.body;
   const id = req.params.id;
 
   try {
+    console.log(chehkedFeature, "checkfeture");
     const result = `UPDATE enquiry_category SET category_name = '${category_name}', category_description = '${category_description}',  department = '${department}' WHERE is_active = 1 and id = ${id}`;
     console.log(result, "result");
     await db.query(
       result,
-      [category_name, category_description, department, id],
+      [category_name, category_description, department],
       async (err, newResult) => {
         if (err) {
           console.log({ isSuccess: false, result: err });
           res.status(500).json({ isSuccess: false, result: "error" });
         } else {
-          async.forEachOf(
-            chehkedFeature,
-            (item, key, callback) => {
-              const sqlQuery = `UPDATE enquiry_category_field SET  field_id = '${item}' WHERE category_id ='${id}' `;
-              console.log(sqlQuery, "sqlQuery");
-              db.query(sqlQuery, (err, result) => {
-                if (err) {
-                  console.log({ isSuccess: true, result: err });
-                  res.send({ isSuccess: true, result: "error" });
-                }
-              });
-              callback();
-            },
-            (err) => {
+          await db.query(
+            `SELECT field_id FROM enquiry_category_field WHERE category_id = ${id}`,
+            (err, fieldResult) => {
               if (err) {
-                console.log({ isSuccess: true, result: err });
-                res.send({ isSuccess: true, result: "error" });
+                console.log({ isSuccess: false, result: "error" });
+                res.send({ isSuccess: false, result: "error" });
               } else {
-                console.log({ isSuccess: true, result: "success" });
+                console.log({ isSuccess: true, result: fieldResult });
+                // res.status(200).send({ isSuccess: true, result: categorybyIdData });
+                const storeField = fieldResult.map((item) => item.field_id);
+                console.log(chehkedFeature, "new");
+                console.log(storeField, "stored");
+                const newfieldValue = chehkedFeature.filter(
+                  (feature) => !storeField.includes(feature)
+                );
+                const removedFieldValues = storeField.filter(
+                  (field) => !chehkedFeature.includes(field)
+                );
+                if (newfieldValue.length > 0) {
+                  const insertQuery = `INSERT INTO enquiry_category_field (category_id, field_id) VALUES (?, ?)`;
+
+                  newfieldValue.forEach((field) => {
+                    db.query(insertQuery, [id, field], (err, insertResult) => {
+                      if (err) {
+                        console.error(err);
+                        res
+                          .status(500)
+                          .json({
+                            isSuccess: false,
+                            result: "Error inserting new values",
+                          });
+                      } else {
+                        console.log("New value inserted successfully.");
+                      }
+                    });
+                  });
+                }
+                if (removedFieldValues.length > 0) {
+                  const deleteQuery = `DELETE FROM enquiry_category_field WHERE category_id = ? AND field_id = ?`;
+
+                  removedFieldValues.forEach((field) => {
+                    db.query(deleteQuery, [id, field], (err, deleteResult) => {
+                      if (err) {
+                        console.error(err);
+                        res
+                          .status(500)
+                          .json({
+                            isSuccess: false,
+                            result: "Error deleting removed values",
+                          });
+                      } else {
+                        console.log("Removed value deleted successfully.");
+                      }
+                    });
+                  });
+                }
                 res.send({ isSuccess: true, result: "success" });
               }
             }
