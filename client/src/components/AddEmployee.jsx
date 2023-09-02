@@ -138,35 +138,39 @@ export default function Addemployee({ workFor }) {
     formData.append("bloodgroup", bg);
     formData.append("selectedRole", ro);
     formData.append("logo", alogo);
-    if (workFor === "forAdd" ? pass.length > 0 : true) {
-      employeeData["bankname"] = BankDetais.bankname;
-
-      employeeData["bankBranch"] = BankDetais.bankBranch;
-
-      employeeData["accountNo"] = BankDetais.accountNo;
-
-      employeeData["accountType"] = BankDetais.accountType;
-
-      employeeData["ifscCode"] = BankDetais.ifscCode;
-
-      employeeData["branch"] = jobdetails.branch;
-
-      employeeData["department"] = jobdetails.department;
-
-      employeeData["bloodgroup"] = bloodgroup;
-
-      employeeData["selectedDate"] = selectedDate;
-      employeeData["selectedRole"] = selectedRole;
-      employeeData["logo"] = employeeprofilelogo.logo;
-      if (workFor === "forEdit") {
-        formData.append("document_id", editemployeeData.document_id);
-        formData.append("id", editemployeeData.user_id);
-        dispatch(editemployeeUpdateToDb(formData));
-      } else {
-        dispatch(addemployeeToDb(formData));
-      }
+    if (fileInputRef.current.files.length === 0) {
+      dispatch(setShowMessage("*Please Select a File"));
     } else {
-      dispatch(setShowMessage("All field must be field"));
+      if (workFor === "forAdd" ? pass.length > 0 : true) {
+        employeeData["bankname"] = BankDetais.bankname;
+
+        employeeData["bankBranch"] = BankDetais.bankBranch;
+
+        employeeData["accountNo"] = BankDetais.accountNo;
+
+        employeeData["accountType"] = BankDetais.accountType;
+
+        employeeData["ifscCode"] = BankDetais.ifscCode;
+
+        employeeData["branch"] = jobdetails.branch;
+
+        employeeData["department"] = jobdetails.department;
+
+        employeeData["bloodgroup"] = bloodgroup;
+
+        employeeData["selectedDate"] = selectedDate;
+        employeeData["selectedRole"] = selectedRole;
+        employeeData["logo"] = employeeprofilelogo.logo;
+        if (workFor === "forEdit") {
+          formData.append("document_id", editemployeeData.document_id);
+          formData.append("id", editemployeeData.user_id);
+          dispatch(editemployeeUpdateToDb(formData));
+        } else {
+          dispatch(addemployeeToDb(formData));
+        }
+      } else {
+        dispatch(setShowMessage("*All fields must be filled."));
+      }
     }
   }
   async function getemployeeBranchRole(id) {
@@ -193,7 +197,7 @@ export default function Addemployee({ workFor }) {
     if (workFor === "forEdit") {
       if (editemployeeData === null) {
         setTimeout(() => {
-          dispatch(setShowMessage("Please select a employee"));
+          dispatch(setShowMessage("*Please Select a Employee"));
           navigate("/administration/employees");
         }, 1000);
       } else {
@@ -332,7 +336,7 @@ export default function Addemployee({ workFor }) {
         dispatch(clearAddemployeeState());
         navigate("/administration/employees");
       } else if (addemployeeState.message.result === "alreadyExist") {
-        dispatch(setShowMessage("Please use a different email to continue!"));
+        dispatch(setShowMessage("*Please use a different email to continue!"));
         dispatch(clearAddemployeeState());
       } else {
         dispatch(setShowMessage("Something is wrong!"));
@@ -403,7 +407,6 @@ export default function Addemployee({ workFor }) {
 
   function handleCancel() {
     navigate("/administration/employees");
-    console.log(employeeprofilelogo, "logoooooooooo");
   }
   function onChangeHandler(e) {
     const name = e.target.name;
@@ -428,7 +431,7 @@ export default function Addemployee({ workFor }) {
     setEmployeeProfilelogo({ ...employeeData, [name]: files[0] });
     console.log(employeeData, "employeeData");
   }
-  
+
   const onChangejobdetails = (e) => {
     const name = e.target.name;
     const value = e.target.value;
@@ -584,6 +587,7 @@ export default function Addemployee({ workFor }) {
                   autoComplete="false"
                   type="file"
                   name="logo"
+                  required
                 />
               </div>
               <div className="d-flex justify-content-end col-12 col-sm-6 col-lg-4">
@@ -654,8 +658,11 @@ export default function Addemployee({ workFor }) {
                 onChange={(e) => {
                   onChangeHandler(e);
                 }}
-                type="number"
+                type="text"
+                id="phoneNumber"
                 name="phoneNumber"
+                inputMode="numeric"
+                pattern="[0-9]*"
               />
             </section>
             <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
