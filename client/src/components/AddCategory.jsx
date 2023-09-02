@@ -237,6 +237,13 @@ export default function AddCategory({ workFor }) {
       }
     }
   }, [addCategory]);
+  useEffect(() => {
+    if (workFor === "forEdit" && editcategoryData && editcategoryData.data) {
+      const id = editcategoryData.data.id;
+      getcategoryid(id);
+      getCategoryField(id);
+    }
+  }, []);
 
   async function getDeptList() {
     const url = `${process.env.REACT_APP_NODE_URL}/api/master/get-department-list`;
