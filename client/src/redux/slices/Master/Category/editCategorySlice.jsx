@@ -25,7 +25,7 @@ export const editcategoryUpdateToDb = createAsyncThunk(
         token: localStorage.getItem("rbacToken"),
       },
     };
-    const url = `${process.env.REACT_APP_NODE_URL}/api/master/get-category-edit/${categoryData.id}`;
+    const url = `${process.env.REACT_APP_NODE_URL}/api/master/edit-category/${categoryData.id}`;
     return await Axios.post(url, categoryData, config).then((response) => {
       return response.data;
     });
