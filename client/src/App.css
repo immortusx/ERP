@@ -592,6 +592,9 @@ select.myInput {
   margin-left: 10px;
   margin-top: 10px;
 }
+.spinner-white {
+  color: white;
+}
 
 @keyframes App-logo-spin {
   from {
