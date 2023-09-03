@@ -268,6 +268,7 @@ router.post('/set-new-enquiry-data', tokenCheck, async (req, res) => {
   const lastName = req.body.lastName
   const middleName = req.body.fatherName
   const phoneNumber = req.body.mobileNumber
+  const whatsappNumber = req.body.whatsappNumber
   const email = req.body.emailId
   const isActive = 1
   const district = req.body.district
@@ -284,7 +285,7 @@ router.post('/set-new-enquiry-data', tokenCheck, async (req, res) => {
   const deliveryDate = req.body.deliveryDate
   const sourceOfEnquiry = req.body.sourceOfEnquiry
 
-  const url = `INSERT INTO customers (first_name, middle_name, last_name, phone_number, email, is_active, district, taluka, block, village) VALUES ('${fristName}','${middleName}','${lastName}','${phoneNumber}','${email}','${isActive}','${district}','${taluka}','${block}','${village}')`;
+  const url = `INSERT INTO customers (first_name, middle_name, last_name, phone_number, whatsapp_number, email, is_active, district, taluka, village) VALUES ('${fristName}','${middleName}','${lastName}','${phoneNumber}','${whatsappNumber}','${email}','${isActive}','${district}','${taluka}','${village}')`;
 
   console.log('url', url)
 
@@ -314,79 +315,6 @@ router.post('/set-new-enquiry-data', tokenCheck, async (req, res) => {
   })
 })
 
-// router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
-//   console.log(">>>>>>>>>set-new-enquiry-data", req.body);
-
-//   const fristName = req.body.firstName || "null";
-//   const lastName = req.body.lastName || "null";
-//   const fatherName = req.body.fatherName || "null";
-//   const phoneNumber = req.body.mobileNumber || "null";
-//   const whatsappNumber = req.body.whatsappNumber || "null";
-//   const email = req.body.emailId || "null";
-//   const isActive = 1;
-//   const state = req.body.state || "null";
-//   const district = req.body.district || "null";
-//   const taluka = req.body.tehsil || "null";
-//   const block = req.body.block || "null";
-//   const village = req.body.village || "null";
-
-//   const make = req.body.make || "null";
-//   const modalName = req.body.modalName || "null";
-//   const variantName = req.body.variantName || "null";
-//   const year = req.body.year || "null";
-//   const condition_of = req.body.condition_of || "null";
-
-//   const enquiryTypeId = "1";
-//   const visitReason = "1";
-//   const branchId = req.body.branchId || "null";
-//   const dsp = req.body.dsp || "null";
-//   const model = req.body.model || "null";
-//   const enquiryDate = req.body.enquiryDate || "null";
-//   const deliveryDate = req.body.deliveryDate || "null";
-//   const sourceOfEnquiry = req.body.sourceOfEnquiry || "null";
-
-//   // const url = `INSERT INTO customers (first_name, middle_name, last_name, phone_number, email, is_active, state, district, taluka, block, village) VALUES ('${fristName}','${middleName}','${lastName}','${phoneNumber}','${email}','${isActive}','${state}','${district}','${taluka}','${block}','${village}')`;
-//   const url = `INSERT INTO customers (first_name, middle_name, last_name, phone_number,whatsapp_number, email, is_active, state, district, taluka, village) VALUES ('${fristName}','${fatherName}','${lastName}','${phoneNumber}','${whatsappNumber}','${email}','${isActive}','${state}','${district}','${taluka}','${village}')`;
-
-//   console.log("url", url);
-
-//   await db.query(url, async (err, result) => {
-//     if (err) {
-//       console.log({ isSuccess: false, result: err });
-//       res.send({ isSuccess: false, result: "error" });
-//     } else if (result && result.insertId) {
-//       const insertedId = result.insertId;
-//       console.log({ isSuccess: "success", result: url });
-
-//       const newEnquiryDate = await getDateInFormate(enquiryDate);
-//       const newDeliveryDate = await getDateInFormate(deliveryDate);
-
-//       // const urlNew = `INSERT INTO enquiries (branch_id, enquiry_type_id, salesperson_id, customer_id, product_id, date, delivery_date, enquiry_source_id, visitReason) VALUES('${branchId}','${enquiryTypeId}','${dsp}','${insertedId}','${model}','${newEnquiryDate}','${newDeliveryDate}','${sourceOfEnquiry}','${visitReason}')`;
-//       const urlNew = `INSERT INTO enquiries (branch_id, enquiry_type_id, salesperson_id, customer_id, date, delivery_date, enquiry_source_id, visitReason) VALUES('${branchId}','${enquiryTypeId}','${dsp}','${insertedId}','${newEnquiryDate}','${newDeliveryDate}','${sourceOfEnquiry}','${visitReason}')`;
-//       await db.query(urlNew, async (err, result) => {
-//         if (err) {
-//           console.log({ isSuccess: false, result: err });
-//           res.send({ isSuccess: false, result: "error" });
-//         } else if (result && result.insertId) {
-//           console.log(result.insertId, "result.insertId");
-//           console.log({ isSuccess: "success", result: urlNew });
-
-//           const urlSql = `INSERT INTO manufactur_details (enquiry_id, maker, modalName) VALUES('${result.insertId}', '${make}', '${model}')`;
-//           console.log(urlSql, "urlSql");
-//           await db.query(urlSql, (err, result) => {
-//             if (err) {
-//               console.log({ isSuccess: false, result: err });
-//               res.send({ isSuccess: false, result: "error" });
-//             } else {
-//               console.log({ isSuccess: "success", result: urlSql });
-//               res.send({ isSuccess: "success", result: "success" });
-//             }
-//           });
-//         }
-//       });
-//     }
-//   });
-// });
 router.post("/add-enquiry-category", tokenCheck, async (req, res) => {
   console.log(">>>>>>>addEnquiryCategory");
   const categoriesValue = Object.values(req.body);

@@ -63,9 +63,9 @@ router.get("/get-taluka-list/:id", tokenCheck, async (req, res) => {
   });
 });
 router.get("/get-village-list/:id", tokenCheck, async (req, res) => {
-  console.log(">>>>>get-village-list");
+  console.log(">>>>>get-village-listbyid");
   const id = req.params.id;
-  const url = `SELECT * FROM village where taluka_id = ${id} and is_active= '1';`;
+  const url = `SELECT * FROM village where taluka_id = ${id} and is_active= '1'`;
   await db.query(url, async (err, result) => {
     if (err) {
       console.log({ isSuccess: true, result: err });

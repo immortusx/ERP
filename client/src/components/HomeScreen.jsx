@@ -277,13 +277,28 @@ export default function HomeScreen() {
         <main className="asideMain">
           <section className="outerSection">
             <div className="logoDiv">
-              <img
-                className="rounded logoB"
-                src={`${process.env.REACT_APP_NODE_URL}/api${agencyData.angencyLogo}`}
-                alt="Agency"
-                height={100}
-                width={100}
-              />
+              {agencyData.angencyLogo ? (
+                <img
+                  className="rounded logoB"
+                  src={`${process.env.REACT_APP_NODE_URL}/api${agencyData.angencyLogo}`}
+                  alt="Agency"
+                  height={100}
+                  width={100}
+                />
+              ) : (
+                <div className="alert alert-danger text-center" role="alert">
+                  <p
+                    style={{
+                      color: "red",
+                      fontFamily: "Arial, sans-serif",
+                      fontSize: "11px",
+                      fontWeight: "bold",
+                    }}
+                  >
+                   <strong>*Please,</strong> First Create Agency.
+                  </p>
+                </div>
+              )}
               <h6 className="agency-style">{agencyData.agencyName}</h6>
 
               <img
