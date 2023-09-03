@@ -19,7 +19,6 @@ const initialState = {
 //     // })
 // })
 export const setEnquiryDb = createAsyncThunk('setEnquiryDb/enquirySlice', async (data) => {
-    console.log('data', data)
     const config = {
       headers: {
         token: localStorage.getItem("rbacToken"),

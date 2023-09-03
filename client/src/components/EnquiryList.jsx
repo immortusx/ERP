@@ -20,6 +20,7 @@ import "../styles/Users.css";
 import Checkbox from "@mui/material/Checkbox";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { setShowMessage } from "../redux/slices/notificationSlice";
+export {getUserListFromDb};
 export default function EnquiryList() {
   const dispatch = useDispatch();
   const [enquiries, setEnquiries] = useState([]);
@@ -410,19 +411,25 @@ export default function EnquiryList() {
       ),
     },
   ];
-  async function getEnquiriesFromDb() {
-    const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/get-enquiries`;
-    const config = {
-      headers: {
-        token: localStorage.getItem("rbacToken"),
-      },
-    };
-    await Axios.get(url, config).then((response) => {
-      if (response.data?.isSuccess) {
-        setEnquiries(response.data.result);
-      }
-    });
+  const getEnquiriesFromDb = async () => {
+  const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/get-enquiries`;
+  const config = {
+    headers: {
+      token: localStorage.getItem("rbacToken"),
+    },
+  };
+
+  try {
+    const response = await Axios.get(url, config);
+
+    if (response.data?.isSuccess) {
+      setEnquiries(response.data.result);
+    }
+  } catch (error) {
+    console.error("Error fetching enquiries:", error);
+    throw error; // Rethrow the error for handling in the calling code
   }
+};
   let counter = 1;
   useEffect(() => {
     getEnquiriesFromDb();
