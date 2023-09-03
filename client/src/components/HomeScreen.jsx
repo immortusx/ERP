@@ -254,6 +254,11 @@ export default function HomeScreen() {
     // set here branchesList
     setCurrentBranch(branchesList);
   }, []);
+  useEffect(()=> {
+    setTimeout(()=> {
+      setLoading(false);
+    },2000)
+  },[])
   return (
     <>
       <aside ref={adminAsideRef} className="asideNav">
