@@ -21,7 +21,7 @@ export default function Department_list({ workFor }) {
   const [deleteMessage, setDeleteMessage] = useState(null);
   const [type, setType] = useState(null);
   const [id, setId] = useState(null);
-  const [deleteDepartId,setDeleteDepartId]=useState(null);
+  const [deleteDepartId, setDeleteDepartId] = useState(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -264,30 +264,31 @@ export default function Department_list({ workFor }) {
           token: localStorage.getItem("rbacToken"),
         },
       };
-        try {
-          const response = await Axios.get(url, config);
-          console.log(response, "response.data");
-          if (response.data && response.data.isSuccess) {
-              console.log(response.data, "delete true");
-              dispatch(setShowMessage("Branch Deleted"));
-              getDepartmentForm();
-              setDisplayConfirmationModal(false);
-          } else {
-              console.log(response.data, "false");
-              dispatch(setShowMessage("Failed to delete"));
-          }
+      try {
+        const response = await Axios.get(url, config);
+        console.log(response, "response.data");
+        if (response.data && response.data.isSuccess) {
+          console.log(response.data, "delete true");
+          dispatch(setShowMessage("Branch Deleted"));
+          getDepartmentForm();
+          setDisplayConfirmationModal(false);
+        } else {
+          console.log(response.data, "false");
+          dispatch(setShowMessage("Failed to delete"));
+        }
       } catch (error) {
-          console.error("Error while deleting branch:", error);
-          // Handle the error as needed.
+        console.error("Error while deleting branch:", error);
+        // Handle the error as needed.
       }
-  }
-};
+    }
+  };
 
   const getDepartmentForm = () => {
     getDepartment()
       .then((data) => {
         console.log("Response from getDepartment:", data.result);
-        setDepartment(data.result);
+        const updatedDepart = data.result.filter((item) => item.id !== 1);
+        setDepartment(updatedDepart);
       })
       .catch((error) => {
         console.error("Error in getDepartment:", error);

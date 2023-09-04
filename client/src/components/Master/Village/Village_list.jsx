@@ -411,8 +411,9 @@ export default function Village_list() {
         });
 
         getAllVillageAction().then((data) => {
-            console.log(data, "All villageeeee")
-            setAllVillageDate(data.result)
+            console.log(data.result, "All villageeeee")
+            const updatedVillage = data.result.filter((item) => item.id !== 1);
+            setAllVillageDate(updatedVillage)
         }).catch((error) => {
             console.error('Error in getAllVillageAction:', error);
         });

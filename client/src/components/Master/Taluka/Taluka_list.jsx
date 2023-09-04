@@ -77,8 +77,9 @@ export default function Taluka_list() {
         });
 
         getAllTalukaAction().then((data) => {
-            console.log(data, "All talukaaaaaaaaaaaaa")
-            setAllTalukaDate(data.result)
+            console.log(data.result, "All talukaaaaaaaaaaaaa")
+            const updatedtaluka = data.result.filter((item) => item.id !== 1)
+            setAllTalukaDate(updatedtaluka)
         }).catch((error) => {
             console.error('Error in getAllTalukaAction:', error);
         });
