@@ -41,48 +41,6 @@ export default function AddCategory({ workFor }) {
   const featuresState = useSelector(
     (state) => state.categoryfeaturesListState.featuresState
   );
-  function clearInpHook() {
-    setCategoryData({
-      category_name: "",
-      category_description: "",
-      department: "",
-      chehkedFeature: [],
-    });
-  }
-
-  // function onChangeHandle(data, id) {
-  //   console.log(data, "fhdfh");
-  //   console.log(id, "fhddddfh");
-  //   let tempAr = [];
-  //   // const value = data.target.value;
-  //   // const name = data.target.name;
-  //   const checked = data.target.checked ;
-
-  //   console.log(checked, "checked");
-  //   categoryData.chehkedFeature.forEach((i) => {
-  //     tempAr.push(i);
-  //   });
-  //   // if (id === undefined) {
-  //   //   setCategoryData((featureData) => ({ ...featureData, [name]: value }));
-  //   // } else {
-  //     if (checked) {
-  //       tempAr.push(id);
-  //       console.log(tempAr, "tempAr");
-  //       setCategoryData((featureData) => ({
-  //         ...featureData,
-  //         chehkedFeature: tempAr,
-  //       }));
-  //     } else {
-  //       tempAr = tempAr.filter((i) => {
-  //         return i != id;
-  //       });
-  //       setCategoryData((featureData) => ({
-  //         ...featureData,
-  //         chehkedFeature: tempAr,
-  //       }));
-  //     }
-  //   // }
-  // }
 
   function onChangeHandle(data, id) {
     const checked = data.target.checked;
@@ -162,7 +120,6 @@ export default function AddCategory({ workFor }) {
     if (editcategorySliceState.isSuccess) {
       if (editcategorySliceState.message.result === "success") {
         dispatch(setShowMessage("Data is Updated"));
-        clearInpHook();
         dispatch(clearEditcategoryState());
         navigate("/administration/configuration/category");
       } else {
@@ -194,23 +151,23 @@ export default function AddCategory({ workFor }) {
     };
   }, [workFor, editcategoryData]);
 
-  async function getcategoryid(id) {
-    const url = `${process.env.REACT_APP_NODE_URL}/api/master/get-categorybyid/${id}`;
-    const config = {
-      headers: {
-        token: localStorage.getItem("rbacToken"),
-      },
-    };
-    try {
-      const response = await Axios.get(url, config);
-      if (response.data?.isSuccess) {
-        console.log(response.data.result, "editData");
-        setCategoryData(response.data.result);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
+  // async function getcategoryid(id) {
+  //   const url = `${process.env.REACT_APP_NODE_URL}/api/master/get-categorybyid/${id}`;
+  //   const config = {
+  //     headers: {
+  //       token: localStorage.getItem("rbacToken"),
+  //     },
+  //   };
+  //   try {
+  //     const response = await Axios.get(url, config);
+  //     if (response.data?.isSuccess) {
+  //       console.log(response.data.result, "editData");
+  //       setCategoryData(response.data.result);
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }
   const getCategoryField = async (categoryId) => {
     console.log(categoryId, "categoryIs");
     if (categoryId) {
@@ -234,26 +191,23 @@ export default function AddCategory({ workFor }) {
   };
 
   useEffect(() => {
-    if (workFor === "forEdit" && editcategoryData && editcategoryData.data) {
-      const id = editcategoryData.data.id;
-      getcategoryid(id);
-      getCategoryField(id);
-    }
-  }, []);
-
-  useEffect(() => {
     if (addCategory.isSuccess) {
       if (addCategory.message.isSuccess) {
         dispatch(setShowMessage("Category is created"));
         dispatch(clearaddCategory());
         navigate("/administration/configuration/category");
-        clearInpHook();
         clearaddCategory();
       } else {
         dispatch(setShowMessage("Something is wrong"));
       }
     }
   }, [addCategory]);
+  useEffect(() => {
+    if (workFor === "forEdit" && editcategoryData && editcategoryData.data) {
+      const id = editcategoryData.data.id;
+      getCategoryField(id);
+    }
+  }, []);
 
   async function getDeptList() {
     const url = `${process.env.REACT_APP_NODE_URL}/api/master/get-department-list`;
@@ -285,29 +239,28 @@ export default function AddCategory({ workFor }) {
       [name]: value,
     }));
   };
+  useEffect(() => {
+    if (workFor === "forEdit") {
+      if (editcategoryData && editcategoryData.data.length > 0) {
+        setCategoryData({
+          category_name: editcategoryData.data.category_name,
+          category_description: editcategoryData.data.category_description,
+          department: editcategoryData.data.department,
+          chehkedFeature: checkField,
+        });
+      }
+    }
+  }, [workFor]);
 
   const handleSubmit = async (e) => {
-    console.log(categoryData, "cateogry Da");
     e.preventDefault();
-    const categoryname = categoryData.category_name;
-    const categorydescription = categoryData.category_description;
-    const categorydepartment = categoryData.department;
-    const categorychehkedFeature = categoryData.chehkedFeature;
-    if (
-      categoryname.length > 0 &&
-      categorydescription !== "" &&
-      categorydepartment !== "" &&
-      categorychehkedFeature !== []
-    ) {
-      if (workFor === "forEdit") {
-        categoryData["id"] = editcategoryData.data.id;
-        console.log(categoryData, "categoryData");
-        dispatch(editcategoryUpdateToDb(categoryData));
-      } else {
-        dispatch(addCategoryToDb(categoryData));
-      }
+    if (workFor === "forEdit") {
+      categoryData["id"] = editcategoryData.data.id;
+      console.log(categoryData, "editData");
+      dispatch(editcategoryUpdateToDb(categoryData));
     } else {
-      dispatch(setShowMessage("All field must be field"));
+      console.log(categoryData, "forAdd");
+      dispatch(addCategoryToDb(categoryData));
     }
   };
 
@@ -347,7 +300,6 @@ export default function AddCategory({ workFor }) {
   function handlCancel() {
     // navigate("/administration/configuration/category");
     console.log(categoryData, "categoryData");
-    clearInpHook();
   }
   const redirectModal = () => {
     navigate(-1);

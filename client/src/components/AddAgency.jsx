@@ -54,6 +54,7 @@ export default function AddAgency({ workFor }) {
         navigate("/administration/configuration");
         clearInpHook();
         clearaddaddAgency();
+        window.location.reload();
       } else {
         dispatch(setShowMessage("Something is wrong"));
       }

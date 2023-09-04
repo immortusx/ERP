@@ -403,6 +403,13 @@ export default function Enquiry({ workFor, villageId }) {
     }
   }, [enquiryData.category]);
 
+  useEffect(() => {
+    if (enquiryState && enquiryState.result.result === "success") {
+      dispatch(setShowMessage("Enquiry Registered Successfully !"));
+      dispatch(clearEnquiryState());
+      navigate("/sale/enquiryies");
+    }
+  }, [enquiryState]);
   async function handleSubmit() {
     console.log("currentCategoryData", currentCategoryData);
     const branchId = await localStorage.getItem("currentDealerId");
@@ -424,10 +431,7 @@ export default function Enquiry({ workFor, villageId }) {
     enquiryData.bank = bank;
     enquiryData.oldTractorOwned = oldTractorOwned;
 
-    console.log(enquiryData, "enquierekjjjjjjjj");
     dispatch(setEnquiryDb(enquiryData));
-    dispatch(setShowMessage("Enquiry is registered"));
-    navigate("/sale/enquiryies");
   }
 
   function getSelectedFields(data) {
@@ -966,7 +970,6 @@ export default function Enquiry({ workFor, villageId }) {
   function changeHandler(e) {
     const name = e.target.name;
     const value = e.target.value;
-    console.log("name, value", name, value);
     if (value === "") {
       clearState();
     } else {
@@ -996,7 +999,6 @@ export default function Enquiry({ workFor, villageId }) {
       return { ...pre, village: val };
     });
   };
-
 
   const onSelectedStatedata = (val) => {
     setEnquiryData((pre) => {
@@ -1034,10 +1036,10 @@ export default function Enquiry({ workFor, villageId }) {
           <Button
             variant="btn btn-warning mx-1"
             style={{
-              width: '70px',
-              height: '35px',
-              fontSize: '14px',
-              borderRadius: '20px',
+              width: "70px",
+              height: "35px",
+              fontSize: "14px",
+              borderRadius: "20px",
             }}
             onClick={() => {
               redirectModal();
