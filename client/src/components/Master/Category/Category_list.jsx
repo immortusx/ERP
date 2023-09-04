@@ -309,7 +309,7 @@ export default function Category_list({ workFor }) {
     }
   };
   const redirectModal = () => {
-    navigate(-1);
+    navigate("/administration/configuration");
   };
 
 

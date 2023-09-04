@@ -35,7 +35,7 @@ export default function Department_list({ workFor }) {
   //     flex: 1,
   //   },
   const redirectModal = () => {
-    navigate(-1);
+    navigate("/administration/configuration");
   };
 
 
