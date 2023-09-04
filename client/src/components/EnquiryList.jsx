@@ -20,7 +20,7 @@ import "../styles/Users.css";
 import Checkbox from "@mui/material/Checkbox";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { setShowMessage } from "../redux/slices/notificationSlice";
-export {getUserListFromDb};
+export { getUserListFromDb };
 export default function EnquiryList() {
   const dispatch = useDispatch();
   const [enquiries, setEnquiries] = useState([]);
@@ -130,7 +130,10 @@ export default function EnquiryList() {
       console.error("An error occurred while fetching data:", error);
     }
   }
-
+  const editEnquiryCell = (editEnquiryData) => {
+    const customerId = editEnquiryData.id;
+    navigate("/sale/enquiryies/editenquiry", { state: customerId });
+  };
   async function editsalesperson(formData) {
     const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/edit-salesperson-enquiry-data`;
     const config = {
@@ -153,7 +156,6 @@ export default function EnquiryList() {
     setShowComponent(false);
   };
 
-  
   async function getDspList(currentBranch) {
     const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/get-dsp/${currentBranch}`;
     const config = {
@@ -189,8 +191,6 @@ export default function EnquiryList() {
     dispatch(setShowMessage("Area is assigned"));
     setShowComponent(false);
   }
-
- 
 
   const columns = [
     {
@@ -379,7 +379,7 @@ export default function EnquiryList() {
             </button>
             <button
               onClick={() => {
-                console.log(params);
+                editEnquiryCell(params.row);
               }}
               className="myActionBtn m-1"
             >
@@ -412,24 +412,24 @@ export default function EnquiryList() {
     },
   ];
   const getEnquiriesFromDb = async () => {
-  const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/get-enquiries`;
-  const config = {
-    headers: {
-      token: localStorage.getItem("rbacToken"),
-    },
-  };
+    const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/get-enquiries`;
+    const config = {
+      headers: {
+        token: localStorage.getItem("rbacToken"),
+      },
+    };
 
-  try {
-    const response = await Axios.get(url, config);
+    try {
+      const response = await Axios.get(url, config);
 
-    if (response.data?.isSuccess) {
-      setEnquiries(response.data.result);
+      if (response.data?.isSuccess) {
+        setEnquiries(response.data.result);
+      }
+    } catch (error) {
+      console.error("Error fetching enquiries:", error);
+      throw error; // Rethrow the error for handling in the calling code
     }
-  } catch (error) {
-    console.error("Error fetching enquiries:", error);
-    throw error; // Rethrow the error for handling in the calling code
-  }
-};
+  };
   let counter = 1;
   useEffect(() => {
     getEnquiriesFromDb();
@@ -473,7 +473,6 @@ export default function EnquiryList() {
           <div
             onClick={() => {
               navigate("/sale/enquiryies/enquiry");
-              
             }}
             className="d-flex align-items-center px-1"
             type="button"
