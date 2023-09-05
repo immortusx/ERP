@@ -33,6 +33,8 @@ export default function Enquiry({ workFor, villageId }) {
   const [categoriesList, setCategoriesList] = useState([]);
   const [categoryId, setCategoryId] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [editEnquiryDate, setEditEnquiryDate] = useState(null);
+  const [editdeliveryDate, setEditDeliveryDate] = useState(null);
   const [editEnquiryData, setEditEnquiryData] = useState({});
   const [currentCategoryData, setCurrentCategoryData] = useState({
     id: "",
@@ -194,7 +196,7 @@ export default function Enquiry({ workFor, villageId }) {
 
   useEffect(() => {
     if (editEnquiryData && Object.keys(editEnquiryData).length > 0) {
-      console.log(editEnquiryData.branch_id, "branchs");
+      console.log(editEnquiryData.date, "branchs");
       setNewEnquiryData({
         branchId: editEnquiryData.branch_id,
         firstName: editEnquiryData.first_name,
@@ -208,7 +210,7 @@ export default function Enquiry({ workFor, villageId }) {
         tehsil: Number(editEnquiryData.taluka),
         village: Number(editEnquiryData.village),
         dsp: editEnquiryData.salesperson_id,
-        model: editEnquiryData.product_id
+        model: editEnquiryData.product_id,
       });
       setEnquiryData({
         state: Number(editEnquiryData.state),
@@ -216,7 +218,12 @@ export default function Enquiry({ workFor, villageId }) {
         tehsil: Number(editEnquiryData.taluka),
         village: Number(editEnquiryData.village),
       });
-      getModelList(1)
+      getModelList(1);
+      getSourceOfEnquiryList(2);
+      const enquiryDate = new Date(editEnquiryData.date);
+      setEditEnquiryDate(enquiryDate);
+      const deliveryDate = new Date(editEnquiryData.delivery_date);
+      setEditDeliveryDate(deliveryDate);
     }
   }, [editEnquiryData]);
   useEffect(() => {
@@ -467,6 +474,9 @@ export default function Enquiry({ workFor, villageId }) {
     }
   }, [enquiryState]);
   async function handleSubmit() {
+    if(workFor){
+      console.log(workFor, 'woro')
+    }
     console.log("currentCategoryData", currentCategoryData);
     const branchId = await localStorage.getItem("currentDealerId");
     const dsp = newEnquiryData.dsp;
@@ -694,7 +704,12 @@ export default function Enquiry({ workFor, villageId }) {
                 newEnquiryList.listMake.length > 0 &&
                 newEnquiryList.listMake.map((i, index) => {
                   return (
-                    <option selected={i.id == 1 ? true : false} key={index} value={i.id} className="myLabel">
+                    <option
+                      selected={i.id == 1 ? true : false}
+                      key={index}
+                      value={i.id}
+                      className="myLabel"
+                    >
                       {i.name}
                     </option>
                   );
@@ -713,6 +728,7 @@ export default function Enquiry({ workFor, villageId }) {
               onChange={changeHandlerNewEnquiry}
               className="inpClr myInput"
               name="enquiryPrimarySource"
+              defaultValue={2}
             >
               <option value="0" className="myLabel">
                 select
@@ -721,7 +737,12 @@ export default function Enquiry({ workFor, villageId }) {
                 newEnquiryList.listPrimarySource.length > 0 &&
                 newEnquiryList.listPrimarySource.map((i, index) => {
                   return (
-                    <option key={index} value={i.id} className="myLabel">
+                    <option
+                      selected={i.id == 2 ? true : false}
+                      key={index}
+                      value={i.id}
+                      className="myLabel"
+                    >
                       {i.name}
                     </option>
                   );
@@ -740,6 +761,7 @@ export default function Enquiry({ workFor, villageId }) {
               onChange={changeHandlerNewEnquiry}
               className="inpClr myInput"
               name="sourceOfEnquiry"
+              defaultValue={3}
             >
               <option value="0" className="myLabel">
                 select
@@ -888,7 +910,12 @@ export default function Enquiry({ workFor, villageId }) {
                 newEnquiryList.listModel.length > 0 &&
                 newEnquiryList.listModel.map((i, index) => {
                   return (
-                    <option selected={i.id === 1 ? true : false} key={index} value={i.id} className="myLabel">
+                    <option
+                      selected={i.id === 1 ? true : false}
+                      key={index}
+                      value={i.id}
+                      className="myLabel"
+                    >
                       {i.name}
                     </option>
                   );
@@ -904,7 +931,8 @@ export default function Enquiry({ workFor, villageId }) {
               EnquiryDate *
             </label>
             <DatePicker
-              selected={newEnquiryData.enquiryDate}
+              selected={editEnquiryDate}
+              dateFormat="dd/MM/yyyy"
               onChange={(date) =>
                 setNewEnquiryData((newEnquiryData) => ({
                   ...newEnquiryData,
@@ -922,7 +950,8 @@ export default function Enquiry({ workFor, villageId }) {
               Expected Delivery Date
             </label>
             <DatePicker
-              selected={newEnquiryData.deliveryDate}
+              selected={editdeliveryDate}
+              dateFormat="dd/MM/yyyy"
               onChange={(date) =>
                 setNewEnquiryData((newEnquiryData) => ({
                   ...newEnquiryData,
@@ -943,6 +972,7 @@ export default function Enquiry({ workFor, villageId }) {
               onChange={changeHandlerNewEnquiry}
               className="inpClr myInput"
               name="modeOfFinance"
+              defaultValue={'Cash'}
             >
               <option value="0" className="myLabel">
                 select
@@ -970,6 +1000,7 @@ export default function Enquiry({ workFor, villageId }) {
               onChange={changeHandlerNewEnquiry}
               className="inpClr myInput"
               name="bank"
+              defaultValue={'State Bank Of India'}
             >
               <option value="0" className="myLabel">
                 select
@@ -978,7 +1009,7 @@ export default function Enquiry({ workFor, villageId }) {
                 newEnquiryList.listBank.length > 0 &&
                 newEnquiryList.listBank.map((i, index) => {
                   return (
-                    <option key={index} value={i.name} className="myLabel">
+                    <option selected={i.name == 'State Bank Of India' ? true : false} key={index} value={i.name} className="myLabel">
                       {i.name}
                     </option>
                   );
