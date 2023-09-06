@@ -79,8 +79,11 @@ router.post(
       const { name, contact, email} = req.body;
       console.log(req.body, "req.body");
       console.log(req.file, "req.file");
-      const logoImage = `/upload/${req.file.filename}`;
-    
+      let logoImage = req.body.logo;
+      console.log('req.file',req.file)
+      if (req.file) {
+        logoImage = `/upload/${req.file.filename}`;
+      } 
       try {
         const updateNameSql = `UPDATE configuration SET value = '${name}' WHERE setting = 'agency' AND key_name = 'name'`;
         const updateContactSql = `UPDATE configuration SET value = '${contact}' WHERE setting = 'agency' AND key_name = 'contact'`;

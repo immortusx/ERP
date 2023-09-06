@@ -238,7 +238,7 @@ export default function Department_list({ workFor }) {
     console.log("editEmployeee");
     dispatch(setEditdepartmentData(data));
     console.log(setEditdepartmentData(data));
-    navigate("/administration/configuration/department/editdepartment");
+    navigate("/administration/configuration/department/edit");
   };
 
   const deleteActionCall = (data) => {
@@ -309,7 +309,7 @@ export default function Department_list({ workFor }) {
               className="btn btn-primary"
               onClick={() => {
                 navigate(
-                  "/administration/configuration/department/adddepartment"
+                  "/administration/configuration/department/add"
                 );
               }}
             >

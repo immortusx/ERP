@@ -364,7 +364,7 @@ export default function AddUser({ workFor }) {
                         </section>
                         <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
                             <label className='myLabel' htmlFor="email">Phone Number</label>
-                            <input value={userData.phoneNumber} className='myInput inputElement' autoComplete='false' onChange={(e) => { onChangeHandler(e) }} type="number" name="phoneNumber" />
+                            <input value={userData.phoneNumber} className='myInput inputElement' autoComplete='false' onChange={(e) => { onChangeHandler(e) }} type="text" name="phoneNumber" />
                         </section>
                         <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
                             <label className='myLabel' htmlFor="password">{workFor === 'forAdd' ? 'Password' : 'New password'}</label>
@@ -438,7 +438,7 @@ export default function AddUser({ workFor }) {
                             </div>
                         </section>
                         <section className='d-flex mt-3  flex-column flex-sm-row'>
-                            <button className='col-12 col-sm-5 col-lg-2 myBtn py-2' onClick={handleSubmit} type='button'>{workFor === 'forAdd' ? 'Add user' : 'Edit user'}</button>
+                            <button className='col-12 col-sm-5 col-lg-2 myBtn py-2' onClick={handleSubmit} type='button'>{workFor === 'forAdd' ? 'Add user' : 'Save'}</button>
                             <button className='ms-0 ms-sm-3 mt-3 mt-sm-0 col-12 col-sm-5 col-lg-2 myBtn py-2' onClick={handleCancel} type='button'>Cancel</button>
                         </section>
                     </div>

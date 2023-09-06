@@ -969,7 +969,7 @@ export default function Addemployee({ workFor }) {
             onClick={handleSubmit}
             type="button"
           >
-            {workFor === "forAdd" ? "Add employee" : "Edit employee"}
+            {workFor === "forAdd" ? "Add employee" : "Save"}
           </button>
           <button
             className="ms-0 ms-sm-3 mt-3 mt-sm-0 col-12 col-sm-5 col-lg-2 myBtn py-2"
