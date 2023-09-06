@@ -1327,4 +1327,47 @@ router.get("/get-total-enquiry-booking", tokenCheck, async (req, res) => {
   }
 });
 
+router.get("/delete-enquiry/:id", tokenCheck, async (req, res) => {
+  try {
+    const customerId = req.params.id;
+    console.log(customerId, "Customer ID");
+
+    // Check if the customer exists
+    const checkCustomerQuery = `SELECT * FROM customers WHERE id = ${customerId}`;
+    db.query(checkCustomerQuery, async (err, customerResult) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ isSuccess: false, result: "error" });
+      } else if (customerResult.length === 1) {
+        // Customer exists, mark it as deleted
+        const deleteCustomerQuery = `UPDATE customers SET is_active = 1 WHERE id = ${customerId}`;
+        db.query(deleteCustomerQuery, [customerId], async (err, deleteResult) => {
+          if (err) {
+            console.error(err);
+            res.status(500).json({ isSuccess: false, result: "error" });
+          } else {
+            // Now, delete related enquiries
+            const deleteEnquiriesQuery = "DELETE FROM enquiries WHERE customer_id = ?";
+            db.query(deleteEnquiriesQuery, [customerId], async (err, deleteEnquiriesResult) => {
+              if (err) {
+                console.error(err);
+                res.status(500).json({ isSuccess: false, result: "error" });
+              } else {
+                res.json({ isSuccess: true, result: "deletesuccess" });
+              }
+            });
+          }
+        });
+      } else {
+        // Customer does not exist
+        console.log("Customer not found");
+        res.status(404).json({ isSuccess: false, result: "notExist" });
+      }
+    });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ isSuccess: false, result: "error" });
+  }
+});
+
 module.exports = router;
