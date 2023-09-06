@@ -138,7 +138,7 @@ const FollowUpScreen = ({item}) => {
           <SweetSuccessAlert message={'Call Schedule'} modalShow={true} />
         )}
         <View style={styles.dateContainer}>
-          <Text style={styles.selectDateText}>
+          <Text style={[styles.selectDateText, alertError && styles.alertErrorDate]}>
             Select Next Follow Up Date *
           </Text>
           <View style={styles.dateStyle}>
