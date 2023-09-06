@@ -138,9 +138,7 @@ export default function Addemployee({ workFor }) {
     formData.append("bloodgroup", bg);
     formData.append("selectedRole", ro);
     formData.append("logo", alogo);
-    if (fileInputRef.current.files.length === 0) {
-      dispatch(setShowMessage("*Please Select a File"));
-    } else {
+     {
       if (workFor === "forAdd" ? pass.length > 0 : true) {
         employeeData["bankname"] = BankDetais.bankname;
 
