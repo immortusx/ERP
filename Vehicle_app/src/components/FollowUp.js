@@ -44,6 +44,7 @@ const FollowUpScreen = ({item}) => {
   const [scheduleDetails, setScheduleDetails] = useState([]);
   const [isShow, setIsShow] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [alertError, setAlertError] = useState(false);
   const enquiryStage = ['Follow Up', 'Booking', 'Drop', 'Invalid   '];
   const [selectedOption, setSelectedOption] = useState('Follow Up');
 
@@ -85,8 +86,11 @@ const FollowUpScreen = ({item}) => {
     let mobileNumber = 9060779043;
     Linking.openURL(`tel:${item.phone_nmuber}`);
   };
+  const getSelectedDateError = () => {
+    setAlertError(true);
+  };
   const handleSaveDetails = () => {
-    if (discussion.length > 0) {
+    if (discussion.length > 0 && scheduleDate) {
       const formData = {
         last_discussion: discussion,
         next_followup_date: scheduleDate,
@@ -94,6 +98,8 @@ const FollowUpScreen = ({item}) => {
       };
       dispatch(setFollowUpDb(formData));
       setDiscussion('');
+    } else {
+      getSelectedDateError();
     }
   };
   const handleCalendarDate = selectedDate => {
@@ -140,7 +146,7 @@ const FollowUpScreen = ({item}) => {
               onPress={() => {
                 setOpenScheduleDate(true);
               }}>
-              <Text style={styles.dateText}>
+              <Text style={[styles.dateText, alertError && styles.alertErrorDate]}>
                 {scheduleDate === ''
                   ? new Date().toISOString().slice(0, 10)
                   : scheduleDate}
@@ -323,6 +329,10 @@ const styles = StyleSheet.create({
     borderWidth: 0.2,
     borderRadius: 5,
   },
+  alertErrorDate: {
+    color: 'red',
+    fontWeight: 'bold'
+  }
 });
 
 export default FollowUpScreen;

@@ -464,7 +464,7 @@ router.post("/set-new-fast-enquiry", tokenCheck, async (req, res) => {
         // console.log({ isSuccess: true, result: salePersonDetails });
 
         const userData = salePersonDetails[0][0];
-        const salesperson_id = userData ? userData.userId : 20;
+        const salesperson_id = userData ? userData.userId : 1;
         console.log(salesperson_id, "userId");
 
         if (salesperson_id) {
@@ -481,7 +481,7 @@ router.post("/set-new-fast-enquiry", tokenCheck, async (req, res) => {
                 // res.send({ isSuccess: true, result: fastEnquiry });
                 const customer_id = fastEnquiry.insertId;
                 console.log(customer_id);
-                const enquirySql = `INSERT INTO enquiries (branch_id, enquiry_type_id, salesperson_id, customer_id, date) VALUES (?,?,?,?,?)`;
+                const enquirySql = `INSERT INTO enquiries (branch_id, enquiry_category_id, salesperson_id, customer_id, date) VALUES (?,?,?,?,?)`;
                 await db.query(
                   enquirySql,
                   [
@@ -553,7 +553,7 @@ router.post("/set-new-detail-enquiry", tokenCheck, async (req, res) => {
         // console.log({ isSuccess: true, result: salePersonDetails });
 
         const userData = salePersonDetails[0][0];
-        const salesperson_id = userData ? userData.userId : 20;
+        const salesperson_id = userData ? userData.userId : 1;
         console.log(salesperson_id, "userId");
 
         if (salesperson_id) {
@@ -582,7 +582,7 @@ router.post("/set-new-detail-enquiry", tokenCheck, async (req, res) => {
                   .replace("T", " ");
                 console.log(enquiryDate);
                 console.log(customer_id);
-                const enquirySql = `INSERT INTO enquiries (branch_id, enquiry_type_id, salesperson_id, customer_id, date, delivery_date, enquiry_source_id) VALUES (?,?,?,?,?,?,?)`;
+                const enquirySql = `INSERT INTO enquiries (branch_id, enquiry_category_id, salesperson_id, customer_id, date, delivery_date, enquiry_source_id) VALUES (?,?,?,?,?,?,?)`;
                 await db.query(
                   enquirySql,
                   [

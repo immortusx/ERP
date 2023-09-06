@@ -27,7 +27,6 @@ import {clearModalData, saveModalData} from '../redux/slice/modalDataSlice';
 import SweetSuccessAlert from './subCom/SweetSuccessAlert';
 import {useNavigation} from '@react-navigation/native';
 import {getEnquiryData} from '../redux/slice/getEnquirySlice';
-import {clearLocationForm} from '../redux/slice/locationFormSlice';
 import {clearManufacturerDetails} from '../redux/slice/manufacturerDetailsSlice';
 import {
   clearEditEnquiryState,
@@ -39,8 +38,6 @@ import MinDateCalendars from './subCom/MinDateCalendars';
 const DetailEnquiry = ({route}) => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
-  const locationForm = useSelector(state => state.locationForm);
-  const {taluka, village} = locationForm;
   const enquiryState = useSelector(state => state.enquirySlice.enquiryState);
   const editEnquiryState = useSelector(
     state => state.editEnquirySlice.editEnquiryState,
@@ -78,7 +75,11 @@ const DetailEnquiry = ({route}) => {
   const [loading, setLoading] = useState(false);
   const [modalData, setModalData] = useState([]);
   const [modalList, setModalList] = useState([]);
+  const [talukaResult, setTalukaResult] = useState([]);
+  const [resultData, setResultData] = useState([]);
   const [variantData, setVariantData] = useState([]);
+  const [village, setVillage] = useState(null);
+  const [taluka, setTaluka] = useState(null);
   const [currentCategoryData, setcurrentCategoryData] = useState({
     id: '',
     fields: [],
@@ -116,6 +117,14 @@ const DetailEnquiry = ({route}) => {
   const modalsList = modalList.map(item => ({
     label: item.modalName,
     value: item.id,
+  }));
+  const talukaData = talukaResult.map(taluka => ({
+    label: taluka.name,
+    value: taluka.id,
+  }));
+  const villageData = resultData.map(village => ({
+    label: village.name,
+    value: village.id,
   }));
 
   const enquirySourceItem = [
@@ -281,37 +290,83 @@ const DetailEnquiry = ({route}) => {
         );
         break;
       }
-      case 'location': {
+      case 'taluko': {
+        return (
+          <View style={{marginBottom: 5}}>
+            <Text style={[styles.label, {marginBottom: 5}]}>Select Taluka *</Text>
+            <View style={styles.enquirySourceContainer}>
+              {/* {renderLabel()} */}
+              <Dropdown
+                style={[
+                  styles.dropdown,
+                  isFocus && {borderColor: 'blue'},
+                  {paddingHorizontal: 5},
+                ]}
+                placeholderStyle={styles.placeholderStyle}
+                selectedTextStyle={styles.selectedTextStyle}
+                inputSearchStyle={styles.inputSearchStyle}
+                iconStyle={styles.iconStyle}
+                data={talukaData}
+                search
+                maxHeight={200}
+                labelField="label"
+                valueField="value"
+                placeholder={!isFocus ? 'Select Taluka' : ' '}
+                searchPlaceholder="Search..."
+                value={taluka}
+                onChange={item => {
+                  setTaluka(item.value);
+                }}
+              />
+            </View>
+          </View>
+        );
+        break;
+      }
+      case 'village': {
         return (
           <>
-            <View editable={false} style={[styles.inputStyle, styles.optional]}>
-              <View>
-                <TouchableOpacity
-                  style={styles.centeredContainer}
-                  onPress={() => {
-                    openAddLocation(editData);
-                  }}>
-                  <Image
-                    style={styles.plusImg}
-                    source={require('../../assets/plus2.png')}
-                  />
-                  <Text style={styles.textMore}>Add Location (Optional)</Text>
-                </TouchableOpacity>
+            <View style={{marginBottom: 5}}>
+              <Text style={[styles.label, {marginBottom: 5}]}>Select Village *</Text>
+              <View style={styles.enquirySourceContainer}>
+                {/* {renderLabel()} */}
+                <Dropdown
+                  style={[
+                    styles.dropdown,
+                    isFocus && {borderColor: 'blue'},
+                    {paddingHorizontal: 5},
+                  ]}
+                  placeholderStyle={styles.placeholderStyle}
+                  selectedTextStyle={styles.selectedTextStyle}
+                  inputSearchStyle={styles.inputSearchStyle}
+                  iconStyle={styles.iconStyle}
+                  data={villageData}
+                  search
+                  maxHeight={200}
+                  labelField="label"
+                  valueField="value"
+                  placeholder={!isFocus ? 'Select Village' : ' '}
+                  searchPlaceholder="Search..."
+                  value={village}
+                  onChange={item => {
+                    setVillage(item.value);
+                  }}
+                />
               </View>
+              {loading ? (
+                <ActivityIndicator
+                  style={{alignItems: 'flex-start'}}
+                  size={10}
+                  color="#3498DB"
+                />
+              ) : (
+                <Text style={{color: 'green', fontWeight: '400'}}>
+                  {salePerson
+                    ? 'Sales Person :-' + ' ' + salePerson.toUpperCase()
+                    : ''}
+                </Text>
+              )}
             </View>
-            {loading ? (
-              <ActivityIndicator
-                style={{alignItems: 'flex-start'}}
-                size={12}
-                color="#3498DB"
-              />
-            ) : (
-              <Text style={{color: 'green', fontWeight: '400'}}>
-                {salePerson
-                  ? 'Sales Person :-' + ' ' + salePerson.toUpperCase()
-                  : ''}
-              </Text>
-            )}
           </>
         );
         break;
@@ -609,6 +664,48 @@ const DetailEnquiry = ({route}) => {
   }, [category]);
 
   useEffect(() => {
+    const getTaluka = async () => {
+      const url = `${API_URL}/api/get-taluka-list`;
+      console.log('get taluka', url);
+      const token = await AsyncStorage.getItem('rbacToken');
+      const config = {
+        headers: {
+          token: token ? token : '',
+        },
+      };
+      console.log(config);
+      await axios.get(url, config).then(response => {
+        if (response) {
+          // console.log(response.data.result, 'talukaid');
+          setTalukaResult(response.data.result);
+        }
+      });
+    };
+    getTaluka();
+  }, []);
+  useEffect(() => {
+    if (taluka) {
+      const getVillage = async () => {
+        const url = `${API_URL}/api/get-village-list/${taluka}`;
+        console.log('get taluka', url);
+        const token = await AsyncStorage.getItem('rbacToken');
+        const config = {
+          headers: {
+            token: token ? token : '',
+          },
+        };
+        console.log(config);
+        await axios.get(url, config).then(response => {
+          if (response) {
+            // console.log(response.data, 'villllll');
+            setResultData(response.data.result);
+          }
+        });
+      };
+      getVillage();
+    }
+  }, [taluka]);
+  useEffect(() => {
     if (modalVisible) {
       const getManufacturer = async () => {
         const url = `${API_URL}/api/master/get-allmanufacturer`;
@@ -737,7 +834,6 @@ const DetailEnquiry = ({route}) => {
   useEffect(() => {
     if (enquiryState && enquiryState.isSuccess === true) {
       dispatch(clearEnquiryState());
-      dispatch(clearLocationForm());
       dispatch(clearManufacturerDetails());
       dispatch(clearModalData());
       setMessage('Enquiry Submitted');
@@ -752,8 +848,6 @@ const DetailEnquiry = ({route}) => {
 
   const submitEnquiry = () => {
     const {firstname, lastname, phone, whatsappno, enquiry} = enquiryData;
-    const {taluka, village} = locationForm;
-
     const formData = {
       first_name: firstname,
       last_name: lastname,
