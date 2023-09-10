@@ -178,7 +178,11 @@ router.post(
   async (req, res) => {
     console.log(">>>>>editemployeee");
     console.log(req.body);
-    const logoImage = `/upload/${req.file.filename}`;
+    let logoImage = req.body.logo;
+    console.log('req.file',req.file)
+    if (req.file) {
+      logoImage = `/upload/${req.file.filename}`;
+    }
     const roleArr = req.body.role;
     const firstName = req.body.firstName;
     const lastName = req.body.lastName;

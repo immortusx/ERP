@@ -301,7 +301,7 @@ const Tax = () => {
     useEffect(() => {
         const rowsData = taxesList.map((item, index) => ({
             ...item,
-            id: index + 1,
+            id: item.id,
             checkbox: selectAll,
         }));
         setRowData(rowsData);
@@ -413,7 +413,7 @@ const Tax = () => {
                         > Close </Button>
                         <Button variant="primary"
                             onClick={handleSubmit}
-                        >{modalId === 0 ? 'Add' : 'Edit'}</Button>
+                        >{modalId === 0 ? 'Add' : 'Save'}</Button>
                     </Modal.Footer>
                 </Modal>
             </main>

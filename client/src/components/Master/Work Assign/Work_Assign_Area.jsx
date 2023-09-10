@@ -187,7 +187,7 @@ const Work_Assign_Area = () => {
             renderCell: (params) => {
 
                 return (
-                    <div style={{ fontWeight: 'bold' }}>
+                    <div>
                         {params.value}
                     </div>
                 );

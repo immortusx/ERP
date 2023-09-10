@@ -7,7 +7,9 @@ import {
 import { setEditUserData } from "../redux/slices/editUserDataSlice";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import Axios from "axios";
+import axios from "axios";
 import moment from "moment";
+import AlertDeleteModal from "./AlertDelete/AlertDeleteModal";
 import { Modal, Button } from "react-bootstrap";
 import Select from "react-select";
 
@@ -26,7 +28,13 @@ export default function EnquiryList() {
   const [enquiries, setEnquiries] = useState([]);
   const [showComponent, setShowComponent] = useState(false);
   const [customerId, setCustomerId] = useState([]);
+  const [enquiryId, setEnquiryId] = useState(null);
   const [selecteduser, setSelectedUser] = useState({});
+  const [id, setId] = useState(null);
+  const [displayConfirmationModal, setDisplayConfirmationModal] =
+  useState(false);
+  const [type, setType] = useState(null);
+  const [deleteMessage, setDeleteMessage] = useState(null);
   const [newEnquiryList, setNewEnquiryList] = useState({
     listDsp: [],
   });
@@ -38,7 +46,7 @@ export default function EnquiryList() {
   const currentBranch = localStorage.getItem("currentDealerId");
   console.log(currentBranch, "currentBranch*******");
 
-  function editActionCall() {}
+  function editActionCall() { }
 
   const [selectAll, setSelectAll] = useState(false);
   const [rowData, setRowData] = useState([]);
@@ -156,6 +164,7 @@ export default function EnquiryList() {
     setShowComponent(false);
   };
 
+
   async function getDspList(currentBranch) {
     const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/get-dsp/${currentBranch}`;
     const config = {
@@ -175,6 +184,42 @@ export default function EnquiryList() {
       }
     });
   }
+  const deleteActionCall = (data) => {
+    setType("enquiry_delete");
+    setEnquiryId(data.id);
+    console.log(data.id,"ghsghghsd")
+    setDeleteMessage(
+      `Are You Sure You Want To Delete The Enquiry '${data.first_name} ${data.last_name}'?`
+    );
+    setDisplayConfirmationModal(true);
+  };
+  const hideConfirmationModal = () => {
+    setDisplayConfirmationModal(false);
+  };
+
+  const submitDelete = async () => {
+    if (enquiryId) {
+      const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/delete-enquiry/${enquiryId}`;
+      const config = {
+        headers: {
+          token: localStorage.getItem("rbacToken"),
+        },
+      };
+      console.log(enquiryId, "idddddddddddddddddddddddd");
+      await axios.get(url, config).then((response) => {
+        console.log(response, "response.data ");
+        if (response.data && response.data.isSuccess) {
+          console.log(response.data, "delete true");
+          dispatch(setShowMessage("Enquiry Deleted"));
+          dispatch(getUserListFromDb());
+          setDisplayConfirmationModal(false);
+        } else {
+          console.log(response.data, "false");
+          dispatch(setShowMessage("failed to delete"));
+        }
+      });
+    }
+  };
 
   function handleSubmit() {
     console.log("form save");
@@ -191,6 +236,8 @@ export default function EnquiryList() {
     dispatch(setShowMessage("Area is assigned"));
     setShowComponent(false);
   }
+
+
 
   const columns = [
     {
@@ -396,7 +443,13 @@ export default function EnquiryList() {
                 />
               </svg>
             </button>
-            <button className="myActionBtn m-1">
+
+            <button
+              onClick={() => {
+                deleteActionCall(params.row);
+              }}
+              className="myActionBtn m-1"
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="currentColor"
@@ -438,7 +491,7 @@ export default function EnquiryList() {
   useEffect(() => {
     const rowsData = enquiries.map((item, index) => ({
       ...item,
-      rowNumber: index + 1,
+      rowNumber: item.id,
       checkbox: selectAll,
     }));
     setRowData(rowsData);
@@ -466,134 +519,145 @@ export default function EnquiryList() {
   //   };
 
   return (
-    <div>
-      <div className="myTbl">
-        {/* <NavLink to={/edit-user}>callme</NavLink > */}
-        <div className="my-3  d-flex align-items-end justify-content-end">
-          <div
-            onClick={() => {
-              navigate("/sale/enquiryies/enquiry");
-            }}
-            className="d-flex align-items-center px-1"
-            type="button"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              fill="currentColor"
-              className="bi bi-plus-circle"
-              viewBox="0 0 16 16"
+    <>
+      <div>
+        <div className="myTbl">
+          {/* <NavLink to={/edit-user}>callme</NavLink > */}
+          <div className="my-3  d-flex align-items-end justify-content-end">
+            <div
+              onClick={() => {
+                navigate("/sale/enquiries/enquiry");
+
+              }}
+              className="d-flex align-items-center px-1"
+              type="button"
             >
-              <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
-              <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
-            </svg>
-            <h6 className="m-0 ps-1">Add Enquiry</h6>
-          </div>
-          <div
-            onClick={handleworkAssign}
-            className="d-flex align-items-center px-1"
-            type="button"
-          >
-            <PersonIcon />
-            <h6 className="m-0 ps-1">Work Assign</h6>
-          </div>
-        </div>
-
-        <div
-          className="tableMenuHover"
-          style={{ height: "85vh", width: "100%" }}
-        >
-          <DataGrid
-            rows={rowData}
-            columns={columns}
-            getRowId={(params) => {
-              return params.rowNumber;
-            }}
-            style={{
-              fontFamily: "Poppins",
-              padding: 5,
-              backgroundColor: "white",
-            }}
-            className="rounded"
-            pageSizeOptions={[5, 10, 25]}
-            initialState={{
-              ...enquiries.initialState,
-              pagination: { paginationModel: { pageSize: 10 } },
-            }}
-            components={{
-              Toolbar: GridToolbar,
-              NoRowsOverlay: () => (
-                <div
-                  style={{
-                    height: "100%",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <span>There is no Enquiry with current branch</span>
-                </div>
-              ),
-            }}
-            componentsProps={{
-              toolbar: {
-                position: "right",
-                style: { fontFamily: "Poppins", alignSelf: "end" },
-              },
-            }}
-            rowSelection={false}
-            autoPageSize={false}
-          />
-        </div>
-      </div>
-      <Modal show={showComponent} onHide={hideModal}>
-        <Modal.Header closeButton>
-          <h5 className="modal-title" id="TalukaModalLabel">
-            Work Assign
-          </h5>
-        </Modal.Header>
-        <Modal.Body>
-          <div className="">
-            <div className="row mt-5">
-              <h5>Select Sales Person</h5>
-
-              <select
-                onChange={changeHandler}
-                defaultValue={selecteduser}
-                name="dsp"
-                className="myInput inpClr "
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                fill="currentColor"
+                className="bi bi-plus-circle"
+                viewBox="0 0 16 16"
               >
-                <option value="0" className="myLabel">
-                  select Sales Person
-                </option>
-                {newEnquiryList.listDsp &&
-                  newEnquiryList.listDsp.length > 0 &&
-                  newEnquiryList.listDsp.map((person) => {
-                    const fullName = `${person.first_name} ${person.last_name}`;
-                    return (
-                      <option
-                        key={person.id}
-                        value={person.id}
-                        className="myLabel"
-                      >
-                        {fullName}
-                      </option>
-                    );
-                  })}
-              </select>
+                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
+              </svg>
+              <h6 className="m-0 ps-1">Add Enquiry</h6>
+            </div>
+            <div
+              onClick={handleworkAssign}
+              className="d-flex align-items-center px-1"
+              type="button"
+            >
+              <PersonIcon />
+              <h6 className="m-0 ps-1">Work Assign</h6>
             </div>
           </div>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={hideModal}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={handleSubmit}>
-            Save
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    </div>
+
+          <div
+            className="tableMenuHover"
+            style={{ height: "85vh", width: "100%" }}
+          >
+            <DataGrid
+              rows={rowData}
+              columns={columns}
+              getRowId={(params) => {
+                return params.rowNumber;
+              }}
+              style={{
+                fontFamily: "Poppins",
+                padding: 5,
+                backgroundColor: "white",
+              }}
+              className="rounded"
+              pageSizeOptions={[5, 10, 25]}
+              initialState={{
+                ...enquiries.initialState,
+                pagination: { paginationModel: { pageSize: 10 } },
+              }}
+              components={{
+                Toolbar: GridToolbar,
+                NoRowsOverlay: () => (
+                  <div
+                    style={{
+                      height: "100%",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <span>There is no Enquiry with current branch</span>
+                  </div>
+                ),
+              }}
+              componentsProps={{
+                toolbar: {
+                  position: "right",
+                  style: { fontFamily: "Poppins", alignSelf: "end" },
+                },
+              }}
+              rowSelection={false}
+              autoPageSize={false}
+            />
+          </div>
+        </div>
+        <Modal show={showComponent} onHide={hideModal}>
+          <Modal.Header closeButton>
+            <h5 className="modal-title" id="TalukaModalLabel">
+              Work Assign
+            </h5>
+          </Modal.Header>
+          <Modal.Body>
+            <div className="">
+              <div className="row mt-5">
+                <h5>Select Sales Person</h5>
+
+                <select
+                  onChange={changeHandler}
+                  defaultValue={selecteduser}
+                  name="dsp"
+                  className="myInput inpClr "
+                >
+                  <option value="0" className="myLabel">
+                    select Sales Person
+                  </option>
+                  {newEnquiryList.listDsp &&
+                    newEnquiryList.listDsp.length > 0 &&
+                    newEnquiryList.listDsp.map((person) => {
+                      const fullName = `${person.first_name} ${person.last_name}`;
+                      return (
+                        <option
+                          key={person.id}
+                          value={person.id}
+                          className="myLabel"
+                        >
+                          {fullName}
+                        </option>
+                      );
+                    })}
+                </select>
+              </div>
+            </div>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={hideModal}>
+              Close
+            </Button>
+            <Button variant="primary" onClick={handleSubmit}>
+              Save
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      </div>
+      <AlertDeleteModal
+        showModal={displayConfirmationModal}
+        confirmModal={submitDelete}
+        hideModal={hideConfirmationModal}
+        type={type}
+        id={enquiryId}
+        message={deleteMessage}
+      />
+    </>
   );
 }

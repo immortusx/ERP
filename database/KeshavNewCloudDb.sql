@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Aug 25, 2023 at 09:07 AM
+-- Generation Time: Sep 03, 2023 at 10:56 AM
 -- Server version: 10.2.43-MariaDB
 -- PHP Version: 7.2.30
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `new_keshav_vehicle_crm`
+-- Database: `VehicleKeshavCRM`
 --
 
 DELIMITER $$
@@ -169,9 +169,9 @@ END IF;
 END$$
 
 CREATE DEFINER=`balkrush1`@`%` PROCEDURE `sp_get_category_with_total_enquiry` (IN `villageId` INT)  BEGIN
-SELECT et.*, COUNT(e.enquiry_type_id) AS total_enquiries
+SELECT et.*, COUNT(e.enquiry_category_id) AS total_enquiries
 FROM enquiry_category AS et
-LEFT JOIN enquiries AS e ON et.id = e.enquiry_type_id
+LEFT JOIN enquiries AS e ON et.id = e.enquiry_category_id
 LEFT JOIN customers AS c ON c.id = e.customer_id 
 WHERE c.village = villageId
 GROUP BY et.id;
@@ -405,7 +405,7 @@ LEFT JOIN taluka AS t1 ON t1.id = s.taluka
 LEFT JOIN village AS v1 ON v1.id = s.village
 LEFT JOIN state AS st ON st.state_id = s.state
 LEFT JOIN enquiry_sources AS es ON es.id = f.enquiry_source_id
-WHERE ((f.enquiry_stage IS NULL OR f.enquiry_stage <> 'INVALID') AND s.village = villageId AND f.enquiry_type_id = categoryId)
+WHERE ((f.enquiry_stage IS NULL OR f.enquiry_stage <> 'INVALID') AND s.village = villageId AND f.enquiry_category_id = categoryId)
 ORDER BY f.date DESC;
 END$$
 
@@ -468,6 +468,18 @@ CREATE DEFINER=`balkrush1`@`%` PROCEDURE `sp_get_role_list` ()  BEGIN
 	SELECT * from roles where id != 1 and `active` = 1 and `delete` = 0;
 END$$
 
+CREATE DEFINER=`balkrush1`@`%` PROCEDURE `sp_get_selected_enquiry_fields_by_category` (IN `categoryId` INT)  BEGIN
+SELECT f.field_id, ef.field FROM enquiry_category_field as f inner join enquiry_category as s on s.id = f.category_id inner join enquiry_fields as ef on ef.id = f.field_id where category_id = categoryId;
+END$$
+
+CREATE DEFINER=`balkrush1`@`%` PROCEDURE `sp_get_task_list` ()  BEGIN
+SELECT s.id, CONCAT(s.first_name, ' ', s.last_name) as employee, tt.tasktype_name, ts.task_name, att.taskcount ,att.startdate,att.enddate
+FROM addtask_data AS att
+INNER JOIN users AS s ON att.employee = s.id
+INNER JOIN task_types AS tt ON att.tasktype = tt.tasktype_id
+INNER JOIN tasks AS ts ON ts.id = att.task;
+END$$
+
 CREATE DEFINER=`balkrush1`@`%` PROCEDURE `sp_get_todays_enquiry_list` ()  BEGIN
 SELECT s.id, s.first_name, s.last_name, s.phone_number, s.whatsapp_number, s.email,
       (select modalName from enquiry_products as f1 inner join modal as s on s.id = f1.modal where f1.enquiry_id = f.id) AS product,
@@ -513,16 +525,16 @@ JOIN BookingCounts bc ON ec.month = bc.month;
 END$$
 
 CREATE DEFINER=`balkrush1`@`%` PROCEDURE `sp_get_total_enquiry_perCategory` (IN `villageId` INT)  BEGIN
-SELECT e.*, COUNT(e.enquiry_type_id) AS total_enquiries
+SELECT e.*, COUNT(e.enquiry_category_id) AS total_enquiries
 FROM enquiries AS e
-LEFT JOIN enquiry_types AS et ON et.id = e.enquiry_type_id
+LEFT JOIN enquiry_category AS et ON et.id = e.enquiry_category_id
 LEFT JOIN customers AS c ON c.id = e.customer_id WHERE c.village = villageId
-GROUP BY e.enquiry_type_id;
+GROUP BY e.enquiry_category_id;
 END$$
 
 CREATE DEFINER=`balkrush1`@`%` PROCEDURE `sp_get_user_list` (IN `userId` INT(11), IN `branchId` INT(11), IN `isAdmin` BOOLEAN)  BEGIN
 IF (isAdmin = TRUE) then
-	SELECT distinct f.id, f.first_name, f.last_name, f.email, f.is_active, f.phone_number  FROM users as f  where f.id not in(userId) and user_type_id=1 and f.is_delete = 0;
+	SELECT distinct f.id, f.first_name, f.last_name, f.email, f.is_active, f.phone_number  FROM users as f  where f.id and user_type_id=1 and f.is_delete = 0;
 ELSE
     SELECT distinct f.id, f.first_name, f.last_name, f.email, f.is_active, f.phone_number  FROM users as f inner join branch_department_user as s on s.user_id = f.id  inner join branches as t on s.branch_id = t.id where s.branch_id = branchId and user_type_id=1 and f.is_delete=0 and f.id not in((select user_id from branch_department_user where role_id  =1 limit 1), userId);
 END IF;	
@@ -547,10 +559,10 @@ CREATE DEFINER=`balkrush1`@`%` PROCEDURE `sp_get_work_assign_village_list` (IN `
 SELECT u.id as user_id, CONCAT(u.first_name, ' ', u.last_name) AS salesperson,
        ec.category_name,
        GROUP_CONCAT(DISTINCT v.name) AS village_names
-FROM vehical_crm_db.users u
-JOIN vehical_crm_db.area_assign_user aau ON aau.user_id = u.id
-JOIN vehical_crm_db.enquiry_category ec ON ec.id = aau.category_id
-JOIN vehical_crm_db.village v ON aau.distribution_id = v.id
+FROM users u
+JOIN area_assign_user aau ON aau.user_id = u.id
+JOIN enquiry_category ec ON ec.id = aau.category_id
+JOIN village v ON aau.distribution_id = v.id
 GROUP BY salesperson, ec.category_name;
 END$$
 
@@ -786,12 +798,12 @@ DELIMITER ;
 
 CREATE TABLE `addtask_data` (
   `id` int(11) NOT NULL,
-  `employee` varchar(255) NOT NULL,
-  `tasktype` varchar(255) NOT NULL,
-  `task` varchar(45) NOT NULL,
-  `taskcount` int(11) NOT NULL,
-  `startdate` date NOT NULL,
-  `enddate` date NOT NULL
+  `employee` varchar(255) DEFAULT NULL,
+  `tasktype` varchar(255) DEFAULT NULL,
+  `task` varchar(45) DEFAULT NULL,
+  `taskcount` int(11) DEFAULT NULL,
+  `startdate` date DEFAULT NULL,
+  `enddate` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -829,7 +841,7 @@ CREATE TABLE `bank_details` (
   `id` int(11) NOT NULL,
   `bank_name` text DEFAULT NULL,
   `bank_branch` text DEFAULT NULL,
-  `account_number` int(11) DEFAULT NULL,
+  `account_number` bigint(16) DEFAULT NULL,
   `account_type` text DEFAULT NULL,
   `ifsc_code` text DEFAULT NULL,
   `user_id` int(11) DEFAULT NULL
@@ -884,7 +896,7 @@ CREATE TABLE `branches` (
 --
 
 INSERT INTO `branches` (`id`, `name`, `mobile_number`, `email_id`, `address`, `code`, `create_date`, `gst_number`, `description`, `is_active`, `contact_person`, `state`, `district`, `taluka`, `village`) VALUES
-(1, 'New Keshav Tractors', '8976543433', 'admin@newkeshav.com', 'At Dhrangandhra', '360606', '2023-04-08 19:16:06', '23WSE44', 'New Branch', 1, 'Harilal Goraiya', 1, 1, 1, 1);
+(1, 'New Keshav Tractors (Dhrangadhra)', '9725579291', 'admin@newkeshav.com', 'At Dhrangandhra', '363310', '2023-04-08 19:16:06', '23WSE44', 'New Branch', 1, 'Harilal Goraiya', 2, 2, 2, 2);
 
 -- --------------------------------------------------------
 
@@ -982,8 +994,11 @@ CREATE TABLE `departments` (
 --
 
 INSERT INTO `departments` (`id`, `name`, `description`, `is_active`) VALUES
-(1, 'None', 'Department is not selected', 1);
-
+(1, 'None', 'Department is not selected', 1),
+(2, 'Sales', 'Sales department is responsible for the selling the products or services', 1),
+(3, 'Service', 'Service department is responsible to provide service to the customers', 1),
+(4, 'Market', 'Manages marketing and promotional activities related to vehicle services and sales.', 1),
+(5, 'Public Relations', 'Manages public relations and communication strategies for the organization.', 1);
 
 -- --------------------------------------------------------
 
@@ -1013,7 +1028,7 @@ CREATE TABLE `district` (
   `id` int(11) NOT NULL,
   `name` varchar(100) NOT NULL,
   `state_id` int(11) NOT NULL,
-  `is_active` bit(1) NOT NULL DEFAULT b'1'
+  `is_active` bit(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -1022,7 +1037,7 @@ CREATE TABLE `district` (
 
 INSERT INTO `district` (`id`, `name`, `state_id`, `is_active`) VALUES
 (1, 'None', 1, b'1'),
-(2, 'Surendra Nagar', 2, b'1');
+(2, 'SURENDRANAGAR', 2, b'1');
 
 -- --------------------------------------------------------
 
@@ -1060,7 +1075,7 @@ CREATE TABLE `employee_detail` (
 CREATE TABLE `enquiries` (
   `id` int(11) NOT NULL,
   `branch_id` int(11) DEFAULT NULL,
-  `enquiry_type_id` int(11) DEFAULT NULL,
+  `enquiry_category_id` int(11) DEFAULT NULL,
   `salesperson_id` int(11) DEFAULT NULL,
   `customer_id` int(11) DEFAULT NULL,
   `product_id` int(11) DEFAULT NULL,
@@ -1130,32 +1145,40 @@ CREATE TABLE `enquiry_data` (
 
 CREATE TABLE `enquiry_fields` (
   `id` int(11) NOT NULL,
-  `field` varchar(100) DEFAULT NULL,
+  `field` varchar(100) NOT NULL,
   `name` varchar(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `enquiry_fields`
 --
 
 INSERT INTO `enquiry_fields` (`id`, `field`, `name`) VALUES
-(1, 'firstName', 'First Name'),
-(2, 'lastName', 'Last Name'),
-(3, 'state', 'State'),
-(4, 'city', 'City'),
-(5, 'district', 'District'),
-(6, 'taluko', 'Taluko'),
-(7, 'village', 'Village'),
-(8, 'mobileNumber', 'Mobile Number'),
-(9, 'whatsappNumber', 'Whatsapp Number'),
-(10, 'visitReason', 'Visit Reason'),
-(11, 'sourceOfInquiry', 'Source Of Inquiry'),
-(12, 'email', 'Email'),
-(13, 'companyName', 'Company Name'),
-(14, 'location', 'Location'),
-(15, 'modal', 'Modal'),
-(16, 'deliveryDate', 'Delivery Date'),
-(17, 'oldTractor', 'Old Tractor Owned');
+(1, 'branchId', 'Branch'),
+(2, 'firstName', 'First Name'),
+(3, 'lastName', 'Last Name '),
+(4, 'fatherName', 'Father Name'),
+(5, 'email', 'Email'),
+(6, 'mobileNumber', 'Mobile Number'),
+(7, 'whatsappNumber', 'Whatsapp Number'),
+(8, 'state', 'State'),
+(9, 'district', 'District'),
+(10, 'taluko', 'Taluko'),
+(11, 'village', 'Village'),
+(12, 'dsp', 'DSP'),
+(13, 'make', 'Make'),
+(14, 'modal', 'Modal'),
+(15, 'primarySource', 'Primary Source '),
+(16, 'sourceOfEnquiry', 'Source Of Inquiry'),
+(17, 'enquiryDate', 'Enquiry Date'),
+(18, 'deliveryDate', 'Delivery Date'),
+(19, 'modeOfFinance', 'Mode Of Finance'),
+(20, 'bank', 'Bank'),
+(21, 'city', 'City'),
+(22, 'visitReason', 'Visit Reason'),
+(23, 'companyName', 'Compaony Name'),
+(24, 'location', 'Location'),
+(25, 'oldTractor', ' Old Tractor Owend');
 
 -- --------------------------------------------------------
 
@@ -1263,13 +1286,21 @@ CREATE TABLE `enquiry_stages` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `enquiry_types`
+-- Table structure for table `enquiry_category`
 --
 
 CREATE TABLE `enquiry_types` (
   `id` int(11) NOT NULL,
   `name` varchar(45) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `enquiry_types`
+--
+
+INSERT INTO `enquiry_types` (`id`, `name`) VALUES
+(1, 'New Tractor'),
+(2, 'Old Tractor');
 
 -- --------------------------------------------------------
 
@@ -1292,9 +1323,9 @@ CREATE TABLE `features` (
 --
 
 INSERT INTO `features` (`id`, `page`, `index_no`, `feature`, `label`, `parent_Id`, `is_active`) VALUES
-(1, 1, '1.1', 'home', 'Home', 0, b'00000000000'),
-(2, 1, '1.2', 'agency-profile', 'Agency', 0, b'00000000000'),
-(3, 1, '1.3', 'dashboard', 'Dashboard', 0, b'00000000000'),
+(1, 1, '1.1', 'profile', 'profile', 0, b'00000000001'),
+(2, 1, '1.2', 'agency', 'Agency', 0, b'00000000001'),
+(3, 1, '1.3', 'dashboard', 'Dashboard', 0, b'00000000001'),
 (4, 1, '1.4', 'user-profile', 'profile', 0, b'00000000001'),
 (5, 2, '2.1', 'sales', 'Sales', 0, b'00000000001'),
 (6, 3, '3.1', 'service', 'Services', 0, b'00000000001'),
@@ -1305,12 +1336,12 @@ INSERT INTO `features` (`id`, `page`, `index_no`, `feature`, `label`, `parent_Id
 (11, 5, '5.4', 'add-user', 'Add user', 1, b'00000000001'),
 (12, 5, '5.5', 'edit-user', 'Edit user', 1, b'00000000001'),
 (13, 4, '4.2', 'products', 'Products', 3, b'00000000001'),
-(14, 5, '5.6', 'configuration', 'Configuration', 3, b'00000000000'),
+(14, 5, '5.6', 'configuration', 'Configuration', 3, b'00000000001'),
 (15, 5, '5.7', 'agency', 'Agency', 0, b'00000000001'),
 (16, 5, '5.8', 'branch', 'Branch', 0, b'00000000001'),
-(17, 5, '5.9', 'work-assign', 'Work Assign', 0, b'00000000000'),
-(18, 5, '5.10', 'employee', 'Employee', 0, b'00000000000'),
-(19, 5, '5.11', 'report', 'Report', 3, b'00000000000');
+(17, 5, '5.9', 'work-assign', 'Work Assign', 0, b'00000000001'),
+(18, 5, '5.10', 'employee', 'Employee', 0, b'00000000001'),
+(19, 5, '5.11', 'report', 'Report', 3, b'00000000001');
 
 -- --------------------------------------------------------
 
@@ -1358,6 +1389,35 @@ CREATE TABLE `manufacturers` (
   `isActive` int(11) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Dumping data for table `manufacturers`
+--
+
+INSERT INTO `manufacturers` (`id`, `name`, `description`, `isActive`) VALUES
+(1, 'SONALIKA', 'SONALIKA', 1),
+(2, 'ACE', 'ACE', 1),
+(3, 'Captain Tractor', 'Captain Tractor', 1),
+(4, 'EICHER', 'EICHER', 1),
+(5, 'ESCORTS', 'ESCORTS', 1),
+(6, 'FORCE MOTORS', 'FORCE MOTORS', 1),
+(7, 'HMT', 'HMT', 1),
+(8, 'INDOFARM', 'INDOFARM', 1),
+(9, 'ITL', 'ITL', 1),
+(10, 'ITL-NAVYUG', 'ITL-NAVYUG', 1),
+(11, 'JD', 'JD', 1),
+(12, 'Kubota', 'Kubota', 1),
+(13, 'M & M', 'M & M', 1),
+(14, 'MF/TAFE', 'MF/TAFE', 1),
+(15, 'MGT', 'MGT', 1),
+(16, 'NHF', 'NHF', 1),
+(17, 'PREET', 'PREET', 1),
+(18, 'PTL', 'PTL', 1),
+(19, 'SAME', 'SAME', 1),
+(20, 'SAS', 'SAS', 1),
+(21, 'STANDARD', 'STANDARD', 1),
+(22, 'SWARAJ', 'SWARAJ', 1),
+(23, 'VST', 'VST', 1);
+
 -- --------------------------------------------------------
 
 --
@@ -1387,6 +1447,32 @@ CREATE TABLE `modal` (
   `manufacturerId` int(11) DEFAULT NULL,
   `isActive` bit(11) NOT NULL DEFAULT b'1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `modal`
+--
+
+INSERT INTO `modal` (`id`, `modalName`, `manufacturerId`, `isActive`) VALUES
+(1, 'DI-740III', 1, b'00000000001'),
+(2, 'DI-745III', 1, b'00000000001'),
+(3, 'GT-20', 1, b'00000000001'),
+(4, 'GT-22', 1, b'00000000001'),
+(5, 'DI-734 P+', 1, b'00000000001'),
+(6, 'DI-35 13.6 CG', 1, b'00000000001'),
+(7, 'DI-50', 1, b'00000000001'),
+(8, 'NT-30', 1, b'00000000001'),
+(9, 'RX-47', 1, b'00000000001'),
+(10, 'MM-18', 1, b'00000000001'),
+(11, 'Baagban-30 NT', 1, b'00000000001'),
+(12, 'DI-745 14.9', 1, b'00000000001'),
+(13, '188', 4, b'00000000001'),
+(14, '25', 5, b'00000000001'),
+(15, 'A211N', 12, b'00000000001'),
+(16, '717', 22, b'00000000001'),
+(17, '841 XM', 22, b'00000000001'),
+(18, '30 DI J(2Cyl)', 14, b'00000000001'),
+(19, 'JIVO 225', 13, b'00000000001'),
+(20, '2211', 7, b'00000000001');
 
 -- --------------------------------------------------------
 
@@ -1435,6 +1521,13 @@ CREATE TABLE `products` (
   `manufacturer_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Dumping data for table `products`
+--
+
+INSERT INTO `products` (`id`, `name`, `manufacturer_id`) VALUES
+(1, 'DI 35', 1);
+
 -- --------------------------------------------------------
 
 --
@@ -1455,7 +1548,11 @@ CREATE TABLE `roles` (
 --
 
 INSERT INTO `roles` (`id`, `role`, `active`, `description`, `delete`, `role_emp`) VALUES
-(1, 'super_admin', '1', 'Super Admin', '0', 1);
+(1, 'super_admin', '1', 'Super Admin', '0', 0),
+(2, 'Admin', '1', 'Admin has all access of the current branch', '0', 1),
+(3, 'Manager', '1', 'Manager can manager his personal profile and his reporter profile', '0', 1),
+(4, 'Employee', '1', 'Employee role can only view to his thing', '0', 1),
+(5, 'customer', '1', 'purchases goods or services', '1', 1);
 
 -- --------------------------------------------------------
 
@@ -1491,7 +1588,8 @@ INSERT INTO `role_features` (`id`, `role_id`, `feature_id`) VALUES
 (15, 1, 15),
 (16, 1, 16),
 (17, 1, 17),
-(18, 1, 18);
+(18, 1, 18),
+(19, 1, 19);
 
 -- --------------------------------------------------------
 
@@ -1518,7 +1616,7 @@ CREATE TABLE `state` (
   `state_id` int(11) NOT NULL,
   `state_name` varchar(150) NOT NULL,
   `description` varchar(200) DEFAULT NULL,
-  `is_active` bit(1) NOT NULL DEFAULT b'1'
+  `is_active` bit(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -1526,8 +1624,8 @@ CREATE TABLE `state` (
 --
 
 INSERT INTO `state` (`state_id`, `state_name`, `description`, `is_active`) VALUES
-(1, 'None', 'No state selected', b'1'),
-(2, 'Gujarat', 'Gujarat is a western Indian state known for its rich cultural heritage', b'1');
+(1, 'None', 'No Selected State', b'1'),
+(2, 'GUJARAT', 'Gujarat is a vibrant state located on the western coast of India', b'1');
 
 -- --------------------------------------------------------
 
@@ -1549,7 +1647,8 @@ CREATE TABLE `taluka` (
 
 INSERT INTO `taluka` (`id`, `name`, `district_id`, `state_id`, `is_active`) VALUES
 (1, 'None', 1, 1, b'1'),
-(2, 'Dhrangadhra', 2, 2, b'1');
+(2, 'Dhrangadhra', 2, 2, b'1'),
+(3, 'Maniyahu', 4, 4, b'0');
 
 -- --------------------------------------------------------
 
@@ -1579,7 +1678,6 @@ INSERT INTO `tasks` (`id`, `task_name`, `description`, `tasktype_id`) VALUES
 (8, 'Loan', 'Send details in whatsup.', 3),
 (9, 'Insurence', 'Send details in whatsup.', 3),
 (10, 'RTO', 'Send details in whatsup.', 3);
-
 
 -- --------------------------------------------------------
 
@@ -1721,8 +1819,210 @@ CREATE TABLE `village` (
 --
 
 INSERT INTO `village` (`id`, `name`, `taluka_id`, `district_id`, `state_id`, `is_active`) VALUES
-(1, 'None', 1, 1, 1, b'1');
-
+(1, 'None', 1, 1, 1, b'1'),
+(2, 'BAISABGADH', 2, 2, 2, b'1'),
+(3, 'BAVLI', 2, 2, 2, b'1'),
+(4, 'BHARAD', 2, 2, 2, b'1'),
+(5, 'BHARADA', 2, 2, 2, b'1'),
+(6, 'BHECHDA', 2, 2, 2, b'1'),
+(7, 'CHANDRASAR', 2, 2, 2, b'1'),
+(8, 'CHULI', 2, 2, 2, b'1'),
+(9, 'DEVCHARADI', 2, 2, 2, b'1'),
+(10, 'DHOLI', 2, 2, 2, b'1'),
+(11, 'DHRANGADHRA', 2, 2, 2, b'1'),
+(12, 'DHRUMATH', 2, 2, 2, b'1'),
+(13, 'DUDAPUR', 2, 2, 2, b'1'),
+(14, 'DUMANA', 2, 2, 2, b'1'),
+(15, 'GAJANVAV', 2, 2, 2, b'1'),
+(16, 'GALA', 2, 2, 2, b'1'),
+(17, 'GANJELA', 2, 2, 2, b'1'),
+(18, 'GHANSYAMGADH', 2, 2, 2, b'1'),
+(19, 'GOPALGADH', 2, 2, 2, b'1'),
+(20, 'GUJRVADI', 2, 2, 2, b'1'),
+(21, 'HAMPAR', 2, 2, 2, b'1'),
+(22, 'HARIPAR', 2, 2, 2, b'1'),
+(23, 'HIRAPUR', 2, 2, 2, b'1'),
+(24, 'ISDRA', 2, 2, 2, b'1'),
+(25, 'JASAPAR', 2, 2, 2, b'1'),
+(26, 'JASMATPUR', 2, 2, 2, b'1'),
+(27, 'JEGADVA', 2, 2, 2, b'1'),
+(28, 'JESDA', 2, 2, 2, b'1'),
+(29, 'JIVA', 2, 2, 2, b'1'),
+(30, 'KALYANPUR', 2, 2, 2, b'1'),
+(31, 'KANKAVATI', 2, 2, 2, b'1'),
+(32, 'KHAMBHADA', 2, 2, 2, b'1'),
+(33, 'KONDH/   ???', 2, 2, 2, b'1'),
+(34, 'KOPENI', 2, 2, 2, b'1'),
+(35, 'KRASNANAGAR', 2, 2, 2, b'1'),
+(36, 'KUDA', 2, 2, 2, b'1'),
+(37, 'MANPUR', 2, 2, 2, b'1'),
+(38, 'METHAN', 2, 2, 2, b'1'),
+(39, 'MOTA ANKEVALIYA', 2, 2, 2, b'1'),
+(40, 'MOTI MALVAN', 2, 2, 2, b'1'),
+(41, 'NARALI', 2, 2, 2, b'1'),
+(42, 'NARICHANA', 2, 2, 2, b'1'),
+(43, 'NAVALGADH / ?????', 2, 2, 2, b'1'),
+(44, 'NIMAKNAGAR', 2, 2, 2, b'1'),
+(45, 'PIPLA', 2, 2, 2, b'1'),
+(46, 'PRATHUGADH', 2, 2, 2, b'1'),
+(47, 'RAJCHARADI', 2, 2, 2, b'1'),
+(48, 'RAJGADH', 2, 2, 2, b'1'),
+(49, 'RAJPAR', 2, 2, 2, b'1'),
+(50, 'RAJSITAPUR', 2, 2, 2, b'1'),
+(51, 'RAMDEVPUR', 2, 2, 2, b'1'),
+(52, 'RAMGADH', 2, 2, 2, b'1'),
+(53, 'RAMPARA', 2, 2, 2, b'1'),
+(54, 'RATNPAR', 2, 2, 2, b'1'),
+(55, 'RAVLIYAVADAR', 2, 2, 2, b'1'),
+(56, 'RAYGADH', 2, 2, 2, b'1'),
+(57, 'SAJANPUR', 2, 2, 2, b'1'),
+(58, 'SARVAL', 2, 2, 2, b'1'),
+(59, 'SATAPAR', 2, 2, 2, b'1'),
+(60, 'SOKHDA', 2, 2, 2, b'1'),
+(61, 'SOLDI', 2, 2, 2, b'1'),
+(62, 'SULTANPUR', 2, 2, 2, b'1'),
+(63, 'THALA', 2, 2, 2, b'1'),
+(64, 'VAGHGADH', 2, 2, 2, b'1'),
+(65, 'VASADAVA', 2, 2, 2, b'1'),
+(66, 'VAVDI', 2, 2, 2, b'1'),
+(67, 'VIRENDRAGADH', 2, 2, 2, b'1'),
+(68, 'VRAJPAR', 2, 2, 2, b'1'),
+(69, 'ADALSAR', 3, 2, 2, b'1'),
+(70, 'ANIYARI', 3, 2, 2, b'1'),
+(71, 'BABAJIPARA', 3, 2, 2, b'1'),
+(72, 'BAJRANGPURA', 3, 2, 2, b'1'),
+(73, 'BHADVANA', 3, 2, 2, b'1'),
+(74, 'BHALADA', 3, 2, 2, b'1'),
+(75, 'BHASHAKRPURA', 3, 2, 2, b'1'),
+(76, 'BHATHARIYA', 3, 2, 2, b'1'),
+(77, 'CHARAD', 3, 2, 2, b'1'),
+(78, 'DERVADA', 3, 2, 2, b'1'),
+(79, 'DEVDIYA', 3, 2, 2, b'1'),
+(80, 'DHANKI', 3, 2, 2, b'1'),
+(81, 'GANGAD', 3, 2, 2, b'1'),
+(82, 'GANGAD', 3, 2, 2, b'1'),
+(83, 'GHANAD', 3, 2, 2, b'1'),
+(84, 'INGRODI', 3, 2, 2, b'1'),
+(85, 'JYOTIPURA', 3, 2, 2, b'1'),
+(86, 'KADAM', 3, 2, 2, b'1'),
+(87, 'KADU', 3, 2, 2, b'1'),
+(88, 'KALIYANPURA', 3, 2, 2, b'1'),
+(89, 'KARELA', 3, 2, 2, b'1'),
+(90, 'KESHARIYA', 3, 2, 2, b'1'),
+(91, 'LAKHATAR', 3, 2, 2, b'1'),
+(92, 'LARKHADIYA', 3, 2, 2, b'1'),
+(93, 'LILAPUR', 3, 2, 2, b'1'),
+(94, 'MALIKA', 3, 2, 2, b'1'),
+(95, 'MODHAVANA', 3, 2, 2, b'1'),
+(96, 'NANA AKEVADIYA', 3, 2, 2, b'1'),
+(97, 'ODAK', 3, 2, 2, b'1'),
+(98, 'PETHDA', 3, 2, 2, b'1'),
+(99, 'SADAD', 3, 2, 2, b'1'),
+(100, 'SAKAR', 3, 2, 2, b'1'),
+(101, 'SAVALANA', 3, 2, 2, b'1'),
+(102, 'TALSHANA', 3, 2, 2, b'1'),
+(103, 'TALVANI', 3, 2, 2, b'1'),
+(104, 'TANMANIYA', 3, 2, 2, b'1'),
+(105, 'TAVI', 3, 2, 2, b'1'),
+(106, 'VADEKHAN', 3, 2, 2, b'1'),
+(107, 'VADLA', 3, 2, 2, b'1'),
+(108, 'VALSHANI', 3, 2, 2, b'1'),
+(109, 'VANA', 3, 2, 2, b'1'),
+(110, 'VITHALAPARA', 3, 2, 2, b'1'),
+(111, 'VITHALGADHA', 3, 2, 2, b'1'),
+(112, 'ZAMAR', 3, 2, 2, b'1'),
+(113, 'ADARIYANA', 4, 2, 2, b'1'),
+(114, 'AKHIYANA', 4, 2, 2, b'1'),
+(115, 'ALMAPUR', 4, 2, 2, b'1'),
+(116, 'AMBADA', 4, 2, 2, b'1'),
+(117, 'AMNAGAR', 4, 2, 2, b'1'),
+(118, 'AREVADA', 4, 2, 2, b'1'),
+(119, 'ASAVADA', 4, 2, 2, b'1'),
+(120, 'BAJANA', 4, 2, 2, b'1'),
+(121, 'BAMNVA', 4, 2, 2, b'1'),
+(122, 'BHADENA', 4, 2, 2, b'1'),
+(123, 'BHALGAM', 4, 2, 2, b'1'),
+(124, 'BUBANA', 4, 2, 2, b'1'),
+(125, 'CHABALI', 4, 2, 2, b'1'),
+(126, 'CHATROT', 4, 2, 2, b'1'),
+(127, 'CHIKASAR', 4, 2, 2, b'1'),
+(128, 'DASHADA', 4, 2, 2, b'1'),
+(129, 'DEGAM', 4, 2, 2, b'1'),
+(130, 'DHAMA', 4, 2, 2, b'1'),
+(131, 'FETAPUR', 4, 2, 2, b'1'),
+(132, 'GASHAPUR', 4, 2, 2, b'1'),
+(133, 'GAVANA', 4, 2, 2, b'1'),
+(134, 'GEDIAY', 4, 2, 2, b'1'),
+(135, 'GORIYAVAD', 4, 2, 2, b'1'),
+(136, 'GOSHANA', 4, 2, 2, b'1'),
+(137, 'HARIPURA', 4, 2, 2, b'1'),
+(138, 'HATHIPURA', 4, 2, 2, b'1'),
+(139, 'HEBATPUR', 4, 2, 2, b'1'),
+(140, 'HIMATPURA', 4, 2, 2, b'1'),
+(141, 'JADISAN', 4, 2, 2, b'1'),
+(142, 'JAINABAD', 4, 2, 2, b'1'),
+(143, 'JARVALA', 4, 2, 2, b'1'),
+(144, 'JIVANGADHA', 4, 2, 2, b'1'),
+(145, 'JORAVPURA', 4, 2, 2, b'1'),
+(146, 'KACHOLIYA', 4, 2, 2, b'1'),
+(147, 'KAMLPAR', 4, 2, 2, b'1'),
+(148, 'KAMLPUR', 4, 2, 2, b'1'),
+(149, 'KATHADA', 4, 2, 2, b'1'),
+(150, 'KHARAGODHA', 4, 2, 2, b'1'),
+(151, 'KHERVA', 4, 2, 2, b'1'),
+(152, 'KOCHADA', 4, 2, 2, b'1'),
+(153, 'LIMBAD', 4, 2, 2, b'1'),
+(154, 'MALNPUR', 4, 2, 2, b'1'),
+(155, 'MALVAN', 4, 2, 2, b'1'),
+(156, 'MANAVADA', 4, 2, 2, b'1'),
+(157, 'MERA', 4, 2, 2, b'1'),
+(158, 'METASAR', 4, 2, 2, b'1'),
+(159, 'MITHAGODHA', 4, 2, 2, b'1'),
+(160, 'MOTA UBHADA', 4, 2, 2, b'1'),
+(161, 'MOTI METHEJI', 4, 2, 2, b'1'),
+(162, 'MULADA', 4, 2, 2, b'1'),
+(163, 'NAGDKA', 4, 2, 2, b'1'),
+(164, 'NAGVADA', 4, 2, 2, b'1'),
+(165, 'NANA GORIYA', 4, 2, 2, b'1'),
+(166, 'NANI METHAJI', 4, 2, 2, b'1'),
+(167, 'NARANPURA', 4, 2, 2, b'1'),
+(168, 'NAVAGAM', 4, 2, 2, b'1'),
+(169, 'NAVIYANAI', 4, 2, 2, b'1'),
+(170, 'NAVRANGPURA', 4, 2, 2, b'1'),
+(171, 'ODU', 4, 2, 2, b'1'),
+(172, 'PADIVADA', 4, 2, 2, b'1'),
+(173, 'PANVA', 4, 2, 2, b'1'),
+(174, 'PATDI', 4, 2, 2, b'1'),
+(175, 'PIPADI', 4, 2, 2, b'1'),
+(176, 'POYADA', 4, 2, 2, b'1'),
+(177, 'RAJAPR', 4, 2, 2, b'1'),
+(178, 'RAMGARI', 4, 2, 2, b'1'),
+(179, 'ROZAVA', 4, 2, 2, b'1'),
+(180, 'RUSHULABAD', 4, 2, 2, b'1'),
+(181, 'RUSTAMGADHA', 4, 2, 2, b'1'),
+(182, 'SADLA', 4, 2, 2, b'1'),
+(183, 'SALI', 4, 2, 2, b'1'),
+(184, 'SAVADA', 4, 2, 2, b'1'),
+(185, 'SAVANI', 4, 2, 2, b'1'),
+(186, 'SAVLAS', 4, 2, 2, b'1'),
+(187, 'SEDLA', 4, 2, 2, b'1'),
+(188, 'SIDHADAR', 4, 2, 2, b'1'),
+(189, 'SURAJPURA', 4, 2, 2, b'1'),
+(190, 'SUREL', 4, 2, 2, b'1'),
+(191, 'SUSHIYA', 4, 2, 2, b'1'),
+(192, 'UPARIYADA', 4, 2, 2, b'1'),
+(193, 'VADGAM', 4, 2, 2, b'1'),
+(194, 'VAKHADA', 4, 2, 2, b'1'),
+(195, 'VALEVADA', 4, 2, 2, b'1'),
+(196, 'VANOD', 4, 2, 2, b'1'),
+(197, 'VASHARAJPURA', 4, 2, 2, b'1'),
+(198, 'VISHANGAR', 4, 2, 2, b'1'),
+(199, 'VISHAVDI', 4, 2, 2, b'1'),
+(200, 'ZADIYANA', 4, 2, 2, b'1'),
+(201, 'ZEZARA', 4, 2, 2, b'1'),
+(202, 'ZEZARI', 4, 2, 2, b'1'),
+(203, 'ZIZUVADA', 4, 2, 2, b'1'),
+(204, 'Jeetap', 3, 4, 4, b'0');
 
 --
 -- Indexes for dumped tables
@@ -1832,7 +2132,7 @@ ALTER TABLE `enquiries`
   ADD KEY `customer_id_idx` (`customer_id`),
   ADD KEY `product_id_idx` (`product_id`),
   ADD KEY `salesperson_id_idx` (`salesperson_id`),
-  ADD KEY `enquiry_type_id_idx` (`enquiry_type_id`),
+  ADD KEY `enquiry_category_id_idx` (`enquiry_category_id`),
   ADD KEY `enquiry_source_id_idx` (`enquiry_source_id`);
 
 --
@@ -2043,6 +2343,12 @@ ALTER TABLE `village`
 --
 
 --
+-- AUTO_INCREMENT for table `addtask_data`
+--
+ALTER TABLE `addtask_data`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `area_assign_user`
 --
 ALTER TABLE `area_assign_user`
@@ -2064,7 +2370,7 @@ ALTER TABLE `booking`
 -- AUTO_INCREMENT for table `branches`
 --
 ALTER TABLE `branches`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `branches_new`
@@ -2100,19 +2406,19 @@ ALTER TABLE `customers`
 -- AUTO_INCREMENT for table `departments`
 --
 ALTER TABLE `departments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `distributionType`
 --
 ALTER TABLE `distributionType`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `district`
 --
 ALTER TABLE `district`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `documents`
@@ -2154,19 +2460,19 @@ ALTER TABLE `enquiry_data`
 -- AUTO_INCREMENT for table `enquiry_fields`
 --
 ALTER TABLE `enquiry_fields`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `enquiry_lost_reasons`
 --
 ALTER TABLE `enquiry_lost_reasons`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `enquiry_primary_sources`
 --
 ALTER TABLE `enquiry_primary_sources`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `enquiry_products`
@@ -2178,7 +2484,7 @@ ALTER TABLE `enquiry_products`
 -- AUTO_INCREMENT for table `enquiry_sources`
 --
 ALTER TABLE `enquiry_sources`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `enquiry_stages`
@@ -2190,13 +2496,13 @@ ALTER TABLE `enquiry_stages`
 -- AUTO_INCREMENT for table `enquiry_types`
 --
 ALTER TABLE `enquiry_types`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `features`
 --
 ALTER TABLE `features`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `follow_up_details`
@@ -2214,7 +2520,7 @@ ALTER TABLE `lost_enquiries`
 -- AUTO_INCREMENT for table `manufacturers`
 --
 ALTER TABLE `manufacturers`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT for table `manufactur_details`
@@ -2226,7 +2532,7 @@ ALTER TABLE `manufactur_details`
 -- AUTO_INCREMENT for table `modal`
 --
 ALTER TABLE `modal`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT for table `old_tractor_details`
@@ -2238,25 +2544,25 @@ ALTER TABLE `old_tractor_details`
 -- AUTO_INCREMENT for table `parts`
 --
 ALTER TABLE `parts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `roles`
 --
 ALTER TABLE `roles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `role_features`
 --
 ALTER TABLE `role_features`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `rto_detail`
@@ -2268,25 +2574,25 @@ ALTER TABLE `rto_detail`
 -- AUTO_INCREMENT for table `state`
 --
 ALTER TABLE `state`
-  MODIFY `state_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;;
+  MODIFY `state_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `taluka`
 --
 ALTER TABLE `taluka`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `taxes`
 --
 ALTER TABLE `taxes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `tax_details`
 --
 ALTER TABLE `tax_details`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -2298,7 +2604,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `user_types`
 --
 ALTER TABLE `user_types`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `variant`
@@ -2310,7 +2616,7 @@ ALTER TABLE `variant`
 -- AUTO_INCREMENT for table `village`
 --
 ALTER TABLE `village`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=205;
 
 --
 -- Constraints for dumped tables
@@ -2328,7 +2634,7 @@ ALTER TABLE `branch_department_user`
 --
 ALTER TABLE `enquiries`
   ADD CONSTRAINT `customer_id` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`id`),
-  ADD CONSTRAINT `enquiry_type_id` FOREIGN KEY (`enquiry_type_id`) REFERENCES `enquiry_types` (`id`),
+  ADD CONSTRAINT `enquiry_category_id` FOREIGN KEY (`enquiry_category_id`) REFERENCES `enquiry_category` (`id`),
   ADD CONSTRAINT `product_id` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`),
   ADD CONSTRAINT `salesperson_id` FOREIGN KEY (`salesperson_id`) REFERENCES `users` (`id`);
 

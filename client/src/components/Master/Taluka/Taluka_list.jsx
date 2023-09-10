@@ -77,8 +77,9 @@ export default function Taluka_list() {
         });
 
         getAllTalukaAction().then((data) => {
-            console.log(data, "All talukaaaaaaaaaaaaa")
-            setAllTalukaDate(data.result)
+            console.log(data.result, "All talukaaaaaaaaaaaaa")
+            const updatedtaluka = data.result.filter((item) => item.id !== 1)
+            setAllTalukaDate(updatedtaluka)
         }).catch((error) => {
             console.error('Error in getAllTalukaAction:', error);
         });
@@ -144,6 +145,9 @@ export default function Taluka_list() {
         setTalukaData({ ...TalukaData, [name]: value })
     }
 
+    useEffect(() => {
+        console.log(districtOptions, 'districitpepg');
+    }, [districtOptions])
     function handleSubmit() {
         console.log('TalukaData', TalukaData)
 
@@ -515,7 +519,7 @@ export default function Taluka_list() {
                             <label htmlFor="select" className="col-form-label">District Name:</label>
                             <select className="form-control" name="DistrictName" id="select" value={TalukaData.DistrictName} onChange={(e) => { onChangeHandlerDistrict(e) }}>
                                 <option value="">Select District</option>
-                                {districtOptions.map((option) => (
+                                {Array.isArray(districtOptions) && districtOptions.map((option) => (
                                     <option key={option.id} value={option.id}>
                                         {option.name}
                                     </option>

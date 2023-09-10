@@ -430,7 +430,7 @@ export default function HomeScreen() {
                             className={({ isActive }) =>
                               isActive ? "activeLink" : ""
                             }
-                            to="sale/enquiryies"
+                            to="sale/enquiries"
                           >
                             Enquiry
                           </NavLink>
@@ -865,7 +865,7 @@ export default function HomeScreen() {
               exact
             />
             <Route
-              path="sale/enquiryies/enquiry"
+              path="sale/enquiries/enquiry"
               element={
                 <CheckPermission path="profile">
                   <Enquiry workFor="Enquiry" />
@@ -979,7 +979,7 @@ export default function HomeScreen() {
               exact
             />
             <Route
-              path="administration/configuration/department/adddepartment"
+              path="administration/configuration/department/add"
               element={
                 <CheckPermission path="profile">
                   <AddDepartment workFor="forAdd" />
@@ -988,7 +988,7 @@ export default function HomeScreen() {
               exact
             />
             <Route
-              path="administration/configuration/department/editdepartment"
+              path="administration/configuration/department/edit"
               element={
                 <CheckPermission path="profile">
                   <AddDepartment workFor="forEdit" />
@@ -1096,7 +1096,7 @@ export default function HomeScreen() {
               exact
             />
             <Route
-              path="administration/roles/addrole"
+              path="administration/roles/add"
               element={
                 <CheckPermission path="add-role">
                   <AddRole workFor="addRole" />
@@ -1105,7 +1105,7 @@ export default function HomeScreen() {
               exact
             />
             <Route
-              path="administration/roles/editrole"
+              path="administration/roles/edit"
               element={
                 <CheckPermission path="add-role">
                   <AddRole workFor="forEdit" />
@@ -1133,7 +1133,7 @@ export default function HomeScreen() {
               exact
             />
             <Route
-              path="administration/users/adduser"
+              path="administration/users/add"
               element={
                 <CheckPermission path="add-user">
                   <AddUser workFor="forAdd" />
@@ -1142,7 +1142,7 @@ export default function HomeScreen() {
               exact
             />
             <Route
-              path="administration/employees/addemployee"
+              path="administration/employees/add"
               element={
                 // <CheckPermission path="add-employee">
                 <AddEmployee workFor="forAdd" />
@@ -1151,7 +1151,7 @@ export default function HomeScreen() {
               exact
             />
             <Route
-              path="administration/employees/editemployee"
+              path="administration/employees/edit"
               element={
                 // <CheckPermission path="add-role">
                 <AddEmployee workFor="forEdit" />
@@ -1160,7 +1160,7 @@ export default function HomeScreen() {
               exact
             />
             <Route
-              path="administration/users/edituser"
+              path="administration/users/edit"
               element={
                 <CheckPermission path="edit-user">
                   <AddUser workFor="forEdit" />
@@ -1197,7 +1197,7 @@ export default function HomeScreen() {
               exact
             />
             <Route
-              path="administration/configuration/category/addcategory"
+              path="administration/configuration/category/add"
               element={
                 <CheckPermission path="profile">
                   <AddCategory workFor="forAdd" />
@@ -1206,7 +1206,7 @@ export default function HomeScreen() {
               exact
             />
             <Route
-              path="administration/configuration/category/editcategory"
+              path="administration/configuration/category/edit"
               element={
                 <CheckPermission path="profile">
                   <AddCategory workFor="forEdit" />
@@ -1225,7 +1225,7 @@ export default function HomeScreen() {
               exact
             />
             <Route
-              path="administration/configuration/branch/add-branch"
+              path="administration/configuration/branch/add"
               element={
                 <CheckPermission path="branch">
                   <Branch workFor="addBranch" />
@@ -1234,7 +1234,7 @@ export default function HomeScreen() {
               exact
             />
             <Route
-              path="administration/configuration/branch/edit-branch"
+              path="administration/configuration/branch/edit"
               element={
                 <CheckPermission path="branch">
                   <Branch workFor="editBranch" />

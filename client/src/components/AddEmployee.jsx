@@ -138,9 +138,7 @@ export default function Addemployee({ workFor }) {
     formData.append("bloodgroup", bg);
     formData.append("selectedRole", ro);
     formData.append("logo", alogo);
-    if (fileInputRef.current.files.length === 0) {
-      dispatch(setShowMessage("*Please Select a File"));
-    } else {
+     {
       if (workFor === "forAdd" ? pass.length > 0 : true) {
         employeeData["bankname"] = BankDetais.bankname;
 
@@ -971,7 +969,7 @@ export default function Addemployee({ workFor }) {
             onClick={handleSubmit}
             type="button"
           >
-            {workFor === "forAdd" ? "Add employee" : "Edit employee"}
+            {workFor === "forAdd" ? "Add employee" : "Save"}
           </button>
           <button
             className="ms-0 ms-sm-3 mt-3 mt-sm-0 col-12 col-sm-5 col-lg-2 myBtn py-2"

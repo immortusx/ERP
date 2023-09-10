@@ -461,14 +461,14 @@ const Part_List = () => {
                                 defaultValue={evData.hsn} onChange={(e) => { onChangeHandler(e) }}
                             ></input>
                         </div>
-                        <div className="mb-3">
+                        {/* <div className="mb-3">
                             <label htmlFor="message-text" className="col-form-label" name="is_active">Active:</label>
                             <Switch defaultChecked={evData.is_active == '1' ? true : false} onChange={handleIsActiveChange} style={{
                                 // background: switchStyles.switchColor,
                                 '--react-switch-bg-color': switchStyles.switchColor,
                                 '--react-switch-handle-color': switchStyles.handleColor,
                             }} />
-                        </div>
+                        </div> */}
                     </div>
                 </Modal.Body>
                 <Modal.Footer>
@@ -477,7 +477,7 @@ const Part_List = () => {
                     > Close </Button>
                     <Button variant="primary"
                         onClick={handleSubmit}
-                    >  {modalState === true ? "Edit" : "Save"}  </Button>
+                    >  {modalState === true ? "Save" : "Save"}  </Button>
                 </Modal.Footer>
             </Modal>
             {/* state modal end*/}

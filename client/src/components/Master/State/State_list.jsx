@@ -332,7 +332,10 @@ export default function State_list() {
 
     useEffect(() => {
         getAllStateAction().then((data) => {
-            setAllStateDate(data.result)
+            console.log(data.result, 'resuly');
+            const updatedState = data.result.filter((item) => item.state_id !== 1);
+            console.log(updatedState, 'updatedstate')
+            setAllStateDate(updatedState)
         }).catch((error) => {
             console.error('Error in getAllStateAction:', error);
         });

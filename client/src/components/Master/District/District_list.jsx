@@ -73,7 +73,9 @@ export default function District_list() {
             console.error('Error in getAllStateAction:', error);
         });
         getAllDistrictAction().then((data) => {
-            setAllDistrictDate(data.result)
+            console.log(data.result, "district")
+            const updateDistrict = data.result.filter((item) => item.id !== 1)
+            setAllDistrictDate(updateDistrict)
         }).catch((error) => {
             console.error('Error in getAllDistrictAction:', error);
         });

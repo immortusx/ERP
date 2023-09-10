@@ -276,14 +276,14 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
   const block = req.body.block;
   const village = req.body.village;
 
-  const enquiryTypeId = "1";
-  const visitReason = "1";
-  const branchId = req.body.branchId;
-  const dsp = req.body.dsp;
-  const model = req.body.model;
-  const enquiryDate = req.body.enquiryDate;
-  const deliveryDate = req.body.deliveryDate;
-  const sourceOfEnquiry = req.body.sourceOfEnquiry;
+  const enquiryTypeId = '1'
+  const visitReason = '1'
+  const branchId = req.body.branchId
+  const dsp = req.body.dsp || 1;
+  const model = req.body.model
+  const enquiryDate = req.body.enquiryDate
+  const deliveryDate = req.body.deliveryDate
+  const sourceOfEnquiry = req.body.sourceOfEnquiry
 
   const url = `INSERT INTO customers (first_name, middle_name, last_name, phone_number, whatsapp_number, email, is_active, district, taluka, village) VALUES ('${fristName}','${middleName}','${lastName}','${phoneNumber}','${whatsappNumber}','${email}','${isActive}','${district}','${taluka}','${village}')`;
 
@@ -299,7 +299,7 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
       const newEnquiryDate = await getDateInFormate(enquiryDate);
       const newDeliveryDate = await getDateInFormate(deliveryDate);
 
-      const urlNew = `INSERT INTO enquiries (branch_id, enquiry_type_id, salesperson_id, customer_id, product_id, date, delivery_date, enquiry_source_id, visitReason) VALUES('${branchId}','${enquiryTypeId}','${dsp}','${insertedId}','${model}','${newEnquiryDate}','${newDeliveryDate}','${sourceOfEnquiry}','${visitReason}')`;
+      const urlNew = `INSERT INTO enquiries (branch_id, enquiry_category_id, salesperson_id, customer_id, product_id, date, delivery_date, enquiry_source_id, visitReason) VALUES('${branchId}','${enquiryTypeId}','${dsp}','${insertedId}','${model}','${newEnquiryDate}','${newDeliveryDate}','${sourceOfEnquiry}','${visitReason}')`
       await db.query(urlNew, async (err, result) => {
         if (err) {
           console.log({ isSuccess: false, result: err });
@@ -462,7 +462,7 @@ router.post("/set-new-fast-enquiry", tokenCheck, async (req, res) => {
         // console.log({ isSuccess: true, result: salePersonDetails });
 
         const userData = salePersonDetails[0][0];
-        const salesperson_id = userData ? userData.userId : 20;
+        const salesperson_id = userData ? userData.userId : 1;
         console.log(salesperson_id, "userId");
 
         if (salesperson_id) {
@@ -479,7 +479,7 @@ router.post("/set-new-fast-enquiry", tokenCheck, async (req, res) => {
                 // res.send({ isSuccess: true, result: fastEnquiry });
                 const customer_id = fastEnquiry.insertId;
                 console.log(customer_id);
-                const enquirySql = `INSERT INTO enquiries (branch_id, enquiry_type_id, salesperson_id, customer_id, date) VALUES (?,?,?,?,?)`;
+                const enquirySql = `INSERT INTO enquiries (branch_id, enquiry_category_id, salesperson_id, customer_id, date) VALUES (?,?,?,?,?)`;
                 await db.query(
                   enquirySql,
                   [
@@ -551,7 +551,7 @@ router.post("/set-new-detail-enquiry", tokenCheck, async (req, res) => {
         // console.log({ isSuccess: true, result: salePersonDetails });
 
         const userData = salePersonDetails[0][0];
-        const salesperson_id = userData ? userData.userId : 20;
+        const salesperson_id = userData ? userData.userId : 1;
         console.log(salesperson_id, "userId");
 
         if (salesperson_id) {
@@ -580,7 +580,7 @@ router.post("/set-new-detail-enquiry", tokenCheck, async (req, res) => {
                   .replace("T", " ");
                 console.log(enquiryDate);
                 console.log(customer_id);
-                const enquirySql = `INSERT INTO enquiries (branch_id, enquiry_type_id, salesperson_id, customer_id, date, delivery_date, enquiry_source_id) VALUES (?,?,?,?,?,?,?)`;
+                const enquirySql = `INSERT INTO enquiries (branch_id, enquiry_category_id, salesperson_id, customer_id, date, delivery_date, enquiry_source_id) VALUES (?,?,?,?,?,?,?)`;
                 await db.query(
                   enquirySql,
                   [
@@ -680,7 +680,7 @@ router.post("/edit-new-detail-enquiry", tokenCheck, async (req, res) => {
     const whatsapp_number = req.body.whatsapp_number;
 
     const branch_id = req.body.branchId;
-    const salesperson_id = 20;
+    const salesperson_id = 1;
 
     const taluka = req.body.taluka;
     const village = req.body.village;
@@ -1204,7 +1204,7 @@ router.get(
   async (req, res) => {
     try {
       const categoryId = req.params.id;
-      const urlNew = `SELECT * FROM enquiries where enquiry_type_id = ${categoryId}`;
+      const urlNew = `SELECT * FROM enquiries where enquiry_category_id = ${categoryId}`;
       await db.query(urlNew, async (err, result) => {
         if (err) {
           console.log({ isSuccess: false, result: err });
@@ -1325,30 +1325,47 @@ router.get("/get-total-enquiry-booking", tokenCheck, async (req, res) => {
   }
 });
 
-//====================get edit Enquiry Data==================//
-router.get(
-  "/get-edit-enquiry-data/:customerId",
-  tokenCheck,
-  async (req, res) => {
-    try {
-      const customerId = req.params.customerId;
-      console.log(">>>>>>>>>/get-edit-enquiry-data/");
-      const urlNew = `SELECT s.*, f.* FROM customers AS s 
-    INNER JOIN enquiries AS  f ON f.customer_id = s.id
-    WHERE s.id = ${customerId}`;
-      await db.query(urlNew, async (err, result) => {
-        if (err) {
-          console.log({ isSuccess: false, result: err });
-          res.send({ isSuccess: false, result: "error" });
-        } else {
-          console.log({ isSuccess: "success", result: urlNew });
-          res.send({ isSuccess: "success", result: result[0] });
-        }
-      });
-    } catch (err) {
-      console.log(err);
-    }
+router.get("/delete-enquiry/:id", tokenCheck, async (req, res) => {
+  try {
+    const customerId = req.params.id;
+    console.log(customerId, "Customer ID");
+
+    // Check if the customer exists
+    const checkCustomerQuery = `SELECT * FROM customers WHERE id = ${customerId}`;
+    db.query(checkCustomerQuery, async (err, customerResult) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ isSuccess: false, result: "error" });
+      } else if (customerResult.length === 1) {
+        // Customer exists, mark it as deleted
+        const deleteCustomerQuery = `UPDATE customers SET is_active = 1 WHERE id = ${customerId}`;
+        db.query(deleteCustomerQuery, [customerId], async (err, deleteResult) => {
+          if (err) {
+            console.error(err);
+            res.status(500).json({ isSuccess: false, result: "error" });
+          } else {
+            // Now, delete related enquiries
+            const deleteEnquiriesQuery = "DELETE FROM enquiries WHERE customer_id = ?";
+            db.query(deleteEnquiriesQuery, [customerId], async (err, deleteEnquiriesResult) => {
+              if (err) {
+                console.error(err);
+                res.status(500).json({ isSuccess: false, result: "error" });
+              } else {
+                res.json({ isSuccess: true, result: "deletesuccess" });
+              }
+            });
+          }
+        });
+      } else {
+        // Customer does not exist
+        console.log("Customer not found");
+        res.status(404).json({ isSuccess: false, result: "notExist" });
+      }
+    });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ isSuccess: false, result: "error" });
   }
-);
+});
 
 module.exports = router;
