@@ -191,7 +191,7 @@ export default function Enquiry({ workFor, villageId }) {
         dispatch(clearNewEnquiryState());
         clearStateAndInp();
         dispatch(setShowMessage("Enquiry is registered"));
-        navigate("/sale/enquiryies");
+        navigate("/sale/enquiries");
       }
     }
   }, [setNewEnquiryDataState]);
@@ -332,7 +332,7 @@ export default function Enquiry({ workFor, villageId }) {
     getEnquiryCategories();
   }, []);
   function cancelHandler() {
-    navigate("/sale/enquiryies");
+    navigate("/sale/enquiries");
   }
   useEffect(() => {
     const getDsplist = async () => {
@@ -407,7 +407,7 @@ export default function Enquiry({ workFor, villageId }) {
     if (enquiryState && enquiryState.result.result === "success") {
       dispatch(setShowMessage("Enquiry Registered Successfully !"));
       dispatch(clearEnquiryState());
-      navigate("/sale/enquiryies");
+      navigate("/sale/enquiries");
     }
   }, [enquiryState]);
   async function handleSubmit() {

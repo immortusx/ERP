@@ -333,7 +333,7 @@ const [deleteMessage, setDeleteMessage] = useState(null);
   }, [userListState])
   function editActionCall(data) {
     dispatch(setEditUserData(data))
-    navigate('/administration/users/edituser')
+    navigate('/administration/users/edit')
   }
   return (
     <>
@@ -342,7 +342,7 @@ const [deleteMessage, setDeleteMessage] = useState(null);
         <div className="my-3  d-flex align-items-end justify-content-end">
           <div
             onClick={() => {
-              navigate("/administration/users/adduser");
+              navigate("/administration/users/add");
             }}
             className="d-flex align-items-center"
             type="button"

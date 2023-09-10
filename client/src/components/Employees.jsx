@@ -373,7 +373,7 @@ export default function Employees() {
     console.log(data, 'respoe');
     console.log("editEmployeee");
     dispatch(setEditemployeeData(data));
-    navigate("/administration/employees/editemployee");
+    navigate("/administration/employees/edit");
   }
   const deleteActionCall = (data) => {
     setType("emplyee_delete");
@@ -414,7 +414,7 @@ export default function Employees() {
         <div className="my-3  d-flex align-items-end justify-content-end">
           <div
             onClick={() => {
-              navigate("/administration/employees/addemployee");
+              navigate("/administration/employees/add");
             }}
             className="d-flex align-items-center"
             type="button"

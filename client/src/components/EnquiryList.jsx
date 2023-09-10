@@ -523,7 +523,7 @@ export default function EnquiryList() {
           <div className="my-3  d-flex align-items-end justify-content-end">
             <div
               onClick={() => {
-                navigate("/sale/enquiryies/enquiry");
+                navigate("/sale/enquiries/enquiry");
 
               }}
               className="d-flex align-items-center px-1"

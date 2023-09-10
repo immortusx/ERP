@@ -464,7 +464,7 @@ export default function Roles({ workFor }) {
   const editeStateModal = (data) => {
     console.log(data,"data")
     // setTableEditData(data);
-    navigate("/administration/roles/editrole", { state: data });
+    navigate("/administration/roles/edit", { state: data });
   };
 
   const deleteActionCall = (data) => {
@@ -516,7 +516,7 @@ export default function Roles({ workFor }) {
           <div className="  d-flex align-items-end justify-content-end">
             <div
               onClick={() => {
-                navigate("/administration/roles/addrole");
+                navigate("/administration/roles/add");
               }}
               className="d-flex align-items-center"
               type="button"

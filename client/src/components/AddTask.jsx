@@ -304,7 +304,7 @@ const AddTask = ({ workFor }) => {
           className="col-12 col-sm-5 col-lg-2 myBtn py-2"
           onClick={handleSubmit}
           type="button">
-          Submit
+          Add Task
         </button>
       </section>
     </div>

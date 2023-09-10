@@ -45,7 +45,7 @@ export default function Category_list({ workFor }) {
 
    const editeStateModal = (data) => {
      dispatch(setEdicategoryData(data));
-     navigate("/administration/configuration/category/editcategory", { state: data });
+     navigate("/administration/configuration/category/edit", { state: data });
    };
 
 
@@ -322,7 +322,7 @@ export default function Category_list({ workFor }) {
               type="button"
               className="btn btn-primary"
               onClick={() => {
-                navigate("/administration/configuration/category/addcategory");
+                navigate("/administration/configuration/category/add");
               }}
             >
               <svg
