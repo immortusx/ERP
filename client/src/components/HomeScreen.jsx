@@ -430,7 +430,7 @@ export default function HomeScreen() {
                             className={({ isActive }) =>
                               isActive ? "activeLink" : ""
                             }
-                            to="sale/enquiries"
+                            to="sale/enquiryies"
                           >
                             Enquiry
                           </NavLink>
