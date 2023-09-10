@@ -85,7 +85,7 @@ router.get("/get-village/:id", tokenCheck, async (req, res) => {
 });
 router.get("/get-model/:id", tokenCheck, async (req, res) => {
   console.log(">>>>>>>>>get-model", req.params);
-  const urlNew = `SELECT * FROM products WHERE manufacturer_id = (${req.params.id})`;
+  const urlNew = `SELECT * FROM modal WHERE manufacturerId = (${req.params.id})`;
   await db.query(urlNew, async (err, result) => {
     if (err) {
       console.log({ isSuccess: false, result: err });
@@ -271,21 +271,22 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
   const whatsappNumber = req.body.whatsappNumber;
   const email = req.body.emailId;
   const isActive = 1;
+  const state = req.body.state || 2;
   const district = req.body.district;
   const taluka = req.body.tehsil;
   const block = req.body.block;
   const village = req.body.village;
 
-  const enquiryTypeId = '1'
-  const visitReason = '1'
-  const branchId = req.body.branchId
+  const enquiryTypeId = "1";
+  const visitReason = "1";
+  const branchId = req.body.branchId;
   const dsp = req.body.dsp || 1;
-  const model = req.body.model
-  const enquiryDate = req.body.enquiryDate
-  const deliveryDate = req.body.deliveryDate
-  const sourceOfEnquiry = req.body.sourceOfEnquiry
+  const model = req.body.model;
+  const enquiryDate = req.body.enquiryDate;
+  const deliveryDate = req.body.deliveryDate;
+  const sourceOfEnquiry = req.body.sourceOfEnquiry;
 
-  const url = `INSERT INTO customers (first_name, middle_name, last_name, phone_number, whatsapp_number, email, is_active, district, taluka, village) VALUES ('${fristName}','${middleName}','${lastName}','${phoneNumber}','${whatsappNumber}','${email}','${isActive}','${district}','${taluka}','${village}')`;
+  const url = `INSERT INTO customers (first_name, middle_name, last_name, phone_number, whatsapp_number, email, is_active, state, district, taluka, village) VALUES ('${fristName}','${middleName}','${lastName}','${phoneNumber}','${whatsappNumber}','${email}','${isActive}','${state}','${district}','${taluka}','${village}')`;
 
   console.log("url", url);
 
@@ -299,7 +300,7 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
       const newEnquiryDate = await getDateInFormate(enquiryDate);
       const newDeliveryDate = await getDateInFormate(deliveryDate);
 
-      const urlNew = `INSERT INTO enquiries (branch_id, enquiry_category_id, salesperson_id, customer_id, product_id, date, delivery_date, enquiry_source_id, visitReason) VALUES('${branchId}','${enquiryTypeId}','${dsp}','${insertedId}','${model}','${newEnquiryDate}','${newDeliveryDate}','${sourceOfEnquiry}','${visitReason}')`
+      const urlNew = `INSERT INTO enquiries (branch_id, enquiry_category_id, salesperson_id, customer_id, modal_id, date, delivery_date, enquiry_source_id, visitReason) VALUES('${branchId}','${enquiryTypeId}','${dsp}','${insertedId}','${model}','${newEnquiryDate}','${newDeliveryDate}','${sourceOfEnquiry}','${visitReason}')`;
       await db.query(urlNew, async (err, result) => {
         if (err) {
           console.log({ isSuccess: false, result: err });
@@ -1339,23 +1340,32 @@ router.get("/delete-enquiry/:id", tokenCheck, async (req, res) => {
       } else if (customerResult.length === 1) {
         // Customer exists, mark it as deleted
         const deleteCustomerQuery = `UPDATE customers SET is_active = 1 WHERE id = ${customerId}`;
-        db.query(deleteCustomerQuery, [customerId], async (err, deleteResult) => {
-          if (err) {
-            console.error(err);
-            res.status(500).json({ isSuccess: false, result: "error" });
-          } else {
-            // Now, delete related enquiries
-            const deleteEnquiriesQuery = "DELETE FROM enquiries WHERE customer_id = ?";
-            db.query(deleteEnquiriesQuery, [customerId], async (err, deleteEnquiriesResult) => {
-              if (err) {
-                console.error(err);
-                res.status(500).json({ isSuccess: false, result: "error" });
-              } else {
-                res.json({ isSuccess: true, result: "deletesuccess" });
-              }
-            });
+        db.query(
+          deleteCustomerQuery,
+          [customerId],
+          async (err, deleteResult) => {
+            if (err) {
+              console.error(err);
+              res.status(500).json({ isSuccess: false, result: "error" });
+            } else {
+              // Now, delete related enquiries
+              const deleteEnquiriesQuery =
+                "DELETE FROM enquiries WHERE customer_id = ?";
+              db.query(
+                deleteEnquiriesQuery,
+                [customerId],
+                async (err, deleteEnquiriesResult) => {
+                  if (err) {
+                    console.error(err);
+                    res.status(500).json({ isSuccess: false, result: "error" });
+                  } else {
+                    res.json({ isSuccess: true, result: "deletesuccess" });
+                  }
+                }
+              );
+            }
           }
-        });
+        );
       } else {
         // Customer does not exist
         console.log("Customer not found");
@@ -1368,4 +1378,31 @@ router.get("/delete-enquiry/:id", tokenCheck, async (req, res) => {
   }
 });
 
+//==================get edit Enquiry Data====================//
+router.get(
+  "/get-edit-enquiry-data/:customerId",
+  tokenCheck,
+  async (req, res) => {
+    console.log(">>>>>/get-tasks-list");
+    const customerId = req.params.customerId;
+    const url = `SELECT c.*, e.* 
+  FROM enquiries AS e
+  INNER JOIN customers AS c ON c.id = e.customer_id
+  WHERE e.customer_id = ${customerId};
+  `;
+    try {
+      await db.query(url, async (err, result) => {
+        if (err) {
+          console.log({ isSuccess: true, result: err });
+          res.send({ isSuccess: true, result: "error" });
+        } else {
+          console.log({ isSuccess: true, result: url });
+          res.send({ isSuccess: true, result: result[0] });
+        }
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  }
+);
 module.exports = router;
