@@ -279,7 +279,7 @@ router.post('/set-new-enquiry-data', tokenCheck, async (req, res) => {
   const enquiryTypeId = '1'
   const visitReason = '1'
   const branchId = req.body.branchId
-  const dsp = req.body.dsp
+  const dsp = req.body.dsp || 1;
   const model = req.body.model
   const enquiryDate = req.body.enquiryDate
   const deliveryDate = req.body.deliveryDate
@@ -300,7 +300,7 @@ router.post('/set-new-enquiry-data', tokenCheck, async (req, res) => {
       const newEnquiryDate = await getDateInFormate(enquiryDate)
       const newDeliveryDate = await getDateInFormate(deliveryDate)
 
-      const urlNew = `INSERT INTO enquiries (branch_id, enquiry_type_id, salesperson_id, customer_id, product_id, date, delivery_date, enquiry_source_id, visitReason) VALUES('${branchId}','${enquiryTypeId}','${dsp}','${insertedId}','${model}','${newEnquiryDate}','${newDeliveryDate}','${sourceOfEnquiry}','${visitReason}')`
+      const urlNew = `INSERT INTO enquiries (branch_id, enquiry_category_id, salesperson_id, customer_id, product_id, date, delivery_date, enquiry_source_id, visitReason) VALUES('${branchId}','${enquiryTypeId}','${dsp}','${insertedId}','${model}','${newEnquiryDate}','${newDeliveryDate}','${sourceOfEnquiry}','${visitReason}')`
       await db.query(urlNew, async (err, result) => {
         if (err) {
           console.log({ isSuccess: false, result: err })
@@ -464,7 +464,7 @@ router.post("/set-new-fast-enquiry", tokenCheck, async (req, res) => {
         // console.log({ isSuccess: true, result: salePersonDetails });
 
         const userData = salePersonDetails[0][0];
-        const salesperson_id = userData ? userData.userId : 20;
+        const salesperson_id = userData ? userData.userId : 1;
         console.log(salesperson_id, "userId");
 
         if (salesperson_id) {
@@ -481,7 +481,7 @@ router.post("/set-new-fast-enquiry", tokenCheck, async (req, res) => {
                 // res.send({ isSuccess: true, result: fastEnquiry });
                 const customer_id = fastEnquiry.insertId;
                 console.log(customer_id);
-                const enquirySql = `INSERT INTO enquiries (branch_id, enquiry_type_id, salesperson_id, customer_id, date) VALUES (?,?,?,?,?)`;
+                const enquirySql = `INSERT INTO enquiries (branch_id, enquiry_category_id, salesperson_id, customer_id, date) VALUES (?,?,?,?,?)`;
                 await db.query(
                   enquirySql,
                   [
@@ -553,7 +553,7 @@ router.post("/set-new-detail-enquiry", tokenCheck, async (req, res) => {
         // console.log({ isSuccess: true, result: salePersonDetails });
 
         const userData = salePersonDetails[0][0];
-        const salesperson_id = userData ? userData.userId : 20;
+        const salesperson_id = userData ? userData.userId : 1;
         console.log(salesperson_id, "userId");
 
         if (salesperson_id) {
@@ -582,7 +582,7 @@ router.post("/set-new-detail-enquiry", tokenCheck, async (req, res) => {
                   .replace("T", " ");
                 console.log(enquiryDate);
                 console.log(customer_id);
-                const enquirySql = `INSERT INTO enquiries (branch_id, enquiry_type_id, salesperson_id, customer_id, date, delivery_date, enquiry_source_id) VALUES (?,?,?,?,?,?,?)`;
+                const enquirySql = `INSERT INTO enquiries (branch_id, enquiry_category_id, salesperson_id, customer_id, date, delivery_date, enquiry_source_id) VALUES (?,?,?,?,?,?,?)`;
                 await db.query(
                   enquirySql,
                   [
@@ -682,7 +682,7 @@ router.post("/edit-new-detail-enquiry", tokenCheck, async (req, res) => {
     const whatsapp_number = req.body.whatsapp_number;
 
     const branch_id = req.body.branchId;
-    const salesperson_id = 20;
+    const salesperson_id = 1;
 
     const taluka = req.body.taluka;
     const village = req.body.village;
@@ -1206,7 +1206,7 @@ router.get(
   async (req, res) => {
     try {
       const categoryId = req.params.id;
-      const urlNew = `SELECT * FROM enquiries where enquiry_type_id = ${categoryId}`;
+      const urlNew = `SELECT * FROM enquiries where enquiry_category_id = ${categoryId}`;
       await db.query(urlNew, async (err, result) => {
         if (err) {
           console.log({ isSuccess: false, result: err });

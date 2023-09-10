@@ -10,7 +10,7 @@ const router = express.Router();
 //==========Prodcuts Details=========//
 router.get("/product-details", tokenCheck, async (req, res) => {
   try {
-    await db.query(`SELECT * FROM enquiry_types`, (err, results) => {
+    await db.query(`SELECT * FROM enquiry_category`, (err, results) => {
       if (err) {
         console.log({ isSuccess: false, result: err });
         res.send({ isSuccess: false, result: "error" });
