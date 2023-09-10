@@ -874,7 +874,16 @@ export default function HomeScreen() {
               exact
             />
             <Route
-              path="sale/enquiries/newenquiry"
+              path="sale/enquiryies/editenquiry"
+              element={
+                <CheckPermission path="profile">
+                  <Enquiry workFor="editEnquiry" />
+                </CheckPermission>
+              }
+              exact
+            />
+            <Route
+              path="sale/enquiryies/newenquiry"
               element={
                 <CheckPermission path="profile">
                   <Enquiry workFor="newEnquiry" />

@@ -138,7 +138,10 @@ export default function EnquiryList() {
       console.error("An error occurred while fetching data:", error);
     }
   }
-
+  const editEnquiryCell = (editEnquiryData) => {
+    const customerId = editEnquiryData.id;
+    navigate("/sale/enquiryies/editenquiry", { state: customerId });
+  };
   async function editsalesperson(formData) {
     const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/edit-salesperson-enquiry-data`;
     const config = {
@@ -423,7 +426,7 @@ export default function EnquiryList() {
             </button>
             <button
               onClick={() => {
-                console.log(params);
+                editEnquiryCell(params.row);
               }}
               className="myActionBtn m-1"
             >
