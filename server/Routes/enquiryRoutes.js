@@ -314,6 +314,18 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
   });
 });
 
+//=================edit Enquiry Data================//
+router.post("/set-edit-enquiry-data/:customerId", tokenCheck, async (req, res) => {
+  console.log(">>>>>>>>>set-edit-enquiry-data", req.body);
+  try {
+    const customerId = req.params.customerId;
+    console.log(customerId);
+    const  updateCustomerSql = `UPDATE customers SET `
+  } catch (err) {
+    console.log(err);
+  }
+});
+
 router.post("/add-enquiry-category", tokenCheck, async (req, res) => {
   console.log(">>>>>>>addEnquiryCategory");
   const categoriesValue = Object.values(req.body);
