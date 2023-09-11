@@ -31,7 +31,8 @@ export default function Category_list({ workFor }) {
  getCategory()
    .then((data) => {
      console.log("Response from getCategory:", data.result);
-     setCategoryList(data.result);
+     const filterCategory = data.result.filter((item)=> item.id !== 1);
+     setCategoryList(filterCategory);
    })
    .catch((error) => {
      console.error("Error in getCategory:", error);

@@ -20,7 +20,10 @@ import State from "./singleComponents/villageCom/state";
 import District from "./singleComponents/villageCom/District";
 import Taluka from "./singleComponents/villageCom/Taluka";
 import Village from "./singleComponents/villageCom/village";
-import { editEnquiryDb } from "../redux/slices/editEnquirySlice";
+import {
+  clearEditEnquiryState,
+  editEnquiryDb,
+} from "../redux/slices/editEnquirySlice";
 export default function Enquiry({ workFor, villageId }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -30,6 +33,7 @@ export default function Enquiry({ workFor, villageId }) {
   const setNewEnquiryDataState = useSelector(
     (state) => state.setNewEnquiryDataState.newEnquiryState
   );
+  const editEnquiryState = useSelector((state) => state.editEnquirySlice);
 
   const [categoriesList, setCategoriesList] = useState([]);
   const [categoryId, setCategoryId] = useState("");
@@ -259,7 +263,10 @@ export default function Enquiry({ workFor, villageId }) {
       if (response.data) {
         // setRoles(response.data.result)
         if (response.data.isSuccess) {
-          setCategoriesList(response.data.result);
+          const filteredCategory = response.data.result.filter(
+            (item) => item.id !== 1
+          );
+          setCategoriesList(filteredCategory);
         }
       }
     });
@@ -481,6 +488,14 @@ export default function Enquiry({ workFor, villageId }) {
     }
   }, [enquiryState]);
 
+  useEffect(() => {
+    console.log(editEnquiryState, "editStae");
+    if (editEnquiryState && editEnquiryState.result === "success") {
+      clearEditEnquiryState();
+      navigate("/sale/enquiries");
+    }
+  }, [editEnquiryState]);
+  
   const handleSubmit = async () => {
     if (workFor === "editEnquiry") {
       const branchId = newEnquiryData.branchId;
@@ -505,14 +520,14 @@ export default function Enquiry({ workFor, villageId }) {
       enquiryData.oldTractorOwned = oldTractorOwned;
       enquiryData.enquiryDate = enquiryDate;
       enquiryData.deliveryDate = deliveryDate;
-      console.log(enquiryData, 'newEnqi');
-      
-      if(customerId){
+      console.log(enquiryData, "newEnqi");
+
+      if (customerId) {
         enquiryData.customerId = customerId;
         dispatch(editEnquiryDb(enquiryData));
       }
     } else {
-      console.log('addENquiry')
+      console.log("addENquiry");
       const branchId = await localStorage.getItem("currentDealerId");
       const dsp = newEnquiryData.dsp;
       const model = newEnquiryData.model;
@@ -535,14 +550,14 @@ export default function Enquiry({ workFor, villageId }) {
       enquiryData.oldTractorOwned = oldTractorOwned;
       enquiryData.enquiryDate = enquiryDate;
       enquiryData.deliveryDate = deliveryDate;
-      console.log(enquiryData, 'enquir')
+      console.log(enquiryData, "enquir");
 
       dispatch(setEnquiryDb(enquiryData));
     }
   };
 
   function getSelectedFields(data) {
-    console.log(data, 'dataaa');
+    console.log(data, "dataaa");
     switch (data.field) {
       case "branchId":
         return (
@@ -725,11 +740,7 @@ export default function Enquiry({ workFor, villageId }) {
                 newEnquiryList.listMake.length > 0 &&
                 newEnquiryList.listMake.map((i, index) => {
                   return (
-                    <option
-                      key={index}
-                      value={i.id}
-                      className="myLabel"
-                    >
+                    <option key={index} value={i.id} className="myLabel">
                       {i.name}
                     </option>
                   );
@@ -1149,7 +1160,12 @@ export default function Enquiry({ workFor, villageId }) {
                   {categoriesList.length > 0 &&
                     categoriesList.map((item, index) => {
                       return (
-                        <option selected={item.id == 2 ? true : false} value={item.id} key={index} className="myLabel">
+                        <option
+                          selected={item.id == 2 ? true : false}
+                          value={item.id}
+                          key={index}
+                          className="myLabel"
+                        >
                           {item.category_name}
                         </option>
                       );
