@@ -10,7 +10,9 @@ import lg from "../assets/images/lg.png"
 // import lg from "../assets/images/loginlogo.png"
 import eyeIcon from "../assets/images/view.png";
 import eyeIconClose from "../assets/images/hide.png"
-
+import LanguageSelector from './languageSelector'
+import enTranslations from "../assets/locals/en.json"
+import gjTranslations from "../assets/locals/gj.json"
 
 export default function Login() {
     const dispatch = useDispatch()
@@ -18,6 +20,10 @@ export default function Login() {
     const profileDataState = useSelector(state => state.profileData.profile)
     const [showPassword, setShowPassword] = useState(false);
     const [rememberMe, setRememberMe] = useState(false);
+    const [language, setLanguage] = useState('en'); // Default language is English
+
+    const translations = language === 'en' ? enTranslations : gjTranslations;
+
 
     const navigate = useNavigate()
     const [loginData, setLoginData] = useState({
@@ -93,80 +99,86 @@ export default function Login() {
     }, []);
 
     return (
-        <main className='container'>
-            {/* section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4 */}
-            <div className=' d-flex flex-column align-items-center justify-content-center'>
-                <div className='container'>
-                    <div className=' row justify-content-center'>
-                        <section className='col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center'>
+        <main>
+            <div className='d-flex align-items-start justify-content-end'>
+                <LanguageSelector onChangeLanguage={(selectedLanguage) => setLanguage(selectedLanguage)} />
+            </div>
 
-                            {/* <h5 className='text-center p-0 m-0'>
+            <div className='container'>
+                {/* section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4 */}
+                <div className=' d-flex flex-column align-items-center justify-content-center'>
+                    <div className='container'>
+                        <div className=' row justify-content-center'>
+                            <section className='col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center'>
+
+                                {/* <h5 className='text-center p-0 m-0'>
                                 <strong>Vehicle Management System</strong>
                             </h5> */}
-                            <div style={{ marginTop: '45px' }}>
-                                <img src={lg} alt="Logo" height={200} width={350} />
-                            </div>
-                            <div className='mainDivRegister mt-3 bg-white p-4'>
-                                <h2 className='text-left'>Login</h2>
-                                <section>
-                                    <label htmlFor="email" style={{ fontSize: '17px', marginLeft: '5px' }}>Username </label>
-                                    <input className='myInputl' onChange={(e) => { onChangeHandler(e) }} type="text" id='email' name="email" />
-                                </section>
-                                <section>
+                                <div style={{ marginTop: '45px' }}>
+                                    <img src={lg} alt="Logo" height={200} width={350} />
+                                </div>
+                                <div className='mainDivRegister mt-3 bg-white p-4'>
+                                    <h2 className='text-left'>{translations.login}</h2>
+                                    <section>
+                                        <label htmlFor="email" style={{ fontSize: '17px', marginLeft: '5px' }}>{translations.username} </label>
+                                        <input className='myInputl' onChange={(e) => { onChangeHandler(e) }} type="text" id='email' name="email" />
+                                    </section>
+                                    <section>
 
-                                    <label htmlFor="password" style={{ fontSize: '17px', marginLeft: '5px' }}>Password </label>
-                                    <div style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
-                                        <input
-                                            className='myInputl'
-                                            onChange={(e) => { onChangeHandler(e) }}
-                                            type={showPassword ? 'text' : 'password'}
-                                            id='password'
-                                            name="password"
-                                            style={{ flex: '1' }}
-                                        />
-                                        <img
-                                            src={showPassword ? eyeIconClose : eyeIcon}
-                                            alt="Toggle Password"
-                                            height={20}
-                                            width={20}
-                                            onClick={() => setShowPassword(!showPassword)}
-                                            style={{ cursor: 'pointer', position: 'absolute', right: '7px', top: '50%', transform: 'translateY(-50%)' }}
-                                        />
-                                    </div>
+                                        <label htmlFor="password" style={{ fontSize: '17px', marginLeft: '5px' }}>{translations.password} </label>
+                                        <div style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
+                                            <input
+                                                className='myInputl'
+                                                onChange={(e) => { onChangeHandler(e) }}
+                                                type={showPassword ? 'text' : 'password'}
+                                                id='password'
+                                                name="password"
+                                                style={{ flex: '1' }}
+                                            />
+                                            <img
+                                                src={showPassword ? eyeIconClose : eyeIcon}
+                                                alt="Toggle Password"
+                                                height={20}
+                                                width={20}
+                                                onClick={() => setShowPassword(!showPassword)}
+                                                style={{ cursor: 'pointer', position: 'absolute', right: '7px', top: '50%', transform: 'translateY(-50%)' }}
+                                            />
+                                        </div>
 
-                                </section>
+                                    </section>
 
-                                <section className="remember-me" style={{ fontSize: '14px', display: 'inline-block' }}>
-                                    <label htmlFor="rememberMe" className="checkbox-label" style={{ verticalAlign: 'middle' }}>
-                                        <input
-                                            style={{ marginRight: '7px', marginLeft: '15px', width: '18px', height: '18px', verticalAlign: 'middle' }}
-                                            type="checkbox"
-                                            id="rememberMe"
-                                            name="rememberMe"
-                                            checked={rememberMe}
-                                            onChange={() => setRememberMe(!rememberMe)}
-                                        />
-                                        Remember my username
-                                    </label>
-                                </section>
+                                    <section className="remember-me" style={{ fontSize: '14px', display: 'inline-block' }}>
+                                        <label htmlFor="rememberMe" className="checkbox-label" style={{ verticalAlign: 'middle' }}>
+                                            <input
+                                                style={{ marginRight: '7px', marginLeft: '15px', width: '18px', height: '18px', verticalAlign: 'middle' }}
+                                                type="checkbox"
+                                                id="rememberMe"
+                                                name="rememberMe"
+                                                checked={rememberMe}
+                                                onChange={() => setRememberMe(!rememberMe)}
+                                            />
+                                            {translations.rememberMe}
+                                        </label>
+                                    </section>
 
-                                {/* <section>
+                                    {/* <section>
                             <label htmlFor="confirmPassword">Confirm Password </label>
                             <input className='myInput' onChange={(e) => { onChangeHandler(e) }} type="password" id='confirmPassword' name="confirmPassword" />
                         </section> */}
-                                <section>
-                                    <button className='myBtnl py-1' style={{ fontSize: '18px' }} onClick={handleSubmit} type='button'>Log in</button>
-                                </section>
-                                <section>
-                                    <button className='myBtnl py-1' style={{ fontSize: '18px' }} type='button'>Forgot password?</button>
-                                </section>
-                            </div>
-                        </section>
+                                    <section>
+                                        <button className='myBtnl py-1' style={{ fontSize: '18px' }} onClick={handleSubmit} type='button'>  {translations.loginButton}</button>
+                                    </section>
+                                    <section>
+                                        <button className='myBtnl py-1' style={{ fontSize: '18px' }} type='button'>  {translations.forgotPassword}</button>
+                                    </section>
+                                </div>
+                            </section>
+                        </div>
                     </div>
-                </div>
+
+                </div >
 
             </div >
-
-        </main >
+        </main>
     )
 }
