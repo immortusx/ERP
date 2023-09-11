@@ -430,7 +430,7 @@ export default function HomeScreen() {
                             className={({ isActive }) =>
                               isActive ? "activeLink" : ""
                             }
-                            to="sale/enquiryies"
+                            to="sale/enquiries"
                           >
                             Enquiry
                           </NavLink>
@@ -874,7 +874,7 @@ export default function HomeScreen() {
               exact
             />
             <Route
-              path="sale/enquiryies/editenquiry"
+              path="sale/enquiries/editenquiry"
               element={
                 <CheckPermission path="profile">
                   <Enquiry workFor="editEnquiry" />
@@ -883,7 +883,7 @@ export default function HomeScreen() {
               exact
             />
             <Route
-              path="sale/enquiryies/newenquiry"
+              path="sale/enquiries/newenquiry"
               element={
                 <CheckPermission path="profile">
                   <Enquiry workFor="newEnquiry" />
@@ -892,7 +892,7 @@ export default function HomeScreen() {
               exact
             />
             <Route
-              path="sale/enquiryies"
+              path="sale/enquiries"
               element={
                 <CheckPermission path="profile">
                   <EnquiryList />

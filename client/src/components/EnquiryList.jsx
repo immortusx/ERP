@@ -140,7 +140,7 @@ export default function EnquiryList() {
   }
   const editEnquiryCell = (editEnquiryData) => {
     const customerId = editEnquiryData.id;
-    navigate("/sale/enquiryies/editenquiry", { state: customerId });
+    navigate("/sale/enquiries/editenquiry", { state: customerId });
   };
   async function editsalesperson(formData) {
     const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/edit-salesperson-enquiry-data`;
