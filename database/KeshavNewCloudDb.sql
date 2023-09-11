@@ -35,7 +35,7 @@ END$$
 CREATE DEFINER=`balkrush1`@`%` PROCEDURE `get_enquiries_list` (IN `branchId` INT, IN `isAdmin` BOOLEAN, IN `salespersonId` INT)  BEGIN
     IF (isAdmin = TRUE) THEN
        SELECT s.id, s.first_name, s.last_name, s.phone_number, s.whatsapp_number, s.email,
-       (SELECT name FROM products WHERE id = product_id) AS product,
+       (SELECT modalName FROM modal WHERE id = modal_id) AS product,
        CONCAT(fo.first_name, ' ', fo.last_name) AS sales_person,
        f.date, f.delivery_date,
        (SELECT id FROM district WHERE id = s.district) AS district_id,
@@ -57,7 +57,7 @@ AND f.salesperson_id = salespersonId
 ORDER BY f.date DESC;
     ELSE
         SELECT s.id, s.first_name, s.last_name, s.phone_number, s.whatsapp_number, s.email,
-       (SELECT name FROM products WHERE id = product_id) AS product,
+       (SELECT modalName FROM modal WHERE id = modal_id) AS product,
        CONCAT(fo.first_name, ' ', fo.last_name) AS sales_person,
        f.date, f.delivery_date,
        (SELECT id FROM district WHERE id = s.district) AS district_id,
@@ -208,7 +208,7 @@ END$$
 CREATE DEFINER=`balkrush1`@`%` PROCEDURE `sp_get_enquiries_list` (IN `branchId` INT, IN `isAdmin` BOOLEAN)  BEGIN
     IF (isAdmin = TRUE) THEN
        SELECT s.id, s.first_name, s.last_name, s.phone_number, s.whatsapp_number, s.email,
-       (SELECT name FROM products WHERE id = product_id) AS product,
+       (SELECT modalName FROM modal WHERE id = modal_id) AS product,
        CONCAT(fo.first_name, ' ', fo.last_name) AS sales_person,
        f.date, f.delivery_date,
        (SELECT id FROM district WHERE id = s.district) AS district_id,
@@ -229,7 +229,7 @@ WHERE (f.enquiry_stage IS NULL OR f.enquiry_stage <> 'INVALID')
 ORDER BY f.date DESC;
     ELSE
         SELECT s.id, s.first_name, s.last_name, s.phone_number, s.whatsapp_number, s.email,
-       (SELECT name FROM products WHERE id = product_id) AS product,
+       (SELECT modalName FROM modal WHERE id = modal_id) AS product,
        CONCAT(fo.first_name, ' ', fo.last_name) AS sales_person,
        f.date, f.delivery_date,
        (SELECT id FROM district WHERE id = s.district) AS district_id,
@@ -302,7 +302,7 @@ END$$
 CREATE DEFINER=`balkrush1`@`%` PROCEDURE `sp_get_enquiry_list_by_time_interval` (IN `timeInterval` VARCHAR(20))  BEGIN
 IF timeInterval = 'Today' THEN 
  SELECT s.id, s.first_name, s.last_name, s.phone_number, s.whatsapp_number, s.email,
-           (SELECT name FROM products WHERE id = product_id) AS product,
+           (SELECT modalName FROM modal WHERE id = modal_id) AS product,
            CONCAT(fo.first_name, ' ', fo.last_name) AS sales_person,
            f.date, f.delivery_date,
            (SELECT id FROM district WHERE id = s.district) AS district_id,
@@ -324,7 +324,7 @@ IF timeInterval = 'Today' THEN
   
   ELSEIF timeInterval = 'LastWeek' THEN
     SELECT s.id, s.first_name, s.last_name, s.phone_number, s.whatsapp_number, s.email,
-           (SELECT name FROM products WHERE id = product_id) AS product,
+           (SELECT modalName FROM modal WHERE id = modal_id) AS product,
            CONCAT(fo.first_name, ' ', fo.last_name) AS sales_person,
            f.date, f.delivery_date,
            (SELECT id FROM district WHERE id = s.district) AS district_id,
@@ -347,7 +347,7 @@ IF timeInterval = 'Today' THEN
   
   ELSEIF timeInterval = 'LastMonth' THEN
     SELECT s.id, s.first_name, s.last_name, s.phone_number, s.whatsapp_number, s.email,
-           (SELECT name FROM products WHERE id = product_id) AS product,
+           (SELECT modalName FROM modal WHERE id = modal_id) AS product,
            CONCAT(fo.first_name, ' ', fo.last_name) AS sales_person,
            f.date, f.delivery_date,
            (SELECT id FROM district WHERE id = s.district) AS district_id,
@@ -399,7 +399,7 @@ FROM enquiries AS f
 INNER JOIN customers AS s ON s.id = f.customer_id
 INNER JOIN branches AS t ON f.branch_id = t.id
 INNER JOIN users AS fo ON fo.id = f.salesperson_id
-LEFT JOIN products AS p ON p.id = f.product_id
+LEFT JOIN modal AS p ON p.id = f.modal_id
 LEFT JOIN district AS d ON d.id = s.district
 LEFT JOIN taluka AS t1 ON t1.id = s.taluka
 LEFT JOIN village AS v1 ON v1.id = s.village
@@ -1078,7 +1078,7 @@ CREATE TABLE `enquiries` (
   `enquiry_category_id` int(11) DEFAULT NULL,
   `salesperson_id` int(11) DEFAULT NULL,
   `customer_id` int(11) DEFAULT NULL,
-  `product_id` int(11) DEFAULT NULL,
+  `modal_id` int(11) DEFAULT NULL,
   `date` datetime DEFAULT NULL,
   `delivery_date` datetime DEFAULT NULL,
   `enquiry_source_id` varchar(11) DEFAULT NULL,
@@ -1100,6 +1100,12 @@ CREATE TABLE `enquiry_category` (
   `is_active` tinyint(4) NOT NULL DEFAULT 1,
   `department` varchar(45) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Table structure for table `enquiry_category`
+--
+INSERT INTO `enquiry_category` (`id`, `category_name`, `category_description`, `is_active`, `department`) VALUES
+(1, 'None', 'None', 1, 'None');
 
 -- --------------------------------------------------------
 
@@ -1453,7 +1459,7 @@ CREATE TABLE `modal` (
 --
 
 INSERT INTO `modal` (`id`, `modalName`, `manufacturerId`, `isActive`) VALUES
-(1, 'DI-740III', 1, b'00000000001'),
+(1, 'None', 1, b'00000000001'),
 (2, 'DI-745III', 1, b'00000000001'),
 (3, 'GT-20', 1, b'00000000001'),
 (4, 'GT-22', 1, b'00000000001'),
@@ -2130,7 +2136,7 @@ ALTER TABLE `employee_detail`
 ALTER TABLE `enquiries`
   ADD PRIMARY KEY (`id`),
   ADD KEY `customer_id_idx` (`customer_id`),
-  ADD KEY `product_id_idx` (`product_id`),
+  ADD KEY `modal_id_idx` (`modal_id`),
   ADD KEY `salesperson_id_idx` (`salesperson_id`),
   ADD KEY `enquiry_category_id_idx` (`enquiry_category_id`),
   ADD KEY `enquiry_source_id_idx` (`enquiry_source_id`);
@@ -2635,7 +2641,7 @@ ALTER TABLE `branch_department_user`
 ALTER TABLE `enquiries`
   ADD CONSTRAINT `customer_id` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`id`),
   ADD CONSTRAINT `enquiry_category_id` FOREIGN KEY (`enquiry_category_id`) REFERENCES `enquiry_category` (`id`),
-  ADD CONSTRAINT `product_id` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`),
+  ADD CONSTRAINT `modal_id` FOREIGN KEY (`modal_id`) REFERENCES `modal` (`id`),
   ADD CONSTRAINT `salesperson_id` FOREIGN KEY (`salesperson_id`) REFERENCES `users` (`id`);
 
 --
