@@ -6,7 +6,9 @@ const { getDateInFormate } = require("../Utils/timeFunctions");
 const { db } = require("../Database/dbConfig");
 
 const router = express.Router();
-
+const none = 1;
+const adminId = 1;
+const stateId = 2;
 router.get("/enquiry-data", tokenCheck, async (req, res) => {
   console.log(">>>>>>>>>get-enquiry-data");
   try {
@@ -271,17 +273,17 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
   const whatsappNumber = req.body.whatsappNumber || null;
   const email = req.body.emailId || null;
   const isActive = 1;
-  const state = req.body.state || 2;
+  const state = req.body.state || stateId;
   const district = req.body.district || null;
   const taluka = req.body.tehsil || null;
   const block = req.body.block || null;
   const village = req.body.village || null;
 
-  const enquiryTypeId = "1" || null;
+  const enquiryCategoryId = req.body.category || none;
   const visitReason = "1" || null;
   const branchId = req.body.branchId || null;
-  const dsp = req.body.dsp || 1;
-  const model = req.body.model || 1;
+  const dsp = req.body.dsp || none;
+  const model = req.body.model || none;
   const enquiryDate = req.body.enquiryDate || null;
   const deliveryDate = req.body.deliveryDate || null;
   const sourceOfEnquiry = req.body.sourceOfEnquiry || null;
@@ -300,7 +302,7 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
       const newEnquiryDate = await getDateInFormate(enquiryDate);
       const newDeliveryDate = await getDateInFormate(deliveryDate);
 
-      const urlNew = `INSERT INTO enquiries (branch_id, enquiry_category_id, salesperson_id, customer_id, modal_id, date, delivery_date, enquiry_source_id, visitReason) VALUES('${branchId}','${enquiryTypeId}','${dsp}','${insertedId}','${model}','${newEnquiryDate}','${newDeliveryDate}','${sourceOfEnquiry}','${visitReason}')`;
+      const urlNew = `INSERT INTO enquiries (branch_id, enquiry_category_id, salesperson_id, customer_id, modal_id, date, delivery_date, enquiry_source_id, visitReason) VALUES('${branchId}','${enquiryCategoryId}','${dsp}','${insertedId}','${model}','${newEnquiryDate}','${newDeliveryDate}','${sourceOfEnquiry}','${visitReason}')`;
       await db.query(urlNew, async (err, result) => {
         if (err) {
           console.log({ isSuccess: false, result: err });
@@ -315,16 +317,100 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
 });
 
 //=================edit Enquiry Data================//
-router.post("/set-edit-enquiry-data/:customerId", tokenCheck, async (req, res) => {
-  console.log(">>>>>>>>>set-edit-enquiry-data", req.body);
-  try {
-    const customerId = req.params.customerId;
-    console.log(customerId);
-    const  updateCustomerSql = `UPDATE customers SET `
-  } catch (err) {
-    console.log(err);
+router.post(
+  "/set-edit-enquiry-data/:customerId",
+  tokenCheck,
+  async (req, res) => {
+    console.log(">>>>>>>>>set-edit-enquiry-data", req.body);
+    try {
+      const customerId = req.params.customerId;
+      const fristName = req.body.firstName || null;
+      const lastName = req.body.lastName || null;
+      const middleName = req.body.fatherName || null;
+      const phoneNumber = req.body.mobileNumber || null;
+      const whatsappNumber = req.body.whatsappNumber || null;
+      const email = req.body.emailId || null;
+      const isActive = 1;
+      const state = req.body.state || stateId;
+      const district = req.body.district || null;
+      const taluka = req.body.tehsil || null;
+      const block = req.body.block || null;
+      const village = req.body.village || null;
+
+      const enquiryCategoryId = req.body.category || none;
+      const visitReason = "1" || null;
+      const branchId = req.body.branchId || null;
+      const dsp = req.body.dsp || none;
+      const model = req.body.model || none;
+      const enquiryDate = req.body.enquiryDate || null;
+      const deliveryDate = req.body.deliveryDate || null;
+      const sourceOfEnquiry = req.body.sourceOfEnquiry || null;
+      const newDeliveryDate = await getDateInFormate(deliveryDate);
+      const updateCustomerSql = `
+    UPDATE customers 
+    SET 
+      first_name = ?,
+      middle_name = ?, 
+      last_name = ?, 
+      phone_number = ?, 
+      whatsapp_number = ?, 
+      email = ?, 
+      state = ?, 
+      district = ?, 
+      taluka = ?, 
+      village = ?
+    WHERE id = ${customerId}`;
+      const updateEnquirySql = `
+      UPDATE enquiries 
+      SET 
+        branch_id = ?, 
+        enquiry_category_id = ?, 
+        salesperson_id = ?, 
+        modal_id = ?, 
+        delivery_date = ?
+      WHERE customer_id = ${customerId}`;
+      await db.query(
+        updateCustomerSql,
+        [
+          fristName,
+          middleName,
+          lastName,
+          phoneNumber,
+          whatsappNumber,
+          email,
+          state,
+          district,
+          taluka,
+          village,
+        ],
+        async (err, result) => {
+          if (err) {
+            console.log({ isSuccess: false, result: err });
+            res.send({ isSuccess: false, result: "error" });
+          } else {
+            console.log({ isSuccess: "success", result: 'success' });
+            // res.send({ isSuccess: "success", result: result[0] });
+            await db.query(
+              updateEnquirySql,
+              [branchId, enquiryCategoryId, dsp, model, newDeliveryDate],
+              (err, result) => {
+                if (err) {
+                  console.log({ isSuccess: false, result: err });
+                  res.send({ isSuccess: false, result: "error" });
+                } else {
+                  console.log({ isSuccess: "success", result: 'success' });
+                  res.send({ isSuccess: "success", result: 'success' });
+                }
+              }
+            );
+          }
+        }
+      );
+    } catch (err) {
+      console.log(err);
+    }
   }
-});
+);
 
 router.post("/add-enquiry-category", tokenCheck, async (req, res) => {
   console.log(">>>>>>>addEnquiryCategory");

@@ -542,6 +542,7 @@ export default function Enquiry({ workFor, villageId }) {
   };
 
   function getSelectedFields(data) {
+    console.log(data, 'dataaa');
     switch (data.field) {
       case "branchId":
         return (
@@ -716,7 +717,6 @@ export default function Enquiry({ workFor, villageId }) {
               onChange={changeHandlerNewEnquiry}
               className="inpClr myInput"
               name="make"
-              defaultValue={1}
             >
               <option value="0" className="myLabel">
                 select
@@ -726,7 +726,6 @@ export default function Enquiry({ workFor, villageId }) {
                 newEnquiryList.listMake.map((i, index) => {
                   return (
                     <option
-                      selected={i.id == 1 ? true : false}
                       key={index}
                       value={i.id}
                       className="myLabel"
@@ -1150,7 +1149,7 @@ export default function Enquiry({ workFor, villageId }) {
                   {categoriesList.length > 0 &&
                     categoriesList.map((item, index) => {
                       return (
-                        <option value={item.id} key={index} className="myLabel">
+                        <option selected={item.id == 2 ? true : false} value={item.id} key={index} className="myLabel">
                           {item.category_name}
                         </option>
                       );
