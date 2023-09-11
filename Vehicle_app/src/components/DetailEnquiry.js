@@ -134,7 +134,7 @@ const DetailEnquiry = ({route}) => {
     {label: 'Visit', value: '28'},
     {label: 'Other', value: '29'},
   ];
-
+  let newTractorId = 2;
   const conditionType = [
     {label: 'Good', value: 'Good'},
     {label: 'Below Average', value: 'Below Average'},
@@ -197,7 +197,8 @@ const DetailEnquiry = ({route}) => {
       await axios.get(url, config).then(response => {
         if (response) {
           // console.log(response.data.result, 'category List');
-          setCategoryData(response.data.result);
+          const filteredCategory = response.data.result.filter((item)=> item.id !== 1);
+          setCategoryData(filteredCategory);
         }
       });
     };
@@ -794,7 +795,7 @@ const DetailEnquiry = ({route}) => {
   useEffect(() => {
     if (categoryData) {
       categoryData.map(item => {
-        if (item.id === 1) {
+        if (item.id === newTractorId) {
           setCategory(item.id);
         }
       });

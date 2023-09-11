@@ -103,6 +103,7 @@ const FastEnquiry = () => {
     value: category.id,
   }));
 
+  let newTractorId = 2;
   const conditionType = [
     {label: 'Good', value: '1'},
     {label: 'Below Average', value: '2'},
@@ -392,7 +393,7 @@ const FastEnquiry = () => {
   useEffect(() => {
     if (categoryData) {
       categoryData.map(item => {
-        if (item.id === 1) {
+        if (item.id === newTractorId) {
           setCategory(item.id);
         }
       });
@@ -453,7 +454,8 @@ const FastEnquiry = () => {
       await axios.get(url, config).then(response => {
         if (response) {
           // console.log(response.data.result, 'category List');
-          setCategoryData(response.data.result);
+          const filteredCategory = response.data.result.filter((item)=> item.id !== 1);
+          setCategoryData(filteredCategory);
         }
       });
     };

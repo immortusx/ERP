@@ -8,7 +8,8 @@ const { db } = require("../Database/dbConfig");
 const router = express.Router();
 const none = 1;
 const adminId = 1;
-const stateId = 2;
+let stateId = 2;
+let districtId = 2;
 router.get("/enquiry-data", tokenCheck, async (req, res) => {
   console.log(">>>>>>>>>get-enquiry-data");
   try {
@@ -565,10 +566,10 @@ router.post("/set-new-fast-enquiry", tokenCheck, async (req, res) => {
         console.log(salesperson_id, "userId");
 
         if (salesperson_id) {
-          const fastSql = `INSERT INTO customers (first_name, phone_number, whatsapp_number, taluka, village) VALUES (?,?,?,?,?)`;
+          const fastSql = `INSERT INTO customers (first_name, phone_number, whatsapp_number, state, district, taluka, village) VALUES (?,?,?,?,?,?,?)`;
           await db.query(
             fastSql,
-            [first_name, phone_number, whatsapp_number, taluka, village],
+            [first_name, phone_number, whatsapp_number, stateId, districtId, taluka, village],
             async (err, fastEnquiry) => {
               if (err) {
                 console.log({ isSuccess: false, result: err });
@@ -654,7 +655,7 @@ router.post("/set-new-detail-enquiry", tokenCheck, async (req, res) => {
         console.log(salesperson_id, "userId");
 
         if (salesperson_id) {
-          const fastSql = `INSERT INTO customers (first_name, last_name, phone_number, whatsapp_number, taluka, village) VALUES (?,?,?,?,?,?)`;
+          const fastSql = `INSERT INTO customers (first_name, last_name, phone_number, whatsapp_number, state, district, taluka, village) VALUES (?,?,?,?,?,?,?,?)`;
           await db.query(
             fastSql,
             [
@@ -662,6 +663,8 @@ router.post("/set-new-detail-enquiry", tokenCheck, async (req, res) => {
               last_name,
               phone_number,
               whatsapp_number,
+              stateId,
+              districtId,
               taluka,
               village,
             ],
