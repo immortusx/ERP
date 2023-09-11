@@ -264,27 +264,27 @@ router.post("/edit-salesperson-enquiry-data", tokenCheck, async (req, res) => {
 router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
   console.log(">>>>>>>>>set-new-enquiry-data", req.body);
 
-  const fristName = req.body.firstName;
-  const lastName = req.body.lastName;
-  const middleName = req.body.fatherName;
-  const phoneNumber = req.body.mobileNumber;
-  const whatsappNumber = req.body.whatsappNumber;
-  const email = req.body.emailId;
+  const fristName = req.body.firstName || null;
+  const lastName = req.body.lastName || null;
+  const middleName = req.body.fatherName || null;
+  const phoneNumber = req.body.mobileNumber || null;
+  const whatsappNumber = req.body.whatsappNumber || null;
+  const email = req.body.emailId || null;
   const isActive = 1;
   const state = req.body.state || 2;
-  const district = req.body.district;
-  const taluka = req.body.tehsil;
-  const block = req.body.block;
-  const village = req.body.village;
+  const district = req.body.district || null;
+  const taluka = req.body.tehsil || null;
+  const block = req.body.block || null;
+  const village = req.body.village || null;
 
-  const enquiryTypeId = "1";
-  const visitReason = "1";
-  const branchId = req.body.branchId;
+  const enquiryTypeId = "1" || null;
+  const visitReason = "1" || null;
+  const branchId = req.body.branchId || null;
   const dsp = req.body.dsp || 1;
-  const model = req.body.model;
-  const enquiryDate = req.body.enquiryDate;
-  const deliveryDate = req.body.deliveryDate;
-  const sourceOfEnquiry = req.body.sourceOfEnquiry;
+  const model = req.body.model || 1;
+  const enquiryDate = req.body.enquiryDate || null;
+  const deliveryDate = req.body.deliveryDate || null;
+  const sourceOfEnquiry = req.body.sourceOfEnquiry || null;
 
   const url = `INSERT INTO customers (first_name, middle_name, last_name, phone_number, whatsapp_number, email, is_active, state, district, taluka, village) VALUES ('${fristName}','${middleName}','${lastName}','${phoneNumber}','${whatsappNumber}','${email}','${isActive}','${state}','${district}','${taluka}','${village}')`;
 
