@@ -1,28 +1,43 @@
-import React, {useEffect, useState} from 'react';
-import {View, Text, ImageBackground, StyleSheet} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, ImageBackground, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useDispatch} from 'react-redux';
-import {getProfileData} from '../redux/slice/getUserProfile';
+import { useDispatch, useSelector } from 'react-redux';
+import { getProfileData } from '../redux/slice/getUserProfile';
 
-const Splash = ({navigation}) => {
+const Splash = ({ navigation }) => {
   const dispatch = useDispatch();
-  const [isLoggedIn, setLoggedIn] = useState(false);
+  const [initialCheckDone, setInitialCheckDone] = useState(false);
+  const profileData = useSelector((state) => state.getUserProfileSlice.profile);
 
   useEffect(() => {
     const checkLoginAndNavigate = async () => {
       const token = await AsyncStorage.getItem('rbacToken');
+
       if (token) {
-        setLoggedIn(true);
-        dispatch(getProfileData());
-        navigation.navigate('Main');
+        setTimeout(() => {
+          setInitialCheckDone(true);
+          dispatch(getProfileData());
+        }, 2000);
       } else {
-        setLoggedIn(true);
-        navigation.navigate('Login');
+        setTimeout(() => {
+          setInitialCheckDone(true);
+          navigation.navigate('Login');
+        }, 2000);
       }
     };
 
-    setTimeout(checkLoginAndNavigate, 2000);
-  }, []);
+    checkLoginAndNavigate();
+  }, [navigation, dispatch]);
+
+  useEffect(() => {
+    if (initialCheckDone) {
+      if (profileData.isSuccess && profileData.currentUserData.isSuccess) {
+        navigation.navigate('Main');
+      } else {
+        navigation.navigate('Login');
+      }
+    }
+  }, [profileData, navigation, initialCheckDone]);
 
   return (
     <View style={styles.container}>
