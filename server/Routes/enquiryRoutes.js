@@ -985,8 +985,6 @@ router.post("/edit-new-detail-enquiry", tokenCheck, async (req, res) => {
                               result: enquiryProductSql,
                             });
                             if (old_tractor === "Yes") {
-                              const newYearOfManufactur =
-                                await getDateInFormate(year);
                               const urlSql = `UPDATE manufactur_details SET maker = ?, modalName = ?, variantName = ?, year_of_manufactur = ?, condition_of = ?, old_tractor = ? WHERE enquiry_id = ${enquiry_id}`;
                               await db.query(
                                 urlSql,
@@ -994,7 +992,7 @@ router.post("/edit-new-detail-enquiry", tokenCheck, async (req, res) => {
                                   maker,
                                   modalName,
                                   variantName,
-                                  newYearOfManufactur,
+                                  year,
                                   condition_of,
                                   old_tractor,
                                 ],
