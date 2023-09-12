@@ -36,6 +36,7 @@ export default function Enquiry({ workFor, villageId }) {
   const editEnquiryState = useSelector((state) => state.editEnquirySlice);
 
   const [categoriesList, setCategoriesList] = useState([]);
+  const [variant, setVariant] = useState([]);
   const [categoryId, setCategoryId] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [editEnquiryDate, setEditEnquiryDate] = useState(null);
@@ -80,6 +81,10 @@ export default function Enquiry({ workFor, villageId }) {
     ssp: "",
     make: "",
     model: "",
+    variant:"",
+    manufacturers:" ",
+    product:" ",
+    condition:" ",
     enquiryPrimarySource: "",
     sourceOfEnquiry: "",
     enquiryDate: new Date(),
@@ -101,9 +106,63 @@ export default function Enquiry({ workFor, villageId }) {
     listSsp: [],
     listMake: [],
     listModel: [],
+    listVariant: [],
     listPrimarySource: [],
     listSourceOfEnquiry: [],
     listCustomerCategory: [],
+    listyears:[
+      {id:1,year:"1980" },
+      {id:2,year:"1981" },
+      {id:3,year:"1982" },
+      {id:4,year:"1983" },
+      {id:5,year:"1984" },
+      {id:6,year:"1985" },
+      {id:7,year:"1986" },
+      {id:8,year:"1987" },
+      {id:9,year:"1988" },
+      {id:10,year:"1989" },
+      {id:11,year:"1990" },
+      {id:12,year:"1991" },
+      {id:13,year:"1992" },
+      {id:14,year:"1993" },
+      {id:15,year:"1994" },
+      {id:15,year:"1995" },
+      {id:15,year:"1996" },
+      {id:15,year:"1997" },
+      {id:15,year:"1998" },
+      {id:15,year:"1999" },
+      {id:15,year:"2000" },
+      {id:15,year:"2001" },
+      {id:15,year:"2002" },
+      {id:15,year:"2003" },
+      {id:15,year:"2004" },
+      {id:15,year:"2005" },
+      {id:15,year:"2006" },
+      {id:15,year:"2007" },
+      {id:15,year:"2008" },
+      {id:15,year:"2009" },
+      {id:15,year:"2010" },
+      {id:15,year:"2011" },
+      {id:15,year:"2012" },
+      {id:15,year:"2013" },
+      {id:15,year:"2014" },
+      {id:15,year:"2015" },
+      {id:15,year:"2016" },
+      {id:15,year:"2017" },
+      {id:15,year:"2018" },
+      {id:15,year:"2019" },
+      {id:15,year:"2020" },
+      {id:15,year:"2021" },
+      {id:15,year:"2022" },
+      {id:15,year:"2023" },
+     
+    ],
+    listCondition:[
+      {id: 1, name :"very Good"},
+      {id: 2, name :"Average"},
+      {id: 3, name :"Below Average"},
+      {id: 4, name :"Good"},
+    ],
     listModeOfFinance: [
       { id: 1, name: "Cash" },
       { id: 2, name: "Credit Card" },
@@ -132,6 +191,10 @@ export default function Enquiry({ workFor, villageId }) {
       ssp: "",
       make: "",
       model: "",
+      variant: "",
+      manufacturers: " ",
+      product: " ",
+      condition: " ",
       enquiryPrimarySource: "",
       sourceOfEnquiry: "",
       enquiryDate: new Date(),
@@ -380,6 +443,26 @@ export default function Enquiry({ workFor, villageId }) {
       }
     });
   }
+
+  const getVariant = async (id) => {
+    const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/get-variant/${id}`;
+    const config = {
+      headers: {
+        token: localStorage.getItem("rbacToken"),
+      },
+    };
+    await axios.get(url, config).then((response) => {
+      if (response.data) {
+        if (response.data.isSuccess) {
+          setNewEnquiryList((newEnquiryList) => ({
+            ...newEnquiryList,
+            ["listVariant"]: response.data.result,
+          }));
+        }
+      }
+    });
+  };
+
   useEffect(() => {
     if (workFor === "editEnquiry" && customerId) {
       const getEditEnquiryData = async () => {
@@ -495,13 +578,14 @@ export default function Enquiry({ workFor, villageId }) {
       navigate("/sale/enquiries");
     }
   }, [editEnquiryState]);
-  
+
   const handleSubmit = async () => {
     if (workFor === "editEnquiry") {
       const branchId = newEnquiryData.branchId;
       const dsp = newEnquiryData.dsp;
       const model = newEnquiryData.model;
       const make = newEnquiryData.make;
+      const manufacturers = newEnquiryData.manufacturers
       const enquiryPrimarySource = newEnquiryData.enquiryPrimarySource;
       const sourceOfEnquiry = newEnquiryData.sourceOfEnquiry;
       const modeOfFinance = newEnquiryData.modeOfFinance;
@@ -520,6 +604,7 @@ export default function Enquiry({ workFor, villageId }) {
       enquiryData.oldTractorOwned = oldTractorOwned;
       enquiryData.enquiryDate = enquiryDate;
       enquiryData.deliveryDate = deliveryDate;
+      enquiryData.manufacturers = manufacturers;
       console.log(enquiryData, "newEnqi");
 
       if (customerId) {
@@ -532,6 +617,10 @@ export default function Enquiry({ workFor, villageId }) {
       const dsp = newEnquiryData.dsp;
       const model = newEnquiryData.model;
       const make = newEnquiryData.make;
+        const manufacturers = newEnquiryData.manufacturers;
+        const product = newEnquiryData.product;
+        const variant = newEnquiryData.variant;
+        const condition = newEnquiryData.condition;
       const enquiryPrimarySource = newEnquiryData.enquiryPrimarySource;
       const sourceOfEnquiry = newEnquiryData.sourceOfEnquiry;
       const modeOfFinance = newEnquiryData.modeOfFinance;
@@ -550,6 +639,10 @@ export default function Enquiry({ workFor, villageId }) {
       enquiryData.oldTractorOwned = oldTractorOwned;
       enquiryData.enquiryDate = enquiryDate;
       enquiryData.deliveryDate = deliveryDate;
+      enquiryData.manufacturers = manufacturers;
+      enquiryData.product = product;
+      enquiryData.variant = variant;
+      enquiryData.condition = condition;
       console.log(enquiryData, "enquir");
 
       dispatch(setEnquiryDb(enquiryData));
@@ -854,7 +947,7 @@ export default function Enquiry({ workFor, villageId }) {
             </label>
             <div className="d-flex">
               <input
-                value="0"
+                value="1"
                 onChange={changeHandler}
                 type="radio"
                 id="html"
@@ -863,6 +956,7 @@ export default function Enquiry({ workFor, villageId }) {
               <label className="ms-1 myLabel" htmlFor="email">
                 Yes
               </label>
+
               <input
                 defaultChecked
                 value="0"
@@ -876,6 +970,131 @@ export default function Enquiry({ workFor, villageId }) {
                 No
               </label>
             </div>
+            {enquiryData.oldTractorOwned === "1" && (
+              <>
+                <p className="mt-3 mb-0"> Select Details* </p>
+                <section className="d-flex mt-3 flex-column col-lg-12 col-sm-6 col-4">
+                  <select
+                    onChange={changeHandlerNewEnquiry}
+                    className="inpClr myInput"
+                    name="manufacturers"
+                  >
+                    <option value="0" className="myLabel">
+                      select Manufacturer
+                    </option>
+                    {newEnquiryList.listMake &&
+                      newEnquiryList.listMake.length > 0 &&
+                      newEnquiryList.listMake.map((i, index) => {
+                        return (
+                          <option
+                            key={index}
+                            value={i.name}
+                            className="myLabel"
+                          >
+                            {i.name}
+                          </option>
+                        );
+                      })}
+                  </select>
+                </section>
+                <section className="d-flex mt-3 flex-column col-lg-12 col-sm-6 col-4">
+                  <select
+                    onChange={changeHandlerNewEnquiry}
+                    className="inpClr myInput"
+                    name="product"
+                  >
+                    <option value="0" className="myLabel">
+                      select Modal
+                    </option>
+                    {newEnquiryList.listModel &&
+                      newEnquiryList.listModel.length > 0 &&
+                      newEnquiryList.listModel.map((i, index) => {
+                        return (
+                          <option
+                            key={index}
+                            value={i.modalName}
+                            className="myLabel"
+                          >
+                            {i.modalName}
+                          </option>
+                        );
+                      })}
+                  </select>
+                </section>
+                <section className="d-flex mt-3 flex-column col-lg-12 col-sm-6 col-4">
+                  <select
+                    onChange={changeHandlerNewEnquiry}
+                    className="inpClr myInput"
+                    name="variant"
+                  >
+                    <option value="0" className="myLabel">
+                      select Variant
+                    </option>
+                    {newEnquiryList.listVariant &&
+                      newEnquiryList.listVariant.length > 0 &&
+                      newEnquiryList.listVariant.map((i, index) => {
+                        return (
+                          <option
+                            key={index}
+                            value={i.variantName}
+                            className="myLabel"
+                          >
+                            {i.variantName}
+                          </option>
+                        );
+                      })}
+                  </select>
+                </section>
+                <section className="d-flex mt-3 flex-column col-lg-12 col-sm-6 col-4">
+                  <select
+                    onChange={changeHandler}
+                    className="inpClr myInput"
+                    name="modelYear"
+                  >
+                    <option value="0" className="myLabel">
+                      Manufacturer year :- Select year
+                    </option>
+                    {newEnquiryList.listyears &&
+                      newEnquiryList.listyears.length > 0 &&
+                      newEnquiryList.listyears.map((i, index) => {
+                        return (
+                          <option
+                            key={index}
+                            value={i.year}
+                            className="myLabel"
+                          >
+                            {i.year}
+                          </option>
+                        );
+                      })}
+                  </select>
+                </section>
+                <section className="d-flex mt-3 flex-column col-lg-12 col-sm-6 col-4">
+                  <select
+                    onChange={changeHandlerNewEnquiry}
+                    className="inpClr myInput"
+                    name="condition"
+                  >
+                    <option value="0" className="myLabel">
+                      Select Condition
+                    </option>
+                    {newEnquiryList.listCondition &&
+                      newEnquiryList.listCondition.length > 0 &&
+                      newEnquiryList.listCondition.map((i, index) => {
+                        return (
+                          <option
+                            key={index}
+                            value={i.name}
+                            className="myLabel"
+                          >
+                            {i.name}
+                          </option>
+                        );
+                      })}
+                  </select>
+                </section>
+              </>
+            )}
           </section>
         );
 
@@ -1022,8 +1241,14 @@ export default function Enquiry({ workFor, villageId }) {
         // case "branchId":
         //   getDspList(value);
         //   break;
+        case "manufacturers":
+          getModelList(value);
+          break;
         case "make":
           getModelList(value);
+          break;
+        case "product":
+          getVariant(value);
           break;
         case "enquiryPrimarySource":
           getSourceOfEnquiryList(value);
