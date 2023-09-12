@@ -389,7 +389,7 @@ router.post(
             console.log({ isSuccess: false, result: err });
             res.send({ isSuccess: false, result: "error" });
           } else {
-            console.log({ isSuccess: "success", result: 'success' });
+            console.log({ isSuccess: "success", result: "success" });
             // res.send({ isSuccess: "success", result: result[0] });
             await db.query(
               updateEnquirySql,
@@ -399,8 +399,8 @@ router.post(
                   console.log({ isSuccess: false, result: err });
                   res.send({ isSuccess: false, result: "error" });
                 } else {
-                  console.log({ isSuccess: "success", result: 'success' });
-                  res.send({ isSuccess: "success", result: 'success' });
+                  console.log({ isSuccess: "success", result: "success" });
+                  res.send({ isSuccess: "success", result: "success" });
                 }
               }
             );
@@ -569,7 +569,15 @@ router.post("/set-new-fast-enquiry", tokenCheck, async (req, res) => {
           const fastSql = `INSERT INTO customers (first_name, phone_number, whatsapp_number, state, district, taluka, village) VALUES (?,?,?,?,?,?,?)`;
           await db.query(
             fastSql,
-            [first_name, phone_number, whatsapp_number, stateId, districtId, taluka, village],
+            [
+              first_name,
+              phone_number,
+              whatsapp_number,
+              stateId,
+              districtId,
+              taluka,
+              village,
+            ],
             async (err, fastEnquiry) => {
               if (err) {
                 console.log({ isSuccess: false, result: err });
@@ -616,29 +624,30 @@ router.post("/set-new-fast-enquiry", tokenCheck, async (req, res) => {
 router.post("/set-new-detail-enquiry", tokenCheck, async (req, res) => {
   console.log(">>>>>/set-new-detail-enquiry", req.body);
   try {
-    const first_name = req.body.first_name;
-    const last_name = req.body.last_name;
-    const phone_number = req.body.phone_number;
-    const whatsapp_number = req.body.whatsapp_number;
+    const first_name = req.body.first_name || null;
+    const last_name = req.body.last_name || null;
+    const phone_number = req.body.phone_number || null;
+    const whatsapp_number = req.body.whatsapp_number || null;
 
-    const branch_id = req.body.branchId;
+    const branch_id = req.body.branchId || null;
 
-    const taluka = req.body.taluka;
-    const village = req.body.village;
+    const taluka = req.body.taluka || null;
+    const village = req.body.village || null;
 
-    const deliveryDate = req.body.deliveryDate;
-    const modal = req.body.modal;
+    const deliveryDate = req.body.deliveryDate || null;
+    const make = req.body.make || null;
+    const modal = req.body.modal || none;
 
-    const maker = req.body.maker;
-    const modalName = req.body.modalName;
-    const variantName = req.body.variantName;
-    const year = req.body.year;
-    const condition_of = req.body.condition_of;
+    const maker = req.body.maker || null;
+    const modalName = req.body.modalName || null;
+    const variantName = req.body.variantName || null;
+    const year = req.body.year || null;
+    const condition_of = req.body.condition_of || null;
     const sourceOfEnquiry = req.body.sourceOfEnquiry
       ? req.body.sourceOfEnquiry
       : 31;
-    const old_tractor = req.body.old_tractor;
-    const categoryId = req.body.category;
+    const old_tractor = req.body.old_tractor || null;
+    const categoryId = req.body.category || null;
 
     const salePersonSql = `CALL sp_get_user_sale_person(${village}, ${categoryId})`;
     await db.query(salePersonSql, async (err, salePersonDetails) => {
@@ -682,7 +691,7 @@ router.post("/set-new-detail-enquiry", tokenCheck, async (req, res) => {
                   .replace("T", " ");
                 console.log(enquiryDate);
                 console.log(customer_id);
-                const enquirySql = `INSERT INTO enquiries (branch_id, enquiry_category_id, salesperson_id, customer_id, date, delivery_date, enquiry_source_id) VALUES (?,?,?,?,?,?,?)`;
+                const enquirySql = `INSERT INTO enquiries (branch_id, enquiry_category_id, salesperson_id, customer_id, modal_id, date, delivery_date, enquiry_source_id) VALUES (?,?,?,?,?,?,?,?)`;
                 await db.query(
                   enquirySql,
                   [
@@ -690,6 +699,7 @@ router.post("/set-new-detail-enquiry", tokenCheck, async (req, res) => {
                     categoryId,
                     salesperson_id,
                     customer_id,
+                    modal,
                     new Date(),
                     deliveryDate,
                     sourceOfEnquiry,
@@ -701,10 +711,10 @@ router.post("/set-new-detail-enquiry", tokenCheck, async (req, res) => {
                     } else if (enquiryResult && enquiryResult.insertId) {
                       console.log({ isSuccess: "success", result: enquirySql });
                       const enquiryId = enquiryResult.insertId;
-                      const enquiryProductSql = `INSERT INTO enquiry_products (enquiry_id, modal) VALUES (?,?)`;
+                      const enquiryProductSql = `INSERT INTO enquiry_products (enquiry_id, manufacturer, modal) VALUES (?,?,?)`;
                       await db.query(
                         enquiryProductSql,
-                        [enquiryId, modal],
+                        [enquiryId, make, modal],
                         async (err, productResult) => {
                           if (err) {
                             console.log(err);
@@ -713,13 +723,7 @@ router.post("/set-new-detail-enquiry", tokenCheck, async (req, res) => {
                               isSuccess: "success",
                               result: enquiryProductSql,
                             });
-                            if (
-                              maker &&
-                              modalName &&
-                              variantName &&
-                              year &&
-                              condition_of
-                            ) {
+                            if (old_tractor === "Yes") {
                               const urlSql = `INSERT INTO manufactur_details (enquiry_id, maker, modalName, variantName, year_of_manufactur, condition_of, old_tractor) VALUES(?, ?, ?, ?, ?, ?, ?)`;
                               await db.query(
                                 urlSql,
@@ -730,6 +734,29 @@ router.post("/set-new-detail-enquiry", tokenCheck, async (req, res) => {
                                   variantName,
                                   year,
                                   condition_of,
+                                  old_tractor,
+                                ],
+                                (err, result) => {
+                                  if (err) {
+                                    console.log(err);
+                                  } else {
+                                    console.log({
+                                      isSuccess: "success",
+                                      result: urlSql,
+                                    });
+                                    res.send({
+                                      isSuccess: "success",
+                                      result: "success",
+                                    });
+                                  }
+                                }
+                              );
+                            } else if (old_tractor === "No") {
+                              const urlSql = `INSERT INTO manufactur_details (enquiry_id, old_tractor) VALUES(?,?)`;
+                              await db.query(
+                                urlSql,
+                                [
+                                  enquiryId,
                                   old_tractor,
                                 ],
                                 (err, result) => {
@@ -776,30 +803,31 @@ router.post("/set-new-detail-enquiry", tokenCheck, async (req, res) => {
 router.post("/edit-new-detail-enquiry", tokenCheck, async (req, res) => {
   console.log(">>>>>/edit-new-detail-enquiry", req.body);
   try {
-    const first_name = req.body.first_name;
-    const last_name = req.body.last_name;
-    const phone_number = req.body.phone_number;
-    const whatsapp_number = req.body.whatsapp_number;
+    const first_name = req.body.first_name || null;
+    const last_name = req.body.last_name || null;
+    const phone_number = req.body.phone_number || null;
+    const whatsapp_number = req.body.whatsapp_number || null;
 
-    const branch_id = req.body.branchId;
+    const branch_id = req.body.branchId || null;
     const salesperson_id = 1;
 
-    const taluka = req.body.taluka;
-    const village = req.body.village;
+    const taluka = req.body.taluka || null;
+    const village = req.body.village || null;
 
-    const deliveryDate = req.body.deliveryDate;
-    const manufacturer = req.body.manufacturer;
-    const modal = req.body.modal;
-    const variant = req.body.variant;
+    const deliveryDate = req.body.deliveryDate || null;
+    const manufacturer = req.body.manufacturer || null;
+    const make = req.body.make || null;
+    const modal = req.body.modal || none;
+    const variant = req.body.variant || null;
 
-    const maker = req.body.maker;
-    const modalName = req.body.modalName;
-    const variantName = req.body.variantName;
-    const year = req.body.year;
-    const condition_of = req.body.condition_of;
-    const sourceOfEnquiry = req.body.sourceOfEnquiry;
-    const customer_id = req.body.customer_id;
-    const old_tractor = req.body.old_tractor;
+    const maker = req.body.maker || null;
+    const modalName = req.body.modalName || null;
+    const variantName = req.body.variantName || null;
+    const year = req.body.year || null;
+    const condition_of = req.body.condition_of || null;
+    const sourceOfEnquiry = req.body.sourceOfEnquiry || null;
+    const customer_id = req.body.customer_id || null;
+    const old_tractor = req.body.old_tractor || null;
 
     const fastSql = `UPDATE customers SET first_name = ?, last_name = ?, phone_number = ?, whatsapp_number = ?, taluka = ?, village = ? WHERE id = ${customer_id}`;
     await db.query(
@@ -827,14 +855,14 @@ router.post("/edit-new-detail-enquiry", tokenCheck, async (req, res) => {
                   .slice(0, 19)
                   .replace("T", " ");
                 console.log(enquiryDate);
-                const enquirySql = `UPDATE enquiries SET branch_id = ?, salesperson_id = ?, customer_id = ?, date = ?, delivery_date = ?, enquiry_source_id = ? WHERE id = ${enquiry_id}`;
+                const enquirySql = `UPDATE enquiries SET branch_id = ?, salesperson_id = ?, customer_id = ?, modal_id = ?, delivery_date = ?, enquiry_source_id = ? WHERE id = ${enquiry_id}`;
                 await db.query(
                   enquirySql,
                   [
                     branch_id,
                     salesperson_id,
                     customer_id,
-                    enquiryDate,
+                    modal,
                     deliveryDate,
                     sourceOfEnquiry,
                   ],
@@ -847,7 +875,7 @@ router.post("/edit-new-detail-enquiry", tokenCheck, async (req, res) => {
                       const enquiryProductSql = `UPDATE enquiry_products SET manufacturer = ?, modal = ?, variant = ? WHERE enquiry_id = ${enquiry_id}`;
                       await db.query(
                         enquiryProductSql,
-                        [manufacturer, modal, variant],
+                        [make, modal, variant],
                         async (err, productResult) => {
                           if (err) {
                             console.log(err);
@@ -886,7 +914,7 @@ router.post("/edit-new-detail-enquiry", tokenCheck, async (req, res) => {
                                 }
                               );
                             } else if (old_tractor === "No") {
-                              const urlSql = `UPDATE manufactur_details SET maker = ?, modalName = ?, variantName = ?, year_of_manufactur = ?, condition_of = ?, old_tractor = ? WHERE enquiry_id = ${enquiry_id}`;
+                              const urlSql = `UPDATE manufactur_details SET old_tractor = ? WHERE enquiry_id = ${enquiry_id}`;
                               await db.query(
                                 urlSql,
                                 [old_tractor],
@@ -1506,4 +1534,20 @@ router.get(
     }
   }
 );
+
+//=================get Old Product Details=================//
+router.get("/get-old-product-details/:enquiryId", tokenCheck, async (req, res) => {
+  console.log(">>>>>>/get-old-product-details/:enquiryId", req.params.enquiryId);
+  const enquiryId = req.params.enquiryId;
+  const newSqlQuery = `SELECT * FROM manufactur_details WHERE enquiry_id = ${enquiryId}`;
+  db.query(newSqlQuery, (err, newSqlResult) => {
+    if (err) {
+      console.log({ isSuccess: false, result: err });
+      res.send({ isSuccess: false, result: "error" });
+    } else {
+      console.log({ isSuccess: true, result: newSqlQuery });
+      res.send({ isSuccess: true, result: newSqlResult });
+    }
+  });
+});
 module.exports = router;
