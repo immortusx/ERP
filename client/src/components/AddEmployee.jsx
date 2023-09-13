@@ -21,6 +21,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import Checkbox from "@mui/material/Checkbox";
 
 import SwapSection from "./SwapSection";
+import axios from "axios";
 
 export default function Addemployee({ workFor }) {
   const dispatch = useDispatch();
@@ -34,6 +35,7 @@ export default function Addemployee({ workFor }) {
   const editemployeeData = useSelector(
     (state) => state.editemployeeDataState.editemployeeData.data
   );
+  const [downloadedFile, setDownloadedFile] = useState(null);
 
   const [roles, setRoles] = useState([]);
   const [empRoles, setEmpRoles] = useState([]);
@@ -82,6 +84,7 @@ export default function Addemployee({ workFor }) {
   const [roleSelect, setRoleSelect] = useState("");
   const [selectedRole, setSelectedRole] = useState("");
   const [selectedRoleName, setSelectedRoleName] = useState("");
+  const [documentId, setDocumentId] = useState("");
   const [selectedFile, setSelectedFile] = [false];
   const selectInp = useRef();
   const selectedInp = useRef();
@@ -138,7 +141,7 @@ export default function Addemployee({ workFor }) {
     formData.append("bloodgroup", bg);
     formData.append("selectedRole", ro);
     formData.append("logo", alogo);
-     {
+    {
       if (workFor === "forAdd" ? pass.length > 0 : true) {
         employeeData["bankname"] = BankDetais.bankname;
 
@@ -164,6 +167,7 @@ export default function Addemployee({ workFor }) {
           formData.append("id", editemployeeData.user_id);
           dispatch(editemployeeUpdateToDb(formData));
         } else {
+          formData.append("documentId", documentId);
           dispatch(addemployeeToDb(formData));
         }
       } else {
@@ -235,6 +239,60 @@ export default function Addemployee({ workFor }) {
   }, [workFor, editemployeeData]);
 
   const fileInputRef = useRef(null);
+
+  useEffect(() => {
+    const uploadLogo = async () => {
+      if (employeeprofilelogo.logo != null) {
+        const url = `${process.env.REACT_APP_NODE_URL}/api/employees/upload-document`;
+        const config = {
+          headers: {
+            token: localStorage.getItem("rbacToken"),
+          },
+        };
+        const formData = new FormData();
+        formData.append('employee', employeeprofilelogo.logo);
+        try {
+          const response = await Axios.post(url, formData, config);
+          if (response.data) {
+            setDocumentId(response.data.result.insertId)
+            console.log(response.data.result, "sdasdasdasdas")
+          }
+        } catch (error) {
+          // Handle any errors here
+          console.error("Error uploading document:", error);
+        }
+      }
+    };
+
+    uploadLogo();
+  }, [employeeprofilelogo]);
+
+  const handleDownload = async () => {
+    // Replace with the actual filename
+
+
+    try {
+      const url = `${process.env.REACT_APP_NODE_URL}/api/employees/download-document`;
+      const config = {
+        headers: {
+          token: localStorage.getItem("rbacToken"),
+        },
+        // responseType: 'blob',
+      };
+      const data = {
+        downloFile: employeeprofilelogo.logo
+      }
+      axios.post(url, data, config).then((response) => {
+        if (response) {
+          console.log(response.data, 'fileresposer')
+        }
+      })
+    } catch (err) {
+      console.log(err, 'error')
+    }
+
+  };
+
 
   function clearInpHook() {
     setemployeeData({
@@ -514,7 +572,7 @@ export default function Addemployee({ workFor }) {
   function confirmClicked() {
     setPopUpScreen(false);
   }
-  const handleNoAccess = () => {};
+  const handleNoAccess = () => { };
   const onChangeAccess = async (e) => {
     const selectedValue = e.target.value;
     const [id, role] = selectedValue.split(",");
@@ -588,17 +646,36 @@ export default function Addemployee({ workFor }) {
                   required
                 />
               </div>
-              <div className="d-flex justify-content-end col-12 col-sm-6 col-lg-4">
-                {employeeprofilelogo && (
-                  <img
-                    src={`${process.env.REACT_APP_NODE_URL}/api${employeeprofilelogo.logo}`}
-                    alt="logo"
-                    className="logo-image rounded-circle"
-                    height={100}
-                    width={100}
-                  />
-                )}
+              <div className="container">
+                <div className="row">
+                  <div className="col-md-6">
+                    {/* Image */}
+                    <div className="d-flex justify-content-end">
+                      {employeeprofilelogo && (
+                        <img
+                          src={`${process.env.REACT_APP_NODE_URL}/api${employeeprofilelogo.logo}`}
+                          alt="logo"
+                          className="logo-image rounded-circle"
+                          height={100}
+                          width={100}
+                        />
+                      )}
+                    </div>
+                  </div>
+                  <div className="col-md-6">
+                    {/* Download Link */}
+                    <div>
+                      {employeeprofilelogo.logo && (
+                        <div>
+                          <button onClick={handleDownload}>Download</button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
               </div>
+
+
             </main>
             <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
               <label className="myLabel" htmlFor="email">

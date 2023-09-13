@@ -1,10 +1,10 @@
 const express = require("express");
 const async = require("async");
+const fs = require('fs');
 const moment = require("moment");
 const { tokenCheck } = require("../Auth/TokenCheck");
 const { checkUserPermission } = require("../Auth/userPermission");
 const { hasThePass, compareTheHass } = require("../Auth/Bcrypt");
-
 const { db } = require("../Database/dbConfig");
 const uploadFile = require("../Utils/multerMiddaeware");
 
@@ -20,11 +20,12 @@ router.post(
     console.log(req.file, "asjdxfkclgh");
     console.log(req.body, "req.body ");
 
-    const logoImage = `/upload/${req.file.filename}`;
+    const logoImage = `employee_profile`;
     const roleArr = req.body.role;
     const firstName = req.body.firstName;
     const lastName = req.body.lastName;
     const email = req.body.email;
+    const documentid = req.body.documentId
     const password = req.body.password;
     const phoneNumber = req.body.phoneNumber;
     // const branchRole = req.body.branchRole;
@@ -75,7 +76,7 @@ router.post(
           .slice(0, 19)
           .replace("T", " ");
 
-        const suburl = `INSERT INTO documents (table_entity_id, document_value,created_at) VALUES('${userId}','${logoImage}', '${formattedDate}')`;
+        const suburl = `INSERT INTO employee_document (document_id, mapping_id,mapping_table) VALUES('${documentid}','${userId}','${logoImage}')`;
         await queryDatabase(suburl);
         console.log(suburl, "suburl");
         await queryDatabase(
@@ -132,29 +133,32 @@ router.get("/get-employee-list", tokenCheck, async (req, res) => {
   try {
     await db.query(
       `SELECT
-     f.*,
-     s.user_id,
-     s.bank_name,
-     s.bank_branch,
-     s.account_number,
-     s.account_type,
-     s.ifsc_code,
-     d.document_id,
-     d.document_value,
-     ddu.branch_id,
-     ddu.department_id,
-     ddu.role_id
- FROM
-     users AS f
- INNER JOIN
-     bank_details AS s ON s.user_id = f.id
-     inner join
-      employee_detail  AS ddu ON ddu.user_id=f.id
- LEFT JOIN
-     documents AS d ON d.table_entity_id = f.id
- WHERE
-     f.user_type_id = 2
-     AND f.is_delete = 0`,
+      f.*,
+      s.user_id,
+      s.bank_name,
+      s.bank_branch,
+      s.account_number,
+      s.account_type,
+      s.ifsc_code,
+      ddu.branch_id,
+      ddu.department_id,
+      ddu.role_id,
+      t.*
+  FROM
+      new_keshav_vehicle_crm.users AS f
+  INNER JOIN
+      new_keshav_vehicle_crm.bank_details AS s ON s.user_id = f.id
+  INNER JOIN
+      new_keshav_vehicle_crm.employee_detail AS ddu ON ddu.user_id = f.id
+  LEFT JOIN
+      new_keshav_vehicle_crm.employee_document AS ed ON ed.mapping_id = f.id
+  INNER JOIN
+      new_keshav_vehicle_crm.documents AS t ON t.document_id = ed.document_id
+  WHERE
+      f.user_type_id = 2
+      AND f.is_delete = 0
+    
+  `,
       (err, results) => {
         if (err) {
           console.log({ isSuccess: false, result: err });
@@ -179,7 +183,7 @@ router.post(
     console.log(">>>>>editemployeee");
     console.log(req.body);
     let logoImage = req.body.logo;
-    console.log('req.file',req.file)
+    console.log('req.file', req.file)
     if (req.file) {
       logoImage = `/upload/${req.file.filename}`;
     }
@@ -264,6 +268,66 @@ router.get("/delete-employee/:id", tokenCheck, async (req, res) => {
     });
   } catch (e) {
     console.log(e);
+  }
+});
+
+//=====================Upload Document========================
+router.post("/upload-document",
+  tokenCheck,
+  uploadFile.single("employee"),
+  async (req, res) => {
+    try {
+      console.log(">>>>>upload-document", req.body);
+      const logoImage = `/upload/${req.file.filename}`;
+      console.log(logoImage, "logoimg");
+
+      const currentDate = new Date();
+      const formattedDate = currentDate
+        .toISOString()
+        .slice(0, 19)
+        .replace("T", " ");
+
+      const sql = "INSERT INTO documents (document_value, created_at) VALUES (?, ?)";
+      const values = [logoImage, formattedDate];
+
+      db.query(sql, values, (err, result) => {
+        if (err) {
+          console.error(err);
+          return res.status(500).json({ isSuccess: false, result: 'Error uploading document' });
+        }
+        console.log({ isSuccess: true, result: result });
+        res.status(200).json({ isSuccess: true, result: result });
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ isSuccess: false, result: 'Server error' });
+    }
+  });
+
+//==================Download Document================
+
+router.post('/download-document', tokenCheck, (req, res) => {
+  try {
+    const filename = req.body.downloFile;
+
+    // Check if the file exists
+    const filePath = path.join(__dirname, filename);
+
+    if (!fs.existsSync(filePath)) {
+      res.status(404).json({ isSuccess: false, result: 'File not found' });
+      return;
+    }
+
+    // Set appropriate headers for the file download
+    res.setHeader('Content-Disposition', `attachment; filename=${path.basename(filePath)}`);
+    res.setHeader('Content-Type', 'application/octet-stream');
+
+    // Send the file
+    const fileStream = fs.createReadStream(filePath);
+    fileStream.pipe(res);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ isSuccess: false, result: 'Server error' });
   }
 });
 
