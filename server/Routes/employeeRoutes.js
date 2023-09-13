@@ -145,15 +145,15 @@ router.get("/get-employee-list", tokenCheck, async (req, res) => {
       ddu.role_id,
       t.*
   FROM
-      new_keshav_vehicle_crm.users AS f
+      users AS f
   INNER JOIN
-      new_keshav_vehicle_crm.bank_details AS s ON s.user_id = f.id
+      bank_details AS s ON s.user_id = f.id
   INNER JOIN
-      new_keshav_vehicle_crm.employee_detail AS ddu ON ddu.user_id = f.id
+      employee_detail AS ddu ON ddu.user_id = f.id
   LEFT JOIN
-      new_keshav_vehicle_crm.employee_document AS ed ON ed.mapping_id = f.id
+      employee_document AS ed ON ed.mapping_id = f.id
   INNER JOIN
-      new_keshav_vehicle_crm.documents AS t ON t.document_id = ed.document_id
+      documents AS t ON t.document_id = ed.document_id
   WHERE
       f.user_type_id = 2
       AND f.is_delete = 0
