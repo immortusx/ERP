@@ -17,7 +17,8 @@ import moment from 'moment';
 import CustomRadioButton from './subCom/CustomRadioButton';
 import RadioButtons from './subCom/RadioButtons';
 import SweetSuccessAlert from './subCom/SweetSuccessAlert';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
+import YearPicker from './subCom/YearPicker';
 
 const AddBooking = ({item}) => {
   const navigation = useNavigation();
@@ -31,6 +32,7 @@ const AddBooking = ({item}) => {
   const [oldManufacturer, setOldManufacturer] = useState(null);
   const [oldModal, setOldModal] = useState(null);
   const [oldVariant, setOldVariant] = useState(null);
+  const [isPickerVisible, setIsPickerVisible] = useState(false);
   const [manuYearDate, setManuYearDate] = useState('');
   const [openManuYearDate, setOpenManufacturer] = useState(false);
   const [bank, setBank] = useState('');
@@ -127,9 +129,7 @@ const AddBooking = ({item}) => {
         setOldManufacturer(Number(oldVehicleData.maker));
         setOldModal(Number(oldVehicleData.modalName));
         setOldVariant(Number(oldVehicleData.variantName));
-        const isYear = oldVehicleData.year_of_manufactur;
-        const manufactureYear = new Date(isYear).toISOString().slice(0, 10);
-        setManuYearDate(manufactureYear);
+        setManuYearDate(oldVehicleData.year_of_manufactur);
         setCondtion(oldVehicleData.condition_of);
       } else {
         setSelectedOption('Exchange No');
@@ -207,6 +207,11 @@ const AddBooking = ({item}) => {
       getVariant();
     }
   }, [modal]);
+  const onYearSelect = year => {
+    console.log(year, 'year');
+    setManuYearDate(year);
+    setIsPickerVisible(false);
+  };
   const onChangeInputField = (value, field) => {
     setDeliveryData(prefield => ({
       ...prefield,
@@ -245,8 +250,7 @@ const AddBooking = ({item}) => {
       getoldTractorData();
     }
   }, [modalVisible]);
-  
-  
+
   const submitDelivery = async () => {
     console.log(deliveryData);
     console.log(modal, variant, finance, bank, expDeliveryDate, retailDate);
@@ -284,8 +288,7 @@ const AddBooking = ({item}) => {
         if (response && response.data.isSuccess) {
           console.log(response.data, 'booking');
           setShowMessageModal(true);
-          navigation.navigate('Delivery');
-        
+          navigation.navigate('Schedule Call');
         }
       });
     } else {
@@ -578,34 +581,31 @@ const AddBooking = ({item}) => {
                 </View>
 
                 <View style={{marginBottom: 5}}>
-                  <View style={styles.deliveryDateContainer}>
-                    <TouchableOpacity
-                      style={{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        paddingHorizontal: 5,
-                      }}
-                      onPress={() => {
-                        setOpenManufacturer(true);
-                      }}>
-                      <Text style={{paddingVertical: 7}}>
-                        Manufactur Year {':- '}
-                        {manuYearDate === ''
-                          ? new Date().toISOString().slice(0, 10)
-                          : manuYearDate}
-                      </Text>
-                      <Image
-                        style={styles.dateImg}
-                        source={require('../../assets/date.png')}
-                      />
-                    </TouchableOpacity>
-                    <Calendars
-                      showModal={openManuYearDate}
-                      selectedDate={manuYearDate}
-                      handleCalendarDate={handleManufacturYearDate}
-                      onClose={() => setOpenManufacturer(false)}
-                    />
+                  <View
+                    style={[
+                      styles.deliveryDateContainer,
+                      {paddingVertical: 7},
+                    ]}>
+                    <View>
+                      <View style={{flex: 1}}>
+                        <TouchableOpacity
+                          onPress={() => {
+                            setIsPickerVisible(true);
+                          }}>
+                          <Text style={{textAlign: 'left'}}>
+                            Manufactur Year{' :-'}
+                            {manuYearDate ? manuYearDate : 'Select Year'}
+                          </Text>
+                        </TouchableOpacity>
+                        <YearPicker
+                          visible={isPickerVisible}
+                          onYearSelect={onYearSelect}
+                          onClose={() => {
+                            setIsPickerVisible(false);
+                          }}
+                        />
+                      </View>
+                    </View>
                   </View>
                 </View>
 
