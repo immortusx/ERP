@@ -311,8 +311,7 @@ router.post('/download-document', tokenCheck, (req, res) => {
     const filename = req.body.downloFile;
 
     // Check if the file exists
-    const filePath = fs.join(__dirname, filename);
-    console.log(filePath,"gfgffgfggffgfgfggfgfg")
+    const filePath = path.join(__dirname, filename);
 
     if (!fs.existsSync(filePath)) {
       res.status(404).json({ isSuccess: false, result: 'File not found' });
