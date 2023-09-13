@@ -238,10 +238,10 @@ router.post(
             res.send({ isSuccess: true, result: "error" });
           } else {
             console.log(insertIdArray, "Array");
-            const documentSql = `INSERT INTO documents (table_entity_id, document_value, created_at) VALUES (?, ?, ?)`;
+            const documentSql = `INSERT INTO documents (document_value, created_at) VALUES (?, ?)`;
             for (let i = 0; i < insertIdArray.length; i++) {
               const { insertId, files } = insertIdArray[i];
-              db.query(documentSql, [insertId, files.filename, new Date()]);
+              db.query(documentSql, [files.filename, new Date()]);
             }
             console.log({ isSuccess: true, result: "success" });
             res.send({ isSuccess: true, result: "success" });

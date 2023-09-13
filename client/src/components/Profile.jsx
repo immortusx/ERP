@@ -4,6 +4,8 @@ import Axios from "axios";
 import { setShowMessage } from "../redux/slices/notificationSlice";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Modal, Button } from "react-bootstrap";
+import downloadgif from "../assets/images/download.gif"
+import axios from "axios";
 // import {
 //   addAgencyToDb,
 //   clearaddaddAgency,
@@ -84,12 +86,12 @@ export default function Profile_list({ workFor }) {
   //      };
   //    }, [workFor, clearEditagencyData]);
 
-  useEffect(()=> {
-    if(agencyData){
+  useEffect(() => {
+    if (agencyData) {
       const logo = `${process.env.REACT_APP_NODE_URL}/api${agencyData.logo}`;
       console.log(logo, 'logo')
     }
-  },[agencyData])
+  }, [agencyData])
   async function getagencyid() {
     const url = `${process.env.REACT_APP_NODE_URL}/api/agency/get-agencybyid`;
     const config = {
@@ -151,7 +153,7 @@ export default function Profile_list({ workFor }) {
     formData.append("name", aname);
     formData.append("contact", acontact);
     formData.append("email", aemail);
-    formData.append("logo", alogo);
+    formData.append("agency", alogo);
 
     if (
       aname.length > 0 &&
@@ -175,6 +177,42 @@ export default function Profile_list({ workFor }) {
 
   const redirectModal = () => {
     navigate(-1);
+  };
+  const handleDownload = async () => {
+    try {
+      const url = `${process.env.REACT_APP_NODE_URL}/api/employees/download-document`;
+      const config = {
+        headers: {
+          token: localStorage.getItem("rbacToken"),
+        },
+        responseType: 'blob',
+      };
+
+      const data = {
+        downloadFilePath: agencyData.logo,
+      };
+
+      const response = await axios.post(url, data, config);
+
+      if (response.status === 200) {
+        // Create a blob URL for the downloaded file
+        const blob = new Blob([response.data]);
+        const url = window.URL.createObjectURL(blob);
+
+        // Create a link element and trigger a click to download the file
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = agencyData.logo; // Set the desired file name
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+      } else {
+        console.error('File download failed:', response.statusText);
+      }
+    } catch (err) {
+      console.error('Error:', err);
+    }
   };
 
   return (
@@ -260,15 +298,33 @@ export default function Profile_list({ workFor }) {
                 }}
               />
             </div>
-            {agencyData && (
-              <img
-                src={`${process.env.REACT_APP_NODE_URL}/api${agencyData.logo}`}
-                alt="logo"
-                className="logo-image"
-                height={50}
-                width={50}
-              />
-            )}
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              {agencyData.logo && (
+                <div>
+                  <img
+                    src={`${process.env.REACT_APP_NODE_URL}/api${agencyData.logo}`}
+                    alt="logo"
+                    className="logo-image"
+                    height={50}
+                    width={50}
+                  />
+                </div>
+              )}
+
+              {agencyData.logo && (
+                <div style={{ marginLeft: '10px' }}>
+                  <img
+                    src={downloadgif}
+                    className="logo-image rounded-circle"
+                    height={35}
+                    width={35}
+                    onClick={handleDownload}
+                    alt="download"
+                  />
+                </div>
+              )}
+            </div>
+
           </section>
 
           <section className="d-flex mt-3 flex-column flex-sm-row">
@@ -277,7 +333,7 @@ export default function Profile_list({ workFor }) {
               onClick={handleSubmit}
               type="button"
             >
-              {workFor === "forEdit" ? "Edit" : "Create"}
+              {workFor === "forEdit" ? "Save" : "Create"}
             </button>
 
             <button

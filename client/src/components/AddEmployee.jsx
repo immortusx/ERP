@@ -660,10 +660,10 @@ export default function Addemployee({ workFor }) {
                 />
               </div>
               {employeeprofilelogo.logo && (
-                <div className="d-flex justify-content-end" style={{ marginLeft: '50px' }}>
+                <div className="d-flex justify-content-end align-items-end" >
                   <img
                     src={`${process.env.REACT_APP_NODE_URL}/api${employeeprofilelogo.logo}`}
-                    alt="Employee Profile"
+                    alt="logo"
                     className="logo-image rounded-circle"
                     height={100}
                     width={100}
@@ -674,7 +674,7 @@ export default function Addemployee({ workFor }) {
               <div >
 
                 {employeeprofilelogo.logo && (
-                  <div style={{ marginLeft: '50px' }}>
+                  <div style={{ marginLeft: '20px' }}>
                     <img
                       src={downloadgif}
                       className="logo-image rounded-circle"
