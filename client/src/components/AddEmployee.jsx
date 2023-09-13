@@ -663,7 +663,7 @@ export default function Addemployee({ workFor }) {
                 <div className="d-flex justify-content-end" style={{ marginLeft: '50px' }}>
                   <img
                     src={`${process.env.REACT_APP_NODE_URL}/api${employeeprofilelogo.logo}`}
-                    alt="Employee Profile"
+                    alt="logo"
                     className="logo-image rounded-circle"
                     height={100}
                     width={100}

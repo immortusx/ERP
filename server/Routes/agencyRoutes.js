@@ -41,7 +41,7 @@ router.get("/add-agency-exist", tokenCheck, async (req, res) => {
 router.post(
   "/add-agency",
   tokenCheck,
-  uploadFile.single("logo"),
+  uploadFile.single("agency"),
   async (req, res) => {
     console.log("req.body *********", req.body);
     const { name, contact, email } = req.body;
@@ -73,7 +73,7 @@ router.post(
   router.post(
     "/get-agency-edit",
     tokenCheck,
-    uploadFile.single("logo"),
+    uploadFile.single("agency"),
     async (req, res) => {
       console.log(">>>>>get-roles");
       const { name, contact, email} = req.body;
