@@ -87,3 +87,13 @@ h3 {
     border-Radius: 5px;
     cursor: pointer;
 }
+.btnemp{
+    background: #3090C7;
+    color: white;
+    border: none;
+    padding: 10px 10px;
+    border-Radius: 5px;
+    cursor: pointer;
+    height: 40px;
+    width: 120px;
+}

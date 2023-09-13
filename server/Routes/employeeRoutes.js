@@ -7,6 +7,7 @@ const { checkUserPermission } = require("../Auth/userPermission");
 const { hasThePass, compareTheHass } = require("../Auth/Bcrypt");
 const { db } = require("../Database/dbConfig");
 const uploadFile = require("../Utils/multerMiddaeware");
+const path = require('path');
 
 const router = express.Router();
 
@@ -114,7 +115,6 @@ async function queryDatabase(query) {
 
 router.get("/get-employee-details/:id", tokenCheck, async (req, res) => {
   const userId = req.params.id;
-  console.log(req, " req");
   const urlNew = "SELECT * FROM employee_detail where id=" + userId;
   db.query(urlNew, async (err, result) => {
     console.log(result, "result");
@@ -277,7 +277,8 @@ router.post("/upload-document",
   uploadFile.single("employee"),
   async (req, res) => {
     try {
-      console.log(">>>>>upload-document", req.body);
+      console.log(req.body, 'reo');
+      console.log(req.file.filename, 'rer');
       const logoImage = `/upload/${req.file.filename}`;
       console.log(logoImage, "logoimg");
 
@@ -305,26 +306,26 @@ router.post("/upload-document",
   });
 
 //==================Download Document================
-
 router.post('/download-document', tokenCheck, (req, res) => {
   try {
-    const filename = req.body.downloFile;
+    const filename = req.body.downloadFilePath;
 
-    // Check if the file exists
-    const filePath = path.join(__dirname, filename);
+    const filePath = path.join(__dirname, "../", filename);
+    console.log(filePath, "path");
 
     if (!fs.existsSync(filePath)) {
       res.status(404).json({ isSuccess: false, result: 'File not found' });
-      return;
+    } else {
+      // If the file exists, initiate the download
+      res.download(filePath, (err) => {
+        if (err) {
+          console.error('Download error:', err);
+          res.status(500).json({ isSuccess: false, result: 'Download failed' });
+        } else {
+          console.log('Download successful');
+        }
+      });
     }
-
-    // Set appropriate headers for the file download
-    res.setHeader('Content-Disposition', `attachment; filename=${path.basename(filePath)}`);
-    res.setHeader('Content-Type', 'application/octet-stream');
-
-    // Send the file
-    const fileStream = fs.createReadStream(filePath);
-    fileStream.pipe(res);
   } catch (error) {
     console.error(error);
     res.status(500).json({ isSuccess: false, result: 'Server error' });

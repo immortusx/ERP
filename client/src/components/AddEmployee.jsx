@@ -4,6 +4,7 @@ import {
   addemployeeToDb,
   clearAddemployeeState,
 } from "../redux/slices/addemployeeSlice";
+import downloadgif from "../assets/images/download.gif"
 import {
   clearEditemployeeState,
   clearEditemployeeData,
@@ -268,30 +269,42 @@ export default function Addemployee({ workFor }) {
   }, [employeeprofilelogo]);
 
   const handleDownload = async () => {
-    // Replace with the actual filename
-
-
     try {
       const url = `${process.env.REACT_APP_NODE_URL}/api/employees/download-document`;
       const config = {
         headers: {
           token: localStorage.getItem("rbacToken"),
         },
-        // responseType: 'blob',
+        responseType: 'blob',
       };
-      const data = {
-        downloFile: employeeprofilelogo.logo
-      }
-      axios.post(url, data, config).then((response) => {
-        if (response) {
-          console.log(response.data, 'fileresposer')
-        }
-      })
-    } catch (err) {
-      console.log(err, 'error')
-    }
 
+      const data = {
+        downloadFilePath: employeeprofilelogo.logo,
+      };
+
+      const response = await axios.post(url, data, config);
+
+      if (response.status === 200) {
+        // Create a blob URL for the downloaded file
+        const blob = new Blob([response.data]);
+        const url = window.URL.createObjectURL(blob);
+
+        // Create a link element and trigger a click to download the file
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = employeeprofilelogo.logo; // Set the desired file name
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+      } else {
+        console.error('File download failed:', response.statusText);
+      }
+    } catch (err) {
+      console.error('Error:', err);
+    }
   };
+
 
 
   function clearInpHook() {
@@ -633,7 +646,7 @@ export default function Addemployee({ workFor }) {
               </div>
               <div className="d-flex  flex-column col-12 col-sm-6 col-lg-4">
                 <label className="myLabel " htmlFor="logo">
-                  Logo
+                  Employee Profile *
                 </label>
                 <input
                   ref={fileInputRef}
@@ -646,36 +659,33 @@ export default function Addemployee({ workFor }) {
                   required
                 />
               </div>
-              <div className="container">
-                <div className="row">
-                  <div className="col-md-6">
-                    {/* Image */}
-                    <div className="d-flex justify-content-end">
-                      {employeeprofilelogo && (
-                        <img
-                          src={`${process.env.REACT_APP_NODE_URL}/api${employeeprofilelogo.logo}`}
-                          alt="logo"
-                          className="logo-image rounded-circle"
-                          height={100}
-                          width={100}
-                        />
-                      )}
-                    </div>
-                  </div>
-                  <div className="col-md-6">
-                    {/* Download Link */}
-                    <div>
-                      {employeeprofilelogo.logo && (
-                        <div>
-                          <button onClick={handleDownload}>Download</button>
-                        </div>
-                      )}
-                    </div>
-                  </div>
+              {employeeprofilelogo.logo && (
+                <div className="d-flex justify-content-end" style={{ marginLeft: '50px' }}>
+                  <img
+                    src={`${process.env.REACT_APP_NODE_URL}/api${employeeprofilelogo.logo}`}
+                    alt="Employee Profile"
+                    className="logo-image rounded-circle"
+                    height={100}
+                    width={100}
+                  />
                 </div>
+              )}
+              {/* Download Link */}
+              <div >
+
+                {employeeprofilelogo.logo && (
+                  <div style={{ marginLeft: '50px' }}>
+                    <img
+                      src={downloadgif}
+                      className="logo-image rounded-circle"
+                      height={35}
+                      width={35}
+                      onClick={handleDownload}
+                    />
+                   {/* // <button className="btnemp" onClick={handleDownload}>Download</button> */}
+                  </div>
+                )}
               </div>
-
-
             </main>
             <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
               <label className="myLabel" htmlFor="email">
