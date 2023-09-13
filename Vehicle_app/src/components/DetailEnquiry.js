@@ -45,7 +45,6 @@ const DetailEnquiry = ({route}) => {
   const {maker, modalName, variantName, year, condition_of} = useSelector(
     state => state.modalData,
   );
-  // const {modal} = useSelector(state => state.manufacturerDetails);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [editData, setEditData] = useState(null);
   const [openCurentDate, setOpenCurrentDate] = useState(false);
@@ -64,6 +63,7 @@ const DetailEnquiry = ({route}) => {
   const [selectedOption, setSelectedOption] = useState('No');
   const options = ['No', 'Yes'];
   const [category, setCategory] = useState(null);
+  const [make, setMake] = useState(null);
   const [modal, setModal] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [oldManufacturer, setOldManufacturer] = useState(null);
@@ -80,6 +80,8 @@ const DetailEnquiry = ({route}) => {
   const [variantData, setVariantData] = useState([]);
   const [village, setVillage] = useState(null);
   const [taluka, setTaluka] = useState(null);
+  const [enquiryId, setEnquiryId] = useState(null);
+  const [oldProductData, setOldProductData] = useState([]);
   const [currentCategoryData, setcurrentCategoryData] = useState({
     id: '',
     fields: [],
@@ -197,7 +199,9 @@ const DetailEnquiry = ({route}) => {
       await axios.get(url, config).then(response => {
         if (response) {
           // console.log(response.data.result, 'category List');
-          const filteredCategory = response.data.result.filter((item)=> item.id !== 1);
+          const filteredCategory = response.data.result.filter(
+            item => item.id !== 1,
+          );
           setCategoryData(filteredCategory);
         }
       });
@@ -294,7 +298,9 @@ const DetailEnquiry = ({route}) => {
       case 'taluko': {
         return (
           <View style={{marginBottom: 5}}>
-            <Text style={[styles.label, {marginBottom: 5}]}>Select Taluka *</Text>
+            <Text style={[styles.label, {marginBottom: 5}]}>
+              Select Taluka *
+            </Text>
             <View style={styles.enquirySourceContainer}>
               {/* {renderLabel()} */}
               <Dropdown
@@ -328,7 +334,9 @@ const DetailEnquiry = ({route}) => {
         return (
           <>
             <View style={{marginBottom: 5}}>
-              <Text style={[styles.label, {marginBottom: 5}]}>Select Village *</Text>
+              <Text style={[styles.label, {marginBottom: 5}]}>
+                Select Village *
+              </Text>
               <View style={styles.enquirySourceContainer}>
                 {/* {renderLabel()} */}
                 <Dropdown
@@ -369,6 +377,38 @@ const DetailEnquiry = ({route}) => {
               )}
             </View>
           </>
+        );
+        break;
+      }
+      case 'make': {
+        return (
+          <View style={{marginBottom: 5}}>
+            <Text style={[styles.label, {marginBottom: 5}]}>Manufactur *</Text>
+            <View style={styles.enquirySourceContainer}>
+              <Dropdown
+                style={[
+                  styles.dropdown,
+                  isFocus && {borderColor: 'blue'},
+                  {paddingHorizontal: 5},
+                ]}
+                placeholderStyle={styles.placeholderStyle}
+                selectedTextStyle={styles.selectedTextStyle}
+                inputSearchStyle={styles.inputSearchStyle}
+                iconStyle={styles.iconStyle}
+                data={manufacturItem}
+                search
+                maxHeight={300}
+                labelField="label"
+                valueField="value"
+                placeholder={!isFocus ? 'Select Manufactur' : ' '}
+                searchPlaceholder="Search..."
+                value={make}
+                onChange={item => {
+                  setMake(item.value);
+                }}
+              />
+            </View>
+          </View>
         );
         break;
       }
@@ -706,11 +746,35 @@ const DetailEnquiry = ({route}) => {
       getVillage();
     }
   }, [taluka]);
+
+  const getManufacturer = async () => {
+    const url = `${API_URL}/api/master/get-allmanufacturer`;
+    console.log('get manufacturer', url);
+    const token = await AsyncStorage.getItem('rbacToken');
+    const config = {
+      headers: {
+        token: token ? token : '',
+      },
+    };
+    console.log(config);
+    await axios.get(url, config).then(response => {
+      if (response) {
+        setManufacurerData(response.data.result);
+      }
+    });
+  };
   useEffect(() => {
     if (modalVisible) {
-      const getManufacturer = async () => {
-        const url = `${API_URL}/api/master/get-allmanufacturer`;
-        console.log('get manufacturer', url);
+      getManufacturer();
+    } else {
+      getManufacturer();
+    }
+  }, [modalVisible]);
+  useEffect(() => {
+    if (make) {
+      const getModal = async () => {
+        const url = `${API_URL}/api/master/getmodal/${make}`;
+        console.log('get modal', url);
         const token = await AsyncStorage.getItem('rbacToken');
         const config = {
           headers: {
@@ -720,13 +784,13 @@ const DetailEnquiry = ({route}) => {
         console.log(config);
         await axios.get(url, config).then(response => {
           if (response) {
-            setManufacurerData(response.data.result);
+            setModalList(response.data.result);
           }
         });
       };
-      getManufacturer();
+      getModal();
     }
-  }, [modalVisible]);
+  }, [make]);
   useEffect(() => {
     if (oldManufacturer) {
       const getModal = async () => {
@@ -777,30 +841,68 @@ const DetailEnquiry = ({route}) => {
       // console.log(route, '>>>>>>>>>>>>');
       // console.log(route.params,"para");
       const {editData} = route.params;
-      // console.log(editData,'edit');
+      console.log(editData, 'edit');
       setEditData(editData);
     }
   }, [route]);
   useEffect(() => {
     if (editData) {
+      setCategory(editData.enquiry_category_id);
       setEnquiryData({
         firstname: editData.first_name,
         lastname: editData.last_name,
         phone: editData.phone_number,
         whatsappno: editData.whatsapp_number,
       });
+      setTaluka(editData.taluka_id);
+      setVillage(editData.village_id);
+      setMake(Number(editData.make));
+      setModal(editData.modal_id);
+      setExpDeliveryDate(editData.delivery_date.slice(0, 10));
+      setEnquiry(editData.id);
+      if (editData.oldOwend === 'Yes') {
+        setSelectedOption('Yes');
+        setModalVisible(true);
+        getOldProductDetails(editData.id);
+      } else {
+        setSelectedOption('No');
+        setModalVisible(false);
+      }
+    } else if (categoryData && newTractorId) {
+      const matchingCategory = categoryData.find(
+        item => item.id === newTractorId,
+      );
+      if (matchingCategory) {
+        setCategory(matchingCategory.id);
+      }
     }
-  }, [editData]);
-  // const formattedDeliveryDate = expDeliveryDate.toLocaleDateString();
-  useEffect(() => {
-    if (categoryData) {
-      categoryData.map(item => {
-        if (item.id === newTractorId) {
-          setCategory(item.id);
-        }
-      });
-    }
-  }, [categoryData]);
+  }, [editData, categoryData, newTractorId]);
+  const getOldProductDetails = async (enquiryId) => {
+    const url = `${API_URL}/api/enquiry/get-old-product-details/${enquiryId}`;
+    console.log('get old product', url);
+    const token = await AsyncStorage.getItem('rbacToken');
+    const config = {
+      headers: {
+        token: token ? token : '',
+      },
+    };
+    await axios.get(url, config).then(response => {
+      if (response) {
+        console.log(response.data.result, 'product');
+        // setOldProductData(response.data.result);
+        const maker = response.data.result.map((item)=> item.maker);
+        const modal = response.data.result.map((item)=> item.modalName);
+        const year = response.data.result.map((item)=> item.year_of_manufactur);
+        const condtionn = response.data.result.map((item)=> item.condition_of);
+        console.log(maker[0], 'maker');
+        setOldManufacturer(Number(maker[0]));
+        setOldModal(Number(modal[0]));
+        setManuYearDate(year[0]);
+        setCondtion(condtionn[0]);
+
+      }
+    });
+  };
   const handleReadValue = () => {
     console.log(selectedOption);
   };
@@ -819,8 +921,6 @@ const DetailEnquiry = ({route}) => {
     console.log(editEnquiryState, 'detail');
     if (editEnquiryState && editEnquiryState.isSuccess === true) {
       dispatch(clearEditEnquiryState());
-      dispatch(clearLocationForm());
-      dispatch(clearManufacturerDetails());
       dispatch(clearModalData());
       setMessage('Enquiry Updated');
       console.log('Enquiry Updated');
@@ -864,6 +964,7 @@ const DetailEnquiry = ({route}) => {
               .slice(0, 19)
               .replace('T', ' ')
           : new Date().toISOString().slice(0, 19).replace('T', ' '),
+      make: make,
       modal: modal,
       maker: oldManufacturer,
       modalName: oldModal,
@@ -931,26 +1032,7 @@ const DetailEnquiry = ({route}) => {
       [field]: value,
     }));
   };
-  useEffect(() => {
-    const getModal = async () => {
-      const url = `${API_URL}/api/master/getallmodallist`;
-      console.log('get modal', url);
-      const token = await AsyncStorage.getItem('rbacToken');
-      const config = {
-        headers: {
-          token: token ? token : '',
-        },
-      };
-      console.log(config);
-      await axios.get(url, config).then(response => {
-        if (response) {
-          // console.log(response.data.result, 'modllllllllllllll');
-          setModalList(response.data.result);
-        }
-      });
-    };
-    getModal();
-  }, []);
+
   const handleCalendarDate = selectedDate => {
     console.log(selectedDate.dateString, 'deliverydate');
     console.log(selectedDate, 'deliverydate');
