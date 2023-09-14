@@ -1,8 +1,5 @@
 pipeline {
   agent any
-  parameters {
-  choice choices: ['build and deploy images', 'build deploy and run images'], description: 'Choose the pipeline type', name: 'buildtype'
-  }
   options {
     buildDiscarder(logRotator(numToKeepStr: '5'))
   }
