@@ -278,70 +278,7 @@ router.post("/edit-salesperson-enquiry-data", tokenCheck, async (req, res) => {
 });
 
 //===================Set New Enquiry Data=============================//
-// router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
-//   console.log(">>>>>>>>>set-new-enquiry-data", req.body);
-
-//   const fristName = req.body.firstName || null;
-//   const lastName = req.body.lastName || null;
-//   const middleName = req.body.fatherName || null;
-//   const phoneNumber = req.body.mobileNumber || null;
-//   const whatsappNumber = req.body.whatsappNumber || null;
-//   const email = req.body.emailId || null;
-//   const isActive = 1;
-//   const state = req.body.state || stateId;
-//   const district = req.body.district || null;
-//   const taluka = req.body.tehsil || null;
-//   const block = req.body.block || null;
-//   const village = req.body.village || null;
-
-//   const enquiryCategoryId = req.body.category || null;
-//   const visitReason = "1" || null;
-//   const branchId = req.body.branchId || null;
-//   const dsp = req.body.dsp || null;
-//   const model = req.body.model || null;
-//   const manufacturers = req.body.manufacturers || null;
-//   const product = req.body.product || null;
-//   const variant = req.body.variant || null;
-//   const modelYear = req.body.modelYear || null;
-//   const condition = req.body.condition || null;
-//   const oldTractorOwned = req.body.oldTractorOwned || null;
-//   const enquiryDate = req.body.enquiryDate || null;
-//   const deliveryDate = req.body.deliveryDate || null;
-//   const sourceOfEnquiry = req.body.sourceOfEnquiry || null;
-
-//   const url = `INSERT INTO customers (first_name, middle_name, last_name, phone_number, whatsapp_number, email, is_active, state, district, taluka, village) VALUES ('${fristName}','${middleName}','${lastName}','${phoneNumber}','${whatsappNumber}','${email}','${isActive}','${state}','${district}','${taluka}','${village}')`;
-
-//   console.log("url", url);
-
-//   await db.query(url, async (err, result) => {
-//     if (err) {
-//       console.log({ isSuccess: false, result: err });
-//       res.send({ isSuccess: false, result: "error" });
-//     } else if (result && result.insertId) {
-//       const insertedId = result.insertId;
-
-//       const newEnquiryDate = await getDateInFormate(enquiryDate);
-//       const newDeliveryDate = await getDateInFormate(deliveryDate);
-
-//       const urlNew = `INSERT INTO enquiries (branch_id, enquiry_type_id, salesperson_id, customer_id, product_id, date, delivery_date, enquiry_source_id, visitReason) VALUES('${branchId}','${enquiryCategoryId}','${dsp}','${insertedId}','${model}','${newEnquiryDate}','${newDeliveryDate}','${sourceOfEnquiry}','${visitReason}')`;
-//       await db.query(urlNew, async (err, result) => {
-//         if (err) {
-//           console.log({ isSuccess: false, result: err });
-//           res.send({ isSuccess: false, result: "error" });
-//         } else if (result && result.insertId) {
-//           const insertedId = result.insertId;
-//           const urlSql = `INSERT INTO manufactur_details (enquiry_id, maker, modalName, variantName, year_of_manufactur, condition_of, old_tractor) VALUES(${insertedId}, '${manufacturers}', '${product}','${variant}', ${modelYear}, '${condition}','${oldTractorOwned}')`;
-//           console.log("urlSql", urlSql);
-//           console.log({ isSuccess: "success", result: urlSql });
-//           res.send({ isSuccess: "success", result: "success" });
-//         }
-//       });
-//     }
-//   });
-// });
-
 router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
-  console.log(">>>>>>>>>set-new-enquiry-data", req.body);
   console.log(">>>>>>>>>set-new-enquiry-data", req.body);
 
   const fristName = req.body.firstName || null;
@@ -357,17 +294,11 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
   const block = req.body.block || null;
   const village = req.body.village || null;
 
-  const enquiryCategoryId = req.body.category || null;
+  const enquiryCategoryId = req.body.category || none;
   const visitReason = "1" || null;
   const branchId = req.body.branchId || null;
-  const dsp = req.body.dsp || null;
-  const model = req.body.model || null;
-  const manufacturers = req.body.manufacturers || null;
-  const product = req.body.product || null;
-  const variant = req.body.variant || null;
-  const modelYear = req.body.modelYear || null;
-  const condition = req.body.condition || null;
-  const oldTractorOwned = req.body.oldTractorOwned || null;
+  const dsp = req.body.dsp || adminId;
+  const model = req.body.model || none;
   const enquiryDate = req.body.enquiryDate || null;
   const deliveryDate = req.body.deliveryDate || null;
   const sourceOfEnquiry = req.body.sourceOfEnquiry || null;
@@ -386,26 +317,14 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
       const newEnquiryDate = await getDateInFormate(enquiryDate);
       const newDeliveryDate = await getDateInFormate(deliveryDate);
 
-      const urlNew = `INSERT INTO enquiries (branch_id, enquiry_type_id, salesperson_id, customer_id, product_id, date, delivery_date, enquiry_source_id, visitReason) VALUES('${branchId}','${enquiryCategoryId}','${dsp}','${insertedId}','${model}','${newEnquiryDate}','${newDeliveryDate}','${sourceOfEnquiry}','${visitReason}')`;
+      const urlNew = `INSERT INTO enquiries (branch_id, enquiry_category_id, salesperson_id, customer_id, modal_id, date, delivery_date, enquiry_source_id, visitReason) VALUES('${branchId}','${enquiryCategoryId}','${dsp}','${insertedId}','${model}','${newEnquiryDate}','${newDeliveryDate}','${sourceOfEnquiry}','${visitReason}')`;
       await db.query(urlNew, async (err, result) => {
         if (err) {
           console.log({ isSuccess: false, result: err });
           res.send({ isSuccess: false, result: "error" });
         } else if (result && result.insertId) {
-          const insertedEnquiryId = result.insertId; // Use a different variable name
-
-          // Modify the URL for the manufactur_details query and execute it
-          const urlSql = `INSERT INTO manufactur_details (enquiry_id, maker, modalName, variantName, year_of_manufactur, condition_of, old_tractor) VALUES('${insertedEnquiryId}', '${manufacturers}', '${product}', '${variant}', '${modelYear}', '${condition}', '${oldTractorOwned}')`;
-
-          db.query(urlSql, async (err, result) => {
-            if (err) {
-              console.log({ isSuccess: false, result: err });
-              res.send({ isSuccess: false, result: "error" });
-            } else {
-              console.log({ isSuccess: "success", result: urlSql });
-              res.send({ isSuccess: "success", result: "success" });
-            }
-          });
+          console.log({ isSuccess: "success", result: urlNew });
+          res.send({ isSuccess: "success", result: "success" });
         }
       });
     }
@@ -432,7 +351,6 @@ router.post(
       const taluka = req.body.tehsil || null;
       const block = req.body.block || null;
       const village = req.body.village || null;
-
       const enquiryCategoryId = req.body.category || none;
       const visitReason = "1" || null;
       const branchId = req.body.branchId || null;
@@ -713,24 +631,24 @@ router.post("/set-new-fast-enquiry", tokenCheck, async (req, res) => {
                               result: enquiryProductSql,
                             });
                             const urlSql = `INSERT INTO manufactur_details (enquiry_id, old_tractor) VALUES(?,?)`;
-                              await db.query(
-                                urlSql,
-                                [enquiryId, 'No'],
-                                (err, result) => {
-                                  if (err) {
-                                    console.log(err);
-                                  } else {
-                                    console.log({
-                                      isSuccess: "success",
-                                      result: urlSql,
-                                    });
-                                    res.send({
-                                      isSuccess: "success",
-                                      result: "success",
-                                    });
-                                  }
+                            await db.query(
+                              urlSql,
+                              [enquiryId, "No"],
+                              (err, result) => {
+                                if (err) {
+                                  console.log(err);
+                                } else {
+                                  console.log({
+                                    isSuccess: "success",
+                                    result: urlSql,
+                                  });
+                                  res.send({
+                                    isSuccess: "success",
+                                    result: "success",
+                                  });
                                 }
-                              );
+                              }
+                            );
                           }
                         }
                       );
