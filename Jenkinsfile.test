@@ -7,7 +7,13 @@ pipeline {
     DOCKERHUB_CREDENTIALS_1 = credentials('dockerhub-1')
     DOCKERHUB_CREDENTIALS_2 = credentials('dockerhub-2')
   }
+  
   stages {
+    // stage('Get Source') {
+    //   steps {
+    //     sh ' git clone https://x-token-auth:ATCTT3xFfGN0LjLLCuVkZBrwucG29DfOgUpNzjueYhenVQILMSm2fmKw2gY7R48BHxxqnVVRCtKOai0KMaTtxWKGlag0hG1EfDVIPiPMZ2idD-3a7y3tNEoTsdUgdrufKtUaBp7o7HuNXWgWv_n4C4DXNiLV7snaY2vs4mw8mACOQs4YV0b9oAE=FE9E4BE5@bitbucket.org/balkrushnatechnologies-admin/vehicle-erp-system.git && cd vehicle-erp-deployment/ '
+    //   }
+    // }
     stage('Build Client') {
       steps {
         sh 'docker build ./client/ -t raptor1702/client:latest '
