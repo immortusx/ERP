@@ -77,7 +77,7 @@ router.post(
           .slice(0, 19)
           .replace("T", " ");
 
-        const suburl = `INSERT INTO employee_document (document_id, mapping_id,mapping_table) VALUES('${documentid}','${userId}','${logoImage}')`;
+        const suburl = `INSERT INTO document_details (document_id, mapping_id,mapping_table) VALUES('${documentid}','${userId}','${logoImage}')`;
         await queryDatabase(suburl);
         console.log(suburl, "suburl");
         await queryDatabase(
@@ -151,7 +151,7 @@ router.get("/get-employee-list", tokenCheck, async (req, res) => {
   INNER JOIN
       employee_detail AS ddu ON ddu.user_id = f.id
   LEFT JOIN
-      employee_document AS ed ON ed.mapping_id = f.id
+  document_details AS ed ON ed.mapping_id = f.id
   INNER JOIN
       documents AS t ON t.document_id = ed.document_id
   WHERE
@@ -219,7 +219,7 @@ router.post(
 
       const userId = result.insertId;
       console.log("document_id:", document_id);
-      const suburl = `UPDATE  documents SET document_value ='${logoImage}' WHERE  document_id =${document_id}`;
+      const suburl = `UPDATE  documents SET document_path ='${logoImage}' WHERE  document_id =${document_id}`;
       await queryDatabase(suburl);
       console.log(suburl, "suburl");
       const employeeqry = `UPDATE employee_detail SET branch_id = '${branch}', department_id = '${department}', role_id = '${role}' WHERE user_id = '${id}'`;
@@ -288,7 +288,7 @@ router.post("/upload-document",
         .slice(0, 19)
         .replace("T", " ");
 
-      const sql = "INSERT INTO documents (document_value, created_at) VALUES (?, ?)";
+      const sql = "INSERT INTO documents (document_path, created_at) VALUES (?, ?)";
       const values = [logoImage, formattedDate];
 
       db.query(sql, values, (err, result) => {

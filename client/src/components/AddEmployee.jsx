@@ -224,7 +224,7 @@ export default function Addemployee({ workFor }) {
           department: editemployeeData.department_id,
         });
         setEmployeeProfilelogo({
-          logo: editemployeeData.document_value,
+          logo: editemployeeData.document_path,
           document_id: editemployeeData.document_id,
         });
         setSelectedRole(editemployeeData.role_id);
