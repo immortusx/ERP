@@ -53,6 +53,7 @@ export default function Profile_list({ workFor }) {
         clearInpHook();
         dispatch(clearEditagencyState());
         navigate("/administration/configuration");
+        window.location.reload();
       } else {
         console.log("Something is wrong!");
         dispatch(setShowMessage("Something is wrong!"));
