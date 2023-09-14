@@ -19,7 +19,7 @@ pipeline {
         sh 'docker build ./client/ -t raptor1702/client:latest '
       }
     }
-    stage('Login') {
+    stage('Login client docker') {
       steps {
         sh 'echo $DOCKERHUB_CREDENTIALS_1_PSW | docker login -u $DOCKERHUB_CREDENTIALS_1_USR --password-stdin'
       }
@@ -39,7 +39,7 @@ pipeline {
         sh 'docker build ./server/ -t raptor2103/server:latest '
       }
     }
-    stage('Login') {
+    stage('Login Server Docker') {
       steps {
         sh 'echo $DOCKERHUB_CREDENTIALS_2_PSW | docker login -u $DOCKERHUB_CREDENTIALS_2_USR --password-stdin'
       }
