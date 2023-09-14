@@ -139,6 +139,7 @@ export default function EnquiryList() {
     }
   }
   const editEnquiryCell = (editEnquiryData) => {
+    console.log(editEnquiryData, "editEnquiryData");
     const customerId = editEnquiryData.id;
     navigate("/sale/enquiries/editenquiry", { state: customerId });
   };
