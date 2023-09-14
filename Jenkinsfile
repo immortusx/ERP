@@ -1,5 +1,8 @@
 pipeline {
   agent any
+  parameters {
+  choice choices: ['build and deploy images', 'build deploy and run images'], description: 'Choose the pipeline type', name: 'buildtype'
+  }
   options {
     buildDiscarder(logRotator(numToKeepStr: '5'))
   }
@@ -47,6 +50,11 @@ pipeline {
     stage('Push-2') {
       steps {
         sh 'docker push raptor2103/server:latest'
+      }
+    }
+    stage('Deploy'){
+      when (${params.buildtype} != 'build and deploy images' ){
+        echo 'Skipped'
       }
     }
   }
