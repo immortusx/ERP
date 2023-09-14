@@ -53,7 +53,8 @@ pipeline {
       }
     }
     stage('Deploy'){
-      when (${params.buildtype} != 'build and deploy images' ){
+      when (${params.buildtype} != 'build and deploy images' )
+      steps {
         echo 'Skipped'
       }
     }
