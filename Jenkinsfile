@@ -19,12 +19,12 @@ pipeline {
         sh 'docker build ./client/ -t raptor1702/client:latest '
       }
     }
-    stage('Login-1') {
+    stage('Login') {
       steps {
         sh 'echo $DOCKERHUB_CREDENTIALS_1_PSW | docker login -u $DOCKERHUB_CREDENTIALS_1_USR --password-stdin'
       }
     }
-    stage('Push-1') {
+    stage('Push client image') {
       steps {
         sh 'docker push raptor1702/client:latest'
       }
@@ -39,12 +39,12 @@ pipeline {
         sh 'docker build ./server/ -t raptor2103/server:latest '
       }
     }
-    stage('Login-2') {
+    stage('Login') {
       steps {
         sh 'echo $DOCKERHUB_CREDENTIALS_2_PSW | docker login -u $DOCKERHUB_CREDENTIALS_2_USR --password-stdin'
       }
     }    
-    stage('Push-2') {
+    stage('Push server image') {
       steps {
         sh 'docker push raptor2103/server:latest'
       }
