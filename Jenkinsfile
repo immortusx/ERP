@@ -49,12 +49,6 @@ pipeline {
         sh 'docker push raptor2103/server:latest'
       }
     }
-    stage('Deploy'){
-      when (${params.buildtype} != 'build and deploy images' )
-      steps {
-        echo 'Skipped'
-      }
-    }
   }
   post {
     always {
