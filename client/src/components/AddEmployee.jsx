@@ -251,7 +251,7 @@ export default function Addemployee({ workFor }) {
           },
         };
         const formData = new FormData();
-        formData.append('employee', employeeprofilelogo.logo);
+        formData.append('document', employeeprofilelogo.logo);
         try {
           const response = await Axios.post(url, formData, config);
           if (response.data) {

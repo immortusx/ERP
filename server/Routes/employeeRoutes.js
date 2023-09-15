@@ -274,7 +274,7 @@ router.get("/delete-employee/:id", tokenCheck, async (req, res) => {
 //=====================Upload Document========================
 router.post("/upload-document",
   tokenCheck,
-  uploadFile.single("employee"),
+  uploadFile.single("document"),
   async (req, res) => {
     try {
       console.log(req.body, 'reo');
