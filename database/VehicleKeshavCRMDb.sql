@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Sep 03, 2023 at 10:56 AM
+-- Generation Time: Sep 15, 2023 at 05:49 AM
 -- Server version: 10.2.43-MariaDB
 -- PHP Version: 7.2.30
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `VehicleKeshavCRM`
+-- Database: `VehicleKeshavCRMDb`
 --
 
 DELIMITER $$
@@ -35,7 +35,7 @@ END$$
 CREATE DEFINER=`balkrush1`@`%` PROCEDURE `get_enquiries_list` (IN `branchId` INT, IN `isAdmin` BOOLEAN, IN `salespersonId` INT)  BEGIN
     IF (isAdmin = TRUE) THEN
        SELECT s.id, s.first_name, s.last_name, s.phone_number, s.whatsapp_number, s.email,
-       (SELECT name FROM products WHERE id = product_id) AS product,
+       (SELECT modalName FROM modal WHERE id = modal_id) AS product,
        CONCAT(fo.first_name, ' ', fo.last_name) AS sales_person,
        f.date, f.delivery_date,
        (SELECT id FROM district WHERE id = s.district) AS district_id,
@@ -57,7 +57,7 @@ AND f.salesperson_id = salespersonId
 ORDER BY f.date DESC;
     ELSE
         SELECT s.id, s.first_name, s.last_name, s.phone_number, s.whatsapp_number, s.email,
-       (SELECT name FROM products WHERE id = product_id) AS product,
+       (SELECT modalName FROM modal WHERE id = modal_id) AS product,
        CONCAT(fo.first_name, ' ', fo.last_name) AS sales_person,
        f.date, f.delivery_date,
        (SELECT id FROM district WHERE id = s.district) AS district_id,
@@ -169,9 +169,9 @@ END IF;
 END$$
 
 CREATE DEFINER=`balkrush1`@`%` PROCEDURE `sp_get_category_with_total_enquiry` (IN `villageId` INT)  BEGIN
-SELECT et.*, COUNT(e.enquiry_type_id) AS total_enquiries
+SELECT et.*, COUNT(e.enquiry_category_id) AS total_enquiries
 FROM enquiry_category AS et
-LEFT JOIN enquiries AS e ON et.id = e.enquiry_type_id
+LEFT JOIN enquiries AS e ON et.id = e.enquiry_category_id
 LEFT JOIN customers AS c ON c.id = e.customer_id 
 WHERE c.village = villageId
 GROUP BY et.id;
@@ -208,7 +208,7 @@ END$$
 CREATE DEFINER=`balkrush1`@`%` PROCEDURE `sp_get_enquiries_list` (IN `branchId` INT, IN `isAdmin` BOOLEAN)  BEGIN
     IF (isAdmin = TRUE) THEN
        SELECT s.id, s.first_name, s.last_name, s.phone_number, s.whatsapp_number, s.email,
-       (SELECT name FROM products WHERE id = product_id) AS product,
+       (SELECT modalName FROM modal WHERE id = modal_id) AS product,
        CONCAT(fo.first_name, ' ', fo.last_name) AS sales_person,
        f.date, f.delivery_date,
        (SELECT id FROM district WHERE id = s.district) AS district_id,
@@ -229,7 +229,7 @@ WHERE (f.enquiry_stage IS NULL OR f.enquiry_stage <> 'INVALID')
 ORDER BY f.date DESC;
     ELSE
         SELECT s.id, s.first_name, s.last_name, s.phone_number, s.whatsapp_number, s.email,
-       (SELECT name FROM products WHERE id = product_id) AS product,
+       (SELECT modalName FROM modal WHERE id = modal_id) AS product,
        CONCAT(fo.first_name, ' ', fo.last_name) AS sales_person,
        f.date, f.delivery_date,
        (SELECT id FROM district WHERE id = s.district) AS district_id,
@@ -302,7 +302,7 @@ END$$
 CREATE DEFINER=`balkrush1`@`%` PROCEDURE `sp_get_enquiry_list_by_time_interval` (IN `timeInterval` VARCHAR(20))  BEGIN
 IF timeInterval = 'Today' THEN 
  SELECT s.id, s.first_name, s.last_name, s.phone_number, s.whatsapp_number, s.email,
-           (SELECT name FROM products WHERE id = product_id) AS product,
+           (SELECT modalName FROM modal WHERE id = modal_id) AS product,
            CONCAT(fo.first_name, ' ', fo.last_name) AS sales_person,
            f.date, f.delivery_date,
            (SELECT id FROM district WHERE id = s.district) AS district_id,
@@ -324,7 +324,7 @@ IF timeInterval = 'Today' THEN
   
   ELSEIF timeInterval = 'LastWeek' THEN
     SELECT s.id, s.first_name, s.last_name, s.phone_number, s.whatsapp_number, s.email,
-           (SELECT name FROM products WHERE id = product_id) AS product,
+           (SELECT modalName FROM modal WHERE id = modal_id) AS product,
            CONCAT(fo.first_name, ' ', fo.last_name) AS sales_person,
            f.date, f.delivery_date,
            (SELECT id FROM district WHERE id = s.district) AS district_id,
@@ -347,7 +347,7 @@ IF timeInterval = 'Today' THEN
   
   ELSEIF timeInterval = 'LastMonth' THEN
     SELECT s.id, s.first_name, s.last_name, s.phone_number, s.whatsapp_number, s.email,
-           (SELECT name FROM products WHERE id = product_id) AS product,
+           (SELECT modalName FROM modal WHERE id = modal_id) AS product,
            CONCAT(fo.first_name, ' ', fo.last_name) AS sales_person,
            f.date, f.delivery_date,
            (SELECT id FROM district WHERE id = s.district) AS district_id,
@@ -399,13 +399,13 @@ FROM enquiries AS f
 INNER JOIN customers AS s ON s.id = f.customer_id
 INNER JOIN branches AS t ON f.branch_id = t.id
 INNER JOIN users AS fo ON fo.id = f.salesperson_id
-LEFT JOIN products AS p ON p.id = f.product_id
+LEFT JOIN modal AS p ON p.id = f.modal_id
 LEFT JOIN district AS d ON d.id = s.district
 LEFT JOIN taluka AS t1 ON t1.id = s.taluka
 LEFT JOIN village AS v1 ON v1.id = s.village
 LEFT JOIN state AS st ON st.state_id = s.state
 LEFT JOIN enquiry_sources AS es ON es.id = f.enquiry_source_id
-WHERE ((f.enquiry_stage IS NULL OR f.enquiry_stage <> 'INVALID') AND s.village = villageId AND f.enquiry_type_id = categoryId)
+WHERE ((f.enquiry_stage IS NULL OR f.enquiry_stage <> 'INVALID') AND s.village = villageId AND f.enquiry_category_id = categoryId)
 ORDER BY f.date DESC;
 END$$
 
@@ -525,16 +525,16 @@ JOIN BookingCounts bc ON ec.month = bc.month;
 END$$
 
 CREATE DEFINER=`balkrush1`@`%` PROCEDURE `sp_get_total_enquiry_perCategory` (IN `villageId` INT)  BEGIN
-SELECT e.*, COUNT(e.enquiry_type_id) AS total_enquiries
+SELECT e.*, COUNT(e.enquiry_category_id) AS total_enquiries
 FROM enquiries AS e
-LEFT JOIN enquiry_types AS et ON et.id = e.enquiry_type_id
+LEFT JOIN enquiry_category AS et ON et.id = e.enquiry_category_id
 LEFT JOIN customers AS c ON c.id = e.customer_id WHERE c.village = villageId
-GROUP BY e.enquiry_type_id;
+GROUP BY e.enquiry_category_id;
 END$$
 
 CREATE DEFINER=`balkrush1`@`%` PROCEDURE `sp_get_user_list` (IN `userId` INT(11), IN `branchId` INT(11), IN `isAdmin` BOOLEAN)  BEGIN
 IF (isAdmin = TRUE) then
-	SELECT distinct f.id, f.first_name, f.last_name, f.email, f.is_active, f.phone_number  FROM users as f  where f.id not in(userId) and user_type_id=1 and f.is_delete = 0;
+	SELECT distinct f.id, f.first_name, f.last_name, f.email, f.is_active, f.phone_number  FROM users as f  where f.id and user_type_id=1 and f.is_delete = 0;
 ELSE
     SELECT distinct f.id, f.first_name, f.last_name, f.email, f.is_active, f.phone_number  FROM users as f inner join branch_department_user as s on s.user_id = f.id  inner join branches as t on s.branch_id = t.id where s.branch_id = branchId and user_type_id=1 and f.is_delete=0 and f.id not in((select user_id from branch_department_user where role_id  =1 limit 1), userId);
 END IF;	
@@ -896,7 +896,7 @@ CREATE TABLE `branches` (
 --
 
 INSERT INTO `branches` (`id`, `name`, `mobile_number`, `email_id`, `address`, `code`, `create_date`, `gst_number`, `description`, `is_active`, `contact_person`, `state`, `district`, `taluka`, `village`) VALUES
-(1, 'New Keshav Tractors (Dhrangadhra)', '9725579291', 'admin@newkeshav.com', 'At Dhrangandhra', '363310', '2023-04-08 19:16:06', '23WSE44', 'New Branch', 1, 'Harilal Goraiya', 2, 2, 2, 2);
+(1, 'New Keshav Tractors (Dhrangadhra)', '9725579291', 'admin@newkeshav.com', 'At Dhrangandhra', '363310', '2023-04-08 19:16:06', '23WSE44', 'Main branch of New Keshav tractor agency', 1, 'Harilal Goraiya', 2, 2, 2, 2);
 
 -- --------------------------------------------------------
 
@@ -927,6 +927,9 @@ CREATE TABLE `branch_department_user` (
   `role_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Dumping data for table `branch_department_user`
+--
 -- --------------------------------------------------------
 
 --
@@ -952,6 +955,16 @@ CREATE TABLE `configuration` (
   `key_name` varchar(100) DEFAULT NULL,
   `value` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `configuration`
+--
+
+INSERT INTO `configuration` (`id`, `setting`, `key_name`, `value`) VALUES
+(1, 'agency', 'name', 'New Keshav Tractors'),
+(2, 'agency', 'contact', 'Harilal Pael'),
+(3, 'agency', 'email', 'newkeshav@gmail.com'),
+(4, 'agency', 'logo', '/upload/logo_1694441895352.jpg');
 
 -- --------------------------------------------------------
 
@@ -1047,10 +1060,22 @@ INSERT INTO `district` (`id`, `name`, `state_id`, `is_active`) VALUES
 
 CREATE TABLE `documents` (
   `document_id` int(11) NOT NULL,
-  `table_entity_id` int(11) DEFAULT NULL,
-  `document_value` varchar(255) DEFAULT NULL,
+  `document_path` varchar(255) DEFAULT NULL,
   `created_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `document_details`
+--
+
+CREATE TABLE `document_details` (
+  `id` int(11) NOT NULL,
+  `document_id` int(11) DEFAULT NULL,
+  `mapping_id` int(11) DEFAULT NULL,
+  `mapping_table` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -1075,10 +1100,10 @@ CREATE TABLE `employee_detail` (
 CREATE TABLE `enquiries` (
   `id` int(11) NOT NULL,
   `branch_id` int(11) DEFAULT NULL,
-  `enquiry_type_id` int(11) DEFAULT NULL,
+  `enquiry_category_id` int(11) DEFAULT NULL,
   `salesperson_id` int(11) DEFAULT NULL,
   `customer_id` int(11) DEFAULT NULL,
-  `product_id` int(11) DEFAULT NULL,
+  `modal_id` int(11) DEFAULT NULL,
   `date` datetime DEFAULT NULL,
   `delivery_date` datetime DEFAULT NULL,
   `enquiry_source_id` varchar(11) DEFAULT NULL,
@@ -1101,6 +1126,14 @@ CREATE TABLE `enquiry_category` (
   `department` varchar(45) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Dumping data for table `enquiry_category`
+--
+
+INSERT INTO `enquiry_category` (`id`, `category_name`, `category_description`, `is_active`, `department`) VALUES
+(1, 'None', 'None', 1, 'None'),
+(2, 'New Tractor', '', 1, 'Sales');
+
 -- --------------------------------------------------------
 
 --
@@ -1113,6 +1146,35 @@ CREATE TABLE `enquiry_category_field` (
   `field_id` int(11) NOT NULL,
   `type` varchar(45) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `enquiry_category_field`
+--
+
+INSERT INTO `enquiry_category_field` (`id`, `category_id`, `field_id`, `type`) VALUES
+(1, 2, 1, 'enquiry'),
+(2, 2, 2, 'enquiry'),
+(3, 2, 3, 'enquiry'),
+(4, 2, 5, 'enquiry'),
+(5, 2, 6, 'enquiry'),
+(6, 2, 7, 'enquiry'),
+(7, 2, 8, 'enquiry'),
+(8, 2, 9, 'enquiry'),
+(9, 2, 10, 'enquiry'),
+(10, 2, 11, 'enquiry'),
+(11, 2, 12, 'enquiry'),
+(12, 2, 13, 'enquiry'),
+(13, 2, 14, 'enquiry'),
+(14, 2, 15, 'enquiry'),
+(15, 2, 16, 'enquiry'),
+(16, 2, 17, 'enquiry'),
+(17, 2, 18, 'enquiry'),
+(18, 2, 19, 'enquiry'),
+(19, 2, 20, 'enquiry'),
+(20, 2, 21, 'enquiry'),
+(21, 2, 22, 'enquiry'),
+(22, 2, 24, 'enquiry'),
+(23, 2, 25, 'enquiry');
 
 -- --------------------------------------------------------
 
@@ -1453,7 +1515,7 @@ CREATE TABLE `modal` (
 --
 
 INSERT INTO `modal` (`id`, `modalName`, `manufacturerId`, `isActive`) VALUES
-(1, 'DI-740III', 1, b'00000000001'),
+(1, 'None', 1, b'00000000001'),
 (2, 'DI-745III', 1, b'00000000001'),
 (3, 'GT-20', 1, b'00000000001'),
 (4, 'GT-22', 1, b'00000000001'),
@@ -2119,6 +2181,12 @@ ALTER TABLE `documents`
   ADD PRIMARY KEY (`document_id`);
 
 --
+-- Indexes for table `document_details`
+--
+ALTER TABLE `document_details`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `employee_detail`
 --
 ALTER TABLE `employee_detail`
@@ -2130,9 +2198,9 @@ ALTER TABLE `employee_detail`
 ALTER TABLE `enquiries`
   ADD PRIMARY KEY (`id`),
   ADD KEY `customer_id_idx` (`customer_id`),
-  ADD KEY `product_id_idx` (`product_id`),
+  ADD KEY `modal_id_idx` (`modal_id`),
   ADD KEY `salesperson_id_idx` (`salesperson_id`),
-  ADD KEY `enquiry_type_id_idx` (`enquiry_type_id`),
+  ADD KEY `enquiry_category_id_idx` (`enquiry_category_id`),
   ADD KEY `enquiry_source_id_idx` (`enquiry_source_id`);
 
 --
@@ -2382,7 +2450,7 @@ ALTER TABLE `branches_new`
 -- AUTO_INCREMENT for table `branch_department_user`
 --
 ALTER TABLE `branch_department_user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `category_field`
@@ -2394,13 +2462,13 @@ ALTER TABLE `category_field`
 -- AUTO_INCREMENT for table `configuration`
 --
 ALTER TABLE `configuration`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `customers`
 --
 ALTER TABLE `customers`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `departments`
@@ -2427,6 +2495,12 @@ ALTER TABLE `documents`
   MODIFY `document_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `document_details`
+--
+ALTER TABLE `document_details`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `employee_detail`
 --
 ALTER TABLE `employee_detail`
@@ -2436,19 +2510,19 @@ ALTER TABLE `employee_detail`
 -- AUTO_INCREMENT for table `enquiries`
 --
 ALTER TABLE `enquiries`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `enquiry_category`
 --
 ALTER TABLE `enquiry_category`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `enquiry_category_field`
 --
 ALTER TABLE `enquiry_category_field`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT for table `enquiry_data`
@@ -2598,7 +2672,7 @@ ALTER TABLE `tax_details`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `user_types`
@@ -2634,8 +2708,8 @@ ALTER TABLE `branch_department_user`
 --
 ALTER TABLE `enquiries`
   ADD CONSTRAINT `customer_id` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`id`),
-  ADD CONSTRAINT `enquiry_type_id` FOREIGN KEY (`enquiry_type_id`) REFERENCES `enquiry_types` (`id`),
-  ADD CONSTRAINT `product_id` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`),
+  ADD CONSTRAINT `enquiry_category_id` FOREIGN KEY (`enquiry_category_id`) REFERENCES `enquiry_category` (`id`),
+  ADD CONSTRAINT `modal_id` FOREIGN KEY (`modal_id`) REFERENCES `modal` (`id`),
   ADD CONSTRAINT `salesperson_id` FOREIGN KEY (`salesperson_id`) REFERENCES `users` (`id`);
 
 --
