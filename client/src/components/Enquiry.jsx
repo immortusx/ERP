@@ -33,7 +33,9 @@ export default function Enquiry({ workFor, villageId }) {
   const setNewEnquiryDataState = useSelector(
     (state) => state.setNewEnquiryDataState.newEnquiryState
   );
-  const editEnquiryState = useSelector((state) => state.editEnquirySlice);
+  const editEnquiryState = useSelector(
+    (state) => state.editEnquiryState.editEnquiryState
+  );
 
   const [categoriesList, setCategoriesList] = useState([]);
   const [variant, setVariant] = useState([]);
@@ -41,6 +43,7 @@ export default function Enquiry({ workFor, villageId }) {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [editEnquiryDate, setEditEnquiryDate] = useState(null);
   const [editdeliveryDate, setEditDeliveryDate] = useState(null);
+  const [seletedOwned, setSelectedOwned] = useState('No');
   const [editEnquiryData, setEditEnquiryData] = useState({});
   const [currentCategoryData, setCurrentCategoryData] = useState({
     id: "",
@@ -96,13 +99,13 @@ export default function Enquiry({ workFor, villageId }) {
     category_id: null,
   });
 
-const generateYears = (startYear, endYear) => {
-  const years = [];
-  for (let year = startYear; year <= endYear; year++) {
-    years.push({ id: years.length + 1, year: year.toString() });
-  }
-  return years;
-};
+  const generateYears = (startYear, endYear) => {
+    const years = [];
+    for (let year = startYear; year <= endYear; year++) {
+      years.push({ id: years.length + 1, year: year.toString() });
+    }
+    return years;
+  };
 
   const [newEnquiryList, setNewEnquiryList] = useState({
     listBranch: [],
@@ -114,6 +117,7 @@ const generateYears = (startYear, endYear) => {
     listSsp: [],
     listMake: [],
     listModel: [],
+    listOldModal: [],
     listVariant: [],
     listPrimarySource: [],
     listSourceOfEnquiry: [],
@@ -136,9 +140,6 @@ const generateYears = (startYear, endYear) => {
     ],
   });
 
-
-
-  
   function clearStateAndInp() {
     setNewEnquiryData({
       branchId: "",
@@ -247,15 +248,20 @@ const generateYears = (startYear, endYear) => {
         village: Number(editEnquiryData.village),
         dsp: editEnquiryData.salesperson_id,
         model: editEnquiryData.modal_id,
+        make: Number(editEnquiryData.manufacturer),
         enquiryDate: editEnquiryDate,
         deliveryDate: editDeliveryDate,
         category_id: editEnquiryData.enquiry_category_id,
-        manufacturers: editEnquiryData.maker,
+        manufacturers: Number(editEnquiryData.maker),
         variant: editEnquiryData.variantName,
         product: editEnquiryData.modalName,
         modelYear: editEnquiryData.year_of_manufactur,
         condition: editEnquiryData.condition_of,
+        enquiryPrimarySource: Number(editEnquiryData.primary_source_id),
+        sourceOfEnquiry: Number(editEnquiryData.enquiry_source_id),
+        oldTractorOwned: editEnquiryData.old_tractor,
       });
+      setSelectedOwned(editEnquiryData.old_tractor);
       console.log("editEnquiryData ************", editEnquiryData);
       setEnquiryData({
         category: editEnquiryData.enquiry_category_id,
@@ -270,8 +276,9 @@ const generateYears = (startYear, endYear) => {
         tehsil: Number(editEnquiryData.taluka),
         village: Number(editEnquiryData.village),
       });
-      getModelList(1);
-      getSourceOfEnquiryList(2);
+      getModelList(editEnquiryData.manufacturer);
+      getOldModelList(editEnquiryData.maker);
+      getSourceOfEnquiryList(editEnquiryData.primary_source_id);
     }
   }, [editEnquiryData]);
   useEffect(() => {
@@ -339,6 +346,24 @@ const generateYears = (startYear, endYear) => {
     });
   }
 
+  async function getOldModelList(id) {
+    const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/get-model/${id}`;
+    const config = {
+      headers: {
+        token: localStorage.getItem("rbacToken"),
+      },
+    };
+    await axios.get(url, config).then((response) => {
+      if (response.data) {
+        if (response.data.isSuccess) {
+          setNewEnquiryList((newEnquiryList) => ({
+            ...newEnquiryList,
+            ["listOldModal"]: response.data.result,
+          }));
+        }
+      }
+    });
+  }
   async function getModelList(id) {
     const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/get-model/${id}`;
     const config = {
@@ -537,8 +562,6 @@ const generateYears = (startYear, endYear) => {
     }
   }, [enquiryData.category]);
 
-  
-
   useEffect(() => {
     if (enquiryState && enquiryState.result.result === "success") {
       dispatch(setShowMessage("Enquiry Registered Successfully !"));
@@ -548,85 +571,88 @@ const generateYears = (startYear, endYear) => {
   }, [enquiryState]);
 
   useEffect(() => {
-    if (editEnquiryState && editEnquiryState.result === "success") {
-      clearEditEnquiryState();
+    if (editEnquiryState && editEnquiryState.result.result === "success") {
+      dispatch(setShowMessage("Enquiry Edited Successfully !"));
+      dispatch(clearEditEnquiryState());
       navigate("/sale/enquiries");
     }
   }, [editEnquiryState]);
 
   const handleSubmit = async () => {
-    if (workFor === "editEnquiry") {
-      const branchId = newEnquiryData.branchId;
-      const dsp = newEnquiryData.dsp;
-      const model = newEnquiryData.model;
-      const make = newEnquiryData.make;
-      const oldTractorOwned = newEnquiryData.oldTractorOwned;
-      const manufacturers = newEnquiryData.manufacturers;
-      const product = newEnquiryData.product;
-      const variant = newEnquiryData.variant;
-      const condition = newEnquiryData.condition;
-      const enquiryPrimarySource = newEnquiryData.enquiryPrimarySource;
-      const sourceOfEnquiry = newEnquiryData.sourceOfEnquiry;
-      const modeOfFinance = newEnquiryData.modeOfFinance;
-      const bank = newEnquiryData.bank;
-      const enquiryDate = newEnquiryData.enquiryDate;
-      const deliveryDate = newEnquiryData.deliveryDate;
-      enquiryData.branchId = branchId;
-      enquiryData.dsp = dsp;
-      enquiryData.model = model;
-      enquiryData.make = make;
-      enquiryData.enquiryPrimarySource = enquiryPrimarySource;
-      enquiryData.sourceOfEnquiry = sourceOfEnquiry;
-      enquiryData.modeOfFinance = modeOfFinance;
-      enquiryData.bank = bank;
-      enquiryData.enquiryDate = enquiryDate;
-      enquiryData.deliveryDate = deliveryDate;
-      enquiryData.oldTractorOwned = oldTractorOwned;
-      enquiryData.manufacturers = manufacturers;
-      enquiryData.product = product;
-      enquiryData.variant = variant;
-      enquiryData.condition = condition;
-      console.log(enquiryData, "newEnqi");
-      if (customerId) {
-        enquiryData.customerId = customerId;
-        dispatch(editEnquiryDb(enquiryData));
+    console.log(newEnquiryData.oldTractorOwned, "oldif");
+    // if (workFor === "editEnquiry") {
+    //   const branchId = newEnquiryData.branchId;
+    //   const dsp = newEnquiryData.dsp;
+    //   const model = newEnquiryData.model;
+    //   const make = newEnquiryData.make;
+    //   const oldTractorOwned = newEnquiryData.oldTractorOwned;
+    //   const manufacturers = newEnquiryData.manufacturers;
+    //   const product = newEnquiryData.product;
+    //   const variant = newEnquiryData.variant;
+    //   const condition = newEnquiryData.condition;
+    //   const enquiryPrimarySource = newEnquiryData.enquiryPrimarySource;
+    //   const sourceOfEnquiry = newEnquiryData.sourceOfEnquiry;
+    //   const modeOfFinance = newEnquiryData.modeOfFinance;
+    //   const bank = newEnquiryData.bank;
+    //   const enquiryDate = newEnquiryData.enquiryDate;
+    //   const deliveryDate = newEnquiryData.deliveryDate;
+    //   enquiryData.branchId = branchId;
+    //   enquiryData.dsp = dsp;
+    //   enquiryData.model = model;
+    //   enquiryData.make = make;
+    //   enquiryData.enquiryPrimarySource = enquiryPrimarySource;
+    //   enquiryData.sourceOfEnquiry = sourceOfEnquiry;
+    //   enquiryData.modeOfFinance = modeOfFinance;
+    //   enquiryData.bank = bank;
+    //   enquiryData.enquiryDate = enquiryDate;
+    //   enquiryData.deliveryDate = deliveryDate;
+    //   enquiryData.oldTractorOwned = oldTractorOwned;
+    //   enquiryData.manufacturers = manufacturers;
+    //   enquiryData.product = product;
+    //   enquiryData.variant = variant;
+    //   enquiryData.condition = condition;
+    //   console.log(enquiryData, "newEnqi");
+    //   if (customerId) {
+    //     enquiryData.customerId = customerId;
+    //     dispatch(editEnquiryDb(enquiryData));
 
-      }
-    } else {
-      const branchId = await localStorage.getItem("currentDealerId");
-      const dsp = newEnquiryData.dsp;
-      const model = newEnquiryData.model;
-      const make = newEnquiryData.make;
-      const manufacturers = newEnquiryData.manufacturers;
-      const product = newEnquiryData.product;
-      const variant = newEnquiryData.variant;
-      const condition = newEnquiryData.condition;
-      const enquiryPrimarySource = newEnquiryData.enquiryPrimarySource;
-      const sourceOfEnquiry = newEnquiryData.sourceOfEnquiry;
-      const modeOfFinance = newEnquiryData.modeOfFinance;
-      const bank = newEnquiryData.bank;
-      const oldTractorOwned = newEnquiryData.oldTractorOwned;
-      const enquiryDate = newEnquiryData.enquiryDate;
-      const deliveryDate = newEnquiryData.deliveryDate;
-      enquiryData.branchId = branchId;
-      enquiryData.dsp = dsp;
-      enquiryData.model = model;
-      enquiryData.make = make;
-      enquiryData.enquiryPrimarySource = enquiryPrimarySource;
-      enquiryData.sourceOfEnquiry = sourceOfEnquiry;
-      enquiryData.modeOfFinance = modeOfFinance;
-      enquiryData.bank = bank;
-      enquiryData.oldTractorOwned = oldTractorOwned;
-      enquiryData.enquiryDate = enquiryDate;
-      enquiryData.deliveryDate = deliveryDate;
-      enquiryData.manufacturers = manufacturers;
-      enquiryData.product = product;
-      enquiryData.variant = variant;
-      enquiryData.condition = condition;
-      console.log(enquiryData, "enquir");
+    //   }
+    // } else {
+    //   console.log(newEnquiryData.enquiryPrimarySource, 'pimaryOsrer');
+    //   const branchId = await localStorage.getItem("currentDealerId");
+    //   const dsp = newEnquiryData.dsp;
+    //   const model = newEnquiryData.model;
+    //   const make = newEnquiryData.make;
+    //   const manufacturers = newEnquiryData.manufacturers;
+    //   const product = newEnquiryData.product;
+    //   const variant = newEnquiryData.variant;
+    //   const condition = newEnquiryData.condition;
+    //   const enquiryPrimarySource = newEnquiryData.enquiryPrimarySource;
+    //   const sourceOfEnquiry = newEnquiryData.sourceOfEnquiry;
+    //   const modeOfFinance = newEnquiryData.modeOfFinance;
+    //   const bank = newEnquiryData.bank;
+    //   const oldTractorOwned = newEnquiryData.oldTractorOwned;
+    //   const enquiryDate = newEnquiryData.enquiryDate;
+    //   const deliveryDate = newEnquiryData.deliveryDate;
+    //   enquiryData.branchId = branchId;
+    //   enquiryData.dsp = dsp;
+    //   enquiryData.model = model;
+    //   enquiryData.make = make;
+    //   enquiryData.enquiryPrimarySource = enquiryPrimarySource;
+    //   enquiryData.sourceOfEnquiry = sourceOfEnquiry;
+    //   enquiryData.modeOfFinance = modeOfFinance;
+    //   enquiryData.bank = bank;
+    //   enquiryData.oldTractorOwned = oldTractorOwned;
+    //   enquiryData.enquiryDate = enquiryDate;
+    //   enquiryData.deliveryDate = deliveryDate;
+    //   enquiryData.manufacturers = manufacturers;
+    //   enquiryData.product = product;
+    //   enquiryData.variant = variant;
+    //   enquiryData.condition = condition;
+    //   console.log(enquiryData, "enquir");
 
-      dispatch(setEnquiryDb(enquiryData));
-    }
+    //   dispatch(setEnquiryDb(enquiryData));
+    // }
   };
 
   function getSelectedFields(data) {
@@ -804,6 +830,7 @@ const generateYears = (startYear, endYear) => {
               onChange={changeHandlerNewEnquiry}
               className="inpClr myInput"
               name="make"
+              defaultValue={newEnquiryData.make}
             >
               <option value="0" className="myLabel">
                 select
@@ -812,7 +839,12 @@ const generateYears = (startYear, endYear) => {
                 newEnquiryList.listMake.length > 0 &&
                 newEnquiryList.listMake.map((i, index) => {
                   return (
-                    <option key={index} value={i.id} className="myLabel">
+                    <option
+                      selected={i.id == newEnquiryData.make ? true : false}
+                      key={index}
+                      value={i.id}
+                      className="myLabel"
+                    >
                       {i.name}
                     </option>
                   );
@@ -831,7 +863,7 @@ const generateYears = (startYear, endYear) => {
               onChange={changeHandlerNewEnquiry}
               className="inpClr myInput"
               name="enquiryPrimarySource"
-              defaultValue={1}
+              defaultValue={newEnquiryData.enquiryPrimarySource}
             >
               <option value="0" className="myLabel">
                 select
@@ -841,7 +873,11 @@ const generateYears = (startYear, endYear) => {
                 newEnquiryList.listPrimarySource.map((i, index) => {
                   return (
                     <option
-                      selected={i.id == 1 ? true : false}
+                      selected={
+                        i.id == newEnquiryData.enquiryPrimarySource
+                          ? true
+                          : false
+                      }
                       key={index}
                       value={i.id}
                       className="myLabel"
@@ -864,7 +900,7 @@ const generateYears = (startYear, endYear) => {
               onChange={changeHandlerNewEnquiry}
               className="inpClr myInput"
               name="sourceOfEnquiry"
-              defaultValue={3}
+              defaultValue={newEnquiryData.sourceOfEnquiry}
             >
               <option value="0" className="myLabel">
                 select
@@ -926,6 +962,7 @@ const generateYears = (startYear, endYear) => {
             </label>
             <div className="d-flex">
               <input
+                defaultChecked={seletedOwned === 'Yes' ? true : false}
                 value="Yes"
                 onChange={changeHandler}
                 type="radio"
@@ -937,7 +974,7 @@ const generateYears = (startYear, endYear) => {
               </label>
 
               <input
-                defaultChecked
+                defaultChecked={seletedOwned === 'No' ? true : false}
                 value="NO"
                 onChange={changeHandler}
                 className="ms-3"
@@ -949,7 +986,7 @@ const generateYears = (startYear, endYear) => {
                 No
               </label>
             </div>
-            {enquiryData.oldTractorOwned === "Yes" && (
+            {seletedOwned === "Yes" && (
               <>
                 <p className="mt-3 mb-0"> Select Details* </p>
                 <section className="d-flex mt-3 flex-column col-lg-12 col-sm-6 col-4">
@@ -966,7 +1003,7 @@ const generateYears = (startYear, endYear) => {
                       newEnquiryList.listMake.length > 0 &&
                       newEnquiryList.listMake.map((i, index) => {
                         return (
-                          <option key={index} value={i.id} className="myLabel">
+                          <option selected={i.id === newEnquiryData.manufacturers ? true : false } key={index} value={i.id} className="myLabel">
                             {i.name}
                           </option>
                         );
@@ -983,9 +1020,9 @@ const generateYears = (startYear, endYear) => {
                     <option value="0" className="myLabel">
                       select Modal
                     </option>
-                    {newEnquiryList.listModel &&
-                      newEnquiryList.listModel.length > 0 &&
-                      newEnquiryList.listModel.map((i, index) => {
+                    {newEnquiryList.listOldModal &&
+                      newEnquiryList.listOldModal.length > 0 &&
+                      newEnquiryList.listOldModal.map((i, index) => {
                         return (
                           <option key={index} value={i.id} className="myLabel">
                             {i.modalName}
@@ -1238,6 +1275,7 @@ const generateYears = (startYear, endYear) => {
           ...prevState,
           oldTractorOwned: value,
         }));
+        setSelectedOwned(value);
       }
     }
   }
