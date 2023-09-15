@@ -21,6 +21,7 @@ import {
 } from "./getEditeManufacturer";
 import AlertDeleteModal from "../../AlertDelete/AlertDeleteModal";
 import axios from "axios";
+import Axios from "axios";
 
 export default function Variants() {
   const dispatch = useDispatch();
@@ -47,6 +48,7 @@ export default function Variants() {
 
   const [modalRowsArr, setModalRowsArr] = useState([]);
   const [firstBlankField, setFirstBlankField] = useState(null);
+  const [insertedId, setInsertedId] = useState([]);
 
   const onAddNewRowsHandler = () => {
     setModalRowsArr((prevState) => [
@@ -161,9 +163,10 @@ export default function Variants() {
           const files = variantFile[i].variantFile;
           const variant = variantFile[i].variantName;
           variantsArray.push(variant);
-          formData.append("variantFiles", files);
+          // formData.append("variantFiles", files);
         }
-
+      
+        formData.append("variantFiles", JSON.stringify(insertedId));
         formData.append("variants", JSON.stringify(variantsArray));
         formData.append("modalid", modalId);
         formData.append("manufacturerId", manufacturerID);
@@ -200,6 +203,33 @@ export default function Variants() {
   useEffect(() => {
     onAddNewRowsHandler();
   }, []);
+
+  useEffect(() => {
+    const uploadLogo = async () => {
+      if (variantFile && variantFile.name != null) {
+        const url = `${process.env.REACT_APP_NODE_URL}/api/employees/upload-document`;
+        const config = {
+          headers: {
+            token: localStorage.getItem("rbacToken"),
+          },
+        };
+        const formData = new FormData();
+        formData.append('document', variantFile);
+        try {
+          const response = await Axios.post(url, formData, config);
+          if (response.data) {
+            setInsertedId([...insertedId, response.data.result.insertId]);
+            console.log(response.data.result, "sdasdasdasdas")
+          }
+        } catch (error) {
+          // Handle any errors here
+          console.error("Error uploading document:", error);
+        }
+      }
+    };
+
+    uploadLogo();
+  }, [variantFile]);
 
   const getVariantList = async () => {
     console.log(modalId, "get");
@@ -281,13 +311,14 @@ export default function Variants() {
   };
   const handleFileChange = (e, modalIndex, variantIndex) => {
     const files = e.target.files[0];
-    setModalRowsArr((prevState) => {
-      const updatedModalRowsArr = [...prevState];
-      const modalRow = updatedModalRowsArr[modalIndex];
-      const variantRow = modalRow.variants[variantIndex];
-      variantRow.variantFile = files;
-      return updatedModalRowsArr;
-    });
+    setVariantFile(files)
+    //setModalRowsArr((prevState) => {
+    //   const updatedModalRowsArr = [...prevState];
+    //   const modalRow = updatedModalRowsArr[modalIndex];
+    //   const variantRow = modalRow.variants[variantIndex];
+    //   variantRow.variantFile = files;
+    //   return updatedModalRowsArr;
+    // });
   };
   // const handleFileChange = (e) => {
   //   const selectedFile = fileInputRef.current.files[0];
@@ -517,11 +548,10 @@ export default function Variants() {
                             <div className="col-10">
                               <input
                                 type="text"
-                                className={`form-control ${
-                                  firstBlankField === modalIndex
-                                    ? "is-invalid"
-                                    : "was-validated"
-                                }`}
+                                className={`form-control ${firstBlankField === modalIndex
+                                  ? "is-invalid"
+                                  : "was-validated"
+                                  }`}
                                 id={`variantName_${modalIndex}_${variantIndex}`}
                                 name={`variantName_${modalIndex}_${variantIndex}`}
                                 value={variantRow.variantName}
