@@ -571,6 +571,7 @@ export default function Enquiry({ workFor, villageId }) {
   }, [enquiryState]);
 
   useEffect(() => {
+    console.log(editEnquiryState, 'editEnquiryStae');
     if (editEnquiryState && editEnquiryState.result.result === "success") {
       dispatch(setShowMessage("Enquiry Edited Successfully !"));
       dispatch(clearEditEnquiryState());
@@ -580,79 +581,79 @@ export default function Enquiry({ workFor, villageId }) {
 
   const handleSubmit = async () => {
     console.log(newEnquiryData.oldTractorOwned, "oldif");
-    // if (workFor === "editEnquiry") {
-    //   const branchId = newEnquiryData.branchId;
-    //   const dsp = newEnquiryData.dsp;
-    //   const model = newEnquiryData.model;
-    //   const make = newEnquiryData.make;
-    //   const oldTractorOwned = newEnquiryData.oldTractorOwned;
-    //   const manufacturers = newEnquiryData.manufacturers;
-    //   const product = newEnquiryData.product;
-    //   const variant = newEnquiryData.variant;
-    //   const condition = newEnquiryData.condition;
-    //   const enquiryPrimarySource = newEnquiryData.enquiryPrimarySource;
-    //   const sourceOfEnquiry = newEnquiryData.sourceOfEnquiry;
-    //   const modeOfFinance = newEnquiryData.modeOfFinance;
-    //   const bank = newEnquiryData.bank;
-    //   const enquiryDate = newEnquiryData.enquiryDate;
-    //   const deliveryDate = newEnquiryData.deliveryDate;
-    //   enquiryData.branchId = branchId;
-    //   enquiryData.dsp = dsp;
-    //   enquiryData.model = model;
-    //   enquiryData.make = make;
-    //   enquiryData.enquiryPrimarySource = enquiryPrimarySource;
-    //   enquiryData.sourceOfEnquiry = sourceOfEnquiry;
-    //   enquiryData.modeOfFinance = modeOfFinance;
-    //   enquiryData.bank = bank;
-    //   enquiryData.enquiryDate = enquiryDate;
-    //   enquiryData.deliveryDate = deliveryDate;
-    //   enquiryData.oldTractorOwned = oldTractorOwned;
-    //   enquiryData.manufacturers = manufacturers;
-    //   enquiryData.product = product;
-    //   enquiryData.variant = variant;
-    //   enquiryData.condition = condition;
-    //   console.log(enquiryData, "newEnqi");
-    //   if (customerId) {
-    //     enquiryData.customerId = customerId;
-    //     dispatch(editEnquiryDb(enquiryData));
+    if (workFor === "editEnquiry") {
+      const branchId = newEnquiryData.branchId;
+      const dsp = newEnquiryData.dsp;
+      const model = newEnquiryData.model;
+      const make = newEnquiryData.make;
+      const oldTractorOwned = newEnquiryData.oldTractorOwned;
+      const manufacturers = newEnquiryData.manufacturers;
+      const product = newEnquiryData.product;
+      const variant = newEnquiryData.variant;
+      const condition = newEnquiryData.condition;
+      const enquiryPrimarySource = newEnquiryData.enquiryPrimarySource;
+      const sourceOfEnquiry = newEnquiryData.sourceOfEnquiry;
+      const modeOfFinance = newEnquiryData.modeOfFinance;
+      const bank = newEnquiryData.bank;
+      const enquiryDate = newEnquiryData.enquiryDate;
+      const deliveryDate = newEnquiryData.deliveryDate;
+      enquiryData.branchId = branchId;
+      enquiryData.dsp = dsp;
+      enquiryData.model = model;
+      enquiryData.make = make;
+      enquiryData.enquiryPrimarySource = enquiryPrimarySource;
+      enquiryData.sourceOfEnquiry = sourceOfEnquiry;
+      enquiryData.modeOfFinance = modeOfFinance;
+      enquiryData.bank = bank;
+      enquiryData.enquiryDate = enquiryDate;
+      enquiryData.deliveryDate = deliveryDate;
+      enquiryData.oldTractorOwned = oldTractorOwned;
+      enquiryData.manufacturers = manufacturers;
+      enquiryData.product = product;
+      enquiryData.variant = variant;
+      enquiryData.condition = condition;
+      console.log(enquiryData, "newEnqi");
+      if (customerId) {
+        enquiryData.customerId = customerId;
+        dispatch(editEnquiryDb(enquiryData));
 
-    //   }
-    // } else {
-    //   console.log(newEnquiryData.enquiryPrimarySource, 'pimaryOsrer');
-    //   const branchId = await localStorage.getItem("currentDealerId");
-    //   const dsp = newEnquiryData.dsp;
-    //   const model = newEnquiryData.model;
-    //   const make = newEnquiryData.make;
-    //   const manufacturers = newEnquiryData.manufacturers;
-    //   const product = newEnquiryData.product;
-    //   const variant = newEnquiryData.variant;
-    //   const condition = newEnquiryData.condition;
-    //   const enquiryPrimarySource = newEnquiryData.enquiryPrimarySource;
-    //   const sourceOfEnquiry = newEnquiryData.sourceOfEnquiry;
-    //   const modeOfFinance = newEnquiryData.modeOfFinance;
-    //   const bank = newEnquiryData.bank;
-    //   const oldTractorOwned = newEnquiryData.oldTractorOwned;
-    //   const enquiryDate = newEnquiryData.enquiryDate;
-    //   const deliveryDate = newEnquiryData.deliveryDate;
-    //   enquiryData.branchId = branchId;
-    //   enquiryData.dsp = dsp;
-    //   enquiryData.model = model;
-    //   enquiryData.make = make;
-    //   enquiryData.enquiryPrimarySource = enquiryPrimarySource;
-    //   enquiryData.sourceOfEnquiry = sourceOfEnquiry;
-    //   enquiryData.modeOfFinance = modeOfFinance;
-    //   enquiryData.bank = bank;
-    //   enquiryData.oldTractorOwned = oldTractorOwned;
-    //   enquiryData.enquiryDate = enquiryDate;
-    //   enquiryData.deliveryDate = deliveryDate;
-    //   enquiryData.manufacturers = manufacturers;
-    //   enquiryData.product = product;
-    //   enquiryData.variant = variant;
-    //   enquiryData.condition = condition;
-    //   console.log(enquiryData, "enquir");
+      }
+    } else {
+      console.log(newEnquiryData.enquiryPrimarySource, 'pimaryOsrer');
+      const branchId = await localStorage.getItem("currentDealerId");
+      const dsp = newEnquiryData.dsp;
+      const model = newEnquiryData.model;
+      const make = newEnquiryData.make;
+      const manufacturers = newEnquiryData.manufacturers;
+      const product = newEnquiryData.product;
+      const variant = newEnquiryData.variant;
+      const condition = newEnquiryData.condition;
+      const enquiryPrimarySource = newEnquiryData.enquiryPrimarySource;
+      const sourceOfEnquiry = newEnquiryData.sourceOfEnquiry;
+      const modeOfFinance = newEnquiryData.modeOfFinance;
+      const bank = newEnquiryData.bank;
+      const oldTractorOwned = newEnquiryData.oldTractorOwned;
+      const enquiryDate = newEnquiryData.enquiryDate;
+      const deliveryDate = newEnquiryData.deliveryDate;
+      enquiryData.branchId = branchId;
+      enquiryData.dsp = dsp;
+      enquiryData.model = model;
+      enquiryData.make = make;
+      enquiryData.enquiryPrimarySource = enquiryPrimarySource;
+      enquiryData.sourceOfEnquiry = sourceOfEnquiry;
+      enquiryData.modeOfFinance = modeOfFinance;
+      enquiryData.bank = bank;
+      enquiryData.oldTractorOwned = oldTractorOwned;
+      enquiryData.enquiryDate = enquiryDate;
+      enquiryData.deliveryDate = deliveryDate;
+      enquiryData.manufacturers = manufacturers;
+      enquiryData.product = product;
+      enquiryData.variant = variant;
+      enquiryData.condition = condition;
+      console.log(enquiryData, "enquir");
 
-    //   dispatch(setEnquiryDb(enquiryData));
-    // }
+      dispatch(setEnquiryDb(enquiryData));
+    }
   };
 
   function getSelectedFields(data) {
@@ -975,7 +976,7 @@ export default function Enquiry({ workFor, villageId }) {
 
               <input
                 defaultChecked={seletedOwned === 'No' ? true : false}
-                value="NO"
+                value="No"
                 onChange={changeHandler}
                 className="ms-3"
                 type="radio"
@@ -1243,7 +1244,7 @@ export default function Enquiry({ workFor, villageId }) {
         //   getDspList(value);
         //   break;
         case "manufacturers":
-          getModelList(value);
+          getOldModelList(value);
           break;
         case "make":
           getModelList(value);

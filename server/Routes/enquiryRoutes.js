@@ -340,7 +340,7 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
               console.log({ isSuccess: false, result: err });
               res.send({ isSuccess: false, result: "error" });
             } else {
-              console.log({ isSuccess: "success", result: enquiryProductSql });
+              console.log({ isSuccess: "success", result: 'success' });
               res.send({ isSuccess: "success", result: "success" });
             }
           });
@@ -353,7 +353,7 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
                 console.log({ isSuccess: false, result: err });
                 res.send({ isSuccess: false, result: "error" });
               } else {
-                console.log({ isSuccess: "success", result: urlSql });
+                console.log({ isSuccess: "success", result: 'success' });
                 // res.send({ isSuccess: "success", result: "success" });
               }
             });
@@ -364,7 +364,7 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
                 console.log(err);
               } else {
                 console.log({
-                  result: urlSql,
+                  result: 'success',
                   isSuccess: "success",
                 });
                 // res.send({
@@ -412,6 +412,7 @@ router.post(
       const branchId = req.body.branchId || null;
       const dsp = req.body.dsp || none;
       const model = req.body.model || none;
+      const make = req.body.make || none;
       const manufacturers = req.body.manufacturers || null;
       const product = req.body.product || null;
       const variant = req.body.variant || null;
@@ -421,10 +422,10 @@ router.post(
       const enquiryDate = req.body.enquiryDate || null;
       const deliveryDate = req.body.deliveryDate || null;
       const sourceOfEnquiry = req.body.sourceOfEnquiry || null;
+      const enquiryPrimarySource = req.body.enquiryPrimarySource || null;
       const newDeliveryDate = await getDateInFormate(deliveryDate);
       const newEnquiryDate = await getDateInFormate(enquiryDate);
 
-      // Construct the SQL UPDATE query for updating customer data
       const updateCustomerSql = `
       UPDATE customers 
       SET 
@@ -442,7 +443,6 @@ router.post(
 
       console.log(updateCustomerSql, "customers");
 
-      // Execute the SQL UPDATE query to update customer data
       db.query(
         updateCustomerSql,
         [
@@ -474,13 +474,13 @@ router.post(
               modal_id = ?,
               date = ?,
               delivery_date = ?,
+              primary_source_id = ?,
               enquiry_source_id = ?,
               visitReason = ?
             WHERE customer_id = ?`;
 
             console.log(updateEnquirySql, "enquiries");
 
-            // Execute the SQL UPDATE query to update enquiries
             db.query(
               updateEnquirySql,
               [
@@ -490,100 +490,83 @@ router.post(
                 model,
                 newEnquiryDate,
                 newDeliveryDate,
+                enquiryPrimarySource,
                 sourceOfEnquiry,
                 visitReason,
                 customerId,
               ],
-              (err, result) => {
+              async (err, result) => {
                 if (err) {
                   console.log({ isSuccess: false, result: err });
                   res.send({ isSuccess: false, result: "error" });
                 } else {
                   console.log({ isSuccess: "success", result: "success" });
-                  // If oldTractorOwned is "Yes", update manufactur_details table
-                  if (oldTractorOwned === "Yes") {
-                    const maker = manufacturers || null;
-                    const modalName = product || null;
-                    const variantName = variant || null;
-                    const year_of_manufactur = modelYear || none;
-                    const condition_of = condition || null;
-                    const oldTractor_Owned = oldTractorOwned || null;
 
-                    // Construct the SQL UPDATE query for updating manufactur_details
-                    const updateManufacturDetailsSql = `
-                    UPDATE manufactur_details
-                    SET 
-                      maker = ?,
-                      modalName = ?,
-                      variantName = ?,
-                      year_of_manufactur = ?,
-                      condition_of = ?,
-                      old_tractor = ?
-                    WHERE enquiry_id = ?`;
-
-                    console.log(
-                      updateManufacturDetailsSql,
-                      "manufactur_details==Yes"
-                    );
-
-                    // Execute the SQL UPDATE query to update manufactur_details
-                    db.query(
-                      updateManufacturDetailsSql,
-                      [
-                        maker,
-                        modalName,
-                        variantName,
-                        year_of_manufactur,
-                        condition_of,
-                        oldTractor_Owned,
-                        customerId,
-                      ],
-                      (err, result) => {
-                        if (err) {
-                          console.log({ isSuccess: false, result: err });
-                          res.send({ isSuccess: false, result: "error" });
+                  const enquiryProductSql = `UPDATE enquiry_products SET manufacturer = ?, modal = ?, variant = ? WHERE enquiry_id = ${customerId}`;
+                  await db.query(
+                    enquiryProductSql,
+                    [make, product, variant],
+                    async (err, productResult) => {
+                      if (err) {
+                        console.log(err);
+                      } else {
+                        console.log({
+                          isSuccess: "success",
+                          result: enquiryProductSql,
+                        });
+                        
+                        if (oldTractorOwned === "Yes") {
+                          const urlSql = `UPDATE manufactur_details SET maker = ?, modalName = ?, variantName = ?, year_of_manufactur = ?, condition_of = ?, old_tractor = ? WHERE enquiry_id = ${customerId}`;
+                          await db.query(
+                            urlSql,
+                            [
+                              manufacturers,
+                              product,
+                              variant,
+                              modelYear,
+                              condition,
+                              oldTractorOwned,
+                            ],
+                            (err, result) => {
+                              if (err) {
+                                console.log(err);
+                              } else {
+                                console.log({
+                                  isSuccess: "success",
+                                  result: urlSql,
+                                });
+                                res.send({
+                                  isSuccess: "success",
+                                  result: "success",
+                                });
+                              }
+                            }
+                          );
+                        } else if (oldTractorOwned === "No") {
+                          const urlSql = `UPDATE manufactur_details SET maker = ?, modalName = ?, variantName = ?, year_of_manufactur = ?, condition_of = ?, old_tractor = ? WHERE enquiry_id = ${customerId}`;
+                          await db.query(urlSql, [null, null, null, null, null, oldTractorOwned], (err, result) => {
+                            if (err) {
+                              console.log(err);
+                            } else {
+                              console.log({
+                                isSuccess: "success",
+                                result: urlSql,
+                              });
+                              res.send({
+                                isSuccess: "success",
+                                result: "success",
+                              });
+                            }
+                          });
                         } else {
-                          console.log({
+                          res.send({
                             isSuccess: "success",
                             result: "success",
                           });
-                          res.send({ isSuccess: "success", result: "success" });
                         }
                       }
-                    );
-                  } else {
-                    const oldTractor_Owned = oldTractorOwned || null;
-
-                    // Construct the SQL UPDATE query for updating manufactur_details
-                    const updateManufacturDetailsSql = `
-                    UPDATE manufactur_details
-                    SET 
-                      old_tractor = ?
-                    WHERE enquiry_id = ?`;
-
-                    console.log(
-                      updateManufacturDetailsSql,
-                      "manufactur_details==No"
-                    );
-
-                    // Execute the SQL UPDATE query to update manufactur_details
-                    db.query(
-                      updateManufacturDetailsSql,
-                      [oldTractor_Owned, customerId],
-                      (err, result) => {
-                        if (err) {
-                          console.log({ isSuccess: false, result: err });
-                          res.send({ isSuccess: false, result: "error" });
-                        } else {
-                          console.log({
-                            isSuccess: "success",
-                            result: "success",
-                          });
-                          res.send({ isSuccess: "success", result: "success" });
-                        }
-                      }
-                    );
-                  }
+                    }
+                  );
                 }
               }
             );
