@@ -1,0 +1,12 @@
+version: '3'
+services:
+  server:
+    image: raptor2103/server:latest
+    network_mode: "host"
+    restart: always
+    container_name: server_img
+  client:
+    image: raptor1702/client:latest
+    network_mode: "host"
+    restart: always
+    container_name: client_img
