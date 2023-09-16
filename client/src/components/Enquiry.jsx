@@ -1267,9 +1267,9 @@ export default function Enquiry({ workFor, villageId }) {
   function changeHandler(e) {
     const name = e.target.name;
     const value = e.target.value;
-    if (value === "") {
-      clearState();
-    } else {
+    // if (value === "") {
+    //   clearState();
+    // } else {
       setEnquiryData((enquiryData) => ({ ...enquiryData, [name]: value }));
       if (name === "oldTractorOwned") {
         setNewEnquiryData((prevState) => ({
@@ -1278,7 +1278,7 @@ export default function Enquiry({ workFor, villageId }) {
         }));
         setSelectedOwned(value);
       }
-    }
+    // }
   }
 
   const onSelectedState = (val) => {
