@@ -98,8 +98,6 @@ export default function Addemployee({ workFor }) {
         clearInpHook();
         dispatch(clearEditemployeeState());
         navigate("/administration/employees");
-      } else {
-        dispatch(setShowMessage("Something is wrong!"));
       }
     }
   }, [editemployeeSliceState]);
@@ -143,36 +141,32 @@ export default function Addemployee({ workFor }) {
     formData.append("selectedRole", ro);
     formData.append("logo", alogo);
     {
-      if (workFor === "forAdd" ? pass.length > 0 : true) {
-        employeeData["bankname"] = BankDetais.bankname;
+      employeeData["bankname"] = BankDetais.bankname;
 
-        employeeData["bankBranch"] = BankDetais.bankBranch;
+      employeeData["bankBranch"] = BankDetais.bankBranch;
 
-        employeeData["accountNo"] = BankDetais.accountNo;
+      employeeData["accountNo"] = BankDetais.accountNo;
 
-        employeeData["accountType"] = BankDetais.accountType;
+      employeeData["accountType"] = BankDetais.accountType;
 
-        employeeData["ifscCode"] = BankDetais.ifscCode;
+      employeeData["ifscCode"] = BankDetais.ifscCode;
 
-        employeeData["branch"] = jobdetails.branch;
+      employeeData["branch"] = jobdetails.branch;
 
-        employeeData["department"] = jobdetails.department;
+      employeeData["department"] = jobdetails.department;
 
-        employeeData["bloodgroup"] = bloodgroup;
+      employeeData["bloodgroup"] = bloodgroup;
 
-        employeeData["selectedDate"] = selectedDate;
-        employeeData["selectedRole"] = selectedRole;
-        employeeData["logo"] = employeeprofilelogo.logo;
-        if (workFor === "forEdit") {
-          formData.append("document_id", editemployeeData.document_id);
-          formData.append("id", editemployeeData.user_id);
-          dispatch(editemployeeUpdateToDb(formData));
-        } else {
-          formData.append("documentId", documentId);
-          dispatch(addemployeeToDb(formData));
-        }
+      employeeData["selectedDate"] = selectedDate;
+      employeeData["selectedRole"] = selectedRole;
+      employeeData["logo"] = employeeprofilelogo.logo;
+      if (workFor === "forEdit") {
+        formData.append("document_id", editemployeeData.document_id);
+        formData.append("id", editemployeeData.user_id);
+        dispatch(editemployeeUpdateToDb(formData));
       } else {
-        dispatch(setShowMessage("*All fields must be filled."));
+        formData.append("documentId", documentId);
+        dispatch(addemployeeToDb(formData));
       }
     }
   }
@@ -407,8 +401,6 @@ export default function Addemployee({ workFor }) {
       } else if (addemployeeState.message.result === "alreadyExist") {
         dispatch(setShowMessage("*Please use a different email to continue!"));
         dispatch(clearAddemployeeState());
-      } else {
-        dispatch(setShowMessage("Something is wrong!"));
       }
     }
   }, [addemployeeState]);
@@ -682,7 +674,7 @@ export default function Addemployee({ workFor }) {
                       width={35}
                       onClick={handleDownload}
                     />
-                   {/* // <button className="btnemp" onClick={handleDownload}>Download</button> */}
+                    {/* // <button className="btnemp" onClick={handleDownload}>Download</button> */}
                   </div>
                 )}
               </div>
