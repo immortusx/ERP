@@ -659,7 +659,7 @@ export default function Addemployee({ workFor }) {
                   required
                 />
               </div>
-              {employeeprofilelogo.logo && (
+              { workFor === "forEdit" && employeeprofilelogo.logo &&  (
                 <div className="d-flex justify-content-end align-items-end" >
                   <img
                     src={`${process.env.REACT_APP_NODE_URL}/api${employeeprofilelogo.logo}`}
@@ -673,7 +673,7 @@ export default function Addemployee({ workFor }) {
               {/* Download Link */}
               <div >
 
-                {employeeprofilelogo.logo && (
+                { workFor === "forEdit" && employeeprofilelogo.logo && (
                   <div style={{ marginLeft: '20px' }}>
                     <img
                       src={downloadgif}
