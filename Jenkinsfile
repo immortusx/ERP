@@ -13,12 +13,12 @@ pipeline {
   }
   
   stages {    
-    stage('Build Client') {
+    stage('Build Client img') {
       steps {
         sh 'docker build ./client/ -t raptor1702/client:latest '
       }
     }
-    stage('Login docker & push client image') {
+    stage('Push client image') {
       steps {
         sh 'echo $DOCKERHUB_CREDENTIALS_1_PSW | docker login -u $DOCKERHUB_CREDENTIALS_1_USR --password-stdin'
         sh 'docker push raptor1702/client:latest'
@@ -29,25 +29,17 @@ pipeline {
         sh 'docker logout'
       }
     }
-    stage('Build Server') {
+    stage('Build Server img') {
       steps {
         sh 'docker build ./server/ -t raptor2103/server:latest '
       }
     }
-    stage('Login Docker and push server image') {
+    stage('Push server image') {
       steps {
         sh 'echo $DOCKERHUB_CREDENTIALS_2_PSW | docker login -u $DOCKERHUB_CREDENTIALS_2_USR --password-stdin'
         sh 'docker push raptor2103/server:latest'
       }
     }
-    // stage('Remove Existng Docker Containers') {
-    //   steps{
-    //     catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
-    //       sh 'docker rm $(docker ps -a -f name=client_img) -f && sleep 2s'
-    //       sh 'docker rm $(docker ps -a -f name=server_img) -f && sleep 2s'
-    //     }  
-    //   }
-    // }
     stage('Remove Client Image') {
       steps {
         catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS'){
