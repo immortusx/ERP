@@ -48,25 +48,30 @@ pipeline {
     //     }  
     //   }
     // }
-    stage('Run Client Image') {
+    stage('Remove Client Image') {
       steps {
         catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS'){
           sh 'docker rm $(docker ps -a -f name=client_img) -f'
           sh 'sleep 5s'
-          sh 'docker run -d --name client_img --network host --env PORT=${PORT_client} raptor1702/client:latest'
+          
         }
       }
     }
-    stage('Run Server Image') {
+    stage('Remove Server Image') {
       steps {
         catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS'){
           sh 'docker rm $(docker ps -a -f name=server_img) -f'
           sh 'sleep 5s'
-          sh 'docker run -d --name server_img --network host --env PORT=${PORT_server} raptor2103/server:latest'
+          
         }
       }
     }    
-
+    stage('Run Images') {
+      steps {
+        sh 'docker run -d --name client_img --network host --env PORT=${PORT_client} raptor1702/client:latest'
+        sh 'docker run -d --name server_img --network host --env PORT=${PORT_server} raptor2103/server:latest'
+      }
+    }
   }
   post {
     always {
