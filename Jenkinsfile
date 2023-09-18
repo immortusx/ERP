@@ -69,7 +69,7 @@ pipeline {
     stage('Run Images') {
       steps {
         sh 'docker run -d --name client_img --network host --env PORT=${PORT_client} raptor1702/client:latest'
-        sh 'docker run -d --name server_img --network host --env PORT=${PORT_server} raptor2103/server:latest'
+        sh 'docker run -d --name server_img --network host --env ENV_PORT=${PORT_server} raptor2103/server:latest'
       }
     }
   }
