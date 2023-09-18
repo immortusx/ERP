@@ -12,13 +12,7 @@ pipeline {
     DOCKERHUB_CREDENTIALS_2 = credentials('dockerhub-2')
   }
   
-  stages {
-    stage('Check port') {
-      steps {
-        sh 'export PORT=${PORT} '
-        echo "port set to ${PORT} "
-      }
-    }    
+  stages {    
     stage('Build Client') {
       steps {
         sh 'docker build ./client/ -t raptor1702/client:latest '
