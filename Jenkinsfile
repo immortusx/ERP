@@ -1,5 +1,9 @@
 pipeline {
   agent any
+  parameters {
+      string defaultValue: '3000', description: 'Choose custom port for client', name: 'PORT_client'
+      string defaultValue: '2223', description: 'Choose custom port for server', name: 'PORT_server'
+  }  
   options {
     buildDiscarder(logRotator(numToKeepStr: '5'))
   }
@@ -8,19 +12,15 @@ pipeline {
     DOCKERHUB_CREDENTIALS_2 = credentials('dockerhub-2')
   }
   
-  stages {
-    stage('Build Client') {
+  stages {    
+    stage('Build Client img') {
       steps {
         sh 'docker build ./client/ -t raptor1702/client:latest '
       }
     }
-    stage('Login client docker') {
-      steps {
-        sh 'echo $DOCKERHUB_CREDENTIALS_1_PSW | docker login -u $DOCKERHUB_CREDENTIALS_1_USR --password-stdin'
-      }
-    }
     stage('Push client image') {
       steps {
+        sh 'echo $DOCKERHUB_CREDENTIALS_1_PSW | docker login -u $DOCKERHUB_CREDENTIALS_1_USR --password-stdin'
         sh 'docker push raptor1702/client:latest'
       }
     }
@@ -29,19 +29,39 @@ pipeline {
         sh 'docker logout'
       }
     }
-    stage('Build Server') {
+    stage('Build Server img') {
       steps {
         sh 'docker build ./server/ -t raptor2103/server:latest '
       }
     }
-    stage('Login Server Docker') {
-      steps {
-        sh 'echo $DOCKERHUB_CREDENTIALS_2_PSW | docker login -u $DOCKERHUB_CREDENTIALS_2_USR --password-stdin'
-      }
-    }    
     stage('Push server image') {
       steps {
+        sh 'echo $DOCKERHUB_CREDENTIALS_2_PSW | docker login -u $DOCKERHUB_CREDENTIALS_2_USR --password-stdin'
         sh 'docker push raptor2103/server:latest'
+      }
+    }
+    stage('Remove Client Image') {
+      steps {
+        catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS'){
+          sh 'docker rm $(docker ps -a -f name=client_img) -f'
+          sh 'sleep 5s'
+          
+        }
+      }
+    }
+    stage('Remove Server Image') {
+      steps {
+        catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS'){
+          sh 'docker rm $(docker ps -a -f name=server_img) -f'
+          sh 'sleep 5s'
+          
+        }
+      }
+    }    
+    stage('Run Images') {
+      steps {
+        sh 'docker run -d --name client_img --network host --env PORT=${PORT_client} raptor1702/client:latest'
+        sh 'docker run -d --name server_img --network host --env ENV_PORT=${PORT_server} raptor2103/server:latest'
       }
     }
   }

@@ -4,5 +4,5 @@ COPY package*.json ./
 RUN npm install
 COPY . ./server
 WORKDIR /usr/src/app/server
-#RUN npm run build
+EXPOSE $PORT
 CMD ["node", "index.js"]
