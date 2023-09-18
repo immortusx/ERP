@@ -1,5 +1,8 @@
 pipeline {
   agent any
+  parameters {
+      string defaultValue: '3000', description: 'Choose custom port', name: 'port'
+  }  
   options {
     buildDiscarder(logRotator(numToKeepStr: '5'))
   }
@@ -9,6 +12,17 @@ pipeline {
   }
   
   stages {
+    stage('Checkout Repo') {
+      steps {
+        checkout scm
+      }
+    }
+    stage('Check port') {
+      steps {
+        sh 'export PORT=${port} '
+        echo "port set to ${port} "
+      }
+    }    
     stage('Build Client') {
       steps {
         sh 'docker build ./client/ -t raptor1702/client:latest '
