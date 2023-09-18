@@ -1759,4 +1759,62 @@ router.get(
     });
   }
 );
+
+//==================For Enquiry Sources===================//
+
+router.post("/add-primary-sources", tokenCheck, async (req, res) => {
+  console.log(">>>>>/add-primary-sources");
+  const enquirySourceName = req.body.enquirySourcesName;
+  const enquirySourceDiscription = req.body.enquirySourcesDescription;
+  console.log(enquirySourceName, enquirySourceDiscription);
+  var esourceNamespace = enquirySourceName.trim(" ");
+  const firstLetter = esourceNamespace.charAt(0).toUpperCase();
+  var capitalFirstLetter = firstLetter + esourceNamespace.slice(1);
+  const newUrl =
+    "SELECT * FROM enquiry_primary_sources WHERE name ='" +
+    capitalFirstLetter +
+    "'";
+  await db.query(newUrl, async (err, newResult) => {
+    if (err) {
+      console.log({ isSuccess: false, result: err });
+      res.send({ isSuccess: false, result: "error" });
+    } else if (newResult.length === 0) {
+      const url = `INSERT INTO enquiry_primary_sources (name, description) VALUES('${capitalFirstLetter}', '${enquirySourceDiscription}')`;
+      await db.query(url, async (err, result) => {
+        if (err) {
+          console.log({ isSuccess: false, result: err });
+          res.send({ isSuccess: false, result: "error" });
+        } else {
+          console.log({ isSuccess: true, result: "success" });
+          res.send({ isSuccess: true, result: "success" });
+        }
+      });
+    } else {
+      console.log(newResult);
+      console.log({ isSuccess: false, result: "alreadyExist" });
+      res.send({ isSuccess: false, result: "alreadyExist" });
+    }
+  });
+});
+router.get("/get-enquiryPsourcesbyid/:id", tokenCheck, async (req, res) => {
+  console.log(">>>>>/get-enquiryPsourcesbyid");
+  try {
+    const enquirySourcesById = req.params.id;
+    console.log(enquirySourcesById);
+    await db.query(
+      "SELECT id as enquirySourcesId, name as enquirySourcesName, description as enquirySourcesDescription FROM enquiry_primary_sources where id=" +
+      enquirySourcesById,
+      (err, enquirySourcesIdData) => {
+        if (err) {
+          console.log({ isSuccess: false, result: "error" });
+          res.send({ isSuccess: false, result: "error" });
+        } else {
+          res.status(200).send({ isSuccess: true, result:enquirySourcesIdData });
+        }
+      }
+    );
+  } catch (e) {
+    console.log(e);
+  }
+});
 module.exports = router;
