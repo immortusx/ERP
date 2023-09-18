@@ -1,7 +1,8 @@
 pipeline {
   agent any
   parameters {
-      string defaultValue: '3000', description: 'Choose custom port', name: 'port'
+      string defaultValue: '3000', description: 'Choose custom port for client', name: 'PORT_client'
+      string defaultValue: '2223', description: 'Choose custom port for server', name: 'PORT_server'
   }  
   options {
     buildDiscarder(logRotator(numToKeepStr: '5'))
@@ -14,8 +15,8 @@ pipeline {
   stages {
     stage('Check port') {
       steps {
-        sh 'export PORT=${port} '
-        echo "port set to ${port} "
+        sh 'export PORT=${PORT} '
+        echo "port set to ${PORT} "
       }
     }    
     stage('Build Client') {
@@ -44,7 +45,26 @@ pipeline {
         sh 'echo $DOCKERHUB_CREDENTIALS_2_PSW | docker login -u $DOCKERHUB_CREDENTIALS_2_USR --password-stdin'
         sh 'docker push raptor2103/server:latest'
       }
+    }
+    stage('Remove Existng Docker Containers') {
+      steps{
+        catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
+          sh 'docker rm $(docker ps -a -f name=client_img) -f && sleep 2s'
+          sh 'docker rm $(docker ps -a -f name=server_img) -f && sleep 2s'
+        }  
+      }
+    }
+    stage('Run Client Image') {
+      steps {
+        sh 'docker run -d --name client_img --network host --env PORT=${PORT_client} raptor1702/client:latest'
+      }
+    }
+    stage('Run Server Image') {
+      steps {
+        sh 'docker run -d --name server_img --network host --env PORT=${PORT_server} raptor2103/server:latest'
+      }
     }    
+
   }
   post {
     always {
