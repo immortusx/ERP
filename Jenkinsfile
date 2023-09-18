@@ -12,11 +12,6 @@ pipeline {
   }
   
   stages {
-    stage('Checkout Repo') {
-      steps {
-        checkout scm
-      }
-    }
     stage('Check port') {
       steps {
         sh 'export PORT=${port} '
