@@ -40,21 +40,25 @@ pipeline {
         sh 'docker push raptor2103/server:latest'
       }
     }
-    stage('Remove Existng Docker Containers') {
-      steps{
-        catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
-          sh 'docker rm $(docker ps -a -f name=client_img) -f && sleep 2s'
-          sh 'docker rm $(docker ps -a -f name=server_img) -f && sleep 2s'
-        }  
-      }
-    }
+    // stage('Remove Existng Docker Containers') {
+    //   steps{
+    //     catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
+    //       sh 'docker rm $(docker ps -a -f name=client_img) -f && sleep 2s'
+    //       sh 'docker rm $(docker ps -a -f name=server_img) -f && sleep 2s'
+    //     }  
+    //   }
+    // }
     stage('Run Client Image') {
       steps {
+        sh 'docker rm $(docker ps -a -f name=client_img) -f'
+        sh 'sleep 5s'
         sh 'docker run -d --name client_img --network host --env PORT=${PORT_client} raptor1702/client:latest'
       }
     }
     stage('Run Server Image') {
       steps {
+        sh 'docker rm $(docker ps -a -f name=server_img) -f'
+        sh 'sleep 5s'
         sh 'docker run -d --name server_img --network host --env PORT=${PORT_server} raptor2103/server:latest'
       }
     }    
