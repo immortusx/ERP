@@ -3,6 +3,7 @@ pipeline {
   parameters {
       string defaultValue: '3000', description: 'Choose custom port for client', name: 'PORT_client'
       string defaultValue: '2223', description: 'Choose custom port for server', name: 'PORT_server'
+      string defaultValue: 'vehical_crm_db', description: 'Choose Database for server', name: 'database'
   }  
   options {
     buildDiscarder(logRotator(numToKeepStr: '5'))
@@ -63,7 +64,7 @@ pipeline {
     stage('Run Images') {
       steps {
         sh 'docker run -d --name client_img --network host --env PORT=${PORT_client} raptor1702/client:latest'
-        sh 'docker run -d --name server_img --network host --env ENV_PORT=${PORT_server} raptor2103/server:latest'
+        sh 'docker run -d --name server_img --network host --env ENV_PORT=${PORT_server} --env ENV_DATABASE='${database}' raptor2103/server:latest'
       }
     }
   }
