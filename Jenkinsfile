@@ -13,9 +13,16 @@ pipeline {
   }
   
   stages {    
-    stage('Build Client img') {
+    stage('Build Images') {
       steps {
-        sh 'docker build ./client/ -t raptor1702/client:latest '
+        parallel(
+          build_client: {
+            sh 'docker build ./client/ -t raptor1702/client:latest'
+          },
+          build_server: {
+            sh 'docker build ./server/ -t raptor2103/server:latest'
+          }          
+        )
       }
     }
     stage('Push client image') {
@@ -27,11 +34,6 @@ pipeline {
     stage('Logout') {
       steps {
         sh 'docker logout'
-      }
-    }
-    stage('Build Server img') {
-      steps {
-        sh 'docker build ./server/ -t raptor2103/server:latest '
       }
     }
     stage('Push server image') {
