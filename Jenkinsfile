@@ -40,22 +40,22 @@ pipeline {
         sh 'docker push raptor2103/server:latest'
       }
     }
-    stage('Remove Client Image') {
+    stage('Remove Current Images') {
       steps {
-        catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS'){
-          sh 'docker rm $(docker ps -a -f name=client_img) -f'
-          sh 'sleep 5s'
-          
-        }
-      }
-    }
-    stage('Remove Server Image') {
-      steps {
-        catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS'){
-          sh 'docker rm $(docker ps -a -f name=server_img) -f'
-          sh 'sleep 5s'
-          
-        }
+        parallel(
+          a: {
+            catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS'){
+              sh 'docker rm $(docker ps -a -f name=client_img) -f'
+              sh 'sleep 5s' 
+            }
+          },
+          b: {
+            catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS'){
+              sh 'docker rm $(docker ps -a -f name=server_img) -f'
+              sh 'sleep 5s'
+            }
+          }          
+        )
       }
     }    
     stage('Run Images') {
