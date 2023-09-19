@@ -1,10 +1,10 @@
 pipeline {
   agent any
   parameters {
-      string defaultValue: '3000', description: 'Choose custom port for client', name: 'PORT_client'
-      string defaultValue: '2223', description: 'Choose custom port for server', name: 'PORT_server'
-      string defaultValue: 'vehical_crm_db', description: 'Choose Database for server', name: 'database'
-      string defaultValue: 'https://dev.balkrushna.com', description: 'Choose react app node url', name: 'node_url'
+      string (defaultValue: '3000', description: 'Choose custom port for client', name: 'PORT_client')
+      string (defaultValue: '2223', description: 'Choose custom port for server', name: 'PORT_server')
+      string (defaultValue: 'vehical_crm_db', description: 'Choose Database for server', name: 'database')
+      string (defaultValue: 'https://dev.balkrushna.com', description: 'Choose react app node url', name: 'node_url')
   }  
   options {
     buildDiscarder(logRotator(numToKeepStr: '5'))
