@@ -35,7 +35,7 @@ import editCategorySlice from './slices/Master/Category/editCategorySlice';
 import editassignareaSlice from './slices/editassignareaSlice';
 import addTaskSlice from './slices/addTaskSlice';
 import editEnquirySlice from './slices/editEnquirySlice';
-import addEnquirySourcesSlice from './slices/Master/Enquiry Sources/addEnquirySourcesSlice';
+import addEnquirySourcesSlice from './slices/Master/EnquirySources/addEnquirySourcesSlice';
 
 export const store = configureStore({
   reducer: {

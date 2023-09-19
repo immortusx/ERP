@@ -81,8 +81,8 @@ import Task from "./Task";
 import AddTask from "./AddTask";
 import axios from "axios";
 import { Spinner } from "react-bootstrap";
-import EnquirySources from "./Master/Enquiry Sources/EnquirySources";
-import EnquirySources_model from "./Master/Enquiry Sources/EnquirySources_modal";
+import EnquirySources from "./Master/EnquirySources/EnquirySources";
+import EnquirySources_model from "./Master/EnquirySources/EnquirySources_modal";
 const CheckPermission = ({ children, path }) => {
   // return checkList.includes(path) ? children : <Navigate to="../no-access" />
   // return checkList.includes(path) ? children : <h3>No access</h3>

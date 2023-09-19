@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Axios from "axios";
 import { setShowMessage } from "../../../redux/slices/notificationSlice";
-import { addEnquirySourcesToDb, clearAddEnquirySources } from "../../../redux/slices/Master/Enquiry Sources/addEnquirySourcesSlice";
+import { addEnquirySourcesToDb, clearAddEnquirySources } from "../../../redux/slices/Master/EnquirySources/addEnquirySourcesSlice";
 
 const EnquirySources = ({workFor}) => {
     const [modalShow, setModalShow] = useState(false);
