@@ -21,10 +21,10 @@ pipeline {
       steps {
         parallel(
           build_client: {
-            sh "docker build --no-cache ./client/ -t raptor1702/client:${BUILD_TAG}"
+            sh "docker build ./client/ -t raptor1702/client:${BUILD_TAG}"
           },
           build_server: {
-            sh "docker build --no-cache ./server/ -t raptor2103/server:${BUILD_TAG}"
+            sh "docker build ./server/ -t raptor2103/server:${BUILD_TAG}"
           }          
         )
       }
@@ -67,6 +67,7 @@ pipeline {
     stage('Run Images') {
       steps {
         sh "docker-compose up -d"
+        sh 'sleep 1m'
       }
     }
   }
