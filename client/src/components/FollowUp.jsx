@@ -226,7 +226,7 @@ const [value, setValue] = useState('');
               </div>
               {radio === "Yes" && (
                 <>
-                <p className='mt-3'>Select Details*</p>
+                  <p className="mt-3">Select Details*</p>
                   <section className="d-flex mt-3 flex-column col-12">
                     <input
                       className="myInput inputElement"
@@ -236,7 +236,7 @@ const [value, setValue] = useState('');
                       placeholder="EICHER"
                     />
                   </section>
-                   <section className="d-flex mt-3 flex-column col-12">
+                  <section className="d-flex mt-3 flex-column col-12">
                     <select className="inpClr myInput" name="bank">
                       <option value="0" className="myLabel">
                         select modal
@@ -297,6 +297,11 @@ const [value, setValue] = useState('');
                 </>
               )}
             </section>
+          </div>
+          <div className="d-flex justify-content-center mt-3">
+            <button className="btn btn-primary p-2" type="button">
+             Save Delivery
+            </button>
           </div>
         </>
       ) : value === "lost" ? (
