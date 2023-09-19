@@ -514,7 +514,7 @@ router.post(
                           isSuccess: "success",
                           result: enquiryProductSql,
                         });
-                        
+
                         if (oldTractorOwned === "Yes") {
                           const urlSql = `UPDATE manufactur_details SET maker = ?, modalName = ?, variantName = ?, year_of_manufactur = ?, condition_of = ?, old_tractor = ? WHERE enquiry_id = ${customerId}`;
                           await db.query(
@@ -1796,25 +1796,80 @@ router.post("/add-primary-sources", tokenCheck, async (req, res) => {
     }
   });
 });
-router.get("/get-enquiryPsourcesbyid/:id", tokenCheck, async (req, res) => {
-  console.log(">>>>>/get-enquiryPsourcesbyid");
+router.get("/get-primary-source", tokenCheck, async (req, res) => {
+  console.log(">>>>>/get-primary-source");
   try {
-    const enquirySourcesById = req.params.id;
-    console.log(enquirySourcesById);
+
     await db.query(
-      "SELECT id as enquirySourcesId, name as enquirySourcesName, description as enquirySourcesDescription FROM enquiry_primary_sources where id=" +
-      enquirySourcesById,
-      (err, enquirySourcesIdData) => {
+      "SELECT * FROM enquiry_primary_sources",
+      (err, results) => {
         if (err) {
-          console.log({ isSuccess: false, result: "error" });
+          console.log({ isSuccess: false, result: err });
           res.send({ isSuccess: false, result: "error" });
         } else {
-          res.status(200).send({ isSuccess: true, result:enquirySourcesIdData });
+          console.log({ isSuccess: true, result: results });
+          res.send({ isSuccess: true, result: results });
         }
       }
     );
-  } catch (e) {
-    console.log(e);
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+router.post("/addenquirysources", tokenCheck, async (req, res) => {
+  console.log(">>>>>addenquirysources");
+  try {
+    const { sourcesName, primarySourcesId } = req.body;
+
+    const url =
+      "INSERT INTO enquiry_sources (name, primary_source_id) VALUES (?, ?)";
+
+    await db.query(
+      url,
+      [sourcesName, primarySourcesId],
+      async (err, results) => {
+        if (err) {
+          console.log({ isSuccess: false, result: err });
+          res.send({ isSuccess: false, result: "error" });
+        } else {
+          console.log({ isSuccess: true, result: results });
+          res.send({ isSuccess: true, result: results });
+        }
+      }
+    );
+  } catch (err) {
+    console.log(err);
+  }
+});
+router.post("/deletenquirysources", tokenCheck, async (req, res) => {
+  try {
+    console.log(">>>>>deletenquirysources");
+    const { primarySourcesId } = req.body;
+    const deleteEnquirysourcesSql = `DELETE FROM enquiry_sources WHERE primary_source_id = ${primarySourcesId}`;
+    await db.query(deleteEnquirysourcesSql, [primarySourcesId], async (err, results) => {
+      if (err) {
+        console.log({ isSuccess: false, result: err });
+        res.send({ isSuccess: false, result: "error" });
+      } else {
+        console.log({ isSuccess: true, result: results });
+        // res.send({ isSuccess: true, result: results });
+        const deleteEnquirySql = `DELETE FROM enquiry_primary_sources WHERE id= ${primarySourcesId}`;
+        await db.query(deleteEnquirySql, [primarySourcesId], (err, results) => {
+          if (err) {
+            console.log({ isSuccess: false, result: err });
+            res.send({ isSuccess: false, result: "error" });
+          } else {
+            console.log({ isSuccess: true, result: results });
+            res.send({ isSuccess: true, result: results });
+
+          }
+        });
+
+      }
+    });
+  } catch (err) {
+    console.log(err);
   }
 });
 module.exports = router;

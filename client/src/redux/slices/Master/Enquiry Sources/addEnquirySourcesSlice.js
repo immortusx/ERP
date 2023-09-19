@@ -2,7 +2,7 @@ import Axios from 'axios';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 const initialState = {
-    addEnquirySources: {
+    addEnquirySourcesState: {
         isSuccess: false,
         isError: false,
         isFetching: false,
@@ -25,29 +25,29 @@ export const addEnquirySourcesToDb = createAsyncThunk('addEnquirySourcesToDb/add
     })
 })
 const addEnquirySourcesSlice = createSlice({
-    name: 'addEnquirySources',
+    name: 'addEnquirySourcesState',
     initialState,
     reducers: {
-        clearAddManufacturer: (state) => {
-            state.addEnquirySources.isError = false;
-            state.addEnquirySources.isSuccess = false;
-            state.addEnquirySources.isFetching = false;
-            state.addEnquirySources.message = '';
+        clearAddEnquirySources: (state) => {
+            state.addEnquirySourcesState.isError = false;
+            state.addEnquirySourcesState.isSuccess = false;
+            state.addEnquirySourcesState.isFetching = false;
+            state.addEnquirySourcesState.message = '';
             return state;
         },
     },
     extraReducers: builder => {
         builder.addCase(addEnquirySourcesToDb.pending, state => {
-            state.addEnquirySources.isFetching = true;
+            state.addEnquirySourcesState.isFetching = true;
         })
         builder.addCase(addEnquirySourcesToDb.fulfilled, (state, action) => {
-            state.addManufacturer.isFetching = false;
-            state.addManufacturer.isSuccess = true;
-            state.addManufacturer.message = action.payload;
+            state.addEnquirySourcesState.isFetching = false;
+            state.addEnquirySourcesState.isSuccess = true;
+            state.addEnquirySourcesState.message = action.payload;
         })
         builder.addCase(addEnquirySourcesToDb.rejected, (state, action) => {
-            state.addManufacturer.isFetching = false;
-            state.addManufacturer.isError = true;
+            state.addEnquirySourcesState.isFetching = false;
+            state.addEnquirySourcesState.isError = true;
         })
     }
 })

@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Button, Spinner } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Axios from "axios";
 import { setShowMessage } from "../../../redux/slices/notificationSlice";
-import { addEnquirySourcesToDb } from "../../../redux/slices/Master/Enquiry Sources/addEnquirySourcesSlice";
+import { addEnquirySourcesToDb, clearAddEnquirySources } from "../../../redux/slices/Master/Enquiry Sources/addEnquirySourcesSlice";
 
-const EnquirySources = () => {
+const EnquirySources = ({workFor}) => {
     const [modalShow, setModalShow] = useState(false);
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -14,6 +14,8 @@ const EnquirySources = () => {
     const [rowsData, setRowData] = useState([]);
     const currentBranch = localStorage.getItem("currentDealerId");
     const [enquirySource, setEnquirySource] = useState([]);
+    const addEnquirySourcesState = useSelector((state) => state.addEnquirySourcesSlice.addEnquirySourcesState
+    );
 
     const [enquirySourcesData, setEnquirySourcesData] = useState({
         enquirySourcesName: "",
@@ -32,62 +34,63 @@ const EnquirySources = () => {
         setModalShow(true);
     };
 
-    const handleSubmit = async () => {
-        const mName = enquirySourcesData.enquirySourcesName;
-        const mDescr = enquirySourcesData.enquirySourcesDescription;
 
-        if (mName.length > 0 && mDescr.length > 0) {
+    const getAllEnquirySource = async () => {
+            const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/get-primary-source`;
+            const config = {
+                headers: {
+                    token: localStorage.getItem('rbacToken')
+                }
+            };
+
             try {
-                const data = await dispatch(addEnquirySourcesToDb(enquirySourcesData));
-                console.log("Data added successfully:", data);
-                if (data.result === "updatesuccess") {
-                    setModalShow(false);
-                    // Add the new data to the enquiry source array
-                    setEnquirySource((prevEnquirySource) => [
-                        ...prevEnquirySource,
-                        enquirySourcesData,
-                    ]);
-                    dispatch(setShowMessage("Enquiry Sources Data Added Successfully!"));
-                } else {
-                    dispatch(setShowMessage("Something went wrong while adding data."));
+                const response = await Axios.get(url, config);
+                if (response.data?.isSuccess) {
+                    console.log(response.data.result, "all satehhhhhhhhhhhhh");
+                    setRowData(response.data.result); // Update the rowsData state
                 }
             } catch (error) {
-                console.error("Error in adding data:", error);
+                console.error(error);
             }
-        } else {
-            dispatch(setShowMessage("All Fields Must be Required."));
-        }
+        
     };
 
-  useEffect(() => {
-        const getAllEnquirySource = async () => {
-            if (currentBranch) {
-                const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/get-enquiryPsourcesbyid/${currentBranch}`;
-                const config = {
-                    headers: {
-                        token: localStorage.getItem('rbacToken')
-                    }
-                };
-
-                try {
-                    const response = await Axios.get(url, config);
-                    if (response.data?.isSuccess) {
-                        console.log(response.data.result, "all satehhhhhhhhhhhhh");
-                        setRowData(response.data.result); // Update the rowsData state
-                    }
-                } catch (error) {
-                    console.error(error);
-                }
-            }
-        };
-
+    useEffect(() => {
         // Call the function to fetch enquiry sources data when the component mounts
         getAllEnquirySource();
-    }, [currentBranch]);
-    const redirectaddmodal = (rmdata) => {
-        console.log(rmdata, "rmdata");
-        navigate("/administration/configuration/enquirysources", {
-            state: { rowData: rmdata },
+    },[]);
+
+    const handleSubmit = async () => {
+        if (enquirySourcesData.enquirySourcesName.trim() === "" || enquirySourcesData.enquirySourcesDescription.trim() === "") {
+            // Display validation error message to the user
+            return;
+        }
+        if (workFor === "forAddd") {
+          dispatch(addEnquirySourcesToDb(enquirySourcesData));
+        } else {
+          dispatch(setShowMessage("All fields must be filled"));
+        }
+      }
+    useEffect(() => {
+        if (addEnquirySourcesState.isSuccess) {
+          if (addEnquirySourcesState.message.isSuccess) {
+            dispatch(setShowMessage("Data Updated"));
+            getAllEnquirySource()
+            .then((data) => {
+                setEnquirySourcesData(data.result);
+            })
+            dispatch(clearAddEnquirySources())
+            clearAddEnquirySources();
+            setModalShow(false);
+          } else {
+            dispatch(setShowMessage("Something is wrong"));
+          }
+        }
+    }, [addEnquirySourcesState]);
+
+    const redirectaddmodal = (enquirySource) => {
+        navigate("/administration/configuration/enquirysources-model", {
+            state: { enquirySource: enquirySource },
         });
     };
 
@@ -134,10 +137,12 @@ const EnquirySources = () => {
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleClose}>
-                        Close
+                        {" "}
+                        Close{" "}
                     </Button>
                     <Button variant="primary" onClick={handleSubmit}>
-                        Save
+                        {" "}
+                        Save{" "}
                     </Button>
                 </Modal.Footer>
             </Modal>
@@ -220,7 +225,7 @@ const EnquirySources = () => {
                                                     />
                                                 </svg>
                                             </div>
-                                            <span className="ms-2">{row.enquirySourcesName}</span>
+                                            <span className="ms-2">{row.name}</span>
                                         </main>
                                     </li>
                                 </ul>

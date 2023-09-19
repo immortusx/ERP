@@ -82,6 +82,7 @@ import AddTask from "./AddTask";
 import axios from "axios";
 import { Spinner } from "react-bootstrap";
 import EnquirySources from "./Master/Enquiry Sources/EnquirySources";
+import EnquirySources_model from "./Master/Enquiry Sources/EnquirySources_modal";
 const CheckPermission = ({ children, path }) => {
   // return checkList.includes(path) ? children : <Navigate to="../no-access" />
   // return checkList.includes(path) ? children : <h3>No access</h3>
@@ -1028,7 +1029,16 @@ export default function HomeScreen() {
               path="administration/configuration/enquirysources"
               element={
                 <CheckPermission path="profile">
-                  <EnquirySources/>
+                  <EnquirySources workFor="forAddd"/>
+                </CheckPermission>
+              }
+              exact
+            />
+            <Route
+              path="administration/configuration/enquirysources-model"
+              element={
+                <CheckPermission path="profile">
+                  <EnquirySources_model />
                 </CheckPermission>
               }
               exact
