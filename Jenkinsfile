@@ -64,7 +64,7 @@ pipeline {
     }    
     stage('Run Images') {
       steps {
-        sh "docker-compose up"
+        sh "docker-compose up -d"
       }
     }
   }
