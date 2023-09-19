@@ -7,6 +7,7 @@ services:
         environment:
             - 'ENV_PORT=${ENV_PORT}'
             - 'ENV_DATABASE=${ENV_DATABASE}'
+            
             - 'REACT_APP_NODE_URL=${REACT_APP_NODE_URL}'
         image: 'raptor2103/server:latest'
     client:
