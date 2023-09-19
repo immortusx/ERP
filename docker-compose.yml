@@ -1,12 +1,18 @@
-version: '3'
+version: '3.3'
 services:
-  server:
-    image: raptor2103/server:latest
-    network_mode: "host"
-    restart: always
-    container_name: server_img
-  client:
-    image: raptor1702/client:latest
-    network_mode: "host"
-    restart: always
-    container_name: client_img
+    server:
+        container_name: server_img
+        network_mode: host
+        restart: always
+        environment:
+            - 'ENV_PORT=${PORT_server}'
+            - 'ENV_DATABASE=${database}'
+            - 'REACT_APP_NODE_URL=${node_url}'
+        image: 'raptor2103/server:latest'
+    client:
+        container_name: client_img
+        network_mode: host
+        restart: always
+        environment:
+            - 'PORT=${PORT_client}'
+        image: 'raptor1702/client:latest'
