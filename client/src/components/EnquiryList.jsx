@@ -146,9 +146,11 @@ export default function EnquiryList() {
   };
 
 
-  const handleEditArea = ()=>{
-    navigate("/sale/enquiries/followup");
-  }
+  const handleFolloup = (editEnquiryData) => {
+    console.log(editEnquiryData, "editEnquiryData");
+    const customerId = editEnquiryData.id;
+    navigate("/sale/enquiries/followup", { state: customerId });
+  };
   async function editsalesperson(formData) {
     const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/edit-salesperson-enquiry-data`;
     const config = {
@@ -467,7 +469,7 @@ export default function EnquiryList() {
             </button>
             <button
               onClick={() => {
-                handleEditArea(params.row);
+                handleFolloup(params.row);
               }}
               className="myActionBtn m-1"
             >
