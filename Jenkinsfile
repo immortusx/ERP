@@ -16,12 +16,7 @@ pipeline {
     DOCKERHUB_CREDENTIALS_2 = credentials('dockerhub-2')
   }
   
-  stages {
-    stage('Checking') {
-      steps {
-        sh 'echo REACT_APP_NODE_URL=${REACT_APP_NODE_URL}'
-      }
-    }    
+  stages {   
     stage('Build Images') {
       steps {
         parallel(
