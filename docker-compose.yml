@@ -5,14 +5,14 @@ services:
         network_mode: host
         restart: always
         environment:
-            - 'ENV_PORT=${PORT_server}'
-            - 'ENV_DATABASE=${database}'
-            - 'REACT_APP_NODE_URL=${node_url}'
+            - 'ENV_PORT=${ENV_PORT}'
+            - 'ENV_DATABASE=${ENV_DATABASE}'
+            - 'REACT_APP_NODE_URL=${REACT_APP_NODE_URL}'
         image: 'raptor2103/server:latest'
     client:
         container_name: client_img
         network_mode: host
         restart: always
         environment:
-            - 'PORT=${PORT_client}'
+            - 'PORT=${PORT}'
         image: 'raptor1702/client:latest'
