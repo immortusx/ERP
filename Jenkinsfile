@@ -16,12 +16,17 @@ pipeline {
     DOCKERHUB_CREDENTIALS_2 = credentials('dockerhub-2')
   }
   
-  stages {    
+  stages {
+    stage('Checking') {
+      steps {
+        sh 'echo REACT_APP_NODE_URL=${REACT_APP_NODE_URL}'
+      }
+    }    
     stage('Build Images') {
       steps {
         parallel(
           build_client: {
-            sh "docker build --no-cache ./client/ -t raptor1702/client:${BUILD_TAG}"
+            sh "docker build ./client/ -t raptor1702/client:${BUILD_TAG}"
           },
           build_server: {
             sh "docker build ./server/ -t raptor2103/server:${BUILD_TAG}"
