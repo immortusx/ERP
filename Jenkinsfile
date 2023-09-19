@@ -5,7 +5,7 @@ pipeline {
       string (defaultValue: '2223', description: 'Choose custom port for server', name: 'ENV_PORT')
       string (defaultValue: 'vehical_crm_db', description: 'Choose Database for server', name: 'ENV_DATABASE')
       string (defaultValue: 'https://dev.balkrushna.com', description: 'Choose react app node url', name: 'REACT_APP_NODE_URL')
-      string (defaultValue: "${BUILD_NUMBER}", description: 'Build Tag', name: 'BUILD_NUMBER')
+      string (defaultValue: "latest", description: 'Build Tag', name: 'BUILD_TAG')
     }  
   options {
     buildDiscarder(logRotator(numToKeepStr: '5'))
@@ -20,10 +20,10 @@ pipeline {
       steps {
         parallel(
           build_client: {
-            sh "docker build ./client/ -t raptor1702/client:${BUILD_NUMBER}"
+            sh "docker build ./client/ -t raptor1702/client:${BUILD_TAG}"
           },
           build_server: {
-            sh "docker build ./server/ -t raptor2103/server:${BUILD_NUMBER}"
+            sh "docker build ./server/ -t raptor2103/server:${BUILD_TAG}"
           }          
         )
       }
@@ -31,7 +31,7 @@ pipeline {
     stage('Push client image') {
       steps {
         sh 'echo $DOCKERHUB_CREDENTIALS_1_PSW | docker login -u $DOCKERHUB_CREDENTIALS_1_USR --password-stdin'
-        sh "docker push raptor1702/client:${BUILD_NUMBER}"
+        sh "docker push raptor1702/client:${BUILD_TAG}"
       }
     }
     stage('Logout') {
@@ -42,7 +42,7 @@ pipeline {
     stage('Push server image') {
       steps {
         sh 'echo $DOCKERHUB_CREDENTIALS_2_PSW | docker login -u $DOCKERHUB_CREDENTIALS_2_USR --password-stdin'
-        sh "docker push raptor2103/server:${BUILD_NUMBER}"
+        sh "docker push raptor2103/server:${BUILD_TAG}"
       }
     }
     stage('Remove Current Images') {

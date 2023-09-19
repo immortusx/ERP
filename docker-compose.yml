@@ -9,11 +9,11 @@ services:
             - 'ENV_DATABASE=${ENV_DATABASE}'
             
             - 'REACT_APP_NODE_URL=${REACT_APP_NODE_URL}'
-        image: 'raptor2103/server:latest'
+        image: 'raptor2103/server:${BUILD_TAG}'
     client:
         container_name: client_img
         network_mode: host
         restart: always
         environment:
             - 'PORT=${PORT}'
-        image: 'raptor1702/client:latest'
+        image: 'raptor1702/client:${BUILD_TAG}'
