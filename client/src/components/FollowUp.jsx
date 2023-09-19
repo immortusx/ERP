@@ -379,8 +379,23 @@ const [value, setValue] = useState('');
           </div>
         </div>
       ) : value === "invalidenquiry" ? (
-        // Content for invalidenquiry
-        <div>invalidenquiry</div>
+        <>
+          <div className="mt-2">
+            <label htmlFor="exampleFormControlTextarea1" className="form-label">
+              Reason
+            </label>
+            <textarea
+              className="form-control"
+              id="exampleFormControlTextarea1"
+              rows="4"
+            ></textarea>
+          </div>
+          <div className="mt-3">
+            <button className="btn btn-primary p-2" type="button">
+              Close Enquiry
+            </button>
+          </div>
+        </>
       ) : null}
     </main>
   );
