@@ -114,7 +114,7 @@ export default function Login() {
                                 {/* <h5 className='text-center p-0 m-0'>
                                 <strong>Vehicle Management System</strong>
                             </h5> */}
-                                <div style={{ marginTop: '45px' }}>
+                                <div>
                                     <img src={lg} alt="Logo" height={200} width={350} />
                                 </div>
                                 <div className='mainDivRegister mt-3 bg-white p-4'>

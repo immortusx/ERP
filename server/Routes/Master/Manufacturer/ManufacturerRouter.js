@@ -73,7 +73,7 @@ router.get("/get-manufacturerbyid/:id", tokenCheck, async (req, res) => {
     console.log(manucaturerById);
     await db.query(
       "SELECT id as manufacturerId, name as manufacturerName, description as manufacturerDescription, isActive FROM manufacturers where isActive = 1 and id=" +
-        manucaturerById,
+      manucaturerById,
       (err, MfacturerIdData) => {
         if (err) {
           console.log({ isSuccess: false, result: "error" });
@@ -200,13 +200,15 @@ router.post(
   uploadFile.array("variantFiles", 20),
   async (req, res) => {
     try {
-      const { variants, modalid, manufacturerId } = req.body;
-      const variantFiles = req.files;
+      const { variants, modalid, manufacturerId, variantFiles } = req.body;
       const variantArray = JSON.parse(variants);
+      const insertedIds = JSON.parse(variantFiles);
       console.log(variantArray, "variants");
-      console.log(variantFiles, "variantFiles");
+      console.log(insertedIds, "insertedId");
 
+      const logoImage = `variant_data`;
       const insertIdArray = [];
+
       async.forEachOf(
         variantArray,
         (item, key, callback) => {
@@ -220,29 +222,41 @@ router.post(
                 console.log({ isSuccess: true, result: err });
                 res.send({ isSuccess: true, result: "error" });
               } else {
-                console.log({ isSuccess: true, result: resultNew.insertId });
                 if (resultNew.insertId) {
                   insertIdArray.push({
                     insertId: resultNew.insertId,
-                    files: variantFiles[key],
+                    documentId: insertedIds[key]
                   });
                 }
+                callback();
               }
-              callback();
             }
           );
         },
-        (err) => {
+        async (err) => {
           if (err) {
             console.log({ isSuccess: true, result: err });
             res.send({ isSuccess: true, result: "error" });
           } else {
-            console.log(insertIdArray, "Array");
-            const documentSql = `INSERT INTO documents (document_value, created_at) VALUES (?, ?)`;
+            // Insert document IDs outside the loop
+            const documentSql = `INSERT INTO document_details (document_id, mapping_id, mapping_table) VALUES (?,?,?)`;
+
             for (let i = 0; i < insertIdArray.length; i++) {
-              const { insertId, files } = insertIdArray[i];
-              db.query(documentSql, [files.filename, new Date()]);
+              const { insertId, documentId } = insertIdArray[i];
+              console.log(documentId, insertId, 'jjjjjjjjjddddddddddddddddd');
+              // Insert document ID here
+              db.query(
+                documentSql,
+                [documentId, insertId,logoImage],
+                (documentErr, documentResult) => {
+                  if (documentErr) {
+                    console.log({ isSuccess: true, result: documentErr });
+                    res.send({ isSuccess: true, result: "error" });
+                  }
+                }
+              );
             }
+
             console.log({ isSuccess: true, result: "success" });
             res.send({ isSuccess: true, result: "success" });
           }
@@ -256,6 +270,7 @@ router.post(
     }
   }
 );
+
 
 //==========getModalist=============
 router.get("/getmodal/:id", tokenCheck, async (req, res) => {
