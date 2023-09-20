@@ -1177,7 +1177,6 @@ export default function Enquiry({ workFor, villageId }) {
               onChange={changeHandlerNewEnquiry}
               className="inpClr myInput"
               name="modeOfFinance"
-              defaultValue={"Cash"}
             >
               <option value="0" className="myLabel">
                 select
@@ -1205,7 +1204,6 @@ export default function Enquiry({ workFor, villageId }) {
               onChange={changeHandlerNewEnquiry}
               className="inpClr myInput"
               name="bank"
-              defaultValue={"State Bank Of India"}
             >
               <option value="0" className="myLabel">
                 select
