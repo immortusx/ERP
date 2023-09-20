@@ -10,7 +10,7 @@ const uploadFile = require("../Utils/multerMiddaeware");
 const path = require('path');
 
 const router = express.Router();
-
+let none = 1;
 //================addEmployee===============//
 router.post(
   "/add-employee",
@@ -18,31 +18,28 @@ router.post(
   uploadFile.single("logo"),
   async (req, res) => {
     console.log(">>>>>employee");
-    console.log(req.file, "asjdxfkclgh");
     console.log(req.body, "req.body ");
 
-    const logoImage = `employee_profile`;
+    const logoImage = `employee_profile` || null;
     const roleArr = req.body.role;
     const firstName = req.body.firstName;
     const lastName = req.body.lastName;
     const email = req.body.email;
-    const documentid = req.body.documentId
+    const documentid = req.body.documentId;
     const password = req.body.password;
     const phoneNumber = req.body.phoneNumber;
-    // const branchRole = req.body.branchRole;
-    const bankname = req.body.bankname;
-    const bankBranch = req.body.bankBranch;
-    const accountNo = req.body.accountNo;
-    const accountType = req.body.accountType;
-    const ifscCode = req.body.ifscCode;
-    const bloodgroup = req.body.bloodgroup;
+    const bankname = req.body.bankname || null;
+    const bankBranch = req.body.bankBranch || null;
+    const accountNo = req.body.accountNo || 00;
+    const accountType = req.body.accountType || null;
+    const ifscCode = req.body.ifscCode || null;
+    const bloodgroup = req.body.bloodgroup || null;
     const branchId = req.body.branchId;
     const role = req.body.selectedRole;
     const branch = req.body.branch;
     const selectedDate = moment(req.body.selectedDate).format("YYYY/MM/DD");
     const department = req.body.department;
 
-    // const departmentId = 1;
     const user_type_id = 2;
 
     const hashedPassword = await hasThePass(password);
@@ -60,26 +57,22 @@ router.post(
         console.log(url, "url");
         console.log("result *******", result);
 
-        // for (const branchId of Object.keys(branchRole)) {
-        //   const rolesAr = branchRole[branchId];
-        //   for (const roleId of rolesAr) {
-        //     await queryDatabase(
-        //       `INSERT INTO branch_department_user(branch_id, department_id, user_id, role_id) VALUES('${branchId}','${departmentId}','${userId}','${roleId}')`
-        //     );
-        //   }
-        // }
-
         const currentDate = new Date();
 
-        // Format the date into 'YYYY-MM-DD HH:MM:SS' format
         const formattedDate = currentDate
           .toISOString()
           .slice(0, 19)
           .replace("T", " ");
 
-        const suburl = `INSERT INTO employee_document (document_id, mapping_id,mapping_table) VALUES('${documentid}','${userId}','${logoImage}')`;
-        await queryDatabase(suburl);
-        console.log(suburl, "suburl");
+        if (documentid) {
+          const suburl = `INSERT INTO document_details (document_id, mapping_id,mapping_table) VALUES('${documentid}','${userId}','${logoImage}')`;
+          await queryDatabase(suburl);
+          console.log(suburl, "suburl");
+        } else {
+          const suburl = `INSERT INTO document_details (document_id, mapping_id,mapping_table) VALUES('${none}','${userId}','${logoImage}')`;
+          await queryDatabase(suburl);
+          console.log(suburl, "suburl");
+        }
         await queryDatabase(
           `INSERT INTO employee_detail (branch_id, department_id, user_id,role_id) VALUES('${branch}','${department}','${userId}','${role}')`
         );
@@ -151,7 +144,7 @@ router.get("/get-employee-list", tokenCheck, async (req, res) => {
   INNER JOIN
       employee_detail AS ddu ON ddu.user_id = f.id
   LEFT JOIN
-      employee_document AS ed ON ed.mapping_id = f.id
+  document_details AS ed ON ed.mapping_id = f.id
   INNER JOIN
       documents AS t ON t.document_id = ed.document_id
   WHERE
@@ -219,7 +212,7 @@ router.post(
 
       const userId = result.insertId;
       console.log("document_id:", document_id);
-      const suburl = `UPDATE  documents SET document_value ='${logoImage}' WHERE  document_id =${document_id}`;
+      const suburl = `UPDATE  documents SET document_path ='${logoImage}' WHERE  document_id =${document_id}`;
       await queryDatabase(suburl);
       console.log(suburl, "suburl");
       const employeeqry = `UPDATE employee_detail SET branch_id = '${branch}', department_id = '${department}', role_id = '${role}' WHERE user_id = '${id}'`;
@@ -274,21 +267,25 @@ router.get("/delete-employee/:id", tokenCheck, async (req, res) => {
 //=====================Upload Document========================
 router.post("/upload-document",
   tokenCheck,
-  uploadFile.single("employee"),
+  uploadFile.single("document"),
   async (req, res) => {
     try {
       console.log(req.body, 'reo');
       console.log(req.file.filename, 'rer');
-      const logoImage = `/upload/${req.file.filename}`;
-      console.log(logoImage, "logoimg");
-
+      // const logoImage = `/upload/${req.file.filename}`;
+      // console.log(logoImage, "logoimg");
+      let logoImage = req.body.logo;
+      console.log('req.file', req.file)
+      if (req.file) {
+        logoImage = `/upload/${req.file.filename}`;
+      }
       const currentDate = new Date();
       const formattedDate = currentDate
         .toISOString()
         .slice(0, 19)
         .replace("T", " ");
 
-      const sql = "INSERT INTO documents (document_value, created_at) VALUES (?, ?)";
+      const sql = "INSERT INTO documents (document_path, created_at) VALUES (?, ?)";
       const values = [logoImage, formattedDate];
 
       db.query(sql, values, (err, result) => {

@@ -35,11 +35,13 @@ const Task = () => {
                task: user.task_name,
                taskcount: user.taskcount,
                startdate: moment(user.startdate).format('LL'),
-               enddate: moment(user.enddate).format('LL')
+               enddate: moment(user.enddate).format('LL'),
+               tasktimeperiod:user.period_name
 
             }));
 
             setTaskData(formattedData);
+            console.log(formattedData,"kkkkkkkkkkkkkkkkkkkkk")
          }
       }
 
@@ -133,6 +135,14 @@ const Task = () => {
          minWidth: 250,
          flex: 1,
       },
+      {
+         field:"tasktimeperiod",
+         headerAlign:"left",
+         align:"left",
+         headerName:"Task Time Period",
+         minWidth:250,
+         flex:1,
+      }
    ]
 
    useEffect(() => {

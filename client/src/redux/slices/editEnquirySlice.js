@@ -11,17 +11,17 @@ const initialState = {
 };
 
 export const editEnquiryDb = createAsyncThunk(
-  "editEnquirySlice/editEditEnquiryDb",
+  "editEditEnquiryDb/editEnquirySlice",
   async (editData) => {
     try {
-        const customerId = editData.customerId;
+      const customerId = editData.customerId;
       const config = {
         headers: {
           token: localStorage.getItem("rbacToken"),
         },
       };
       const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/set-edit-enquiry-data/${customerId}`;
-      
+
       const response = await axios.post(url, editData, config);
       return response.data;
     } catch (error) {

@@ -17,6 +17,7 @@
     "@react-navigation/stack": "^6.3.16",
     "@reduxjs/toolkit": "^1.9.5",
     "axios": "^1.4.0",
+    "jedify": "^0.2.4",
     "moment": "^2.29.4",
     "native-base": "^3.4.28",
     "react": "18.2.0",

@@ -33,7 +33,9 @@ export default function Enquiry({ workFor, villageId }) {
   const setNewEnquiryDataState = useSelector(
     (state) => state.setNewEnquiryDataState.newEnquiryState
   );
-  const editEnquiryState = useSelector((state) => state.editEnquirySlice);
+  const editEnquiryState = useSelector(
+    (state) => state.editEnquiryState.editEnquiryState
+  );
 
   const [categoriesList, setCategoriesList] = useState([]);
   const [variant, setVariant] = useState([]);
@@ -41,6 +43,7 @@ export default function Enquiry({ workFor, villageId }) {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [editEnquiryDate, setEditEnquiryDate] = useState(null);
   const [editdeliveryDate, setEditDeliveryDate] = useState(null);
+  const [seletedOwned, setSelectedOwned] = useState('No');
   const [editEnquiryData, setEditEnquiryData] = useState({});
   const [currentCategoryData, setCurrentCategoryData] = useState({
     id: "",
@@ -81,10 +84,10 @@ export default function Enquiry({ workFor, villageId }) {
     ssp: "",
     make: "",
     model: "",
-    variant:"",
-    manufacturers:" ",
-    product:" ",
-    condition:" ",
+    variant: "",
+    manufacturers: " ",
+    product: " ",
+    condition: " ",
     enquiryPrimarySource: "",
     sourceOfEnquiry: "",
     enquiryDate: new Date(),
@@ -92,9 +95,17 @@ export default function Enquiry({ workFor, villageId }) {
     cuustomerCategory: "",
     modeOfFinance: "",
     bank: "",
-    oldTractorOwned: "0",
+    oldTractorOwned: "No",
     category_id: null,
   });
+
+  const generateYears = (startYear, endYear) => {
+    const years = [];
+    for (let year = startYear; year <= endYear; year++) {
+      years.push({ id: years.length + 1, year: year.toString() });
+    }
+    return years;
+  };
 
   const [newEnquiryList, setNewEnquiryList] = useState({
     listBranch: [],
@@ -106,62 +117,17 @@ export default function Enquiry({ workFor, villageId }) {
     listSsp: [],
     listMake: [],
     listModel: [],
+    listOldModal: [],
     listVariant: [],
     listPrimarySource: [],
     listSourceOfEnquiry: [],
     listCustomerCategory: [],
-    listyears:[
-      {id:1,year:"1980" },
-      {id:2,year:"1981" },
-      {id:3,year:"1982" },
-      {id:4,year:"1983" },
-      {id:5,year:"1984" },
-      {id:6,year:"1985" },
-      {id:7,year:"1986" },
-      {id:8,year:"1987" },
-      {id:9,year:"1988" },
-      {id:10,year:"1989" },
-      {id:11,year:"1990" },
-      {id:12,year:"1991" },
-      {id:13,year:"1992" },
-      {id:14,year:"1993" },
-      {id:15,year:"1994" },
-      {id:15,year:"1995" },
-      {id:15,year:"1996" },
-      {id:15,year:"1997" },
-      {id:15,year:"1998" },
-      {id:15,year:"1999" },
-      {id:15,year:"2000" },
-      {id:15,year:"2001" },
-      {id:15,year:"2002" },
-      {id:15,year:"2003" },
-      {id:15,year:"2004" },
-      {id:15,year:"2005" },
-      {id:15,year:"2006" },
-      {id:15,year:"2007" },
-      {id:15,year:"2008" },
-      {id:15,year:"2009" },
-      {id:15,year:"2010" },
-      {id:15,year:"2011" },
-      {id:15,year:"2012" },
-      {id:15,year:"2013" },
-      {id:15,year:"2014" },
-      {id:15,year:"2015" },
-      {id:15,year:"2016" },
-      {id:15,year:"2017" },
-      {id:15,year:"2018" },
-      {id:15,year:"2019" },
-      {id:15,year:"2020" },
-      {id:15,year:"2021" },
-      {id:15,year:"2022" },
-      {id:15,year:"2023" },
-     
-    ],
-    listCondition:[
-      {id: 1, name :"very Good"},
-      {id: 2, name :"Average"},
-      {id: 3, name :"Below Average"},
-      {id: 4, name :"Good"},
+    listyears: generateYears(1980, 2023),
+    listCondition: [
+      { id: 1, name: "very Good" },
+      { id: 2, name: "Average" },
+      { id: 3, name: "Below Average" },
+      { id: 4, name: "Good" },
     ],
     listModeOfFinance: [
       { id: 1, name: "Cash" },
@@ -173,6 +139,7 @@ export default function Enquiry({ workFor, villageId }) {
       { id: 2, name: "Bank Of Baroda" },
     ],
   });
+
   function clearStateAndInp() {
     setNewEnquiryData({
       branchId: "",
@@ -180,8 +147,8 @@ export default function Enquiry({ workFor, villageId }) {
       firstName: "",
       lastName: "",
       fatherName: "",
-      mobileNumber: "",
       email: "",
+      mobileNumber: "",
       whatsappNumber: "",
       state: "",
       district: "",
@@ -202,7 +169,7 @@ export default function Enquiry({ workFor, villageId }) {
       cuustomerCategory: "",
       modeOfFinance: "",
       bank: "",
-      oldTractorOwned: "0",
+      oldTractorOwned: "No",
     });
 
     const inpClr = document.getElementsByClassName("inpClr");
@@ -216,8 +183,6 @@ export default function Enquiry({ workFor, villageId }) {
     });
   }
   function saveBtnCalled() {
-    console.log("newEnquiryList", newEnquiryList);
-    console.log("newEnquiryData", newEnquiryData);
     if (
       newEnquiryData.branchId &&
       newEnquiryData.dsp &&
@@ -267,7 +232,6 @@ export default function Enquiry({ workFor, villageId }) {
 
   useEffect(() => {
     if (editEnquiryData && Object.keys(editEnquiryData).length > 0) {
-      console.log(editEnquiryData.date, "branchs");
       const editEnquiryDate = new Date(editEnquiryData.date);
       const editDeliveryDate = new Date(editEnquiryData.delivery_date);
       setNewEnquiryData({
@@ -284,11 +248,23 @@ export default function Enquiry({ workFor, villageId }) {
         village: Number(editEnquiryData.village),
         dsp: editEnquiryData.salesperson_id,
         model: editEnquiryData.modal_id,
+        make: Number(editEnquiryData.manufacturer),
         enquiryDate: editEnquiryDate,
         deliveryDate: editDeliveryDate,
         category_id: editEnquiryData.enquiry_category_id,
+        manufacturers: Number(editEnquiryData.maker),
+        variant: editEnquiryData.variantName,
+        product: editEnquiryData.modalName,
+        modelYear: editEnquiryData.year_of_manufactur,
+        condition: editEnquiryData.condition_of,
+        enquiryPrimarySource: Number(editEnquiryData.primary_source_id),
+        sourceOfEnquiry: Number(editEnquiryData.enquiry_source_id),
+        oldTractorOwned: editEnquiryData.old_tractor,
       });
+      setSelectedOwned(editEnquiryData.old_tractor);
+      console.log("editEnquiryData ************", editEnquiryData);
       setEnquiryData({
+        category: editEnquiryData.enquiry_category_id,
         firstName: editEnquiryData.first_name,
         lastName: editEnquiryData.last_name,
         fatherName: editEnquiryData.middle_name,
@@ -300,8 +276,9 @@ export default function Enquiry({ workFor, villageId }) {
         tehsil: Number(editEnquiryData.taluka),
         village: Number(editEnquiryData.village),
       });
-      getModelList(1);
-      getSourceOfEnquiryList(2);
+      getModelList(editEnquiryData.manufacturer);
+      getOldModelList(editEnquiryData.maker);
+      getSourceOfEnquiryList(editEnquiryData.primary_source_id);
     }
   }, [editEnquiryData]);
   useEffect(() => {
@@ -369,6 +346,24 @@ export default function Enquiry({ workFor, villageId }) {
     });
   }
 
+  async function getOldModelList(id) {
+    const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/get-model/${id}`;
+    const config = {
+      headers: {
+        token: localStorage.getItem("rbacToken"),
+      },
+    };
+    await axios.get(url, config).then((response) => {
+      if (response.data) {
+        if (response.data.isSuccess) {
+          setNewEnquiryList((newEnquiryList) => ({
+            ...newEnquiryList,
+            ["listOldModal"]: response.data.result,
+          }));
+        }
+      }
+    });
+  }
   async function getModelList(id) {
     const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/get-model/${id}`;
     const config = {
@@ -379,8 +374,6 @@ export default function Enquiry({ workFor, villageId }) {
     await axios.get(url, config).then((response) => {
       if (response.data) {
         if (response.data.isSuccess) {
-          console.log("response.data", response.data);
-          // setCategoriesList(response.data.result)
           setNewEnquiryList((newEnquiryList) => ({
             ...newEnquiryList,
             ["listModel"]: response.data.result,
@@ -506,7 +499,6 @@ export default function Enquiry({ workFor, villageId }) {
         };
         await axios.get(url, config).then((response) => {
           if (response.data.isSuccess) {
-            console.log(response.data.result, "response.data.result");
             setNewEnquiryList((newEnquiryList) => ({
               ...newEnquiryList,
               ["listDsp"]: response.data.result,
@@ -519,6 +511,7 @@ export default function Enquiry({ workFor, villageId }) {
   }, [enquiryData.village]);
 
   async function getFieldCurrentCategories(id) {
+    console.log(id, "id##################333");
     const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/get-current-fields/${id}`;
     const config = {
       headers: {
@@ -528,6 +521,7 @@ export default function Enquiry({ workFor, villageId }) {
     await axios.get(url, config).then((response) => {
       if (response.data) {
         if (response.data.isSuccess) {
+          console.log(response.data.result, "fields******************");
           setCurrentCategoryData((currentCategoryData) => ({
             ...currentCategoryData,
             fields: response.data.result,
@@ -539,13 +533,16 @@ export default function Enquiry({ workFor, villageId }) {
 
   useEffect(
     (e) => {
+      console.log(categoriesList, "categoriesList");
       if (categoriesList.length > 0) {
         const firstCategoryId = categoriesList[0].id.toString();
         setSelectedCategory(firstCategoryId);
-        setEnquiryData((enquiryData) => ({
-          ...enquiryData,
-          category: firstCategoryId,
-        }));
+        if (workFor === "Enquiry") {
+          setEnquiryData((enquiryData) => ({
+            ...enquiryData,
+            category: firstCategoryId,
+          }));
+        }
       }
     },
     [categoriesList]
@@ -553,6 +550,8 @@ export default function Enquiry({ workFor, villageId }) {
 
   useEffect(() => {
     const idIs = enquiryData.category;
+    console.log(idIs, "idIs$$$$$$$$$44");
+
     if (enquiryData.category != 0) {
       setCurrentCategoryData((currentCategoryData) => ({
         ...currentCategoryData,
@@ -572,25 +571,30 @@ export default function Enquiry({ workFor, villageId }) {
   }, [enquiryState]);
 
   useEffect(() => {
-    console.log(editEnquiryState, "editStae");
-    if (editEnquiryState && editEnquiryState.result === "success") {
-      clearEditEnquiryState();
+    console.log(editEnquiryState, 'editEnquiryStae');
+    if (editEnquiryState && editEnquiryState.result.result === "success") {
+      dispatch(setShowMessage("Enquiry Edited Successfully !"));
+      dispatch(clearEditEnquiryState());
       navigate("/sale/enquiries");
     }
   }, [editEnquiryState]);
 
   const handleSubmit = async () => {
+    console.log(newEnquiryData.oldTractorOwned, "oldif");
     if (workFor === "editEnquiry") {
       const branchId = newEnquiryData.branchId;
       const dsp = newEnquiryData.dsp;
       const model = newEnquiryData.model;
       const make = newEnquiryData.make;
-      const manufacturers = newEnquiryData.manufacturers
+      const oldTractorOwned = newEnquiryData.oldTractorOwned;
+      const manufacturers = newEnquiryData.manufacturers;
+      const product = newEnquiryData.product;
+      const variant = newEnquiryData.variant;
+      const condition = newEnquiryData.condition;
       const enquiryPrimarySource = newEnquiryData.enquiryPrimarySource;
       const sourceOfEnquiry = newEnquiryData.sourceOfEnquiry;
       const modeOfFinance = newEnquiryData.modeOfFinance;
       const bank = newEnquiryData.bank;
-      const oldTractorOwned = newEnquiryData.oldTractorOwned;
       const enquiryDate = newEnquiryData.enquiryDate;
       const deliveryDate = newEnquiryData.deliveryDate;
       enquiryData.branchId = branchId;
@@ -601,26 +605,29 @@ export default function Enquiry({ workFor, villageId }) {
       enquiryData.sourceOfEnquiry = sourceOfEnquiry;
       enquiryData.modeOfFinance = modeOfFinance;
       enquiryData.bank = bank;
-      enquiryData.oldTractorOwned = oldTractorOwned;
       enquiryData.enquiryDate = enquiryDate;
       enquiryData.deliveryDate = deliveryDate;
+      enquiryData.oldTractorOwned = oldTractorOwned;
       enquiryData.manufacturers = manufacturers;
+      enquiryData.product = product;
+      enquiryData.variant = variant;
+      enquiryData.condition = condition;
       console.log(enquiryData, "newEnqi");
-
       if (customerId) {
         enquiryData.customerId = customerId;
         dispatch(editEnquiryDb(enquiryData));
+
       }
     } else {
-      console.log("addENquiry");
+      console.log(newEnquiryData.enquiryPrimarySource, 'pimaryOsrer');
       const branchId = await localStorage.getItem("currentDealerId");
       const dsp = newEnquiryData.dsp;
       const model = newEnquiryData.model;
       const make = newEnquiryData.make;
-        const manufacturers = newEnquiryData.manufacturers;
-        const product = newEnquiryData.product;
-        const variant = newEnquiryData.variant;
-        const condition = newEnquiryData.condition;
+      const manufacturers = newEnquiryData.manufacturers;
+      const product = newEnquiryData.product;
+      const variant = newEnquiryData.variant;
+      const condition = newEnquiryData.condition;
       const enquiryPrimarySource = newEnquiryData.enquiryPrimarySource;
       const sourceOfEnquiry = newEnquiryData.sourceOfEnquiry;
       const modeOfFinance = newEnquiryData.modeOfFinance;
@@ -650,7 +657,6 @@ export default function Enquiry({ workFor, villageId }) {
   };
 
   function getSelectedFields(data) {
-    console.log(data, "dataaa");
     switch (data.field) {
       case "branchId":
         return (
@@ -825,6 +831,7 @@ export default function Enquiry({ workFor, villageId }) {
               onChange={changeHandlerNewEnquiry}
               className="inpClr myInput"
               name="make"
+              defaultValue={newEnquiryData.make}
             >
               <option value="0" className="myLabel">
                 select
@@ -833,7 +840,12 @@ export default function Enquiry({ workFor, villageId }) {
                 newEnquiryList.listMake.length > 0 &&
                 newEnquiryList.listMake.map((i, index) => {
                   return (
-                    <option key={index} value={i.id} className="myLabel">
+                    <option
+                      selected={i.id == newEnquiryData.make ? true : false}
+                      key={index}
+                      value={i.id}
+                      className="myLabel"
+                    >
                       {i.name}
                     </option>
                   );
@@ -852,7 +864,7 @@ export default function Enquiry({ workFor, villageId }) {
               onChange={changeHandlerNewEnquiry}
               className="inpClr myInput"
               name="enquiryPrimarySource"
-              defaultValue={1}
+              defaultValue={newEnquiryData.enquiryPrimarySource}
             >
               <option value="0" className="myLabel">
                 select
@@ -862,7 +874,11 @@ export default function Enquiry({ workFor, villageId }) {
                 newEnquiryList.listPrimarySource.map((i, index) => {
                   return (
                     <option
-                      selected={i.id == 1 ? true : false}
+                      selected={
+                        i.id == newEnquiryData.enquiryPrimarySource
+                          ? true
+                          : false
+                      }
                       key={index}
                       value={i.id}
                       className="myLabel"
@@ -885,7 +901,7 @@ export default function Enquiry({ workFor, villageId }) {
               onChange={changeHandlerNewEnquiry}
               className="inpClr myInput"
               name="sourceOfEnquiry"
-              defaultValue={3}
+              defaultValue={newEnquiryData.sourceOfEnquiry}
             >
               <option value="0" className="myLabel">
                 select
@@ -947,7 +963,8 @@ export default function Enquiry({ workFor, villageId }) {
             </label>
             <div className="d-flex">
               <input
-                value="1"
+                defaultChecked={seletedOwned === 'Yes' ? true : false}
+                value="Yes"
                 onChange={changeHandler}
                 type="radio"
                 id="html"
@@ -958,8 +975,8 @@ export default function Enquiry({ workFor, villageId }) {
               </label>
 
               <input
-                defaultChecked
-                value="0"
+                defaultChecked={seletedOwned === 'No' ? true : false}
+                value="No"
                 onChange={changeHandler}
                 className="ms-3"
                 type="radio"
@@ -970,7 +987,7 @@ export default function Enquiry({ workFor, villageId }) {
                 No
               </label>
             </div>
-            {enquiryData.oldTractorOwned === "1" && (
+            {seletedOwned === "Yes" && (
               <>
                 <p className="mt-3 mb-0"> Select Details* </p>
                 <section className="d-flex mt-3 flex-column col-lg-12 col-sm-6 col-4">
@@ -978,6 +995,7 @@ export default function Enquiry({ workFor, villageId }) {
                     onChange={changeHandlerNewEnquiry}
                     className="inpClr myInput"
                     name="manufacturers"
+                    defaultValue={newEnquiryData.manufacturers}
                   >
                     <option value="0" className="myLabel">
                       select Manufacturer
@@ -986,11 +1004,7 @@ export default function Enquiry({ workFor, villageId }) {
                       newEnquiryList.listMake.length > 0 &&
                       newEnquiryList.listMake.map((i, index) => {
                         return (
-                          <option
-                            key={index}
-                            value={i.name}
-                            className="myLabel"
-                          >
+                          <option selected={i.id === newEnquiryData.manufacturers ? true : false } key={index} value={i.id} className="myLabel">
                             {i.name}
                           </option>
                         );
@@ -1002,19 +1016,16 @@ export default function Enquiry({ workFor, villageId }) {
                     onChange={changeHandlerNewEnquiry}
                     className="inpClr myInput"
                     name="product"
+                    defaultValue={newEnquiryData.product}
                   >
                     <option value="0" className="myLabel">
                       select Modal
                     </option>
-                    {newEnquiryList.listModel &&
-                      newEnquiryList.listModel.length > 0 &&
-                      newEnquiryList.listModel.map((i, index) => {
+                    {newEnquiryList.listOldModal &&
+                      newEnquiryList.listOldModal.length > 0 &&
+                      newEnquiryList.listOldModal.map((i, index) => {
                         return (
-                          <option
-                            key={index}
-                            value={i.modalName}
-                            className="myLabel"
-                          >
+                          <option key={index} value={i.id} className="myLabel">
                             {i.modalName}
                           </option>
                         );
@@ -1026,6 +1037,7 @@ export default function Enquiry({ workFor, villageId }) {
                     onChange={changeHandlerNewEnquiry}
                     className="inpClr myInput"
                     name="variant"
+                    defaultValue={newEnquiryData.variant}
                   >
                     <option value="0" className="myLabel">
                       select Variant
@@ -1034,11 +1046,7 @@ export default function Enquiry({ workFor, villageId }) {
                       newEnquiryList.listVariant.length > 0 &&
                       newEnquiryList.listVariant.map((i, index) => {
                         return (
-                          <option
-                            key={index}
-                            value={i.variantName}
-                            className="myLabel"
-                          >
+                          <option key={index} value={i.id} className="myLabel">
                             {i.variantName}
                           </option>
                         );
@@ -1047,9 +1055,10 @@ export default function Enquiry({ workFor, villageId }) {
                 </section>
                 <section className="d-flex mt-3 flex-column col-lg-12 col-sm-6 col-4">
                   <select
-                    onChange={changeHandler}
+                    onChange={changeHandlerNewEnquiry}
                     className="inpClr myInput"
                     name="modelYear"
+                    defaultValue={newEnquiryData.modelYear}
                   >
                     <option value="0" className="myLabel">
                       Manufacturer year :- Select year
@@ -1058,11 +1067,7 @@ export default function Enquiry({ workFor, villageId }) {
                       newEnquiryList.listyears.length > 0 &&
                       newEnquiryList.listyears.map((i, index) => {
                         return (
-                          <option
-                            key={index}
-                            value={i.year}
-                            className="myLabel"
-                          >
+                          <option key={index} value={i.id} className="myLabel">
                             {i.year}
                           </option>
                         );
@@ -1074,6 +1079,7 @@ export default function Enquiry({ workFor, villageId }) {
                     onChange={changeHandlerNewEnquiry}
                     className="inpClr myInput"
                     name="condition"
+                    defaultValue={newEnquiryData.condition}
                   >
                     <option value="0" className="myLabel">
                       Select Condition
@@ -1082,11 +1088,7 @@ export default function Enquiry({ workFor, villageId }) {
                       newEnquiryList.listCondition.length > 0 &&
                       newEnquiryList.listCondition.map((i, index) => {
                         return (
-                          <option
-                            key={index}
-                            value={i.name}
-                            className="myLabel"
-                          >
+                          <option key={index} value={i.id} className="myLabel">
                             {i.name}
                           </option>
                         );
@@ -1175,7 +1177,6 @@ export default function Enquiry({ workFor, villageId }) {
               onChange={changeHandlerNewEnquiry}
               className="inpClr myInput"
               name="modeOfFinance"
-              defaultValue={"Cash"}
             >
               <option value="0" className="myLabel">
                 select
@@ -1203,7 +1204,6 @@ export default function Enquiry({ workFor, villageId }) {
               onChange={changeHandlerNewEnquiry}
               className="inpClr myInput"
               name="bank"
-              defaultValue={"State Bank Of India"}
             >
               <option value="0" className="myLabel">
                 select
@@ -1242,7 +1242,7 @@ export default function Enquiry({ workFor, villageId }) {
         //   getDspList(value);
         //   break;
         case "manufacturers":
-          getModelList(value);
+          getOldModelList(value);
           break;
         case "make":
           getModelList(value);
@@ -1265,12 +1265,20 @@ export default function Enquiry({ workFor, villageId }) {
   function changeHandler(e) {
     const name = e.target.name;
     const value = e.target.value;
-    if (value === "") {
-      clearState();
-    } else {
+    // if (value === "") {
+    //   clearState();
+    // } else {
       setEnquiryData((enquiryData) => ({ ...enquiryData, [name]: value }));
-    }
+      if (name === "oldTractorOwned") {
+        setNewEnquiryData((prevState) => ({
+          ...prevState,
+          oldTractorOwned: value,
+        }));
+        setSelectedOwned(value);
+      }
+    // }
   }
+
   const onSelectedState = (val) => {
     setNewEnquiryData((pre) => {
       return { ...pre, state: val };

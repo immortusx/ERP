@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Sep 03, 2023 at 10:56 AM
+-- Generation Time: Sep 18, 2023 at 05:39 AM
 -- Server version: 10.2.43-MariaDB
 -- PHP Version: 7.2.30
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `VehicleKeshavCRM`
+-- Database: `VehicleKeshavCRMDb`
 --
 
 DELIMITER $$
@@ -35,7 +35,7 @@ END$$
 CREATE DEFINER=`balkrush1`@`%` PROCEDURE `get_enquiries_list` (IN `branchId` INT, IN `isAdmin` BOOLEAN, IN `salespersonId` INT)  BEGIN
     IF (isAdmin = TRUE) THEN
        SELECT s.id, s.first_name, s.last_name, s.phone_number, s.whatsapp_number, s.email,
-       (SELECT name FROM products WHERE id = product_id) AS product,
+       (SELECT modalName FROM modal WHERE id = modal_id) AS product,
        CONCAT(fo.first_name, ' ', fo.last_name) AS sales_person,
        f.date, f.delivery_date,
        (SELECT id FROM district WHERE id = s.district) AS district_id,
@@ -57,7 +57,7 @@ AND f.salesperson_id = salespersonId
 ORDER BY f.date DESC;
     ELSE
         SELECT s.id, s.first_name, s.last_name, s.phone_number, s.whatsapp_number, s.email,
-       (SELECT name FROM products WHERE id = product_id) AS product,
+       (SELECT modalName FROM modal WHERE id = modal_id) AS product,
        CONCAT(fo.first_name, ' ', fo.last_name) AS sales_person,
        f.date, f.delivery_date,
        (SELECT id FROM district WHERE id = s.district) AS district_id,
@@ -169,9 +169,9 @@ END IF;
 END$$
 
 CREATE DEFINER=`balkrush1`@`%` PROCEDURE `sp_get_category_with_total_enquiry` (IN `villageId` INT)  BEGIN
-SELECT et.*, COUNT(e.enquiry_type_id) AS total_enquiries
+SELECT et.*, COUNT(e.enquiry_category_id) AS total_enquiries
 FROM enquiry_category AS et
-LEFT JOIN enquiries AS e ON et.id = e.enquiry_type_id
+LEFT JOIN enquiries AS e ON et.id = e.enquiry_category_id
 LEFT JOIN customers AS c ON c.id = e.customer_id 
 WHERE c.village = villageId
 GROUP BY et.id;
@@ -208,7 +208,7 @@ END$$
 CREATE DEFINER=`balkrush1`@`%` PROCEDURE `sp_get_enquiries_list` (IN `branchId` INT, IN `isAdmin` BOOLEAN)  BEGIN
     IF (isAdmin = TRUE) THEN
        SELECT s.id, s.first_name, s.last_name, s.phone_number, s.whatsapp_number, s.email,
-       (SELECT name FROM products WHERE id = product_id) AS product,
+       (SELECT modalName FROM modal WHERE id = modal_id) AS product,
        CONCAT(fo.first_name, ' ', fo.last_name) AS sales_person,
        f.date, f.delivery_date,
        (SELECT id FROM district WHERE id = s.district) AS district_id,
@@ -229,7 +229,7 @@ WHERE (f.enquiry_stage IS NULL OR f.enquiry_stage <> 'INVALID')
 ORDER BY f.date DESC;
     ELSE
         SELECT s.id, s.first_name, s.last_name, s.phone_number, s.whatsapp_number, s.email,
-       (SELECT name FROM products WHERE id = product_id) AS product,
+       (SELECT modalName FROM modal WHERE id = modal_id) AS product,
        CONCAT(fo.first_name, ' ', fo.last_name) AS sales_person,
        f.date, f.delivery_date,
        (SELECT id FROM district WHERE id = s.district) AS district_id,
@@ -302,7 +302,7 @@ END$$
 CREATE DEFINER=`balkrush1`@`%` PROCEDURE `sp_get_enquiry_list_by_time_interval` (IN `timeInterval` VARCHAR(20))  BEGIN
 IF timeInterval = 'Today' THEN 
  SELECT s.id, s.first_name, s.last_name, s.phone_number, s.whatsapp_number, s.email,
-           (SELECT name FROM products WHERE id = product_id) AS product,
+           (SELECT modalName FROM modal WHERE id = modal_id) AS product,
            CONCAT(fo.first_name, ' ', fo.last_name) AS sales_person,
            f.date, f.delivery_date,
            (SELECT id FROM district WHERE id = s.district) AS district_id,
@@ -324,7 +324,7 @@ IF timeInterval = 'Today' THEN
   
   ELSEIF timeInterval = 'LastWeek' THEN
     SELECT s.id, s.first_name, s.last_name, s.phone_number, s.whatsapp_number, s.email,
-           (SELECT name FROM products WHERE id = product_id) AS product,
+           (SELECT modalName FROM modal WHERE id = modal_id) AS product,
            CONCAT(fo.first_name, ' ', fo.last_name) AS sales_person,
            f.date, f.delivery_date,
            (SELECT id FROM district WHERE id = s.district) AS district_id,
@@ -347,7 +347,7 @@ IF timeInterval = 'Today' THEN
   
   ELSEIF timeInterval = 'LastMonth' THEN
     SELECT s.id, s.first_name, s.last_name, s.phone_number, s.whatsapp_number, s.email,
-           (SELECT name FROM products WHERE id = product_id) AS product,
+           (SELECT modalName FROM modal WHERE id = modal_id) AS product,
            CONCAT(fo.first_name, ' ', fo.last_name) AS sales_person,
            f.date, f.delivery_date,
            (SELECT id FROM district WHERE id = s.district) AS district_id,
@@ -399,13 +399,13 @@ FROM enquiries AS f
 INNER JOIN customers AS s ON s.id = f.customer_id
 INNER JOIN branches AS t ON f.branch_id = t.id
 INNER JOIN users AS fo ON fo.id = f.salesperson_id
-LEFT JOIN products AS p ON p.id = f.product_id
+LEFT JOIN modal AS p ON p.id = f.modal_id
 LEFT JOIN district AS d ON d.id = s.district
 LEFT JOIN taluka AS t1 ON t1.id = s.taluka
 LEFT JOIN village AS v1 ON v1.id = s.village
 LEFT JOIN state AS st ON st.state_id = s.state
 LEFT JOIN enquiry_sources AS es ON es.id = f.enquiry_source_id
-WHERE ((f.enquiry_stage IS NULL OR f.enquiry_stage <> 'INVALID') AND s.village = villageId AND f.enquiry_type_id = categoryId)
+WHERE ((f.enquiry_stage IS NULL OR f.enquiry_stage <> 'INVALID') AND s.village = villageId AND f.enquiry_category_id = categoryId)
 ORDER BY f.date DESC;
 END$$
 
@@ -525,18 +525,18 @@ JOIN BookingCounts bc ON ec.month = bc.month;
 END$$
 
 CREATE DEFINER=`balkrush1`@`%` PROCEDURE `sp_get_total_enquiry_perCategory` (IN `villageId` INT)  BEGIN
-SELECT e.*, COUNT(e.enquiry_type_id) AS total_enquiries
+SELECT e.*, COUNT(e.enquiry_category_id) AS total_enquiries
 FROM enquiries AS e
-LEFT JOIN enquiry_types AS et ON et.id = e.enquiry_type_id
+LEFT JOIN enquiry_category AS et ON et.id = e.enquiry_category_id
 LEFT JOIN customers AS c ON c.id = e.customer_id WHERE c.village = villageId
-GROUP BY e.enquiry_type_id;
+GROUP BY e.enquiry_category_id;
 END$$
 
 CREATE DEFINER=`balkrush1`@`%` PROCEDURE `sp_get_user_list` (IN `userId` INT(11), IN `branchId` INT(11), IN `isAdmin` BOOLEAN)  BEGIN
 IF (isAdmin = TRUE) then
-	SELECT distinct f.id, f.first_name, f.last_name, f.email, f.is_active, f.phone_number  FROM users as f  where f.id not in(userId) and user_type_id=1 and f.is_delete = 0;
+	SELECT distinct f.id, f.first_name, f.last_name, f.email, f.is_active, f.phone_number  FROM users as f  where f.id and f.is_delete = 0;
 ELSE
-    SELECT distinct f.id, f.first_name, f.last_name, f.email, f.is_active, f.phone_number  FROM users as f inner join branch_department_user as s on s.user_id = f.id  inner join branches as t on s.branch_id = t.id where s.branch_id = branchId and user_type_id=1 and f.is_delete=0 and f.id not in((select user_id from branch_department_user where role_id  =1 limit 1), userId);
+    SELECT distinct f.id, f.first_name, f.last_name, f.email, f.is_active, f.phone_number  FROM users as f inner join branch_department_user as s on s.user_id = f.id  inner join branches as t on s.branch_id = t.id where s.branch_id = branchId and f.is_delete=0 and f.id not in((select user_id from branch_department_user where role_id  =1 limit 1), userId);
 END IF;	
 END$$
 
@@ -820,6 +820,214 @@ CREATE TABLE `area_assign_user` (
   `category_id` varchar(225) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Dumping data for table `area_assign_user`
+--
+
+INSERT INTO `area_assign_user` (`id`, `user_id`, `distribution_id`, `distribution_type`, `category_id`) VALUES
+(1, 2, '11', 1, '2'),
+(2, 2, '66', 1, '2'),
+(3, 2, '9', 1, '2'),
+(4, 2, '10', 1, '2'),
+(5, 2, '47', 1, '2'),
+(6, 2, '64', 1, '2'),
+(7, 2, '35', 1, '2'),
+(8, 2, '50', 1, '2'),
+(9, 2, '54', 1, '2'),
+(10, 2, '24', 1, '2'),
+(11, 2, '17', 1, '2'),
+(12, 2, '31', 1, '2'),
+(13, 2, '15', 1, '2'),
+(14, 2, '32', 1, '2'),
+(15, 2, '30', 1, '2'),
+(16, 2, '40', 1, '2'),
+(17, 2, '4', 1, '2'),
+(18, 2, '2', 1, '2'),
+(19, 2, '3', 1, '2'),
+(20, 2, '43', 1, '2'),
+(21, 2, '33', 1, '2'),
+(22, 3, '56', 1, '2'),
+(23, 3, '19', 1, '2'),
+(24, 3, '59', 1, '2'),
+(25, 3, '53', 1, '2'),
+(26, 3, '34', 1, '2'),
+(27, 3, '45', 1, '2'),
+(28, 3, '6', 1, '2'),
+(29, 3, '57', 1, '2'),
+(30, 3, '39', 1, '2'),
+(31, 3, '55', 1, '2'),
+(32, 3, '36', 1, '2'),
+(33, 3, '29', 1, '2'),
+(34, 3, '27', 1, '2'),
+(35, 3, '28', 1, '2'),
+(36, 3, '20', 1, '2'),
+(37, 3, '42', 1, '2'),
+(38, 3, '41', 1, '2'),
+(39, 3, '8', 1, '2'),
+(40, 3, '68', 1, '2'),
+(41, 3, '67', 1, '2'),
+(42, 3, '46', 1, '2'),
+(43, 3, '25', 1, '2'),
+(44, 3, '44', 1, '2'),
+(45, 3, '61', 1, '2'),
+(46, 4, '5', 1, '2'),
+(47, 4, '62', 1, '2'),
+(48, 4, '37', 1, '2'),
+(49, 4, '52', 1, '2'),
+(50, 4, '48', 1, '2'),
+(51, 4, '12', 1, '2'),
+(52, 4, '23', 1, '2'),
+(53, 4, '60', 1, '2'),
+(54, 4, '26', 1, '2'),
+(55, 4, '21', 1, '2'),
+(56, 4, '63', 1, '2'),
+(57, 4, '13', 1, '2'),
+(58, 4, '16', 1, '2'),
+(59, 4, '58', 1, '2'),
+(60, 4, '18', 1, '2'),
+(61, 4, '14', 1, '2'),
+(62, 4, '65', 1, '2'),
+(63, 4, '22', 1, '2'),
+(64, 4, '51', 1, '2'),
+(65, 4, '38', 1, '2'),
+(66, 4, '49', 1, '2'),
+(67, 4, '7', 1, '2'),
+(68, 9, '125', 1, '2'),
+(69, 9, '153', 1, '2'),
+(70, 9, '139', 1, '2'),
+(71, 9, '122', 1, '2'),
+(72, 9, '49', 1, '2'),
+(73, 9, '146', 1, '2'),
+(74, 9, '178', 1, '2'),
+(75, 9, '147', 1, '2'),
+(76, 9, '188', 1, '2'),
+(77, 9, '182', 1, '2'),
+(78, 9, '134', 1, '2'),
+(79, 9, '163', 1, '2'),
+(80, 9, '202', 1, '2'),
+(81, 9, '151', 1, '2'),
+(82, 9, '155', 1, '2'),
+(83, 9, '114', 1, '2'),
+(84, 9, '129', 1, '2'),
+(85, 9, '175', 1, '2'),
+(86, 9, '120', 1, '2'),
+(87, 9, '186', 1, '2'),
+(88, 9, '187', 1, '2'),
+(89, 9, '165', 1, '2'),
+(90, 9, '166', 1, '2'),
+(91, 9, '148', 1, '2'),
+(92, 9, '161', 1, '2'),
+(93, 9, '176', 1, '2'),
+(94, 9, '160', 1, '2'),
+(95, 9, '117', 1, '2'),
+(96, 9, '194', 1, '2'),
+(97, 9, '174', 1, '2'),
+(98, 11, '83', 1, '2'),
+(99, 11, '82', 1, '2'),
+(100, 11, '112', 1, '2'),
+(101, 11, '110', 1, '2'),
+(102, 11, '111', 1, '2'),
+(103, 11, '108', 1, '2'),
+(104, 11, '109', 1, '2'),
+(105, 11, '107', 1, '2'),
+(106, 11, '106', 1, '2'),
+(107, 11, '105', 1, '2'),
+(108, 11, '104', 1, '2'),
+(109, 11, '103', 1, '2'),
+(110, 11, '102', 1, '2'),
+(111, 11, '101', 1, '2'),
+(112, 11, '100', 1, '2'),
+(113, 11, '99', 1, '2'),
+(114, 11, '98', 1, '2'),
+(115, 11, '97', 1, '2'),
+(116, 11, '96', 1, '2'),
+(117, 11, '95', 1, '2'),
+(118, 11, '94', 1, '2'),
+(119, 11, '93', 1, '2'),
+(120, 11, '92', 1, '2'),
+(121, 11, '91', 1, '2'),
+(122, 11, '90', 1, '2'),
+(123, 11, '89', 1, '2'),
+(124, 11, '88', 1, '2'),
+(125, 11, '86', 1, '2'),
+(126, 11, '87', 1, '2'),
+(127, 11, '85', 1, '2'),
+(128, 11, '84', 1, '2'),
+(129, 11, '81', 1, '2'),
+(130, 11, '80', 1, '2'),
+(131, 11, '79', 1, '2'),
+(132, 11, '78', 1, '2'),
+(133, 11, '77', 1, '2'),
+(134, 11, '76', 1, '2'),
+(135, 11, '75', 1, '2'),
+(136, 11, '74', 1, '2'),
+(137, 11, '73', 1, '2'),
+(138, 11, '72', 1, '2'),
+(139, 11, '71', 1, '2'),
+(140, 11, '70', 1, '2'),
+(141, 11, '69', 1, '2'),
+(142, 26, '167', 1, '2'),
+(143, 26, '140', 1, '2'),
+(144, 26, '150', 1, '2'),
+(145, 26, '171', 1, '2'),
+(146, 26, '144', 1, '2'),
+(147, 26, '145', 1, '2'),
+(148, 26, '189', 1, '2'),
+(149, 26, '192', 1, '2'),
+(150, 26, '170', 1, '2'),
+(151, 26, '132', 1, '2'),
+(152, 26, '137', 1, '2'),
+(153, 26, '138', 1, '2'),
+(154, 26, '154', 1, '2'),
+(155, 26, '152', 1, '2'),
+(156, 26, '121', 1, '2'),
+(157, 26, '143', 1, '2'),
+(158, 26, '136', 1, '2'),
+(159, 26, '156', 1, '2'),
+(160, 26, '169', 1, '2'),
+(161, 26, '157', 1, '2'),
+(162, 26, '149', 1, '2'),
+(163, 26, '164', 1, '2'),
+(164, 26, '185', 1, '2'),
+(165, 26, '162', 1, '2'),
+(166, 26, '142', 1, '2'),
+(167, 26, '141', 1, '2'),
+(168, 26, '116', 1, '2'),
+(169, 26, '158', 1, '2'),
+(170, 26, '135', 1, '2'),
+(171, 26, '159', 1, '2'),
+(172, 26, '127', 1, '2'),
+(173, 26, '184', 1, '2'),
+(174, 27, '128', 1, '2'),
+(175, 27, '195', 1, '2'),
+(176, 27, '115', 1, '2'),
+(177, 27, '196', 1, '2'),
+(178, 27, '191', 1, '2'),
+(179, 27, '126', 1, '2'),
+(180, 27, '119', 1, '2'),
+(181, 27, '118', 1, '2'),
+(182, 27, '180', 1, '2'),
+(183, 27, '181', 1, '2'),
+(184, 27, '133', 1, '2'),
+(185, 27, '124', 1, '2'),
+(186, 27, '173', 1, '2'),
+(187, 27, '199', 1, '2'),
+(188, 27, '201', 1, '2'),
+(189, 27, '193', 1, '2'),
+(190, 27, '200', 1, '2'),
+(191, 27, '183', 1, '2'),
+(192, 27, '172', 1, '2'),
+(193, 27, '113', 1, '2'),
+(194, 27, '168', 1, '2'),
+(195, 27, '179', 1, '2'),
+(196, 27, '190', 1, '2'),
+(197, 27, '198', 1, '2'),
+(198, 27, '131', 1, '2'),
+(199, 27, '123', 1, '2'),
+(200, 27, '130', 1, '2'),
+(201, 27, '197', 1, '2'),
+(202, 27, '203', 1, '2');
+
 -- --------------------------------------------------------
 
 --
@@ -846,6 +1054,29 @@ CREATE TABLE `bank_details` (
   `ifsc_code` text DEFAULT NULL,
   `user_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `bank_details`
+--
+
+INSERT INTO `bank_details` (`id`, `bank_name`, `bank_branch`, `account_number`, `account_type`, `ifsc_code`, `user_id`) VALUES
+(1, 'State Bank of India (SBI)', 'DHRANGDHRA', 33972491033, 'Salery', ' SBIN0017321', 2),
+(2, 'State Bank of India (SBI)', ' DHRANGDHRA', 38590814390, 'Savings', 'SBIN0004867', 3),
+(3, 'State Bank of India (SBI)', 'DHRANGDHRA', 34580023579, 'Salery', 'SBIN0060100', 4),
+(4, 'Bank of Baroda (BOB)', 'DHRANGADHRA', 25138100012298, 'Salery', 'BARB0DHRANG', 5),
+(5, 'State Bank of India (SBI)', 'DHRANGADHRA', 2131113, 'Savings', 'none01', 8),
+(6, 'ICICI Bank', 'MALVAN', 288801000639, 'Salery', 'ICIC0002888', 9),
+(7, 'Bank of Baroda (BOB)', 'LAKHATAR', 43270100006418, 'Salery', 'BARB0LAKHTA', 11),
+(8, 'State Bank of India (SBI)', 'LAKHATAR', 0, 'Salery', 'none01', 12),
+(9, 'ICICI Bank', 'DHRANGADHRA', 363501500694, 'Salery', 'ICIC0003635', 13),
+(10, 'Bank of Baroda (BOB)', 'PATDI', 3720100017756, 'Salery', 'BARB0PATRIX', 14),
+(11, 'Bank of Baroda (BOB)', 'PATDI', 3720100021607, 'Salery', 'BARB0PATRIX', 15),
+(12, 'ICICI Bank', 'DHRANGADHRA', 363501501370, 'Salery', 'ICIC0003635', 16),
+(13, 'State Bank of India (SBI)', 'DHRANGADHRA', 1121, 'Salery', 'none11', 22),
+(14, 'State Bank of India (SBI)', 'DHRANGADHRA', 333, 'Salery', 'none22', 24),
+(15, 'ICICI Bank', 'DHRANGADHRA', 25260, 'Salery', 'ICIC0003635', 25),
+(16, 'ICICI Bank', 'DHRANGADHRA', 25260, 'Salery', 'ICIC0003635', 26),
+(17, 'ICICI Bank', 'DHRANGADHRA', 25260, 'Salery', 'ICIC0003635', 27);
 
 -- --------------------------------------------------------
 
@@ -896,7 +1127,7 @@ CREATE TABLE `branches` (
 --
 
 INSERT INTO `branches` (`id`, `name`, `mobile_number`, `email_id`, `address`, `code`, `create_date`, `gst_number`, `description`, `is_active`, `contact_person`, `state`, `district`, `taluka`, `village`) VALUES
-(1, 'New Keshav Tractors (Dhrangadhra)', '9725579291', 'admin@newkeshav.com', 'At Dhrangandhra', '363310', '2023-04-08 19:16:06', '23WSE44', 'New Branch', 1, 'Harilal Goraiya', 2, 2, 2, 2);
+(1, 'New Keshav Tractors (Dhrangadhra)', '9725579291', 'admin@newkeshav.com', 'At Dhrangandhra', '363310', '2023-04-08 19:16:06', '23WSE44', 'Main branch of New Keshav tractor agency', 1, 'Harilal Goraiya', 2, 2, 2, 2);
 
 -- --------------------------------------------------------
 
@@ -927,6 +1158,13 @@ CREATE TABLE `branch_department_user` (
   `role_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Dumping data for table `branch_department_user`
+--
+
+INSERT INTO `branch_department_user` (`id`, `branch_id`, `department_id`, `user_id`, `role_id`) VALUES
+(1, 1, 1, 1, 1);
+
 -- --------------------------------------------------------
 
 --
@@ -953,6 +1191,16 @@ CREATE TABLE `configuration` (
   `value` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Dumping data for table `configuration`
+--
+
+INSERT INTO `configuration` (`id`, `setting`, `key_name`, `value`) VALUES
+(1, 'agency', 'name', 'New Keshav Tractors'),
+(2, 'agency', 'contact', 'Harilal Pael'),
+(3, 'agency', 'email', 'newkeshav@gmail.com'),
+(4, 'agency', 'logo', '/upload/logo_1694441895352.jpg');
+
 -- --------------------------------------------------------
 
 --
@@ -975,6 +1223,14 @@ CREATE TABLE `customers` (
   `village` varchar(45) DEFAULT NULL,
   `city` varchar(45) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `customers`
+--
+
+INSERT INTO `customers` (`id`, `first_name`, `middle_name`, `last_name`, `phone_number`, `whatsapp_number`, `email`, `is_active`, `state`, `district`, `taluka`, `block`, `village`, `city`) VALUES
+(1, 'Mukesh', 'null', 'Patel', '918320022319', '918320022319', 'mukesh@balkrushna.com', 1, '2', '2', NULL, NULL, NULL, NULL),
+(2, 'Mukesh', 'null', 'Patel', '8320022319', '8320022319', 'mukesh@balkrushna.com', 1, '2', '2', '2', NULL, '5', NULL);
 
 -- --------------------------------------------------------
 
@@ -1047,10 +1303,78 @@ INSERT INTO `district` (`id`, `name`, `state_id`, `is_active`) VALUES
 
 CREATE TABLE `documents` (
   `document_id` int(11) NOT NULL,
-  `table_entity_id` int(11) DEFAULT NULL,
-  `document_value` varchar(255) DEFAULT NULL,
+  `document_path` varchar(255) DEFAULT NULL,
   `created_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `documents`
+--
+
+INSERT INTO `documents` (`document_id`, `document_path`, `created_at`) VALUES
+(1, '/upload/1694775324615_newkeshav.png', '2023-09-15 10:55:25'),
+(2, '/upload/1694775702006_newkeshav.png', '2023-09-15 11:01:43'),
+(3, '/upload/1694777678500_newkeshav.png', '2023-09-15 11:34:44'),
+(4, '/upload/1694777748631_newkeshav.png', '2023-09-15 11:35:52'),
+(5, '/upload/1694778096795_newkeshav.png', '2023-09-15 11:41:40'),
+(6, '/upload/1694778249412_newkeshav.png', '2023-09-15 11:44:13'),
+(7, '/upload/1694778376145_newkeshav.png', '2023-09-15 11:46:20'),
+(8, '/upload/1694778615864_newkeshav.png', '2023-09-15 11:50:20'),
+(9, '/upload/1694778863771_newkeshav.png', '2023-09-15 11:54:27'),
+(10, '/upload/1694779084594_newkeshav.png', '2023-09-15 11:58:08'),
+(11, '/upload/1694779241737_newkeshav.png', '2023-09-15 12:00:45'),
+(12, '/upload/1694779387496_newkeshav.png', '2023-09-15 12:03:11'),
+(13, '/upload/1694779524462_newkeshav.png', '2023-09-15 12:05:28'),
+(14, '/upload/1694780410533_newkeshav.png', '2023-09-15 12:20:14'),
+(15, '/upload/1694780658495_newkeshav.png', '2023-09-15 12:24:22'),
+(16, '/upload/1694780777700_newkeshav.png', '2023-09-15 12:26:20'),
+(17, '/upload/1694781043374_newkeshav.png', '2023-09-15 12:30:47'),
+(18, '/upload/1694781481611_newkeshav.png', '2023-09-15 12:38:05'),
+(19, '/upload/1694781538839_newkeshav.png', '2023-09-15 12:39:02'),
+(20, '/upload/1694781696838_newkeshav.png', '2023-09-15 12:41:40'),
+(21, '/upload/1694781813883_newkeshav.png', '2023-09-15 12:43:38');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `document_details`
+--
+
+CREATE TABLE `document_details` (
+  `id` int(11) NOT NULL,
+  `document_id` int(11) DEFAULT NULL,
+  `mapping_id` int(11) DEFAULT NULL,
+  `mapping_table` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `document_details`
+--
+
+INSERT INTO `document_details` (`id`, `document_id`, `mapping_id`, `mapping_table`) VALUES
+(1, 1, 2, 'employee_profile'),
+(2, 2, 3, 'employee_profile'),
+(3, 3, 4, 'employee_profile'),
+(4, 4, 5, 'employee_profile'),
+(5, 5, 6, 'employee_profile'),
+(6, 8, 8, 'employee_profile'),
+(7, 9, 9, 'employee_profile'),
+(8, 10, 11, 'employee_profile'),
+(9, 11, 12, 'employee_profile'),
+(10, 12, 13, 'employee_profile'),
+(11, 13, 14, 'employee_profile'),
+(12, 14, 15, 'employee_profile'),
+(13, 15, 16, 'employee_profile'),
+(14, 16, 17, 'employee_profile'),
+(15, 16, 18, 'employee_profile'),
+(16, 16, 19, 'employee_profile'),
+(17, 17, 20, 'employee_profile'),
+(18, 17, 21, 'employee_profile'),
+(19, 17, 22, 'employee_profile'),
+(20, 18, 24, 'employee_profile'),
+(21, 19, 25, 'employee_profile'),
+(22, 20, 26, 'employee_profile'),
+(23, 21, 27, 'employee_profile');
 
 -- --------------------------------------------------------
 
@@ -1066,6 +1390,29 @@ CREATE TABLE `employee_detail` (
   `role_id` int(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Dumping data for table `employee_detail`
+--
+
+INSERT INTO `employee_detail` (`id`, `branch_id`, `department_id`, `user_id`, `role_id`) VALUES
+(1, 1, 2, 2, 4),
+(2, 1, 2, 3, 4),
+(3, 1, 2, 4, 4),
+(4, 1, 2, 5, 4),
+(5, 1, 2, 8, 4),
+(6, 1, 2, 9, 4),
+(7, 1, 2, 11, 4),
+(8, 1, 2, 12, 3),
+(9, 1, 3, 13, 4),
+(10, 1, 3, 14, 4),
+(11, 1, 1, 15, 3),
+(12, 1, 1, 16, 3),
+(13, 1, 2, 22, 3),
+(14, 1, 3, 24, 5),
+(15, 1, 3, 25, 5),
+(16, 1, 2, 26, 3),
+(17, 1, 2, 27, 3);
+
 -- --------------------------------------------------------
 
 --
@@ -1075,17 +1422,25 @@ CREATE TABLE `employee_detail` (
 CREATE TABLE `enquiries` (
   `id` int(11) NOT NULL,
   `branch_id` int(11) DEFAULT NULL,
-  `enquiry_type_id` int(11) DEFAULT NULL,
+  `enquiry_category_id` int(11) DEFAULT NULL,
   `salesperson_id` int(11) DEFAULT NULL,
   `customer_id` int(11) DEFAULT NULL,
-  `product_id` int(11) DEFAULT NULL,
+  `modal_id` int(11) DEFAULT NULL,
   `date` datetime DEFAULT NULL,
   `delivery_date` datetime DEFAULT NULL,
+  `primary_source_id` varchar(11) DEFAULT NULL,
   `enquiry_source_id` varchar(11) DEFAULT NULL,
   `visitReason` varchar(100) DEFAULT NULL,
   `enquiry_stage` varchar(45) DEFAULT NULL,
   `enquiry_remarks` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `enquiries`
+--
+
+INSERT INTO `enquiries` (`id`, `branch_id`, `enquiry_category_id`, `salesperson_id`, `customer_id`, `modal_id`, `date`, `delivery_date`, `primary_source_id`, `enquiry_source_id`, `visitReason`, `enquiry_stage`, `enquiry_remarks`) VALUES
+(2, 1, 2, 1, 2, 14, '2023-09-15 07:05:26', '2023-09-15 07:23:50', NULL, '1', '1', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -1101,6 +1456,14 @@ CREATE TABLE `enquiry_category` (
   `department` varchar(45) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Dumping data for table `enquiry_category`
+--
+
+INSERT INTO `enquiry_category` (`id`, `category_name`, `category_description`, `is_active`, `department`) VALUES
+(1, 'None', 'None', 1, 'None'),
+(2, 'New Tractor', '', 1, 'Sales');
+
 -- --------------------------------------------------------
 
 --
@@ -1113,6 +1476,35 @@ CREATE TABLE `enquiry_category_field` (
   `field_id` int(11) NOT NULL,
   `type` varchar(45) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `enquiry_category_field`
+--
+
+INSERT INTO `enquiry_category_field` (`id`, `category_id`, `field_id`, `type`) VALUES
+(1, 2, 1, 'enquiry'),
+(2, 2, 2, 'enquiry'),
+(3, 2, 3, 'enquiry'),
+(4, 2, 5, 'enquiry'),
+(5, 2, 6, 'enquiry'),
+(6, 2, 7, 'enquiry'),
+(7, 2, 8, 'enquiry'),
+(8, 2, 9, 'enquiry'),
+(9, 2, 10, 'enquiry'),
+(10, 2, 11, 'enquiry'),
+(11, 2, 12, 'enquiry'),
+(12, 2, 13, 'enquiry'),
+(13, 2, 14, 'enquiry'),
+(14, 2, 15, 'enquiry'),
+(15, 2, 16, 'enquiry'),
+(16, 2, 17, 'enquiry'),
+(17, 2, 18, 'enquiry'),
+(18, 2, 19, 'enquiry'),
+(19, 2, 20, 'enquiry'),
+(20, 2, 21, 'enquiry'),
+(21, 2, 22, 'enquiry'),
+(22, 2, 24, 'enquiry'),
+(23, 2, 25, 'enquiry');
 
 -- --------------------------------------------------------
 
@@ -1435,6 +1827,13 @@ CREATE TABLE `manufactur_details` (
   `old_tractor` varchar(45) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Dumping data for table `manufactur_details`
+--
+
+INSERT INTO `manufactur_details` (`id`, `enquiry_id`, `maker`, `modalName`, `variantName`, `year_of_manufactur`, `condition_of`, `old_tractor`) VALUES
+(1, 2, '4', '13', 'null', 1, '3', 'Yes');
+
 -- --------------------------------------------------------
 
 --
@@ -1453,7 +1852,7 @@ CREATE TABLE `modal` (
 --
 
 INSERT INTO `modal` (`id`, `modalName`, `manufacturerId`, `isActive`) VALUES
-(1, 'DI-740III', 1, b'00000000001'),
+(1, 'None', 1, b'00000000001'),
 (2, 'DI-745III', 1, b'00000000001'),
 (3, 'GT-20', 1, b'00000000001'),
 (4, 'GT-22', 1, b'00000000001'),
@@ -1765,6 +2164,30 @@ CREATE TABLE `users` (
   `user_type_id` int(11) DEFAULT NULL,
   `is_delete` int(255) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `users`
+--
+
+INSERT INTO `users` (`id`, `first_name`, `last_name`, `email`, `password`, `is_active`, `phone_number`, `last_login`, `current_login`, `bloodgroup`, `dob`, `user_type_id`, `is_delete`) VALUES
+(1, 'Harilal', 'Patel', 'newkeshav@gmail.com', '$2b$10$dHj8ggO9IJ9ObDAUfoUPaOGkGzpOlSyKfR5QEgyk4bFjNduAGVRxi', 1, '9725579291', '2023-09-11 14:17:35', '2023-09-11 14:39:32', NULL, NULL, NULL, 0),
+(2, 'BHARATBHAI ', 'KHATANA', ' KHATANABHARAT51@GMAIL.COM', '$2b$10$VXtnFftyX1dGB0jgv88EqugL.m9bamgD1GIROOpuDaXjJ5RSm8PPG', 1, ' 9879546234', NULL, NULL, '', '2023-09-16', 2, 0),
+(3, 'MAHESHBHAI', ' KAlOTARA', 'rabarim008@gmail.com', '$2b$10$dhUTciEEjv26uBLQiBkFv.dTximdgmqbAzSpTgnyU5es6PMPaePha', 1, '1234567890', NULL, NULL, '', '2023-09-16', 2, 0),
+(4, 'BRIJRAJSINH ', 'JADEJA', ' sonalikabrijraj@gmail.com', '$2b$10$e85hf8HaDh8CnqqtEiBtG.EE.TCwGM018lSE5WYZgAWHpEX39K0ha', 1, '8238322266', NULL, NULL, '', '2023-09-16', 2, 0),
+(5, 'NIVEDANBHAI ', 'HAREJA', 'harejanivedan@gmail.com', '$2b$10$NJvzEh63ieuTF572XymXA.XV7DihFCnbD2QnA9jB8wOtmDqKdsyIu', 1, '8780056174', NULL, NULL, '', '2023-09-16', 2, 0),
+(8, 'RAJUBHAI ', 'PATEL', 'patelraju2204@gamil.com', '$2b$10$0k1w3Gis5UhFwo0lJvVuZ..uRsVHFH0WUeYIGc1cg1EplMyY7.XAi', 1, '9998979555', NULL, NULL, '', '2023-09-16', 2, 0),
+(9, 'VINODBHAI ', 'MAKVANA', ' prakash.thakor.7390@gmail.com', '$2b$10$6AJJbqme3KGVF9O4N0tHVewA2K/xHJaWNgARwUu6j4oezNQ2gB1a2', 1, '8238544222', NULL, NULL, '', '2023-09-16', 2, 0),
+(11, 'AJAMALBHAI ', 'PARMAR', ' ajmal@gmail.com', '$2b$10$uqTKVH5b/xDRSC4W.YlweOyyAqQ7ePAQBdC1FrFQyL5dXoup8D0T.', 1, '9875053248', NULL, NULL, '', '2023-09-16', 2, 0),
+(12, 'HARILAL ', 'DEALER', 'harilalsonalika@gmail.com', '$2b$10$6ByVUoaZ1g0lgekV5FD99exO1kBTTtwUxgHTU9pNmeaOTrIbXuPYi', 1, '8238566222', NULL, NULL, 'AB+', '2023-09-15', 2, 0),
+(13, 'VIPULKUMAR ', 'PATEL', ' sonalikavipul@gmail.com', '$2b$10$11hN1MTAuMLiYuOrmCt8W.WVkKIeV/bVx8X.vtNEo.gcLyEZDEXQS', 1, '9265763819', NULL, NULL, '', '2023-09-16', 2, 0),
+(14, 'MUKESH ', 'RAJOSANIYA', 'mukeshthakor0111@gmail.com', '$2b$10$KqyIYdlft4ZdvteppdR/jusqHFzCrfg9tF/.jloFT7GZcwNMaBa4G', 1, '7575038456', NULL, NULL, '', '2023-09-16', 2, 0),
+(15, 'MAYURSINH ', 'ZALA', 'zalamayursinh48@gmail.com', '$2b$10$weaAdL6dtjrtaq23vCqaCeCEeRBPbyoH8Y3ZJYOTpBeiF5awwzuC2', 1, '9265758542', NULL, NULL, '', '2023-09-15', 2, 0),
+(16, 'GHANGHAR ', 'DEVAJIBHAI', ' ghanghardevji@gmail.com', '$2b$10$c47cBcl8NXm24u6XDm3aZeHH8wDLbNwqfdG4Nnma556kvkXspB6Z2', 1, '9033243313', NULL, NULL, '', '2023-09-15', 2, 0),
+(22, '	ASHOKBHAI', 'none', ' AMITK4330@GMAIL.COM', '$2b$10$h/zy/4TAvEVnoDGaX0VK6.a3fJ2mV8upMQ6RJpJpr5A.taJrsY.p.', 1, '9510029913', NULL, NULL, 'B+', '2023-09-15', 2, 0),
+(24, 'PRAJAPATI ', 'PINALBEN', ' pinalnagpara@gmail.com', '$2b$10$ZoDlBwYQAfbDbPlJmDFxuOnKIzrRKl1Uz3p2IjUacP0vT0IuF26hm', 1, '7016564044', NULL, NULL, 'B-', '2023-09-15', 2, 0),
+(25, 'ASHOKBHAI ', 'HEMUBHAI', ' ASHOKBHAI@GMAIL.COM', '$2b$10$q49QjXS/BPVD1/cwv.Tk3u3h9cPHoKlWOkWZcNpv2xpN0xUqlezaa', 1, '8401602023', NULL, NULL, 'AB-', '2023-09-15', 2, 0),
+(26, 'CLUSTER 1', 'none', ' mukeshthakor0111@gmail.com', '$2b$10$AA1iEDUZpRTnSdUddHYaIO141jYo4GkGriW1jhPr0qrWihd56joX.', 1, '9898989898', NULL, NULL, 'AB+', '2023-09-15', 2, 0),
+(27, 'CLUSTER 2', 'none', ' mukeshthakor0112@gmail.com', '$2b$10$N5y79QqJqC5WbPpENRZUx.6SumBe1amiAXCB/x.uPTCetOOpKYUOC', 1, '9797979797', NULL, NULL, 'AB-', '2023-09-15', 2, 0);
 
 -- --------------------------------------------------------
 
@@ -2119,6 +2542,12 @@ ALTER TABLE `documents`
   ADD PRIMARY KEY (`document_id`);
 
 --
+-- Indexes for table `document_details`
+--
+ALTER TABLE `document_details`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `employee_detail`
 --
 ALTER TABLE `employee_detail`
@@ -2130,9 +2559,9 @@ ALTER TABLE `employee_detail`
 ALTER TABLE `enquiries`
   ADD PRIMARY KEY (`id`),
   ADD KEY `customer_id_idx` (`customer_id`),
-  ADD KEY `product_id_idx` (`product_id`),
+  ADD KEY `modal_id_idx` (`modal_id`),
   ADD KEY `salesperson_id_idx` (`salesperson_id`),
-  ADD KEY `enquiry_type_id_idx` (`enquiry_type_id`),
+  ADD KEY `enquiry_category_id_idx` (`enquiry_category_id`),
   ADD KEY `enquiry_source_id_idx` (`enquiry_source_id`);
 
 --
@@ -2352,13 +2781,13 @@ ALTER TABLE `addtask_data`
 -- AUTO_INCREMENT for table `area_assign_user`
 --
 ALTER TABLE `area_assign_user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=203;
 
 --
 -- AUTO_INCREMENT for table `bank_details`
 --
 ALTER TABLE `bank_details`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `booking`
@@ -2382,7 +2811,7 @@ ALTER TABLE `branches_new`
 -- AUTO_INCREMENT for table `branch_department_user`
 --
 ALTER TABLE `branch_department_user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `category_field`
@@ -2394,13 +2823,13 @@ ALTER TABLE `category_field`
 -- AUTO_INCREMENT for table `configuration`
 --
 ALTER TABLE `configuration`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `customers`
 --
 ALTER TABLE `customers`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `departments`
@@ -2424,31 +2853,37 @@ ALTER TABLE `district`
 -- AUTO_INCREMENT for table `documents`
 --
 ALTER TABLE `documents`
-  MODIFY `document_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `document_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+
+--
+-- AUTO_INCREMENT for table `document_details`
+--
+ALTER TABLE `document_details`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT for table `employee_detail`
 --
 ALTER TABLE `employee_detail`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `enquiries`
 --
 ALTER TABLE `enquiries`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `enquiry_category`
 --
 ALTER TABLE `enquiry_category`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `enquiry_category_field`
 --
 ALTER TABLE `enquiry_category_field`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT for table `enquiry_data`
@@ -2526,7 +2961,7 @@ ALTER TABLE `manufacturers`
 -- AUTO_INCREMENT for table `manufactur_details`
 --
 ALTER TABLE `manufactur_details`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `modal`
@@ -2598,7 +3033,7 @@ ALTER TABLE `tax_details`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT for table `user_types`
@@ -2634,8 +3069,8 @@ ALTER TABLE `branch_department_user`
 --
 ALTER TABLE `enquiries`
   ADD CONSTRAINT `customer_id` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`id`),
-  ADD CONSTRAINT `enquiry_type_id` FOREIGN KEY (`enquiry_type_id`) REFERENCES `enquiry_types` (`id`),
-  ADD CONSTRAINT `product_id` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`),
+  ADD CONSTRAINT `enquiry_category_id` FOREIGN KEY (`enquiry_category_id`) REFERENCES `enquiry_category` (`id`),
+  ADD CONSTRAINT `modal_id` FOREIGN KEY (`modal_id`) REFERENCES `modal` (`id`),
   ADD CONSTRAINT `salesperson_id` FOREIGN KEY (`salesperson_id`) REFERENCES `users` (`id`);
 
 --

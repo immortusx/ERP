@@ -35,6 +35,8 @@ import editCategorySlice from './slices/Master/Category/editCategorySlice';
 import editassignareaSlice from './slices/editassignareaSlice';
 import addTaskSlice from './slices/addTaskSlice';
 import editEnquirySlice from './slices/editEnquirySlice';
+import followupSlice from './slices/followupSlice';
+import addEnquirySourcesSlice from './slices/Master/EnquirySources/addEnquirySourcesSlice';
 
 export const store = configureStore({
   reducer: {
@@ -47,16 +49,16 @@ export const store = configureStore({
     getUserListSlice: getUserListSlice,
     getemployeeListSlice: getemployeeListSlice,
     featuresListState: getFeatureSlice,
-    categoryfeaturesListState:getcategoryfeactureSice,
+    categoryfeaturesListState: getcategoryfeactureSice,
     addRoleState: addRoleSlice,
     notificationState: notificationSlice,
     editUserDataState: editUserDataSlice,
     editemployeeDataState: editemployeeDataSlice,
-    addAgency:addagencySlice,
-    editDepartmentDataState : editDepartmentSlice,
-    editCategoryDataState :editCategorySlice,
-    editassignareaDataState:editassignareaSlice,
-    editAgencyDataState :editAgencySlice,
+    addAgency: addagencySlice,
+    editDepartmentDataState: editDepartmentSlice,
+    editCategoryDataState: editCategorySlice,
+    editassignareaDataState: editassignareaSlice,
+    editAgencyDataState: editAgencySlice,
     enquiryState: enquirySlice,
     editRoleDataState: editRoleDataSlice,
     enquiryFieldSaveState: enquiryFieldSaveSlice,
@@ -72,6 +74,8 @@ export const store = configureStore({
     addManufacturerSlice: addManufacturerSlice,
     addassigneAreaSlice: addassigneAreaSlice,
     addTaskSlice: addTaskSlice,
-    editEnquirySlice: editEnquirySlice
+    editEnquiryState: editEnquirySlice,
+    addEnquirySourcesSlice:addEnquirySourcesSlice,
+    enquiryFollowupSlice: followupSlice,
   },
 });  
