@@ -130,7 +130,7 @@ router.post('/addtask-data', tokenCheck, async (req, res) => {
             } catch (err) {
                 console.log({ isSuccess: false, result: err });
                 res.send({ isSuccess: false, result: "error" });
-                return; // Exit the loop and request handling on error
+                return; 
             }
         }
 
