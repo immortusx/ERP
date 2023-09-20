@@ -11,7 +11,7 @@ import Checkbox from '@mui/material/Checkbox'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsisV } from "@fortawesome/free-solid-svg-icons/faEllipsisV";
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
-
+import { Tooltip } from "@mui/material";
 import SwapSection from './SwapSection'
 import moment from 'moment'
 
@@ -232,23 +232,26 @@ export default function Branch({ workFor }) {
                 <div className="d-flex justify-content-center dotHover">
                     <FontAwesomeIcon icon={faEllipsisV} />
                     <div className="expandDiv">
-                        <button onClick={() => { editActionCall(params.row) }} className='myActionBtn m-1'>
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="bi bi-pencil-square" viewBox="0 0 16 16">
-                                <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
-                                <path fillRule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
-                            </svg>
-                        </button>
-
-                        <button
-                            onClick={() => {
-                                deleteActionCall(params.row);
-                            }}
-                            className="myActionBtn m-1"
-                        >
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="bi bi-trash3" viewBox="0 0 16 16">
-                                <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5ZM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0H11Zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5h9.916Zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5Z" />
-                            </svg>
-                        </button>
+                        <Tooltip title="Edit">
+                            <button onClick={() => { editActionCall(params.row) }} className='myActionBtn m-1'>
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="bi bi-pencil-square" viewBox="0 0 16 16">
+                                    <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                                    <path fillRule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
+                                </svg>
+                            </button>
+                        </Tooltip>
+                        <Tooltip title="Delete">
+                            <button
+                                onClick={() => {
+                                    deleteActionCall(params.row);
+                                }}
+                                className="myActionBtn m-1"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="bi bi-trash3" viewBox="0 0 16 16">
+                                    <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5ZM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0H11Zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5h9.916Zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5Z" />
+                                </svg>
+                            </button>
+                        </Tooltip>
                     </div>
                 </div>
             ),
@@ -340,12 +343,6 @@ export default function Branch({ workFor }) {
         })
         e.currentTarget.firstChild.firstChild.checked = true
     }
-
-    // function deletActionCall(data) {
-    //     deleteRecordFromDb(data.id)
-    //     console.log(data.id,"idddd")
-
-    // }
     function editActionCall(data) {
         console.log(data.id, 'edit id')
         console.log('data ********', data)
@@ -365,9 +362,6 @@ export default function Branch({ workFor }) {
             taluka: data.taluka,
             village: data.village,
         })
-        // getDistrictByState(data.state)
-        // getTalukaByDistrict(data.district)
-        // getVillageByTaluka(data.taluka)
     }
 
     function clearState() {
@@ -402,30 +396,6 @@ export default function Branch({ workFor }) {
         })
 
     }
-    // async function deleteRecordFromDb(id) {
-    //     const url = `${process.env.REACT_APP_NODE_URL}/api/branch/delete-branch/${id}`;
-    //     console.log(id,"Branch Id")
-    //     const config = {
-    //         headers: {
-    //             token: localStorage.getItem('rbacToken')
-    //         }
-    //     };
-    //     await axios.get(url, config).then((response) => {
-    //         if (response.data) {
-    //             if (response.data.isSuccess) {
-    //                 if (response.data.result === 'success') {
-    //                     dispatch(setShowMessage('Branch is deleted'))
-    //                     clearState()
-    //                     navigate('/administration/configuration')
-    //                     getBranchList()
-    //                 } else {
-    //                     dispatch(setShowMessage('Something is wrong'))
-    //                 }
-    //             }
-    //         }
-
-    //     })
-    // }
 
     const deleteActionCall = (data) => {
         console.log(data, "fffffffffffffffffff");
@@ -463,7 +433,6 @@ export default function Branch({ workFor }) {
                 }
             } catch (error) {
                 console.error("Error while deleting branch:", error);
-                // Handle the error as needed.
             }
         }
     };
@@ -548,11 +517,9 @@ export default function Branch({ workFor }) {
         setRowData(rowsData);
     }, [branchList, selectAll]);
 
-    // const rowsData = branchList.map((item, index) => ({ ...item, rowNumber: index + 1 }));
     function changeHandler(e) {
         const name = e.target.name
         const value = e.target.value
-        // console.log('name,value', name, value)
 
         switch (name) {
             case 'state':
@@ -604,13 +571,9 @@ export default function Branch({ workFor }) {
     return (
         <div className='bg-white rounded p-3'>
             <main>
-
-
                 <h5 className='m-0'>{workFor === 'branch' ? 'Branch' : workFor === 'addBranch' ? 'New Branch' : 'Edit Branch'}</h5>
-
                 <div className='row m-0'>
                     {
-
                         workFor === 'branch' && <div className='mb-3  d-flex align-items-end justify-content-end'>
                             <div onClick={() => { navigate('/administration/configuration/branch/add') }} className='d-flex align-items-center' type='button'>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-plus-circle" viewBox="0 0 16 16">
@@ -637,12 +600,8 @@ export default function Branch({ workFor }) {
                             </div>
 
                         </div>
-
                     }
-
                     {
-
-
                         workFor === 'branch' && <div className='tableMenuHover' style={{ height: '85vh', width: '100%' }}>
 
                             <DataGrid
@@ -694,8 +653,6 @@ export default function Branch({ workFor }) {
                                     BACK
                                 </Button>
                             </div>
-
-
                             <div className='row mt-2 m-0'>
                                 <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
                                     <label className='myLabel' htmlFor="email">Branch Name * </label>
