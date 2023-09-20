@@ -67,7 +67,8 @@ pipeline {
     }    
     stage('Run Images') {
       steps {
-        sh "docker-compose up --no-recreate -d"
+        sh "docker run --name server_img-${BUILD_TAG} --network host -e ENV_PORT=${ENV_PORT} -e ENV_DATABASE=${ENV_DATABASE} -e ENV_HOST=${ENV_HOST} -d raptor2103/server:${BUILD_TAG}"
+        sh "docker run --name client_img-${BUILD_TAG} --network host -e PORT=${PORT} -e REACT_APP_NODE_URL=${REACT_APP_NODE_URL} -d raptor1702/client:${BUILD_TAG} "
         sh 'sleep 1m'
       }
     }
