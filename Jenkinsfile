@@ -1,8 +1,7 @@
 pipeline {
   agent any
     parameters {
-      string (defaultValue: 'https://x-token-auth:ATCTT3xFfGN0LjLLCuVkZBrwucG29DfOgUpNzjueYhenVQILMSm2fmKw2gY7R48BHxxqnVVRCtKOai0KMaTtxWKGlag0hG1EfDVIPiPMZ2idD-3a7y3tNEoTsdUgdrufKtUaBp7o7HuNXWgWv_n4C4DXNiLV7snaY2vs4mw8mACOQs4YV0b9oAE=FE9E4BE5@bitbucket.org/balkrushnatechnologies-admin/vehicle-erp-system.git', description: 'Repository', name: 'repository')
-      string (defaultValue: 'master', description: 'Branch', name: 'branch')
+      string (defaultValue: 'dev', description: 'Branch', name: 'BRANCH')
       string (defaultValue: '3000', description: 'Choose custom port for client', name: 'PORT')
       string (defaultValue: '2223', description: 'Choose custom port for server', name: 'ENV_PORT')
       string (defaultValue: '95.216.144.126', description: 'Choose Host', name: 'ENV_HOST')
@@ -19,12 +18,7 @@ pipeline {
   }
   
   stages {
-    stage('Checkout SCM') {
-      steps {
-        sh 'git clone ${repository} -b ${branch} project/ && cd project/'
-      }
-    }   
-    stage('Build Images') {
+     stage('Build Images') {
       steps {
         parallel(
           build_client: {
