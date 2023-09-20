@@ -1172,7 +1172,11 @@ router.post("/set-follow-up", tokenCheck, async (req, res) => {
           console.log(result[0].id);
           const enquiry_id = result[0].id;
           const followup_date = new Date().toISOString().split("T")[0];
-          const followUpSql = `INSERT INTO follow_up_details (customer_id, enquiry_id, last_discussion, followup_date, next_followup_date) VALUES ('${customer_id}', '${enquiry_id}', '${last_discussion}', '${followup_date}', '${next_followup_date}')`;
+          const nextFollowupDate = new Date(next_followup_date)
+            .toISOString()
+            .split("T")[0];
+          const followUpSql = `INSERT INTO follow_up_details (customer_id, enquiry_id, last_discussion, followup_date, next_followup_date) VALUES ('${customer_id}', '${enquiry_id}', '${last_discussion}', '${followup_date}', '${nextFollowupDate}')`;
+          console.log(followUpSql, "followUpSql");
           await db.query(followUpSql, async (err, followUpResult) => {
             if (err) {
               console.log({ isSuccess: false, result: err });
@@ -1306,7 +1310,10 @@ router.post("/set-lost-enquiry/:id", tokenCheck, async (req, res) => {
               variant || none,
               commercialReason,
               nonCommercialReason,
-              enquiryLostDate,
+              new Date(enquiryLostDate)
+                .toISOString()
+                .slice(0, 19)
+                .replace("T", " "), // Format the date as "YYYY-MM-DD HH:MM:SS"
             ],
             (err, result) => {
               if (err) {

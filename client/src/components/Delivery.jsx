@@ -1,15 +1,57 @@
 import React,{useState} from 'react'
 import DatePicker from "react-datepicker";
+import Alert from "@mui/material/Alert";
+import Stack from "@mui/material/Stack";
+import { useLocation } from "react-router";
 
 const Delivery = () => {
      const [startDate, setStartDate] = useState(new Date());
      const [radio, setRadio] = useState("No");
+      const location = useLocation();
+      const editEnquiryData = location.state;
      const handleChangeRadio = (event) => {
        setRadio(event.target.value);
+     };
+
+     const formatDate = (inputDate) => {
+       const options = {
+         year: "numeric",
+         month: "long",
+         day: "numeric",
+       };
+       const date = new Date(inputDate);
+       const day = date.getDate();
+       const month = date.toLocaleDateString("en-US", { month: "long" });
+       const year = date.getFullYear();
+
+       const daySuffix = getDaySuffix(day);
+
+       return `${day}${daySuffix} ${month} ${year}`;
+     };
+
+     const getDaySuffix = (day) => {
+       if (day >= 11 && day <= 13) {
+         return "th";
+       }
+       switch (day % 10) {
+         case 1:
+           return "st";
+         case 2:
+           return "nd";
+         case 3:
+           return "rd";
+         default:
+           return "th";
+       }
      };
   return (
     <>
       <div className=" row mt-4">
+        <Stack sx={{ width: "100%" }} spacing={2}>
+          <Alert severity="info" className="fw-bold">
+            Delivery :-{editEnquiryData.first_name}   {editEnquiryData.last_name} ,Enquiry. {formatDate(editEnquiryData.date)}
+          </Alert>
+        </Stack>
         <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
           <label className="myLabel" htmlFor="email">
             Enter Mobile Number

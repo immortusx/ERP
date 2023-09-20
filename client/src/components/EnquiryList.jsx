@@ -5,7 +5,7 @@ import {
   clearUserListState,
 } from "../redux/slices/getUserListSlice";
 import { setEditUserData } from "../redux/slices/editUserDataSlice";
-import PlayCircleIcon from "@mui/icons-material/PlayCircle";
+import LabelImportantIcon from "@mui/icons-material/LabelImportant";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import Axios from "axios";
 import axios from "axios";
@@ -146,10 +146,10 @@ export default function EnquiryList() {
   };
 
 
-  const handleFolloup = (editEnquiryData) => {
+  const handleFolloup = (editEnquiryData) => {  
     console.log(editEnquiryData, "editEnquiryData");
-    const customerId = editEnquiryData.id;
-    navigate("/sale/enquiries/followup", { state: customerId });
+    // const id = editEnquiryData.id;
+    navigate("/sale/enquiries/followup", { state: editEnquiryData });
   };
   async function editsalesperson(formData) {
     const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/edit-salesperson-enquiry-data`;
@@ -196,7 +196,7 @@ export default function EnquiryList() {
   const deleteActionCall = (data) => {
     setType("enquiry_delete");
     setEnquiryId(data.id);
-    console.log(data.id,"ghsghghsd")
+    console.log(data,"ghsghghsd")
     setDeleteMessage(
       `Are You Sure You Want To Delete The Enquiry '${data.first_name} ${data.last_name}'?`
     );
@@ -428,7 +428,7 @@ export default function EnquiryList() {
             <button
               className="myActionBtn m-1"
               onClick={() => {
-                handleworkAssign(params.row, true);
+                handleworkAssign(params.row);
               }}
             >
               <PersonIcon />
@@ -473,7 +473,7 @@ export default function EnquiryList() {
               }}
               className="myActionBtn m-1"
             >
-              <PlayCircleIcon color="secondary" />
+              <LabelImportantIcon  />
             </button>
           </div>
         </div>
