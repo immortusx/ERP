@@ -52,13 +52,13 @@ pipeline {
         parallel(
           remove_client: {
             catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS'){
-              sh 'docker rm $(docker ps -a -f name=client_img) -f'
+              sh "docker rm $(docker ps -a -f name=client_img:${BUILD_TAG}) -f"
               sh 'sleep 5s' 
             }
           },
           remove_server: {
             catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS'){
-              sh 'docker rm $(docker ps -a -f name=server_img) -f'
+              sh "docker rm $(docker ps -a -f name=server_img:${BUILD_TAG}) -f"
               sh 'sleep 5s'
             }
           }          
