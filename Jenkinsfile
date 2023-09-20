@@ -1,6 +1,7 @@
 pipeline {
   agent any
     parameters {
+      string (defaultValue: 'dev', description: 'Branch', name: 'BRANCH')
       string (defaultValue: '3000', description: 'Choose custom port for client', name: 'PORT')
       string (defaultValue: '2223', description: 'Choose custom port for server', name: 'ENV_PORT')
       string (defaultValue: '95.216.144.126', description: 'Choose Host', name: 'ENV_HOST')
@@ -16,8 +17,8 @@ pipeline {
     DOCKERHUB_CREDENTIALS_2 = credentials('dockerhub-2')
   }
   
-  stages {   
-    stage('Build Images') {
+  stages {
+     stage('Build Images') {
       steps {
         parallel(
           build_client: {
