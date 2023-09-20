@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import Axios from "axios";
-import { useNavigate } from 'react-router-dom'
+import { useNavigate ,useLocation} from 'react-router-dom'
 import { setShowMessage } from '../redux/slices/notificationSlice'
 import { useSelector, useDispatch } from 'react-redux'
 import { addTaskToDb, clearAddTaskState } from '../redux/slices/addTaskSlice'
@@ -18,7 +18,11 @@ const AddTask = ({ workFor }) => {
   const [taskCount, setTaskCount] = useState(null);
   const [tasktimePeriod, setTasktimePeriod] = useState(null);
   const currentBranch = localStorage.getItem("currentDealerId");
+  const location = useLocation();
+  const workAssign = location.state.user_id;
+
   const addTaskState = useSelector(state => state.addTaskSlice.addTaskState)
+ 
   const [newAddTask, setNewAddTask] = useState({
     listDsp: [],
     listTasktype: [],
@@ -26,16 +30,7 @@ const AddTask = ({ workFor }) => {
     listTasktimeperiod: [],
   });
 
-  const [taskData, setTaskData] = useState({
-    employee: "",
-    tasktype: "",
-    task: "",
-    taskcount: "",
-    startDate: "",
-    endDate: "",
-    tasktimePeriod: "",
 
-  });
   const handleStartDateChange = (date) => {
     setStartDate(date);
   };
@@ -178,7 +173,6 @@ const handleSubmit = async () => {
     tasktimePeriod: tasktimePeriod,
   };
 
-console.log(tasktimePeriod,"llllllllllllllllllllll");
   if (workFor === "addTask") {
     dispatch(addTaskToDb(data));
   } else {
@@ -196,6 +190,7 @@ useEffect(() => {
     }
   }
 }, [addTaskState])
+
 return (
   <div className='addUser  bg-white rounded p-3'>
     <main>
@@ -236,6 +231,7 @@ return (
             onChange={onChangeEmployees}
             value={employees}
           />
+       
         </section>
         <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
           <label className="myLabel" htmlFor="taskType">
@@ -331,7 +327,7 @@ return (
       <div className=' row mt-3 m-0'>
       <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
           <label className="myLabel" htmlFor="task">
-            Task
+          Task Time Period
           </label>
           <select onChange={onChangeTasktimePeriod} className="myInput" name="tasktimePeriod" value={tasktimePeriod}>
             <option value="" className="myLabel">
