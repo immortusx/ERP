@@ -1,7 +1,7 @@
 version: '3.3'
 services:
     server:
-        container_name: server_img:${BUILD_TAG}
+        container_name: server_img-${BUILD_TAG}
         network_mode: host
         restart: always
         environment:
@@ -10,7 +10,7 @@ services:
             - 'ENV_HOST=${ENV_HOST}'
         image: 'raptor2103/server:${BUILD_TAG}'
     client:
-        container_name: client_img:${BUILD_TAG}
+        container_name: client_img-${BUILD_TAG}
         network_mode: host
         restart: always
         environment:

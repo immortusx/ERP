@@ -52,13 +52,13 @@ pipeline {
         parallel(
           remove_client: {
             catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS'){
-              sh 'docker rm $(docker ps -a -f name=client_img:${BUILD_TAG}) -f'
+              sh 'docker rm $(docker ps -a -f name=client_img-${BUILD_TAG}) -f'
               sh 'sleep 5s' 
             }
           },
           remove_server: {
             catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS'){
-              sh 'docker rm $(docker ps -a -f name=server_img:${BUILD_TAG}) -f'
+              sh 'docker rm $(docker ps -a -f name=server_img-${BUILD_TAG}) -f'
               sh 'sleep 5s'
             }
           }          
@@ -67,7 +67,7 @@ pipeline {
     }    
     stage('Run Images') {
       steps {
-        sh "docker-compose up -d"
+        sh "docker-compose up --no-recreate -d"
         sh 'sleep 1m'
       }
     }
