@@ -5,6 +5,7 @@ import {
   clearUserListState,
 } from "../redux/slices/getUserListSlice";
 import { setEditUserData } from "../redux/slices/editUserDataSlice";
+import PlayCircleIcon from "@mui/icons-material/PlayCircle";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import Axios from "axios";
 import axios from "axios";
@@ -142,6 +143,13 @@ export default function EnquiryList() {
     console.log(editEnquiryData, "editEnquiryData");
     const customerId = editEnquiryData.id;
     navigate("/sale/enquiries/editenquiry", { state: customerId });
+  };
+
+
+  const handleFolloup = (editEnquiryData) => {
+    console.log(editEnquiryData, "editEnquiryData");
+    const customerId = editEnquiryData.id;
+    navigate("/sale/enquiries/followup", { state: customerId });
   };
   async function editsalesperson(formData) {
     const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/edit-salesperson-enquiry-data`;
@@ -444,7 +452,6 @@ export default function EnquiryList() {
                 />
               </svg>
             </button>
-
             <button
               onClick={() => {
                 deleteActionCall(params.row);
@@ -459,6 +466,14 @@ export default function EnquiryList() {
               >
                 <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5ZM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0H11Zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5h9.916Zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5Z" />
               </svg>
+            </button>
+            <button
+              onClick={() => {
+                handleFolloup(params.row);
+              }}
+              className="myActionBtn m-1"
+            >
+              <PlayCircleIcon color="secondary" />
             </button>
           </div>
         </div>

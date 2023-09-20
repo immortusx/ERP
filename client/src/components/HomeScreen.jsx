@@ -22,6 +22,7 @@ import Sales from "./Sales";
 import Manage from "./Manage";
 import Profile from "./Profile";
 import Enquiry from "./Enquiry";
+import FollowUp from "./FollowUp";
 import Products from "./Products";
 import Master from "./Master";
 import Employees from "./Employees";
@@ -880,6 +881,15 @@ export default function HomeScreen() {
               element={
                 <CheckPermission path="profile">
                   <Enquiry workFor="editEnquiry" />
+                </CheckPermission>
+              }
+              exact
+            />
+            <Route
+              path="sale/enquiries/followup"
+              element={
+                <CheckPermission path="profile">
+                  <FollowUp  />
                 </CheckPermission>
               }
               exact

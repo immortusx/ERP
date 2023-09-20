@@ -35,6 +35,7 @@ import editCategorySlice from './slices/Master/Category/editCategorySlice';
 import editassignareaSlice from './slices/editassignareaSlice';
 import addTaskSlice from './slices/addTaskSlice';
 import editEnquirySlice from './slices/editEnquirySlice';
+import followupSlice from './slices/followupSlice';
 import addEnquirySourcesSlice from './slices/Master/EnquirySources/addEnquirySourcesSlice';
 
 export const store = configureStore({
@@ -75,5 +76,6 @@ export const store = configureStore({
     addTaskSlice: addTaskSlice,
     editEnquiryState: editEnquirySlice,
     addEnquirySourcesSlice:addEnquirySourcesSlice,
+    enquiryFollowupSlice: followupSlice,
   },
 });  
