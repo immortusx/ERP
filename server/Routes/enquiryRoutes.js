@@ -340,7 +340,7 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
               console.log({ isSuccess: false, result: err });
               res.send({ isSuccess: false, result: "error" });
             } else {
-              console.log({ isSuccess: "success", result: 'success' });
+              console.log({ isSuccess: "success", result: "success" });
               res.send({ isSuccess: "success", result: "success" });
             }
           });
@@ -353,7 +353,7 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
                 console.log({ isSuccess: false, result: err });
                 res.send({ isSuccess: false, result: "error" });
               } else {
-                console.log({ isSuccess: "success", result: 'success' });
+                console.log({ isSuccess: "success", result: "success" });
                 // res.send({ isSuccess: "success", result: "success" });
               }
             });
@@ -364,7 +364,7 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
                 console.log(err);
               } else {
                 console.log({
-                  result: 'success',
+                  result: "success",
                   isSuccess: "success",
                 });
                 // res.send({
@@ -544,20 +544,24 @@ router.post(
                           );
                         } else if (oldTractorOwned === "No") {
                           const urlSql = `UPDATE manufactur_details SET maker = ?, modalName = ?, variantName = ?, year_of_manufactur = ?, condition_of = ?, old_tractor = ? WHERE enquiry_id = ${customerId}`;
-                          await db.query(urlSql, [null, null, null, null, null, oldTractorOwned], (err, result) => {
-                            if (err) {
-                              console.log(err);
-                            } else {
-                              console.log({
-                                isSuccess: "success",
-                                result: urlSql,
-                              });
-                              res.send({
-                                isSuccess: "success",
-                                result: "success",
-                              });
+                          await db.query(
+                            urlSql,
+                            [null, null, null, null, null, oldTractorOwned],
+                            (err, result) => {
+                              if (err) {
+                                console.log(err);
+                              } else {
+                                console.log({
+                                  isSuccess: "success",
+                                  result: urlSql,
+                                });
+                                res.send({
+                                  isSuccess: "success",
+                                  result: "success",
+                                });
+                              }
                             }
-                          });
+                          );
                         } else {
                           res.send({
                             isSuccess: "success",
@@ -1807,24 +1811,19 @@ router.post("/add-primary-sources", tokenCheck, async (req, res) => {
 router.get("/get-primary-source", tokenCheck, async (req, res) => {
   console.log(">>>>>/get-primary-source");
   try {
-
-    await db.query(
-      "SELECT * FROM enquiry_primary_sources",
-      (err, results) => {
-        if (err) {
-          console.log({ isSuccess: false, result: err });
-          res.send({ isSuccess: false, result: "error" });
-        } else {
-          console.log({ isSuccess: true, result: results });
-          res.send({ isSuccess: true, result: results });
-        }
+    await db.query("SELECT * FROM enquiry_primary_sources", (err, results) => {
+      if (err) {
+        console.log({ isSuccess: false, result: err });
+        res.send({ isSuccess: false, result: "error" });
+      } else {
+        console.log({ isSuccess: true, result: results });
+        res.send({ isSuccess: true, result: results });
       }
-    );
+    });
   } catch (err) {
     console.log(err);
   }
 });
-
 
 router.post("/addenquirysources", tokenCheck, async (req, res) => {
   console.log(">>>>>addenquirysources");
@@ -1856,25 +1855,71 @@ router.post("/deletenquirysources", tokenCheck, async (req, res) => {
     console.log(">>>>>deletenquirysources");
     const { primarySourcesId } = req.body;
     const deleteEnquirysourcesSql = `DELETE FROM enquiry_sources WHERE primary_source_id = ${primarySourcesId}`;
-    await db.query(deleteEnquirysourcesSql, [primarySourcesId], async (err, results) => {
+    await db.query(
+      deleteEnquirysourcesSql,
+      [primarySourcesId],
+      async (err, results) => {
+        if (err) {
+          console.log({ isSuccess: false, result: err });
+          res.send({ isSuccess: false, result: "error" });
+        } else {
+          console.log({ isSuccess: true, result: results });
+          // res.send({ isSuccess: true, result: results });
+          const deleteEnquirySql = `DELETE FROM enquiry_primary_sources WHERE id= ${primarySourcesId}`;
+          await db.query(
+            deleteEnquirySql,
+            [primarySourcesId],
+            (err, results) => {
+              if (err) {
+                console.log({ isSuccess: false, result: err });
+                res.send({ isSuccess: false, result: "error" });
+              } else {
+                console.log({ isSuccess: true, result: results });
+                res.send({ isSuccess: true, result: results });
+              }
+            }
+          );
+        }
+      }
+    );
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+//=================Upload The Work Log=================//
+router.post("/upload-work-log", tokenCheck, async (req, res) => {
+  console.log(">>>>>/upload-work-log", req.body);
+  try {
+    const { workDescription, spendTime } = req.body;
+    const task = 1;
+    const userId = 2;
+    const url = `SELECT * FROM addtask_data where employee = ${userId} and task = ${task}`;
+    await db.query(url, async (err, results) => {
       if (err) {
         console.log({ isSuccess: false, result: err });
         res.send({ isSuccess: false, result: "error" });
       } else {
         console.log({ isSuccess: true, result: results });
         // res.send({ isSuccess: true, result: results });
-        const deleteEnquirySql = `DELETE FROM enquiry_primary_sources WHERE id= ${primarySourcesId}`;
-        await db.query(deleteEnquirySql, [primarySourcesId], (err, results) => {
-          if (err) {
-            console.log({ isSuccess: false, result: err });
-            res.send({ isSuccess: false, result: "error" });
-          } else {
-            console.log({ isSuccess: true, result: results });
-            res.send({ isSuccess: true, result: results });
-
-          }
-        });
-
+        if (results) {
+          const tasktype = results[0].tasktype;
+          const task = results[0].task;
+          const workLogSql = `INSERT INTO worklog (user_id, tasktype, task, work_description, datetime, spendtime) VALUES(?,?,?,?,?,?)`;
+          await db.query(
+            workLogSql,
+            [userId, tasktype || 1, task || 1, workDescription, new Date(), spendTime],
+            async (err, result) => {
+              if (err) {
+                console.log({ isSuccess: false, result: err });
+                res.send({ isSuccess: false, result: "error" });
+              } else {
+                console.log({ isSuccess: true, result: workLogSql });
+                res.send({ isSuccess: true, result: results });
+              }
+            }
+          );
+        }  
       }
     });
   } catch (err) {

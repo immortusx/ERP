@@ -13,6 +13,9 @@ import {
 import React, {useEffect, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import moment from 'moment';
+import {API_URL} from '@env';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const AdditonalDetails = ({route}) => {
   const navigation = useNavigation();
   const [callStartTime, setCallStartTime] = useState(null);
@@ -74,6 +77,7 @@ const AdditonalDetails = ({route}) => {
         setCallStartTime(null);
 
         console.log('Call Duration:', durationInSeconds, 'seconds');
+        uploadcallLog(durationInSeconds);
       }
       setAppState(nextAppState);
     };
@@ -88,11 +92,32 @@ const AdditonalDetails = ({route}) => {
     };
   }, [appState, callStartTime]);
 
-  const uploadcallLog = async () => {
-    console.log(durationInSeconds);
-    let workDescription = `Call for ${item.product} enquiry`
-    
+  const uploadcallLog = async (durationInSeconds) => {
+    const hours = Math.floor(durationInSeconds / 3600);
+    const minutes = Math.floor((durationInSeconds % 3600) / 60);
+    const seconds = durationInSeconds % 60;
+    const formattedDuration = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 
+    let workDescription = `Call for ${item.product} enquiry`;
+    const url = `${API_URL}/api/enquiry/upload-work-log`;
+    console.log('enquiry url', url);
+    const data = {
+      spendTime: formattedDuration,
+      workDescription: workDescription
+    }
+    const token = await AsyncStorage.getItem('rbacToken');
+    const config = {
+      headers: {
+        token: token ? token : '',
+      },
+    };
+    console.log(config);
+    await axios.post(url, data, config).then(response => {
+      if(response){
+        console.log(response.data, 'call log data')
+      }
+      // return response.data;
+    });
   };
 
   const sendWhatsAppMessage = whatsAppNumber => {
