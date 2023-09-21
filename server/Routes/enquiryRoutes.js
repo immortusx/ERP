@@ -1407,6 +1407,10 @@ router.post("/set-new-booking/:id", tokenCheck, async (req, res) => {
           console.log({ isSuccess: true, result: enquiryResult });
           // res.send({ isSuccess: true, result: result });
           const enquiry_id = enquiryResult[0].id;
+          const formattedDeliveryDate =new Date(deliveryDate).toISOString().split("T")[0];
+          const formattedretailDate = new Date(retailDate)
+            .toISOString()
+            .split("T")[0];
           console.log(enquiry_id);
           const bookingEnquirySql = `INSERT INTO booking (customer_id, enquiry_id, phone_number, modal, variant, chassis_no, mode_of_finance, bank_name, delivery_date, retail_date) VALUES (?,?,?,?,?,?,?,?,?,?)`;
           await db.query(
@@ -1420,8 +1424,8 @@ router.post("/set-new-booking/:id", tokenCheck, async (req, res) => {
               chassis_no,
               mode_of_finance,
               bank_name,
-              deliveryDate,
-              retailDate,
+              formattedDeliveryDate,
+              formattedretailDate,
             ],
             async (err, result) => {
               if (err) {
