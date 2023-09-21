@@ -151,14 +151,12 @@ export default function Employees() {
     }
   };
 
-  const handleEditWork = async (ev) => {
-    // Navigate to the "/administration/configuration/Task/AddTask" route
+  const handleEditWork = async (username) => {
     navigate("/administration/configuration/Task/AddTask", {
-      state: { user_id: ev.user_id },
+      state: { username:username },
     });
     setShowComponent(true);
-    console.log(ev.user_id, "ev");
-    setId(ev.user_id);
+    setId(username);
   }
 
 
