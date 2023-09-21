@@ -846,9 +846,8 @@ router.post("/set-new-detail-enquiry", tokenCheck, async (req, res) => {
     const variantName = req.body.variantName || null;
     const year = req.body.year || null;
     const condition_of = req.body.condition_of || null;
-    const sourceOfEnquiry = req.body.sourceOfEnquiry
-      ? req.body.sourceOfEnquiry
-      : 31;
+    const enquiryPrimarySource = req.body.enquiryPrimarySource || null;
+    const sourceOfEnquiry = req.body.sourceOfEnquiry || null;
     const old_tractor = req.body.old_tractor || null;
     const categoryId = req.body.category || null;
 
@@ -894,7 +893,7 @@ router.post("/set-new-detail-enquiry", tokenCheck, async (req, res) => {
                   .replace("T", " ");
                 console.log(enquiryDate);
                 console.log(customer_id);
-                const enquirySql = `INSERT INTO enquiries (branch_id, enquiry_category_id, salesperson_id, customer_id, modal_id, date, delivery_date, enquiry_source_id) VALUES (?,?,?,?,?,?,?,?)`;
+                const enquirySql = `INSERT INTO enquiries (branch_id, enquiry_category_id, salesperson_id, customer_id, primary_source_id, enquiry_source_id, modal_id, date, delivery_date) VALUES (?,?,?,?,?,?,?,?,?)`;
                 await db.query(
                   enquirySql,
                   [
@@ -902,6 +901,8 @@ router.post("/set-new-detail-enquiry", tokenCheck, async (req, res) => {
                     categoryId,
                     salesperson_id,
                     customer_id,
+                    enquiryPrimarySource,
+                    sourceOfEnquiry,
                     modal,
                     new Date(),
                     deliveryDate,
@@ -1816,6 +1817,7 @@ router.get("/get-primary-source", tokenCheck, async (req, res) => {
     console.log(err);
   }
 });
+
 
 router.post("/addenquirysources", tokenCheck, async (req, res) => {
   console.log(">>>>>addenquirysources");
