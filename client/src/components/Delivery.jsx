@@ -95,7 +95,7 @@ const Delivery = () => {
     });
   }
   async function getModelList(Id) {
-    console.log(Id,"rtoiuuighguo")
+    console.log(Id, "rtoiuuighguo");
     const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/get-model/${Id}`;
     const config = {
       headers: {
@@ -172,7 +172,7 @@ const Delivery = () => {
   };
   useEffect(() => {
     getBranchs();
-    getModelList(Id)
+    getModelList(Id);
   }, [Id]);
 
   function changeHandlerNewEnquiry(e) {
@@ -208,7 +208,7 @@ const Delivery = () => {
     }
   }
 
-  const clearstate =()=>{
+  const clearstate = () => {
     setDeliveryData({
       phone_number: "",
       modal: "",
@@ -229,7 +229,7 @@ const Delivery = () => {
       marketPrice: "",
       oldChassisNo: "",
     });
-  }
+  };
   const formatDate = (inputDate) => {
     const options = {
       year: "numeric",
@@ -277,9 +277,9 @@ const Delivery = () => {
         // dispatch(getEnquiryData());
       }
     });
-    
-clearstate();
-dispatch(setShowMessage("Delivery Enquiry saved"));
+
+    clearstate();
+    dispatch(setShowMessage("Delivery Enquiry saved"));
     console.log(deliverdata, "deliverdata");
   };
   return (
