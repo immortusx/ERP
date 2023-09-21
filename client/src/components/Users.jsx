@@ -10,7 +10,7 @@ import { faEllipsisV } from "@fortawesome/free-solid-svg-icons/faEllipsisV";
 import Checkbox from '@mui/material/Checkbox'
 import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
-
+import { Tooltip } from "@mui/material";
 import edit from "../assets/images/editu.png";
 
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
@@ -28,8 +28,8 @@ export default function Users() {
   const [type, setType] = useState(null);
   const [id, setId] = useState(null);
   const [displayConfirmationModal, setDisplayConfirmationModal] =
-  useState(false);
-const [deleteMessage, setDeleteMessage] = useState(null);
+    useState(false);
+  const [deleteMessage, setDeleteMessage] = useState(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const userListState = useSelector(state => state.getUserListSlice.userListState);
@@ -67,28 +67,28 @@ const [deleteMessage, setDeleteMessage] = useState(null);
   };
 
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
-    const columns = [
-      {
-        field: "rowNumberd",
-        // headerAlign: "center",
-        // align: "center",
-        headerName: (
-          <Checkbox
-            {...label}
-            checked={selectAll}
-            onClick={handleHeaderCheckboxClick}
-          />
-        ),
-        minWidth: 90,
-        // flex: 1,
-        renderCell: (params) => (
-          <Checkbox
-            {...label}
-            checked={params.row.checkbox}
-            onClick={() => handleChildCheckboxClick(params.row.id)}
-          />
-        ),
-      },
+  const columns = [
+    {
+      field: "rowNumberd",
+      // headerAlign: "center",
+      // align: "center",
+      headerName: (
+        <Checkbox
+          {...label}
+          checked={selectAll}
+          onClick={handleHeaderCheckboxClick}
+        />
+      ),
+      minWidth: 90,
+      // flex: 1,
+      renderCell: (params) => (
+        <Checkbox
+          {...label}
+          checked={params.row.checkbox}
+          onClick={() => handleChildCheckboxClick(params.row.id)}
+        />
+      ),
+    },
     {
       field: "User type",
       headerAlign: "center",
@@ -228,13 +228,14 @@ const [deleteMessage, setDeleteMessage] = useState(null);
         <div className="d-flex justify-content-center dotHover">
           <FontAwesomeIcon icon={faEllipsisV} />
           <div className="expandDiv">
-          <button
-            onClick={() => {
-              editActionCall(params.row);
-            }}
-            className="myActionBtn m-1"
-          >
-            {/* <svg
+            <Tooltip title="Edit">
+              <button
+                onClick={() => {
+                  editActionCall(params.row);
+                }}
+                className="myActionBtn m-1"
+              >
+                {/* <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="currentColor"
               className="bi bi-pencil-square"
@@ -247,24 +248,26 @@ const [deleteMessage, setDeleteMessage] = useState(null);
               />
             </svg> */}
 
-            <img src={edit} alt="Logo" height={20} width={20}/>
-          </button>
-          <button
-            className="myActionBtn m-1"
-            onClick={() => {
-              deleteActionCall(params.row);
-            }}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="currentColor"
-              className="bi bi-trash3"
-              viewBox="0 0 16 16"
-            >
-              <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5ZM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0H11Zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5h9.916Zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5Z" />
-            </svg>
-          </button>
-
+                <img src={edit} alt="Logo" height={20} width={20} />
+              </button>
+            </Tooltip>
+            <Tooltip title="Delete">
+              <button
+                className="myActionBtn m-1"
+                onClick={() => {
+                  deleteActionCall(params.row);
+                }}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="currentColor"
+                  className="bi bi-trash3"
+                  viewBox="0 0 16 16"
+                >
+                  <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5ZM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0H11Zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5h9.916Zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5Z" />
+                </svg>
+              </button>
+            </Tooltip>
           </div>
         </div>
       ),
@@ -283,7 +286,7 @@ const [deleteMessage, setDeleteMessage] = useState(null);
   // const rowsData = userListData.map((item, index) => ({ ...item, rowNumber: index + 1 }));
 
   const deleteActionCall = (data) => {
-    console.log(data,"uuuuuuuuuuuuuuuuuuu")
+    console.log(data, "uuuuuuuuuuuuuuuuuuu")
     setType("user_delete");
     setId(data.id);
     setDeleteMessage(
@@ -301,16 +304,16 @@ const [deleteMessage, setDeleteMessage] = useState(null);
         token: localStorage.getItem("rbacToken"),
       },
     };
-    console.log(id,"idddddddddddddddddddddddd")
+    console.log(id, "idddddddddddddddddddddddd")
     await Axios.get(url, config).then((response) => {
       console.log(response, "response.data ");
       if (response.data && response.data.isSuccess) {
-        
-        console.log(response.data,"delete true");
+
+        console.log(response.data, "delete true");
         dispatch(setShowMessage("User Deleted"));
         dispatch(getUserListFromDb())
         setDisplayConfirmationModal(false);
-      }else{
+      } else {
         console.log(response.data, "false");
         dispatch(setShowMessage("failed to delete"));
       }

@@ -8,7 +8,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import PlayCircleIcon from "@mui/icons-material/PlayCircle";
 import { faEllipsisV } from "@fortawesome/free-solid-svg-icons/faEllipsisV";
 import { Modal, Button } from "react-bootstrap";
-
+import location from "../../../assets/images/location.png";
+import { Tooltip } from "@mui/material";
 const Work_Assign_Area = () => {
     const navigate = useNavigate();
     const [id, setId] = useState(null);
@@ -111,14 +112,7 @@ const Work_Assign_Area = () => {
                 });
             } else {
                 setShowComponent(true);
-                // setName(ev.first_name+ " "+ev.last_name);
                 setId(ev.user_id);
-                // navigate("/sale/area-Assign", {
-                //   state: { assigneAreaPerUserid: ev },
-                // });
-                // navigate("/sale/area-Assign", {
-                //   state: { assigneAreaPerUser: response.data.result },
-                // });
             }
         } catch (error) {
             console.error("An error occurred while fetching data:", error);
@@ -132,16 +126,8 @@ const Work_Assign_Area = () => {
 
     const redirectModal = () => {
         navigate(-1);
-      };
+    };
 
-    // const handleHeaderCheckboxClick = () => {
-    //     const updatedRowsData = rowData.map((row) => ({
-    //         ...row,
-    //         checkbox: !selectAll,
-    //     }));
-    //     setRowData(updatedRowsData);
-    //     setSelectAll(!selectAll);
-    // };
     const handleChildCheckboxClick = (itemId) => {
         const updatedRowsData = rowData.map((row) => {
             if (row.rowNumber === itemId) {
@@ -222,20 +208,21 @@ const Work_Assign_Area = () => {
             align: "center",
             disableColumnMenu: true,
             maxWidth: 50,
-            // flex: 1,
             position: "sticky",
             renderCell: (params) => (
                 <div className="d-flex justify-content-center dotHover">
                     <FontAwesomeIcon icon={faEllipsisV} />
                     <div className="expandDiv">
-                        <button
-                            onClick={() => {
-                                handleEditArea(params.row);
-                            }}
-                            className="myActionBtn m-1"
-                        >
-                            <PlayCircleIcon color="secondary" />
-                        </button>
+                        <Tooltip title="Work Assign Area">
+                            <button
+                                onClick={() => {
+                                    handleEditArea(params.row);
+                                }}
+                                className="myActionBtn m-1"
+                            >
+                                <img src={location} alt="Location" height={20} width={20} />
+                            </button>
+                        </Tooltip>
                     </div>
                 </div>
             ),

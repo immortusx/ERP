@@ -17,7 +17,8 @@ import AutoDeleteIcon from "@mui/icons-material/AutoDelete";
 import DoubleArrowIcon from "@mui/icons-material/DoubleArrow";
 import { setEdiassignareaData } from "../redux/slices/editassignareaSlice";
 import AreaAssignListList from "./AreaAssignListList";
-
+import { Tooltip } from "@mui/material";
+import location from "../assets/images/location.png";
 import Checkbox from "@mui/material/Checkbox";
 import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from "@mui/icons-material/Clear";
@@ -143,21 +144,14 @@ export default function Employees() {
         );
         setShowComponent(true);
         console.log(ev.user_id, "ev");
-        // setName(ev.first_name+ " "+ev.last_name);
         setId(ev.user_id);
-        // navigate("/sale/area-Assign", {
-        //   state: { assigneAreaPerUserid: ev },
-        // });
-        // navigate("/sale/area-Assign", {
-        //   state: { assigneAreaPerUser: response.data.result },
-        // });
       }
     } catch (error) {
       console.error("An error occurred while fetching data:", error);
     }
   };
 
- 
+
 
   const hideareamodal = () => {
     setShowComponent(false);
@@ -165,8 +159,6 @@ export default function Employees() {
   const columns = [
     {
       field: "id",
-      // headerAlign: "center",
-      // align: "center",
       headerName: (
         <Checkbox
           {...label}
@@ -175,7 +167,6 @@ export default function Employees() {
         />
       ),
       minWidth: 90,
-      // flex: 1,
       renderCell: (params) => (
         <Checkbox
           {...label}
@@ -238,12 +229,8 @@ export default function Employees() {
     {
       field: "phone_number",
       headerName: "Phone Number",
-      // description: 'This column has a value getter and is not sortable.',
-      // sortable: false,
       minWidth: 100,
       flex: 1,
-      // valueGetter: (params) =>
-      //     `${params.row.firstName || ''} ${params.row.lastName || ''}`,
     },
     {
       field: "is_active",
@@ -252,7 +239,6 @@ export default function Employees() {
       align: "center",
       type: "number",
       minWidth: 80,
-      // flex: 1,
       renderCell: (params) =>
         params.row.is_active ? (
           <CheckIcon className="d-flex justify-content-center" />
@@ -274,40 +260,44 @@ export default function Employees() {
       position: "sticky",
       renderCell: (params) => (
         <div>
-          <button
-            onClick={() => {
-              editActionCall(params.row);
-            }}
-            className="myActionBtn m-1"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="currentColor"
-              className="bi bi-pencil-square"
-              viewBox="0 0 16 16"
+          <Tooltip title="Edit">
+            <button
+              onClick={() => {
+                editActionCall(params.row);
+              }}
+              className="myActionBtn m-1"
             >
-              <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
-              <path
-                fillRule="evenodd"
-                d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"
-              />
-            </svg>
-          </button>
-          <button
-            onClick={() => {
-              deleteActionCall(params.row);
-            }}
-            className="myActionBtn m-1"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="currentColor"
-              className="bi bi-trash3"
-              viewBox="0 0 16 16"
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="currentColor"
+                className="bi bi-pencil-square"
+                viewBox="0 0 16 16"
+              >
+                <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                <path
+                  fillRule="evenodd"
+                  d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"
+                />
+              </svg>
+            </button>
+          </Tooltip>
+          <Tooltip title="Delete">
+            <button
+              onClick={() => {
+                deleteActionCall(params.row);
+              }}
+              className="myActionBtn m-1"
             >
-              <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5ZM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0H11Zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5h9.916Zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5Z" />
-            </svg>
-          </button>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="currentColor"
+                className="bi bi-trash3"
+                viewBox="0 0 16 16"
+              >
+                <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5ZM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0H11Zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5h9.916Zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5Z" />
+              </svg>
+            </button>
+          </Tooltip>
         </div>
       ),
     },
@@ -327,14 +317,16 @@ export default function Employees() {
         <div className="d-flex justify-content-center dotHover">
           <FontAwesomeIcon icon={faEllipsisV} />
           <div className="expandDiv">
-            <button
-              onClick={() => {
-                handleEditArea(params.row);
-              }}
-              className="myActionBtn m-1"
-            >
-              <PlayCircleIcon color="secondary" />
-            </button>
+            <Tooltip title="Work Assign Area">
+              <button
+                onClick={() => {
+                  handleEditArea(params.row);
+                }}
+                className="myActionBtn m-1"
+              >
+                <img src={location} alt="location" height={20} width={20} />
+              </button>
+            </Tooltip>
           </div>
         </div>
       ),
