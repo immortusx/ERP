@@ -47,24 +47,24 @@ pipeline {
         sh "docker push raptor2103/server:${BUILD_TAG}"
       }
     }
-    stage('Remove Current Images') {
-      steps {
-        parallel(
-          remove_client: {
-            catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS'){
-              sh 'docker rm $(docker ps -a -f name=client_img-${BUILD_TAG}) -f'
-              sh 'sleep 5s' 
-            }
-          },
-          remove_server: {
-            catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS'){
-              sh 'docker rm $(docker ps -a -f name=server_img-${BUILD_TAG}) -f'
-              sh 'sleep 5s'
-            }
-          }          
-        )
-      }
-    }    
+    // stage('Remove Current Images') {
+    //   steps {
+    //     parallel(
+    //       remove_client: {
+    //         catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS'){
+    //           sh 'docker rm $(docker ps -a -f name=client_img-${BUILD_TAG}) -f'
+    //           sh 'sleep 5s' 
+    //         }
+    //       },
+    //       remove_server: {
+    //         catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS'){
+    //           sh 'docker rm $(docker ps -a -f name=server_img-${BUILD_TAG}) -f'
+    //           sh 'sleep 5s'
+    //         }
+    //       }          
+    //     )
+    //   }
+    // }    
     stage('Run Images') {
       steps {
         sh "docker run --name server_img-${BUILD_TAG} --network host -e ENV_PORT=${ENV_PORT} -e ENV_DATABASE=${ENV_DATABASE} -e ENV_HOST=${ENV_HOST} -d raptor2103/server:${BUILD_TAG}"
