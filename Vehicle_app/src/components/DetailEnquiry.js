@@ -57,6 +57,8 @@ const DetailEnquiry = ({route}) => {
   const [isFocus, setIsFocus] = useState(false);
   const [message, setMessage] = useState('');
   const [enquiry, setEnquiry] = useState(null);
+  const [primarySource, setPrimarySource] = useState(null);
+  const [enquirySource, setEnquirySource] = useState(null);
   const [isPickerVisible, setIsPickerVisible] = useState(false);
   const [condition, setCondtion] = useState(null);
   const [categoryData, setCategoryData] = useState([]);
@@ -86,6 +88,8 @@ const DetailEnquiry = ({route}) => {
     id: '',
     fields: [],
   });
+  const [primarySourceItem, setPrimarySourceItem] = useState([]);
+  const [enquirySourceItem, setEnquirySourceItem] = useState([]);
   const [oldVehicleData, setOldVehicleData] = useState({
     maker: '',
     modalName: '',
@@ -128,14 +132,15 @@ const DetailEnquiry = ({route}) => {
     label: village.name,
     value: village.id,
   }));
+  const primarySourceDataItem = primarySourceItem.map(item => ({
+    label: item.name,
+    value: item.id,
+  }));
+  const enquirySourceItems = enquirySourceItem.map(item => ({
+    label: item.name,
+    value: item.id,
+  }));
 
-  const enquirySourceItem = [
-    {label: 'Digital', value: '25'},
-    {label: 'Telemarketing', value: '26'},
-    {label: 'News', value: '27'},
-    {label: 'Visit', value: '28'},
-    {label: 'Other', value: '29'},
-  ];
   let newTractorId = 2;
   const conditionType = [
     {label: 'Good', value: 'Good'},
@@ -207,6 +212,7 @@ const DetailEnquiry = ({route}) => {
       });
     };
     getCategory();
+    getPrimarySource();
   }, []);
 
   const getCurrentCategoriesField = async categoryId => {
@@ -221,7 +227,7 @@ const DetailEnquiry = ({route}) => {
     console.log(config);
     await axios.get(url, config).then(response => {
       if (response) {
-        // console.log(response.data.result, 'category field');
+        console.log(response.data.result, 'category field');
         setcurrentCategoryData(categoryfieldData => ({
           ...categoryfieldData,
           fields: response.data.result,
@@ -444,61 +450,72 @@ const DetailEnquiry = ({route}) => {
         );
         break;
       }
-      case 'sourceOfInquiry': {
+      case 'primarySource': {
         return (
           <View style={{marginBottom: 5}}>
             <Text style={[styles.label, {marginBottom: 5}]}>
-              Enquiry Primary Source *{' '}
-              <Text
-                onPress={() => {
-                  showfield ? setShowField(false) : setShowField(true);
-                }}
-                style={[styles.enterEnquiry, {color: '#3AA4F7'}]}>
-                Add{' '}
-                <Image
-                  style={[styles.plusImg, {width: 15, height: 15}]}
-                  source={require('../../assets/plus2.png')}
-                />
-              </Text>
+              Enquiry Primary Source *
             </Text>
-            {showfield === true ? (
-              <View style={styles.inputContainer}>
-                <TextInput
-                  style={styles.inputStyle}
-                  placeholder="Enter Enquiry Source"
-                  autoCapitalize="none"
-                  keyboardType="default"
-                  // defaultValue={enquiryData.phone || ''}
-                  onChangeText={value => onChangeHandler(value, 'enquiry')}
-                />
-              </View>
-            ) : (
-              <View style={styles.enquirySourceContainer}>
-                {/* {renderLabel()} */}
-                <Dropdown
-                  style={[
-                    styles.dropdown,
-                    isFocus && {borderColor: 'blue'},
-                    {paddingHorizontal: 5},
-                  ]}
-                  placeholderStyle={styles.placeholderStyle}
-                  selectedTextStyle={styles.selectedTextStyle}
-                  inputSearchStyle={styles.inputSearchStyle}
-                  iconStyle={styles.iconStyle}
-                  data={enquirySourceItem}
-                  search
-                  maxHeight={300}
-                  labelField="label"
-                  valueField="value"
-                  placeholder={!isFocus ? 'Select Source' : ' '}
-                  searchPlaceholder="Search..."
-                  value={enquiry}
-                  onChange={item => {
-                    setEnquiry(item.value);
-                  }}
-                />
-              </View>
-            )}
+            <View style={styles.enquirySourceContainer}>
+              {/* {renderLabel()} */}
+              <Dropdown
+                style={[
+                  styles.dropdown,
+                  isFocus && {borderColor: 'blue'},
+                  {paddingHorizontal: 5},
+                ]}
+                placeholderStyle={styles.placeholderStyle}
+                selectedTextStyle={styles.selectedTextStyle}
+                inputSearchStyle={styles.inputSearchStyle}
+                iconStyle={styles.iconStyle}
+                data={primarySourceDataItem}
+                search
+                maxHeight={300}
+                labelField="label"
+                valueField="value"
+                placeholder={!isFocus ? 'Select Primary Source' : ' '}
+                searchPlaceholder="Search..."
+                value={primarySource}
+                onChange={item => {
+                  setPrimarySource(item.value);
+                }}
+              />
+            </View>
+          </View>
+        );
+        break;
+      }
+      case 'sourceOfEnquiry': {
+        return (
+          <View style={{marginBottom: 5}}>
+            <Text style={[styles.label, {marginBottom: 5}]}>
+              Enquiry Source *
+            </Text>
+            <View style={styles.enquirySourceContainer}>
+              {/* {renderLabel()} */}
+              <Dropdown
+                style={[
+                  styles.dropdown,
+                  isFocus && {borderColor: 'blue'},
+                  {paddingHorizontal: 5},
+                ]}
+                placeholderStyle={styles.placeholderStyle}
+                selectedTextStyle={styles.selectedTextStyle}
+                inputSearchStyle={styles.inputSearchStyle}
+                iconStyle={styles.iconStyle}
+                data={enquirySourceItems}
+                search
+                maxHeight={300}
+                labelField="label"
+                valueField="value"
+                placeholder={!isFocus ? 'Select Source' : ' '}
+                searchPlaceholder="Search..."
+                value={enquirySource}
+                onChange={item => {
+                  setEnquirySource(item.value);
+                }}
+              />
+            </View>
           </View>
         );
         break;
@@ -904,6 +921,46 @@ const DetailEnquiry = ({route}) => {
       }
     });
   };
+  const getPrimarySource = async () => {
+    const url = `${API_URL}/api/enquiry/get-primary-source`;
+    console.log('get variant', url);
+    const token = await AsyncStorage.getItem('rbacToken');
+    const config = {
+      headers: {
+        token: token ? token : '',
+      },
+    };
+    console.log(config);
+    await axios.get(url, config).then(response => {
+      if (response) {
+        console.log(response.data.result, 'primary sourcer');
+        setPrimarySourceItem(response.data.result);
+      }
+    });
+  };
+  const getEnquirySource = async primarySourceId => {
+    const url = `${API_URL}/api/enquiry/get-source-enquiry/${primarySourceId}`;
+    console.log('get variant', url);
+    const token = await AsyncStorage.getItem('rbacToken');
+    const config = {
+      headers: {
+        token: token ? token : '',
+      },
+    };
+    console.log(config);
+    await axios.get(url, config).then(response => {
+      if (response) {
+        console.log(response.data.result, 'enquiry source');
+        setEnquirySourceItem(response.data.result);
+      }
+    });
+  };
+
+  useEffect(() => {
+    if (primarySource) {
+      getEnquirySource(primarySource);
+    }
+  }, [primarySource]);
   const handleReadValue = () => {
     console.log(selectedOption);
   };
@@ -949,7 +1006,7 @@ const DetailEnquiry = ({route}) => {
   }, [enquiryState]);
 
   const submitEnquiry = () => {
-    const {firstname, lastname, phone, whatsappno, enquiry} = enquiryData;
+    const {firstname, lastname, phone, whatsappno} = enquiryData;
     const formData = {
       first_name: firstname,
       last_name: lastname,
@@ -972,7 +1029,8 @@ const DetailEnquiry = ({route}) => {
       variantName: oldVariant,
       year: manuYearDate,
       condition_of: condition,
-      sourceOfEnquiry: enquiry,
+      enquiryPrimarySource: primarySource,
+      sourceOfEnquiry: enquirySource,
       old_tractor: selectedOption,
     };
     if (enquiryData.firstname.length > 0) {

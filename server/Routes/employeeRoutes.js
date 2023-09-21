@@ -30,7 +30,7 @@ router.post(
     const phoneNumber = req.body.phoneNumber;
     const bankname = req.body.bankname || null;
     const bankBranch = req.body.bankBranch || null;
-    const accountNo = req.body.accountNo || 00;
+    const accountNo = req.body.accountNo || 0;
     const accountType = req.body.accountType || null;
     const ifscCode = req.body.ifscCode || null;
     const bloodgroup = req.body.bloodgroup || null;

@@ -103,7 +103,7 @@ router.post('/', async (req, res) => {
                   res.send({ isSuccess: true, message: 'success', result: { branchResult, tokenIs, currentBranch } })
                   console.log({ isSuccess: true, message: 'success', result: { branchResult, tokenIs, currentBranch } })
                 } else {
-                  let currentBranch = "-1"
+                  let currentBranch = "1"
                   const tokenData = {
                     id: result[0].id,
                     branchId: currentBranch
