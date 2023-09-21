@@ -8,8 +8,10 @@ import { setShowMessage } from "../redux/slices/notificationSlice";
 import axios from "axios";
 
 const Delivery = () => {
-  const [seletedOwned, setSelectedOwned] = useState("Exchange No");
+  const [seletedOwned, setSelectedOwned] = useState("Exchange Yes");
   const [customerId, setCustomerId] = useState(null);
+  const [enquiryId, setEnquiryId] = useState(null);
+  const [oldProduct, setOldProduct] = useState({});
   const [Id, setId] = useState(null);
   const location = useLocation();
   const dispatch = useDispatch();
@@ -24,7 +26,7 @@ const Delivery = () => {
     bank_name: "",
     deliveryDate: new Date(),
     retailDate: new Date(),
-    selectedOption: "Exchange No",
+    selectedOption: "Exchange Yes",
 
     maker: "",
     modalName: "",
@@ -39,6 +41,7 @@ const Delivery = () => {
   useEffect(() => {
     if (editEnquiryData) {
       setCustomerId(editEnquiryData.id);
+      setEnquiryId(editEnquiryData.id);
     }
   });
   const generateYears = (startYear, endYear) => {
@@ -95,7 +98,6 @@ const Delivery = () => {
     });
   }
   async function getModelList(Id) {
-    console.log(Id, "rtoiuuighguo");
     const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/get-model/${Id}`;
     const config = {
       headers: {
@@ -104,7 +106,6 @@ const Delivery = () => {
     };
     await axios.get(url, config).then((response) => {
       if (response.data) {
-        console.log(response.data.result, "result");
         if (response.data.isSuccess) {
           setDataList((datalist) => ({
             ...datalist,
@@ -123,7 +124,6 @@ const Delivery = () => {
     };
     await axios.get(url, config).then((response) => {
       if (response.data) {
-        console.log(response.data.result, "result");
         if (response.data.isSuccess) {
           setDataList((datalist) => ({
             ...datalist,
@@ -170,10 +170,6 @@ const Delivery = () => {
       }
     });
   };
-  useEffect(() => {
-    getBranchs();
-    getModelList(Id);
-  }, [Id]);
 
   function changeHandlerNewEnquiry(e) {
     const name = e.target.name;
@@ -218,7 +214,7 @@ const Delivery = () => {
       bank_name: "",
       deliveryDate: new Date(),
       retailDate: new Date(),
-      selectedOption: "Exchange No",
+      selectedOption: "Exchange Yes",
 
       maker: "",
       modalName: "",
@@ -262,10 +258,26 @@ const Delivery = () => {
     }
   };
 
+  const getoldProducts = async () => {
+    const id = enquiryId;
+    console.log(id, "enquiryId");
+    const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/get-old-product-details/${id}`;
+    const config = {
+      headers: {
+        token: localStorage.getItem("rbacToken"),
+      },
+    };
+    await axios.get(url, config).then((response) => {
+      console.log(response.data, "closing");
+      if (response.data.result) {
+        setOldProduct(response.data.result[0]);
+      }
+    });
+  };
+
   const handleSaveDelivery = async () => {
     const id = customerId;
     const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/set-new-booking/${id}`;
-    console.log(id, "*********");
     const config = {
       headers: {
         token: localStorage.getItem("rbacToken"),
@@ -274,14 +286,19 @@ const Delivery = () => {
     await axios.post(url, deliverdata, config).then((response) => {
       console.log(response.data, "closing");
       if (response.data) {
-        // dispatch(getEnquiryData());
       }
     });
 
     clearstate();
     dispatch(setShowMessage("Delivery Enquiry saved"));
-    console.log(deliverdata, "deliverdata");
   };
+
+  useEffect(() => {
+    getBranchs();
+    getModelList(Id);
+    getoldProducts();
+  }, [Id]);
+
   return (
     <>
       <div className=" row mt-4">
@@ -460,7 +477,7 @@ const Delivery = () => {
             </label>
 
             <input
-              defaultChecked={seletedOwned === "NO" ? true : false}
+              defaultChecked={seletedOwned === "Exchange Yes" ? true : false}
               onChange={changeHandlerNewEnquiry}
               value="Exchange No"
               className="ms-3"
