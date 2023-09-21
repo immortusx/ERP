@@ -1891,10 +1891,9 @@ router.post("/deletenquirysources", tokenCheck, async (req, res) => {
 router.post("/upload-work-log", tokenCheck, async (req, res) => {
   console.log(">>>>>/upload-work-log", req.body);
   try {
-    const { workDescription, spendTime } = req.body;
-    const task = 1;
-    const userId = 2;
-    const url = `SELECT * FROM addtask_data where employee = ${userId} and task = ${task}`;
+    const { workDescription, spendTime, taskId } = req.body;
+    const userId = req.myData.userId;
+    const url = `SELECT * FROM addtask_data where employee = ${userId} and task = ${taskId}`;
     await db.query(url, async (err, results) => {
       if (err) {
         console.log({ isSuccess: false, result: err });
@@ -1915,7 +1914,7 @@ router.post("/upload-work-log", tokenCheck, async (req, res) => {
                 res.send({ isSuccess: false, result: "error" });
               } else {
                 console.log({ isSuccess: true, result: workLogSql });
-                res.send({ isSuccess: true, result: results });
+                res.send({ isSuccess: true, result: 'success' });
               }
             }
           );
