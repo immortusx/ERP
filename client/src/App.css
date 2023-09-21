@@ -223,6 +223,16 @@ select.myInput {
   padding: 5px 5px;
   border-radius: 10px;
 }
+.myActionBtnicon:hover {
+  background-color: white !important;
+}
+
+.myActionBtnicon {
+  border: none;
+  outline: none;
+  padding: 5px 5px;
+  border-radius: 10px;
+}
 
 .tableMenuHover .MuiDataGrid-row {
   position: relative;
