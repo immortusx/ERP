@@ -1,47 +1,72 @@
-import React,{useState} from 'react'
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Modal, Button } from "react-bootstrap";
 import { useNavigate, useLocation } from "react-router";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import DatePicker from "react-datepicker";
-import Delivery from './Delivery';
-import LostEnquiry from './LostEnquiry';
-import InValidEnquiry from './InValidEnquiry';
+import Delivery from "./Delivery";
+import LostEnquiry from "./LostEnquiry";
+import InValidEnquiry from "./InValidEnquiry";
+import {
+  enquiryFollowUpDB,
+  clearEnquiryFollowupState,
+} from "../redux/slices/followupSlice";
+import { setShowMessage } from "../redux/slices/notificationSlice";
 
 const FollowUp = () => {
-      const [startDate, setStartDate] = useState(new Date());
-      const [value, setValue] = useState("followup"); 
-    const navigate = useNavigate();
-    const location = useLocation();
-    const enquiryId = location.state;
-    const [followupdata,setFollwUpData]=useState({
-       discussion:"",
-       followupdate: new Date(),
-       nextfollowupdate: new Date(), 
-    })
+  const enquiryFollowupSlice = useSelector(
+    (state) => state.enquiryFollowupSlice.enquiryFollowupSlice
+  );
+  const [startDate, setStartDate] = useState(new Date());
+  const [value, setValue] = useState("followup");
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const editEnquiryData = location.state;
+  const [followupdata, setFollwUpData] = useState({
+    last_discussion: "",
+    followupdate: new Date(),
+    next_followup_date: new Date(),
+  });
 
-const redirectModal = () => {
-  navigate(-1);
-}
+  const redirectModal = () => {
+    navigate(-1);
+  };
 
-   function changeHandler(e) {
-     const name = e.target.name;
-     const value = e.target.value;
-          setFollwUpData((followupdata) => ({ ...followupdata, [name]: value }));
-     
-   }
-   const handlesave =()=>{
- if (enquiryId) {
-   followupdata.enquiryId = enquiryId;
-   //    dispatch(editEnquiryDb(enquiryData));
- }
-    // console.log(followupdata,"followupdata")
-   }
+  function changeHandler(e) {
+    const name = e.target.name;
+    const value = e.target.value;
+    setFollwUpData((followupdata) => ({ ...followupdata, [name]: value }));
+  }
+
+  function clearStateAndInp() {
+    setFollwUpData({
+      last_discussion: "",
+      followupdate: new Date(),
+      next_followup_date: new Date(),
+    });
+  }
+  const handlesave = () => {
+    if (editEnquiryData.id) {
+      followupdata.enquiryId = editEnquiryData.id;
+      followupdata.customer_id = editEnquiryData.id;
+        dispatch(enquiryFollowUpDB(followupdata));
+      console.log(followupdata, "followupdata");
+    }
+clearStateAndInp();
+dispatch(setShowMessage("Follow Up Inserted"));
+  };
 
   const handleChange = (event) => {
-    setValue(event.target.value); 
+    setValue(event.target.value);
   };
+
+ 
+  
+
+
   return (
     <main className="bg-white p-3 rounded">
       <div className=" row m-0">
@@ -97,12 +122,12 @@ const redirectModal = () => {
             <p className="m-3">Select Next Follow Up Date*</p>
             <DatePicker
               className="m-3 p-1 rounded-pill text-center"
-              selected={followupdata.nextfollowupdate}
-              name="nextfollowupdate"
+              selected={followupdata.next_followup_date}
+              name="next_followup_date"
               onChange={(date) =>
                 setFollwUpData((followupdata) => ({
                   ...followupdata,
-                  ["nextfollowupdate"]: date,
+                  ["next_followup_date"]: date,
                 }))
               }
             />
@@ -116,11 +141,12 @@ const redirectModal = () => {
               className="form-control"
               id="exampleFormControlTextarea1"
               rows="4"
-              name="discussion"
+              name="last_discussion"
+              value={followupdata.last_discussion}
             ></textarea>
           </div>
           <button
-          onClick={handlesave}
+            onClick={handlesave}
             className="col-12 col-sm-5 col-lg-2 myBtn py-2 my-3"
             type="button"
           >
@@ -142,6 +168,6 @@ const redirectModal = () => {
       ) : null}
     </main>
   );
-}
+};
 
-export default FollowUp
+export default FollowUp;

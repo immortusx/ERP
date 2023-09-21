@@ -19,7 +19,7 @@ export const enquiryFollowUpDB = createAsyncThunk(
         token: localStorage.getItem("rbacToken"),
       },
     };
-    const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/category-insert-fields`;
+    const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/set-follow-up`;
     return await Axios.post(url, data, config).then((response) => {
       console.log("response.data", response.data);
       return response.data;
