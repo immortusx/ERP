@@ -22,7 +22,7 @@ import location from "../assets/images/location.png";
 import Checkbox from "@mui/material/Checkbox";
 import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from "@mui/icons-material/Clear";
-
+import workAssign from "../assets/images/assign.png";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import Axios from "axios";
 import moment from "moment";
@@ -150,6 +150,14 @@ export default function Employees() {
       console.error("An error occurred while fetching data:", error);
     }
   };
+
+  const handleEditWork = async (username) => {
+    navigate("/administration/configuration/Task/AddTask", {
+      state: { username:username },
+    });
+    setShowComponent(true);
+    setId(username);
+  }
 
 
 
@@ -310,14 +318,14 @@ export default function Employees() {
       headerAlign: "center",
       align: "center",
       disableColumnMenu: true,
-      maxWidth: 50,
+      maxWidth: 100,
       // flex: 1,
       position: "sticky",
       renderCell: (params) => (
         <div className="d-flex justify-content-center dotHover">
           <FontAwesomeIcon icon={faEllipsisV} />
           <div className="expandDiv">
-            <Tooltip title="Work Assign Area">
+            <Tooltip title="Assign Area">
               <button
                 onClick={() => {
                   handleEditArea(params.row);
@@ -325,6 +333,16 @@ export default function Employees() {
                 className="myActionBtn m-1"
               >
                 <img src={location} alt="location" height={20} width={20} />
+              </button>
+            </Tooltip>
+            <Tooltip title="Work Assign">
+              <button
+                onClick={() => {
+                  handleEditWork(params.row);
+                }}
+                className="myActionBtn m-1"
+              >
+                <img src={workAssign} alt="workAssign" height={20} width={20} />
               </button>
             </Tooltip>
           </div>

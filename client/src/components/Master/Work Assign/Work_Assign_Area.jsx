@@ -213,7 +213,7 @@ const Work_Assign_Area = () => {
                 <div className="d-flex justify-content-center dotHover">
                     <FontAwesomeIcon icon={faEllipsisV} />
                     <div className="expandDiv">
-                        <Tooltip title="Work Assign Area">
+                        <Tooltip title="Assign Area">
                             <button
                                 onClick={() => {
                                     handleEditArea(params.row);

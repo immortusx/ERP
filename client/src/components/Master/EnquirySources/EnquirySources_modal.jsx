@@ -84,7 +84,6 @@ export default function EnquirySources_model() {
         try {
             const response = await Axios.get(url, config);
             if (response.data?.isSuccess) {
-                console.log(response.data.result, "all satehhhhhhhhhhhhh");
                 setRowData(response.data.result);
                 setEsourceList(response.data.result);
             }
@@ -102,9 +101,6 @@ export default function EnquirySources_model() {
     const handleModalSubmit = async (e) => {
         const eSourcesNameData = rowData;
         const eSourcesData = sourceRowsArr;
-        // console.log(manufacturerModalData);
-        // console.log(manufacturerID);
-
         const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/addenquirysources`;
         const config = {
             headers: {
@@ -145,7 +141,6 @@ export default function EnquirySources_model() {
     
         await axios.post(url, requestData, config).then((response) => {
           if (response.data && response.data.isSuccess) {
-            console.log(response.data.result)
             hideConfirmationModal();
             navigate("/administration/configuration/enquirysources")
             dispatch(setShowMessage("Enquiry Sources Sucessfully Deleted."));
