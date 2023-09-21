@@ -49,20 +49,12 @@ pipeline {
     }
     stage('Remove Current Images') {
       steps {
-        parallel(
-          remove_client: {
-            catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS'){
-              sh 'docker stop $(docker ps -aqf name=client_img-${BUILD_TAG})'
-              sh 'docker rm $(docker ps -aqf name=client_img-${BUILD_TAG})'
-            }
-          },
-          remove_server: {
-            catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS'){
-              sh 'docker stop $(docker ps -aqf name=server_img-${BUILD_TAG})'
-              sh 'docker rm $(docker ps -aqf name=server_img-${BUILD_TAG})'
-            }
-          }          
-        )
+
+        catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS'){
+          sh 'docker stop $(docker ps -aqf name=client_img-${BUILD_TAG}) && docker rm $(docker ps -aqf name=client_img-${BUILD_TAG}) && docker stop $(docker ps -aqf name=server_img-${BUILD_TAG}) && docker rm $(docker ps -aqf name=server_img-${BUILD_TAG})'
+          sh 'sleep 10s'
+        }
+                  
       }
     }    
     stage('Run Images') {
