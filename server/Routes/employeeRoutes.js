@@ -1,13 +1,13 @@
 const express = require("express");
 const async = require("async");
-const fs = require('fs');
+const fs = require("fs");
 const moment = require("moment");
 const { tokenCheck } = require("../Auth/TokenCheck");
 const { checkUserPermission } = require("../Auth/userPermission");
 const { hasThePass, compareTheHass } = require("../Auth/Bcrypt");
 const { db } = require("../Database/dbConfig");
 const uploadFile = require("../Utils/multerMiddaeware");
-const path = require('path');
+const path = require("path");
 
 const router = express.Router();
 let none = 1;
@@ -54,6 +54,18 @@ router.post(
         const result = await queryDatabase(url);
 
         const userId = result.insertId;
+        if (userId) {
+          const sqlQuery = `INSERT INTO branch_department_user(branch_id,department_id,user_id, role_id) VALUES('${branch}','${department}','${result.insertId}', '${role}')`;
+          await db.query(sqlQuery, (err, result) => {
+            if (err) {
+              console.log({ isSuccess: false, result: err });
+              res.send({ isSuccess: false, result: "error" });
+            } else {
+              console.log({ isSuccess: true, result: url });
+              // res.send({ isSuccess: true, result: "success" });
+            }
+          });
+        }
         console.log(url, "url");
         console.log("result *******", result);
 
@@ -176,7 +188,7 @@ router.post(
     console.log(">>>>>editemployeee");
     console.log(req.body);
     let logoImage = req.body.logo;
-    console.log('req.file', req.file)
+    console.log("req.file", req.file);
     if (req.file) {
       logoImage = `/upload/${req.file.filename}`;
     }
@@ -265,17 +277,18 @@ router.get("/delete-employee/:id", tokenCheck, async (req, res) => {
 });
 
 //=====================Upload Document========================
-router.post("/upload-document",
+router.post(
+  "/upload-document",
   tokenCheck,
   uploadFile.single("document"),
   async (req, res) => {
     try {
-      console.log(req.body, 'reo');
-      console.log(req.file.filename, 'rer');
+      console.log(req.body, "reo");
+      console.log(req.file.filename, "rer");
       // const logoImage = `/upload/${req.file.filename}`;
       // console.log(logoImage, "logoimg");
       let logoImage = req.body.logo;
-      console.log('req.file', req.file)
+      console.log("req.file", req.file);
       if (req.file) {
         logoImage = `/upload/${req.file.filename}`;
       }
@@ -285,25 +298,29 @@ router.post("/upload-document",
         .slice(0, 19)
         .replace("T", " ");
 
-      const sql = "INSERT INTO documents (document_path, created_at) VALUES (?, ?)";
+      const sql =
+        "INSERT INTO documents (document_path, created_at) VALUES (?, ?)";
       const values = [logoImage, formattedDate];
 
       db.query(sql, values, (err, result) => {
         if (err) {
           console.error(err);
-          return res.status(500).json({ isSuccess: false, result: 'Error uploading document' });
+          return res
+            .status(500)
+            .json({ isSuccess: false, result: "Error uploading document" });
         }
         console.log({ isSuccess: true, result: result });
         res.status(200).json({ isSuccess: true, result: result });
       });
     } catch (error) {
       console.error(error);
-      res.status(500).json({ isSuccess: false, result: 'Server error' });
+      res.status(500).json({ isSuccess: false, result: "Server error" });
     }
-  });
+  }
+);
 
 //==================Download Document================
-router.post('/download-document', tokenCheck, (req, res) => {
+router.post("/download-document", tokenCheck, (req, res) => {
   try {
     const filename = req.body.downloadFilePath;
 
@@ -311,21 +328,21 @@ router.post('/download-document', tokenCheck, (req, res) => {
     console.log(filePath, "path");
 
     if (!fs.existsSync(filePath)) {
-      res.status(404).json({ isSuccess: false, result: 'File not found' });
+      res.status(404).json({ isSuccess: false, result: "File not found" });
     } else {
       // If the file exists, initiate the download
       res.download(filePath, (err) => {
         if (err) {
-          console.error('Download error:', err);
-          res.status(500).json({ isSuccess: false, result: 'Download failed' });
+          console.error("Download error:", err);
+          res.status(500).json({ isSuccess: false, result: "Download failed" });
         } else {
-          console.log('Download successful');
+          console.log("Download successful");
         }
       });
     }
   } catch (error) {
     console.error(error);
-    res.status(500).json({ isSuccess: false, result: 'Server error' });
+    res.status(500).json({ isSuccess: false, result: "Server error" });
   }
 });
 

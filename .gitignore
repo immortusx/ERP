@@ -18,7 +18,6 @@ build.zip
 *.log
 
 # Package files
-*.jar
 
 # Maven
 target/
