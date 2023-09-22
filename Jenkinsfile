@@ -36,7 +36,7 @@ pipeline {
             sh "docker build ./client/ -t raptor1702/client:${BUILD_TAG}"
           },
           build_server: {
-            sh "docker build ./server/ -t raptor2103/server:${BUILD_TAG}"
+            sh "docker build --build-arg WORKSPACE=${WORKSPACE} ./server/ -t raptor2103/server:${BUILD_TAG}"
           }          
         )
       }
