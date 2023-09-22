@@ -21,8 +21,8 @@ const AddTask = ({ workFor }) => {
   const currentBranch = localStorage.getItem("currentDealerId");
   const location = useLocation();
   const workAssign = location.state?.username;
-  const addTaskState = useSelector(state => state.addTaskSlice.addTaskState)
-
+  const workAssignEmployee = location.state?.selectedEmployeeIDs;
+  const addTaskState = useSelector(state => state.addTaskSlice.addTaskState);
   const [newAddTask, setNewAddTask] = useState({
     listDsp: [],
     listTasktype: [],
@@ -42,6 +42,24 @@ const AddTask = ({ workFor }) => {
       setSelectedEmployee(updatedEmployee);
     }
   }, [workAssign])
+
+  useEffect(() => {
+    if (workAssignEmployee && newAddTask.listDsp) {
+      const updatedEmployees = []; // Initialize an empty array
+
+      newAddTask.listDsp.forEach((item) => {
+        if (workAssignEmployee.includes(item.id)) {
+          console.log(item.id, 'iudud');
+          updatedEmployees.push({
+            value: item.id,
+            label: `${item.first_name} ${item.last_name}`,
+          });
+        }
+      });
+
+      setSelectedEmployee(updatedEmployees); // Set the selected employees array
+    }
+  }, [workAssignEmployee, newAddTask.listDsp]);
 
 
   const handleStartDateChange = (date) => {
@@ -70,7 +88,6 @@ const AddTask = ({ workFor }) => {
     setEmployees(selectedOptions);
     setSelectedEmployee(selectedOptions);
   };
-
 
   useEffect(() => {
     if (currentBranch) {
@@ -174,8 +191,8 @@ const AddTask = ({ workFor }) => {
 
   }, [])
   const handleSubmit = async () => {
-    const selectedEmployeeIds = employees.map(employee => employee.value);
-
+    const selectedEmployeeIds = selectedEmployee.map(employee => employee.value);
+   
     const data = {
       employees: selectedEmployeeIds, // Send the array of selected employee IDs
       taskTypes: taskTypes,

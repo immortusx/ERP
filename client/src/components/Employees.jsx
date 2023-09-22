@@ -22,7 +22,7 @@ import location from "../assets/images/location.png";
 import Checkbox from "@mui/material/Checkbox";
 import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from "@mui/icons-material/Clear";
-import workAssign from "../assets/images/assign.png";
+import workAssign from "../assets/images/clipboard.png";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import Axios from "axios";
 import moment from "moment";
@@ -44,9 +44,14 @@ export default function Employees() {
   };
 
   const handleChildCheckboxClick = (itemId) => {
+    console.log(itemId, 'itemkf')
     const updatedRowsData = rowData.map((row) => {
       if (row.id === itemId) {
-        console.log(row.id, "updatedRowsData");
+        console.log(row.id, "updatedRowsDataaaaaaaaaaaaaa");
+        // setSelectedEmployeeIDs((pre)=> ({
+        //   ...pre,
+        //   [row.first_name + ' ' + row.last_name]: !row.checkbox,
+        // }))
         return {
           ...row,
           checkbox: !row.checkbox, // Toggle the checkbox value
@@ -55,7 +60,15 @@ export default function Employees() {
       return row;
     });
     setRowData(updatedRowsData);
+
+    // Update selected items array
+    const updatedSelectedItems = updatedRowsData
+      .filter((row) => row.checkbox)
+      .map((row) => row.id);
+    console.log(updatedSelectedItems, "updatedSelectedItems");
+    setSelectedEmployeeIDs(updatedSelectedItems);
   };
+
 
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
   const [employeeListData, setEmployeeListData] = useState([]);
@@ -65,6 +78,7 @@ export default function Employees() {
     useState(false);
   const [deleteMessage, setDeleteMessage] = useState(null);
   const [type, setType] = useState(null);
+  const [selectedEmployeeIDs, setSelectedEmployeeIDs] = useState([]);
   const [id, setId] = useState(null);
   const employeeListState = useSelector(
     (state) => state.getemployeeListSlice.employeeListState
@@ -153,7 +167,7 @@ export default function Employees() {
 
   const handleEditWork = async (username) => {
     navigate("/administration/configuration/Task/AddTask", {
-      state: { username:username },
+      state: { username: username },
     });
     setShowComponent(true);
     setId(username);
@@ -353,7 +367,7 @@ export default function Employees() {
   useEffect(() => {
     const rowsData = employeeListData.map((item, index) => ({
       ...item,
-      id: index + 1,
+      id: item.id,
       checkbox: selectAll,
     }));
     setRowData(rowsData);
@@ -396,6 +410,16 @@ export default function Employees() {
   const hideConfirmationModal = () => {
     setDisplayConfirmationModal(false);
   };
+  const redirectToTask = () => {
+    navigate("/administration/configuration/Task/AddTask", {
+      state: { selectedEmployeeIDs: selectedEmployeeIDs }
+    });
+  }
+  const redirectToassign = () => {
+    navigate("/sale/area-Assign/add-AsignArea", {
+      state: { selectedEmployeeIDs: selectedEmployeeIDs }
+    });
+  }
   const submitDelete = async (type, id) => {
     const url = `${process.env.REACT_APP_NODE_URL}/api/employees/delete-employee/${id}`;
     const config = {
@@ -426,21 +450,46 @@ export default function Employees() {
             onClick={() => {
               navigate("/administration/employees/add");
             }}
-            className="d-flex align-items-center"
+            className="d-flex align-items-center myActionBtnicon"
             type="button"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              fill="currentColor"
-              className="bi bi-plus-circle"
-              viewBox="0 0 16 16"
-            >
-              <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
-              <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
-            </svg>
-            <h6 className="m-0 ps-1">Add Employee</h6>
+            <Tooltip title="Add Employee">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="22"
+                height="22"
+                fill="currentColor"
+                className="bi bi-plus-circle"
+                viewBox="0 0 16 16"
+              >
+                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
+              </svg>
+            </Tooltip>
+          </div>
+          <div
+            onClick={() => {
+              redirectToassign()
+            }}
+            className="d-flex align-items-center myActionBtnicon"
+            type="button"
+            style={{ marginLeft: '10px' }}
+          >
+            <Tooltip title="Assign Area">
+              <img src={location} alt="location" height={22} width={22} />
+            </Tooltip>
+          </div>
+          <div
+            onClick={() => {
+              redirectToTask()
+            }}
+            className="d-flex align-items-center myActionBtnicon"
+            type="button"
+            style={{ marginLeft: '10px' }}
+          >
+            <Tooltip title="work Assign">
+              <img src={workAssign} alt="workAssign" height={24} width={22} />
+            </Tooltip>
           </div>
         </div>
 
