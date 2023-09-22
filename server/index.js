@@ -58,7 +58,7 @@ app.get("/api", (req, res) => {
   });
 });
 
-app.get('/download', (req, res) => {
+app.get('/api/download', (req, res) => {
   const remoteFilePath = "/usr/src/app/server/app-release.apk"; 
   const fileName = 'Vehicle-CRM.apk'; 
 
