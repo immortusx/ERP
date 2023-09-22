@@ -18,6 +18,17 @@ pipeline {
   }
   
   stages {
+    stage('Build Android APP') {
+      steps {
+        sh 'cd ${WORKSPACE}/Vehicle_app && npm install'
+        sh 'export ANDROID_HOME=$HOME/android/sdk'
+        sh 'export PATH=$ANDROID_HOME/cmdline-tools/tools/bin/:$PATH'
+        sh 'export PATH=$ANDROID_HOME/emulator/:$PATH'
+        sh 'export PATH=$ANDROID_HOME/platform-tools/:$PATH'
+        sh 'cd ${WORKSPACE}/Vehicle_app/android && ./gradlew clean assembleRelease'
+        sh 'cd ../..'
+      }
+    }
      stage('Build Images') {
       steps {
         parallel(
