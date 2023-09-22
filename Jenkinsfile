@@ -7,7 +7,7 @@ pipeline {
       string (defaultValue: '95.216.144.126', description: 'Choose Host', name: 'ENV_HOST')
       string (defaultValue: 'vehical_crm_db', description: 'Choose Database for server', name: 'ENV_DATABASE')
       string (defaultValue: 'https://dev.balkrushna.com', description: 'Choose react app node url', name: 'REACT_APP_NODE_URL')
-      string (defaultValue: "latest", description: 'Build Tag', name: 'BUILD_TAG')
+      string (defaultValue: "dev", description: 'Build Tag', name: 'BUILD_TAG')
     }  
   options {
     buildDiscarder(logRotator(numToKeepStr: '5'))
