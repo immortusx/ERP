@@ -59,7 +59,7 @@ app.get("/api", (req, res) => {
 });
 
 app.get('/api/download', (req, res) => {
-  const remoteFilePath = "/var/lib/jenkins/workspace/vehicle-crm/android-app-build-freestyle/Vehicle_app/android/app/build/outputs/apk/release/app-release.apk"; 
+  const remoteFilePath = "/usr/src/app/server/app-release.apk"; 
   const fileName = 'Vehicle-CRM.apk'; 
 
   // Stream the remote file to the response
