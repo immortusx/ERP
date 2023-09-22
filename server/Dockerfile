@@ -4,8 +4,6 @@ COPY package*.json ./
 RUN npm install
 ARG WORKSPACE
 COPY . ./server
-WORKDIR /var/lib/jenkins/workspace/vehicle-crm/compile-build-run-application/Vehicle_app/android/app/build/outputs/apk/release
-COPY . ./server
 WORKDIR /usr/src/app/server
 EXPOSE $PORT
 CMD ["node", "index.js"]

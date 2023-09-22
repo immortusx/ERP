@@ -27,6 +27,7 @@ pipeline {
         sh 'export PATH=$ANDROID_HOME/platform-tools/:$PATH'
         sh 'cd ${WORKSPACE}/Vehicle_app/android && ./gradlew clean assembleRelease'
         sh 'cd ../..'
+        sh 'cp ${WORKSPACE}/Vehicle_app/android/app/build/outputs/apk/release/app-release.apk ${WORKSPACE}/server/'
       }
     }
      stage('Build Images') {
