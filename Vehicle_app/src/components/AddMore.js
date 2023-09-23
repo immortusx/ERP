@@ -58,7 +58,7 @@ const AddMore = () => {
 
   useEffect(() => {
     if (result) {
-      // console.log(result.result, 'tttttttttt');
+      console.log(result.result, 'tttttttttt');
       setResultData(result.result);
     }
   }, [result]);

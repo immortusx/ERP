@@ -1411,7 +1411,9 @@ router.post("/set-new-booking/:id", tokenCheck, async (req, res) => {
           console.log({ isSuccess: true, result: enquiryResult });
           // res.send({ isSuccess: true, result: result });
           const enquiry_id = enquiryResult[0].id;
-          const formattedDeliveryDate =new Date(deliveryDate).toISOString().split("T")[0];
+          const formattedDeliveryDate = new Date(deliveryDate)
+            .toISOString()
+            .split("T")[0];
           const formattedretailDate = new Date(retailDate)
             .toISOString()
             .split("T")[0];
@@ -1905,24 +1907,33 @@ router.post("/upload-work-log", tokenCheck, async (req, res) => {
       } else {
         console.log({ isSuccess: true, result: results });
         // res.send({ isSuccess: true, result: results });
-        if (results) {
+        if (results.length > 0) {
           const tasktype = results[0].tasktype;
           const task = results[0].task;
           const workLogSql = `INSERT INTO worklog (user_id, tasktype, task, work_description, datetime, spendtime) VALUES(?,?,?,?,?,?)`;
           await db.query(
             workLogSql,
-            [userId, tasktype || 1, task || 1, workDescription, new Date(), spendTime],
+            [
+              userId,
+              tasktype || 1,
+              task || 1,
+              workDescription,
+              new Date(),
+              spendTime,
+            ],
             async (err, result) => {
               if (err) {
                 console.log({ isSuccess: false, result: err });
                 res.send({ isSuccess: false, result: "error" });
               } else {
                 console.log({ isSuccess: true, result: workLogSql });
-                res.send({ isSuccess: true, result: 'success' });
+                res.send({ isSuccess: true, result: "success" });
               }
             }
           );
-        }  
+        } else {
+          res.send({ isSuccess: true, result: "Task Not Assigned" });
+        }
       }
     });
   } catch (err) {
