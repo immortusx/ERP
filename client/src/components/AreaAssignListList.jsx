@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -19,7 +20,7 @@ import {
 } from "../redux/slices/assignedAreaSlice";
 import { setShowMessage } from "../redux/slices/notificationSlice";
 import AlertDeleteModal from "./AlertDelete/AlertDeleteModal";
-export default function AreaAssignListList({ showModal, hideModal, id }) {
+export default function AreaAssignListList({ showModal, hideModal, id, selectedEmployeeIds }) {
   const [areaAssign, setareaAssign] = useState([]);
   const [assigneAreaPerUser, setAssignedAreaPerUser] = useState([]);
   const [show, setShow] = useState(false);
@@ -33,6 +34,12 @@ export default function AreaAssignListList({ showModal, hideModal, id }) {
   const [displayConfirmationModal, setDisplayConfirmationModal] =
     useState(false);
   const [deleteMessage, setDeleteMessage] = useState(null);
+  const location = useLocation();
+
+  const getIds = () => {
+    return selectedEmployeeIds;
+  }
+
   //   const [id, setId] = useState(null);
   const [categoryd, setCategoryd] = useState(null);
   const [dId, setDId] = useState(null);
@@ -73,10 +80,7 @@ export default function AreaAssignListList({ showModal, hideModal, id }) {
   const handleShow = () => {
     setShow(true);
   };
-  const handleChangeUser = (selectedOption) => {
-    console.log("selectedOptionmm", selectedOption);
-    setSelectedOptionUser(selectedOption);
-  };
+ 
   const handleChangeCategory = (selectedOption) => {
     setselectedCtaegory(selectedOption);
   };
@@ -91,9 +95,8 @@ export default function AreaAssignListList({ showModal, hideModal, id }) {
     value: user.id,
     label: user.name,
   }));
-
+  const [selectedEmployeeassign, setSelectedEmployeeassign] = useState([]);
   const selectedUser = allUser.find((user) => user.id === id);
-  console.log(allUser, "selectedUser");
 
   const categoryoptions = enquireCtaegory.map((category) => ({
     value: category.id,
@@ -155,7 +158,7 @@ export default function AreaAssignListList({ showModal, hideModal, id }) {
         // Call the function with the array of objects
         const combinedArray = combineObjects(response.data.result);
 
-       
+
         setareaAssign(combinedArray);
         console.log(combinedArray, "combinedArray");
       }
@@ -171,7 +174,7 @@ export default function AreaAssignListList({ showModal, hideModal, id }) {
     await Axios.get(url, config).then((response) => {
       if (response.data?.isSuccess) {
         setallUser(response.data.result);
-      
+
       }
     });
   }
@@ -179,7 +182,7 @@ export default function AreaAssignListList({ showModal, hideModal, id }) {
     // handleShow()
     getAreaAssignUserFromDb();
     getAllUserFromDb();
-   ;
+    ;
   }, []);
   useEffect(() => {
     getAllVillageAction()
@@ -209,7 +212,7 @@ export default function AreaAssignListList({ showModal, hideModal, id }) {
     });
   }
 
-  
+
   function handleSubmit() {
     console.log(selectedOptionUser, "selectedOptionUser");
     console.log(selectedOptionVillage, "selectedOptionVillage");
@@ -236,32 +239,36 @@ export default function AreaAssignListList({ showModal, hideModal, id }) {
 
 
     dispatch(addassigneAreaToDb(userAr));
-
-    // let tempAr = [];
-    // selectedOptionUser.forEach((userItem) => {
-    //   tempAr.push({
-    //     value: selectedOptionVillage.map((villageData) => villageData.value),
-    //     // value:selectedOptionVillage.value,
-    //     id: userItem.value,
-    //     category: selectedCtaegory.value,
-    //     category: selectedCtaegory.map((categoryData) => categoryData.value),
-    //   });
-    // });
-
-    // console.log(tempAr, "tempAr");
   }
+  const handleChangeUser = (selectedOption) => {
+    console.log("selectedOptionmm", selectedOption);
+    setSelectedOptionUser(selectedOption);
+  };
   useEffect(() => {
     if (selectedUser) {
       setSelectedOptionUser([
         { value: selectedUser.id, label: selectedUser.name },
       ]);
-    }else{
-        setSelectedOptionUser([])
     }
-
     console.log(selectedUser, "selectedUser");
   }, [selectedUser]);
-  
+  useEffect(() => {
+   
+    if (allUser && selectedEmployeeIds) {
+      console.log(selectedEmployeeIds, 'sler')
+      const updatedEmployees = []
+      allUser.forEach((item) => {
+        if (selectedEmployeeIds.includes(item.id)) {
+          updatedEmployees.push({
+            value: item.id,
+            label: item.name,
+          });
+        }
+      });
+      setSelectedOptionUser(updatedEmployees);
+    }
+  }, [allUser, selectedEmployeeIds])
+
 
   const submitDelete = async (type, id, categoryd, dId) => {
     const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/delete-area/${id}/${categoryd}/${dId}`;
@@ -284,31 +291,6 @@ export default function AreaAssignListList({ showModal, hideModal, id }) {
   };
   return (
     <>
-      {/* <div className="my-3  d-flex align-items-end justify-content-end">
-        <div className="d-flex align-items-center" type="button">
-          <h6 className="m-0 ps-1">
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={handleShow}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                fill="currentColor"
-                className="bi bi-plus-circle"
-                viewBox="0 0 16 16"
-              >
-                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
-                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
-              </svg>
-              &nbsp; Add Assign Area
-            </button>
-          </h6>
-        </div>
-  </div> */}
-
       {/* new modal */}
       <Modal show={showModal} onHide={hideModal}>
         <Modal.Header closeButton>
@@ -321,11 +303,6 @@ export default function AreaAssignListList({ showModal, hideModal, id }) {
             <div className="row mt-5">
               <h5>Select User</h5>
               <Select
-                defaultValue={
-                  selectedUser
-                    ? { value: selectedUser.id, label: selectedUser.name }
-                    : null
-                }
                 isMulti
                 value={selectedOptionUser}
                 onChange={handleChangeUser}

@@ -188,9 +188,7 @@ const Delivery = () => {
     if (value === "" || value === 0) {
     } else {
       switch (name) {
-        // case "Id":
-        //   getModelList(value);
-        //   break;
+        
         case "maker":
           getoldModelList(value);
           break;
@@ -477,7 +475,7 @@ const Delivery = () => {
             </label>
 
             <input
-              defaultChecked={seletedOwned === "Exchange Yes" ? true : false}
+              defaultChecked={seletedOwned === "Exchange No" ? true : false}
               onChange={changeHandlerNewEnquiry}
               value="Exchange No"
               className="ms-3"
