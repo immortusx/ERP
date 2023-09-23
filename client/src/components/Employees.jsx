@@ -48,10 +48,6 @@ export default function Employees() {
     const updatedRowsData = rowData.map((row) => {
       if (row.id === itemId) {
         console.log(row.id, "updatedRowsDataaaaaaaaaaaaaa");
-        // setSelectedEmployeeIDs((pre)=> ({
-        //   ...pre,
-        //   [row.first_name + ' ' + row.last_name]: !row.checkbox,
-        // }))
         return {
           ...row,
           checkbox: !row.checkbox, // Toggle the checkbox value
@@ -67,6 +63,7 @@ export default function Employees() {
       .map((row) => row.id);
     console.log(updatedSelectedItems, "updatedSelectedItems");
     setSelectedEmployeeIDs(updatedSelectedItems);
+    setSelectedEmployeeIds(updatedSelectedItems);
   };
 
 
@@ -79,6 +76,7 @@ export default function Employees() {
   const [deleteMessage, setDeleteMessage] = useState(null);
   const [type, setType] = useState(null);
   const [selectedEmployeeIDs, setSelectedEmployeeIDs] = useState([]);
+  const [selectedEmployeeIds, setSelectedEmployeeIds] = useState([]);
   const [id, setId] = useState(null);
   const employeeListState = useSelector(
     (state) => state.getemployeeListSlice.employeeListState
@@ -415,11 +413,12 @@ export default function Employees() {
       state: { selectedEmployeeIDs: selectedEmployeeIDs }
     });
   }
-  const redirectToassign = () => {
-    navigate("/sale/area-Assign/add-AsignArea", {
-      state: { selectedEmployeeIDs: selectedEmployeeIDs }
-    });
-  }
+ const redirectToassign = () => {
+  
+  setShowComponent(true);
+ 
+}
+
   const submitDelete = async (type, id) => {
     const url = `${process.env.REACT_APP_NODE_URL}/api/employees/delete-employee/${id}`;
     const config = {
@@ -550,6 +549,7 @@ export default function Employees() {
         showModal={showComponent}
         hideModal={hideareamodal}
         id={id}
+        selectedEmployeeIds={selectedEmployeeIds} 
       />
     </>
   );
