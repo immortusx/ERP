@@ -19,7 +19,7 @@ pipeline {
   }
   
   stages {
-    stage('Build Android APP') {
+    stage('Defining Stage...') {
       steps {
         execute_stage('Build Android APP', params.skip_app_building)
 

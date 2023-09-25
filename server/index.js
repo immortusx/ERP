@@ -59,13 +59,17 @@ app.get("/api", (req, res) => {
 });
 
 app.get('/api/download', (req, res) => {
-  const remoteFilePath = "/usr/src/app/server/app-release.apk"; 
-  const fileName = 'Vehicle-CRM.apk'; 
+  res.setHeader('Content-Type', 'application/vnd.android.package-archive');
+  const filePath = "/usr/src/app/server/app-release.apk"; 
+  //const fileName = 'Vehicle-CRM.apk'; 
 
-  // Stream the remote file to the response
-  const fileStream = fs.createReadStream(remoteFilePath);
-  res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
-  fileStream.pipe(res);
+  res.sendFile(filePath, (err) => {
+    if (err) {
+      // Handle any errors here, like 404 Not Found or 500 Internal Server Error.
+      console.error(err);
+      res.status(500).send('Internal Server Error');
+    }
+  });
 });
 
 app.listen(process.env.ENV_PORT, (req, res) => {
