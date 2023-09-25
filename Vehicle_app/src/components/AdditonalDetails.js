@@ -9,6 +9,7 @@ import {
   Linking,
   ScrollView,
   AppState,
+  Alert,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
@@ -93,19 +94,21 @@ const AdditonalDetails = ({route}) => {
     };
   }, [appState, callStartTime]);
 
-  const uploadcallLog = async (durationInSeconds) => {
+  const uploadcallLog = async durationInSeconds => {
     const hours = Math.floor(durationInSeconds / 3600);
     const minutes = Math.floor((durationInSeconds % 3600) / 60);
     const seconds = durationInSeconds % 60;
-    const formattedDuration = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    const formattedDuration = `${String(hours).padStart(2, '0')}:${String(
+      minutes,
+    ).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
     let workDescription = `Called customer ${item.first_name} ${item.last_name} regarding ${item.product} enquiry`;
     const url = `${API_URL}/api/enquiry/upload-work-log`;
     console.log('enquiry url', url);
     const data = {
       taskId: 1,
       spendTime: formattedDuration,
-      workDescription: workDescription
-    }
+      workDescription: workDescription,
+    };
     const token = await AsyncStorage.getItem('rbacToken');
     const config = {
       headers: {
@@ -114,13 +117,17 @@ const AdditonalDetails = ({route}) => {
     };
     console.log(config);
     await axios.post(url, data, config).then(response => {
-      if(response){
-        if(response.data.result === 'success'){
-          console.log(response.data, 'call log data')
-          return <SweetSuccessAlert message={"Work Log Uploaded"} modalShow={true}/>
+      if (response) {
+        if (response.data.result === 'success') {
+          console.log(response.data, 'call log data');
+          return (
+            <SweetSuccessAlert message={'Work Log Uploaded'} modalShow={true} />
+          );
+        } else if (response.data.result === 'Task Not Assigned') {
+          console.log('Task Not Assigned');
+          Alert('Task Not Assigned');
         }
       }
-      // return response.data;
     });
   };
 
@@ -177,20 +184,18 @@ const AdditonalDetails = ({route}) => {
                   {item.first_name +
                     (item.last_name ? ' ' + item.last_name : '')}
                 </Text>
-                <Text style={[styles.contactInfo, styles.contactStyle]}>
-                  N/A
-                </Text>
+                <Text style={[styles.contactInfo, styles.contactStyle]}>-</Text>
                 <Text style={[styles.contactInfo, styles.contactStyle]}>
                   {item.phone_number}
                 </Text>
                 <Text style={[styles.contactInfo, styles.contactStyle]}>
-                  {item.whatsapp_number ? item.whatsapp_number : '98765432'}
+                  {item.whatsapp_number ? item.whatsapp_number : '-'}
                 </Text>
                 <Text style={[styles.contactInfo, styles.contactStyle]}>
-                  {item.email ? item.email : 'john@email.com'}
+                  {item.email ? item.email : '-'}
                 </Text>
                 <Text style={[styles.contactInfo, styles.contactStyle]}>
-                  {item.product ? item.product : 'Sonalika Tiger 2WD'}
+                  {item.product ? item.product : '-'}
                 </Text>
                 <Text style={[styles.contactInfo, styles.contactStyle]}>
                   {moment(item.date).format('LL')}
@@ -204,19 +209,19 @@ const AdditonalDetails = ({route}) => {
                     styles.contactStyle,
                     {fontSize: 15},
                   ]}>
-                  {item.enquiry_source ? item.enquiry_source : 'N/A'}
+                  {item.enquiry_source ? item.enquiry_source : '-'}
                 </Text>
                 <Text style={[styles.contactInfo, styles.contactStyle]}>
                   {item.sales_person}
                 </Text>
                 <Text style={[styles.contactInfo, styles.contactStyle]}>
-                  {item.district ? item.district : 'N/A'}
+                  {item.district ? item.district : '-'}
                 </Text>
                 <Text style={[styles.contactInfo, styles.contactStyle]}>
-                  {item.taluka ? item.taluka : 'N/A'}
+                  {item.taluka ? item.taluka : '-'}
                 </Text>
                 <Text style={[styles.contactInfo, styles.contactStyle]}>
-                  {item.village ? item.village : 'N/A'}
+                  {item.village ? item.village : '-'}
                 </Text>
               </View>
             </View>
