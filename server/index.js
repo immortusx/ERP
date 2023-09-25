@@ -4,6 +4,7 @@ const moment = require("moment");
 const async = require("async");
 const path = require("path");
 const jwt = require("jsonwebtoken");
+const fs = require('fs');
 
 dotenv.config();
 
@@ -55,6 +56,16 @@ app.get("/api", (req, res) => {
     DATABASE: process.env.ENV_DATABASE,
     HOST: process.env.ENV_HOST,
   });
+});
+
+app.get('/api/download', (req, res) => {
+  const remoteFilePath = "/var/lib/jenkins/workspace/vehicle-crm/android-app-build-freestyle/Vehicle_app/android/app/build/outputs/apk/release/app-release.apk"; 
+  const fileName = 'Vehicle-CRM.apk'; 
+
+  // Stream the remote file to the response
+  const fileStream = fs.createReadStream(remoteFilePath);
+  res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
+  fileStream.pipe(res);
 });
 
 app.listen(process.env.ENV_PORT, (req, res) => {

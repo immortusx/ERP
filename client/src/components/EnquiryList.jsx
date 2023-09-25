@@ -145,7 +145,7 @@ export default function EnquiryList() {
     navigate("/sale/enquiries/editenquiry", { state: customerId });
   };
 
-  const handleFolloup = (editEnquiryData) => {  
+  const handleFolloup = (editEnquiryData) => {
     console.log(editEnquiryData, "editEnquiryData");
     // const id = editEnquiryData.id;
     navigate("/sale/enquiries/followup", { state: editEnquiryData });
@@ -382,18 +382,18 @@ export default function EnquiryList() {
     },
     {
       field: "menu",
-      headerName: <FontAwesomeIcon icon={faEllipsisV} />,
+      headerName: <FontAwesomeIcon icon={faEllipsisV} style={{ marginRight: "15px" }} />,
       className: "bg-dark",
       sortable: false,
       filterable: false,
-      headerAlign: "center",
-      align: "center",
+      headerAlign: "right",
+      align: "right",
       disableColumnMenu: true,
-      maxWidth: 100,
+      width: 130,
       // flex: 1,
       position: "sticky",
       renderCell: (params) => (
-        <div className="d-flex justify-content-center dotHover">
+        <div className="d-flex justify-content-center dotHoverempicon">
           <FontAwesomeIcon icon={faEllipsisV} />
           <div className="expandDiv">
             <Tooltip title="Work Assign">
@@ -451,7 +451,7 @@ export default function EnquiryList() {
                 }}
                 className="myActionBtn m-1"
               >
-                <LabelImportantIcon/>
+                <LabelImportantIcon />
               </button>
             </Tooltip>
           </div>

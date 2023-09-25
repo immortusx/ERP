@@ -875,14 +875,15 @@ const DetailEnquiry = ({route}) => {
       setVillage(editData.village_id);
       setMake(Number(editData.make));
       setModal(editData.modal_id);
+      setPrimarySource(Number(editData.primary_source_id));
+      setEnquirySource(Number(editData.enquiry_source_id));
       if (editData.delivery_date) {
         setExpDeliveryDate(editData.delivery_date.slice(0, 10));
       }
-      setEnquiry(editData.id);
-      if (editData.oldOwend === 'Yes') {
+      if (editData.oldOwned === 'Yes') {
         setSelectedOption('Yes');
         setModalVisible(true);
-        getOldProductDetails(editData.id);
+        getOldProductDetails(editData.enquiry_id);
       } else {
         setSelectedOption('No');
         setModalVisible(false);
@@ -896,6 +897,7 @@ const DetailEnquiry = ({route}) => {
       }
     }
   }, [editData, categoryData, newTractorId]);
+
   const getOldProductDetails = async enquiryId => {
     const url = `${API_URL}/api/enquiry/get-old-product-details/${enquiryId}`;
     console.log('get old product', url);
@@ -907,7 +909,7 @@ const DetailEnquiry = ({route}) => {
     };
     await axios.get(url, config).then(response => {
       if (response) {
-        console.log(response.data.result, 'product');
+        console.log(response.data.result, 'oldproduct');
         // setOldProductData(response.data.result);
         const maker = response.data.result.map(item => item.maker);
         const modal = response.data.result.map(item => item.modalName);

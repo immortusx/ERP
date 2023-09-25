@@ -40,7 +40,6 @@ export default function AddAssignArea() {
   const [allUser, setallUser] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
   const [userId, setUserId] = useState(null);
-
   const [displayConfirmationModal, setDisplayConfirmationModal] =
     useState(false);
   const [deleteMessage, setDeleteMessage] = useState(null);
@@ -125,35 +124,12 @@ export default function AddAssignArea() {
         console.error("Error in getAllVillageAction:", error);
       });
     getEnquiryCategoryFromDb();
-    // setSelectedVillagesList(areaAssign[0].names)
-    // setSelectedVillagesList(Array.from(areaAssign[0]?.names || []));
-    // const names = areaAssign[0].names;
-    // const nameId = areaAssign[0].nameId;
-    // const combinedArray = names.map((value, index) => ({
-    //   value: nameId[index],
-    //   label: value,
-    // }));
-    // setSelectedVillagesList(combinedArray);
   }, []);
-  // const handleChange = (selectedOption) => {
-  //   // setSelectedOptionVillage(selectedOption);
-  //   // const newVillagesList = new Set(selectedVillagesList);
-  //   // selectedOption.forEach((option) => {
-  //   //     newVillagesList.add(option.label);
-  //   // })
-  //   // setSelectedVillagesList(newVillagesList);
-  //   setSelectedOptionVillage(selectedOption);
-  //   setSelectedVillagesList(selectedOption.map((option) => option));
-  // };
-
   const handleChangeCategory = (selectedOption) => {
     console.log("selectedOption", selectedOption);
     setSelectedCtaegory(selectedOption);
   };
 
-  // const handleChangeDistribution = (selectedOption) => {
-  //   setSelectedDistributionType(selectedOption);
-  // };
   const categoryoptions = enquireCtaegory.map((category) => ({
     value: category.id,
     label: category.category_name,
@@ -162,13 +138,6 @@ export default function AddAssignArea() {
     value: village.id,
     label: village.name,
   }));
-  // const distributionoptions = [{ value: 1, label: "Area wise" }];
-  // // const handleRemove = (selectedVillage) => {
-  // //     const updatedVillages = selectedVillages.filter(
-  // //         (village) => village.value !== selectedVillage.value
-  // //     );
-  // //     setSelectedVillages(updatedVillages);
-  // // };
   const handleShow = () => {
     setShow(1);
     setSelectedId(areaAssign[0].userId);
@@ -256,20 +225,20 @@ export default function AddAssignArea() {
   };
 
   const submitDelete = async () => {
-    if(id,categoryd){
-    const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/delete-area/${id}/${categoryd}`;
-    const config = {
-      headers: {
-        token: localStorage.getItem("rbacToken"),
-      },
-    };
-    await Axios.get(url, config).then((response) => {
-     if(response.data && response.data.result === "success"){
-      hideConfirmationModal();
-      navigate("/administration/employees");
-     }
-    });
-  }
+    if (id, categoryd) {
+      const url = `${process.env.REACT_APP_NODE_URL}/api/areaAssign/delete-area/${id}/${categoryd}`;
+      const config = {
+        headers: {
+          token: localStorage.getItem("rbacToken"),
+        },
+      };
+      await Axios.get(url, config).then((response) => {
+        if (response.data && response.data.result === "success") {
+          hideConfirmationModal();
+          navigate("/administration/employees");
+        }
+      });
+    }
   };
 
   function handlCancel() {
@@ -393,27 +362,8 @@ export default function AddAssignArea() {
                       </ul>
                     </td>
                     <td>
-                      {/* <Select
-                        // isMulti
-                        value={selectedOptionVillage}
-                        // onChange={handleChange}
-                        // filterOption={(option, inputValue) =>
-                        //   option.label
-                        //     .toLowerCase()
-                        //     .includes(inputValue.toLowerCase())
-                        // }
-                        isDisabled={true}
-                      />*/}
                       <Select
                         isDisabled={true}
-                        // defaultValue={() => {
-                        //   let newArr = item.name.split(",");
-                        //   let data = newArr.map((i) => {
-                        //     return { label: i, value:i.id };
-                        //   });
-                        //   console.log("data", data);
-                        //   return data;
-                        // }}
                         defaultValue={() => {
                           const villages = item.villageData.map((village) => ({
                             label: village.label,
@@ -496,16 +446,6 @@ export default function AddAssignArea() {
         </Modal.Header>
         <Modal.Body>
           <div className="">
-            {/*<div className="row mt-5">
-                <h5>Select User</h5>
-                <Select
-                  value={selectedOptionUser}
-                  onChange={handleChangeUser}
-                  options={useroptions}
-                  isSearchable={true}
-                  placeholder="Search for a user..."
-                />
-                      </div> */}
             <div className="row mt-5">
               <h5>Select Category</h5>
               <Select
@@ -517,12 +457,6 @@ export default function AddAssignArea() {
                 // isMulti={show === 1 ? true : false}
                 placeholder="Search for a category..."
               />
-              {/*<h5 className="mt-4 ">Select DistributionType</h5>
-<Select
-options={distributionoptions}
-onChange={handleChangeDistribution}
-value={selectedDistributionType}
-                    />*/}
 
               <h5 className="mt-4">Select Villages want to assign</h5>
               <Select

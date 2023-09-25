@@ -56,8 +56,8 @@ const AddTask = ({ workFor }) => {
           });
         }
       });
-
       setSelectedEmployee(updatedEmployees); // Set the selected employees array
+
     }
   }, [workAssignEmployee, newAddTask.listDsp]);
 
