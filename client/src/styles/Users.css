@@ -107,11 +107,7 @@ h3 {
     cursor: pointer;
     height: 30px;
 }
-.btnworkreport:hover{
-    background: #ffffff;
-    color: #7299b6;
-    font-weight: bold;
-}
+
 .today-text {
     color: #7299b6;
     font-weight: bold;
