@@ -11,6 +11,7 @@ const BreadCrumb = () => {
     const crumbs = location.pathname
         .split('/')
         .filter((crumb) => crumb !== '');
+      console.log(crumbs, "crumbscrumbscrumbscrumbs");
     return (
         <div className='mb-3'>
             <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />} aria-label="breadcrumb">
@@ -19,12 +20,18 @@ const BreadCrumb = () => {
                     const isLastCrumb = index === array.length - 1;
                     const isCrumb = array.filter((crumb) => crumb !== 'home');
                     return (
-                        <Typography key={index} color="textPrimary">
-                            <Link className="crumb-link" to={currentLink} color={isLastCrumb ? 'textPrimary' : 'inherit'}>
-                            {crumb}
-                            </Link>
-                            {index === array.length - 1 && !isLastCrumb && <ExpandMoreIcon fontSize="small" />}
-                        </Typography>
+                      <Typography key={index} color="textPrimary">
+                        <Link
+                          className="crumb-link"
+                          to={currentLink}
+                          color={isLastCrumb ? "textPrimary" : "inherit"}
+                        >
+                          {crumb.replace(/-/g, "  ")}
+                        </Link>
+                        {index === array.length - 1 && !isLastCrumb && (
+                          <ExpandMoreIcon fontSize="small" />
+                        )}
+                      </Typography>
                     );
                 })}
             </Breadcrumbs>

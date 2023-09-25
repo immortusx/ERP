@@ -214,7 +214,6 @@ export default function HomeScreen() {
     let success = false;
     const rolesArray = localStorage.getItem("rolesArray");
     const checkList = rolesArray.split(",");
-    console.log(checkList, 'checlIst')
     pathAr.forEach((element) => {
       if (checkList.includes(element)) {
         success = true;

@@ -71,6 +71,7 @@ export default function AddUser({ workFor }) {
             Object.keys(branchRoles).length > 0) {
             userData['branchRole'] = branchRoles
             if (workFor === 'forEdit') {
+                console.log(editUserData, "editUserData");
                 userData['id'] = editUserData.id
                 dispatch(editUserUpdateToDb(userData))
             } else {
@@ -90,6 +91,7 @@ export default function AddUser({ workFor }) {
         };
         await Axios.get(url, config).then((response) => {
             if (response.data?.isSuccess) {
+                console.log(response.data.result, "getUserBrsnch");
                 setBranchRoles(response.data.result)
             }
         })
@@ -425,6 +427,10 @@ export default function AddUser({ workFor }) {
 
                                                             <div className='d-flex flex-wrap'>
                                                                 {item.role.map((i, index) => {
+                                                                    console.log(item, 'item')
+                                                                    console.log(
+                                                                      item.role,"itemrole$$$$$$$$$$$4"
+                                                                    );
                                                                     return <span key={index} value={i.id} className='myTag myH7 m-1'>{i.role}</span>
                                                                 })}
                                                             </div>

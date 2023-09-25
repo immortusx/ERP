@@ -327,8 +327,6 @@ export default function Users() {
   useEffect(() => {
     if (userListState.isSuccess) {
       if (userListState.list.isSuccess) {
-
-        console.log('userListState.list.isSuccess', userListState.list.result)
         setUserListData(userListState.list.result)
       }
 
