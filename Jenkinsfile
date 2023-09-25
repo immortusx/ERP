@@ -88,6 +88,7 @@ def execute_stage(stage_name, skip) {
         }
         
         sh 'cd ${WORKSPACE}/Vehicle_app && npm install'
+        sh "echo BUILD_ID=${BUILD_ID}"
         sh "echo 'API_URL=${REACT_APP_NODE_URL}' > ${WORKSPACE}/Vehicle_app/.env"
         sh "cd ${WORKSPACE}/Vehicle_app/android && ./gradlew clean assembleRelease"
         sh 'cd ../..'
