@@ -138,7 +138,11 @@ export default function WorkReport() {
       minWidth: 200,
       flex: 1.2,
       valueGetter: (params) => {
-        return `${params.row.TaskCompleted ? params.row.TaskCompleted : "-"}`;
+        if (params.row.TaskCompleted !== null && params.row.TaskCompleted !== undefined) {
+          return `${params.row.TaskCompleted} / ${params.row.TotalTask}`;
+        } else {
+          return "-";
+        }
       },
     },
     {
