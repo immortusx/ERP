@@ -10,6 +10,7 @@ dotenv.config();
 
 const app = express();
 const cors = require("cors");
+const BUILD_ID = process.env.BUILD_ID;
 
 const { tokenCheck } = require("./Auth/TokenCheck");
 const { checkUserPermission } = require("./Auth/userPermission");
@@ -60,7 +61,7 @@ app.get("/api", (req, res) => {
 
 app.get('/api/download', (req, res) => {
   const filePath = "/usr/src/app/server/app-release.apk"; 
-  const fileName = 'Vehicle-ERP.apk'; 
+  const fileName = `Vehicle-ERP-${BUILD_ID}.apk`; 
   res.setHeader('Content-Type', 'application/vnd.android.package-archive');
   res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
 
