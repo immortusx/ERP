@@ -59,9 +59,11 @@ app.get("/api", (req, res) => {
 });
 
 app.get('/api/download', (req, res) => {
-  res.setHeader('Content-Type', 'application/vnd.android.package-archive');
   const filePath = "/usr/src/app/server/app-release.apk"; 
-  //const fileName = 'Vehicle-CRM.apk'; 
+  const fileName = 'Vehicle-ERP.apk'; 
+  res.setHeader('Content-Type', 'application/vnd.android.package-archive');
+  res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
+
 
   res.sendFile(filePath, (err) => {
     if (err) {
