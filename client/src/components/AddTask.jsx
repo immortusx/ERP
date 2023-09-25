@@ -7,7 +7,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { addTaskToDb, clearAddTaskState } from '../redux/slices/addTaskSlice'
 import Select from 'react-select';
 import { Modal, Button } from "react-bootstrap";
-const AddTask = ({ workFor }) => {
+const AssignTask = ({ workFor }) => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const [startDate, setStartDate] = useState(null); // State for Start Date
@@ -227,7 +227,7 @@ const AddTask = ({ workFor }) => {
         <div className="row m-0">
           <div className="col-6">
             <h5 className='m-0'>
-              Add Task Management
+              Assign Task Management
             </h5>
           </div>
           <div className="col-6 d-flex align-items-end justify-content-end">
@@ -388,11 +388,11 @@ const AddTask = ({ workFor }) => {
           className="col-12 col-sm-5 col-lg-2 myBtn py-2"
           onClick={handleSubmit}
           type="button">
-          Add Task
+          Assign Task
         </button>
       </section>
     </div>
   );
 }
 
-export default AddTask;
+export default AssignTask;
