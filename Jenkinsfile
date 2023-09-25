@@ -7,7 +7,8 @@ pipeline {
       string (defaultValue: '95.216.144.126', description: 'Choose Host', name: 'ENV_HOST')
       string (defaultValue: 'vehical_crm_db', description: 'Choose Database for server', name: 'ENV_DATABASE')
       string (defaultValue: 'https://dev.balkrushna.com', description: 'Choose react app node url', name: 'REACT_APP_NODE_URL')
-      string (defaultValue: "latest", description: 'Build Tag', name: 'BUILD_TAG')
+      string (defaultValue: "dev", description: 'Build Tag', name: 'BUILD_TAG')
+      booleanParam(name: 'skip_app_building', defaultValue: false, description: 'Set to true to skip Apk building')
     }  
   options {
     buildDiscarder(logRotator(numToKeepStr: '5'))
@@ -18,6 +19,12 @@ pipeline {
   }
   
   stages {
+    stage('Build Android APP') {
+      steps {
+        execute_stage('Build Android APP', params.skip_app_building)
+
+      }
+    }
      stage('Build Images') {
       steps {
         parallel(
@@ -25,7 +32,7 @@ pipeline {
             sh "docker build ./client/ -t raptor1702/client:${BUILD_TAG}"
           },
           build_server: {
-            sh "docker build ./server/ -t raptor2103/server:${BUILD_TAG}"
+            sh "docker build --build-arg WORKSPACE=${WORKSPACE} ./server/ -t raptor2103/server:${BUILD_TAG}"
           }          
         )
       }
@@ -70,4 +77,21 @@ pipeline {
       sh 'docker logout'
     }
   }
+}
+
+def execute_stage(stage_name, skip) {
+    stage(stage_name) {
+        if(skip) {
+            echo "Skipping ${stage_name} stage"
+            return
+        }
+        sh 'cd ${WORKSPACE}/Vehicle_app && npm install'
+        sh 'export ANDROID_HOME=$HOME/android/sdk'
+        sh 'export PATH=$ANDROID_HOME/cmdline-tools/tools/bin/:$PATH'
+        sh 'export PATH=$ANDROID_HOME/emulator/:$PATH'
+        sh 'export PATH=$ANDROID_HOME/platform-tools/:$PATH'
+        sh 'cd ${WORKSPACE}/Vehicle_app/android && ./gradlew clean assembleRelease'
+        sh 'cd ../..'
+        sh 'cp ${WORKSPACE}/Vehicle_app/android/app/build/outputs/apk/release/app-release.apk ${WORKSPACE}/server/'
+    }
 }
