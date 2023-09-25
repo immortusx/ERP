@@ -87,12 +87,8 @@ def execute_stage(stage_name, skip) {
         }
         
         sh 'cd ${WORKSPACE}/Vehicle_app && npm install'
-        sh 'export ANDROID_HOME=$HOME/android/sdk'
-        sh 'export PATH=$ANDROID_HOME/cmdline-tools/tools/bin/:$PATH'
-        sh 'export PATH=$ANDROID_HOME/emulator/:$PATH'
-        sh 'export PATH=$ANDROID_HOME/platform-tools/:$PATH'
-        sh 'export REACT_APP_NODE_URL=$REACT_APP_NODE_URL'
-        sh "cd ${WORKSPACE}/Vehicle_app/android && ./gradlew clean assembleRelease -DAPI_URL=${REACT_APP_NODE_URL}"
+        sh "echo 'API_URL=${REACT_APP_NODE_URL}' > ${WORKSPACE}/Vehicle_app/.env"
+        sh "cd ${WORKSPACE}/Vehicle_app/android && ./gradlew clean assembleRelease"
         sh 'cd ../..'
         sh 'cp ${WORKSPACE}/Vehicle_app/android/app/build/outputs/apk/release/app-release.apk ${WORKSPACE}/server/'
     }
