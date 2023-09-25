@@ -249,4 +249,62 @@ router.get("/get-work-report-details/:employeeId", tokenCheck, async (req, res) 
   }
 });
 
+
+router.get("/get-employee-work-report-today", tokenCheck, async (req, res) => {
+  console.log(">>>>>get-employee-work-report-today");
+  try {
+    const url = `CALL sp_get_work_report_today()`;
+    db.query(url, async (err, result) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ isSuccess: false, result: "error" });
+      } else {
+        console.log({ isSuccess: true, result: result });
+        res.status(200).json({ isSuccess: true, result: result[0] });
+      }
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ isSuccess: false, result: "error" });
+  }
+});
+
+router.get("/get-employee-work-report-weekly", tokenCheck, async (req, res) => {
+  console.log(">>>>>get-employee-work-report-weekly");
+  try {
+    const url = `CALL sp_get_work_report_weekly()`;
+    db.query(url, async (err, result) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ isSuccess: false, result: "error" });
+      } else {
+        console.log({ isSuccess: true, result: result });
+        res.status(200).json({ isSuccess: true, result: result[0] });
+      }
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ isSuccess: false, result: "error" });
+  }
+});
+
+router.get("/get-employee-work-report-monthly", tokenCheck, async (req, res) => {
+  console.log(">>>>>get-employee-work-report-monthly");
+  try {
+    const url = `CALL sp_get_work_report_monthly()`;
+    db.query(url, async (err, result) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ isSuccess: true, result: result });
+      } else {
+        console.log({ isSuccess: true, result: result });
+        res.status(200).json({ isSuccess: true, result: result[0] });
+      }
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ isSuccess: false, result: "error" });
+  }
+});
+
 module.exports = router;

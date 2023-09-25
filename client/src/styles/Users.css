@@ -97,3 +97,18 @@ h3 {
     height: 40px;
     width: 120px;
 }
+
+.btnworkreport{
+    background: #7299b6;
+    color: white;
+    border: none;
+    padding: 5px 5px;
+    border-Radius: 5px;
+    cursor: pointer;
+    height: 30px;
+}
+
+.today-text {
+    color: #7299b6;
+    font-weight: bold;
+}

@@ -15,7 +15,9 @@ import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from "@mui/icons-material/Clear";
 import { Tooltip } from "@mui/material";
 import edit from "../assets/images/editu.png";
-
+import today from "../assets/images/today.png";
+import weekly from "../assets/images/week.png";
+import monthly from "../assets/images/month.png";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import Axios from "axios";
 import moment from "moment";
@@ -29,6 +31,9 @@ export default function WorkReport() {
   const [userListData, setUserListData] = useState([]);
   const [type, setType] = useState(null);
   const [workReport, setWorkReport] = useState([]);
+  const [today, setToday] = useState(false);
+  const [weekly, setWeekly] = useState(false);
+  const [monthly, setMonthly] = useState(false);
   const [id, setId] = useState(null);
   const [displayConfirmationModal, setDisplayConfirmationModal] =
     useState(false);
@@ -39,16 +44,6 @@ export default function WorkReport() {
     (state) => state.getUserListSlice.userListState
   );
 
-  // const columns = [
-  //   {
-  //     field: "rowNumber",
-  //     // headerAlign: "center",
-  //     // align: "center",
-  //     headerName: "No",
-  //     minWidth: 80,
-  //     // flex: 1,
-  //   },
-
   const [selectAll, setSelectAll] = useState(false);
   const [rowData, setRowData] = useState([]);
 
@@ -57,11 +52,11 @@ export default function WorkReport() {
     setSelectAll(!selectAll);
   };
 
-  const loadMoreReport = (report)=> {
+  const loadMoreReport = (report) => {
     navigate('/administration/report/workreport/details', {
-        state: {
-            report: report
-        }
+      state: {
+        report: report
+      }
     })
   }
   const handleChildCheckboxClick = (itemId) => {
@@ -135,17 +130,21 @@ export default function WorkReport() {
       },
     },
     {
-        field: "TaskCompleted",
-        headerAlign: "left",
-        align: "left",
-        headerClassName: "custom-header",
-        headerName: "Task Completed",
-        minWidth: 200,
-        flex: 1.2,
-        valueGetter: (params) => {
-          return `${params.row.TaskCompleted ? params.row.TaskCompleted : "-"}`;
-        },
+      field: "TaskCompleted",
+      headerAlign: "left",
+      align: "left",
+      headerClassName: "custom-header",
+      headerName: "Task Completed",
+      minWidth: 200,
+      flex: 1.2,
+      valueGetter: (params) => {
+        if (params.row.TaskCompleted !== null && params.row.TaskCompleted !== undefined) {
+          return `${params.row.TaskCompleted} / ${params.row.TotalTask}`;
+        } else {
+          return "-";
+        }
       },
+    },
     {
       field: "work_description",
       headerAlign: "left",
@@ -156,8 +155,8 @@ export default function WorkReport() {
       flex: 1.2,
       valueGetter: (params) => {
         return `${params.row.work_description
-            ? params.row.work_description
-            : "-"}`;
+          ? params.row.work_description
+          : "-"}`;
       },
     },
     {
@@ -232,7 +231,78 @@ export default function WorkReport() {
       }
     });
   };
+  const getTodayWorkReport = async () => {
+    try {
+      const url = `${process.env.REACT_APP_NODE_URL}/api/get-employee-work-report-today`;
+      const config = {
+        headers: {
+          token: localStorage.getItem("rbacToken"),
+        },
+      };
 
+      const response = await Axios.get(url, config);
+
+      if (response.data && response.data.isSuccess) {
+        console.log("Today's Work Report", response.data.result);
+        setWorkReport(response.data.result);
+        setToday(true);
+        setWeekly(false);
+        setMonthly(false);
+      } else {
+        console.error("Failed to fetch today's work report");
+      }
+    } catch (error) {
+      console.error("An error occurred while fetching today's work report", error);
+    }
+  }
+  const getWeeklyWorkReport = async () => {
+    try {
+      const url = `${process.env.REACT_APP_NODE_URL}/api/get-employee-work-report-weekly`;
+      const config = {
+        headers: {
+          token: localStorage.getItem("rbacToken"),
+        },
+      };
+
+      const response = await Axios.get(url, config);
+
+      if (response.data && response.data.isSuccess) {
+        console.log("Weekly Work Report", response.data.result);
+        setWorkReport(response.data.result);
+        setWeekly(true);
+        setToday(false);
+        setMonthly(false);
+      } else {
+        console.error("Failed to fetch Weekly work report");
+      }
+    } catch (error) {
+      console.error("An error occurred while fetching Weekly work report", error);
+    }
+  }
+
+  const getMonthlyWorkReport = async () => {
+    try {
+      const url = `${process.env.REACT_APP_NODE_URL}/api/get-employee-work-report-monthly`;
+      const config = {
+        headers: {
+          token: localStorage.getItem("rbacToken"),
+        },
+      };
+      const response = await Axios.get(url, config);
+
+      if (response.data && response.data.isSuccess) {
+        console.log("Monthly Work Report", response.data.result);
+        setWorkReport(response.data.result);
+        setMonthly(true);
+        setWeekly(false);
+        setToday(false);
+      } else {
+        console.error("Failed to fetch Monthly work report");
+      }
+    } catch (error) {
+      console.error("An error occurred while fetching Monthly work report", error);
+    }
+  }
   useEffect(() => {
     // console.log('userListState', userListState);
     dispatch(getUserListFromDb());
@@ -265,7 +335,17 @@ export default function WorkReport() {
     <>
       <div className="">
         {/* <NavLink to={/edit-user}>callme</NavLink > */}
-
+        <div className="my-3  d-flex align-items-end justify-content-end">
+          <button onClick={getTodayWorkReport} className={`d-flex align-items-center btnworkreport ${today ? 'bg-white today-text' : ''}`} >
+            Today
+          </button>
+          <button onClick={getWeeklyWorkReport} className={`d-flex align-items-center btnworkreport ${weekly ? 'bg-white today-text' : ''}`} style={{ marginLeft: '10px' }}>
+            Weekly
+          </button>
+          <button onClick={getMonthlyWorkReport} className={`d-flex align-items-center btnworkreport ${monthly ? 'bg-white today-text' : ''}`} style={{ marginLeft: '10px' }}>
+            Monthly
+          </button>
+        </div>
         <div
           className="tableMenuHover"
           style={{ height: "85vh", width: "100%" }}
