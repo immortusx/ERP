@@ -243,6 +243,10 @@ select.myInput {
 
   width: 100%;
 }
+.dotHoverempicon{
+  max-width: 130px;
+  margin-right: 15px;
+}
 
 .tableMenuHover .MuiDataGrid-cell:hover .expandDiv {
   /* background-color: rgb(204, 203, 203); */
