@@ -176,7 +176,7 @@ export default function Employees() {
   };
 
   const handleEditWork = async (username) => {
-    navigate("/administration/configuration/Task/AddTask", {
+    navigate("/administration/configuration/Task/AssignTask", {
       state: { username: username },
     });
     setShowComponent(true);
@@ -402,7 +402,7 @@ export default function Employees() {
     setDisplayConfirmationModal(false);
   };
   const redirectToTask = () => {
-    navigate("/administration/configuration/Task/AddTask", {
+    navigate("/administration/configuration/Task/AssignTask", {
       state: { selectedEmployeeIDs: selectedEmployeeIDs }
     });
   }
