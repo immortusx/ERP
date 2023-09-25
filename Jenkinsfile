@@ -92,7 +92,7 @@ def execute_stage(stage_name, skip) {
         sh 'export PATH=$ANDROID_HOME/emulator/:$PATH'
         sh 'export PATH=$ANDROID_HOME/platform-tools/:$PATH'
         sh 'export REACT_APP_NODE_URL=$REACT_APP_NODE_URL'
-        sh "cd ${WORKSPACE}/Vehicle_app/android && ./gradlew clean assembleRelease -PAPI_URL=${REACT_APP_NODE_URL}"
+        sh "cd ${WORKSPACE}/Vehicle_app/android && ./gradlew clean assembleRelease -DAPI_URL=${REACT_APP_NODE_URL}"
         sh 'cd ../..'
         sh 'cp ${WORKSPACE}/Vehicle_app/android/app/build/outputs/apk/release/app-release.apk ${WORKSPACE}/server/'
     }
