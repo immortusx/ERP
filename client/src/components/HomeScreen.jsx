@@ -79,7 +79,7 @@ import Dashboard from "./Dashboard";
 import UserProfile from "./UserProfile";
 import Report from "./Report";
 import Task from "./Task";
-import AddTask from "./AddTask";
+import AssignTask from "./AddTask";
 import axios from "axios";
 import { Spinner } from "react-bootstrap";
 import EnquirySources from "./Master/EnquirySources/EnquirySources";
@@ -1302,10 +1302,10 @@ export default function HomeScreen() {
               exact
             />
             <Route
-              path="administration/configuration/Task/AddTask"
+              path="administration/configuration/Task/AssignTask"
               element={
                 <CheckPermission path="profile">
-                  <AddTask workFor="addTask" />
+                  <AssignTask workFor="addTask" />
                 </CheckPermission>
               }
               exact

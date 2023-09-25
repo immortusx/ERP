@@ -325,9 +325,9 @@ export default function Employees() {
                 <img src={location} alt="location" height={20} width={20} />
               </button>
             </Tooltip>
-            {checkTabGrant(["work-assign"]) && (
+            {checkTabGrant(["assign-task"]) && (
 
-              <Tooltip title="Work Assign">
+              <Tooltip title="Assign Task">
                 <button
                   onClick={() => {
                     handleEditWork(params.row);
@@ -471,14 +471,14 @@ export default function Employees() {
               <img src={location} alt="location" height={22} width={22} />
             </Tooltip>
           </div>
-          {checkTabGrant(["work-assign"]) && (
+          {checkTabGrant(["assign-task"]) && (
           <div
             className="d-flex align-items-center myActionBtnicon"
             style={{ marginLeft: '10px', cursor: 'pointer' }}
             onClick={redirectToTask}
           >
-            <Tooltip title="Work Assign">
-              <img src={workAssign} alt="Work Assign" height={24} width={22} />
+            <Tooltip title="Assign Task">
+              <img src={workAssign} alt="Assign Task" height={24} width={22} />
             </Tooltip>
           </div>
            )}

@@ -4,7 +4,8 @@ import Checkbox from '@mui/material/Checkbox'
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import Axios from "axios";
 import moment from "moment";
-import { Modal, Button } from "react-bootstrap";
+import { Tooltip } from "@mui/material";
+import { Modal, Button} from "react-bootstrap";
 const Task = () => {
 
    const [rowData, setRowData] = useState([]);
@@ -163,15 +164,16 @@ const Task = () => {
          <div className="my-3  d-flex align-items-end justify-content-end">
             <div
                onClick={() => {
-                  navigate("/administration/configuration/Task/AddTask");
+                  navigate("/administration/configuration/Task/AssignTask");
                }}
                className="d-flex align-items-center"
                type="button"
             >
+               <Tooltip title="Assign Task">
                <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
+                  width="23"
+                  height="23"
                   fill="currentColor"
                   className="bi bi-plus-circle"
                   viewBox="0 0 16 16"
@@ -179,10 +181,10 @@ const Task = () => {
                   <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
                   <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
                </svg>
-               <h6 className="m-0 ps-1">Add Task</h6>
+               </Tooltip>
                <Button
-                  variant="btn btn-warning mx-1"
-                  style={{ width: '70px', height: '35px', fontSize: '14px', borderRadius: '20px' }}
+                  variant="btn btn-warning"
+                  style={{ width: '70px', height: '35px', fontSize: '14px', borderRadius: '20px', marginLeft:'10px' }}
                   onClick={() => {
                      redirectModal();
                   }}
