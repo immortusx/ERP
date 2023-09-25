@@ -274,8 +274,17 @@ export default function EnquiryList() {
       headerName: "First Name",
       minWidth: 150,
       flex: 1,
-      valueGetter: (params) => {
-        return `${params.row.first_name ? params.row.first_name : "-"}`;
+      renderCell: (params) => {
+        const fistName = params.row.first_name || "-";
+        return (
+          <div className='myBtnForEdit'
+            onClick={() => {
+              editEnquiryCell(params.row);
+            }}
+          >
+            {fistName}
+          </div>
+        );
       },
     },
     {
@@ -283,8 +292,17 @@ export default function EnquiryList() {
       headerName: "Last Name",
       minWidth: 150,
       flex: 1,
-      valueGetter: (params) => {
-        return `${params.row.last_name ? params.row.last_name : "-"}`;
+      renderCell: (params) => {
+        const lastName = params.row.last_name || "-";
+        return (
+          <div className='myBtnForEdit'
+            onClick={() => {
+              editActionCall(params.row);
+            }}
+          >
+            {lastName}
+          </div>
+        );
       },
     },
     {

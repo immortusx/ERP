@@ -65,13 +65,33 @@ hr {
   box-shadow: 0 0 5px 0px #3e53678a;
 }
 
-.myBtn,.myBtnl:hover {
+.myBtn,
+.myBtnl:hover {
   text-decoration: underline;
 
 }
 
-.myBtn,.myBtnl:focus {
+.myBtn,
+.myBtnl:focus {
   outline: 1.5px solid #0000006b !important;
+}
+
+.myBtnForEdit:hover {
+  text-decoration: underline;
+  cursor: pointer;
+  background: #D7E2EA;
+  color: black;
+  padding: 5px 10px;
+  border-Radius: 33px;
+}
+
+.myBtnWorkReport:hover {
+  text-decoration: underline;
+  cursor: pointer;
+  background: #D7E2EA;
+  color: black;
+  padding: 5px 10px;
+  border-Radius: 33px;
 }
 
 .svgBtn svg {
@@ -126,6 +146,7 @@ hr {
   border-radius: 10px;
   outline: none;
 }
+
 .myBtnl {
   /* border: none; */
   border: 1.5px solid #d8d6de;
@@ -133,7 +154,8 @@ hr {
   border-radius: 5px;
   outline: none;
 }
-.myBtnl:hover{
+
+.myBtnl:hover {
   border-color: #3e53678a;
   box-shadow: 0 0 5px 0px #3e53678a;
 }
@@ -165,10 +187,11 @@ select.myInput {
   height: 43px;
 }
 
-.myInputl:hover{
+.myInputl:hover {
   border-color: #3e53678a;
   box-shadow: 0 0 5px 0px #3e53678a;
 }
+
 .myInputl:focus {
   /* border-bottom: 1.5px solid #000000; */
   box-shadow: 0 0 5px 0px #3e53678a;
@@ -223,6 +246,7 @@ select.myInput {
   padding: 5px 5px;
   border-radius: 10px;
 }
+
 .myActionBtnicon:hover {
   background-color: white !important;
 }
@@ -243,7 +267,8 @@ select.myInput {
 
   width: 100%;
 }
-.dotHoverempicon{
+
+.dotHoverempicon {
   max-width: 130px;
   margin-right: 15px;
 }

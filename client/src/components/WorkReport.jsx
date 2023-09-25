@@ -101,10 +101,20 @@ export default function WorkReport() {
       headerName: "Employee",
       minWidth: 200,
       flex: 1,
-      valueGetter: (params) => {
-        return `${params.row.Employee ? params.row.Employee : "-"}`;
+      renderCell: (params) => {
+        const employeeName = params.row.Employee || "-";
+        return (
+          <div className='myBtnWorkReport'
+            onClick={() => {
+              loadMoreReport(params.row);
+            }}
+          >
+            {employeeName}
+          </div>
+        );
       },
     },
+    
     {
       field: "tasktype_name",
       headerAlign: "left",
