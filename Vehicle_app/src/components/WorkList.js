@@ -69,7 +69,12 @@ const WorkList = () => {
                     <Text
                       style={[
                         styles.label,
-                        {backgroundColor: 'yourBackgroundColor'},
+                        {
+                          backgroundColor: 'mediumturquoise',
+                          paddingVertical: 5,
+                          paddingHorizontal:5,
+                          width: '100%',
+                        },
                       ]}>
                       <Text>Date</Text>- {formatDate(item.datetime)}
                     </Text>
@@ -107,6 +112,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 5,
+    
   },
   content: {
     fontSize: 14,
