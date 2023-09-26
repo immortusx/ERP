@@ -76,22 +76,18 @@ hr {
   outline: 1.5px solid #0000006b !important;
 }
 
-.myBtnForEdit:hover {
+.myBtnForEdit {
   text-decoration: underline;
   cursor: pointer;
-  background: #D7E2EA;
-  color: black;
-  padding: 5px 10px;
-  border-Radius: 33px;
+  font-weight: bold;
+  color: #000;
 }
 
-.myBtnWorkReport:hover {
+.myBtnWorkReport {
   text-decoration: underline;
   cursor: pointer;
-  background: #D7E2EA;
-  color: black;
-  padding: 5px 10px;
-  border-Radius: 33px;
+  font-weight: bold;
+  color: #000;
 }
 
 .svgBtn svg {

@@ -15,7 +15,7 @@ import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from "@mui/icons-material/Clear";
 import { Tooltip } from "@mui/material";
 import edit from "../assets/images/editu.png";
-
+import { Button } from "react-bootstrap";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import Axios from "axios";
 import moment from "moment";
@@ -148,72 +148,41 @@ export default function WorkReportDetails() {
       minWidth: 200,
       flex: 1.2,
       valueGetter: (params) => {
-        return `${
-          params.row.work_description ? params.row.work_description : "-"
-        }`;
+        return `${params.row.work_description ? params.row.work_description : "-"
+          }`;
       },
     },
     {
-        field: "datetime",
-        headerAlign: "left",
-        align: "left",
-        headerClassName: "custom-header",
-        headerName: "Date Time",
-        minWidth: 200,
-        flex: 1.2,
-        valueGetter: (params) => {
-            if (params.row.datetime) {
-              const dateTimeParts = params.row.datetime.split('T');
-              const date = dateTimeParts[0];
-              const time = dateTimeParts[1].substring(0, 8); // Extract the first 8 characters for the time
-              return `${date} ${time}`;
-            } else {
-              return "-";
-            }
-          }
-      },
-      {
-        field: "spendtime",
-        headerAlign: "left",
-        align: "left",
-        headerClassName: "custom-header",
-        headerName: "Spend Time",
-        minWidth: 200,
-        flex: 1.2,
-        valueGetter: (params) => {
-          return `${
-            params.row.spendtime ? params.row.spendtime : "-"
-          }`;
-        },
-      },
+      field: "datetime",
+      headerAlign: "left",
+      align: "left",
+      headerClassName: "custom-header",
+      headerName: "Date Time",
+      minWidth: 200,
+      flex: 1.2,
+      valueGetter: (params) => {
+        if (params.row.datetime) {
+          const dateTimeParts = params.row.datetime.split('T');
+          const date = dateTimeParts[0];
+          const time = dateTimeParts[1].substring(0, 8); // Extract the first 8 characters for the time
+          return `${date} ${time}`;
+        } else {
+          return "-";
+        }
+      }
+    },
     {
-      field: "menu",
-      headerName: <FontAwesomeIcon icon={faEllipsisV} />,
-      className: "bg-dark",
-      sortable: false,
-      filterable: false,
-      headerAlign: "center",
-      align: "center",
-      disableColumnMenu: true,
-      maxWidth: 50,
-      position: "sticky",
-      renderCell: (params) => (
-        <div className="d-flex justify-content-center dotHover">
-          <FontAwesomeIcon icon={faEllipsisV} />
-          <div className="expandDiv">
-            <Tooltip title="Details">
-              <button
-                onClick={() => {
-                  // handleEditArea(params.row);
-                }}
-                className="myActionBtn m-1"
-              >
-                <img src={swipe} alt="Details" height={20} width={20} />
-              </button>
-            </Tooltip>
-          </div>
-        </div>
-      ),
+      field: "spendtime",
+      headerAlign: "left",
+      align: "left",
+      headerClassName: "custom-header",
+      headerName: "Spend Time",
+      minWidth: 200,
+      flex: 1.2,
+      valueGetter: (params) => {
+        return `${params.row.spendtime ? params.row.spendtime : "-"
+          }`;
+      },
     },
   ];
 
@@ -268,11 +237,26 @@ export default function WorkReportDetails() {
     dispatch(setEditUserData(data));
     navigate("/administration/users/edit");
   }
+  const redirectModal = () => {
+    navigate(-1);
+  };
   return (
     <>
       <div className="">
         {/* <NavLink to={/edit-user}>callme</NavLink > */}
 
+        <div className="my-3  d-flex align-items-end justify-content-end">
+          <Button
+            variant="btn btn-warning mx-1"
+            style={{ width: '70px', height: '35px', fontSize: '14px', borderRadius: '20px' }}
+            onClick={() => {
+              redirectModal();
+            }}
+          >
+            BACK
+          </Button>
+
+        </div>
         <div
           className="tableMenuHover"
           style={{ height: "85vh", width: "100%" }}
