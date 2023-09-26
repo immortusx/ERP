@@ -210,7 +210,7 @@ router.get(
 
 //=======================Get Work Report (EmployeeList)============================//
 router.get("/get-employee-work-report", tokenCheck, async (req, res) => {
-  console.log(">>>>>get-employee-work-report");
+  console.log(req.myData,">>>>>get-employee-work-report");
   try {
     const url = `CALL sp_get_work_report()`;
     db.query(url, async (err, result) => {
@@ -232,7 +232,7 @@ router.get("/get-employee-work-report", tokenCheck, async (req, res) => {
 router.get("/get-work-report-details/:employeeId", tokenCheck, async (req, res) => {
   console.log(">>>>>/get-work-report-details");
   try {
-    const EmployeeId = req.params.employeeId;
+    const EmployeeId = req.myData.userId;
     const url = `CALL sp_get_work_report_by_employee(${EmployeeId})`;
     db.query(url, async (err, result) => {
       if (err) {

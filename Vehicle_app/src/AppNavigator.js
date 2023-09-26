@@ -13,6 +13,7 @@ import FastEnquiry from './components/FastEnquiry';
 import DetailEnquiry from './components/DetailEnquiry';
 import DeliveryScreen from './components/Delivery';
 import EnquiryList from './components/EnquiryList';
+import WorkList from './components/WorkList'
 import EnquiryVillageList from './components/EnquiryVillageList';
 import Category from './components/Category';
 import VillageEnquiryLists from './components/VillageEnquiryLists';
@@ -136,6 +137,18 @@ const AppNavigator = () => {
             },
           }}
         />
+        <Stack.Screen
+          name="WorkReport List"
+          component={WorkList}
+          options={{
+            headerShown: true,
+            headerStyle: {
+              borderWidth: 0.9,
+              borderColor: 'grey',
+            },
+          }}
+        />
+        
         <Stack.Screen
           name="Village List"
           component={EnquiryVillageList}
