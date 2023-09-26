@@ -15,9 +15,6 @@ import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from "@mui/icons-material/Clear";
 import { Tooltip } from "@mui/material";
 import edit from "../assets/images/editu.png";
-import today from "../assets/images/today.png";
-import weekly from "../assets/images/week.png";
-import monthly from "../assets/images/month.png";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import Axios from "axios";
 import moment from "moment";
@@ -25,6 +22,7 @@ import swipe from '../assets/images/swipe.png';
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
+import { Button } from "react-bootstrap";
 import "../styles/Users.css";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 export default function WorkReport() {
@@ -101,10 +99,20 @@ export default function WorkReport() {
       headerName: "Employee",
       minWidth: 200,
       flex: 1,
-      valueGetter: (params) => {
-        return `${params.row.Employee ? params.row.Employee : "-"}`;
+      renderCell: (params) => {
+        const employeeName = params.row.Employee || "-";
+        return (
+          <div className='myBtnWorkReport'
+            onClick={() => {
+              loadMoreReport(params.row);
+            }}
+          >
+            {employeeName}
+          </div>
+        );
       },
     },
+
     {
       field: "tasktype_name",
       headerAlign: "left",
@@ -331,6 +339,9 @@ export default function WorkReport() {
     dispatch(setEditUserData(data));
     navigate("/administration/users/edit");
   }
+  const redirectModal = () => {
+    navigate(-1);
+  };
   return (
     <>
       <div className="">
@@ -345,7 +356,18 @@ export default function WorkReport() {
           <button onClick={getMonthlyWorkReport} className={`d-flex align-items-center btnworkreport ${monthly ? 'bg-white today-text' : ''}`} style={{ marginLeft: '10px' }}>
             Monthly
           </button>
+
+          <Button
+            variant="btn btn-warning mx-1"
+            style={{ width: '70px', height: '32px', fontSize: '14px', borderRadius: '20px' }}
+            onClick={() => {
+              redirectModal();
+            }}
+          >
+            BACK
+          </Button>
         </div>
+
         <div
           className="tableMenuHover"
           style={{ height: "85vh", width: "100%" }}

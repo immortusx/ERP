@@ -315,8 +315,17 @@ export default function Roles({ workFor }) {
       headerName: "Roles",
       minWidth: 120,
       flex: 1,
-      valueGetter: (params) => {
-        return `${params.row.role ? params.row.role : "-"}`;
+      renderCell: (params) => {
+        const role = params.row.role || "-";
+        return (
+          <div className='myBtnForEdit'
+            onClick={() => {
+              editeStateModal(params.row);
+            }}
+          >
+            {role}
+          </div>
+        );
       },
     },
     {
