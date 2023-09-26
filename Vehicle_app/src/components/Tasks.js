@@ -6,8 +6,17 @@ const Tasks = () => {
     <View style={StyleSheet.mainContainer}>
       <View style={styles.container}>
         <TouchableOpacity style={styles.touchableOpacityStyle}>
-          <Text style={styles.taskTitle}>Tasks List</Text>
+          <Text style={styles.taskListStyle}>Tasks List</Text>
         </TouchableOpacity>
+        <View style={styles.contentContainer}>
+          <TouchableOpacity style={styles.taskStyle}>
+            <Text style={styles.taskTitle}>1. Call</Text>
+          </TouchableOpacity>
+          <View style={styles.dataContainer}>
+            <View style={styles.leftContainer}></View>
+            <View style={styles.rightContainer}></View>
+          </View>
+        </View>
       </View>
     </View>
   );
@@ -35,11 +44,44 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 33,
   },
-  taskTitle: {
+  taskListStyle: {
     color: 'white',
     fontWeight: 'bold',
     fontVariant: ['small-caps'],
   },
+  contentContainer: {
+    backgroundColor: 'white',
+    paddingHorizontal: 4,
+    paddingVertical: 4,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.25,
+    elevation: 2,
+    borderRadius: 7,
+    marginVertical: 10,
+  },
+  taskStyle: {
+    backgroundColor: '#2471A2',
+    padding: 10,
+    borderRadius: 4,
+    marginVertical: 8,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  taskTitle: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 14
+  },
+  dataContainer: {
+
+  },
+  leftContainer: {
+
+  },
+  rightContainer: {
+    
+  }
 });
 
 export default Tasks;
