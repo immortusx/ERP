@@ -3,9 +3,13 @@ import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {API_URL} from '@env';
+import moment from 'moment';
+import LoadingSpinner from './subCom/LoadingSpinner';
+import CustomLoadingSpinner from './subCom/CustomLoadingSpinner';
 
 const Tasks = () => {
-  const [loading ,setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [userTaskList, setUserTaskList] = useState([]);
   const getUserTaskLists = async () => {
     const url = `${API_URL}/api/get-user-task-list`;
     console.log('get user task list', url);
@@ -20,7 +24,7 @@ const Tasks = () => {
     await axios.get(url, config).then(response => {
       if (response) {
         console.log(response.data, 'userTask List');
-        // setSalePersonData(response.data.result);
+        setUserTaskList(response.data.result);
       }
     });
     setLoading(false);
@@ -34,78 +38,48 @@ const Tasks = () => {
         <TouchableOpacity style={styles.touchableOpacityStyle}>
           <Text style={styles.taskListStyle}>Tasks List</Text>
         </TouchableOpacity>
-        <View style={styles.contentContainer}>
-          <TouchableOpacity style={styles.taskStyle}>
-            <Text style={styles.taskTitle}>1. Call</Text>
-            <Text style={styles.taskTitle}>26 September</Text>
-          </TouchableOpacity>
-          <View style={styles.dataContainer}>
-            <View style={styles.leftContainer}>
-              <Text>Task Type:</Text>
-              <Text>Tasks:</Text>
-              <Text>Task Count: </Text>
-              <Text>Start Date: </Text>
-              <Text>End Date: </Text>
-              <Text>Task Time Period: </Text>
-            </View>
-            <View style={styles.rightContainer}>
-              <Text>Sales</Text>
-              <Text>Call</Text>
-              <Text>10</Text>
-              <Text>18 September 2023</Text>
-              <Text>26 September 2023</Text>
-              <Text>Daily</Text>
-            </View>
-          </View>
-        </View>
-        <View style={styles.contentContainer}>
-          <TouchableOpacity style={styles.taskStyle}>
-            <Text style={styles.taskTitle}>2. SMS</Text>
-            <Text style={styles.taskTitle}>26 September</Text>
-          </TouchableOpacity>
-          <View style={styles.dataContainer}>
-            <View style={styles.leftContainer}>
-              <Text>Task Type:</Text>
-              <Text>Tasks:</Text>
-              <Text>Task Count: </Text>
-              <Text>Start Date: </Text>
-              <Text>End Date: </Text>
-              <Text>Task Time Period: </Text>
-            </View>
-            <View style={styles.rightContainer}>
-              <Text>Sales</Text>
-              <Text>SMS</Text>
-              <Text>10</Text>
-              <Text>18 September 2023</Text>
-              <Text>26 September 2023</Text>
-              <Text>Daily</Text>
-            </View>
-          </View>
-        </View>
-        <View style={styles.contentContainer}>
-          <TouchableOpacity style={styles.taskStyle}>
-            <Text style={styles.taskTitle}>3. WhatsApp</Text>
-            <Text style={styles.taskTitle}>26 September</Text>
-          </TouchableOpacity>
-          <View style={styles.dataContainer}>
-            <View style={styles.leftContainer}>
-              <Text>Task Type:</Text>
-              <Text>Tasks:</Text>
-              <Text>Task Count: </Text>
-              <Text>Start Date: </Text>
-              <Text>End Date: </Text>
-              <Text>Task Time Period: </Text>
-            </View>
-            <View style={styles.rightContainer}>
-              <Text>Sales</Text>
-              <Text>whatsApp</Text>
-              <Text>10</Text>
-              <Text>18 September 2023</Text>
-              <Text>26 September 2023</Text>
-              <Text>Daily</Text>
-            </View>
-          </View>
-        </View>
+        {loading ? (
+          <CustomLoadingSpinner />
+        ) : (
+          userTaskList &&
+          userTaskList.length > 0 &&
+          userTaskList.map((item, index) => {
+            return (
+              <View style={styles.contentContainer} key={index}>
+                <TouchableOpacity style={styles.taskStyle}>
+                  <Text style={styles.taskTitle}>
+                    {index + 1}. {item.task_name}
+                  </Text>
+                  <Text style={styles.taskTitle}>
+                    {moment(item.startdate).format('LL')}
+                  </Text>
+                </TouchableOpacity>
+                <View style={styles.dataContainer}>
+                  <View style={styles.leftContainer}>
+                    <Text>Task Type:</Text>
+                    <Text>Tasks:</Text>
+                    <Text>Task Count: </Text>
+                    <Text>Start Date: </Text>
+                    <Text>End Date: </Text>
+                    <Text>Task Time Period: </Text>
+                  </View>
+                  <View style={styles.rightContainer}>
+                    <Text style={styles.listStyle}>{item.tasktype_name}</Text>
+                    <Text style={styles.listStyle}>{item.task_name}</Text>
+                    <Text style={styles.listStyle}>{item.taskcount}</Text>
+                    <Text style={styles.listStyle}>
+                      {moment(item.startdate).format('Do MMMM, YYYY')}
+                    </Text>
+                    <Text style={styles.listStyle}>
+                      {moment(item.enddate).format('Do MMMM, YYYY')}
+                    </Text>
+                    <Text style={styles.listStyle}>{item.period_name}</Text>
+                  </View>
+                </View>
+              </View>
+            );
+          })
+        )}
       </View>
     </View>
   );
@@ -145,9 +119,9 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.25,
-    elevation: 2,
+    elevation: 3,
     borderRadius: 7,
-    marginVertical: 10,
+    marginVertical: 10
   },
   taskStyle: {
     backgroundColor: '#2471A2',
@@ -172,6 +146,9 @@ const styles = StyleSheet.create({
   },
   rightContainer: {
     alignItems: 'flex-start',
+  },
+  listStyle: {
+    color: '#2C3E50',
   },
 });
 
