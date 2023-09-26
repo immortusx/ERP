@@ -1,7 +1,33 @@
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {API_URL} from '@env';
 
 const Tasks = () => {
+  const [loading ,setLoading] = useState(false);
+  const getUserTaskLists = async () => {
+    const url = `${API_URL}/api/get-user-task-list`;
+    console.log('get user task list', url);
+    const token = await AsyncStorage.getItem('rbacToken');
+    const config = {
+      headers: {
+        token: token ? token : '',
+      },
+    };
+    setLoading(true);
+    console.log(config);
+    await axios.get(url, config).then(response => {
+      if (response) {
+        console.log(response.data, 'userTask List');
+        // setSalePersonData(response.data.result);
+      }
+    });
+    setLoading(false);
+  };
+  useEffect(() => {
+    getUserTaskLists();
+  }, []);
   return (
     <View style={StyleSheet.mainContainer}>
       <View style={styles.container}>
@@ -11,10 +37,73 @@ const Tasks = () => {
         <View style={styles.contentContainer}>
           <TouchableOpacity style={styles.taskStyle}>
             <Text style={styles.taskTitle}>1. Call</Text>
+            <Text style={styles.taskTitle}>26 September</Text>
           </TouchableOpacity>
           <View style={styles.dataContainer}>
-            <View style={styles.leftContainer}></View>
-            <View style={styles.rightContainer}></View>
+            <View style={styles.leftContainer}>
+              <Text>Task Type:</Text>
+              <Text>Tasks:</Text>
+              <Text>Task Count: </Text>
+              <Text>Start Date: </Text>
+              <Text>End Date: </Text>
+              <Text>Task Time Period: </Text>
+            </View>
+            <View style={styles.rightContainer}>
+              <Text>Sales</Text>
+              <Text>Call</Text>
+              <Text>10</Text>
+              <Text>18 September 2023</Text>
+              <Text>26 September 2023</Text>
+              <Text>Daily</Text>
+            </View>
+          </View>
+        </View>
+        <View style={styles.contentContainer}>
+          <TouchableOpacity style={styles.taskStyle}>
+            <Text style={styles.taskTitle}>2. SMS</Text>
+            <Text style={styles.taskTitle}>26 September</Text>
+          </TouchableOpacity>
+          <View style={styles.dataContainer}>
+            <View style={styles.leftContainer}>
+              <Text>Task Type:</Text>
+              <Text>Tasks:</Text>
+              <Text>Task Count: </Text>
+              <Text>Start Date: </Text>
+              <Text>End Date: </Text>
+              <Text>Task Time Period: </Text>
+            </View>
+            <View style={styles.rightContainer}>
+              <Text>Sales</Text>
+              <Text>SMS</Text>
+              <Text>10</Text>
+              <Text>18 September 2023</Text>
+              <Text>26 September 2023</Text>
+              <Text>Daily</Text>
+            </View>
+          </View>
+        </View>
+        <View style={styles.contentContainer}>
+          <TouchableOpacity style={styles.taskStyle}>
+            <Text style={styles.taskTitle}>3. WhatsApp</Text>
+            <Text style={styles.taskTitle}>26 September</Text>
+          </TouchableOpacity>
+          <View style={styles.dataContainer}>
+            <View style={styles.leftContainer}>
+              <Text>Task Type:</Text>
+              <Text>Tasks:</Text>
+              <Text>Task Count: </Text>
+              <Text>Start Date: </Text>
+              <Text>End Date: </Text>
+              <Text>Task Time Period: </Text>
+            </View>
+            <View style={styles.rightContainer}>
+              <Text>Sales</Text>
+              <Text>whatsApp</Text>
+              <Text>10</Text>
+              <Text>18 September 2023</Text>
+              <Text>26 September 2023</Text>
+              <Text>Daily</Text>
+            </View>
           </View>
         </View>
       </View>
@@ -71,17 +160,19 @@ const styles = StyleSheet.create({
   taskTitle: {
     color: 'white',
     fontWeight: 'bold',
-    fontSize: 14
+    fontSize: 14,
   },
   dataContainer: {
-
+    flexDirection: 'row',
+    marginHorizontal: 12,
   },
   leftContainer: {
-
+    alignItems: 'flex-start',
+    marginRight: 10,
   },
   rightContainer: {
-    
-  }
+    alignItems: 'flex-start',
+  },
 });
 
 export default Tasks;
