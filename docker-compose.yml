@@ -2,7 +2,7 @@ version: '3.3'
 services:
     server:
         restart: unless-stopped
-        container_name: server_img-${BUILD_TAG}
+        container_name: "server_img-${BUILD_TAG}"
         network_mode: host
         volumes:
             - '/upload/${BUILD_TAG}:/usr/src/app/server/upload'
@@ -12,12 +12,12 @@ services:
             - 'ENV_PORT=${ENV_PORT}'
             - 'ENV_DATABASE=${ENV_DATABASE}'
             - 'ENV_HOST=${ENV_HOST}'
-        image: 'raptor2103/server:${BUILD_TAG}'
+        image: "raptor2103/server:${BUILD_TAG}"
     client:
         restart: unless-stopped
-        container_name: client_img-${BUILD_TAG}
+        container_name: "client_img-${BUILD_TAG}"
         network_mode: host
         environment:
             - 'PORT=${PORT}'
             - 'REACT_APP_NODE_URL=${REACT_APP_NODE_URL}'
-        image: 'raptor1702/client:${BUILD_TAG}'
+        image: "raptor1702/client:${BUILD_TAG}"
