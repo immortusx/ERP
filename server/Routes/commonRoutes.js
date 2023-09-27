@@ -250,7 +250,8 @@ router.get("/get-work-report-details/:employeeId", tokenCheck, async (req, res) 
   console.log(">>>>>/get-work-report-details");
   try {
     const EmployeeId = req.myData.userId;
-    const url = `CALL sp_get_work_report_by_employee(${EmployeeId})`;
+    let isAdmin = req.myData.isSuperAdmin;
+    const url = `CALL sp_get_work_report_by_employee(${EmployeeId}, ${isAdmin})`;
     db.query(url, async (err, result) => {
       if (err) {
         console.error(err);
