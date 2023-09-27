@@ -11,6 +11,7 @@ import {
 import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import CustomLoadingSpinner from './subCom/CustomLoadingSpinner';
 import {API_URL} from '@env';
 import {useNavigation} from '@react-navigation/native';
 
@@ -26,7 +27,7 @@ const WorkList = () => {
   useEffect(() => {
     const getWorkReport = async id => {
       try {
-        const url = `${API_URL}/api/get-work-report-details/${id}`;
+        const url = `${API_URL}/api/work-report-details/${id}`;
         const token = await AsyncStorage.getItem('rbacToken');
         const config = {
           headers: {
@@ -47,11 +48,12 @@ const WorkList = () => {
         setLoading(false);
       }
     };
-
-    
-
     getWorkReport();
   }, []);
+
+  if (loading) {
+    return <CustomLoadingSpinner />;
+  }
   const data = () => {
     console.log(selectedEmployeeId, 'selectedEmployeeId');
   };
@@ -66,30 +68,25 @@ const WorkList = () => {
               <TouchableWithoutFeedback>
                 <View key={index} style={styles.enquiryBox}>
                   <View style={styles.dataStyle}>
-                    <Text
-                      style={[
-                        styles.label,
-                        {
-                          backgroundColor: 'mediumturquoise',
-                          paddingVertical: 5,
-                          paddingHorizontal:5,
-                          width: '100%',
-                        },
-                      ]}>
-                      <Text>Date</Text>- {formatDate(item.datetime)}
-                    </Text>
-
+                    <View style={styles.lablecontent}>
+                      <Text style={{fontSize: 18, color: 'white'}}>
+                        {item.task_name}
+                      </Text>
+                      <Text style={{fontSize: 18, color: 'white'}}>
+                        {formatDate(item.datetime)}
+                      </Text>
+                    </View>
                     <Text style={styles.label}>
-                      <Text>SpendTime</Text>- {item.spendtime}
+                      <Text style={{color: 'black'}}>TaskType</Text> -
+                      {item.tasktype_name}
                     </Text>
                     <Text style={styles.label}>
-                      <Text>TaskName</Text>- {item.task_name}
+                      <Text style={{color: 'black'}}>Work-Discription</Text> -
+                      {item.work_description}
                     </Text>
                     <Text style={styles.label}>
-                      <Text>TaskType</Text>- {item.tasktype_name}
-                    </Text>
-                    <Text style={styles.label}>
-                      <Text>Work-Discription</Text>- {item.work_description}
+                      <Text style={{color: 'black'}}>SpendTime</Text> -
+                      {item.spendtime}
                     </Text>
                   </View>
                 </View>
@@ -108,11 +105,19 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5EEF8',
   },
 
+  lablecontent: {
+    backgroundColor: '#2471A2',
+    paddingVertical: 5,
+    paddingHorizontal: 5,
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+
   label: {
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 5,
-    
   },
   content: {
     fontSize: 14,
