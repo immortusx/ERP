@@ -61,8 +61,7 @@ app.get("/api", (req, res) => {
 
 app.get('/api/download', (req, res) => {
   const filePath = "/usr/src/app/server/app-release.apk";
-  const BUILD_ID = process.env.BUILD_ID;
-  const fileName = `Vehicle-ERP-${moment().format("YYYYMMDD")}-${process.env.BUILD_TAG}(${process.env.BUILD_ID}).apk`;
+  const fileName = `Vehicle-ERP-${moment().format("YYYYMMDD")}-${process.env.BUILD_TAG}-${process.env.BUILD_ID}.apk`;
   res.setHeader('Content-Type', 'application/vnd.android.package-archive');
   res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
 

@@ -21,6 +21,8 @@ pipeline {
   stages {
     stage('Defining Stage...') {
       steps {
+        sh "cd server/ && echo 'BUILD_ID= '${BUILD_ID}'' >> .env"
+        sh "cd .."
         execute_stage('Build Android APP', params.skip_app_building)
 
       }
