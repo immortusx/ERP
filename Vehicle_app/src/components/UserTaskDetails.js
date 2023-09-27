@@ -8,7 +8,7 @@ import LoadingSpinner from './subCom/LoadingSpinner';
 import CustomLoadingSpinner from './subCom/CustomLoadingSpinner';
 import { useNavigation } from '@react-navigation/native';
 
-const Tasks = () => {
+const UserTaskDetails = () => {
   const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
   const [userTaskList, setUserTaskList] = useState([]);
@@ -42,12 +42,12 @@ const Tasks = () => {
     <View style={StyleSheet.mainContainer}>
       <View style={styles.container}>
         <TouchableOpacity style={styles.touchableOpacityStyle}>
-          <Text style={styles.taskListStyle}>Tasks List</Text>
+          <Text style={styles.taskListStyle}>Performed Tasks Details</Text>
         </TouchableOpacity>
         {loading ? (
           <CustomLoadingSpinner />
         ) : (
-          userTaskList &&
+          userTaskList && 
           userTaskList.length > 0 && (
             <FlatList
               style={{marginBottom: 60}}
@@ -183,4 +183,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default Tasks;
+export default UserTaskDetails;

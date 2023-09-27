@@ -183,16 +183,16 @@ router.get("/get-task-list", tokenCheck, async (req, res) => {
 
 //========================Retrieve User Task List======================//
 router.get("/get-user-task-list", tokenCheck, async (req, res) => {
-  console.log(">>>>>>>>/get-user-task-list");
+  console.log(">>>>>>>>/get-user-task-list", req.myData);
   const userId = req.myData.userId;
-  console.log(userId, 'userisd');
-  const urlNew = `CALL sp_get_user_task_list_by_user(${userId})`;
+  let isAdmin = req.myData.isSuperAdmin;
+  const urlNew = `CALL sp_get_user_task_list_by_user(${userId}, ${isAdmin})`;
   await db.query(urlNew, async (err, result) => {
     if (err) {
       console.log({ isSuccess: false, result: err });
       res.send({ isSuccess: false, result: "error" });
     } else {
-      console.log({ isSuccess: "success", result: result[0] });
+      console.log({ isSuccess: "success", result: urlNew });
       res.send({ isSuccess: "success", result: result[0] });
     }
   });
