@@ -58,7 +58,9 @@ pipeline {
       steps {
 
         catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS'){
-          sh 'docker stop $(docker ps -aqf name=client_img-${BUILD_TAG}) && docker rm $(docker ps -aqf name=client_img-${BUILD_TAG}) && docker stop $(docker ps -aqf name=server_img-${BUILD_TAG}) && docker rm $(docker ps -aqf name=server_img-${BUILD_TAG})'
+          //sh 'docker stop $(docker ps -aqf name=client_img-${BUILD_TAG}) && docker rm $(docker ps -aqf name=client_img-${BUILD_TAG}) && docker stop $(docker ps -aqf name=server_img-${BUILD_TAG}) && docker rm $(docker ps -aqf name=server_img-${BUILD_TAG})'
+          sh "bash client.sh"
+          sh "bash server.sh"
           sh 'sleep 10s'
         }
                   
