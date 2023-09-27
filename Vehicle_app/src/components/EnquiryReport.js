@@ -9,7 +9,7 @@ const EnquiryReport = () => {
   };
 
   const openDlieveryreport = () => {
-    navigation.navigate('Enquiry List');
+    navigation.navigate('WorkReport List');
   };
   return (
     <View style={styles.mainContainer}>
@@ -30,15 +30,15 @@ const EnquiryReport = () => {
               />
               <Text style={styles.enquiryText}>Enquiry</Text>
             </TouchableOpacity>
-            {/* <TouchableOpacity
+            <TouchableOpacity
               style={styles.deliveryStyle}
               onPress={openDlieveryreport}>
               <Image
                 style={styles.deliveryIcon}
-                source={require('../../assets/delivery.png')}
+                source={require('../../assets/work.png')}
               />
-              <Text style={styles.deliveryText}>Delivery</Text>
-            </TouchableOpacity> */}
+              <Text style={styles.deliveryText}>Work</Text>
+            </TouchableOpacity> 
           </View>
         </View>
         {/* <View style={styles.categoryContainer}>
@@ -127,8 +127,8 @@ const styles = StyleSheet.create({
     borderEndWidth: 0.5,
   },
   deliveryIcon: {
-    width: 70,
-    height: 70,
+    width: 50,
+    height: 60,
     justifyContent: 'center',
   },
   enquiryIcon: {

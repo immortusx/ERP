@@ -66,6 +66,7 @@ router.get('/get-user-details/:id', tokenCheck, async (req, res) => {
     }
   })
 })
+
 router.get('/roles-list', async (req, res) => {
   console.log('>>>>>role-list');
   const url = `call sp_get_role_list()`

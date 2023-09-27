@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, employeeef } from "react";
+import React, { useState, useEffect, useMemo, employeeef, useCallback } from "react";
 import {
   getemployeeListFromDb,
   clearemployeeListState,
@@ -48,10 +48,6 @@ export default function Employees() {
     const updatedRowsData = rowData.map((row) => {
       if (row.id === itemId) {
         console.log(row.id, "updatedRowsDataaaaaaaaaaaaaa");
-        // setSelectedEmployeeIDs((pre)=> ({
-        //   ...pre,
-        //   [row.first_name + ' ' + row.last_name]: !row.checkbox,
-        // }))
         return {
           ...row,
           checkbox: !row.checkbox, // Toggle the checkbox value
@@ -67,6 +63,7 @@ export default function Employees() {
       .map((row) => row.id);
     console.log(updatedSelectedItems, "updatedSelectedItems");
     setSelectedEmployeeIDs(updatedSelectedItems);
+    setSelectedEmployeeIds(updatedSelectedItems);
   };
 
 
@@ -79,6 +76,7 @@ export default function Employees() {
   const [deleteMessage, setDeleteMessage] = useState(null);
   const [type, setType] = useState(null);
   const [selectedEmployeeIDs, setSelectedEmployeeIDs] = useState([]);
+  const [selectedEmployeeIds, setSelectedEmployeeIds] = useState([]);
   const [id, setId] = useState(null);
   const employeeListState = useSelector(
     (state) => state.getemployeeListSlice.employeeListState
@@ -88,6 +86,18 @@ export default function Employees() {
   const [assigneAreaPerUserid, setAssignedAreaPerUserId] = useState([]);
   const [showComponent, setShowComponent] = useState(false);
 
+  const checkTabGrant = useCallback((pathAr) => {
+    let success = false;
+    const rolesArray = localStorage.getItem("rolesArray");
+    console.log(rolesArray, 'roleAraya')
+    const checkList = rolesArray.split(",");
+    pathAr.forEach((element) => {
+      if (checkList.includes(element)) {
+        success = true;
+      }
+    });
+    return success;
+  }, []);
   const handleEditArea = async (ev) => {
     try {
       // console.log(ev.group_id, "evvvvvv");
@@ -166,7 +176,7 @@ export default function Employees() {
   };
 
   const handleEditWork = async (username) => {
-    navigate("/administration/configuration/Task/AddTask", {
+    navigate("/administration/configuration/Task/AssignTask", {
       state: { username: username },
     });
     setShowComponent(true);
@@ -226,8 +236,17 @@ export default function Employees() {
       headerName: "First Name",
       minWidth: 150,
       flex: 1,
-      valueGetter: (params) => {
-        return `${params.row.first_name ? params.row.first_name : "-"}`;
+      renderCell: (params) => {
+        const fistName = params.row.first_name || "-";
+        return (
+          <div className='myBtnForEdit'
+            onClick={() => {
+              editActionCall(params.row);
+            }}
+          >
+            {fistName}
+          </div>
+        );
       },
     },
     {
@@ -235,8 +254,17 @@ export default function Employees() {
       headerName: "Last Name",
       minWidth: 150,
       flex: 1,
-      valueGetter: (params) => {
-        return `${params.row.last_name ? params.row.last_name : "-"}`;
+      renderCell: (params) => {
+        const lastName = params.row.last_name || "-";
+        return (
+          <div className='myBtnForEdit'
+            onClick={() => {
+              editActionCall(params.row);
+            }}
+          >
+            {lastName}
+          </div>
+        );
       },
     },
     {
@@ -269,76 +297,42 @@ export default function Employees() {
         ),
     },
     {
-      field: "actions",
-      headerName: "Actions",
-      className: "bg-dark",
-      sortable: false,
-      filterable: false,
-      headerAlign: "center",
-      align: "center",
-      disableColumnMenu: true,
-      minWidth: 100,
-      flex: 1,
-      position: "sticky",
-      renderCell: (params) => (
-        <div>
-          <Tooltip title="Edit">
-            <button
-              onClick={() => {
-                editActionCall(params.row);
-              }}
-              className="myActionBtn m-1"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="currentColor"
-                className="bi bi-pencil-square"
-                viewBox="0 0 16 16"
-              >
-                <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
-                <path
-                  fillRule="evenodd"
-                  d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"
-                />
-              </svg>
-            </button>
-          </Tooltip>
-          <Tooltip title="Delete">
-            <button
-              onClick={() => {
-                deleteActionCall(params.row);
-              }}
-              className="myActionBtn m-1"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="currentColor"
-                className="bi bi-trash3"
-                viewBox="0 0 16 16"
-              >
-                <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5ZM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0H11Zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5h9.916Zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5Z" />
-              </svg>
-            </button>
-          </Tooltip>
-        </div>
-      ),
-    },
-    {
       field: "menu",
-      headerName: <FontAwesomeIcon icon={faEllipsisV} />,
+      headerName: <FontAwesomeIcon icon={faEllipsisV} style={{ marginRight: "15px" }} />,
       className: "bg-dark",
       sortable: false,
       filterable: false,
-      headerAlign: "center",
-      align: "center",
+      headerAlign: "right",
+      align: "right",
       disableColumnMenu: true,
-      maxWidth: 100,
+      width: 130,
       // flex: 1,
       position: "sticky",
       renderCell: (params) => (
-        <div className="d-flex justify-content-center dotHover">
+        <div className="d-flex justify-content-center dotHoverempicon">
           <FontAwesomeIcon icon={faEllipsisV} />
           <div className="expandDiv">
+            <Tooltip title="Edit">
+              <button
+                onClick={() => {
+                  editActionCall(params.row);
+                }}
+                className="myActionBtn m-1"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="currentColor"
+                  className="bi bi-pencil-square"
+                  viewBox="0 0 16 16"
+                >
+                  <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                  <path
+                    fillRule="evenodd"
+                    d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"
+                  />
+                </svg>
+              </button>
+            </Tooltip>
             <Tooltip title="Assign Area">
               <button
                 onClick={() => {
@@ -349,14 +343,34 @@ export default function Employees() {
                 <img src={location} alt="location" height={20} width={20} />
               </button>
             </Tooltip>
-            <Tooltip title="Work Assign">
+            {checkTabGrant(["assign-task"]) && (
+
+              <Tooltip title="Assign Task">
+                <button
+                  onClick={() => {
+                    handleEditWork(params.row);
+                  }}
+                  className="myActionBtn m-1"
+                >
+                  <img src={workAssign} alt="workAssign" height={20} width={20} />
+                </button>
+              </Tooltip>
+            )}
+            <Tooltip title="Delete">
               <button
                 onClick={() => {
-                  handleEditWork(params.row);
+                  deleteActionCall(params.row);
                 }}
                 className="myActionBtn m-1"
               >
-                <img src={workAssign} alt="workAssign" height={20} width={20} />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="currentColor"
+                  className="bi bi-trash3"
+                  viewBox="0 0 16 16"
+                >
+                  <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5ZM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0H11Zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5h9.916Zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5Z" />
+                </svg>
               </button>
             </Tooltip>
           </div>
@@ -372,11 +386,6 @@ export default function Employees() {
     }));
     setRowData(rowsData);
   }, [employeeListData, selectAll]);
-
-  //  const rowsData = employeeListData.map((item, index) => ({
-  //    ...item,
-  //    id: index + 1,
-  //  }));
 
   useEffect(() => {
     dispatch(getemployeeListFromDb());
@@ -411,15 +420,16 @@ export default function Employees() {
     setDisplayConfirmationModal(false);
   };
   const redirectToTask = () => {
-    navigate("/administration/configuration/Task/AddTask", {
+    navigate("/administration/configuration/Task/AssignTask", {
       state: { selectedEmployeeIDs: selectedEmployeeIDs }
     });
   }
   const redirectToassign = () => {
-    navigate("/sale/area-Assign/add-AsignArea", {
-      state: { selectedEmployeeIDs: selectedEmployeeIDs }
-    });
+
+    setShowComponent(true);
+
   }
+
   const submitDelete = async (type, id) => {
     const url = `${process.env.REACT_APP_NODE_URL}/api/employees/delete-employee/${id}`;
     const config = {
@@ -479,18 +489,18 @@ export default function Employees() {
               <img src={location} alt="location" height={22} width={22} />
             </Tooltip>
           </div>
+          {checkTabGrant(["assign-task"]) && (
           <div
-            onClick={() => {
-              redirectToTask()
-            }}
             className="d-flex align-items-center myActionBtnicon"
-            type="button"
-            style={{ marginLeft: '10px' }}
+            style={{ marginLeft: '10px', cursor: 'pointer' }}
+            onClick={redirectToTask}
           >
-            <Tooltip title="work Assign">
-              <img src={workAssign} alt="workAssign" height={24} width={22} />
+            <Tooltip title="Assign Task">
+              <img src={workAssign} alt="Assign Task" height={24} width={22} />
             </Tooltip>
           </div>
+           )}
+
         </div>
 
         <div
@@ -550,6 +560,7 @@ export default function Employees() {
         showModal={showComponent}
         hideModal={hideareamodal}
         id={id}
+        selectedEmployeeIds={selectedEmployeeIds}
       />
     </>
   );

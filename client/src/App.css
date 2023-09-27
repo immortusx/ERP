@@ -65,13 +65,29 @@ hr {
   box-shadow: 0 0 5px 0px #3e53678a;
 }
 
-.myBtn,.myBtnl:hover {
+.myBtn,
+.myBtnl:hover {
   text-decoration: underline;
 
 }
 
-.myBtn,.myBtnl:focus {
+.myBtn,
+.myBtnl:focus {
   outline: 1.5px solid #0000006b !important;
+}
+
+.myBtnForEdit {
+  text-decoration: underline;
+  cursor: pointer;
+  font-weight: bold;
+  color: #000;
+}
+
+.myBtnWorkReport {
+  text-decoration: underline;
+  cursor: pointer;
+  font-weight: bold;
+  color: #000;
 }
 
 .svgBtn svg {
@@ -126,6 +142,7 @@ hr {
   border-radius: 10px;
   outline: none;
 }
+
 .myBtnl {
   /* border: none; */
   border: 1.5px solid #d8d6de;
@@ -133,7 +150,8 @@ hr {
   border-radius: 5px;
   outline: none;
 }
-.myBtnl:hover{
+
+.myBtnl:hover {
   border-color: #3e53678a;
   box-shadow: 0 0 5px 0px #3e53678a;
 }
@@ -165,10 +183,11 @@ select.myInput {
   height: 43px;
 }
 
-.myInputl:hover{
+.myInputl:hover {
   border-color: #3e53678a;
   box-shadow: 0 0 5px 0px #3e53678a;
 }
+
 .myInputl:focus {
   /* border-bottom: 1.5px solid #000000; */
   box-shadow: 0 0 5px 0px #3e53678a;
@@ -223,6 +242,7 @@ select.myInput {
   padding: 5px 5px;
   border-radius: 10px;
 }
+
 .myActionBtnicon:hover {
   background-color: white !important;
 }
@@ -242,6 +262,11 @@ select.myInput {
 .dotHover {
 
   width: 100%;
+}
+
+.dotHoverempicon {
+  max-width: 130px;
+  margin-right: 15px;
 }
 
 .tableMenuHover .MuiDataGrid-cell:hover .expandDiv {
@@ -712,3 +737,78 @@ select.myInput {
   border-Radius: 5px;
   box-Shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+
+.custom-select {
+  position: relative;
+  display: inline-block;
+}
+
+.custom-select img {
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  transform: translateY(-50%);
+}
+
+.custom-select select {
+  padding-left: 30px;
+  /* Adjust as needed based on the image width and your desired spacing */
+  padding-top: 0;
+  /* Remove any additional padding */
+  padding-bottom: 0;
+  /* Remove any additional padding */
+  margin: 0;
+  /* Remove any margin */
+}
+
+.image-container {
+  position: relative;
+  display: inline-block;
+}
+
+.image-container:hover::before .box-contain{
+  content: '';
+  position: absolute;
+  top: 25px;
+  right: 38px;
+  bottom: 0px;
+  border-radius: 5px;
+  z-index: -1;
+  width: 250px;
+  height: 100px;
+  margin-right: 10px;
+  background-color: rgb(59, 94, 124);
+}
+
+.image-container:hover .box-contain {
+  display: block;
+}
+
+.image-container .box-contain {
+  display: none;
+  position: absolute;
+  background-color: white;
+  padding: 10px;
+  width: 250px;
+  height: 100px;
+  margin-right: 5px;
+  background-color: rgb(59, 94, 124);
+  top: 0;
+  right: 40px;
+}
+
+.download-button {
+  background-color: #0074cc; /* Background color */
+  color: white; /* Text color */
+  border: none; /* Remove borders */
+  border-radius: 5px; /* Rounded corners */
+  cursor: pointer; /* Change cursor to pointer on hover */
+  font-size: 16px; /* Adjust font size */
+  margin: 5px; /* Add margin to create space between buttons */
+}
+
+/* Hover effect */
+.download-button:hover {
+  background-color: #005aa3; /* Change background color on hover */
+}
+

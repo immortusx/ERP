@@ -79,11 +79,13 @@ import Dashboard from "./Dashboard";
 import UserProfile from "./UserProfile";
 import Report from "./Report";
 import Task from "./Task";
-import AddTask from "./AddTask";
+import AssignTask from "./AddTask";
 import axios from "axios";
 import { Spinner } from "react-bootstrap";
 import EnquirySources from "./Master/EnquirySources/EnquirySources";
 import EnquirySources_model from "./Master/EnquirySources/EnquirySources_modal";
+import WorkReport from "./WorkReport";
+import WorkReportDetails from "./WorkReportDetails";
 const CheckPermission = ({ children, path }) => {
   // return checkList.includes(path) ? children : <Navigate to="../no-access" />
   // return checkList.includes(path) ? children : <h3>No access</h3>
@@ -260,8 +262,8 @@ export default function HomeScreen() {
   useEffect(() => {
     setTimeout(() => {
       setLoading(false);
-    }, 2000)
-  }, [])
+    }, 2000);
+  }, []);
   return (
     <>
       <aside ref={adminAsideRef} className="asideNav">
@@ -889,7 +891,7 @@ export default function HomeScreen() {
               path="sale/enquiries/followup"
               element={
                 <CheckPermission path="profile">
-                  <FollowUp  />
+                  <FollowUp />
                 </CheckPermission>
               }
               exact
@@ -1039,7 +1041,7 @@ export default function HomeScreen() {
               path="administration/configuration/enquirysources"
               element={
                 <CheckPermission path="profile">
-                  <EnquirySources workFor="forAddd"/>
+                  <EnquirySources workFor="forAddd" />
                 </CheckPermission>
               }
               exact
@@ -1085,6 +1087,24 @@ export default function HomeScreen() {
               element={
                 <CheckPermission path="profile">
                   <Work_Assign_Area />
+                </CheckPermission>
+              }
+              exact
+            />
+            <Route
+              path="administration/report/workreport"
+              element={
+                <CheckPermission path="profile">
+                  <WorkReport />
+                </CheckPermission>
+              }
+              exact
+            />
+            <Route
+              path="administration/report/workreport/details"
+              element={
+                <CheckPermission path="profile">
+                  <WorkReportDetails />
                 </CheckPermission>
               }
               exact
@@ -1281,10 +1301,10 @@ export default function HomeScreen() {
               exact
             />
             <Route
-              path="administration/configuration/Task/AddTask"
+              path="administration/configuration/Task/AssignTask"
               element={
                 <CheckPermission path="profile">
-                  <AddTask workFor="addTask" />
+                  <AssignTask workFor="addTask" />
                 </CheckPermission>
               }
               exact
