@@ -58,12 +58,12 @@ export default function WorkReport() {
     })
   }
   const handleChildCheckboxClick = (itemId) => {
+    console.log(itemId, "itemId");
     const updatedRowsData = rowData.map((row) => {
-      if (row.id === itemId) {
-        console.log(row.id, "updatedRowsData");
+      if (row.EmployeeId === itemId) {
         return {
           ...row,
-          checkbox: !row.checkbox, // Toggle the checkbox value
+          checkbox: !row.checkbox,
         };
       }
       return row;
@@ -83,11 +83,12 @@ export default function WorkReport() {
         />
       ),
       minWidth: 90,
+      // flex: 1,
       renderCell: (params) => (
         <Checkbox
           {...label}
           checked={params.row.checkbox}
-          onClick={() => handleChildCheckboxClick(params.row.rowNumber)}
+          onClick={() => handleChildCheckboxClick(params.row.EmployeeId)}
         />
       ),
     },
@@ -102,7 +103,8 @@ export default function WorkReport() {
       renderCell: (params) => {
         const employeeName = params.row.Employee || "-";
         return (
-          <div className='myBtnWorkReport'
+          <div
+            className="myBtnWorkReport"
             onClick={() => {
               loadMoreReport(params.row);
             }}
@@ -146,7 +148,10 @@ export default function WorkReport() {
       minWidth: 200,
       flex: 1.2,
       valueGetter: (params) => {
-        if (params.row.TaskCompleted !== null && params.row.TaskCompleted !== undefined) {
+        if (
+          params.row.TaskCompleted !== null &&
+          params.row.TaskCompleted !== undefined
+        ) {
           return `${params.row.TaskCompleted} / ${params.row.TotalTask}`;
         } else {
           return "-";
@@ -162,9 +167,9 @@ export default function WorkReport() {
       minWidth: 200,
       flex: 1.2,
       valueGetter: (params) => {
-        return `${params.row.work_description
-          ? params.row.work_description
-          : "-"}`;
+        return `${
+          params.row.work_description ? params.row.work_description : "-"
+        }`;
       },
     },
     {
@@ -199,12 +204,14 @@ export default function WorkReport() {
   ];
 
   useEffect(() => {
+    console.log(workReport,"workReport");
     const rowsData = workReport.map((item, index) => ({
       ...item,
-      rowNumber: index + 1,
+      rowNumber: item.EmployeeId,
       checkbox: selectAll,
     }));
     setRowData(rowsData);
+    console.log(rowsData,"item")
   }, [workReport, selectAll]);
 
   const deleteActionCall = (data) => {

@@ -314,7 +314,7 @@ const Delivery = () => {
             onChange={changeHandlerNewEnquiry}
             className="myInput inputElement"
             autoComplete="false"
-            type="number"
+            type="text"
             name="phone_number"
             value={deliverdata.phone_number}
             placeholder=" Enter Mobile Number"
@@ -376,7 +376,7 @@ const Delivery = () => {
             onChange={changeHandlerNewEnquiry}
             className="myInput inputElement"
             autoComplete="false"
-            type="number"
+            type="text"
             name="chassis_no"
             value={deliverdata.chassis_no}
             placeholder="Enter Chassis No"

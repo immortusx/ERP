@@ -71,6 +71,7 @@ export default function EnquiryList() {
 
   const [selectedItemIds, setSelectedItemIds] = useState([]);
   const handleChildCheckboxClick = (itemId) => {
+    console.log(itemId, "itemId");
     const updatedRowsData = rowData.map((row) => {
       if (row.id === itemId) {
         return {
@@ -502,6 +503,7 @@ export default function EnquiryList() {
   }, []);
 
   useEffect(() => {
+    console.log(enquiries, "enquiries");
     const rowsData = enquiries.map((item, index) => ({
       ...item,
       rowNumber: item.id,

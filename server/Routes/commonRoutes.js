@@ -181,23 +181,6 @@ router.get("/get-task-list", tokenCheck, async (req, res) => {
   });
 });
 
-//========================Retrieve User Task List======================//
-router.get("/get-user-task-list", tokenCheck, async (req, res) => {
-  console.log(">>>>>>>>/get-user-task-list");
-  const userId = req.myData.userId;
-  console.log(userId, 'userisd');
-  const urlNew = `CALL sp_get_user_task_list_by_user(${userId})`;
-  await db.query(urlNew, async (err, result) => {
-    if (err) {
-      console.log({ isSuccess: false, result: err });
-      res.send({ isSuccess: false, result: "error" });
-    } else {
-      console.log({ isSuccess: "success", result: result[0] });
-      res.send({ isSuccess: "success", result: result[0] });
-    }
-  });
-});
-
 //=====================Retrieve Assigned Sale Person===================//
 router.get(
   "/retrieve-area-assigned-person/:category/:village",
@@ -227,7 +210,7 @@ router.get(
 
 //=======================Get Work Report (EmployeeList)============================//
 router.get("/get-employee-work-report", tokenCheck, async (req, res) => {
-  console.log(req.myData,">>>>>get-employee-work-report");
+  console.log(">>>>>get-employee-work-report");
   try {
     const url = `CALL sp_get_work_report()`;
     db.query(url, async (err, result) => {
@@ -247,6 +230,26 @@ router.get("/get-employee-work-report", tokenCheck, async (req, res) => {
 
 //=======================Get Work Report Details============================//
 router.get("/get-work-report-details/:employeeId", tokenCheck, async (req, res) => {
+  console.log(">>>>>/get-work-report-details");
+  try {
+    const EmployeeId = req.params.employeeId;
+    const url = `CALL sp_get_work_report_by_employee(${EmployeeId})`;
+    db.query(url, async (err, result) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ isSuccess: false, result: "error" });
+      } else {
+        console.log({ isSuccess: true, result: result });
+        res.status(200).json({ isSuccess: true, result: result[0] });
+      }
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ isSuccess: false, result: "error" });
+  }
+});
+//=======================Get Work Report Details for Application============================//
+router.get("/work-report-details/:employeeId", tokenCheck, async (req, res) => {
   console.log(">>>>>/get-work-report-details");
   try {
     const EmployeeId = req.myData.userId;
