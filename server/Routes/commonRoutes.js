@@ -181,6 +181,23 @@ router.get("/get-task-list", tokenCheck, async (req, res) => {
   });
 });
 
+//========================Retrieve User Task List======================//
+router.get("/get-user-task-list", tokenCheck, async (req, res) => {
+  console.log(">>>>>>>>/get-user-task-list");
+  const userId = req.myData.userId;
+  console.log(userId, 'userisd');
+  const urlNew = `CALL sp_get_user_task_list_by_user(${userId})`;
+  await db.query(urlNew, async (err, result) => {
+    if (err) {
+      console.log({ isSuccess: false, result: err });
+      res.send({ isSuccess: false, result: "error" });
+    } else {
+      console.log({ isSuccess: "success", result: result[0] });
+      res.send({ isSuccess: "success", result: result[0] });
+    }
+  });
+});
+
 //=====================Retrieve Assigned Sale Person===================//
 router.get(
   "/retrieve-area-assigned-person/:category/:village",
