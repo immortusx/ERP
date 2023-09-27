@@ -125,7 +125,6 @@ const AdditonalDetails = ({route}) => {
           );
         } else if (response.data.result === 'Task Not Assigned') {
           console.log('Task Not Assigned');
-          Alert('Task Not Assigned');
         }
       }
     });
