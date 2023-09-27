@@ -737,3 +737,78 @@ select.myInput {
   border-Radius: 5px;
   box-Shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+
+.custom-select {
+  position: relative;
+  display: inline-block;
+}
+
+.custom-select img {
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  transform: translateY(-50%);
+}
+
+.custom-select select {
+  padding-left: 30px;
+  /* Adjust as needed based on the image width and your desired spacing */
+  padding-top: 0;
+  /* Remove any additional padding */
+  padding-bottom: 0;
+  /* Remove any additional padding */
+  margin: 0;
+  /* Remove any margin */
+}
+
+.image-container {
+  position: relative;
+  display: inline-block;
+}
+
+.image-container:hover::before .box-contain{
+  content: '';
+  position: absolute;
+  top: 25px;
+  right: 38px;
+  bottom: 0px;
+  border-radius: 5px;
+  z-index: -1;
+  width: 250px;
+  height: 100px;
+  margin-right: 10px;
+  background-color: rgb(59, 94, 124);
+}
+
+.image-container:hover .box-contain {
+  display: block;
+}
+
+.image-container .box-contain {
+  display: none;
+  position: absolute;
+  background-color: white;
+  padding: 10px;
+  width: 250px;
+  height: 100px;
+  margin-right: 5px;
+  background-color: rgb(59, 94, 124);
+  top: 0;
+  right: 40px;
+}
+
+.download-button {
+  background-color: #0074cc; /* Background color */
+  color: white; /* Text color */
+  border: none; /* Remove borders */
+  border-radius: 5px; /* Rounded corners */
+  cursor: pointer; /* Change cursor to pointer on hover */
+  font-size: 16px; /* Adjust font size */
+  margin: 5px; /* Add margin to create space between buttons */
+}
+
+/* Hover effect */
+.download-button:hover {
+  background-color: #005aa3; /* Change background color on hover */
+}
+

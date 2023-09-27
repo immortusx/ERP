@@ -13,6 +13,9 @@ import eyeIconClose from "../assets/images/hide.png"
 import LanguageSelector from './languageSelector'
 import enTranslations from "../assets/locals/en.json"
 import gjTranslations from "../assets/locals/gj.json"
+import appdownload from "../assets/images/apps.png"
+import { Tooltip } from "@mui/material";
+import axios from 'axios'
 
 export default function Login() {
     const dispatch = useDispatch()
@@ -20,7 +23,8 @@ export default function Login() {
     const profileDataState = useSelector(state => state.profileData.profile)
     const [showPassword, setShowPassword] = useState(false);
     const [rememberMe, setRememberMe] = useState(false);
-    const [language, setLanguage] = useState('en'); // Default language is English
+    const [toggleDownloadPopUp, setToggleDownloadPopUp] = useState(false);
+    const [language, setLanguage] = useState('en');
 
     const translations = language === 'en' ? enTranslations : gjTranslations;
 
@@ -30,6 +34,24 @@ export default function Login() {
         email: '',
         password: '',
     })
+    const downloadAndroidApp = async () => {
+        console.log("Downloading Android.....")
+        const androidApkUrl = `${process.env.REACT_APP_NODE_URL}/api/download`;
+        const anchor = document.createElement('a');
+        anchor.style.display = 'none';
+        anchor.href = androidApkUrl;
+        anchor.download = 'android-app.apk';
+        document.body.appendChild(anchor);
+
+        anchor.click();
+
+        document.body.removeChild(anchor);
+
+    }
+    const downloadiOsApp = async () => {
+        console.log("Downloading iOs.....")
+        window.alert("App Not Found")
+    }
     function onChangeHandler(e) {
         if (e.target.name === 'email') {
             setLoginData(registerData => ({ ...loginData, 'email': e.target.value }))
@@ -100,20 +122,28 @@ export default function Login() {
 
     return (
         <main>
-            <div className='d-flex align-items-start justify-content-end'>
+            <div className='d-flex align-items-start justify-content-end' style={{ marginRight: '20px' }}>
+                <div class="image-container">
+                    <img
+                        src={appdownload}
+                        alt="app"
+                        height={25}
+                        width={25}
+                        style={{ marginRight: '20px', marginTop: '1px' }}
+                    />
+                    <div className='box-contain'>
+                        <button class="download-button" onClick={downloadAndroidApp}>Download Android App</button>
+                        <button class="download-button" onClick={downloadiOsApp}>Download iOS App</button>
+                    </div>
+                </div>
                 <LanguageSelector onChangeLanguage={(selectedLanguage) => setLanguage(selectedLanguage)} />
             </div>
 
             <div className='container'>
-                {/* section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4 */}
                 <div className=' d-flex flex-column align-items-center justify-content-center'>
                     <div className='container'>
                         <div className=' row justify-content-center'>
                             <section className='col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center'>
-
-                                {/* <h5 className='text-center p-0 m-0'>
-                                <strong>Vehicle Management System</strong>
-                            </h5> */}
                                 <div>
                                     <img src={lg} alt="Logo" height={200} width={350} />
                                 </div>
@@ -160,11 +190,6 @@ export default function Login() {
                                             {translations.rememberMe}
                                         </label>
                                     </section>
-
-                                    {/* <section>
-                            <label htmlFor="confirmPassword">Confirm Password </label>
-                            <input className='myInput' onChange={(e) => { onChangeHandler(e) }} type="password" id='confirmPassword' name="confirmPassword" />
-                        </section> */}
                                     <section>
                                         <button className='myBtnl py-1' style={{ fontSize: '18px' }} onClick={handleSubmit} type='button'>  {translations.loginButton}</button>
                                     </section>
