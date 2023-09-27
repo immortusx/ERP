@@ -246,7 +246,7 @@ router.get("/get-employee-work-report", tokenCheck, async (req, res) => {
 });
 
 //=======================Get Work Report Details============================//
-router.get("/get-work-report-details/:employeeId", tokenCheck, async (req, res) => {
+router.get("/get-work-report-details", tokenCheck, async (req, res) => {
   console.log(">>>>>/get-work-report-details");
   try {
     const EmployeeId = req.myData.userId;
