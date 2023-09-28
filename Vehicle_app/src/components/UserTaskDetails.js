@@ -8,13 +8,17 @@ import LoadingSpinner from './subCom/LoadingSpinner';
 import CustomLoadingSpinner from './subCom/CustomLoadingSpinner';
 import { useNavigation } from '@react-navigation/native';
 
-const Tasks = () => {
+const UserTaskDetails = () => {
   const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
-  const [userTaskList, setUserTaskList] = useState([]);
-  const getUserTaskLists = async () => {
-    const url = `${API_URL}/api/get-user-task-list`;
-    console.log('get user task list', url);
+  const [userTaskDetails, setUserTaskDetails] = useState([]);
+  
+  useEffect(() => {
+    getWorkReportDetails();
+  }, []);
+  const getWorkReportDetails = async () => {
+    const url = `${API_URL}/api/get-work-report-details`;
+    console.log('get work report', url);
     const token = await AsyncStorage.getItem('rbacToken');
     const config = {
       headers: {
@@ -25,15 +29,12 @@ const Tasks = () => {
     console.log(config);
     await axios.get(url, config).then(response => {
       if (response) {
-        console.log(response.data, 'userTask List');
-        setUserTaskList(response.data.result);
+        console.log(response.data, 'work report');
+        setUserTaskDetails(response.data.result);
       }
     });
     setLoading(false);
   };
-  useEffect(() => {
-    getUserTaskLists();
-  }, []);
   const openTaskDetails = (taskDetails)=> {
     console.log(taskDetails, 'taskDetials');
     navigation.navigate('Task Details', {taskDetails: taskDetails});
@@ -42,16 +43,16 @@ const Tasks = () => {
     <View style={StyleSheet.mainContainer}>
       <View style={styles.container}>
         <TouchableOpacity style={styles.touchableOpacityStyle}>
-          <Text style={styles.taskListStyle}>Tasks List</Text>
+          <Text style={styles.taskListStyle}>Performed Tasks Details</Text>
         </TouchableOpacity>
         {loading ? (
           <CustomLoadingSpinner />
         ) : (
-          userTaskList &&
-          userTaskList.length > 0 && (
+          userTaskDetails && 
+          userTaskDetails.length > 0 && (
             <FlatList
               style={{marginBottom: 60}}
-              data={userTaskList}
+              data={userTaskDetails}
               keyExtractor={(item, index) => `task_${index}`}
               renderItem={({item, index}) => {
                 return (
@@ -68,29 +69,20 @@ const Tasks = () => {
                       <View style={styles.leftContainer}>
                         <Text style={styles.taskLabel}>Task Type:</Text>
                         <Text style={styles.taskLabel}>Tasks:</Text>
-                        <Text style={styles.taskLabel}>Task Performed: </Text>
-                        <Text style={styles.taskLabel}>Start Date: </Text>
-                        <Text style={styles.taskLabel}>End Date: </Text>
-                        <Text style={styles.taskLabel}>Task Time Period: </Text>
+                        <Text style={styles.taskLabel}>Date: </Text>
+                        <Text style={styles.taskLabel}>Spend Time: </Text>
+                        <Text style={styles.taskLabel}>Work Description: </Text>
                       </View>
                       <View style={styles.rightContainer}>
                         <Text style={styles.listStyle}>
                           {item.tasktype_name}
                         </Text>
                         <Text style={styles.listStyle}>{item.task_name}</Text>
-                        <TouchableOpacity style={styles.perfomedTaskBtn} onPress={()=> {openTaskDetails(item)}}>
-                          <Text
-                            style={[styles.listStyle, styles.taskPerformed]}>
-                            {item.taskCompleted}/{item.taskcount}
-                          </Text>
-                        </TouchableOpacity>
                         <Text style={styles.listStyle}>
-                          {moment(item.startdate).format('Do MMMM, YYYY')}
+                          {moment(item.datetime).format('Do MMMM, YYYY')}
                         </Text>
-                        <Text style={styles.listStyle}>
-                          {moment(item.enddate).format('Do MMMM, YYYY')}
-                        </Text>
-                        <Text style={styles.listStyle}>{item.period_name}</Text>
+                        <Text style={styles.listStyle}>{item.spendtime}</Text>
+                        <Text style={styles.listStyle}>{item.work_description}</Text>
                       </View>
                     </View>
                   </View>
@@ -158,6 +150,7 @@ const styles = StyleSheet.create({
   dataContainer: {
     flexDirection: 'row',
     marginHorizontal: 12,
+    paddingRight: 100
   },
   leftContainer: {
     alignItems: 'flex-start',
@@ -183,4 +176,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default Tasks;
+export default UserTaskDetails;
