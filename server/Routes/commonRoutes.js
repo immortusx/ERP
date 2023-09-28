@@ -234,16 +234,16 @@ router.get("/get-addtask/:id", tokenCheck, async (req, res) => {
 
 //========================Retrieve User Task List======================//
 router.get("/get-user-task-list", tokenCheck, async (req, res) => {
-  console.log(">>>>>>>>/get-user-task-list");
+  console.log(">>>>>>>>/get-user-task-list", req.myData);
   const userId = req.myData.userId;
-  console.log(userId, 'userisd');
-  const urlNew = `CALL sp_get_user_task_list_by_user(${userId})`;
+  let isAdmin = req.myData.isSuperAdmin;
+  const urlNew = `CALL sp_get_user_task_list_by_user(${userId}, ${isAdmin})`;
   await db.query(urlNew, async (err, result) => {
     if (err) {
       console.log({ isSuccess: false, result: err });
       res.send({ isSuccess: false, result: "error" });
     } else {
-      console.log({ isSuccess: "success", result: result[0] });
+      console.log({ isSuccess: "success", result: urlNew });
       res.send({ isSuccess: "success", result: result[0] });
     }
   });
@@ -278,7 +278,7 @@ router.get(
 
 //=======================Get Work Report (EmployeeList)============================//
 router.get("/get-employee-work-report", tokenCheck, async (req, res) => {
-  console.log(req.myData, ">>>>>get-employee-work-report");
+  console.log(">>>>>get-employee-work-report");
   try {
     const url = `CALL sp_get_work_report()`;
     db.query(url, async (err, result) => {
@@ -297,11 +297,12 @@ router.get("/get-employee-work-report", tokenCheck, async (req, res) => {
 });
 
 //=======================Get Work Report Details============================//
-router.get("/get-work-report-details/:employeeId", tokenCheck, async (req, res) => {
+router.get("/get-work-report-details", tokenCheck, async (req, res) => {
   console.log(">>>>>/get-work-report-details");
   try {
     const EmployeeId = req.myData.userId;
-    const url = `CALL sp_get_work_report_by_employee(${EmployeeId})`;
+    let isAdmin = req.myData.isSuperAdmin;
+    const url = `CALL sp_get_work_report_by_employee(${EmployeeId}, ${isAdmin})`;
     db.query(url, async (err, result) => {
       if (err) {
         console.error(err);

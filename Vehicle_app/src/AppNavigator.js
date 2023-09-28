@@ -18,6 +18,7 @@ import EnquiryVillageList from './components/EnquiryVillageList';
 import Category from './components/Category';
 import VillageEnquiryLists from './components/VillageEnquiryLists';
 import VillageEnquiry from './components/VillageEnquiry';
+import UserTaskDetails from './components/UserTaskDetails';
 const Stack = createStackNavigator();
 const AppNavigator = () => {
   return (
@@ -185,6 +186,17 @@ const AppNavigator = () => {
         <Stack.Screen
           name="Enquiry Village"
           component={VillageEnquiry}
+          options={{
+            headerShown: true,
+            headerStyle: {
+              borderWidth: 0.9,
+              borderColor: 'grey',
+            },
+          }}
+        />
+        <Stack.Screen
+          name="Task Details"
+          component={UserTaskDetails}
           options={{
             headerShown: true,
             headerStyle: {

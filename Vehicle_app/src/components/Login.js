@@ -22,6 +22,9 @@ const Login = ({navigation}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isLoggedIn, setLoggedIn] = useState(false);
   const loginState = useSelector(state => state.getLoginSlice.loginState);
+  const profileData = useSelector(
+    state => state.getUserProfileSlice.profile.currentUserData.result,
+  );
   const [loginData, setLoginData] = useState({
     email: '',
     password: '',
@@ -79,6 +82,14 @@ const Login = ({navigation}) => {
     console.log('loginState', loginState);
   }, [loginState]);
 
+  useEffect(()=> {
+    if(profileData){
+      const email = profileData?.email ?? '';
+      setLoginData((prevData) => ({ ...prevData, email }));
+      const password = 'admin';
+      setLoginData((prevData) => ({ ...prevData, password }));
+    }
+  },[profileData])
   const handleLogin = () => {
     if (loginData.email.length > 0 && loginData.password.length > 0) {
       dispatch(getLoginUser(loginData));

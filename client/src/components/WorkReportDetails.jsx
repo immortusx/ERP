@@ -71,7 +71,7 @@ export default function WorkReportDetails() {
   }, [EmployeeId]);
   const handleChildCheckboxClick = (itemId) => {
     const updatedRowsData = rowData.map((row) => {
-      if (row.id === itemId) {
+      if (row.EmployeeId === itemId) {
         console.log(row.id, "updatedRowsData");
         return {
           ...row,
@@ -99,7 +99,7 @@ export default function WorkReportDetails() {
         <Checkbox
           {...label}
           checked={params.row.checkbox}
-          onClick={() => handleChildCheckboxClick(params.row.rowNumber)}
+          onClick={() => handleChildCheckboxClick(params.row.EmployeeId)}
         />
       ),
     },
@@ -148,8 +148,9 @@ export default function WorkReportDetails() {
       minWidth: 200,
       flex: 1.2,
       valueGetter: (params) => {
-        return `${params.row.work_description ? params.row.work_description : "-"
-          }`;
+        return `${
+          params.row.work_description ? params.row.work_description : "-"
+        }`;
       },
     },
     {
@@ -162,14 +163,14 @@ export default function WorkReportDetails() {
       flex: 1.2,
       valueGetter: (params) => {
         if (params.row.datetime) {
-          const dateTimeParts = params.row.datetime.split('T');
+          const dateTimeParts = params.row.datetime.split("T");
           const date = dateTimeParts[0];
           const time = dateTimeParts[1].substring(0, 8); // Extract the first 8 characters for the time
           return `${date} ${time}`;
         } else {
           return "-";
         }
-      }
+      },
     },
     {
       field: "spendtime",
@@ -180,8 +181,7 @@ export default function WorkReportDetails() {
       minWidth: 200,
       flex: 1.2,
       valueGetter: (params) => {
-        return `${params.row.spendtime ? params.row.spendtime : "-"
-          }`;
+        return `${params.row.spendtime ? params.row.spendtime : "-"}`;
       },
     },
   ];
