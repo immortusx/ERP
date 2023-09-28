@@ -58,7 +58,62 @@
 }
 
 
+.download-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 40%;
+    padding: 1px 10px;
+}
 
+.download-bar {
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: #6faef1;
+    color: white;
+    padding: 1px 10px;
+    transition: background-color 0.2s, padding 0.2s;
+
+}
+
+.download-menu-container {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    height: 30px;
+    padding: 1px 10px;
+    background-color: #6faef1;
+
+}
+
+
+.download-button {
+    display: fixed;
+    background-color: #6faef1;
+    color: white;
+    padding: 1px 10px;
+    border: 10px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+
+
+}
+
+.download-button:hover {
+    background-color: #6faef1;
+    padding: 1px 10px;
+}
+
+p {
+    margin: 0;
+}
+
+.download-menu-container p {
+    display: none;
+    background-color: #6faef1;
+}
 
 .asideNav .headBtn {
     background-color: transparent;
@@ -207,6 +262,7 @@
     display: block !important;
     margin: auto;
 }
+
 .toggleSideBar .asideMain .logoDiv .agency-style {
     display: none;
 }
