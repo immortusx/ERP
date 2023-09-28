@@ -41,6 +41,7 @@
     padding-bottom: 10px;
     background-color: #0000008a;
     position: relative;
+    border-radius:10px ;
 }
 
 .asideNav .headBtn[aria-expanded="true"]::before {
@@ -58,7 +59,62 @@
 }
 
 
+.download-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 40%;
+    padding: 1px 10px;
+}
 
+.download-bar {
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: #6faef1;
+    color: white;
+    padding: 1px 10px;
+    transition: background-color 0.2s, padding 0.2s;
+
+}
+
+.download-menu-container {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    height: 30px;
+    padding: 1px 10px;
+    background-color: #6faef1;
+
+}
+
+
+.download-button {
+    display: fixed;
+    background-color: #6faef1;
+    color: white;
+    padding: 1px 10px;
+    border: 10px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+
+
+}
+
+.download-button:hover {
+    background-color: #6faef1;
+    padding: 1px 10px;
+}
+
+p {
+    margin: 0;
+}
+
+.download-menu-container p {
+    display: none;
+    background-color: #6faef1;
+}
 
 .asideNav .headBtn {
     background-color: transparent;
@@ -94,6 +150,7 @@
 
 .asideNav .profileSection .logoutSideBar a {
     color: white;
+    border-radius:10px ;
 }
 
 .asideNav .profileSection .logoutSideBar {
@@ -108,6 +165,7 @@
     padding: 15px;
     background: #7e8891;
     animation: var(--myFadeAnimation);
+    border-radius:10px ;
 }
 
 .asideNav .logoDiv img {
@@ -124,6 +182,7 @@
 
 .asideNav .inLi a.activeLink {
     background-color: #00ffff91;
+    border-radius:10px ;
 }
 
 .asideNav .inLi a:hover {
@@ -135,6 +194,7 @@
 
 .asideNav .inUl {
     animation: var(--myFadeAnimation);
+    border-radius:10px ;
 
 }
 
@@ -145,6 +205,7 @@
 .asideNav .outLi {
     list-style: none;
     padding-bottom: 15px;
+    border-radius:10px ;
 }
 
 .asideNav .outerSection {
@@ -207,6 +268,7 @@
     display: block !important;
     margin: auto;
 }
+
 .toggleSideBar .asideMain .logoDiv .agency-style {
     display: none;
 }
@@ -264,6 +326,7 @@
     width: 210px;
     z-index: 1500;
     background: #7e8891;
+    border: 10px;
 }
 
 
@@ -304,6 +367,7 @@
 .toggleSideBar .asideNav .profileSection {
     display: flex;
     justify-content: center;
+    border-radius:10px ;
 }
 
 
@@ -475,6 +539,7 @@
         width: 210px;
         z-index: 1500;
         background: #7e8891;
+        border-radius:10px ;
     }
 
 
@@ -515,6 +580,7 @@
     .asideNav .profileSection {
         display: flex;
         justify-content: center;
+        border-radius:10px ;
     }
 
 
@@ -562,6 +628,7 @@
     .toggleSideBar .asideNav .inUl {
         background-color: red;
         display: none;
+        border-radius:10px ;
     }
 
 
