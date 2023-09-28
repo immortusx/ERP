@@ -27,7 +27,7 @@ const WorkList = () => {
   useEffect(() => {
     const getWorkReport = async id => {
       try {
-        const url = `${API_URL}/api/work-report-details/${id}`;
+        const url = `${API_URL}/api/get-work-report-details`;
         const token = await AsyncStorage.getItem('rbacToken');
         const config = {
           headers: {

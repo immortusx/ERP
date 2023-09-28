@@ -29,8 +29,9 @@ router.get('/profile-data', tokenCheck, async (req, res) => {
         last_name: result[0][0].last_name,
         phone_number: result[0][0].phone_number,
         last_login: result[0][0].last_login,
+        document_path: result[0][0].document_path,
         features: features,
-      }
+      };
       console.log({ isSuccess: true, result: url })
       res.send({ isSuccess: true, result: newObj })
     }
