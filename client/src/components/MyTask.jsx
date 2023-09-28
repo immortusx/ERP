@@ -7,34 +7,19 @@ import { setEditUserData } from "../redux/slices/editUserDataSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { setShowMessage } from "../redux/slices/notificationSlice";
 import AlertDeleteModal from "./AlertDelete/AlertDeleteModal";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import PlayCircleIcon from "@mui/icons-material/PlayCircle";
-import { faEllipsisV } from "@fortawesome/free-solid-svg-icons/faEllipsisV";
 import Checkbox from "@mui/material/Checkbox";
-import CheckIcon from "@mui/icons-material/Check";
-import ClearIcon from "@mui/icons-material/Clear";
 import { Tooltip } from "@mui/material";
 import edit from "../assets/images/editu.png";
 import { Button } from "react-bootstrap";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import Axios from "axios";
-import moment from "moment";
-import swipe from "../assets/images/swipe.png";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
-import Box from "@mui/material/Box";
+
 import "../styles/Users.css";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
-export default function WorkReportDetails() {
-  const location = useLocation();
-  const EmployeeId = location.state.report.EmployeeId;
-  const [userListData, setUserListData] = useState([]);
-  const [type, setType] = useState(null);
-  const [workReport, setWorkReport] = useState([]);
-  const [id, setId] = useState(null);
-  const [displayConfirmationModal, setDisplayConfirmationModal] =
-    useState(false);
-  const [deleteMessage, setDeleteMessage] = useState(null);
+export default function MyTask() {
+
+    const [workReport, setWorkReport] = useState([]);
+   
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const userListState = useSelector(
@@ -48,7 +33,7 @@ export default function WorkReportDetails() {
     setSelectAll(!selectAll);
   };
 
-  async function getWorkReport() {
+  async function getWorkReportDetail() {
     const url = `${process.env.REACT_APP_NODE_URL}/api/get-work-report-details`;
     const config = {
       headers: {
@@ -65,10 +50,8 @@ export default function WorkReportDetails() {
     });
   }
   useEffect(() => {
-    if (EmployeeId) {
-      getWorkReport(EmployeeId);
-    }
-  }, [EmployeeId]);
+    getWorkReportDetail();
+  }, []);
   const handleChildCheckboxClick = (itemId) => {
     const updatedRowsData = rowData.map((row) => {
       if (row.EmployeeId === itemId) {
@@ -195,48 +178,12 @@ export default function WorkReportDetails() {
     setRowData(rowsData);
   }, [workReport, selectAll]);
 
-  const deleteActionCall = (data) => {
-    setType("user_delete");
-    setId(data.id);
-    setDeleteMessage(
-      `Are You Sure You Want To Delete The User '${data.first_name} ${data.last_name}'?`
-    );
-    setDisplayConfirmationModal(true);
-  };
-  const hideConfirmationModal = () => {
-    setDisplayConfirmationModal(false);
-  };
-  const submitDelete = async (type, id) => {
-    const url = `${process.env.REACT_APP_NODE_URL}/api/users/delete-user/${id}`;
-    const config = {
-      headers: {
-        token: localStorage.getItem("rbacToken"),
-      },
-    };
-    console.log(id, "idddddddddddddddddddddddd");
-    await Axios.get(url, config).then((response) => {
-      console.log(response, "response.data ");
-      if (response.data && response.data.isSuccess) {
-        console.log(response.data, "delete true");
-        dispatch(setShowMessage("User Deleted"));
-        dispatch(getUserListFromDb());
-        setDisplayConfirmationModal(false);
-      } else {
-        console.log(response.data, "false");
-        dispatch(setShowMessage("failed to delete"));
-      }
-    });
-  };
 
   useEffect(() => {
-    // console.log('userListState', userListState);
     dispatch(getUserListFromDb());
   }, []);
 
-  function editActionCall(data) {
-    dispatch(setEditUserData(data));
-    navigate("/administration/users/edit");
-  }
+ 
   const redirectModal = () => {
     navigate(-1);
   };
@@ -248,14 +195,18 @@ export default function WorkReportDetails() {
         <div className="my-3  d-flex align-items-end justify-content-end">
           <Button
             variant="btn btn-warning mx-1"
-            style={{ width: '70px', height: '35px', fontSize: '14px', borderRadius: '20px' }}
+            style={{
+              width: "70px",
+              height: "35px",
+              fontSize: "14px",
+              borderRadius: "20px",
+            }}
             onClick={() => {
               redirectModal();
             }}
           >
             BACK
           </Button>
-
         </div>
         <div
           className="tableMenuHover"
@@ -304,14 +255,7 @@ export default function WorkReportDetails() {
           />
         </div>
       </div>
-      <AlertDeleteModal
-        showModal={displayConfirmationModal}
-        confirmModal={submitDelete}
-        hideModal={hideConfirmationModal}
-        type={type}
-        id={id}
-        message={deleteMessage}
-      />
+      
     </>
   );
 }
