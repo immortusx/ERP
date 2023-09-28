@@ -7,12 +7,14 @@ import { useSelector, useDispatch } from 'react-redux'
 import { addTaskToDb, clearAddTaskState } from '../redux/slices/addTaskSlice'
 import Select from 'react-select';
 import { Modal, Button } from "react-bootstrap";
+import { editTaskAssignUpdateToDb, clearEditTaskAssignState, clearEditTaskAssignData } from '../redux/slices/editTaskAssignSlice'
 const AssignTask = ({ workFor }) => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const [startDate, setStartDate] = useState(null); // State for Start Date
   const [endDate, setEndDate] = useState(null);     // State for End Date
   const [employees, setEmployees] = useState(null);
+  const [EmployeeId, setEmployeeId ] = useState(null);
   const [taskTypes, setTaskTypes] = useState(null);
   const [tasks, setTasks] = useState(null);
   const [taskCount, setTaskCount] = useState(null);
@@ -21,14 +23,20 @@ const AssignTask = ({ workFor }) => {
   const currentBranch = localStorage.getItem("currentDealerId");
   const location = useLocation();
   const workAssign = location.state?.username;
+  const taskAssignDatas = location.state?.data;
   const workAssignEmployee = location.state?.selectedEmployeeIDs;
   const addTaskState = useSelector(state => state.addTaskSlice.addTaskState);
+  const editTaskAssignSliceState = useSelector(state => state.editTaskAssignSlice.editTaskAssignSliceState)
+  const editTaskAssignData = useSelector(state => state.editTaskAssignSlice.editTaskAssignData)
+
   const [newAddTask, setNewAddTask] = useState({
     listDsp: [],
     listTasktype: [],
     listTask: [],
     listTasktimeperiod: [],
   });
+
+  const [addtaskList, setAddTaskList] = useState([]);
 
   useEffect(() => {
     if (workAssign) {
@@ -42,6 +50,47 @@ const AssignTask = ({ workFor }) => {
       setSelectedEmployee(updatedEmployee);
     }
   }, [workAssign])
+  async function gettaskdata(id) {
+    const url = `${process.env.REACT_APP_NODE_URL}/api/get-addtask/${id}`;
+    const config = {
+      headers: {
+        token: localStorage.getItem("rbacToken"),
+      },
+    };
+    try {
+      const response = await Axios.get(url, config);
+      if (response.data) {
+        response.data.result.map((item) => {
+          setTaskTypes(item.tasktype);
+          setTasks(item.task);
+          setTaskCount(item.taskcount)
+          const formattedDate = new Date(item.startdate);
+          setStartDate(formattedDate);
+          const formattedEndDate = new Date(item.enddate);
+          setEndDate(formattedEndDate);
+          setTasktimePeriod(item.tasktime_period);
+
+        })
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  useEffect(() => {
+
+    if (taskAssignDatas) {
+      gettaskdata(taskAssignDatas.id);
+      let tempAr = [];
+      const updatedEmployee = [
+        {
+          value: taskAssignDatas.EmployeeId,
+          label: `${taskAssignDatas.employee}`
+        }
+      ]
+      setSelectedEmployee(updatedEmployee);
+    }
+  }, [taskAssignDatas])
+
 
   useEffect(() => {
     if (workAssignEmployee && newAddTask.listDsp) {
@@ -49,14 +98,13 @@ const AssignTask = ({ workFor }) => {
 
       newAddTask.listDsp.forEach((item) => {
         if (workAssignEmployee.includes(item.id)) {
-          console.log(item.id, 'iudud');
           updatedEmployees.push({
             value: item.id,
             label: `${item.first_name} ${item.last_name}`,
           });
         }
       });
-      setSelectedEmployee(updatedEmployees); // Set the selected employees array
+      setSelectedEmployee(updatedEmployees);
 
     }
   }, [workAssignEmployee, newAddTask.listDsp]);
@@ -76,6 +124,9 @@ const AssignTask = ({ workFor }) => {
     setTasks(e.target.value);
   }
 
+  const onChangeTasktype = (e) => {
+    setTaskTypes(e.target.value);
+  }
   const onChangeTaskCount = (e) => {
     setTaskCount(e.target.value);
   }
@@ -139,9 +190,6 @@ const AssignTask = ({ workFor }) => {
     }
   }, [currentBranch])
 
-  const onChangeTasktype = (e) => {
-    setTaskTypes(e.target.value);
-  }
   useEffect(() => {
     if (taskTypes) {
       async function getlistTask() {
@@ -167,7 +215,15 @@ const AssignTask = ({ workFor }) => {
   }, [taskTypes])
 
 
-
+  const [taskAssignData, setTaskAssignData] = useState({
+    employees: "",
+    taskTypes: "",
+    tasks: "",
+    taskCount: "",
+    startDate: "",
+    endDate: "",
+    tasktimePeriod: "",
+  })
   async function getlisttasktimeperiod() {
     const url = `${process.env.REACT_APP_NODE_URL}/api/get-tasktimeperiod-list`;
     const config = {
@@ -190,11 +246,12 @@ const AssignTask = ({ workFor }) => {
     getlisttasktimeperiod();
 
   }, [])
+
   const handleSubmit = async () => {
     const selectedEmployeeIds = selectedEmployee.map(employee => employee.value);
-   
+
     const data = {
-      employees: selectedEmployeeIds, // Send the array of selected employee IDs
+      employees: selectedEmployeeIds,
       taskTypes: taskTypes,
       tasks: tasks,
       taskCount: taskCount,
@@ -203,12 +260,16 @@ const AssignTask = ({ workFor }) => {
       tasktimePeriod: tasktimePeriod,
     };
 
-    if (workFor === "addTask") {
-      dispatch(addTaskToDb(data));
+    if (workFor === "editTask") {
+      data.eIds = taskAssignDatas.id;
+      dispatch(editTaskAssignUpdateToDb(data));
     } else {
-      dispatch(setShowMessage("All fields must be filled"));
+      dispatch(addTaskToDb(data));
+      // dispatch(setShowMessage("All fields must be filled"));
     }
   }
+
+
   useEffect(() => {
     if (addTaskState && addTaskState.isSuccess) {
       if (addTaskState.isSuccess === true) {
@@ -220,6 +281,44 @@ const AssignTask = ({ workFor }) => {
       }
     }
   }, [addTaskState])
+  useEffect(() => {
+    if (editTaskAssignSliceState && editTaskAssignSliceState.isSuccess) {
+      if (editTaskAssignSliceState.isSuccess === true) {
+        dispatch(setShowMessage('Data is added'))
+        dispatch(clearEditTaskAssignState())
+        navigate('/administration/configuration/Task')
+      } else {
+        dispatch(setShowMessage('Something is wrong!'))
+      }
+    }
+  }, [editTaskAssignSliceState])
+
+  useEffect(() => {
+    if (workFor === 'forEdit') {
+      if (editTaskAssignData === null) {
+        dispatch(setShowMessage('Please select a user'))
+        setTimeout(() => {
+          navigate('/administration/users')
+        }, 1000)
+      } else {
+
+        setTaskAssignData({
+          employees: editTaskAssignData.employee,
+          taskTypes: editTaskAssignData.tasktype,
+          tasks: editTaskAssignData.task,
+          taskCount: editTaskAssignData.taskcount,
+          startDate: editTaskAssignData.startdate,
+          endDate: editTaskAssignData.enddate,
+          tasktimePeriod: editTaskAssignData.tasktime_period,
+        })
+      }
+    }
+    return () => {
+      if (workFor === 'forEdit') {
+        dispatch(clearEditTaskAssignData())
+      }
+    }
+  }, [workFor, editTaskAssignData])
 
   return (
     <div className='addUser  bg-white rounded p-3'>
@@ -227,7 +326,7 @@ const AssignTask = ({ workFor }) => {
         <div className="row m-0">
           <div className="col-6">
             <h5 className='m-0'>
-              Assign Task Management
+              {workFor === 'addTask' ? 'Assign Task Management' : 'Edit Task Management'}
             </h5>
           </div>
           <div className="col-6 d-flex align-items-end justify-content-end">
@@ -388,7 +487,7 @@ const AssignTask = ({ workFor }) => {
           className="col-12 col-sm-5 col-lg-2 myBtn py-2"
           onClick={handleSubmit}
           type="button">
-          Assign Task
+          {workFor === 'addTask' ? 'Assign Task' : 'Save'}
         </button>
       </section>
     </div>

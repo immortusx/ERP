@@ -34,16 +34,6 @@ export default function Users() {
   const navigate = useNavigate();
   const userListState = useSelector(state => state.getUserListSlice.userListState);
 
-  // const columns = [
-  //   {
-  //     field: "rowNumber",
-  //     // headerAlign: "center",
-  //     // align: "center",
-  //     headerName: "No",
-  //     minWidth: 80,
-  //     // flex: 1,
-  //   },
-
   const [selectAll, setSelectAll] = useState(false);
   const [rowData, setRowData] = useState([]);
 
