@@ -37,7 +37,7 @@ import addTaskSlice from './slices/addTaskSlice';
 import editEnquirySlice from './slices/editEnquirySlice';
 import followupSlice from './slices/followupSlice';
 import addEnquirySourcesSlice from './slices/Master/EnquirySources/addEnquirySourcesSlice';
-
+import editTaskAssignSlice from './slices/editTaskAssignSlice';
 export const store = configureStore({
   reducer: {
     getRegisterSlice: getRegisterSlice,
@@ -77,5 +77,6 @@ export const store = configureStore({
     editEnquiryState: editEnquirySlice,
     addEnquirySourcesSlice:addEnquirySourcesSlice,
     enquiryFollowupSlice: followupSlice,
+    editTaskAssignSlice: editTaskAssignSlice,
   },
 });  

@@ -1309,6 +1309,15 @@ export default function HomeScreen() {
               }
               exact
             />
+            <Route
+              path="administration/configuration/Task/edit"
+              element={
+                <CheckPermission path="profile">
+                  <AssignTask workFor="editTask" />
+                </CheckPermission>
+              }
+              exact
+            />
 
             <Route
               path="home/profile/agency"

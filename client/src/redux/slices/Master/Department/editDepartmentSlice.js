@@ -13,10 +13,6 @@ const initialState = {
   },
 };
 
-// export const setEditemployeeData = async (data) => {
-//     console.log('in setEditemployeeData ', data)
-// }
-
 export const editdepartmentUpdateToDb = createAsyncThunk(
   "editdepartmentUpdateToDb/editdepartmentSlice",
   async (departmentData) => {

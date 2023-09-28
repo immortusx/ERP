@@ -48,17 +48,7 @@ export default function Category_list({ workFor }) {
     dispatch(setEdicategoryData(data));
     navigate("/administration/configuration/category/edit", { state: data });
   };
-
-
-  // const columns = [
-  //   {
-  //     field: "id",
-  //     headerAlign: "center",
-  //     align: "center",
-  //     headerName: "No",
-  //     minWidth: 80,
-  //     flex: 1,
-  //   },
+  
   const [selectAll, setSelectAll] = useState(false);
   const [rowData, setRowData] = useState([]);
 

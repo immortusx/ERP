@@ -181,6 +181,57 @@ router.get("/get-task-list", tokenCheck, async (req, res) => {
   });
 });
 
+router.post("/set-task-edit/:id", tokenCheck, async (req, res) => {
+  console.log(">>>>>set-task-edit", req.body);
+  try {
+    const EmployeeId = req.params.id;
+    const employees = req.body.employees;
+    const taskType = req.body.taskTypes;
+    const tasks = req.body.tasks;
+    const taskCount = req.body.taskCount;
+    const tasktypePeriod = req.body.tasktimePeriod;
+    const startDate = req.body.startDate.split("T")[0]; // Extract the date part
+    const endDate = req.body.endDate.split("T")[0];
+    const newUrl = `UPDATE addtask_data SET employee = '${employees}', tasktype = '${taskType}', task = '${tasks}', taskcount = '${taskCount}', startdate = '${startDate}', enddate = '${endDate}', tasktime_period = ${tasktypePeriod} WHERE id = '${EmployeeId}'`;
+
+    await db.query(newUrl, async (err, newResult) => {
+      if (err) {
+        console.log({ isSuccess: false, result: err });
+        res.status(500).json({ isSuccess: false, result: "error" });
+      } else {
+        console.log({ isSuccess: true, result: "success" });
+        res.status(200).json({ isSuccess: true, result: "success" });
+      }
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ isSuccess: false, result: "error" });
+  }
+});
+
+router.get("/get-addtask/:id", tokenCheck, async (req, res) => {
+
+  try {
+    console.log(">>>>>get-addtask");
+    const id = req.params.id;
+    const query = 'SELECT * FROM addtask_data WHERE id = ?';
+
+    await db.query(query, [id], async (err, result) => {
+      if (err) {
+        console.log({ isSuccess: false, result: err });
+        res.status(500).json({ isSuccess: false, result: "error" });
+      } else {
+        console.log({ isSuccess: true, result: "success" });
+        res.status(200).json({ isSuccess: true, result: result });
+      }
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ isSuccess: false, result: "error" });
+  }
+});
+
+
 //========================Retrieve User Task List======================//
 router.get("/get-user-task-list", tokenCheck, async (req, res) => {
   console.log(">>>>>>>>/get-user-task-list", req.myData);
