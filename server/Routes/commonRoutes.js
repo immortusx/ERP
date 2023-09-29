@@ -297,12 +297,15 @@ router.get("/get-employee-work-report", tokenCheck, async (req, res) => {
 });
 
 //=======================Get Work Report Details============================//
-router.get("/get-work-report-details", tokenCheck, async (req, res) => {
+router.get("/get-work-report-details/:userId/:taskTypeId/:taskId", tokenCheck, async (req, res) => {
   console.log(">>>>>/get-work-report-details");
   try {
-    const EmployeeId = req.myData.userId;
+    let EmployeeId = req.params.userId;
+    let taskTypeId = req.params.taskTypeId;
+    let taskId = req.params.taskId;
+    const userId = req.myData.userId;
     let isAdmin = req.myData.isSuperAdmin;
-    const url = `CALL sp_get_work_report_by_employee(${EmployeeId}, ${isAdmin})`;
+    const url = `CALL sp_get_work_report_by_employee(${userId}, ${isAdmin}, ${EmployeeId}, ${taskTypeId}, ${taskId})`;
     db.query(url, async (err, result) => {
       if (err) {
         console.error(err);
