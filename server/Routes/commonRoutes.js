@@ -231,8 +231,28 @@ router.get("/get-addtask/:id", tokenCheck, async (req, res) => {
   }
 });
 
+router.get("/delete-taskassign/:id", async (req, res) => {
+  try {
+    console.log(">>>>> delete-taskassign");
+    console.log("req.params", req.params.id);
+    const id = req.params.id;
+    await db.query(`DELETE FROM addtask_data WHERE id = ${id}`, async (err, result) => {
+      if (err) {
+        console.log({ isSuccess: false, result: err });
+        res.send({ isSuccess: false, result: 'error' });
+      } else {
+        console.log({ isSuccess: true, result: 'Task Deleted' });
+        res.send({ isSuccess: true, result: 'success' });
+      }
+    })
+  } catch (error) {
+    console.error("Error:", error);
+    // res.status(500).send({ isSuccess: false, result: "Internal Server Error" });
+  }
+});
 
-//========================Retrieve User Task List======================//
+
+//=====================Retrieve User Task List======================//
 router.get("/get-user-task-list", tokenCheck, async (req, res) => {
   console.log(">>>>>>>>/get-user-task-list", req.myData);
   const userId = req.myData.userId;

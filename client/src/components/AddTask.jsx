@@ -36,8 +36,6 @@ const AssignTask = ({ workFor }) => {
     listTasktimeperiod: [],
   });
 
-  const [addtaskList, setAddTaskList] = useState([]);
-
   useEffect(() => {
     if (workAssign) {
       let tempAr = [];
@@ -248,6 +246,8 @@ const AssignTask = ({ workFor }) => {
   }, [])
 
   const handleSubmit = async () => {
+
+    console.log(taskAssignDatas,"ldkjfffffffffffffffffffffu")
     const selectedEmployeeIds = selectedEmployee.map(employee => employee.value);
 
     const data = {
