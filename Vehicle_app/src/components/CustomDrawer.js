@@ -56,15 +56,34 @@ const CustomDrawer = props => {
         <ImageBackground
           source={require('../../assets/sidecover.jpg')}
           style={{padding: 30}}>
-          <Image
-            source={{uri: `${API_URL}/api${documentPath}`}}
-            style={{
-              height: 80,
-              width: 80,
-              borderRadius: 40,
-              marginBottom: 10,
-            }}
-          />
+          {documentPath ? (
+            <Image
+              source={{uri: `${API_URL}/api${documentPath}`}}
+              style={{
+                height: 80,
+                width: 80,
+                borderRadius: 40,
+                marginBottom: 10,
+              }}
+            />
+          ) : (
+            <Text
+              style={{
+                color: 'white',
+                fontSize: 16,
+                fontWeight: 'bold',
+                textTransform: 'uppercase',
+                backgroundColor: 'teal',
+                height: 80,
+                width: 80,
+                borderRadius: 40,
+                textAlignVertical:'center',
+                textAlign:'center'
+                
+              }}>
+              {firstName && lastName ? `${firstName[0]}${lastName[0]}` : 'A'}
+            </Text>
+          )}
           <Text style={{color: 'white', fontSize: 16, fontWeight: 'bold'}}>
             {firstName} {lastName}
           </Text>
@@ -72,6 +91,7 @@ const CustomDrawer = props => {
             {phoneNumber}
           </Text>
         </ImageBackground>
+
         <View style={{backgroundColor: 'white'}}>
           <DrawerItemList {...props} />
         </View>

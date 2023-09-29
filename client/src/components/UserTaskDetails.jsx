@@ -16,10 +16,9 @@ import Axios from "axios";
 
 import "../styles/Users.css";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
-export default function MyTask() {
+export default function UserTaskDetails() {
+  const [task, setTask] = useState([]);
 
-    const [task, setTask] = useState([]);
-   
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const userListState = useSelector(
@@ -66,14 +65,14 @@ export default function MyTask() {
     setRowData(updatedRowsData);
   };
 
-const formatDate = (startdate) => {
-  const options = { year: "numeric", month: "long", day: "numeric" };
-  return new Date(startdate).toLocaleDateString(undefined, options);
-};
+  const formatDate = (startdate) => {
+    const options = { year: "numeric", month: "long", day: "numeric" };
+    return new Date(startdate).toLocaleDateString(undefined, options);
+  };
 
-const button = () => {
-  navigate("/management/my-task/task-detail");
-};
+  const button = (params) => {
+    console.log(params.row, "rowrowwww");
+  };
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
   const columns = [
     {
@@ -190,20 +189,33 @@ const button = () => {
     setRowData(rowsData);
   }, [task, selectAll]);
 
-
   useEffect(() => {
     dispatch(getUserListFromDb());
   }, []);
 
- 
-//   const redirectModal = () => {
-//     navigate(-1);
-//   };
+ const redirectModal = () => {
+   navigate(-1);
+ };
   return (
     <>
-      <div className="">
-        {/* <NavLink to={/edit-user}>callme</NavLink > */}
-
+      <div>
+        <div className="mb-3 d-flex align-items-end justify-content-end">
+          <Button
+            variant="btn btn-warning"
+            style={{
+              width: "70px",
+              height: "35px",
+              fontSize: "14px",
+              borderRadius: "20px",
+              marginLeft: "10px",
+            }}
+              onClick={() => {
+                redirectModal();
+              }}
+          >
+            BACK
+          </Button>
+        </div>
         <div
           className="tableMenuHover"
           style={{ height: "85vh", width: "100%" }}
