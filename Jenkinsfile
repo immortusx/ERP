@@ -94,7 +94,7 @@ def execute_stage(stage_name, skip) {
         sh "export BUILD_ID=${BUILD_ID}"
         sh "echo 'API_URL=${REACT_APP_NODE_URL}' > ${WORKSPACE}/Vehicle_app/.env"
         sh "cd ${WORKSPACE}/Vehicle_app/android"
-        //sh "sudo chmod +x package-name.sh"
+        sh "sudo chmod +x package-name.sh"
         sh "sh ./package-name.sh com.${BUILD_TAG}"
         sh "cd ${WORKSPACE}/Vehicle_app/android && ./gradlew clean assembleRelease"
         sh 'cd ../..'
