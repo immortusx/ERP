@@ -793,8 +793,8 @@ select.myInput {
   height: 100px;
   margin-right: 5px;
   background-color: rgb(59, 94, 124);
-  top: 0;
-  right: 40px;
+  top: 27px;
+  left: -60px;
 }
 
 .download-button {

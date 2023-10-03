@@ -81,6 +81,7 @@ import UserProfile from "./UserProfile";
 import Report from "./Report";
 import Task from "./Task";
 import AssignTask from "./AddTask";
+import UserTaskDetails from "./UserTaskDetails";
 import axios from "axios";
 import { Spinner } from "react-bootstrap";
 import EnquirySources from "./Master/EnquirySources/EnquirySources";
@@ -1147,6 +1148,15 @@ export default function HomeScreen() {
               element={
                 <CheckPermission path="manage">
                   <MyTask />
+                </CheckPermission>
+              }
+              exact
+            />
+            <Route
+              path="management/my-task/task-detail"
+              element={
+                <CheckPermission path="manage">
+                  <UserTaskDetails />
                 </CheckPermission>
               }
               exact
