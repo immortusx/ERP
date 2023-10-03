@@ -855,3 +855,6 @@ select.myInput {
 .task-status-5 {
   color: green;
 }
+.cursorpointer{
+  cursor: pointer;
+}

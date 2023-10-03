@@ -346,7 +346,7 @@ const Task = () => {
                         </select>
                      ) : (
                         <p
-                           className={`${statusVisible} ${colorClass} rounded-pill px-4`}
+                           className={`${statusVisible} ${colorClass} cursorpointer rounded-pill px-4`}
                            onClick={() => handleTaskStatus(rowId)}
                         >
                            {taskstatus == 1 && "New"}
