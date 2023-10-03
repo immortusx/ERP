@@ -22,6 +22,7 @@ const Task = () => {
    const navigate = useNavigate();
    const dispatch = useDispatch();
    const [type, setType] = useState(null);
+   const [taskStatus, setTaskStatus] = useState(null);
    const [id, setId] = useState(null);
    const [deleteMessage, setDeleteMessage] = useState(null);
    const [deleteTaskAssignId, setDeleteTaskAssignId] = useState(null);
@@ -72,7 +73,8 @@ const Task = () => {
             startdate: moment(user.startdate).format('LL'),
             enddate: moment(user.enddate).format('LL'),
             tasktimeperiod: user.period_name,
-            EmployeeId: user.EmployeeId
+            EmployeeId: user.EmployeeId,
+            taskstatus: user.task_status
 
          }));
 
@@ -108,6 +110,68 @@ const Task = () => {
       }
    };
 
+   const [newAddTask, setNewAddTask] = useState({
+      listTaskStatus: [],
+   });
+
+   function taskAssignStatus(id, newStatus) {
+      const url = `${process.env.REACT_APP_NODE_URL}/api/update-taskstatus/${id}/${newStatus}`;
+      const config = {
+         headers: {
+            token: localStorage.getItem("rbacToken"),
+         },
+      };
+
+      Axios.get(url, config)
+         .then((response) => {
+            if (response.data) {
+               if (response.data.result === 'success') {
+                  getTaskList();
+               }
+            }
+         })
+         .catch((error) => {
+            console.error("Error while updating task status:", error);
+         });
+   }
+
+   const onChangeTaskStatus = (e, id) => {
+      console.log(e.target.value, id, 'valsuifsaefdfsxdf');
+      const newStatus = e.target.value;
+      taskAssignStatus(id, newStatus);
+      const updatedRowData = rowData.map((row) => {
+         if (row.id === id) {
+            return {
+               ...row,
+               taskstatus: newStatus,
+            };
+         }
+         return row;
+      });
+      setRowData(updatedRowData);
+   };
+   async function getlisttaskStatus() {
+      const url = `${process.env.REACT_APP_NODE_URL}/api/get-taskstatus-list`;
+      const config = {
+         headers: {
+            token: localStorage.getItem("rbacToken"),
+         },
+      };
+      await Axios.get(url, config).then((response) => {
+         if (response.data) {
+            if (response.data.isSuccess) {
+               setNewAddTask((newAddTask) => ({
+                  ...newAddTask,
+                  ["listTaskStatus"]: response.data.result,
+               }));
+            }
+         }
+      });
+   }
+   useEffect(() => {
+      getlisttaskStatus();
+
+   }, [])
    useEffect(() => {
       gettaskAssignListFromDb();
    }, [])
@@ -156,15 +220,15 @@ const Task = () => {
          renderCell: (params) => {
             const employee = params.row.employee || "-";
             return (
-              <div className='myBtnForEdit'
-                onClick={() => {
-                  editTaskModal(params.row);
-                }}
-              >
-                {employee}
-              </div>
+               <div className='myBtnForEdit'
+                  onClick={() => {
+                     editTaskModal(params.row);
+                  }}
+               >
+                  {employee}
+               </div>
             );
-          },
+         },
 
       },
 
@@ -183,6 +247,41 @@ const Task = () => {
          headerName: "Task",
          minWidth: 200,
          flex: 1,
+      },
+      {
+         field: "taskstatus",
+         headerAlign: "left",
+         align: "left",
+         headerName: "Task Status",
+         minWidth: 200,
+         flex: 1,
+         renderCell: (params) => {
+            return (
+               <div className=''>
+                  <select
+                     onChange={(e) => onChangeTaskStatus(e, params.row.id)}
+                     className="myInput"
+                     name="taskstatus"
+                     value={params.row.taskstatus} // Set the selected value from the row data
+                  >
+                     {newAddTask.listTaskStatus &&
+                        newAddTask.listTaskStatus.length > 0 &&
+                        newAddTask.listTaskStatus.map((i) => {
+                           const taskstatus = `${i.task_status}`;
+                           return (
+                              <option
+                                 key={i.id}
+                                 value={i.id}
+                                 className="myLabel"
+                              >
+                                 {taskstatus}
+                              </option>
+                           );
+                        })}
+                  </select>
+               </div>
+            );
+         },
       },
       {
          field: "taskcount",

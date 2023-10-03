@@ -19,6 +19,7 @@ const AssignTask = ({ workFor }) => {
   const [tasks, setTasks] = useState(null);
   const [taskCount, setTaskCount] = useState(null);
   const [tasktimePeriod, setTasktimePeriod] = useState(null);
+  const [taskStatus, setTaskStatus] = useState(null);
   const [selectedEmployee, setSelectedEmployee] = useState([]);
   const currentBranch = localStorage.getItem("currentDealerId");
   const location = useLocation();
@@ -34,6 +35,7 @@ const AssignTask = ({ workFor }) => {
     listTasktype: [],
     listTask: [],
     listTasktimeperiod: [],
+    listTaskStatus:[],
   });
 
   useEffect(() => {
@@ -67,6 +69,7 @@ const AssignTask = ({ workFor }) => {
           const formattedEndDate = new Date(item.enddate);
           setEndDate(formattedEndDate);
           setTasktimePeriod(item.tasktime_period);
+          setTaskStatus(item.task_status);
 
         })
       }
@@ -132,7 +135,9 @@ const AssignTask = ({ workFor }) => {
   const onChangeTasktimePeriod = (e) => {
     setTasktimePeriod(e.target.value);
   }
-
+  const onChangeTaskStatus = (e) => {
+    setTaskStatus(e.target.value);
+  }
   const onChangeEmployees = (selectedOptions) => {
     setEmployees(selectedOptions);
     setSelectedEmployee(selectedOptions);
@@ -245,9 +250,32 @@ const AssignTask = ({ workFor }) => {
 
   }, [])
 
-  const handleSubmit = async () => {
+  async function getlisttaskStatus() {
+    const url = `${process.env.REACT_APP_NODE_URL}/api/get-taskstatus-list`;
+    const config = {
+      headers: {
+        token: localStorage.getItem("rbacToken"),
+      },
+    };
+    await Axios.get(url, config).then((response) => {
+      if (response.data) {
+        if (response.data.isSuccess) {
+          setNewAddTask((newAddTask) => ({
+            ...newAddTask,
+            ["listTaskStatus"]: response.data.result,
+          }));
+        }
+      }
+    });
+  }
+  useEffect(() => {
+    getlisttaskStatus();
 
-    console.log(taskAssignDatas,"ldkjfffffffffffffffffffffu")
+  }, [])
+  function handleCancel() {
+    navigate('/administration/configuration/Task')
+}
+  const handleSubmit = async () => {
     const selectedEmployeeIds = selectedEmployee.map(employee => employee.value);
 
     const data = {
@@ -258,6 +286,7 @@ const AssignTask = ({ workFor }) => {
       startDate: startDate,
       endDate: endDate,
       tasktimePeriod: tasktimePeriod,
+      taskStatus:taskStatus,
     };
 
     if (workFor === "editTask") {
@@ -478,6 +507,30 @@ const AssignTask = ({ workFor }) => {
                 })}
             </select>
           </section>
+          <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
+            <label className="myLabel" htmlFor="task">
+              Task Status
+            </label>
+            <select onChange={onChangeTaskStatus} className="myInput" name="tasktimePeriod" value={taskStatus}>
+              <option value="" className="myLabel">
+                Select Task Status
+              </option>
+              {newAddTask.listTaskStatus &&
+                newAddTask.listTaskStatus.length > 0 &&
+                newAddTask.listTaskStatus.map((i) => {
+                  const taskstatus = `${i.task_status}`;
+                  return (
+                    <option
+                      key={i.id}
+                      value={i.id}
+                      className="myLabel"
+                    >
+                      {taskstatus}
+                    </option>
+                  );
+                })}
+            </select>
+          </section>
 
         </div>
       </main>
@@ -489,6 +542,7 @@ const AssignTask = ({ workFor }) => {
           type="button">
           {workFor === 'addTask' ? 'Assign Task' : 'Save'}
         </button>
+        <button className='ms-0 ms-sm-3 mt-3 mt-sm-0 col-12 col-sm-5 col-lg-2 myBtn py-2' onClick={handleCancel} type='button'>Cancel</button>
       </section>
     </div>
   );
