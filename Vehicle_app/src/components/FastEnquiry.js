@@ -422,16 +422,14 @@ const FastEnquiry = () => {
       category: category,
     };
     if (
-      enquiryData.customer.length > 0 &&
-      enquiryData.phone.length > 0 &&
-      enquiryData.whatsappno.length > 0
+      enquiryData.customer.length > 0
     ) {
       dispatch(setFastEnquiryDb(formData)).then(() => {
         dispatch(clearFastEnquiryState());
       });
       setEnquiryData({
         customer: '',
-        phone: '',
+        phone: '', 
         whatsappno: '',
       });
       setVillage(null);

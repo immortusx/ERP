@@ -734,7 +734,7 @@ router.post("/set-new-fast-enquiry", tokenCheck, async (req, res) => {
         // console.log({ isSuccess: true, result: salePersonDetails });
 
         const userData = salePersonDetails[0][0];
-        const salesperson_id = userData ? userData.userId : 1;
+        const salesperson_id = userData ? userData.userId : null;
         console.log(salesperson_id, "userId");
 
         if (salesperson_id) {
@@ -766,6 +766,86 @@ router.post("/set-new-fast-enquiry", tokenCheck, async (req, res) => {
                     branch_id,
                     categoryId,
                     salesperson_id,
+                    none,
+                    customer_id,
+                    new Date(),
+                  ],
+                  async (err, enquiryResult) => {
+                    if (err) {
+                      console.log({ isSuccess: false, result: err });
+                      res.send({ isSuccess: false, result: "error" });
+                    } else if (enquiryResult && enquiryResult.insertId) {
+                      console.log({ isSuccess: "success", result: enquirySql });
+                      const enquiryId = enquiryResult.insertId;
+                      const enquiryProductSql = `INSERT INTO enquiry_products (enquiry_id, manufacturer, modal) VALUES (?,?,?)`;
+                      await db.query(
+                        enquiryProductSql,
+                        [enquiryId, none, none],
+                        async (err, productResult) => {
+                          if (err) {
+                            console.log(err);
+                          } else {
+                            console.log({
+                              isSuccess: "success",
+                              result: enquiryProductSql,
+                            });
+                            const urlSql = `INSERT INTO manufactur_details (enquiry_id, old_tractor) VALUES(?,?)`;
+                            await db.query(
+                              urlSql,
+                              [enquiryId, "No"],
+                              (err, result) => {
+                                if (err) {
+                                  console.log(err);
+                                } else {
+                                  console.log({
+                                    isSuccess: "success",
+                                    result: urlSql,
+                                  });
+                                  res.send({
+                                    isSuccess: "success",
+                                    result: "success",
+                                  });
+                                }
+                              }
+                            );
+                          }
+                        }
+                      );
+                    }
+                  }
+                );
+              }
+            }
+          );
+        } else if (salesperson_id === null) {
+          const fastSql = `INSERT INTO customers (first_name, phone_number, whatsapp_number, state, district, taluka, village) VALUES (?,?,?,?,?,?,?)`;
+          await db.query(
+            fastSql,
+            [
+              first_name,
+              phone_number,
+              whatsapp_number,
+              stateId,
+              districtId,
+              taluka,
+              village,
+            ],
+            async (err, fastEnquiry) => {
+              if (err) {
+                console.log({ isSuccess: false, result: err });
+                res.send({ isSuccess: false, result: "error" });
+              } else {
+                console.log({ isSuccess: true, result: fastSql });
+                // res.send({ isSuccess: true, result: fastEnquiry });
+                const customer_id = fastEnquiry.insertId;
+                console.log(customer_id);
+                const enquirySql = `INSERT INTO enquiries (branch_id, enquiry_category_id, salesperson_id, modal_id, customer_id, date) VALUES (?,?,?,?,?,?)`;
+                await db.query(
+                  enquirySql,
+                  [
+                    branch_id,
+                    categoryId,
+                    null,
                     none,
                     customer_id,
                     new Date(),
@@ -1940,6 +2020,5 @@ router.post("/upload-work-log", tokenCheck, async (req, res) => {
     console.log(err);
   }
 });
-
 
 module.exports = router;
