@@ -6,18 +6,27 @@ import {API_URL} from '@env';
 import moment from 'moment';
 import LoadingSpinner from './subCom/LoadingSpinner';
 import CustomLoadingSpinner from './subCom/CustomLoadingSpinner';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 
-const UserTaskDetails = () => {
+const UserTaskDetails = ({route}) => {
   const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
   const [userTaskDetails, setUserTaskDetails] = useState([]);
-  
+
   useEffect(() => {
-    getWorkReportDetails();
-  }, []);
-  const getWorkReportDetails = async () => {
-    const url = `${API_URL}/api/get-work-report-details`;
+    if (route) {
+      const {taskDetails} = route.params;
+      console.log(taskDetails, 'taskdetiald');
+      const userId = taskDetails.id;
+      const taskTypeId = taskDetails.tasktype;
+      const taskId = taskDetails.task;
+
+      getWorkReportDetails(userId, taskTypeId, taskId);
+    }
+  }, [route]);
+
+  const getWorkReportDetails = async (userId, taskTypeId, taskId) => {
+    const url = `${API_URL}/api/get-work-report-details/${userId}/${taskTypeId}/${taskId}`;
     console.log('get work report', url);
     const token = await AsyncStorage.getItem('rbacToken');
     const config = {
@@ -29,16 +38,13 @@ const UserTaskDetails = () => {
     console.log(config);
     await axios.get(url, config).then(response => {
       if (response) {
-        console.log(response.data, 'work report');
+        console.log(response.data.result, 'work report');
         setUserTaskDetails(response.data.result);
       }
     });
     setLoading(false);
   };
-  const openTaskDetails = (taskDetails)=> {
-    console.log(taskDetails, 'taskDetials');
-    navigation.navigate('Task Details', {taskDetails: taskDetails});
-  }
+
   return (
     <View style={StyleSheet.mainContainer}>
       <View style={styles.container}>
@@ -47,49 +53,48 @@ const UserTaskDetails = () => {
         </TouchableOpacity>
         {loading ? (
           <CustomLoadingSpinner />
-        ) : (
-          userTaskDetails && 
-          userTaskDetails.length > 0 && (
-            <FlatList
-              style={{marginBottom: 60}}
-              data={userTaskDetails}
-              keyExtractor={(item, index) => `task_${index}`}
-              renderItem={({item, index}) => {
-                return (
-                  <View style={styles.contentContainer}>
-                    <TouchableOpacity style={styles.taskStyle}>
-                      <Text style={styles.taskTitle}>
-                        {index + 1}. {item.task_name}
+        ) : userTaskDetails && userTaskDetails.length > 0 ? (
+          <FlatList
+            style={{marginBottom: 60}}
+            data={userTaskDetails}
+            keyExtractor={(item, index) => `task_${index}`}
+            renderItem={({item, index}) => {
+              return (
+                <View style={styles.contentContainer}>
+                  <TouchableOpacity style={styles.taskStyle}>
+                    <Text style={styles.taskTitle}>
+                      {index + 1}. {item.Employee}
+                    </Text>
+                    <Text style={styles.taskTitle}>{item.task_name}</Text>
+                  </TouchableOpacity>
+                  <View style={styles.dataContainer}>
+                    <View style={styles.leftContainer}>
+                      <Text style={styles.taskLabel}>Task Assigned:</Text>
+                      <Text style={styles.taskLabel}>Task Type:</Text>
+                      <Text style={styles.taskLabel}>Tasks:</Text>
+                      <Text style={styles.taskLabel}>Date:</Text>
+                      <Text style={styles.taskLabel}>Spend Time:</Text>
+                      <Text style={styles.taskLabel}>Work Description:</Text>
+                    </View>
+                    <View style={styles.rightContainer}>
+                      <Text style={styles.listStyle}>{item.Employee}</Text>
+                      <Text style={styles.listStyle}>{item.tasktype_name}</Text>
+                      <Text style={styles.listStyle}>{item.task_name}</Text>
+                      <Text style={styles.listStyle}>
+                        {moment(item.datetime).format('Do MMMM, YYYY')}
                       </Text>
-                      <Text style={styles.taskTitle}>
-                        {moment(item.startdate).format('LL')}
+                      <Text style={styles.listStyle}>{item.spendtime}</Text>
+                      <Text style={styles.listStyle}>
+                        {item.work_description}
                       </Text>
-                    </TouchableOpacity>
-                    <View style={styles.dataContainer}>
-                      <View style={styles.leftContainer}>
-                        <Text style={styles.taskLabel}>Task Type:</Text>
-                        <Text style={styles.taskLabel}>Tasks:</Text>
-                        <Text style={styles.taskLabel}>Date: </Text>
-                        <Text style={styles.taskLabel}>Spend Time: </Text>
-                        <Text style={styles.taskLabel}>Work Description: </Text>
-                      </View>
-                      <View style={styles.rightContainer}>
-                        <Text style={styles.listStyle}>
-                          {item.tasktype_name}
-                        </Text>
-                        <Text style={styles.listStyle}>{item.task_name}</Text>
-                        <Text style={styles.listStyle}>
-                          {moment(item.datetime).format('Do MMMM, YYYY')}
-                        </Text>
-                        <Text style={styles.listStyle}>{item.spendtime}</Text>
-                        <Text style={styles.listStyle}>{item.work_description}</Text>
-                      </View>
                     </View>
                   </View>
-                );
-              }}
-            />
-          )
+                </View>
+              );
+            }}
+          />
+        ) : (
+          <Text style={styles.NoTaskStyle}>Task Not Performed</Text>
         )}
       </View>
     </View>
@@ -150,7 +155,7 @@ const styles = StyleSheet.create({
   dataContainer: {
     flexDirection: 'row',
     marginHorizontal: 12,
-    paddingRight: 100
+    paddingRight: 100,
   },
   leftContainer: {
     alignItems: 'flex-start',
@@ -172,8 +177,16 @@ const styles = StyleSheet.create({
   perfomedTaskBtn: {
     backgroundColor: 'lightblue',
     paddingHorizontal: 12,
-    borderRadius: 20
-  }
+    borderRadius: 20,
+  },
+  NoTaskStyle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: 'red',
+    textAlign: 'center',
+    marginTop: 20,
+    fontStyle: 'italic',
+  },
 });
 
 export default UserTaskDetails;
