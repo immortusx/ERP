@@ -93,6 +93,8 @@ def execute_stage(stage_name, skip) {
         sh 'cd ${WORKSPACE}/Vehicle_app && npm install'
         sh "export BUILD_ID=${BUILD_ID}"
         sh "echo 'API_URL=${REACT_APP_NODE_URL}' > ${WORKSPACE}/Vehicle_app/.env"
+        sh "cd ${WORKSPACE}/Vehicle_app/android"
+        sh "sed -i 's/applicationId "com.vehicle_crm"/applicationId "com.${BUILD_TAG}"/' app/build.gradle"
         sh "cd ${WORKSPACE}/Vehicle_app/android && ./gradlew clean assembleRelease"
         sh 'cd ../..'
         sh 'cp ${WORKSPACE}/Vehicle_app/android/app/build/outputs/apk/release/app-release.apk ${WORKSPACE}/server/'
