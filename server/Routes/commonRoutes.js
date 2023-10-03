@@ -125,6 +125,21 @@ router.get("/get-tasktimeperiod-list", tokenCheck, async (req, res) => {
   });
 });
 
+router.get("/get-taskstatus-list", tokenCheck, async (req, res) => {
+  console.log(">>>>>/get-taskstatus-list");
+  const id = req.params.id;
+  const url = `SELECT * FROM task_status`;
+  await db.query(url, async (err, result) => {
+    if (err) {
+      console.log({ isSuccess: true, result: err });
+      res.send({ isSuccess: true, result, result: err });
+    } else {
+      console.log({ isSuccess: true, result: url });
+      res.send({ isSuccess: true, result: result });
+    }
+  });
+});
+
 router.post("/addtask-data", tokenCheck, async (req, res) => {
   try {
     console.log("/addtask-data>>>>>>>>>>>>", req.body);
@@ -133,10 +148,11 @@ router.post("/addtask-data", tokenCheck, async (req, res) => {
     const tasks = req.body.tasks;
     const taskCount = req.body.taskCount;
     const tasktypePeriod = req.body.tasktimePeriod;
+    const taskStatus = req.body.taskStatus;
     const startDate = req.body.startDate.split("T")[0]; // Extract the date part
     const endDate = req.body.endDate.split("T")[0]; // Extract the date part
 
-    const url = `INSERT INTO addtask_data (employee, tasktype, task, taskcount, startdate, enddate,tasktime_period) VALUES (?,?,?,?,?,?,?)`;
+    const url = `INSERT INTO addtask_data (employee, tasktype, task, taskcount, startdate, enddate,tasktime_period,task_status) VALUES (?,?,?,?,?,?,?,?)`;
 
     console.log("url", url);
 
@@ -152,6 +168,7 @@ router.post("/addtask-data", tokenCheck, async (req, res) => {
           startDate,
           endDate,
           tasktypePeriod,
+          taskStatus,
         ]);
         console.log({ isSuccess: true, result: "Task Add Successfully" });
       } catch (err) {
@@ -190,9 +207,10 @@ router.post("/set-task-edit/:id", tokenCheck, async (req, res) => {
     const tasks = req.body.tasks;
     const taskCount = req.body.taskCount;
     const tasktypePeriod = req.body.tasktimePeriod;
+    const taskStatus = req.body.taskStatus;
     const startDate = req.body.startDate.split("T")[0]; // Extract the date part
     const endDate = req.body.endDate.split("T")[0];
-    const newUrl = `UPDATE addtask_data SET employee = '${employees}', tasktype = '${taskType}', task = '${tasks}', taskcount = '${taskCount}', startdate = '${startDate}', enddate = '${endDate}', tasktime_period = ${tasktypePeriod} WHERE id = '${EmployeeId}'`;
+    const newUrl = `UPDATE addtask_data SET employee = '${employees}', tasktype = '${taskType}', task = '${tasks}', taskcount = '${taskCount}', startdate = '${startDate}', enddate = '${endDate}', tasktime_period = ${tasktypePeriod}, task_status=${taskStatus} WHERE id = '${EmployeeId}'`;
 
     await db.query(newUrl, async (err, newResult) => {
       if (err) {
@@ -231,8 +249,42 @@ router.get("/get-addtask/:id", tokenCheck, async (req, res) => {
   }
 });
 
+router.get("/delete-taskassign/:id", async (req, res) => {
+  try {
+    console.log(">>>>> delete-taskassign");
+    console.log("req.params", req.params.id);
+    const id = req.params.id;
+    await db.query(`DELETE FROM addtask_data WHERE id = ${id}`, async (err, result) => {
+      if (err) {
+        console.log({ isSuccess: false, result: err });
+        res.send({ isSuccess: false, result: 'error' });
+      } else {
+        console.log({ isSuccess: true, result: 'Task Deleted' });
+        res.send({ isSuccess: true, result: 'success' });
+      }
+    })
+  } catch (error) {
+    console.error("Error:", error);
+    // res.status(500).send({ isSuccess: false, result: "Internal Server Error" });
+  }
+});
+router.get('/update-taskstatus/:id/:newStatus', async (req, res) => {
+  console.log(">>>>>update-taskstatus")
+ const newStatus =  req.params.newStatus;
+ const id = req.params.id;
+  sql= `UPDATE addtask_data SET task_status = ${newStatus} WHERE id = ${id};`
+  await db.query(sql, async (err, result) => {
+    if (err) {
+      console.log({ isSuccess: true, result: err });
+      res.send({ isSuccess: true, result, result: err });
+    } else {
+      console.log({ isSuccess: true, result: sql });
+      res.send({ isSuccess: true, result: 'success' });
+    }
+  });
+});
 
-//========================Retrieve User Task List======================//
+//=====================Retrieve User Task List======================//
 router.get("/get-user-task-list", tokenCheck, async (req, res) => {
   console.log(">>>>>>>>/get-user-task-list", req.myData);
   const userId = req.myData.userId;
@@ -297,12 +349,15 @@ router.get("/get-employee-work-report", tokenCheck, async (req, res) => {
 });
 
 //=======================Get Work Report Details============================//
-router.get("/get-work-report-details", tokenCheck, async (req, res) => {
+router.get("/get-work-report-details/:userId/:taskTypeId/:taskId", tokenCheck, async (req, res) => {
   console.log(">>>>>/get-work-report-details");
   try {
-    const EmployeeId = req.myData.userId;
+    let EmployeeId = req.params.userId;
+    let taskTypeId = req.params.taskTypeId;
+    let taskId = req.params.taskId;
+    const userId = req.myData.userId;
     let isAdmin = req.myData.isSuperAdmin;
-    const url = `CALL sp_get_work_report_by_employee(${EmployeeId}, ${isAdmin})`;
+    const url = `CALL sp_get_work_report_by_employee(${userId}, ${isAdmin}, ${EmployeeId}, ${taskTypeId}, ${taskId})`;
     db.query(url, async (err, result) => {
       if (err) {
         console.error(err);

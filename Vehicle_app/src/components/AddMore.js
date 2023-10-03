@@ -200,6 +200,7 @@ const AddMore = () => {
       {enquiryType === 'All' && (
         <FlatList
           data={resultData}
+          keyExtractor={(item, index) => `enquiry_${index}`}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
@@ -291,6 +292,7 @@ const AddMore = () => {
           {todayEnquiryList && todayEnquiryList.length > [] ? (
             <FlatList
               data={todayEnquiryList}
+              keyExtractor={(item, index) => `enquiry_${index}`}
               refreshControl={
                 <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
               }
@@ -401,6 +403,7 @@ const AddMore = () => {
           {newEnquiryList && newEnquiryList.length > [] ? (
             <FlatList
               data={newEnquiryList}
+              keyExtractor={(item, index) => `enquiry_${index}`}
               refreshControl={
                 <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
               }
@@ -511,6 +514,7 @@ const AddMore = () => {
           {lastMonthEnquiryList && lastMonthEnquiryList.length > [] ? (
             <FlatList
               data={lastMonthEnquiryList}
+              keyExtractor={(item, index) => `enquiry_${index}`}
               refreshControl={
                 <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
               }

@@ -1,14 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { setShowMessage } from "../redux/slices/notificationSlice";
+import AlertDeleteModal from "./AlertDelete/AlertDeleteModal";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import Checkbox from '@mui/material/Checkbox'
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import Axios from "axios";
 import moment from "moment";
+import { gettaskAssignListFromDb, cleartaskAssignListState } from '../redux/slices/gettaskAssignListSlice'
 import { Tooltip } from "@mui/material";
 import { Modal, Button } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsisV } from "@fortawesome/free-solid-svg-icons/faEllipsisV";
+
 import { setEditTaskAssignData } from "../redux/slices/editTaskAssignSlice";
 const Task = () => {
 
@@ -17,6 +21,13 @@ const Task = () => {
    const [taskData, setTaskData] = useState([]);
    const navigate = useNavigate();
    const dispatch = useDispatch();
+   const [type, setType] = useState(null);
+   const [taskStatus, setTaskStatus] = useState(null);
+   const [id, setId] = useState(null);
+   const [deleteMessage, setDeleteMessage] = useState(null);
+   const [deleteTaskAssignId, setDeleteTaskAssignId] = useState(null);
+   const [displayConfirmationModal, setDisplayConfirmationModal] =
+      useState(false);
    const currentBranch = localStorage.getItem("currentDealerId");
 
    const handleHeaderCheckboxClick = () => {
@@ -28,40 +39,142 @@ const Task = () => {
       navigate("/administration/configuration/Task/edit", { state: { data: data } });
    }
 
-   useEffect(() => {
+   const deleteActionCall = (data) => {
+      console.log(data, 'errogrogog')
+      setType("taskassign_delete");
+      setDeleteTaskAssignId(data.id);
+      setDeleteMessage(
+         `Are You Sure You Want To Delete The category '${data.employee}'?`
+      );
+      setDisplayConfirmationModal(true);
+   };
 
-      async function getTaskList() {
-         const url = `${process.env.REACT_APP_NODE_URL}/api/get-task-list`;
+   const hideConfirmationModal = () => {
+      setDisplayConfirmationModal(false);
+   };
+
+
+   async function getTaskList() {
+      const url = `${process.env.REACT_APP_NODE_URL}/api/get-task-list`;
+      const config = {
+         headers: {
+            token: localStorage.getItem("rbacToken"),
+         },
+      };
+
+      const response = await Axios.get(url, config);
+      if (response.data && response.data.isSuccess) {
+         const formattedData = response.data.result.map((user, index) => ({
+            id: user.id,
+            employee: user.employee,
+            tasktype: user.tasktype_name,
+            task: user.task_name,
+            taskcount: user.taskcount,
+            startdate: moment(user.startdate).format('LL'),
+            enddate: moment(user.enddate).format('LL'),
+            tasktimeperiod: user.period_name,
+            EmployeeId: user.EmployeeId,
+            taskstatus: user.task_status
+
+         }));
+
+         setTaskData(formattedData);
+      }
+   }
+   useEffect(() => {
+      getTaskList();
+   }, []);
+   const submitDelete = async () => {
+      if (deleteTaskAssignId) {
+         console.log(deleteTaskAssignId, "iiiiiiiiiiiiiiii");
+         const url = `${process.env.REACT_APP_NODE_URL}/api/delete-taskassign/${deleteTaskAssignId}`;
          const config = {
             headers: {
                token: localStorage.getItem("rbacToken"),
             },
          };
-
-         const response = await Axios.get(url, config);
-         if (response.data && response.data.isSuccess) {
-            const formattedData = response.data.result.map((user, index) => ({
-               id: index + 1,
-               employee: user.employee,
-               tasktype: user.tasktype_name,
-               task: user.task_name,
-               taskcount: user.taskcount,
-               startdate: moment(user.startdate).format('LL'),
-               enddate: moment(user.enddate).format('LL'),
-               tasktimeperiod: user.period_name,
-               EmployeeId: user.EmployeeId
-
-            }));
-
-            setTaskData(formattedData);
+         try {
+            const response = await Axios.get(url, config);
+            console.log(response, "response.data");
+            if (response.data && response.data.isSuccess) {
+               dispatch(setShowMessage("Task Deleted"));
+               getTaskList();
+               setDisplayConfirmationModal(false);
+            } else {
+               console.log(response.data, "false");
+               dispatch(setShowMessage("Failed to delete"));
+            }
+         } catch (error) {
+            console.error("Error while deleting task:", error);
          }
       }
+   };
 
-      getTaskList();
+   const [newAddTask, setNewAddTask] = useState({
+      listTaskStatus: [],
+   });
 
-   }, []);
+   function taskAssignStatus(id, newStatus) {
+      const url = `${process.env.REACT_APP_NODE_URL}/api/update-taskstatus/${id}/${newStatus}`;
+      const config = {
+         headers: {
+            token: localStorage.getItem("rbacToken"),
+         },
+      };
 
+      Axios.get(url, config)
+         .then((response) => {
+            if (response.data) {
+               if (response.data.result === 'success') {
+                  getTaskList();
+               }
+            }
+         })
+         .catch((error) => {
+            console.error("Error while updating task status:", error);
+         });
+   }
 
+   const onChangeTaskStatus = (e, id) => {
+      console.log(e.target.value, id, 'valsuifsaefdfsxdf');
+      const newStatus = e.target.value;
+      taskAssignStatus(id, newStatus);
+      const updatedRowData = rowData.map((row) => {
+         if (row.id === id) {
+            return {
+               ...row,
+               taskstatus: newStatus,
+            };
+         }
+         return row;
+      });
+      setRowData(updatedRowData);
+   };
+   async function getlisttaskStatus() {
+      const url = `${process.env.REACT_APP_NODE_URL}/api/get-taskstatus-list`;
+      const config = {
+         headers: {
+            token: localStorage.getItem("rbacToken"),
+         },
+      };
+      await Axios.get(url, config).then((response) => {
+         if (response.data) {
+            if (response.data.isSuccess) {
+               setNewAddTask((newAddTask) => ({
+                  ...newAddTask,
+                  ["listTaskStatus"]: response.data.result,
+               }));
+            }
+         }
+      });
+   }
+   useEffect(() => {
+      getlisttaskStatus();
+
+   }, [])
+   useEffect(() => {
+      gettaskAssignListFromDb();
+   }, [])
    const handleChildCheckboxClick = (itemId) => {
       const updatedRowsData = rowData.map((row) => {
          if (row.id === itemId) {
@@ -79,7 +192,7 @@ const Task = () => {
 
    const columns = [
       {
-         field: "rowNumber",
+         field: "id",
          headerName: (
             <Checkbox
                {...label}
@@ -102,8 +215,20 @@ const Task = () => {
          headerAlign: "left",
          align: "left",
          headerName: "Employee",
-         minWidth: 120,
+         minWidth: 200,
          flex: 1,
+         renderCell: (params) => {
+            const employee = params.row.employee || "-";
+            return (
+               <div className='myBtnForEdit'
+                  onClick={() => {
+                     editTaskModal(params.row);
+                  }}
+               >
+                  {employee}
+               </div>
+            );
+         },
 
       },
 
@@ -112,7 +237,7 @@ const Task = () => {
          headerAlign: "left",
          align: "left",
          headerName: "Task Type",
-         minWidth: 250,
+         minWidth: 200,
          flex: 1,
       },
       {
@@ -120,15 +245,50 @@ const Task = () => {
          headerAlign: "left",
          align: "left",
          headerName: "Task",
-         minWidth: 250,
+         minWidth: 200,
          flex: 1,
+      },
+      {
+         field: "taskstatus",
+         headerAlign: "left",
+         align: "left",
+         headerName: "Task Status",
+         minWidth: 200,
+         flex: 1,
+         renderCell: (params) => {
+            return (
+               <div className=''>
+                  <select
+                     onChange={(e) => onChangeTaskStatus(e, params.row.id)}
+                     className="myInput"
+                     name="taskstatus"
+                     value={params.row.taskstatus} // Set the selected value from the row data
+                  >
+                     {newAddTask.listTaskStatus &&
+                        newAddTask.listTaskStatus.length > 0 &&
+                        newAddTask.listTaskStatus.map((i) => {
+                           const taskstatus = `${i.task_status}`;
+                           return (
+                              <option
+                                 key={i.id}
+                                 value={i.id}
+                                 className="myLabel"
+                              >
+                                 {taskstatus}
+                              </option>
+                           );
+                        })}
+                  </select>
+               </div>
+            );
+         },
       },
       {
          field: "taskcount",
          headerAlign: "left",
          align: "left",
          headerName: "Task Count",
-         minWidth: 250,
+         minWidth: 200,
          flex: 1,
       },
       {
@@ -136,7 +296,7 @@ const Task = () => {
          headerAlign: "left",
          align: "left",
          headerName: "Start Date",
-         minWidth: 250,
+         minWidth: 200,
          flex: 1,
       },
       {
@@ -144,7 +304,7 @@ const Task = () => {
          headerAlign: "left",
          align: "left",
          headerName: "End Date",
-         minWidth: 250,
+         minWidth: 200,
          flex: 1,
       },
       {
@@ -152,7 +312,7 @@ const Task = () => {
          headerAlign: "left",
          align: "left",
          headerName: "Task Time Period",
-         minWidth: 250,
+         minWidth: 200,
          flex: 1,
       },
       {
@@ -192,23 +352,23 @@ const Task = () => {
                         </svg>
                      </button>
                   </Tooltip>
-                  {/* <Tooltip title="Delete">
-                 <button
-                   onClick={() => {
-                     deleteActionCall(params.row);
-                   }}
-                   className="myActionBtn m-1"
-                 >
-                   <svg
-                     xmlns="http://www.w3.org/2000/svg"
-                     fill="currentColor"
-                     className="bi bi-trash3"
-                     viewBox="0 0 16 16"
-                   >
-                     <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5ZM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0H11Zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5h9.916Zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5Z" />
-                   </svg>
-                 </button>
-               </Tooltip> */}
+                  <Tooltip title="Delete">
+                     <button
+                        onClick={() => {
+                           deleteActionCall(params.row);
+                        }}
+                        className="myActionBtn m-1"
+                     >
+                        <svg
+                           xmlns="http://www.w3.org/2000/svg"
+                           fill="currentColor"
+                           className="bi bi-trash3"
+                           viewBox="0 0 16 16"
+                        >
+                           <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5ZM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0H11Zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5h9.916Zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5Z" />
+                        </svg>
+                     </button>
+                  </Tooltip>
                </div>
             </div>
          ),
@@ -218,7 +378,8 @@ const Task = () => {
    useEffect(() => {
       const rowsData = taskData.map((item, index) => ({
          ...item,
-         id: item.id,
+         id: index + 1,
+         // id: item.id,
          checkbox: selectAll,
       }));
       setRowData(rowsData);
@@ -297,6 +458,14 @@ const Task = () => {
             />
 
          </div>
+         <AlertDeleteModal
+            showModal={displayConfirmationModal}
+            confirmModal={submitDelete}
+            hideModal={hideConfirmationModal}
+            type={type}
+            id={deleteTaskAssignId}
+            message={deleteMessage}
+         />
       </div>
    );
 
