@@ -78,7 +78,7 @@ pipeline {
   post {
     always {
       sh 'docker logout'
-      cleanWs()
+      sh "sudo rm -rf ${WORKSPACE}"
     }
   }
 }
