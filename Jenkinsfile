@@ -78,7 +78,7 @@ pipeline {
   post {
     always {
       sh 'docker logout'
-      cleanWs()
+      //cleanWs()
     }
   }
 }
@@ -100,8 +100,7 @@ def execute_stage(stage_name, skip) {
         sh "sudo mv ${WORKSPACE}/Vehicle_app/android/app/src/main/java/com/vehicle_crm ${WORKSPACE}/Vehicle_app/android/app/src/main/java/com/${BUILD_TAG}"
         sh "sudo mv ${WORKSPACE}/Vehicle_app/android/app/src/release/java/com/vehicle_crm ${WORKSPACE}/Vehicle_app/android/app/src/release/java/com/${BUILD_TAG}"
         sh "cd ${WORKSPACE}/Vehicle_app/android && sudo ./gradlew --stop"
-        sh "cd ${WORKSPACE}/Vehicle_app/android && sudo ./gradlew clean"
-        sh "cd ${WORKSPACE}/Vehicle_app/android && sudo ./gradlew assembleRelease"
+        sh "cd ${WORKSPACE}/Vehicle_app/android && sudo ./gradlew clean assembleRelease"
         //note : change that folder name too !
         sh 'cd ../..'
         sh 'cp ${WORKSPACE}/Vehicle_app/android/app/build/outputs/apk/release/app-release.apk ${WORKSPACE}/server/'
