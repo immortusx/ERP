@@ -38,6 +38,10 @@ const Tasks = () => {
     console.log(taskDetails, 'taskDetials');
     navigation.navigate('Task Details', {taskDetails: taskDetails});
   };
+  const redirectEnquiriesList = (categoryDetails) => {
+    console.log(categoryDetails, 'cateogir');
+    navigation.navigate('Enquiries', {categoryDetails: categoryDetails});
+  }
   return (
     <View style={StyleSheet.mainContainer}>
       <View style={styles.container}>
@@ -87,7 +91,7 @@ const Tasks = () => {
                       <TouchableOpacity
                         style={styles.perfomedTaskBtn}
                         onPress={() => {
-                          // openTaskDetails(item);
+                          redirectEnquiriesList(item);
                         }}>
                         <Text style={styles.listStyle}>
                           {item.category_name}

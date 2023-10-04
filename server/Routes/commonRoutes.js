@@ -228,11 +228,10 @@ router.post("/set-task-edit/:id", tokenCheck, async (req, res) => {
 });
 
 router.get("/get-addtask/:id", tokenCheck, async (req, res) => {
-
   try {
     console.log(">>>>>get-addtask");
     const id = req.params.id;
-    const query = 'SELECT * FROM addtask_data WHERE id = ?';
+    const query = "SELECT * FROM addtask_data WHERE id = ?";
 
     await db.query(query, [id], async (err, result) => {
       if (err) {
@@ -254,32 +253,35 @@ router.get("/delete-taskassign/:id", async (req, res) => {
     console.log(">>>>> delete-taskassign");
     console.log("req.params", req.params.id);
     const id = req.params.id;
-    await db.query(`DELETE FROM addtask_data WHERE id = ${id}`, async (err, result) => {
-      if (err) {
-        console.log({ isSuccess: false, result: err });
-        res.send({ isSuccess: false, result: 'error' });
-      } else {
-        console.log({ isSuccess: true, result: 'Task Deleted' });
-        res.send({ isSuccess: true, result: 'success' });
+    await db.query(
+      `DELETE FROM addtask_data WHERE id = ${id}`,
+      async (err, result) => {
+        if (err) {
+          console.log({ isSuccess: false, result: err });
+          res.send({ isSuccess: false, result: "error" });
+        } else {
+          console.log({ isSuccess: true, result: "Task Deleted" });
+          res.send({ isSuccess: true, result: "success" });
+        }
       }
-    })
+    );
   } catch (error) {
     console.error("Error:", error);
     // res.status(500).send({ isSuccess: false, result: "Internal Server Error" });
   }
 });
-router.get('/update-taskstatus/:id/:newStatus', async (req, res) => {
-  console.log(">>>>>update-taskstatus")
- const newStatus =  req.params.newStatus;
- const id = req.params.id;
-  sql= `UPDATE addtask_data SET task_status = ${newStatus} WHERE id = ${id};`
+router.get("/update-taskstatus/:id/:newStatus", async (req, res) => {
+  console.log(">>>>>update-taskstatus");
+  const newStatus = req.params.newStatus;
+  const id = req.params.id;
+  sql = `UPDATE addtask_data SET task_status = ${newStatus} WHERE id = ${id};`;
   await db.query(sql, async (err, result) => {
     if (err) {
       console.log({ isSuccess: true, result: err });
       res.send({ isSuccess: true, result, result: err });
     } else {
       console.log({ isSuccess: true, result: sql });
-      res.send({ isSuccess: true, result: 'success' });
+      res.send({ isSuccess: true, result: "success" });
     }
   });
 });
@@ -349,30 +351,33 @@ router.get("/get-employee-work-report", tokenCheck, async (req, res) => {
 });
 
 //=======================Get Work Report Details============================//
-router.get("/get-work-report-details/:userId/:taskTypeId/:taskId", tokenCheck, async (req, res) => {
-  console.log(">>>>>/get-work-report-details");
-  try {
-    let EmployeeId = req.params.userId;
-    let taskTypeId = req.params.taskTypeId;
-    let taskId = req.params.taskId;
-    const userId = req.myData.userId;
-    let isAdmin = req.myData.isSuperAdmin;
-    const url = `CALL sp_get_work_report_by_employee(${userId}, ${isAdmin}, ${EmployeeId}, ${taskTypeId}, ${taskId})`;
-    db.query(url, async (err, result) => {
-      if (err) {
-        console.error(err);
-        res.status(500).json({ isSuccess: false, result: "error" });
-      } else {
-        console.log({ isSuccess: true, result: result });
-        res.status(200).json({ isSuccess: true, result: result[0] });
-      }
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ isSuccess: false, result: "error" });
+router.get(
+  "/get-work-report-details/:userId/:taskTypeId/:taskId",
+  tokenCheck,
+  async (req, res) => {
+    console.log(">>>>>/get-work-report-details");
+    try {
+      let EmployeeId = req.params.userId;
+      let taskTypeId = req.params.taskTypeId;
+      let taskId = req.params.taskId;
+      const userId = req.myData.userId;
+      let isAdmin = req.myData.isSuperAdmin;
+      const url = `CALL sp_get_work_report_by_employee(${userId}, ${isAdmin}, ${EmployeeId}, ${taskTypeId}, ${taskId})`;
+      db.query(url, async (err, result) => {
+        if (err) {
+          console.error(err);
+          res.status(500).json({ isSuccess: false, result: "error" });
+        } else {
+          console.log({ isSuccess: true, result: result });
+          res.status(200).json({ isSuccess: true, result: result[0] });
+        }
+      });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ isSuccess: false, result: "error" });
+    }
   }
-});
-
+);
 
 router.get("/get-employee-work-report-today", tokenCheck, async (req, res) => {
   console.log(">>>>>get-employee-work-report-today");
@@ -412,23 +417,52 @@ router.get("/get-employee-work-report-weekly", tokenCheck, async (req, res) => {
   }
 });
 
-router.get("/get-employee-work-report-monthly", tokenCheck, async (req, res) => {
-  console.log(">>>>>get-employee-work-report-monthly");
-  try {
-    const url = `CALL sp_get_work_report_monthly()`;
-    db.query(url, async (err, result) => {
-      if (err) {
-        console.error(err);
-        res.status(500).json({ isSuccess: true, result: result });
-      } else {
-        console.log({ isSuccess: true, result: result });
-        res.status(200).json({ isSuccess: true, result: result[0] });
-      }
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ isSuccess: false, result: "error" });
+router.get(
+  "/get-employee-work-report-monthly",
+  tokenCheck,
+  async (req, res) => {
+    console.log(">>>>>get-employee-work-report-monthly");
+    try {
+      const url = `CALL sp_get_work_report_monthly()`;
+      db.query(url, async (err, result) => {
+        if (err) {
+          console.error(err);
+          res.status(500).json({ isSuccess: true, result: result });
+        } else {
+          console.log({ isSuccess: true, result: result });
+          res.status(200).json({ isSuccess: true, result: result[0] });
+        }
+      });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ isSuccess: false, result: "error" });
+    }
   }
-});
+);
+
+//==================get Enquiries by categoryId====================//
+router.get(
+  "/get-enquiries-by-category/:categoryId",
+  tokenCheck,
+  async (req, res) => {
+    console.log(">>>>>/get-enquiries-by-category/:categoryId");
+    try {
+      const categoryId = req.params.categoryId;
+      const url = `CALL sp_get_enquiries_by_enquiry_category(${categoryId})`;
+      db.query(url, async (err, result) => {
+        if (err) {
+          console.error(err);
+          res.status(500).json({ isSuccess: true, result: result });
+        } else {
+          console.log({ isSuccess: true, result: result });
+          res.status(200).json({ isSuccess: true, result: result[0] });
+        }
+      });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ isSuccess: false, result: "error" });
+    }
+  }
+);
 
 module.exports = router;
