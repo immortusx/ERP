@@ -97,8 +97,8 @@ def execute_stage(stage_name, skip) {
         sh "wget https://gist.githubusercontent.com/Manan-Santoki/9950411420c85c13ad9c105a834d4f7d/raw/7f9ede2e3d8075765377cfe3b075acf06c467ca0/package-name.sh"
         sh "sudo chmod +x package-name.sh"
         sh "cd ${WORKSPACE}/Vehicle_app/android && sudo sh ./package-name.sh com.${BUILD_TAG}"
-        sh "sudo mv ${WORKSPACE}/Vehicle_app/android/app/src/main/java/com/vehicle_crm ${WORKSPACE}/Vehicle_app/android/app/src/main/java/com/${BUILD_TAG}"
-        sh "sudo mv ${WORKSPACE}/Vehicle_app/android/app/src/release/java/com/vehicle_crm ${WORKSPACE}/Vehicle_app/android/app/src/release/java/com/${BUILD_TAG}"
+        sh "sudo mv ${WORKSPACE}/Vehicle_app/android/app/src/main/java/com/vehicle_crm/ ${WORKSPACE}/Vehicle_app/android/app/src/main/java/com/${BUILD_TAG}/"
+        sh "sudo mv ${WORKSPACE}/Vehicle_app/android/app/src/release/java/com/vehicle_crm/ ${WORKSPACE}/Vehicle_app/android/app/src/release/java/com/${BUILD_TAG}/"
         sh "cd ${WORKSPACE}/Vehicle_app/android && sudo ./gradlew --stop"
         sh "cd ${WORKSPACE}/Vehicle_app/android && sudo ./gradlew clean assembleRelease"
         //note : change that folder name too !
