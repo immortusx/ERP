@@ -1,27 +1,38 @@
-import React, { useEffect, useState } from 'react';
-import lang from "../assets/images/languagess.png"
-import check from '../assets/images/check.png';
+import React, { useState } from 'react';
+import lang from '../assets/images/languagess.png';
 
 function LanguageSelector({ onChangeLanguage }) {
-  const [selectedLanguage, setSelectedLanguage] = useState('');
+  const languages = [
+    { code: 'en', name: 'English' },
+    { code: 'gj', name: 'ગુજરાતી' },
+  ];
 
-  const handleLanguageChange = (e) => {
-    const selectedValue = e.target.value;
-    console.log("Selected Language Value:", selectedValue);
+
+  const [selectedLanguage, setSelectedLanguage] = useState('en'); // Default language is English
+
+  const handleLanguageChange = (event) => {
+    const selectedValue = event.target.value;
     setSelectedLanguage(selectedValue);
     onChangeLanguage(selectedValue);
   };
 
   return (
     <div className="custom-select">
-      <img src={lang} alt="lang" height={20} width={20} />
-      <select onChange={handleLanguageChange} value={selectedLanguage}>
-        <option  value="">Select</option>
-        <option value="en">English</option>
-        <option value="gj">ગુજરાતી</option>
-        {/* Add more language options as needed */}
-      </select>
-      {selectedLanguage && <img src={check} alt="check" height={20} width={20} />}
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        <img src={lang} alt="lang" width="20" height="20" />
+        <label htmlFor="languageSelector"></label>
+        <select
+          id="languageSelector"
+          value={selectedLanguage}
+          onChange={handleLanguageChange}
+        >
+          {languages.map((language) => (
+            <option key={language.code} value={language.code}>
+              {language.name} {selectedLanguage === language.code ? '✓' : ''}
+            </option>
+          ))}
+        </select>
+      </div>
     </div>
   );
 }
