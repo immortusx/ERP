@@ -66,6 +66,7 @@ const Tasks = () => {
                       <Text style={styles.taskLabel}>Task Type:</Text>
                       <Text style={styles.taskLabel}>Tasks:</Text>
                       <Text style={styles.taskLabel}>Task Performed: </Text>
+                      <Text style={styles.taskLabel}>Category: </Text>
                       <Text style={styles.taskLabel}>Start Date: </Text>
                       <Text style={styles.taskLabel}>End Date: </Text>
                       <Text style={styles.taskLabel}>Task Time Period: </Text>
@@ -81,6 +82,15 @@ const Tasks = () => {
                         }}>
                         <Text style={[styles.listStyle, styles.taskPerformed]}>
                           {item.taskCompleted}/{item.taskcount}
+                        </Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={styles.perfomedTaskBtn}
+                        onPress={() => {
+                          // openTaskDetails(item);
+                        }}>
+                        <Text style={styles.listStyle}>
+                          {item.category_name}
                         </Text>
                       </TouchableOpacity>
                       <Text style={styles.listStyle}>
@@ -180,6 +190,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'lightblue',
     paddingHorizontal: 12,
     borderRadius: 20,
+    marginVertical: 1.5
   },
   NoTaskStyle: {
     fontSize: 16,
@@ -187,7 +198,7 @@ const styles = StyleSheet.create({
     color: 'red',
     textAlign: 'center',
     marginTop: 20,
-    fontStyle: 'italic'
+    fontStyle: 'italic',
   },
 });
 

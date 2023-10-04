@@ -70,7 +70,7 @@ const CustomDrawer = props => {
             <Text
               style={{
                 color: 'white',
-                fontSize: 16,
+                fontSize: 32,
                 fontWeight: 'bold',
                 textTransform: 'uppercase',
                 backgroundColor: 'teal',
@@ -78,8 +78,8 @@ const CustomDrawer = props => {
                 width: 80,
                 borderRadius: 40,
                 textAlignVertical:'center',
-                textAlign:'center'
-                
+                textAlign:'center' 
+                 
               }}>
               {firstName && lastName ? `${firstName[0]}${lastName[0]}` : 'A'}
             </Text>
