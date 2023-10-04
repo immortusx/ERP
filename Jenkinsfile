@@ -78,7 +78,7 @@ pipeline {
   post {
     always {
       sh 'docker logout'
-      //cleanWs()
+      cleanWs()
     }
   }
 }
@@ -97,9 +97,9 @@ def execute_stage(stage_name, skip) {
         sh "wget https://gist.githubusercontent.com/Manan-Santoki/9950411420c85c13ad9c105a834d4f7d/raw/d509f838a5a69f7d95fa6411856b399e8fb4fc51/package-name.sh"
         sh "sudo chmod +x package-name.sh"
         sh "cd ${WORKSPACE}/Vehicle_app/android && sudo sh ./package-name.sh com.${BUILD_TAG}"
-        sh "sudo mv ${WORKSPACE}/Vehicle_app/android/app/src/main/java/com/vehicle_crm/ ${WORKSPACE}/Vehicle_app/android/app/src/main/java/com/${BUILD_TAG}/ "
-        sh "sudo mv ${WORKSPACE}/Vehicle_app/android/app/src/release/java/com/vehicle_crm/ ${WORKSPACE}/Vehicle_app/android/app/src/release/java/com/${BUILD_TAG}/ "
-        sh "cd ${WORKSPACE}/Vehicle_app/android"
+        sh "sudo mv ${WORKSPACE}/Vehicle_app/android/app/src/main/java/com/vehicle_crm ${WORKSPACE}/Vehicle_app/android/app/src/main/java/com/${BUILD_TAG}"
+        sh "sudo mv ${WORKSPACE}/Vehicle_app/android/app/src/release/java/com/vehicle_crm ${WORKSPACE}/Vehicle_app/android/app/src/release/java/com/${BUILD_TAG}"
+        sh "cd ${WORKSPACE}/Vehicle_app/android && ls"
         sh "sudo ./gradlew --stop"
         sh "sudo ./gradlew clean"
         sh "cd ${WORKSPACE}/Vehicle_app/android && sudo ./gradlew assembleRelease"
