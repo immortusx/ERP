@@ -12,11 +12,16 @@ import { Tooltip } from "@mui/material";
 import edit from "../assets/images/editu.png";
 import { Button } from "react-bootstrap";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
+import { useLocation, useNavigate } from "react-router-dom";
 import Axios from "axios";
 
 import "../styles/Users.css";
-import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 export default function UserTaskDetails() {
+    const location = useLocation();
+    const userdata = location.state ? location.state.taskdata : {};
+    const Id = userdata.id;
+    const taskId = userdata.task;
+    const tasktype = userdata.tasktype;
   const [task, setTask] = useState([]);
 
   const dispatch = useDispatch();
@@ -32,8 +37,8 @@ export default function UserTaskDetails() {
     setSelectAll(!selectAll);
   };
 
-  async function getWorkTaskDetail() {
-    const url = `${process.env.REACT_APP_NODE_URL}/api/get-user-task-list`;
+  async function getWorkTaskDetail(Id, tasktype, taskId) {
+    const url = `${process.env.REACT_APP_NODE_URL}/api/get-work-report-details/${Id}/${tasktype}/${taskId}`;
     const config = {
       headers: {
         token: localStorage.getItem("rbacToken"),
@@ -42,26 +47,27 @@ export default function UserTaskDetails() {
     await Axios.get(url, config).then((response) => {
       if (response.data) {
         if (response.data.isSuccess) {
-          console.log("ehshd", response.data.result);
+          console.log("ehshd", response.data);
           setTask(response.data.result);
         }
       }
     });
   }
   useEffect(() => {
-    getWorkTaskDetail();
-  }, []);
+    getWorkTaskDetail(Id, tasktype, taskId);
+  }, []); 
   const handleChildCheckboxClick = (itemId) => {
+    console.log(itemId, "itemId");
     const updatedRowsData = rowData.map((row) => {
       if (row.EmployeeId === itemId) {
-        console.log(row.id, "updatedRowsData");
         return {
           ...row,
           checkbox: !row.checkbox,
         };
       }
-      return row;
+        return row;
     });
+    console.log(updatedRowsData, "updatedRowsData");
     setRowData(updatedRowsData);
   };
 
@@ -70,9 +76,6 @@ export default function UserTaskDetails() {
     return new Date(startdate).toLocaleDateString(undefined, options);
   };
 
-  const button = (params) => {
-    console.log(params.row, "rowrowwww");
-  };
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
   const columns = [
     {
@@ -102,7 +105,7 @@ export default function UserTaskDetails() {
       minWidth: 200,
       flex: 1,
       valueGetter: (params) => {
-        return `${params.row.employee ? params.row.employee : "-"}`;
+        return `${params.row.Employee ? params.row.Employee : "-"}`;
       },
     },
     {
@@ -130,42 +133,16 @@ export default function UserTaskDetails() {
       },
     },
     {
-      field: "taskcount",
+      field: "datetime",
       headerAlign: "left",
       align: "left",
       headerClassName: "custom-header",
-      headerName: "TaskCount",
+      headerName: "Date",
       minWidth: 200,
       flex: 1.2,
-      renderCell: (params) => (
-        <button className="border-0 rounded p-2" onClick={button}>
-          {`${params.row.taskCompleted}/${
-            params.row.taskcount ? params.row.taskcount : "-"
-          }`}
-        </button>
-      ),
+      valueGetter: (params) => formatDate(params.row.datetime),
     },
 
-    {
-      field: "startdate",
-      headerAlign: "left",
-      align: "left",
-      headerClassName: "custom-header",
-      headerName: "Start Date",
-      minWidth: 200,
-      flex: 1.2,
-      valueGetter: (params) => formatDate(params.row.startdate),
-    },
-    {
-      field: "enddate",
-      headerAlign: "left",
-      align: "left",
-      headerClassName: "custom-header",
-      headerName: "End Date",
-      minWidth: 200,
-      flex: 1.2,
-      valueGetter: (params) => formatDate(params.row.enddate),
-    },
     {
       field: "period_name",
       headerAlign: "left",
@@ -175,7 +152,21 @@ export default function UserTaskDetails() {
       minWidth: 200,
       flex: 1.2,
       valueGetter: (params) => {
-        return `${params.row.period_name ? params.row.period_name : "-"}`;
+        return `${params.row.spendtime ? params.row.spendtime : "-"}`;
+      },
+    },
+    {
+      field: "work_description",
+      headerAlign: "left",
+      align: "left",
+      headerClassName: "custom-header",
+      headerName: "Work Description",
+      minWidth: 200,
+      flex: 1.2,
+      valueGetter: (params) => {
+        return `${
+          params.row.work_description ? params.row.work_description : "-"
+        }`;
       },
     },
   ];

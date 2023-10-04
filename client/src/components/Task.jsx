@@ -22,13 +22,20 @@ const Task = () => {
    const navigate = useNavigate();
    const dispatch = useDispatch();
    const [type, setType] = useState(null);
-   const [taskStatus, setTaskStatus] = useState(null);
+   const [taskStatus, setTaskStatus] = useState('1');
+   const [statusVisible, setStatusVisible] = useState('none');
+   const [statusDropDown, setStatusDropDown] = useState('none');
    const [id, setId] = useState(null);
    const [deleteMessage, setDeleteMessage] = useState(null);
    const [deleteTaskAssignId, setDeleteTaskAssignId] = useState(null);
+   const [showDropDown, setShowDropDown] = useState(false);
    const [displayConfirmationModal, setDisplayConfirmationModal] =
       useState(false);
    const currentBranch = localStorage.getItem("currentDealerId");
+   const [selectedRowId, setSelectedRowId] = useState(null);
+   const [showSelectionBox, setShowSelectionBox] = useState({});
+
+
 
    const handleHeaderCheckboxClick = () => {
       setSelectAll(!selectAll);
@@ -127,6 +134,8 @@ const Task = () => {
             if (response.data) {
                if (response.data.result === 'success') {
                   getTaskList();
+                  setStatusDropDown('status-dropdown');
+
                }
             }
          })
@@ -134,11 +143,53 @@ const Task = () => {
             console.error("Error while updating task status:", error);
          });
    }
+   // const getColorClass = newAddTask.listTaskStatus
+   //    .map((item) => `task-status${item.id}`)
+   //    .join(' ');
+   const getColorClass = (taskstatus) => {
+      switch (taskstatus) {
+         case '1':
+            return 'task-status-1';
+         case '2':
+            return 'task-status-2';
+         case '3':
+            return 'task-status-3';
+         case '4':
+            return 'task-status-4';
+         case '5':
+            return 'task-status-5';
+         // Add more cases for other task statuses as needed
+         default:
+            return '';
+      }
+   };
+   const handleTaskStatus = (rowId) => {
+      if (showSelectionBox[rowId]) {
+         // Selection box is already visible, make it invisible
+         setShowSelectionBox((prevState) => ({
+            ...prevState,
+            [rowId]: false,
+         }));
+      } else {
+         // Selection box is not visible, make it visible
+         setShowSelectionBox((prevState) => ({
+            ...prevState,
+            [rowId]: true,
+         }));
+      }
+   };
+
 
    const onChangeTaskStatus = (e, id) => {
-      console.log(e.target.value, id, 'valsuifsaefdfsxdf');
       const newStatus = e.target.value;
       taskAssignStatus(id, newStatus);
+
+      // Toggle the visibility of the selection box for the corresponding row
+      setShowSelectionBox((prevState) => ({
+         ...prevState,
+         [id]: false,
+      }));
+
       const updatedRowData = rowData.map((row) => {
          if (row.id === id) {
             return {
@@ -148,8 +199,10 @@ const Task = () => {
          }
          return row;
       });
+
       setRowData(updatedRowData);
    };
+
    async function getlisttaskStatus() {
       const url = `${process.env.REACT_APP_NODE_URL}/api/get-taskstatus-list`;
       const config = {
@@ -256,33 +309,62 @@ const Task = () => {
          minWidth: 200,
          flex: 1,
          renderCell: (params) => {
+            const taskstatus = params.row.taskstatus || "";
+            const colorClass = getColorClass(taskstatus);
+            const rowId = params.row.id;
+
             return (
-               <div className=''>
-                  <select
-                     onChange={(e) => onChangeTaskStatus(e, params.row.id)}
-                     className="myInput"
-                     name="taskstatus"
-                     value={params.row.taskstatus} // Set the selected value from the row data
+               <div className="">
+                  {/* <p
+                     className={`${statusVisible} ${colorClass} rounded-pill px-4`}
+                     onClick={() => handleTaskStatus(rowId)}
                   >
-                     {newAddTask.listTaskStatus &&
-                        newAddTask.listTaskStatus.length > 0 &&
-                        newAddTask.listTaskStatus.map((i) => {
-                           const taskstatus = `${i.task_status}`;
-                           return (
-                              <option
-                                 key={i.id}
-                                 value={i.id}
-                                 className="myLabel"
-                              >
-                                 {taskstatus}
-                              </option>
-                           );
-                        })}
-                  </select>
+                     {taskstatus == 1 && "New"} 
+                     {taskstatus == 2 && "In Progress"} 
+                     {taskstatus == 3 && "On Hold"} 
+                     {taskstatus == 4 && "Discard"} 
+                     {taskstatus == 5 && "Done"} 
+                  </p> */}
+                  {
+                     showSelectionBox[rowId] ? (
+                        <select
+                           onChange={(e) => onChangeTaskStatus(e, params.row.id)}
+                           className={`${statusDropDown} myInput custom-select px-4 rounded-pill`}
+                           name="taskstatus"
+                           value={params.row.taskstatus}
+                        >
+                           {newAddTask.listTaskStatus &&
+                              newAddTask.listTaskStatus.length > 0 &&
+                              newAddTask.listTaskStatus.map((i) => {
+                                 const taskstatus = `${i.task_status}`;
+                                 return (
+                                    <option key={i.id} value={i.id} className="myLabel">
+                                       {taskstatus}
+                                    </option>
+                                 );
+                              })}
+                        </select>
+                     ) : (
+                        <p
+                           className={`${statusVisible} ${colorClass} cursorpointer rounded-pill px-4`}
+                           onClick={() => handleTaskStatus(rowId)}
+                        >
+                           {taskstatus == 1 && "New"}
+                           {taskstatus == 2 && "In Progress"}
+                           {taskstatus == 3 && "On Hold"}
+                           {taskstatus == 4 && "Discard"}
+                           {taskstatus == 5 && "Done"}
+                        </p>
+                     )
+                  }
+
+
                </div>
             );
          },
+
       },
+
       {
          field: "taskcount",
          headerAlign: "left",
@@ -472,3 +554,4 @@ const Task = () => {
 
 }
 export default Task;
+

@@ -54,8 +54,7 @@ export default function MyTask() {
   }, []);
   const handleChildCheckboxClick = (itemId) => {
     const updatedRowsData = rowData.map((row) => {
-      if (row.EmployeeId === itemId) {
-        console.log(row.id, "updatedRowsData");
+      if (row.id === itemId) {
         return {
           ...row,
           checkbox: !row.checkbox,
@@ -63,17 +62,22 @@ export default function MyTask() {
       }
       return row;
     });
+    console.log(updatedRowsData, "updatedRowsData");
     setRowData(updatedRowsData);
   };
+
 
 const formatDate = (startdate) => {
   const options = { year: "numeric", month: "long", day: "numeric" };
   return new Date(startdate).toLocaleDateString(undefined, options);
 };
 
-const button = () => {
-  navigate("/management/my-task/task-detail");
+const handletaskdetail = (data) => {
+  navigate("/management/my-task/task-detail", {
+    state: { taskdata: data },
+  });
 };
+
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
   const columns = [
     {
@@ -90,7 +94,7 @@ const button = () => {
         <Checkbox
           {...label}
           checked={params.row.checkbox}
-          onClick={() => handleChildCheckboxClick(params.row.EmployeeId)}
+          onClick={() => handleChildCheckboxClick(params.row.id)}
         />
       ),
     },
@@ -139,8 +143,11 @@ const button = () => {
       minWidth: 200,
       flex: 1.2,
       renderCell: (params) => (
-        <button className="border-0 rounded p-2" onClick={button}>
-          {`${params.row.taskCompleted}/${
+        <button
+          className="border-0 rounded p-2"
+          onClick={() => handletaskdetail(params.row)}
+        >
+          {`${params.row.taskCompleted ? params.row.taskCompleted : 0}/${
             params.row.taskcount ? params.row.taskcount : "-"
           }`}
         </button>

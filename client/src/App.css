@@ -766,7 +766,7 @@ select.myInput {
   display: inline-block;
 }
 
-.image-container:hover::before .box-contain{
+.image-container:hover::before .box-contain {
   content: '';
   position: absolute;
   top: 25px;
@@ -798,17 +798,63 @@ select.myInput {
 }
 
 .download-button {
-  background-color: #0074cc; /* Background color */
-  color: white; /* Text color */
-  border: none; /* Remove borders */
-  border-radius: 5px; /* Rounded corners */
-  cursor: pointer; /* Change cursor to pointer on hover */
-  font-size: 16px; /* Adjust font size */
-  margin: 5px; /* Add margin to create space between buttons */
+  background-color: #0074cc;
+  /* Background color */
+  color: white;
+  /* Text color */
+  border: none;
+  /* Remove borders */
+  border-radius: 5px;
+  /* Rounded corners */
+  cursor: pointer;
+  /* Change cursor to pointer on hover */
+  font-size: 16px;
+  /* Adjust font size */
+  margin: 5px;
+  /* Add margin to create space between buttons */
 }
 
 /* Hover effect */
 .download-button:hover {
-  background-color: #005aa3; /* Change background color on hover */
+  background-color: #005aa3;
+  /* Change background color on hover */
 }
 
+.custom-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.custom-select::after {
+  content: '\f107';
+  font-family: FontAwesome;
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.task-status-1 {
+  color: purple;
+}
+
+.task-status-2 {
+  color: skyblue;
+}
+
+.task-status-3 {
+  color: orange;
+}
+
+.task-status-4 {
+  color: red;
+}
+
+.task-status-5 {
+  color: green;
+}
+.cursorpointer{
+  cursor: pointer;
+}
