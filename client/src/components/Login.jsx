@@ -16,6 +16,7 @@ import gjTranslations from "../assets/locals/gj.json"
 import appdownload from "../assets/images/apps.png"
 import { Tooltip } from "@mui/material";
 import axios from 'axios'
+import translations from '../assets/locals/translations'
 
 export default function Login() {
     const dispatch = useDispatch()
@@ -25,10 +26,15 @@ export default function Login() {
     const [rememberMe, setRememberMe] = useState(false);
     const [toggleDownloadPopUp, setToggleDownloadPopUp] = useState(false);
     const [language, setLanguage] = useState('en');
+    const currentLanguage = useSelector((state) => state.language.language);
 
-    const translations = language === 'en' ? enTranslations : gjTranslations;
+    useEffect(() => {
+        if (currentLanguage) {
 
-
+            console.log(currentLanguage, translations, 'gdkgg')
+            console.log(translations[currentLanguage].login)
+        }
+    }, [currentLanguage])
     const navigate = useNavigate()
     const [loginData, setLoginData] = useState({
         email: '',
@@ -59,6 +65,7 @@ export default function Login() {
             setLoginData(registerData => ({ ...loginData, 'password': e.target.value }))
         }
     }
+
     useEffect(() => {
         if (profileDataState.isSuccess && profileDataState.currentUserData.isSuccess) {
             const rolesArray = [];
@@ -136,7 +143,7 @@ export default function Login() {
                         <button class="download-button" onClick={downloadiOsApp}>Download iOS App</button>
                     </div>
                 </div>
-                <LanguageSelector onChangeLanguage={(selectedLanguage) => setLanguage(selectedLanguage)} />
+                <LanguageSelector onChangeLanguage={(e) => setLanguage(e.target.value)} />
             </div>
 
             <div className='container'>
@@ -148,14 +155,14 @@ export default function Login() {
                                     <img src={lg} alt="Logo" height={200} width={350} />
                                 </div>
                                 <div className='mainDivRegister mt-3 bg-white p-4'>
-                                    <h2 className='text-left'>{translations.login}</h2>
+                                    <h2 className='text-left'>{translations[currentLanguage].login}</h2>
                                     <section>
-                                        <label htmlFor="email" style={{ fontSize: '17px', marginLeft: '5px' }}>{translations.username} </label>
+                                        <label htmlFor="email" style={{ fontSize: '17px', marginLeft: '5px' }}>{translations[currentLanguage].username} </label>
                                         <input className='myInputl' onChange={(e) => { onChangeHandler(e) }} type="text" id='email' name="email" />
                                     </section>
                                     <section>
 
-                                        <label htmlFor="password" style={{ fontSize: '17px', marginLeft: '5px' }}>{translations.password} </label>
+                                        <label htmlFor="password" style={{ fontSize: '17px', marginLeft: '5px' }}>{translations[currentLanguage].password} </label>
                                         <div style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
                                             <input
                                                 className='myInputl'
@@ -187,14 +194,14 @@ export default function Login() {
                                                 checked={rememberMe}
                                                 onChange={() => setRememberMe(!rememberMe)}
                                             />
-                                            {translations.rememberMe}
+                                            {translations[currentLanguage].rememberMe}
                                         </label>
                                     </section>
                                     <section>
-                                        <button className='myBtnl py-1' style={{ fontSize: '18px' }} onClick={handleSubmit} type='button'>  {translations.loginButton}</button>
+                                        <button className='myBtnl py-1' style={{ fontSize: '18px' }} onClick={handleSubmit} type='button'>  {translations[currentLanguage].loginButton}</button>
                                     </section>
                                     <section>
-                                        <button className='myBtnl py-1' style={{ fontSize: '18px' }} type='button'>  {translations.forgotPassword}</button>
+                                        <button className='myBtnl py-1' style={{ fontSize: '18px' }} type='button'>  {translations[currentLanguage].forgotPassword}</button>
                                     </section>
                                 </div>
                             </section>

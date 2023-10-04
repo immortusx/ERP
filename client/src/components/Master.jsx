@@ -1,9 +1,11 @@
 import React from "react";
+import { useSelector} from "react-redux";
 import { useNavigate } from "react-router-dom";
 import "../styles/master.scss";
 import Axios from "axios";
-
+import translations from '../assets/locals/translations';
 export default function Master() {
+  const currentLanguage = useSelector((state) => state.language.language);
   async function checkagencyexist() {
     const url = `${process.env.REACT_APP_NODE_URL}/api/agency/add-agency-exist`;
     const config = {
@@ -31,12 +33,12 @@ export default function Master() {
     <div className="master bg-white myBorder rounded">
       <main className="my-3">
         <div className="mx-3 m-0">
-          <h6 className="fw-bold m-0">Configuration</h6>
+          <h6 className="fw-bold m-0">{translations[currentLanguage].configuration}</h6>
         </div>
         <section>
           <hr />
           <div className="mx-3 m-0">
-            <h6 className="fw-bold myH9 m-0">BASIC SETUP</h6>
+            <h6 className="fw-bold myH9 m-0">{translations[currentLanguage].basicsetup}</h6>
           </div>
           <hr />
           <ul className="row m-0 px-2">
@@ -64,7 +66,7 @@ export default function Master() {
                     />
                   </svg>
                 </div>
-                <span className="ms-2">State</span>
+                <span className="ms-2">{translations[currentLanguage].state}</span>
               </main>
             </li>
             <li className="col-12 col-sm-4 col-md-3  d-flex align-items-center p-2">
@@ -91,7 +93,7 @@ export default function Master() {
                     />
                   </svg>
                 </div>
-                <span className="ms-2">District</span>
+                <span className="ms-2">{translations[currentLanguage].district}</span>
               </main>
             </li>
             <li className="col-12 col-sm-4 col-md-3  d-flex align-items-center p-2">
@@ -118,7 +120,7 @@ export default function Master() {
                     />
                   </svg>
                 </div>
-                <span className="ms-2">Taluka</span>
+                <span className="ms-2">{translations[currentLanguage].taluka}</span>
               </main>
             </li>
             <li className="col-12 col-sm-4 col-md-3  d-flex align-items-center p-2">
@@ -145,7 +147,7 @@ export default function Master() {
                     />
                   </svg>
                 </div>
-                <span className="ms-2">Village</span>
+                <span className="ms-2">{translations[currentLanguage].village}</span>
               </main>
             </li>
           </ul>
@@ -153,7 +155,7 @@ export default function Master() {
         <section>
           <hr />
           <div className="mx-3 m-0">
-            <h6 className="fw-bold myH9 m-0">AGENCY SETTING</h6>
+            <h6 className="fw-bold myH9 m-0">{translations[currentLanguage].agencysetting}</h6>
           </div>
           <hr />
           <ul className="row m-0 px-2">
@@ -179,7 +181,7 @@ export default function Master() {
                     />
                   </svg>
                 </div>
-                <span className="ms-2">Agency</span>
+                <span className="ms-2">{translations[currentLanguage].agency}</span>
               </main>
             </li>
           </ul>
@@ -187,7 +189,7 @@ export default function Master() {
         <section>
           <hr />
           <div className="mx-3 m-0">
-            <h6 className="fw-bold myH9 m-0">MASTER SETTING</h6>
+            <h6 className="fw-bold myH9 m-0">{translations[currentLanguage].mastersetting}</h6>
           </div>
           <hr />
           <ul className="row m-0 px-2">
@@ -215,7 +217,7 @@ export default function Master() {
                     />
                   </svg>
                 </div>
-                <span className="ms-2">Branch</span>
+                <span className="ms-2">{translations[currentLanguage].branch}</span>
               </main>
             </li>
             <li className="col-12 col-sm-4 col-md-4  d-flex align-items-center p-2">
@@ -242,7 +244,7 @@ export default function Master() {
                     />
                   </svg>
                 </div>
-                <span className="ms-2">Category</span>
+                <span className="ms-2">{translations[currentLanguage].category}</span>
               </main>
             </li>
             <li className="col-12 col-sm-4 col-md-4  d-flex align-items-center p-2">
@@ -269,7 +271,7 @@ export default function Master() {
                     />
                   </svg>
                 </div>
-                <span className="ms-2">Department</span>
+                <span className="ms-2">{translations[currentLanguage].department}</span>
               </main>
             </li>
             <li className="col-12 col-sm-4 col-md-4  d-flex align-items-center p-2">
@@ -296,7 +298,7 @@ export default function Master() {
                     />
                   </svg>
                 </div>
-                <span className="ms-2">Manufacturer</span>
+                <span className="ms-2">{translations[currentLanguage].manufacturer}</span>
               </main>
             </li>
             <li className="col-12 col-sm-4 col-md-4  d-flex align-items-center p-2">
@@ -323,7 +325,7 @@ export default function Master() {
                     />
                   </svg>
                 </div>
-                <span className="ms-2">Task</span>
+                <span className="ms-2">{translations[currentLanguage].task}</span>
               </main>
             </li>
             <li className="col-12 col-sm-4 col-md-4  d-flex align-items-center p-2">
@@ -350,7 +352,7 @@ export default function Master() {
                     />
                   </svg>
                 </div>
-                <span className="ms-2">Enquiry Sources</span>
+                <span className="ms-2">{translations[currentLanguage].enqsources}</span>
               </main>
             </li>
 
@@ -359,7 +361,7 @@ export default function Master() {
         <section>
           <hr />
           <div className="mx-3 m-0">
-            <h6 className="fw-bold myH9 m-0">PART</h6>
+            <h6 className="fw-bold myH9 m-0">{translations[currentLanguage].part}</h6>
           </div>
           <hr />
           <ul className="row m-0 px-2">
@@ -387,7 +389,7 @@ export default function Master() {
                     />
                   </svg>
                 </div>
-                <span className="ms-2">Part</span>
+                <span className="ms-2">{translations[currentLanguage].parts}</span>
               </main>
             </li>
           </ul>
@@ -396,7 +398,7 @@ export default function Master() {
         <section>
           <hr />
           <div className="mx-3 m-0">
-            <h6 className="fw-bold myH9 m-0">TAX</h6>
+            <h6 className="fw-bold myH9 m-0">{translations[currentLanguage].tax}</h6>
           </div>
           <hr />
           <ul className="row m-0 px-2">
@@ -424,7 +426,7 @@ export default function Master() {
                     />
                   </svg>
                 </div>
-                <span className="ms-2">Tax</span>
+                <span className="ms-2">{translations[currentLanguage].taxs}</span>
               </main>
             </li>
           </ul>

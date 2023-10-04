@@ -1,8 +1,9 @@
-    {
-        "login": "Login",
+{
+    "login": "Login",
     "username": "Username",
     "password": "Password",
     "rememberMe": "Remember my username",
     "loginButton": "Log in",
-    "forgotPassword": "Forgot password?"
-    }
+    "forgotPassword": "Forgot password?",
+    "firstname":"First Name"
+  }

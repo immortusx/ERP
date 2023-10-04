@@ -5,14 +5,16 @@ import HomeIcon from '@mui/icons-material/Home';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
+import LanguageSelector from '../languageSelector';
+import enTranslations from "../../assets/locals/en.json"
+import gjTranslations from "../../assets/locals/gj.json"
 
 const BreadCrumb = () => {
   const [isHovered, setIsHovered] = useState(false);
-
   const handleMouseEnter = () => {
     setIsHovered(true);
   };
-
+  const [language, setLanguage] = useState('en');
   const handleMouseLeave = () => {
     setIsHovered(false);
   };
@@ -34,9 +36,8 @@ const BreadCrumb = () => {
   return (
     <div class="container">
       <div class="row">
-        <div class="col-10">
+        <div class="col-md-9">
           <div className='mb-3'>
-
             <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />} aria-label="breadcrumb">
 
               {crumbs.map((crumb, index, array) => {
@@ -51,7 +52,7 @@ const BreadCrumb = () => {
                       to={currentLink}
                       color={isLastCrumb ? "textPrimary" : "inherit"}
                     >
-                      {crumb.replace(/-/g, "  ")}
+                      {crumb.replace(/-/g, " ")}
                     </Link>
                     {index === array.length - 1 && !isLastCrumb && (
                       <ExpandMoreIcon fontSize="small" />
@@ -64,20 +65,25 @@ const BreadCrumb = () => {
             </Breadcrumbs>
           </div>
         </div>
-        <div class="col-2">
+        <div className='col-md-3' style={{ display: 'flex', justifyContent: 'flex-end' }}>
           <div className="download-container">
             <div className="download-bar" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
               {isHovered ? (
                 <div className="download-menu-container">
-                    <button className="download-button" onClick={handleDownloadIos}>iOS</button>
-                    <button className="download-button" onClick={handleDownloadAndroid}>Android</button>
+                  <button className="download-button" onClick={handleDownloadIos}>iOS</button>
+                  <button className="download-button" onClick={handleDownloadAndroid}>Android</button>
                 </div>
               ) : (
                 <p>Download</p>
               )}
             </div>
           </div>
+          <div>
+            <LanguageSelector onChangeLanguage={(e) => setLanguage(e.target.value)} />
+          </div>
         </div>
+
+
 
       </div>
     </div>

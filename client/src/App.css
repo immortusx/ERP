@@ -752,13 +752,9 @@ select.myInput {
 
 .custom-select select {
   padding-left: 30px;
-  /* Adjust as needed based on the image width and your desired spacing */
   padding-top: 0;
-  /* Remove any additional padding */
   padding-bottom: 0;
-  /* Remove any additional padding */
   margin: 0;
-  /* Remove any margin */
 }
 
 .image-container {
