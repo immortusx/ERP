@@ -4,7 +4,8 @@ import {
   addemployeeToDb,
   clearAddemployeeState,
 } from "../redux/slices/addemployeeSlice";
-import downloadgif from "../assets/images/download.gif"
+import DownloadIcon from "@mui/icons-material/Download";
+import download1 from "../assets/images/download1.png"
 import {
   clearEditemployeeState,
   clearEditemployeeData,
@@ -651,8 +652,8 @@ export default function Addemployee({ workFor }) {
                   required
                 />
               </div>
-              { workFor === "forEdit" && employeeprofilelogo.logo &&  (
-                <div className="d-flex justify-content-end align-items-end" >
+              {workFor === "forEdit" && employeeprofilelogo.logo && (
+                <div className="d-flex justify-content-end align-items-end">
                   <img
                     src={`${process.env.REACT_APP_NODE_URL}/api${employeeprofilelogo.logo}`}
                     alt="logo"
@@ -663,18 +664,22 @@ export default function Addemployee({ workFor }) {
                 </div>
               )}
               {/* Download Link */}
-              <div >
-
-                { workFor === "forEdit" && employeeprofilelogo.logo && (
-                  <div style={{ marginLeft: '20px' }}>
-                    <img
-                      src={downloadgif}
-                      className="logo-image rounded-circle"
-                      height={35}
-                      width={35}
+              <div>
+                {workFor === "forEdit" && employeeprofilelogo.logo && (
+                  <div style={{ marginLeft: "5px" }}>
+                    <button
+                      className="border-0 rounded-pill p-1"
                       onClick={handleDownload}
-                    />
-                    {/* // <button className="btnemp" onClick={handleDownload}>Download</button> */}
+                    >
+                    <DownloadIcon/>
+                     {/*<img
+                        src={download1}
+                        className="logo-image rounded-circle"
+                        height={30}
+                        width={30}
+                />*/}
+                      Download
+                    </button>
                   </div>
                 )}
               </div>
