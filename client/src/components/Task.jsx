@@ -81,7 +81,8 @@ const Task = () => {
             enddate: moment(user.enddate).format('LL'),
             tasktimeperiod: user.period_name,
             EmployeeId: user.EmployeeId,
-            taskstatus: user.task_status
+            taskstatus: user.task_status,
+            taskcategory:user.category_name
 
          }));
 
@@ -302,6 +303,14 @@ const Task = () => {
          flex: 1,
       },
       {
+         field: "taskcategory",
+         headerAlign: "left",
+         align: "left",
+         headerName: "Category",
+         minWidth: 200,
+         flex: 1,
+      },
+      {
          field: "taskstatus",
          headerAlign: "left",
          align: "left",
@@ -315,16 +324,7 @@ const Task = () => {
 
             return (
                <div className="">
-                  {/* <p
-                     className={`${statusVisible} ${colorClass} rounded-pill px-4`}
-                     onClick={() => handleTaskStatus(rowId)}
-                  >
-                     {taskstatus == 1 && "New"} 
-                     {taskstatus == 2 && "In Progress"} 
-                     {taskstatus == 3 && "On Hold"} 
-                     {taskstatus == 4 && "Discard"} 
-                     {taskstatus == 5 && "Done"} 
-                  </p> */}
+                
                   {
                      showSelectionBox[rowId] ? (
                         <select

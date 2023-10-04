@@ -149,10 +149,11 @@ router.post("/addtask-data", tokenCheck, async (req, res) => {
     const taskCount = req.body.taskCount;
     const tasktypePeriod = req.body.tasktimePeriod;
     const taskStatus = req.body.taskStatus;
-    const startDate = req.body.startDate.split("T")[0]; // Extract the date part
-    const endDate = req.body.endDate.split("T")[0]; // Extract the date part
+    const taskCategory = req.body.taskCategory;
+    const startDate = req.body.startDate.split("T")[0]; 
+    const endDate = req.body.endDate.split("T")[0]; 
 
-    const url = `INSERT INTO addtask_data (employee, tasktype, task, taskcount, startdate, enddate,tasktime_period,task_status) VALUES (?,?,?,?,?,?,?,?)`;
+    const url = `INSERT INTO addtask_data (employee, tasktype, task, taskcount, startdate, enddate,tasktime_period,task_status,category_name) VALUES (?,?,?,?,?,?,?,?,?)`;
 
     console.log("url", url);
 
@@ -169,12 +170,13 @@ router.post("/addtask-data", tokenCheck, async (req, res) => {
           endDate,
           tasktypePeriod,
           taskStatus,
+          taskCategory
         ]);
         console.log({ isSuccess: true, result: "Task Add Successfully" });
       } catch (err) {
         console.log({ isSuccess: false, result: err });
         res.send({ isSuccess: false, result: "error" });
-        return; // Exit the loop and request handling on error
+        return; 
       }
     }
 
@@ -208,9 +210,10 @@ router.post("/set-task-edit/:id", tokenCheck, async (req, res) => {
     const taskCount = req.body.taskCount;
     const tasktypePeriod = req.body.tasktimePeriod;
     const taskStatus = req.body.taskStatus;
-    const startDate = req.body.startDate.split("T")[0]; // Extract the date part
+    const taskCategory = req.body.taskCategory;
+    const startDate = req.body.startDate.split("T")[0];
     const endDate = req.body.endDate.split("T")[0];
-    const newUrl = `UPDATE addtask_data SET employee = '${employees}', tasktype = '${taskType}', task = '${tasks}', taskcount = '${taskCount}', startdate = '${startDate}', enddate = '${endDate}', tasktime_period = ${tasktypePeriod}, task_status=${taskStatus} WHERE id = '${EmployeeId}'`;
+    const newUrl = `UPDATE addtask_data SET employee = '${employees}', tasktype = '${taskType}', task = '${tasks}', taskcount = '${taskCount}', startdate = '${startDate}', enddate = '${endDate}', tasktime_period = ${tasktypePeriod}, task_status=${taskStatus}, category_name=${taskCategory} WHERE id = '${EmployeeId}'`;
 
     await db.query(newUrl, async (err, newResult) => {
       if (err) {

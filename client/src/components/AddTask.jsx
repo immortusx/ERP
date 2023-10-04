@@ -11,15 +11,16 @@ import { editTaskAssignUpdateToDb, clearEditTaskAssignState, clearEditTaskAssign
 const AssignTask = ({ workFor }) => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
-  const [startDate, setStartDate] = useState(null); // State for Start Date
-  const [endDate, setEndDate] = useState(null);     // State for End Date
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
   const [employees, setEmployees] = useState(null);
-  const [EmployeeId, setEmployeeId ] = useState(null);
+  const [EmployeeId, setEmployeeId] = useState(null);
   const [taskTypes, setTaskTypes] = useState(null);
   const [tasks, setTasks] = useState(null);
   const [taskCount, setTaskCount] = useState(null);
   const [tasktimePeriod, setTasktimePeriod] = useState(null);
   const [taskStatus, setTaskStatus] = useState(null);
+  const [taskCategory, setTaskCategory] = useState(null);
   const [selectedEmployee, setSelectedEmployee] = useState([]);
   const currentBranch = localStorage.getItem("currentDealerId");
   const location = useLocation();
@@ -35,7 +36,8 @@ const AssignTask = ({ workFor }) => {
     listTasktype: [],
     listTask: [],
     listTasktimeperiod: [],
-    listTaskStatus:[],
+    listTaskStatus: [],
+    listTaskCategory:[],
   });
 
   useEffect(() => {
@@ -70,7 +72,7 @@ const AssignTask = ({ workFor }) => {
           setEndDate(formattedEndDate);
           setTasktimePeriod(item.tasktime_period);
           setTaskStatus(item.task_status);
-
+          setTaskCategory(Number(item.category_name));
         })
       }
     } catch (error) {
@@ -142,7 +144,9 @@ const AssignTask = ({ workFor }) => {
     setEmployees(selectedOptions);
     setSelectedEmployee(selectedOptions);
   };
-
+  const onChangeTaskCategory = (e) => {
+    setTaskCategory(e.target.value);
+  }
   useEffect(() => {
     if (currentBranch) {
       async function getDspList() {
@@ -272,9 +276,33 @@ const AssignTask = ({ workFor }) => {
     getlisttaskStatus();
 
   }, [])
+
+  async function getlisttaskCategory() {
+    const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/get-enquiry-categories`;
+    const config = {
+      headers: {
+        token: localStorage.getItem("rbacToken"),
+      },
+    };
+    await Axios.get(url, config).then((response) => {
+      if (response) {
+      
+          setNewAddTask((newAddTask) => ({
+            ...newAddTask,
+            ["listTaskCategory"]: response.data.result,
+          }));
+    
+      }
+    });
+  }
+  useEffect(() => {
+    getlisttaskCategory();
+
+  }, [])
+
   function handleCancel() {
     navigate('/administration/configuration/Task')
-}
+  }
   const handleSubmit = async () => {
     const selectedEmployeeIds = selectedEmployee.map(employee => employee.value);
 
@@ -286,7 +314,8 @@ const AssignTask = ({ workFor }) => {
       startDate: startDate,
       endDate: endDate,
       tasktimePeriod: tasktimePeriod,
-      taskStatus:taskStatus,
+      taskStatus: taskStatus,
+      taskCategory:taskCategory
     };
 
     if (workFor === "editTask") {
@@ -511,7 +540,7 @@ const AssignTask = ({ workFor }) => {
             <label className="myLabel" htmlFor="task">
               Task Status
             </label>
-            <select onChange={onChangeTaskStatus} className="myInput" name="tasktimePeriod" value={taskStatus}>
+            <select onChange={onChangeTaskStatus} className="myInput" name="taskstatuss" value={taskStatus}>
               <option value="" className="myLabel">
                 Select Task Status
               </option>
@@ -531,7 +560,30 @@ const AssignTask = ({ workFor }) => {
                 })}
             </select>
           </section>
-
+          <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
+            <label className="myLabel" htmlFor="category">
+            Category
+            </label>
+            <select onChange={onChangeTaskCategory} className="myInput" name="taskcategory" value={taskCategory}>
+              <option value="" className="myLabel">
+                Select Category
+              </option>
+              {newAddTask.listTaskCategory &&
+                newAddTask.listTaskCategory.length > 0 &&
+                newAddTask.listTaskCategory.map((i) => {
+                  const taskcategory = `${i.category_name}`;
+                  return (
+                    <option
+                      key={i.id}
+                      value={i.id}
+                      className="myLabel"
+                    >
+                      {taskcategory}
+                    </option>
+                  );
+                })}
+            </select>
+          </section>
         </div>
       </main>
 
