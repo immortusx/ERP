@@ -16,7 +16,9 @@ import ClearIcon from "@mui/icons-material/Clear";
 import { addDepartmentToDb } from "../../../redux/slices/Master/Department/addDepartmentSlice";
 import { setEdicategoryData } from "../../../redux/slices/Master/Category/editCategorySlice";
 import { Tooltip } from "@mui/material";
+import translations from "../../../assets/locals/translations";
 export default function Category_list({ workFor }) {
+  const currentLanguage = useSelector((state) => state.language.language);
   const [categoryList, setCategoryList] = useState([]);
   const [displayConfirmationModal, setDisplayConfirmationModal] =
     useState(false);
@@ -98,7 +100,7 @@ export default function Category_list({ workFor }) {
       field: "category_name",
       headerAlign: "left",
       align: "left",
-      headerName: "Category",
+      headerName: translations[currentLanguage].category,
       minWidth: 120,
       flex: 1,
       valueGetter: (params) => {
@@ -109,7 +111,7 @@ export default function Category_list({ workFor }) {
       field: "category_description",
       headerAlign: "left",
       align: "left",
-      headerName: "Description",
+      headerName:translations[currentLanguage].description,
       minWidth: 250,
       flex: 1,
       valueGetter: (params) => {
@@ -123,7 +125,7 @@ export default function Category_list({ workFor }) {
       field: "department",
       headerAlign: "left",
       align: "left",
-      headerName: "Department",
+      headerName: translations[currentLanguage].department,
       minWidth: 250,
       flex: 1,
       valueGetter: (params) => {
@@ -146,7 +148,7 @@ export default function Category_list({ workFor }) {
         <div className="d-flex justify-content-center dotHover">
           <FontAwesomeIcon icon={faEllipsisV} />
           <div className="expandDiv">
-            <Tooltip title="Edit">
+            <Tooltip title= {translations[currentLanguage].edit}>
               <button
                 className="myActionBtn m-1"
                 onClick={() => {
@@ -167,7 +169,7 @@ export default function Category_list({ workFor }) {
                 </svg>
               </button>
             </Tooltip>
-            <Tooltip title="Delete">
+            <Tooltip title= {translations[currentLanguage].delete}>
               <button
                 onClick={() => {
                   deleteActionCall(params.row);
@@ -271,7 +273,7 @@ export default function Category_list({ workFor }) {
                 <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
                 <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
               </svg>
-              &nbsp; Add Category
+              &nbsp;  {translations[currentLanguage].addcategory}
             </button>
           </h6>
           <Button
@@ -281,7 +283,7 @@ export default function Category_list({ workFor }) {
               redirectModal();
             }}
           >
-            BACK
+            {translations[currentLanguage].back}
           </Button>
 
         </div>

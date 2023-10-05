@@ -2,14 +2,17 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Modal, Button } from "react-bootstrap";
 import { useNavigate } from "react-router";
+import { useSelector } from 'react-redux'
+import translations from "../../../assets/locals/translations";
 
 const District = ({
-  onSelectedDistrict = () => {},
+  onSelectedDistrict = () => { },
   stateId = "",
   districtId = "",
 }) => {
   const navigate = useNavigate();
   const [districtList, setDistrictList] = useState([]);
+  const currentLanguage = useSelector((state) => state.language.language);
 
   const getDistrictList = async () => {
     const url = `${process.env.REACT_APP_NODE_URL}/api/get-district-list/${stateId}`;
@@ -42,7 +45,7 @@ const District = ({
     <>
       <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
         <label className="myLabe    l" htmlFor="email">
-          Select District *
+          {translations[currentLanguage].selectdistrict} *
         </label>
         <select
           defaultValue={districtId}

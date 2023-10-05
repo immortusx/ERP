@@ -2,8 +2,10 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { Modal, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router';
-
+import { useSelector} from 'react-redux'
+import translations from '../../../assets/locals/translations';
 const Taluka = ({ onSelectedTaluka = () => {}, districtId = '', talukaId = '' }) => {
+    const currentLanguage = useSelector((state) => state.language.language);
     const navigate = useNavigate();
     const [talukaList, setTalukaList] = useState([]);
 
@@ -37,13 +39,12 @@ const Taluka = ({ onSelectedTaluka = () => {}, districtId = '', talukaId = '' })
     return (
         <>
             <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
-                <label className='myLabe    l' htmlFor="email">Select Taluka *</label>
+                <label className='myLabe    l' htmlFor="email"> {translations[currentLanguage].selecttaluka} *</label>
                 <select
                     defaultValue={talukaId}
                     onChange={changeHandlerNewEnquiry}
                     className='inpClr myInput' name="district">
                     <option value='0' className='myLabel' >select</option>
-                    {/* <option value='0' className='myLabel' style={{fontWeight: 'bold'}}>Add New Taluka</option> */}
                     {
                         talukaList && talukaList.length > 0 && talukaList.map((i, index) => {
                             return <option selected={i.id == talukaId ? true : false} key={index} value={i.id} className='myLabel'>{i.name}</option>

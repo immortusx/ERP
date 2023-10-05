@@ -822,15 +822,7 @@ select.myInput {
   -moz-appearance: none;
 }
 
-.custom-select::after {
-  content: '\f107';
-  font-family: FontAwesome;
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  pointer-events: none;
-}
+
 
 .task-status-1 {
   color: purple;
