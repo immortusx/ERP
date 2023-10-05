@@ -19,11 +19,12 @@ import PersonIcon from "@mui/icons-material/Person";
 import { faEllipsisV } from "@fortawesome/free-solid-svg-icons/faEllipsisV";
 
 import "../styles/Users.css";
-
+import translations from '../assets/locals/translations'
 import Checkbox from "@mui/material/Checkbox";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { setShowMessage } from "../redux/slices/notificationSlice";
 export { getUserListFromDb };
+
 export default function EnquiryList() {
   const dispatch = useDispatch();
   const [enquiries, setEnquiries] = useState([]);
@@ -56,18 +57,7 @@ export default function EnquiryList() {
     setSelectAll(!selectAll);
   };
 
-  //   const handleChildCheckboxClick = (itemId) => {
-  //     const updatedRowsData = rowData.map((row) => {
-  //       if (row.id == itemId) {
-  //         return {
-  //           ...row,
-  //           checkbox: !row.checkbox,
-  //         };
-  //       }
-  //       return row;
-  //     });
-  //     setRowData(updatedRowsData);
-  //   };
+  const currentLanguage = useSelector((state) => state.language.language);
 
   const [selectedItemIds, setSelectedItemIds] = useState([]);
   const handleChildCheckboxClick = (itemId) => {
@@ -148,7 +138,6 @@ export default function EnquiryList() {
 
   const handleFolloup = (editEnquiryData) => {
     console.log(editEnquiryData, "editEnquiryData");
-    // const id = editEnquiryData.id;
     navigate("/sale/enquiries/followup", { state: editEnquiryData });
   };
   async function editsalesperson(formData) {
@@ -160,7 +149,6 @@ export default function EnquiryList() {
     };
     await Axios.post(url, formData, config).then((response) => {
       if (response.data) {
-        // setRoles(response.data.result)
         if (response.data && response.data.isSuccess) {
           console.log(response.data.result, "result**********");
           setNewEnquiryData(response.data.result);
@@ -172,7 +160,6 @@ export default function EnquiryList() {
   const hideModal = () => {
     setShowComponent(false);
   };
-
 
   async function getDspList(currentBranch) {
     const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/get-dsp/${currentBranch}`;
@@ -246,8 +233,6 @@ export default function EnquiryList() {
     setShowComponent(false);
   }
 
-
-
   const columns = [
     {
       field: "rowNumber",
@@ -272,7 +257,7 @@ export default function EnquiryList() {
       field: "first_name",
       headerAlign: "left",
       align: "left",
-      headerName: "First Name",
+      headerName: translations[currentLanguage].firstname,
       minWidth: 150,
       flex: 1,
       renderCell: (params) => {
@@ -290,7 +275,7 @@ export default function EnquiryList() {
     },
     {
       field: "last_name",
-      headerName: "Last Name",
+      headerName: translations[currentLanguage].lastname,
       minWidth: 150,
       flex: 1,
       renderCell: (params) => {
@@ -308,13 +293,13 @@ export default function EnquiryList() {
     },
     {
       field: "phone_number",
-      headerName: "Phone Number",
+      headerName: translations[currentLanguage].phoneno,
       minWidth: 150,
       flex: 1,
     },
     {
       field: "email",
-      headerName: "Email",
+      headerName: translations[currentLanguage].email,
       headerAlign: "left",
       align: "left",
       type: "number",
@@ -323,17 +308,13 @@ export default function EnquiryList() {
     },
     {
       field: "product",
-      headerName: "Product",
-      // description: 'This column has a value getter and is not sortable.',
-      // sortable: false,
+      headerName: translations[currentLanguage].product,
       minWidth: 200,
       flex: 1,
-      // valueGetter: (params) =>
-      //     `${params.row.firstName || ''} ${params.row.lastName || ''}`,
     },
     {
       field: "sales_person",
-      headerName: "Sales Person",
+      headerName: translations[currentLanguage].salesp,
       headerAlign: "left",
       align: "left",
       type: "number",
@@ -342,7 +323,7 @@ export default function EnquiryList() {
     },
     {
       field: "date",
-      headerName: "Enquiry date",
+      headerName: translations[currentLanguage].enqdate,
       headerAlign: "left",
       align: "left",
       type: "number",
@@ -354,7 +335,7 @@ export default function EnquiryList() {
     },
     {
       field: "delivery_date",
-      headerName: "Expected delivery",
+      headerName: translations[currentLanguage].expdelivery,
       headerAlign: "left",
       align: "left",
       minWidth: 150,
@@ -365,7 +346,7 @@ export default function EnquiryList() {
     },
     {
       field: "district",
-      headerName: "District",
+      headerName: translations[currentLanguage].district,
       headerAlign: "left",
       align: "left",
       type: "text",
@@ -374,7 +355,7 @@ export default function EnquiryList() {
     },
     {
       field: "taluka",
-      headerName: "Taluka",
+      headerName: translations[currentLanguage].taluka,
       headerAlign: "left",
       align: "left",
       type: "text",
@@ -383,7 +364,7 @@ export default function EnquiryList() {
     },
     {
       field: "village",
-      headerName: "Village",
+      headerName: translations[currentLanguage].village,
       headerAlign: "left",
       align: "left",
       type: "text",
@@ -392,7 +373,7 @@ export default function EnquiryList() {
     },
     {
       field: "enquiry_source",
-      headerName: "Source of Enquiry",
+      headerName: translations[currentLanguage].sourceofenq,
       headerAlign: "left",
       align: "left",
       type: "text",
@@ -527,17 +508,11 @@ export default function EnquiryList() {
       [name]: value,
     }));
   };
-  //   const changeHandler = (selectedOption) => {
-  //     console.log("Selected Option:", selectedOption);
-
-  //     setSelectedPerson(selectedOption);
-  //   };
 
   return (
     <>
       <div>
         <div className="myTbl">
-          {/* <NavLink to={/edit-user}>callme</NavLink > */}
           <div className="my-3  d-flex align-items-end justify-content-end">
             <div
               onClick={() => {
@@ -558,7 +533,7 @@ export default function EnquiryList() {
                 <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
                 <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
               </svg>
-              <h6 className="m-0 ps-1">Add Enquiry</h6>
+              <h6 className="m-0 ps-1">{translations[currentLanguage].addenq}</h6>
             </div>
             <div
               onClick={handleworkAssign}
@@ -566,7 +541,7 @@ export default function EnquiryList() {
               type="button"
             >
               <PersonIcon />
-              <h6 className="m-0 ps-1">Work Assign</h6>
+              <h6 className="m-0 ps-1">{translations[currentLanguage].workassign}</h6>
             </div>
           </div>
 

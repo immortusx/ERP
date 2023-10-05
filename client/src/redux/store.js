@@ -39,6 +39,7 @@ import followupSlice from './slices/followupSlice';
 import addEnquirySourcesSlice from './slices/Master/EnquirySources/addEnquirySourcesSlice';
 import editTaskAssignSlice from './slices/editTaskAssignSlice';
 import gettaskAssignListSlice from './slices/gettaskAssignListSlice';
+import languageReducer from './slices/languageSlice'
 export const store = configureStore({
   reducer: {
     getRegisterSlice: getRegisterSlice,
@@ -80,5 +81,6 @@ export const store = configureStore({
     enquiryFollowupSlice: followupSlice,
     editTaskAssignSlice: editTaskAssignSlice,
     gettaskAssignListSlice:gettaskAssignListSlice,
+    language: languageReducer,
   },
 });  

@@ -33,8 +33,9 @@ import { setShowMessage } from "../redux/slices/notificationSlice";
 import AlertDeleteModal from "./AlertDelete/AlertDeleteModal";
 import axios from "axios";
 import { color } from "@mui/system";
-
+import translations from '../assets/locals/translations'
 export default function Employees() {
+  const currentLanguage = useSelector((state) => state.language.language);
   const [selectAll, setSelectAll] = useState(false);
   const [rowData, setRowData] = useState([]);
 
@@ -211,7 +212,7 @@ export default function Employees() {
       field: "employee type",
       headerAlign: "center",
       align: "center",
-      headerName: "Employee Type",
+      headerName: translations[currentLanguage].emptype,
       minWidth: 100,
       flex: 1,
       renderCell: (params) => (
@@ -233,7 +234,7 @@ export default function Employees() {
       field: "first_name",
       headerAlign: "left",
       align: "left",
-      headerName: "First Name",
+      headerName:  translations[currentLanguage].firstname,
       minWidth: 150,
       flex: 1,
       renderCell: (params) => {
@@ -251,7 +252,7 @@ export default function Employees() {
     },
     {
       field: "last_name",
-      headerName: "Last Name",
+      headerName:  translations[currentLanguage].lastname,
       minWidth: 150,
       flex: 1,
       renderCell: (params) => {
@@ -269,7 +270,7 @@ export default function Employees() {
     },
     {
       field: "email",
-      headerName: "Email",
+      headerName: translations[currentLanguage].email,
       headerAlign: "left",
       align: "left",
       type: "text",
@@ -278,13 +279,13 @@ export default function Employees() {
     },
     {
       field: "phone_number",
-      headerName: "Phone Number",
+      headerName:  translations[currentLanguage].phoneno,
       minWidth: 100,
       flex: 1,
     },
     {
       field: "is_active",
-      headerName: "Active",
+      headerName: translations[currentLanguage].active,
       headerAlign: "center",
       align: "center",
       type: "number",

@@ -16,7 +16,7 @@ import edit from "../assets/images/editu.png";
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import Axios from 'axios'
 import moment from 'moment'
-
+import translations from '../assets/locals/translations'
 
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
@@ -24,6 +24,7 @@ import Box from '@mui/material/Box';
 import '../styles/Users.css'
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 export default function Users() {
+  const currentLanguage = useSelector((state) => state.language.language);
   const [userListData, setUserListData] = useState([]);
   const [type, setType] = useState(null);
   const [id, setId] = useState(null);
@@ -83,7 +84,7 @@ export default function Users() {
       field: "User type",
       headerAlign: "center",
       align: "center",
-      headerName: "User type",
+      headerName:translations[currentLanguage].usertype,
       minWidth: 100,
       flex: 1,
       renderCell: (params) => (
@@ -105,7 +106,7 @@ export default function Users() {
       field: "first_name",
       headerAlign: "left",
       align: "left",
-      headerName: "First Name",
+      headerName:translations[currentLanguage].firstname,
       minWidth: 150,
       flex: 1,
       renderCell: (params) => {
@@ -123,7 +124,7 @@ export default function Users() {
     },
     {
       field: "last_name",
-      headerName: "Last Name",
+      headerName:translations[currentLanguage].lastname,
       minWidth: 150,
       flex: 1,
       renderCell: (params) => {
@@ -141,7 +142,7 @@ export default function Users() {
     },
     {
       field: "email",
-      headerName: "Email",
+      headerName:translations[currentLanguage].email,
       headerAlign: "left",
       align: "left",
       type: "text",
@@ -150,13 +151,13 @@ export default function Users() {
     },
     {
       field: "phone_number",
-      headerName: "Phone Number",
+      headerName:translations[currentLanguage].phoneno,
       minWidth: 200,
       flex: 1,
     },
     {
       field: "is_active",
-      headerName: "Active",
+      headerName:translations[currentLanguage].active,
       headerAlign: "center",
       align: "center",
       type: "number",
@@ -299,7 +300,7 @@ export default function Users() {
               <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
               <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
             </svg>
-            <h6 className="m-0 ps-1">Add user</h6>
+            <h6 className="m-0 ps-1">{translations[currentLanguage].adduser}</h6>
           </div>
         </div>
 

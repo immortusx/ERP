@@ -24,8 +24,9 @@ import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from "@mui/icons-material/Clear";
 import { Tooltip } from "@mui/material";
-
+import translations from '../assets/locals/translations';
 export default function Roles({ workFor }) {
+  const currentLanguage = useSelector((state) => state.language.language);
   const [featuresList, setFeaturesList] = useState([]);
   const [showRolesList, setShowRolesList] = useState([]);
   const [tableEditData, setTableEditData] = useState([]);
@@ -252,16 +253,6 @@ export default function Roles({ workFor }) {
     clearInpHook();
   }
 
-  // const columns = [
-  //   {
-  //     field: "rowNumber",
-  //     headerAlign: "center",
-  //     align: "center",
-  //     headerName: "No",
-  //     minWidth: 80,
-  //     flex: 1,
-  //   },
-
   const [selectAll, setSelectAll] = useState(false);
   const [rowData, setRowData] = useState([]);
 
@@ -288,8 +279,6 @@ export default function Roles({ workFor }) {
   const columns = [
     {
       field: "rowNumberd",
-      // headerAlign: "center",
-      // align: "center",
       headerName: (
         <Checkbox
           {...label}
@@ -298,7 +287,6 @@ export default function Roles({ workFor }) {
         />
       ),
       minWidth: 90,
-      // flex: 1,
       renderCell: (params) => (
         <Checkbox
           {...label}
@@ -312,7 +300,7 @@ export default function Roles({ workFor }) {
       field: "role",
       headerAlign: "left",
       align: "left",
-      headerName: "Roles",
+      headerName:translations[currentLanguage].roles,
       minWidth: 120,
       flex: 1,
       renderCell: (params) => {
@@ -332,7 +320,7 @@ export default function Roles({ workFor }) {
       field: "description",
       headerAlign: "left",
       align: "left",
-      headerName: "Role description",
+      headerName:translations[currentLanguage].roledes,
       minWidth: 250,
       flex: 1,
       valueGetter: (params) => {
@@ -341,7 +329,7 @@ export default function Roles({ workFor }) {
     },
     {
       field: "is_active",
-      headerName: "Active",
+      headerName: translations[currentLanguage].active,
       headerAlign: "center",
       align: "center",
       type: "number",

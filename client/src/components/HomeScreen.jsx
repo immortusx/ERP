@@ -88,6 +88,7 @@ import EnquirySources from "./Master/EnquirySources/EnquirySources";
 import EnquirySources_model from "./Master/EnquirySources/EnquirySources_modal";
 import WorkReport from "./WorkReport";
 import WorkReportDetails from "./WorkReportDetails";
+import translations from '../assets/locals/translations'
 const CheckPermission = ({ children, path }) => {
   // return checkList.includes(path) ? children : <Navigate to="../no-access" />
   // return checkList.includes(path) ? children : <h3>No access</h3>
@@ -100,6 +101,7 @@ const CheckPermission = ({ children, path }) => {
 };
 
 export default function HomeScreen() {
+  const currentLanguage = useSelector((state) => state.language.language);
   const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
@@ -346,7 +348,7 @@ export default function HomeScreen() {
                     >
                       <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.707 1.5ZM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5 5 5Z" />
                     </svg>
-                    <span onClick={openDashboard}>Home</span>
+                    <span onClick={openDashboard}>{translations[currentLanguage].home}</span>
                   </button>
                   <div
                     id="home-collapseOne"
@@ -362,7 +364,7 @@ export default function HomeScreen() {
                             }
                             to="home/profile/agency"
                           >
-                            Agency Profile
+                            {translations[currentLanguage].agencyp}
                           </NavLink>
                         </li>
                       )}
@@ -374,7 +376,7 @@ export default function HomeScreen() {
                             }
                             to="home/dashboard"
                           >
-                            Dashboard
+                            {translations[currentLanguage].dashboard}
                           </NavLink>
                         </li>
                       )}
@@ -387,7 +389,7 @@ export default function HomeScreen() {
                             }
                             to="home/profiles"
                           >
-                            Profile
+                            {translations[currentLanguage].profile}
                           </NavLink>
                         </li>
                       )}
@@ -423,7 +425,7 @@ export default function HomeScreen() {
                         d="M0 0h1v15h15v1H0V0Zm10 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V4.9l-3.613 4.417a.5.5 0 0 1-.74.037L7.06 6.767l-3.656 5.027a.5.5 0 0 1-.808-.588l4-5.5a.5.5 0 0 1 .758-.06l2.609 2.61L13.445 4H10.5a.5.5 0 0 1-.5-.5Z"
                       />
                     </svg>
-                    <span>Sale</span>
+                    <span>{translations[currentLanguage].sale}</span>
                   </button>
                   <div
                     id="sale-collapse"
@@ -439,7 +441,7 @@ export default function HomeScreen() {
                             }
                             to="sale/enquiries"
                           >
-                            Enquiry
+                            {translations[currentLanguage].enquiry}
                           </NavLink>
                         </li>
                       )}
@@ -468,7 +470,7 @@ export default function HomeScreen() {
                     >
                       <path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v3A1.5 1.5 0 0 1 5.5 7h-3A1.5 1.5 0 0 1 1 5.5v-3zM2.5 2a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zm6.5.5A1.5 1.5 0 0 1 10.5 1h3A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-3A1.5 1.5 0 0 1 9 5.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zM1 10.5A1.5 1.5 0 0 1 2.5 9h3A1.5 1.5 0 0 1 7 10.5v3A1.5 1.5 0 0 1 5.5 15h-3A1.5 1.5 0 0 1 1 13.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zm6.5.5A1.5 1.5 0 0 1 10.5 9h3a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 13.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3z" />
                     </svg>
-                    <span>Service</span>
+                    <span>{translations[currentLanguage].service}</span>
                   </button>
                   <div
                     id="service-collapseOne"
@@ -484,7 +486,7 @@ export default function HomeScreen() {
                             }
                             to="service/products"
                           >
-                            Products
+                            {translations[currentLanguage].products}
                           </NavLink>
                         </li>
                       )}
@@ -496,7 +498,7 @@ export default function HomeScreen() {
                             }
                             to="service/sales"
                           >
-                            Sales
+                            {translations[currentLanguage].sales}
                           </NavLink>
                         </li>
                       )}
@@ -525,7 +527,7 @@ export default function HomeScreen() {
                         d="M6 3.5A1.5 1.5 0 0 1 7.5 2h1A1.5 1.5 0 0 1 10 3.5v1A1.5 1.5 0 0 1 8.5 6v1H14a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-1 0V8h-5v.5a.5.5 0 0 1-1 0V8h-5v.5a.5.5 0 0 1-1 0v-1A.5.5 0 0 1 2 7h5.5V6A1.5 1.5 0 0 1 6 4.5v-1zm-6 8A1.5 1.5 0 0 1 1.5 10h1A1.5 1.5 0 0 1 4 11.5v1A1.5 1.5 0 0 1 2.5 14h-1A1.5 1.5 0 0 1 0 12.5v-1zm6 0A1.5 1.5 0 0 1 7.5 10h1a1.5 1.5 0 0 1 1.5 1.5v1A1.5 1.5 0 0 1 8.5 14h-1A1.5 1.5 0 0 1 6 12.5v-1zm6 0a1.5 1.5 0 0 1 1.5-1.5h1a1.5 1.5 0 0 1 1.5 1.5v1a1.5 1.5 0 0 1-1.5 1.5h-1a1.5 1.5 0 0 1-1.5-1.5v-1z"
                       />
                     </svg>
-                    <span>Management</span>
+                    <span>  {translations[currentLanguage].management}</span>
                   </button>
                   <div
                     id="manage-collapseOne"
@@ -541,7 +543,7 @@ export default function HomeScreen() {
                             }
                             to="management/manage"
                           >
-                            Manage
+                            {translations[currentLanguage].manage}
                           </NavLink>
                         </li>
                       )}
@@ -553,7 +555,7 @@ export default function HomeScreen() {
                             }
                             to="management/my-task"
                           >
-                            MyTask
+                           {translations[currentLanguage].mytask}
                           </NavLink>
                         </li>
                       )}
@@ -572,104 +574,104 @@ export default function HomeScreen() {
                 "employee",
                 "add-employee",
               ]) && (
-                <li className="outLi">
-                  <button
-                    className="headBtn"
-                    type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#admin-collapseOne"
-                    aria-expanded="false"
-                    aria-controls="admin-collapseOne"
-                  >
-                    {/* <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="headSvg bi bi-house" viewBox="0 0 16 16">
+                  <li className="outLi">
+                    <button
+                      className="headBtn"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#admin-collapseOne"
+                      aria-expanded="false"
+                      aria-controls="admin-collapseOne"
+                    >
+                      {/* <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="headSvg bi bi-house" viewBox="0 0 16 16">
                     <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.707 1.5ZM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5 5 5Z" />
                   </svg> */}
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="currentColor"
-                      className="bi bi-person-gear"
-                      viewBox="0 0 16 16"
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="currentColor"
+                        className="bi bi-person-gear"
+                        viewBox="0 0 16 16"
+                      >
+                        <path d="M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm.256 7a4.474 4.474 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10c.26 0 .507.009.74.025.226-.341.496-.65.804-.918C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4s1 1 1 1h5.256Zm3.63-4.54c.18-.613 1.048-.613 1.229 0l.043.148a.64.64 0 0 0 .921.382l.136-.074c.561-.306 1.175.308.87.869l-.075.136a.64.64 0 0 0 .382.92l.149.045c.612.18.612 1.048 0 1.229l-.15.043a.64.64 0 0 0-.38.921l.074.136c.305.561-.309 1.175-.87.87l-.136-.075a.64.64 0 0 0-.92.382l-.045.149c-.18.612-1.048.612-1.229 0l-.043-.15a.64.64 0 0 0-.921-.38l-.136.074c-.561.305-1.175-.309-.87-.87l.075-.136a.64.64 0 0 0-.382-.92l-.148-.045c-.613-.18-.613-1.048 0-1.229l.148-.043a.64.64 0 0 0 .382-.921l-.074-.136c-.306-.561.308-1.175.869-.87l.136.075a.64.64 0 0 0 .92-.382l.045-.148ZM14 12.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0Z" />
+                      </svg>
+                      <span>{translations[currentLanguage].administration}</span>
+                    </button>
+                    <div
+                      id="admin-collapseOne"
+                      data-bs-parent="#accordionExample"
+                      className="accordion-collapse collapse"
                     >
-                      <path d="M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm.256 7a4.474 4.474 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10c.26 0 .507.009.74.025.226-.341.496-.65.804-.918C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4s1 1 1 1h5.256Zm3.63-4.54c.18-.613 1.048-.613 1.229 0l.043.148a.64.64 0 0 0 .921.382l.136-.074c.561-.306 1.175.308.87.869l-.075.136a.64.64 0 0 0 .382.92l.149.045c.612.18.612 1.048 0 1.229l-.15.043a.64.64 0 0 0-.38.921l.074.136c.305.561-.309 1.175-.87.87l-.136-.075a.64.64 0 0 0-.92.382l-.045.149c-.18.612-1.048.612-1.229 0l-.043-.15a.64.64 0 0 0-.921-.38l-.136.074c-.561.305-1.175-.309-.87-.87l.075-.136a.64.64 0 0 0-.382-.92l-.148-.045c-.613-.18-.613-1.048 0-1.229l.148-.043a.64.64 0 0 0 .382-.921l-.074-.136c-.306-.561.308-1.175.869-.87l.136.075a.64.64 0 0 0 .92-.382l.045-.148ZM14 12.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0Z" />
-                    </svg>
-                    <span>Administration</span>
-                  </button>
-                  <div
-                    id="admin-collapseOne"
-                    data-bs-parent="#accordionExample"
-                    className="accordion-collapse collapse"
-                  >
-                    <ul className="inUl">
-                      {checkTabGrant(["roles"]) && (
-                        <li className="inLi">
-                          <NavLink
-                            className={({ isActive }) =>
-                              isActive ? "activeLink" : ""
-                            }
-                            to="administration/roles"
-                          >
-                            Roles
-                          </NavLink>
-                        </li>
-                      )}
-                      {checkTabGrant(["users"]) && (
-                        <li className="inLi">
-                          <NavLink
-                            className={({ isActive }) =>
-                              isActive ? "activeLink" : ""
-                            }
-                            to="administration/users"
-                          >
-                            Users
-                          </NavLink>
-                        </li>
-                      )}
-                      {checkTabGrant(["employee"]) && (
-                        <li className="inLi">
-                          <NavLink
-                            className={({ isActive }) =>
-                              isActive ? "activeLink" : ""
-                            }
-                            to="administration/employees"
-                          >
-                            Employee
-                          </NavLink>
-                        </li>
-                      )}
-                      {checkTabGrant(["configuration"]) && (
-                        <li className="inLi">
-                          <NavLink
-                            className={({ isActive }) =>
-                              isActive ? "activeLink" : ""
-                            }
-                            to="administration/configuration"
-                          >
-                            Configuration
-                          </NavLink>
-                        </li>
-                      )}
-                      {checkTabGrant(["report"]) && (
-                        <li className="inLi">
-                          <NavLink
-                            className={({ isActive }) =>
-                              isActive ? "activeLink" : ""
-                            }
-                            to="administration/report"
-                          >
-                            Report
-                          </NavLink>
-                        </li>
-                      )}
+                      <ul className="inUl">
+                        {checkTabGrant(["roles"]) && (
+                          <li className="inLi">
+                            <NavLink
+                              className={({ isActive }) =>
+                                isActive ? "activeLink" : ""
+                              }
+                              to="administration/roles"
+                            >
+                              {translations[currentLanguage].roles}
+                            </NavLink>
+                          </li>
+                        )}
+                        {checkTabGrant(["users"]) && (
+                          <li className="inLi">
+                            <NavLink
+                              className={({ isActive }) =>
+                                isActive ? "activeLink" : ""
+                              }
+                              to="administration/users"
+                            >
+                              {translations[currentLanguage].users}
+                            </NavLink>
+                          </li>
+                        )}
+                        {checkTabGrant(["employee"]) && (
+                          <li className="inLi">
+                            <NavLink
+                              className={({ isActive }) =>
+                                isActive ? "activeLink" : ""
+                              }
+                              to="administration/employees"
+                            >
+                                {translations[currentLanguage].employee}
+                            </NavLink>
+                          </li>
+                        )}
+                        {checkTabGrant(["configuration"]) && (
+                          <li className="inLi">
+                            <NavLink
+                              className={({ isActive }) =>
+                                isActive ? "activeLink" : ""
+                              }
+                              to="administration/configuration"
+                            >
+                               {translations[currentLanguage].configuration}
+                            </NavLink>
+                          </li>
+                        )}
+                        {checkTabGrant(["report"]) && (
+                          <li className="inLi">
+                            <NavLink
+                              className={({ isActive }) =>
+                                isActive ? "activeLink" : ""
+                              }
+                              to="administration/report"
+                            >
+                              {translations[currentLanguage].report}
+                            </NavLink>
+                          </li>
+                        )}
 
-                      {/*need to remove this */}
-                      {/* {
+                        {/*need to remove this */}
+                        {/* {
                         checkTabGrant(['users']) && <li className='inLi'>
                           <NavLink className={({ isActive }) => isActive ? 'activeLink' : ''} to="administration/enquirycategories" >
                             Enquiry categories
                           </NavLink>
                         </li>
                       } */}
-                      {/* {checkTabGrant(["branch"]) && (
+                        {/* {checkTabGrant(["branch"]) && (
                         <li className="inLi">
                           <NavLink
                             className={({ isActive }) =>
@@ -681,10 +683,10 @@ export default function HomeScreen() {
                           </NavLink>
                         </li>
                       )} */}
-                    </ul>
-                  </div>
-                </li>
-              )}
+                      </ul>
+                    </div>
+                  </li>
+                )}
 
               {/* {checkTabGrant(["profile"]) && (
                 <li className="outLi">
@@ -750,9 +752,9 @@ export default function HomeScreen() {
                   <span className="text-uppercase">
                     {Object.keys(profileDataState.currentUserData).length
                       ? `${profileDataState?.currentUserData?.result?.first_name.slice(
-                          0,
-                          1
-                        )}`
+                        0,
+                        1
+                      )}`
                       : "A"}
                   </span>
                 </div>
@@ -823,9 +825,9 @@ export default function HomeScreen() {
                           {Object.keys(profileDataState.currentUserData)
                             .length > 0
                             ? `${profileDataState?.currentUserData?.result?.first_name.slice(
-                                0,
-                                1
-                              )}`
+                              0,
+                              1
+                            )}`
                             : "A"}
                         </span>
                       </div>
@@ -833,12 +835,12 @@ export default function HomeScreen() {
                         Last login :{" "}
                         {Object.keys(profileDataState.currentUserData).length >
                           0 &&
-                        profileDataState?.currentUserData.result.last_login !=
+                          profileDataState?.currentUserData.result.last_login !=
                           null
                           ? getDateTime(
-                              profileDataState?.currentUserData.result
-                                .last_login
-                            )
+                            profileDataState?.currentUserData.result
+                              .last_login
+                          )
                           : "first time logged in"}
                       </span>
                     </div>
