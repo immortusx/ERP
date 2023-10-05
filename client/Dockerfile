@@ -5,7 +5,8 @@ COPY package*.json ./
 RUN npm install
 COPY . ./client
 WORKDIR /usr/src/app/client
-#RUN npm run build
-#RUN npm install --global serve
+RUN npm run build
+RUN npm install --global serve
 EXPOSE $PORT
-CMD ["npm", "start"]
+#RUN echo REACT_APP_NODE_URL = $REACT_APP_NODE_URL > .env
+CMD ["serve", "-s", "build"]

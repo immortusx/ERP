@@ -30,6 +30,7 @@ pipeline {
       steps {
         parallel(
           build_client: {
+            sh "echo REACT_APP_NODE_URL = ${REACT_APP_NODE_URL} > client/.env"
             sh "docker build ./client/ -t raptor1702/client:${BUILD_TAG}"
           },
           build_server: {
