@@ -80,6 +80,7 @@ pipeline {
   post {
     always {
       sh 'docker logout'
+      sh "sudo rm -rf /var/lib/jenkins/workspace/vehicle-crm/compile-build-run-application"
       
     }
   }
