@@ -6,6 +6,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Modal, Button } from "react-bootstrap";
 import downloadgif from "../assets/images/download.gif"
 import DownloadIcon from "@mui/icons-material/Download";
+import translations from "../assets/locals/translations";
 import axios from "axios";
 // import {
 //   addAgencyToDb,
@@ -41,6 +42,8 @@ export default function Profile_list({ workFor }) {
   const { editagencySliceState } = useSelector(
     (state) => state.editAgencyDataState
   );
+
+   const currentLanguage = useSelector((state) => state.language.language);
   // const editagencyData = useSelector(
   //   (state) => state.editAgencyDataState.editagencyData
   // );
@@ -222,7 +225,7 @@ export default function Profile_list({ workFor }) {
       <main>
         <div className=" row m-0">
           <div className="col-md-6">
-            <h5 className="myLabel">Agency</h5>
+            <h5 className="myLabel">{translations[currentLanguage].agency}</h5>
           </div>
           <div className="col-md-6 d-flex justify-content-end align-items-end">
             <Button
@@ -237,13 +240,13 @@ export default function Profile_list({ workFor }) {
                 redirectModal();
               }}
             >
-              BACK
+              {translations[currentLanguage].back}
             </Button>
           </div>
 
           <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
             <label className="myLabel" htmlFor="email">
-              Name *
+              {translations[currentLanguage].name}
             </label>
             <input
               value={agencyData.name}
@@ -259,7 +262,7 @@ export default function Profile_list({ workFor }) {
 
           <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
             <label className="myLabel" htmlFor="email">
-              Person *
+              {translations[currentLanguage].person}
             </label>
             <input
               value={agencyData.contact}
@@ -276,7 +279,7 @@ export default function Profile_list({ workFor }) {
         <div className=" row m-0">
           <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
             <label className="myLabel" htmlFor="email">
-              Email *
+              {translations[currentLanguage].email}
             </label>
             <input
               value={agencyData.email}
@@ -292,8 +295,7 @@ export default function Profile_list({ workFor }) {
           <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
             <div class="mb-3">
               <label for="formFile" className="myLabel" htmlFor="logo">
-                {" "}
-                Logo *
+                {translations[currentLanguage].logo}
               </label>
               <input
                 className="form-control"
@@ -325,8 +327,7 @@ export default function Profile_list({ workFor }) {
                     onClick={handleDownload}
                   >
                     <DownloadIcon />
-                   
-                    Download
+                    {translations[currentLanguage].download}
                   </button>
                   {/*<img
                     src={downloadgif}
@@ -347,7 +348,9 @@ export default function Profile_list({ workFor }) {
               onClick={handleSubmit}
               type="button"
             >
-              {workFor === "forEdit" ? "Save" : "Create"}
+              {workFor === "forEdit"
+                ? translations[currentLanguage].save
+                : translations[currentLanguage].create}
             </button>
 
             <button
@@ -355,7 +358,7 @@ export default function Profile_list({ workFor }) {
               onClick={handlCancel}
               type="button"
             >
-              Cancel
+              {translations[currentLanguage].cancel}
             </button>
           </section>
         </div>
