@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useSelector} from "react-redux";
 import Typography from '@mui/material/Typography';
 import HomeIcon from '@mui/icons-material/Home';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import LanguageSelector from '../languageSelector';
-import enTranslations from "../../assets/locals/en.json"
-import gjTranslations from "../../assets/locals/gj.json"
+import translations from '../../assets/locals/translations';
 
 const BreadCrumb = () => {
+  const currentLanguage = useSelector((state) => state.language.language);
   const [isHovered, setIsHovered] = useState(false);
   const handleMouseEnter = () => {
     setIsHovered(true);
@@ -82,7 +83,7 @@ const BreadCrumb = () => {
                   <button className="download-button" onClick={handleDownloadAndroid}>Android</button>
                 </div>
               ) : (
-                <p>Download</p>
+                <p>{translations[currentLanguage].download}</p>
               )}
             </div>
           </div>

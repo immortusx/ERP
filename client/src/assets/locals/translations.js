@@ -58,6 +58,10 @@ const translations = {
     parts:"part",
     tax:"TAX",
     taxs:"Tax",
+    totalenq:"Total Enquiry",
+    workassinarea:"Work Assigned Area",
+    workreport:"Work Report",
+    download:"Download",
   },
   gj: {
     login: "લોગિન",
@@ -118,6 +122,10 @@ const translations = {
     parts:"ભાગ",
     tax:"ટેક્સ",
     taxs:"ટેક્સ",
+    totalenq:"કુલ પૂછપરછ",
+    workassinarea:"કાર્ય સોંપાયેલ વિસ્તાર",
+    workreport:"કાર્ય અહેવાલ",
+    download:"ડાઉનલોડ",
   },
 };
 
