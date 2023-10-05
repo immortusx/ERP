@@ -5,6 +5,7 @@ COPY package*.json ./
 RUN npm install
 COPY . ./client
 WORKDIR /usr/src/app/client
+RUN npx update-browserslist-db@latest --yes
 RUN npm run build
 RUN npm install --global serve
 EXPOSE $PORT
