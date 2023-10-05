@@ -12,6 +12,7 @@ pipeline {
       booleanParam(name: 'skip_app_building', defaultValue: false, description: 'Set to true to skip Apk building')
     }  
   options {
+    skipDefaultCheckout true
     buildDiscarder(logRotator(numToKeepStr: '5'))
   }
   environment {
@@ -20,6 +21,11 @@ pipeline {
   }
   
   stages {
+    stage('SCM Checkout') {
+      steps {
+        checkout scm
+      }
+    }    
     stage('Defining Stage...') {
       steps {
         execute_stage('Build Android APP', params.skip_app_building)
@@ -80,8 +86,9 @@ pipeline {
   post {
     always {
       sh 'docker logout'
-      sh "sudo rm -rf /var/lib/jenkins/workspace/vehicle-crm/compile-build-run-application"
-      
+      catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS'){
+        sh "sudo rm -rf ${WORKSPACE}" 
+      }
     }
   }
 }
