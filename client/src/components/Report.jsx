@@ -1,13 +1,15 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-
+import { useSelector} from "react-redux";
+import translations from '../assets/locals/translations';
 const Report = () => {
   const navigate = useNavigate();
+  const currentLanguage = useSelector((state) => state.language.language);
   return (
     <div className="master bg-white myBorder rounded">
       <main className="my-3">
         <div className="mx-3 m-0">
-          <h6 className="fw-bold m-0">Work Assign </h6>
+          <h6 className="fw-bold m-0">{translations[currentLanguage].workassign}</h6>
         </div>
         <section>
           <hr />
@@ -37,7 +39,7 @@ const Report = () => {
                     />
                   </svg>
                 </div>
-                <span className="ms-2">Total Enquiry</span>
+                <span className="ms-2">{translations[currentLanguage].totalenq}</span>
               </main>
             </li>
           </ul>
@@ -68,7 +70,7 @@ const Report = () => {
                     />
                   </svg>
                 </div>
-                <span className="ms-2">Work Assigned Area</span>
+                <span className="ms-2">{translations[currentLanguage].workassinarea}</span>
               </main>
             </li>
           </ul>
@@ -78,7 +80,7 @@ const Report = () => {
 
       <main className="my-3">
         <div className="mx-3 m-0">
-          <h6 className="fw-bold m-0">Work Report </h6>
+          <h6 className="fw-bold m-0">{translations[currentLanguage].workreport} </h6>
         </div>
         <section>
           <hr />
@@ -108,7 +110,7 @@ const Report = () => {
                     />
                   </svg>
                 </div>
-                <span className="ms-2">Work Report</span>
+                <span className="ms-2">{translations[currentLanguage].workreport} </span>
               </main>
             </li>
           </ul>
