@@ -8,6 +8,7 @@ pipeline {
       string (defaultValue: 'vehical_crm_db', description: 'Choose Database for server', name: 'ENV_DATABASE')
       string (defaultValue: 'https://dev.balkrushna.com', description: 'Choose react app node url', name: 'REACT_APP_NODE_URL')
       string (defaultValue: "dev", description: 'Build Tag', name: 'BUILD_TAG')
+      string (defaultValue: "Vehicle_crm", description: 'App Name', name: 'APP_NAME')
       booleanParam(name: 'skip_app_building', defaultValue: false, description: 'Set to true to skip Apk building')
     }  
   options {
@@ -93,13 +94,13 @@ def execute_stage(stage_name, skip) {
         sh 'cd ${WORKSPACE}/Vehicle_app && npm install'
         sh "export BUILD_ID=${BUILD_ID}"
         sh "echo 'API_URL=${REACT_APP_NODE_URL}' > ${WORKSPACE}/Vehicle_app/.env"
-        sh "cd ${WORKSPACE}/Vehicle_app/android && wget https://gist.githubusercontent.com/Manan-Santoki/9950411420c85c13ad9c105a834d4f7d/raw/7f9ede2e3d8075765377cfe3b075acf06c467ca0/package-name.sh && sudo chmod +x package-name.sh"
-        sh "cd ${WORKSPACE}/Vehicle_app/android && sudo sh ./package-name.sh com.${BUILD_TAG}"
+        sh "cd ${WORKSPACE}/Vehicle_app && sudo chmod +x package-name.sh && sudo chmod +x app-name.sh"
+        sh "cd ${WORKSPACE}/Vehicle_app && sudo sh ./package-name.sh com.${BUILD_TAG}"
+        sh "cd ${WORKSPACE}/Vehicle_app && sudo sh ./app-name.sh ${APP_NAME}"
         sh "sudo mv ${WORKSPACE}/Vehicle_app/android/app/src/main/java/com/vehicle_crm ${WORKSPACE}/Vehicle_app/android/app/src/main/java/com/${BUILD_TAG}"
         sh "sudo mv ${WORKSPACE}/Vehicle_app/android/app/src/release/java/com/vehicle_crm ${WORKSPACE}/Vehicle_app/android/app/src/release/java/com/${BUILD_TAG}"
         sh "cd ${WORKSPACE}/Vehicle_app/android && sudo ./gradlew --stop"
         sh "cd ${WORKSPACE}/Vehicle_app/android && sudo ./gradlew clean assembleRelease"
-        //note : change that folder name too !
         sh 'cd ../..'
         sh 'cp ${WORKSPACE}/Vehicle_app/android/app/build/outputs/apk/release/app-release.apk ${WORKSPACE}/server/'
     }
