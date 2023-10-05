@@ -180,8 +180,7 @@ const AdditonalDetails = ({route}) => {
               </View>
               <View style={styles.rightContainer}>
                 <Text style={[styles.contactInfo, styles.contactStyle]}>
-                  {item.first_name +
-                    (item.last_name ? ' ' + item.last_name : '')}
+                {item.first_name} {item.last_name === 'null' ? '': item.last_name}
                 </Text>
                 <Text style={[styles.contactInfo, styles.contactStyle]}>-</Text>
                 <Text style={[styles.contactInfo, styles.contactStyle]}>

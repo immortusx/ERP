@@ -237,8 +237,7 @@ const AddMore = () => {
                       </View>
                       <View style={styles.detailContainer}>
                         <Text style={styles.label}>
-                          {item.first_name +
-                            (item.last_name ? ' ' + item.last_name : '')}
+                        {item.first_name} {item.last_name === 'null' ? '': item.last_name}
                         </Text>
                         <TouchableOpacity
                           onPress={() => {
