@@ -2,8 +2,11 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Modal, Button } from "react-bootstrap";
 import { useNavigate } from "react-router";
+import translations from "../../../assets/locals/translations";
+import { useSelector} from 'react-redux'
 
 const State = ({onSelectedState = () => {}, stateId = '' }) => {
+  const currentLanguage = useSelector((state) => state.language.language);
   const navigate = useNavigate();
   const [stateList, setStateList] = useState([]);
   const getStateList = async () => {
@@ -32,7 +35,7 @@ const State = ({onSelectedState = () => {}, stateId = '' }) => {
     <>
       <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
         <label className="myLabe    l" htmlFor="email">
-          Select State *
+        {translations[currentLanguage].selectstate} *
         </label>
         <select
           defaultValue={stateId}

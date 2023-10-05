@@ -17,9 +17,11 @@ import { getAllDistrictAction, getDistrictById, editeDistrictAction, deleteDistr
 import { getAllStateAction, editeStateAction } from '../State/getEditeSate'
 import AlertDeleteModal from '../../AlertDelete/AlertDeleteModal';
 import { Tooltip } from "@mui/material";
+import translations from '../../../assets/locals/translations';
 const axios = require('axios');
 
 export default function District_list() {
+    const currentLanguage = useSelector((state) => state.language.language);
     const location = useLocation();
     const modalStatus = location.state;
     const dispatch = useDispatch();
@@ -113,19 +115,6 @@ export default function District_list() {
         setEditDistrictById('');
     }
 
-
-    // const getState = async () => {
-    //     axios.get(`${process.env.REACT_APP_NODE_URL}/api/master/get-allsate`)
-    //         .then(response => {
-    //             console.log(response.data);
-    //             setStatateOptions(response.result)
-    //         })
-    //         .catch(error => {
-
-    //             console.error(error);
-    //         });
-    // }
-
     function onChangeHandler(e) {
         const name = e.target.name;
         const value = e.target.value;
@@ -139,15 +128,9 @@ export default function District_list() {
         const dsName = districtData.StateName;
 
         if (dName.length > 0 && dsName !== '') {
-            // userData['dealerRole'] = dealerRoles
-            // if (workFor === 'forEdit') {
-            //     userData['id'] = editUserData.id
-            //     dispatch(editUserUpdateToDb(userData))
-            // } else {
             if (editDistrictById != '') {
                 console.log('Update getDistrictActionIdData: ', editDistrictById);
                 districtData['id'] = editDistrictById;
-                // console.log('UpdatedistrictData', districtData)
                 editeDistrictAction(districtData).then((data) => {
                     console.log('state Update getDistrictActionIdData:', data);
                     if (data.result === "updatesuccess") {
@@ -217,17 +200,6 @@ export default function District_list() {
         });
     };
 
-    // const columns = [
-    //     {
-    //         field: 'rowNumber',
-    //         headerAlign: 'center',
-    //         align: 'center',
-    //         headerName: 'No',
-    //         minWidth: 80,
-    //         flex: 1,
-
-    //     },
-
     const [selectAll, setSelectAll] = useState(false);
     const [rowData, setRowData] = useState([]);
 
@@ -276,7 +248,7 @@ export default function District_list() {
             field: 'District Name',
             headerAlign: 'center',
             align: 'center',
-            headerName: 'District Name',
+            headerName: translations[currentLanguage].districtname,
             minWidth: 100,
             flex: 1,
             valueGetter: (params) => {
@@ -287,7 +259,7 @@ export default function District_list() {
             field: 'State Name',
             headerAlign: 'left',
             align: 'left',
-            headerName: 'State Name',
+            headerName: translations[currentLanguage].statename,
             minWidth: 150,
             flex: 1,
             valueGetter: (params) => {
@@ -296,7 +268,7 @@ export default function District_list() {
         },
         {
             field: 'is_active',
-            headerName: 'Active',
+            headerName: translations[currentLanguage].active,
             headerAlign: 'left',
             align: 'left',
             type: 'number',
@@ -323,7 +295,7 @@ export default function District_list() {
                 <div className="d-flex justify-content-center dotHover">
                     <FontAwesomeIcon icon={faEllipsisV} />
                     <div className="expandDiv">
-                        <Tooltip title="Edit">
+                        <Tooltip title={translations[currentLanguage].edit}>
                             <button className='myActionBtn m-1' onClick={() => { editeDistrictModal(params.row) }}>
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="bi bi-pencil-square" viewBox="0 0 16 16">
                                     <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
@@ -331,7 +303,7 @@ export default function District_list() {
                                 </svg>
                             </button>
                         </Tooltip>
-                        <Tooltip title="Delete">
+                        <Tooltip title={translations[currentLanguage].delete}>
                             <button className='myActionBtn m-1' onClick={() => { deleteDistrictAlert(params.row) }}>
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="bi bi-trash3" viewBox="0 0 16 16">
                                     <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5ZM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0H11Zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5h9.916Zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5Z" />
@@ -387,7 +359,7 @@ export default function District_list() {
                                     <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
                                     <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
                                 </svg>&nbsp;
-                                Add District
+                                {translations[currentLanguage].adddistrict}
                             </button>
 
                         </h6>
@@ -398,7 +370,7 @@ export default function District_list() {
                                 redirectModal();
                             }}
                         >
-                            BACK
+                            {translations[currentLanguage].back}
                         </Button>
                     </div>
                 </div>
@@ -441,12 +413,12 @@ export default function District_list() {
             {/* new modal */}
             <Modal show={modalShow} onHide={handleClose}>
                 <Modal.Header closeButton>
-                    <h5 className="modal-title" id="districtModalLabel">ADD District</h5>
+                    <h5 className="modal-title" id="districtModalLabel">  {translations[currentLanguage].adddistrict}</h5>
                 </Modal.Header>
                 <Modal.Body>
                     <div className="">
                         <div className="mb-3">
-                            <label htmlFor="select" className="col-form-label">State Name:</label>
+                            <label htmlFor="select" className="col-form-label">  {translations[currentLanguage].statename}:</label>
                             <select class="form-control" name="StateName" id="select" value={districtData.StateName} onChange={(e) => { onChangeHandler(e) }}>
                                 <option value="">Select State</option>
                                 {/* <option value="1">GUJARAT </option>
@@ -460,7 +432,7 @@ export default function District_list() {
                             </select>
                         </div>
                         <div className="mb-3">
-                            <label htmlFor="recipient-name" className="col-form-label">District Name:</label>
+                            <label htmlFor="recipient-name" className="col-form-label">  {translations[currentLanguage].districtname}:</label>
                             <input type="text" className="form-control" id="recipient-name" name="DistrictName" value={districtData.DistrictName} onChange={(e) => { onChangeHandler(e) }} />
                         </div>
                         {/* <div className="mb-3">
@@ -473,10 +445,10 @@ export default function District_list() {
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleClose}>
-                        Close
+                        {translations[currentLanguage].close}
                     </Button>
                     <Button variant="primary" onClick={handleSubmit}>
-                        Save
+                        {translations[currentLanguage].save}
                     </Button>
                 </Modal.Footer>
 
