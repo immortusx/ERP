@@ -5,6 +5,7 @@ import { setShowMessage } from "../redux/slices/notificationSlice";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Modal, Button } from "react-bootstrap";
 import downloadgif from "../assets/images/download.gif"
+import DownloadIcon from "@mui/icons-material/Download";
 import axios from "axios";
 // import {
 //   addAgencyToDb,
@@ -226,7 +227,12 @@ export default function Profile_list({ workFor }) {
           <div className="col-md-6 d-flex justify-content-end align-items-end">
             <Button
               variant="btn btn-warning mx-1"
-              style={{ width: '70px', height: '35px', fontSize: '14px', borderRadius: '20px' }}
+              style={{
+                width: "70px",
+                height: "35px",
+                fontSize: "14px",
+                borderRadius: "20px",
+              }}
               onClick={() => {
                 redirectModal();
               }}
@@ -299,7 +305,7 @@ export default function Profile_list({ workFor }) {
                 }}
               />
             </div>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
+            <div style={{ display: "flex", alignItems: "center" }}>
               {agencyData.logo && (
                 <div>
                   <img
@@ -313,19 +319,26 @@ export default function Profile_list({ workFor }) {
               )}
 
               {agencyData.logo && (
-                <div style={{ marginLeft: '10px' }}>
-                  <img
+                <div style={{ marginLeft: "10px" }}>
+                  <button
+                    className="border-0 rounded-pill p-1"
+                    onClick={handleDownload}
+                  >
+                    <DownloadIcon />
+                   
+                    Download
+                  </button>
+                  {/*<img
                     src={downloadgif}
                     className="logo-image rounded-circle"
                     height={35}
                     width={35}
                     onClick={handleDownload}
                     alt="download"
-                  />
+              />*/}
                 </div>
               )}
             </div>
-
           </section>
 
           <section className="d-flex mt-3 flex-column flex-sm-row">

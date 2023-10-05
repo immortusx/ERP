@@ -23,10 +23,18 @@ const BreadCrumb = () => {
   };
 
   const handleDownloadAndroid = () => {
-    const androidDownloadUrl = `${process.env.REACT_APP_NODE_URL}/api/download`;
-    const androidDownloadLink = document.createElement('a');
-    androidDownloadLink.href = androidDownloadUrl;
-    androidDownloadLink.click();
+
+    console.log("Downloading Android.....")
+    const androidApkUrl = `${process.env.REACT_APP_NODE_URL}/api/download`;
+    const anchor = document.createElement('a');
+    anchor.style.display = 'none';
+    anchor.href = androidApkUrl;
+    anchor.download = 'android-app.apk';
+    document.body.appendChild(anchor);
+
+    anchor.click();
+
+    document.body.removeChild(anchor);
   };
   const location = useLocation();
   const crumbs = location.pathname
