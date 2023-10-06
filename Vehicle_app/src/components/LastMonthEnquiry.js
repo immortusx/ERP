@@ -99,7 +99,7 @@ const LastMonthEnquiry = () => {
     console.log(config);
     await axios.get(url, config).then(response => {
         // console.log(response.data.result, 'last Montht')
-        setNewEnquiryList(response.data.result);
+        setLastMonthEnquiryList(response.data.result);
     });
     setLoading(false);
   };
@@ -110,9 +110,9 @@ const LastMonthEnquiry = () => {
   return (
     <View style={styles.container}>
       <View>
-        {newEnquiryList && newEnquiryList.length > [] ? (
+        {lastMonthEnquiryList && lastMonthEnquiryList.length > [] ? (
           <FlatList
-            data={newEnquiryList}
+            data={lastMonthEnquiryList}
             keyExtractor={(item, index) => `enquiry_${index}`}
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />

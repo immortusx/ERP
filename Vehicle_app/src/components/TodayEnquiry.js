@@ -43,25 +43,25 @@ const TodayEnquiry = () => {
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    setEnquiryType('All');
-    dispatch(getEnquiryData());
+    // setEnquiryType('All');
+    // dispatch(getEnquiryData());
     setTimeout(() => {
       setRefreshing(false);
     }, 2000);
   }, []);
-  useEffect(() => {
-    const getEnquiry = () => {
-      dispatch(getEnquiryData());
-    };
-    getEnquiry();
-  }, []);
+  // useEffect(() => {
+  //   const getEnquiry = () => {
+  //     dispatch(getEnquiryData());
+  //   };
+  //   getEnquiry();
+  // }, []);
 
-  useEffect(() => {
-    if (result) {
-      // console.log(result.result, 'tttttttttt');
-      setResultData(result.result);
-    }
-  }, [result]);
+  // useEffect(() => {
+  //   if (result) {
+  //     // console.log(result.result, 'tttttttttt');
+  //     setResultData(result.result);
+  //   }
+  // }, [result]);
   useEffect(() => {
     // dispatch(getEnquiryData());
     handleTodayEnquiry();
@@ -112,9 +112,9 @@ const TodayEnquiry = () => {
   return (
     <View style={styles.container}>
       <View>
-        {newEnquiryList && newEnquiryList.length > [] ? (
+        {todayEnquiryList && todayEnquiryList.length > [] ? (
           <FlatList
-            data={newEnquiryList}
+            data={todayEnquiryList}
             keyExtractor={(item, index) => `enquiry_${index}`}
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />

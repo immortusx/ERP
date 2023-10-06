@@ -1837,7 +1837,6 @@ router.get("/get-last-month-enquiries", tokenCheck, async (req, res) => {
 
 //========================Get New (Not Followed) Enquiry List======================//
 router.get("/get-new-enquiries-list", tokenCheck, async (req, res) => {
-  try {
     console.log(">>>>>>>>>/get-new-enquiries-list", req.myData);
     let branchId = req.myData.branchId;
     let isSuperAdmin = req.myData.isSuperAdmin;
@@ -1852,9 +1851,6 @@ router.get("/get-new-enquiries-list", tokenCheck, async (req, res) => {
         res.send({ isSuccess: "success", result: result[0] });
       }
     });
-  } catch (err) {
-    console.log(err);
-  }
 });
 
 //====================get total enquiry-booking==================

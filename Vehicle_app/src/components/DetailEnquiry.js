@@ -987,7 +987,7 @@ const DetailEnquiry = ({route}) => {
       // openModal();
       setShowMessageModal(true);
       dispatch(getEnquiryData()).then(() => {
-        navigation.navigate('AddMore');
+        navigation.navigate('Enquiry');
       });
     }
   }, [editEnquiryState]);
