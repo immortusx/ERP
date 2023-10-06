@@ -196,7 +196,7 @@ router.post(
     const firstName = req.body.firstName;
     const lastName = req.body.lastName;
     const email = req.body.email;
-    const password = req.body.password;
+    // const password = req.body.password;
     const phoneNumber = req.body.phoneNumber;
     const branchRole = req.body.branchRole;
     const bankname = req.body.bankname;
@@ -213,12 +213,30 @@ router.post(
     // const departmentId = 1;
     const user_type_id = 2;
     const id = req.body.id;
-    const hashedPassword = await hasThePass(password);
+    // const hashedPassword = await hasThePass(password);
+    const newPassword = req.body.password;
+    const defaultPassword = '............'; // Replace with your actual default password
+    let updatePasswordQuery = "";
+
+    if (newPassword && newPassword !== defaultPassword) {
+      // Hash the new password
+      const hashedNewPassword = await hasThePass(newPassword);
+      updatePasswordQuery = `, password = '${hashedNewPassword}'`;
+    }
 
     try {
       console.log(id, "editid");
       console.log(document_id, "docemid");
-      const result = `UPDATE users SET first_name = '${firstName}', last_name = '${lastName}', email = '${email}', password = '${hashedPassword}', phone_number = '${phoneNumber}', bloodgroup = '${bloodgroup}', dob = '${selectedDate}', user_type_id = '${user_type_id}' WHERE id = '${id}'`;
+      const result = `UPDATE users SET 
+        first_name = '${firstName}', 
+        last_name = '${lastName}', 
+        email = '${email}', 
+        phone_number = '${phoneNumber}', 
+        bloodgroup = '${bloodgroup}', 
+        dob = '${selectedDate}', 
+        user_type_id = '${user_type_id}' 
+        ${updatePasswordQuery} 
+        WHERE id = '${id}'`;
       await queryDatabase(result);
       console.log(result, "result");
 
