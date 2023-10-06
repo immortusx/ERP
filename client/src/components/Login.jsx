@@ -37,7 +37,7 @@ export default function Login() {
     }, [currentLanguage])
     const navigate = useNavigate()
     const [loginData, setLoginData] = useState({
-        email: '',
+        username: '',
         password: '',
     })
     const downloadAndroidApp = async () => {
@@ -59,8 +59,8 @@ export default function Login() {
         window.alert("App Not Found")
     }
     function onChangeHandler(e) {
-        if (e.target.name === 'email') {
-            setLoginData(registerData => ({ ...loginData, 'email': e.target.value }))
+        if (e.target.name === 'username') {
+            setLoginData(registerData => ({ ...loginData, 'username': e.target.value }))
         } else if (e.target.name === 'password') {
             setLoginData(registerData => ({ ...loginData, 'password': e.target.value }))
         }
@@ -109,10 +109,10 @@ export default function Login() {
     }, [loginState])
 
     function handleSubmit() {
-        if (loginData.email.length > 0 && loginData.password.length > 0) {
+        if (loginData.username.length > 0 && loginData.password.length > 0) {
             dispatch(getLoginUser(loginData));
             if (rememberMe) {
-                localStorage.setItem('rememberedUsername', loginData.email);
+                localStorage.setItem('rememberedUsername', loginData.username);
             }
         } else {
             dispatch(setShowMessage('Please fill all the field'));
@@ -122,7 +122,7 @@ export default function Login() {
         // Check if there is a remembered username
         const rememberedUsername = localStorage.getItem('rememberedUsername');
         if (rememberedUsername) {
-            setLoginData({ ...loginData, email: rememberedUsername });
+            setLoginData({ ...loginData, username: rememberedUsername });
             setRememberMe(true); // Check the Remember Me checkbox
         }
     }, []);
@@ -157,8 +157,8 @@ export default function Login() {
                                 <div className='mainDivRegister mt-3 bg-white p-4'>
                                     <h2 className='text-left'>{translations[currentLanguage].login}</h2>
                                     <section>
-                                        <label htmlFor="email" style={{ fontSize: '17px', marginLeft: '5px' }}>{translations[currentLanguage].username} </label>
-                                        <input className='myInputl' onChange={(e) => { onChangeHandler(e) }} type="text" id='email' name="email" />
+                                        <label htmlFor="username" style={{ fontSize: '17px', marginLeft: '5px' }}>{translations[currentLanguage].username} </label>
+                                        <input className='myInputl' onChange={(e) => { onChangeHandler(e) }} type="text" id='username' name="username" placeholder='Enter Email/Mobile Number' />
                                     </section>
                                     <section>
 
@@ -170,6 +170,7 @@ export default function Login() {
                                                 type={showPassword ? 'text' : 'password'}
                                                 id='password'
                                                 name="password"
+                                                placeholder='Enter Password'
                                                 style={{ flex: '1' }}
                                             />
                                             <img

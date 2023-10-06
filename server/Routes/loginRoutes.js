@@ -65,75 +65,72 @@ router.post('/branch-token-change', tokenCheck, async (req, res) => {
   res.send({ isSuccess: true, message: 'success', result: tokenIs })
   console.log({ isSuccess: true, message: 'success', result: tokenIs })
 })
+
+
 router.post('/', async (req, res) => {
   console.log('>>>>>login');
-  const url = `SELECT * FROM users WHERE email = '${req.body.email}'`
-  db.query(url, async (err, result) => {
+
+  const { username, password } = req.body; // Assuming 'username' is used for both email and phone number
+
+  const url = `SELECT * FROM users WHERE email = ? OR phone_number = ?`; // Use OR condition to check both email and phone number
+
+  db.query(url, [username, username], async (err, result) => {
     if (err) {
-      res.send({ isSuccess: true, message: 'error', result: [] })
-      console.log({ isSuccess: true, message: 'error', result: err })
-    }
-    else if (result.length > 0) {
-      const comparisionResult = await compareTheHass(req.body.password, result[0].password)
+      res.send({ isSuccess: true, message: 'error', result: [] });
+      console.log({ isSuccess: true, message: 'error', result: err });
+    } else if (result.length > 0) {
+      const comparisionResult = await compareTheHass(password, result[0].password);
       if (comparisionResult) {
         if (result[0].is_active == 1) {
-
           var cdate = moment().format('YYYY-MM-DD H:m:s');
-          // const newUrl = `SELECT * FROM users WHERE email = '${req.body.email}'`
-          // const newUrl = `UPDATE users SET last_login = '${cdate}' WHERE(id = '${result[0].id}')`
-          const newUrl = `UPDATE users SET last_login = current_login, current_login = '${cdate}' WHERE id = '${result[0].id}'; `
-          db.query(newUrl, async (err, newResult) => {
+          const newUrl = `UPDATE users SET last_login = current_login, current_login = ? WHERE id = ?`;
+          db.query(newUrl, [cdate, result[0].id], async (err, newResult) => {
             if (err) {
-              res.send({ isSuccess: true, message: 'error', result: [] })
-              console.log({ isSuccess: true, message: 'error', result: err })
+              res.send({ isSuccess: true, message: 'error', result: [] });
+              console.log({ isSuccess: true, message: 'error', result: err });
             } else {
-              const branchUrl = `select distinct s.id , s.name from branch_department_user as f inner join branches as s on s.id = f.branch_id where f.user_id ='${result[0].id}'; `
-              db.query(branchUrl, async (err, branchResult) => {
+              const branchUrl = `SELECT DISTINCT s.id, s.name FROM branch_department_user AS f INNER JOIN branches AS s ON s.id = f.branch_id WHERE f.user_id = ?`;
+              db.query(branchUrl, [result[0].id], async (err, branchResult) => {
                 if (err) {
-                  res.send({ isSuccess: true, message: 'error', result: [] })
-                  console.log({ isSuccess: true, message: 'error', result: err })
+                  res.send({ isSuccess: true, message: 'error', result: [] });
+                  console.log({ isSuccess: true, message: 'error', result: err });
                 } else if (branchResult.length > 0) {
-                  console.log('branchResult ************', branchResult)
-                  let currentBranch = branchResult[0].id
+                  console.log('branchResult ************', branchResult);
+                  let currentBranch = branchResult[0].id;
                   const tokenData = {
                     id: result[0].id,
-                    branchId: currentBranch
+                    branchId: currentBranch,
                   };
-                  const tokenIs = await getToken(tokenData)
-                  res.send({ isSuccess: true, message: 'success', result: { branchResult, tokenIs, currentBranch } })
-                  console.log({ isSuccess: true, message: 'success', result: { branchResult, tokenIs, currentBranch } })
+                  const tokenIs = await getToken(tokenData);
+                  res.send({ isSuccess: true, message: 'success', result: { branchResult, tokenIs, currentBranch } });
+                  console.log({ isSuccess: true, message: 'success', result: { branchResult, tokenIs, currentBranch } });
                 } else {
-                  let currentBranch = "1"
+                  let currentBranch = '1';
                   const tokenData = {
                     id: result[0].id,
-                    branchId: currentBranch
+                    branchId: currentBranch,
                   };
-                  const tokenIs = await getToken(tokenData)
-                  res.send({ isSuccess: true, message: 'success', result: { branchResult, tokenIs, currentBranch } })
-                  console.log({ isSuccess: true, message: 'success', result: { branchResult, tokenIs, currentBranch } })
-
-                  //res.send({ isSuccess: true, message: 'wrong', result: [] })
-                 // console.log({ isSuccess: true, message: 'wrong', result: [] })
+                  const tokenIs = await getToken(tokenData);
+                  res.send({ isSuccess: true, message: 'success', result: { branchResult, tokenIs, currentBranch } });
+                  console.log({ isSuccess: true, message: 'success', result: { branchResult, tokenIs, currentBranch } });
                 }
-              })
-
+              });
             }
-          })
+          });
         } else {
-          res.send({ isSuccess: true, message: 'deactivate', result: [] })
-          console.log({ isSuccess: true, message: 'deactivate', result: [] })
+          res.send({ isSuccess: true, message: 'deactivate', result: [] });
+          console.log({ isSuccess: true, message: 'deactivate', result: [] });
         }
       } else {
-        res.send({ isSuccess: true, message: 'wrong', result: [] })
-        console.log({ isSuccess: true, message: 'wrong', result: [] })
+        res.send({ isSuccess: true, message: 'wrong', result: [] });
+        console.log({ isSuccess: true, message: 'wrong', result: [] });
       }
-
     } else {
-      console.log(url)
-      res.send({ isSuccess: true, message: 'empty', result: [] })
-      console.log({ isSuccess: true, message: 'empty', result: [] })
+      console.log(url);
+      res.send({ isSuccess: true, message: 'empty', result: [] });
+      console.log({ isSuccess: true, message: 'empty', result: [] });
     }
-  })
-})
+  });
+});
 
 module.exports = router;
