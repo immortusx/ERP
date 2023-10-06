@@ -204,7 +204,7 @@ export default function Addemployee({ workFor }) {
           lastName: editemployeeData.last_name,
           email: editemployeeData.email,
           // password: editemployeeData.password,
-          password:"............",
+          password:"..................",
           phoneNumber: editemployeeData.phone_number,
           bloodgroup: editemployeeData.bloodgroup,
         });
