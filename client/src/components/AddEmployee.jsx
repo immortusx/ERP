@@ -203,7 +203,8 @@ export default function Addemployee({ workFor }) {
           firstName: editemployeeData.first_name,
           lastName: editemployeeData.last_name,
           email: editemployeeData.email,
-          password: "",
+          // password: editemployeeData.password,
+          password:"............",
           phoneNumber: editemployeeData.phone_number,
           bloodgroup: editemployeeData.bloodgroup,
         });
@@ -473,14 +474,8 @@ export default function Addemployee({ workFor }) {
   function onChangeHandler(e) {
     const name = e.target.name;
     const value = e.target.value;
-    // const files = e.target.files;
-    // if (name === "logo") {
-    //   setEmployeeProfilelogo({ ...employeeData, [name]: files[0] });
-    //   console.log(employeeData, "employeeData");
-    // } else {
     setemployeeData({ ...employeeData, [name]: value });
     console.log(employeeData, "employeeData");
-    // }
   }
   function onChangeBankDetais(e) {
     const name = e.target.name;
@@ -498,7 +493,6 @@ export default function Addemployee({ workFor }) {
     const name = e.target.name;
     const value = e.target.value;
     setJobDetails({ ...jobdetails, [name]: value });
-    //console.log(value);
   };
   const handleDateChange = (date) => {
     setSelectedDate(date);
@@ -543,37 +537,12 @@ export default function Addemployee({ workFor }) {
       let findBranch = branches.find((i) => {
         return i.id == item;
       });
-      //console.log("findBranch", findBranch);
       if (findBranch) {
         tempCounter++;
       }
     });
     return tempCounter;
   }, [branchRoles]);
-  // const showSelectedData = useMemo(() => {
-  //   let tempAr = [];
-  //   if (Object.keys(branchRoles).length > 0) {
-  //     Object.keys(branchRoles).forEach((item, index) => {
-  //       let tempObj = {};
-  //       let findBranch = branches.find((i) => {
-  //         return i.id == item;
-  //       });
-  //       if (findBranch) {
-  //         tempObj["branch"] = findBranch;
-  //         let tempArNested = [];
-  //         branchRoles[item].forEach((i) => {
-  //           let result = roles.find((roleItem) => {
-  //             return i == roleItem.id;
-  //           });
-  //           tempArNested.push(result);
-  //         });
-  //         tempObj["role"] = tempArNested;
-  //         tempAr.push(tempObj);
-  //       }
-  //     });
-  //   }
-  //   return tempAr;
-  // }, [branchRoles]);
 
   function confirmClicked() {
     setPopUpScreen(false);
@@ -586,7 +555,6 @@ export default function Addemployee({ workFor }) {
     const selectedRole = role;
     setSelectedRole(selectedId);
     setSelectedRoleName(selectedRole);
-    // console.log(selectedRole,"roleSelectroleSelectroleSelectroleSelect")
     const url = `${process.env.REACT_APP_NODE_URL}/api/users/getRoleDesc/${selectedId}`;
     const config = {
       headers: {
@@ -596,7 +564,6 @@ export default function Addemployee({ workFor }) {
     await Axios.get(url, config).then((response) => {
       if (response.data?.isSuccess) {
         setEmpRolesDesc(response.data.result[0].description);
-        //console.log(response.data.result, "descriptionnnnnn")
       }
     });
   };
@@ -671,13 +638,7 @@ export default function Addemployee({ workFor }) {
                       className="border-0 rounded-pill p-1"
                       onClick={handleDownload}
                     >
-                    <DownloadIcon/>
-                     {/*<img
-                        src={download1}
-                        className="logo-image rounded-circle"
-                        height={30}
-                        width={30}
-                />*/}
+                      <DownloadIcon />
                       Download
                     </button>
                   </div>
@@ -798,9 +759,6 @@ export default function Addemployee({ workFor }) {
           </div>
         </main>
         <main className="mt-4">
-          {/*<h5 className="m-0">
-            {workFor === "forAdd" ? "Select branch" : "Edit branch"}
-                </h5>*/}
           <h5 className="m-0">Job Information</h5>
           <div className="row mt-3 m-0">
             <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
@@ -843,51 +801,6 @@ export default function Addemployee({ workFor }) {
             </section>
           </div>
         </main>
-        {/* ===========bankDetails========== */}
-        {/* <main className="mt-4">*/}
-        {/* <h5 className="m-0">Bank Details</h5> */}
-        {/* <h5 className="m-0">Job Information</h5> */}
-        {/*<div className="row  m-0"> */}
-        {/* <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
-              <label className="myLabel" htmlFor="bloodGroup">
-                Select Branch
-              </label>
-              <select
-                className="form-control"
-                id="branch"
-                name="branch"
-                onChange={onChangejobdetails}
-                value={jobdetails.value}
-              >
-                <option value="">Select Branch Name</option>
-                {branches.map((branch, index) => (
-                  <option key={index} value={branch.id}>
-                    {branch.name}
-                  </option>
-                ))}
-              </select>
-            </section>
-            <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
-              <label className="myLabel" htmlFor="bloodGroup">
-                Select Department
-              </label>
-              <select
-                className="form-control"
-                id="department"
-                name="department"
-                onChange={onChangejobdetails}
-                value={jobdetails.value}
-              >
-                <option value="">Select Department Name</option>
-                {departmentList.map((dept, index) => (
-                  <option key={index} value={dept.id}>
-                    {dept.name}
-                  </option>
-                ))}
-              </select>
-            </section> */}
-        {/* </main> */}
-        {/*} </div> */}
         {/* ===========bankDetails========== */}
         <main className="mt-4">
           <h5 className="m-0">Bank Details</h5>
@@ -1089,7 +1002,6 @@ export default function Addemployee({ workFor }) {
                   >
                     Done
                   </button>
-                  {/* <button onClick={cancelClicked} className='ms-0 ms-sm-3 mt-3 mt-sm-0 col-12 col-sm-5 col-lg-2 myBtn py-2' type='button'>Cancel</button> */}
                 </section>
               </div>
             </main>
@@ -1098,133 +1010,4 @@ export default function Addemployee({ workFor }) {
       </div>
     </>
   );
-}
-
-{
-  /* <section className="d-flex mt-3 flex-column  col-12">
-               <label className="myLabel">Select one or more branch</label>
-               <div className="swapSelection d-flex flex-column flex-md-row mt-2">
-                 <main>
-                   <label className="pb-2">
-                     Available branches (
-                     {branches && branches.length > 0 ? branches.length : 0})
-                   </label>
-                   <ul
-                    ref={selectInp}
-                    name="selectRole"
-                    className="inputElement"
-                  >
-                    {branches.length > 0 &&
-                      branches.map((item, index) => {
-                        return (
-                          <li
-                            onClick={(event) => {
-                              makeSelected(event, "rightSide", item);
-                            }}
-                            className="text-uppercase"
-                            key={index}
-                            value={item.id}
-                          >
-                            <div className="d-flex align-items-center">
-                              <input type='checkbox' className='m-2 myCheckBox inputElement' onChange={(e) => { onChangeHandler(e) }} name="enableemployee" />
-                              <p className="ms-1">{item.name}</p>
-                            </div>
-                          </li>
-                        );
-                      })}
-                  </ul>
-                </main>
-
-                <div className="d-flex flex-row flex-md-column justify-content-around allBtnsMain m-3">
-                  <div
-                    ref={rightArrowBtn}
-                    className="arrowBtn disabledBtn"
-                    name="rightDiv"
-                    onClick={rightClick}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="currentColor"
-                      className="bi bi-arrow-right"
-                      viewBox="0 0 16 16"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"
-                      />
-                    </svg>
-                  </div>
-                  <div
-                    ref={leftArrowBtn}
-                    className="arrowBtn disabledBtn"
-                    onClick={leftClick}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      fill="currentColor"
-                      className="bi bi-arrow-left"
-                      viewBox="0 0 16 16"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"
-                      />
-                    </svg>
-                  </div>
-                </div>
-                <main>
-                  <label className="pb-2">
-                    Selected (
-                    {branchRoles && Object.keys(branchRoles).length
-                      ? connectedBranch
-                      : 0}
-                    )
-                  </label>
-
-                  <ul
-                    ref={selectedInp}
-                    className="inputElement"
-                    name="selectedRole"
-                  >
-                    {branchRoles &&
-                      Object.keys(branchRoles).length > 0 &&
-                      showSelectedData.map((item, index) => {
-                        return (
-                          <>
-                            <li
-                              value={item.branch.id}
-                              onDoubleClick={editBranchRole}
-                              onClick={(event) => {
-                                makeSelected(event, "leftSide", item.branch.id);
-                              }}
-                              className="text-uppercase"
-                              key={index}
-                            >
-                              <div className="d-flex flex-wrap align-items-center  justify-content-between">
-                                {item.branch.name}
-
-                                <div className="d-flex flex-wrap">
-                                  {item.role.map((i, index) => {
-                                    return (
-                                      <span
-                                        key={index}
-                                        value={i.id}
-                                        className="myTag myH7 m-1"
-                                      >
-                                        {i.role}
-                                      </span>
-                                    );
-                                  })}
-                                </div>
-                              </div>
-                            </li>
-                          </>
-                        );
-                      })}
-                  </ul>
-                </main>
-              </div>
-            </section> */
 }

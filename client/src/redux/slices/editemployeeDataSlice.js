@@ -18,17 +18,34 @@ const initialState = {
 // }
 
 
-export const editemployeeUpdateToDb = createAsyncThunk('editemployeeUpdateToDb/editemployeeSlice', async (employeeData) => {
-    const config = {
-        headers: {
-            token: localStorage.getItem('rbacToken')
+export const editemployeeUpdateToDb = createAsyncThunk(
+    'editemployeeUpdateToDb/editemployeeSlice',
+    async (employeeData, { getState }) => {
+        const state = getState();
+        const defaultPassword = "yourDefaultPassword"; // Replace with your default password
+
+        // Check if the password is the default one
+        if (employeeData.password === defaultPassword) {
+            // Remove the password from the request
+            employeeData = {
+                ...employeeData,
+                password: "",
+            };
         }
-    };
-    const url = `${process.env.REACT_APP_NODE_URL}/api/employees/edit-employee`
-    return await Axios.post(url, employeeData,config).then((response) => {
-        return response.data
-    })
-})
+
+        const config = {
+            headers: {
+                token: localStorage.getItem('rbacToken')
+            }
+        };
+        const url = `${process.env.REACT_APP_NODE_URL}/api/employees/edit-employee`;
+
+        return await Axios.post(url, employeeData, config).then((response) => {
+            return response.data;
+        });
+    }
+);
+
 const editemployeeSlice = createSlice({
     name: 'editemployeeSliceState',
     initialState,
