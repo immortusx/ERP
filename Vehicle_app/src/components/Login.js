@@ -123,8 +123,6 @@ const Login = ({navigation}) => {
               style={styles.input}
               placeholder="Enter Email/Mobile Number"
               autoCapitalize="none"
-              keyboardType="username-address"
-              textContentType="emailAddress"
               value={loginData.username}
               onChangeText={value => onChangeHandler(value, 'username')}
             />

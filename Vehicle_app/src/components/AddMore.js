@@ -53,15 +53,12 @@ const AddMore = () => {
   // }
 
   const handleTodayEnquiry = () => {
-    console.log('Today');
     setEnquiryType('Today');
   };
   const handleNewEnquiry = () => {
-    console.log('New');
     setEnquiryType('New');
   };
   const handleLastMonthEnquiry = () => {
-    console.log('Last Month');
     setEnquiryType('Last Month');
   };
   return (
@@ -106,7 +103,7 @@ const AddMore = () => {
       </View>
       {enquiryType === 'New' && <NewEnquiry />}
       {enquiryType === 'Today' && <TodayEnquiry />}
-      {enquiryType === 'Last Month' && <LastMonthEnquiry />}
+      {enquiryType === 'Last Month' && < LastMonthEnquiry/>}
     </View>
   );
 };
