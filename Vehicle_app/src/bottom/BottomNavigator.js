@@ -17,13 +17,14 @@ const BottomNavigator = () => {
 
   return (
     <Bottom.Navigator
-      initialRouteName="AddMore"
+      initialRouteName="Enquiry"
       tabBarStyle={styles.tabBar}
       screenOptions={({route}) => ({
         tabBarStyle: {
           height: 55,
           backgroundColor: '#2471A2',
         },
+        tabBarShowLabel: false,
         tabBarLabelStyle: [styles.tabBarLabel, styles.tabBarLabelSmall],
         tabBarIcon: ({focused}) => {
           let iconName;
@@ -31,7 +32,7 @@ const BottomNavigator = () => {
             iconName = focused
               ? require('../../assets/addEnquiry.png')
               : require('../../assets/addEnquiry.png');
-          } else if (route.name === 'AddMore') {
+          } else if (route.name === 'Enquiry') {
             iconName = focused
               ? require('../../assets/home.png')
               : require('../../assets/home.png');
@@ -59,9 +60,9 @@ const BottomNavigator = () => {
         options={{headerShown: false, tabBarLabel: 'Add Enquiry'}}
       />
       <Bottom.Screen
-        name="AddMore"
+        name="Enquiry"
         component={AddMore}
-        options={{headerShown: false, tabBarLabel: 'Home'}}
+        options={{headerShown: false, tabBarLabel: 'Enquiry'}}
       />
       <Bottom.Screen
         name="AddBooking"
@@ -78,12 +79,10 @@ const styles = StyleSheet.create({
   },
   tabBarLabel: {
     fontSize: 15,
-    marginBottom: 3,
     fontWeight: 'bold',
   },
   tabBarLabelSmall: {
     fontSize: 14,
-    marginTop: -30,
   },
   tabBarButton: {
     flex: 1,

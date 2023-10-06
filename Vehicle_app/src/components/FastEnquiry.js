@@ -407,7 +407,7 @@ const FastEnquiry = () => {
       // console.log('Enquiry submitted');
       openModal();
       dispatch(getEnquiryData()).then(() => {
-        navigation.navigate('AddMore');
+        navigation.navigate('Enquiry');
       });
     }
   }, [fastEnquiryState]);

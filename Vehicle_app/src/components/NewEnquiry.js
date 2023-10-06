@@ -98,7 +98,7 @@ const NewEnquiry = () => {
     setLoading(true);
     console.log(config);
     await axios.get(url, config).then(response => {
-      // console.log(response.data.result, 'enquiry today list');
+      console.log(response.data.result, 'enquiry today list');
       setNewEnquiryList(response.data.result);
     });
     setLoading(false);

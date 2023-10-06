@@ -3,7 +3,7 @@ import React from 'react'
 
 const Profile = () => {
   return (
-    <View>
+    <View style={{flex: 1, backgroundColor: 'orange'}}>
       <Text>Profile</Text>
     </View>
   )
