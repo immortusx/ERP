@@ -215,7 +215,7 @@ router.post(
     const id = req.body.id;
     // const hashedPassword = await hasThePass(password);
     const newPassword = req.body.password;
-    const defaultPassword = '............'; // Replace with your actual default password
+    const defaultPassword = '..................'; // Replace with your actual default password
     let updatePasswordQuery = "";
 
     if (newPassword && newPassword !== defaultPassword) {

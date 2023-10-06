@@ -132,14 +132,17 @@ router.post('/edit-user', tokenCheck, checkUserPermission('edit-user'), async (r
   const branchRole = req.body.branchRole;
   const departmentId = 1;
   const userId = req.body.id;
-  const hassPass = await hasThePass(req.body.password)
-  // const url = `INSERT INTO users(first_name, last_name, email, password, phone_number) VALUES('${req.body.firstName}', '${req.body.lastName}', '${req.body.email}', '${hassPass}', '${req.body.phoneNumber}')`
-  let addNewValue = '';
 
-  if (req.body.password !== '') {
-    addNewValue = `, password = '${hassPass}'`
+  const newPassword = req.body.password;
+  const defaultPassword = '..................'; 
+  let updatePasswordQuery = "";
+
+  if (newPassword && newPassword !== defaultPassword) {
+    // Hash the new password
+    const hashedNewPassword = await hasThePass(newPassword);
+    updatePasswordQuery = `, password = '${hashedNewPassword}'`;
   }
-  const url = `UPDATE users SET first_name = '${req.body.firstName}', last_name = '${req.body.lastName}', email = '${req.body.email}', phone_number = '${req.body.phoneNumber}' ${addNewValue} WHERE(id = '${req.body.id}'); `
+  const url = `UPDATE users SET first_name = '${req.body.firstName}', last_name = '${req.body.lastName}', email = '${req.body.email}', phone_number = '${req.body.phoneNumber}'  ${updatePasswordQuery}  WHERE(id = '${req.body.id}'); `
   await db.query(url, async (err, result) => {
     if (err) {
       console.log({ isSuccess: false, result: err })

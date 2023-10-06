@@ -116,7 +116,7 @@ export default function AddUser({ workFor }) {
                     firstName: editUserData.first_name,
                     lastName: editUserData.last_name,
                     email: editUserData.email,
-                    password: '',
+                    password: '..................',
                     phoneNumber: editUserData.phone_number,
                 })
             }
