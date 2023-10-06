@@ -20,18 +20,10 @@ const BottomNavigator = () => {
       initialRouteName="AddMore"
       tabBarStyle={styles.tabBar}
       screenOptions={({route}) => ({
-        // tabBarStyle: {
-        //   height: 50,
-        //   backgroundColor: 'green',
-        //   elevation: 5,
-        //   shadowColor: 'gray',
-        //   shadowOffset: {
-        //     width: 3,
-        //     height: 2,
-        //   },
-        //   shadowOpacity: 0.3,
-        //   shadowRadius: 3,
-        // },
+        tabBarStyle: {
+          height: 55,
+          backgroundColor: '#2471A2',
+        },
         tabBarLabelStyle: [styles.tabBarLabel, styles.tabBarLabelSmall],
         tabBarIcon: ({focused}) => {
           let iconName;
@@ -41,8 +33,8 @@ const BottomNavigator = () => {
               : require('../../assets/addEnquiry.png');
           } else if (route.name === 'AddMore') {
             iconName = focused
-              ? require('../../assets/homm.png')
-              : require('../../assets/homm.png');
+              ? require('../../assets/home.png')
+              : require('../../assets/home.png');
           } else if (route.name === 'AddBooking') {
             iconName = focused
               ? require('../../assets/addBooking.png')

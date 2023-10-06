@@ -35,7 +35,12 @@ const SidebarMenu = () => {
           headerStyle: {
             borderWidth: 0.9,
             borderColor: 'grey',
+            backgroundColor: '#2471A2',
           },
+          headerTitleStyle: {
+            color: 'white'
+          },
+          headerTintColor: 'white',
           drawerIcon: () => (
             <Image
               style={styles.personImg}
