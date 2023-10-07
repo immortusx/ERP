@@ -23,13 +23,14 @@ import ToastMessage from './subCom/ToastMessage';
 import TimeAgo from './subCom/TImeAgo';
 import ConfirmationDialog from './subCom/ConfirmationDialog';
 import ConfirmBox from './subCom/Confirm';
+import SimpleAlert from './subCom/SimpleAlert';
+import { setEnquiryType } from '../redux/slice/enquiryTypeSlice';
 
 const TodayEnquiry = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const [resultData, setResultData] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [enquiryType, setEnquiryType] = useState('All');
   const [todayEnquiryList, setTodayEnquiryList] = useState([]);
   const [newEnquiryList, setNewEnquiryList] = useState([]);
   const [lastMonthEnquiryList, setLastMonthEnquiryList] = useState([]);
@@ -65,7 +66,6 @@ const TodayEnquiry = () => {
   useEffect(() => {
     // dispatch(getEnquiryData());
     handleTodayEnquiry();
-    setEnquiryType('Today');
   }, []);
   const handleSheduleCall = item => {
     navigation.navigate('Schedule Call', {item: item});
@@ -101,12 +101,12 @@ const TodayEnquiry = () => {
     await axios.get(url, config).then(response => {
       // console.log(response.data.result, 'enquiry today list');
       setTodayEnquiryList(response.data.result);
-      setEnquiryType('Today');
+      dispatch(setEnquiryType('Today'));
     });
     setLoading(false);
   };
   const handleConfirm = () => {
-    setEnquiryType('All');
+    dispatch(setEnquiryType('Last Month'));
     setIsConfiromation(false);
   };
   return (
@@ -202,18 +202,10 @@ const TodayEnquiry = () => {
             }}
           />
         ) : (
-          <ConfirmBox
-            visible={true}
-            message={
-              <>
-                <Text>New Enquiry Not found.</Text>
-                {'\n'}
-                <Text style={{fontWeight: 'bold', color: '#C0392B'}}>
-                  Please Check After Sometimes
-                </Text>
-              </>
-            }
-            onCancel={() => setIsConfiromation(false)}
+          <SimpleAlert
+            isVisible={true}
+            text1={'Alert !'}
+            text2={'There is No Enquiry Available For Today'}
             onConfirm={handleConfirm}
           />
         )}

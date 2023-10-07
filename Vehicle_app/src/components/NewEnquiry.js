@@ -23,18 +23,20 @@ import ToastMessage from './subCom/ToastMessage';
 import TimeAgo from './subCom/TImeAgo';
 import ConfirmationDialog from './subCom/ConfirmationDialog';
 import ConfirmBox from './subCom/Confirm';
+import SimpleAlert from './subCom/SimpleAlert';
+import {setEnquiryType} from '../redux/slice/enquiryTypeSlice';
 
 const LastMonthEnquiry = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const [resultData, setResultData] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [enquiryType, setEnquiryType] = useState('All');
   const [todayEnquiryList, setTodayEnquiryList] = useState([]);
   const [newEnquiryList, setNewEnquiryList] = useState([]);
   const [lastMonthEnquiryList, setLastMonthEnquiryList] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [isConfirmation, setIsConfiromation] = useState(false);
+  const enquiryType = useSelector(state => state.enquiryType.enquiryType);
   const profileData = useSelector(
     state => state.getUserProfileSlice.profile.currentUserData.result,
   );
@@ -43,7 +45,7 @@ const LastMonthEnquiry = () => {
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    setEnquiryType('All');
+    // setEnquiryType('All');
     // dispatch(getEnquiryData());
     setTimeout(() => {
       setRefreshing(false);
@@ -100,12 +102,13 @@ const LastMonthEnquiry = () => {
     await axios.get(url, config).then(response => {
       // console.log(response.data.result, 'enquiry new list');
       setNewEnquiryList(response.data.result);
-      setEnquiryType('New');
+      dispatch(setEnquiryType('New'));
     });
     setLoading(false);
   };
   const handleConfirm = () => {
-    setEnquiryType('All');
+    console.log('Hello');
+    dispatch(setEnquiryType('Today'));
     setIsConfiromation(false);
   };
   return (
@@ -163,9 +166,7 @@ const LastMonthEnquiry = () => {
                             </Text>
                           </TouchableOpacity>
                           <Text style={styles.label}>
-                            {item.product
-                              ? item.product
-                              : '-'}
+                            {item.product ? item.product : '-'}
                           </Text>
                           <Text style={styles.label}>
                             {item.sales_person ? item.sales_person : '-'}
@@ -201,18 +202,10 @@ const LastMonthEnquiry = () => {
             }}
           />
         ) : (
-          <ConfirmBox
-            visible={true}
-            message={
-              <>
-                <Text>New Enquiry Not found.</Text>
-                {'\n'}
-                <Text style={{fontWeight: 'bold', color: '#C0392B'}}>
-                  Please Check After Sometimes
-                </Text>
-              </>
-            }
-            onCancel={() => setIsConfiromation(false)}
+          <SimpleAlert
+            isVisible={true}
+            text1={'Alert !'}
+            text2={'Currently, There is New Enquiry Not Available'}
             onConfirm={handleConfirm}
           />
         )}

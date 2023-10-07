@@ -1798,7 +1798,7 @@ router.get("/get-current-date-enquiries", tokenCheck, async (req, res) => {
     let branchId = req.myData.branchId;
     let isSuperAdmin = req.myData.isSuperAdmin;
     let userId = req.myData.userId;
-    const urlNew = `CALL sp_get_todays_enquiry_list()`;
+    const urlNew = `CALL sp_get_todays_enquiry_list(${branchId}, ${isSuperAdmin}, ${userId})`;
     await db.query(urlNew, async (err, result) => {
       if (err) {
         console.log({ isSuccess: false, result: err });
@@ -1820,7 +1820,7 @@ router.get("/get-last-month-enquiries", tokenCheck, async (req, res) => {
     let branchId = req.myData.branchId;
     let isSuperAdmin = req.myData.isSuperAdmin;
     let userId = req.myData.userId;
-    const urlNew = `CALL sp_get_last_month_enquiry_list()`;
+    const urlNew = `CALL sp_get_last_month_enquiry_list(${branchId}, ${isSuperAdmin}, ${userId})`;
     await db.query(urlNew, async (err, result) => {
       if (err) {
         console.log({ isSuccess: false, result: err });
@@ -1841,7 +1841,7 @@ router.get("/get-new-enquiries-list", tokenCheck, async (req, res) => {
     let branchId = req.myData.branchId;
     let isSuperAdmin = req.myData.isSuperAdmin;
     let userId = req.myData.userId;
-    const urlNew = `CALL sp_get_new_enquiry_list()`;
+    const urlNew = `CALL sp_get_new_enquiry_list(${branchId}, ${isSuperAdmin}, ${userId})`;
     await db.query(urlNew, async (err, result) => {
       if (err) {
         console.log({ isSuccess: false, result: err });
