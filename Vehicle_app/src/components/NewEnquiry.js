@@ -102,19 +102,18 @@ const LastMonthEnquiry = () => {
     await axios.get(url, config).then(response => {
       // console.log(response.data.result, 'enquiry new list');
       setNewEnquiryList(response.data.result);
-      dispatch(setEnquiryType('New'));
+      setIsConfiromation(true)
     });
     setLoading(false);
   };
   const handleConfirm = () => {
-    console.log('Hello');
     dispatch(setEnquiryType('Today'));
     setIsConfiromation(false);
   };
   return (
     <View style={styles.container}>
       <View>
-        {newEnquiryList && newEnquiryList.length > [] ? (
+        {newEnquiryList && newEnquiryList.length > 0 ? (
           <FlatList
             data={newEnquiryList}
             keyExtractor={(item, index) => `enquiry_${index}`}
@@ -203,7 +202,7 @@ const LastMonthEnquiry = () => {
           />
         ) : (
           <SimpleAlert
-            isVisible={true}
+            isVisible={isConfirmation}
             text1={'Alert !'}
             text2={'Currently, There is New Enquiry Not Available'}
             onConfirm={handleConfirm}

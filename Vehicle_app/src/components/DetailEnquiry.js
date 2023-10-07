@@ -987,7 +987,7 @@ const DetailEnquiry = ({route}) => {
       // openModal();
       setShowMessageModal(true);
       dispatch(getEnquiryData()).then(() => {
-        navigation.navigate('Enquiry');
+        navigation.navigate('HOME');
       });
     }
   }, [editEnquiryState]);
@@ -1001,9 +1001,10 @@ const DetailEnquiry = ({route}) => {
       // console.log('Enquiry submitted');
       // openModal();
       setShowMessageModal(true);
-      dispatch(getEnquiryData()).then(() => {
-        navigation.navigate('AddMore');
-      });
+      navigation.navigate('HOME');
+      // dispatch(getEnquiryData()).then(() => {
+      //   navigation.navigate('HOME');
+      // });
     }
   }, [enquiryState]);
 

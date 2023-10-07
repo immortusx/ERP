@@ -50,21 +50,7 @@ const TodayEnquiry = () => {
       setRefreshing(false);
     }, 2000);
   }, []);
-  // useEffect(() => {
-  //   const getEnquiry = () => {
-  //     dispatch(getEnquiryData());
-  //   };
-  //   getEnquiry();
-  // }, []);
-
-  // useEffect(() => {
-  //   if (result) {
-  //     // console.log(result.result, 'tttttttttt');
-  //     setResultData(result.result);
-  //   }
-  // }, [result]);
   useEffect(() => {
-    // dispatch(getEnquiryData());
     handleTodayEnquiry();
   }, []);
   const handleSheduleCall = item => {
@@ -101,7 +87,7 @@ const TodayEnquiry = () => {
     await axios.get(url, config).then(response => {
       // console.log(response.data.result, 'enquiry today list');
       setTodayEnquiryList(response.data.result);
-      dispatch(setEnquiryType('Today'));
+      setIsConfiromation(true);
     });
     setLoading(false);
   };
@@ -112,7 +98,7 @@ const TodayEnquiry = () => {
   return (
     <View style={styles.container}>
       <View>
-        {todayEnquiryList && todayEnquiryList.length > [] ? (
+        {todayEnquiryList && todayEnquiryList.length > 0 ? (
           <FlatList
             data={todayEnquiryList}
             keyExtractor={(item, index) => `enquiry_${index}`}
@@ -203,7 +189,7 @@ const TodayEnquiry = () => {
           />
         ) : (
           <SimpleAlert
-            isVisible={true}
+            isVisible={isConfirmation}
             text1={'Alert !'}
             text2={'There is No Enquiry Available For Today'}
             onConfirm={handleConfirm}

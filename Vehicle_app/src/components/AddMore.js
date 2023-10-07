@@ -41,18 +41,6 @@ const AddMore = () => {
   const [isConfirmation, setIsConfiromation] = useState(false);
   const enquiryType = useSelector(state => state.enquiryType.enquiryType);
 
-  useEffect(() => {
-    // dispatch(getEnquiryData());
-    dispatch(setEnquiryType('New'));
-  }, []);
-
-  // if (loading) {
-  //   return <CustomLoadingSpinner />;
-  // }
-  // if (isFetching) {
-  //   return <CustomLoadingSpinner />;
-  // }
-
   const handleTodayEnquiry = () => {
     dispatch(setEnquiryType('Today'));
   };

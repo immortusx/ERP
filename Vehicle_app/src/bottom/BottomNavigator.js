@@ -17,7 +17,7 @@ const BottomNavigator = () => {
 
   return (
     <Bottom.Navigator
-      initialRouteName="Enquiry"
+      initialRouteName="HOME"
       tabBarStyle={styles.tabBar}
       screenOptions={({route}) => ({
         tabBarStyle: {
@@ -32,7 +32,7 @@ const BottomNavigator = () => {
             iconName = focused
               ? require('../../assets/addEnquiry.png')
               : require('../../assets/addEnquiry.png');
-          } else if (route.name === 'Enquiry') {
+          } else if (route.name === 'HOME') {
             iconName = focused
               ? require('../../assets/home.png')
               : require('../../assets/home.png');
@@ -60,9 +60,9 @@ const BottomNavigator = () => {
         options={{headerShown: false, tabBarLabel: 'Add Enquiry'}}
       />
       <Bottom.Screen
-        name="Enquiry"
+        name="HOME"
         component={AddMore}
-        options={{headerShown: false, tabBarLabel: 'Enquiry'}}
+        options={{headerShown: false, tabBarLabel: 'HOME'}}
       />
       <Bottom.Screen
         name="AddBooking"

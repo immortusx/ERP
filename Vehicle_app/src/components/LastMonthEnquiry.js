@@ -49,21 +49,7 @@ const LastMonthEnquiry = () => {
       setRefreshing(false);
     }, 2000);
   }, []);
-  // useEffect(() => {
-  //   const getEnquiry = () => {
-  //     dispatch(getEnquiryData());
-  //   };
-  //   getEnquiry();
-  // }, []);
-
-  // useEffect(() => {
-  //   if (result) {
-  //     // console.log(result.result, 'tttttttttt');
-  //     setResultData(result.result);
-  //   }
-  // }, [result]);
   useEffect(() => {
-    // dispatch(getEnquiryData());
     handleLastMonthEnquiry();
   }, []);
   const handleSheduleCall = item => {
@@ -99,6 +85,7 @@ const LastMonthEnquiry = () => {
     console.log(config);
     await axios.get(url, config).then(response => {
       setLastMonthEnquiryList(response.data.result);
+      setIsConfiromation(true);
     });
     setLoading(false);
   };
@@ -109,7 +96,7 @@ const LastMonthEnquiry = () => {
   return (
     <View style={styles.container}>
       <View>
-        {lastMonthEnquiryList && lastMonthEnquiryList.length > [] ? (
+        {lastMonthEnquiryList && lastMonthEnquiryList.length > 0 ? (
           <FlatList
             data={lastMonthEnquiryList}
             keyExtractor={(item, index) => `enquiry_${index}`}
@@ -200,7 +187,7 @@ const LastMonthEnquiry = () => {
           />
         ) : (
           <SimpleAlert
-            isVisible={true}
+            isVisible={isConfirmation}
             text1={'Alert !'}
             text2={'There is No Last Month Enquiry Available'}
             onConfirm={handleConfirm}
