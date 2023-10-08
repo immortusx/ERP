@@ -28,6 +28,7 @@ import NewEnquiry from './NewEnquiry';
 import LastMonthEnquiry from './LastMonthEnquiry';
 import TodayEnquiry from './TodayEnquiry';
 import {setEnquiryType} from '../redux/slice/enquiryTypeSlice';
+import FollowedEnquiry from './FollowedEnquiry';
 
 const AddMore = () => {
   const navigation = useNavigation();
@@ -93,6 +94,7 @@ const AddMore = () => {
       {enquiryType === 'New' && <NewEnquiry />}
       {enquiryType === 'Today' && <TodayEnquiry />}
       {enquiryType === 'Last Month' && <LastMonthEnquiry />}
+      {enquiryType === 'Followed Enquiry' && <FollowedEnquiry />}
     </View>
   );
 };

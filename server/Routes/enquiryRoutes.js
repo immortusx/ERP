@@ -1736,7 +1736,7 @@ router.get("/get-enquiries-by-salesperson", tokenCheck, async (req, res) => {
   let branchId = req.myData.branchId;
   let isSuperAdmin = req.myData.isSuperAdmin;
   let userId = req.myData.userId;
-  const urlNew = `CALL sp_get_enquiries_list_by_salesperson(${branchId},${isSuperAdmin}, ${userId})`;
+  const urlNew = `CALL sp_get_followed_enquiry(${branchId},${isSuperAdmin}, ${userId})`;
   await db.query(urlNew, async (err, result) => {
     if (err) {
       console.log({ isSuccess: false, result: err });

@@ -44,7 +44,7 @@ const TodayEnquiry = () => {
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    // setEnquiryType('All');
+    dispatch(setEnquiryType('Followed Enquiry'));
     // dispatch(getEnquiryData());
     setTimeout(() => {
       setRefreshing(false);
@@ -92,7 +92,7 @@ const TodayEnquiry = () => {
     setLoading(false);
   };
   const handleConfirm = () => {
-    dispatch(setEnquiryType('Last Month'));
+    dispatch(setEnquiryType('Followed Enquiry'));
     setIsConfiromation(false);
   };
   return (

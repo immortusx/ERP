@@ -139,7 +139,7 @@ const FollowUpScreen = ({item}) => {
         )}
         <View style={styles.dateContainer}>
           <Text style={[styles.selectDateText, alertError && styles.alertErrorDate]}>
-            Select Next Follow Up Date *
+            Select Next Follow Up Date:
           </Text>
           <View style={styles.dateStyle}>
             <TouchableOpacity
@@ -171,13 +171,14 @@ const FollowUpScreen = ({item}) => {
           />
         </View>
         <TouchableOpacity style={styles.saveButton} onPress={handleSaveDetails}>
-          <Text style={styles.buttonText}>Save Follow Up Details</Text>
+          <Text style={styles.buttonText}>Save Follow Up</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.callBodyContainer}>
-        <Text style={{fontWeight: 'bold', marginHorizontal: 10}}>
-          Schedule Details
+      <Text style={{fontWeight: 'bold', marginHorizontal: 10, fontSize: 18, marginVertical: 5}}>
+          Next Follow Up Details
         </Text>
+        <View style={styles.line}/>
         {loading ? (
           <CustomLoadingSpinner />
         ) : scheduleDetails && scheduleDetails.length === 0 ? (
@@ -234,13 +235,14 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   label: {
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: 'bold',
-    // marginBottom: 8,
+    color: 'black',
+    marginBottom: 2,
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: '#0984DF',
     padding: 10,
     borderRadius: 8,
   },
@@ -252,7 +254,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: 'white',
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
   },
   dateContainer: {
@@ -317,7 +319,8 @@ const styles = StyleSheet.create({
   },
   selectDateText: {
     fontWeight: 'bold',
-    // color: '#2980B9',
+    color: 'black',
+    fontSize: 17
   },
   enquiryStageContainer: {
     width: '96%',
@@ -332,7 +335,13 @@ const styles = StyleSheet.create({
   alertErrorDate: {
     color: 'red',
     fontWeight: 'bold'
-  }
+  },
+  line: {
+    backgroundColor: '#3498DB',
+    height: 1,
+    alignSelf: 'stretch',
+    marginBottom: 10,
+  },
 });
 
 export default FollowUpScreen;

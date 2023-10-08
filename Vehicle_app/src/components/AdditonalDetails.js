@@ -22,6 +22,8 @@ const AdditonalDetails = ({route}) => {
   const navigation = useNavigation();
   const [callStartTime, setCallStartTime] = useState(null);
   const [callDuration, setCallDuration] = useState(null);
+  const [isShow, setIsShow] = useState(false);
+  const [oldProductDetails, setOldProductDetails] = useState([]);
   const [appState, setAppState] = useState(AppState.currentState);
   const {item} = route.params;
 
@@ -94,6 +96,32 @@ const AdditonalDetails = ({route}) => {
     };
   }, [appState, callStartTime]);
 
+  const getOldProductDetails = async enquiryId => {
+    console.log('Old Product....');
+    const url = `${API_URL}/api/get-old-product/${enquiryId}`;
+    console.log('get new enqiry', url);
+    const token = await AsyncStorage.getItem('rbacToken');
+    const config = {
+      headers: {
+        token: token ? token : '',
+      },
+    };
+    // setLoading(true);
+    console.log(config);
+    await axios.get(url, config).then(response => {
+      console.log(response.data.result, 'old product');
+      setOldProductDetails(response.data.result);
+    });
+    // setLoading(false);
+  };
+  useEffect(() => {
+    if (item) {
+      getOldProductDetails(item.enquiry_id);
+      if (item.oldOwned === 'Yes') {
+        setIsShow(true);
+      }
+    }
+  }, [item]);
   const uploadcallLog = async durationInSeconds => {
     const hours = Math.floor(durationInSeconds / 3600);
     const minutes = Math.floor((durationInSeconds % 3600) / 60);
@@ -147,116 +175,208 @@ const AdditonalDetails = ({route}) => {
   };
   return (
     <View style={styles.mainContainer}>
-      <View style={styles.contentContainer}>
-        <View style={styles.headerStyle}>
-          <Text style={styles.labelStyle}>Details</Text>
-        </View>
-        <View style={styles.detailsContainer}>
-          <View style={styles.imageContainer}>
+      <ScrollView>
+        <View style={styles.contentContainer}>
+          <View style={styles.headerStyle}>
+            <Text style={styles.labelStyle}>Details</Text>
+          </View>
+          <View style={styles.detailsContainer}>
+            <View style={styles.imageContainer}>
+              <TouchableOpacity
+                onPress={() => {
+                  openEditEnquiry(item);
+                }}>
+                <Image
+                  style={styles.editImg}
+                  source={require('../../assets/edit.png')}
+                />
+              </TouchableOpacity>
+            </View>
+            <View style={styles.dataStyle}>
+              <View style={styles.subDataStyle}>
+                <Text style={styles.label}>Customer Name: </Text>
+                <Text style={styles.labelValue}>
+                  {item.first_name} {item.last_name ? ' ' + item.last_name : ''}
+                </Text>
+              </View>
+              <View style={styles.line} />
+            </View>
+            <View style={styles.dataStyle}>
+              <View style={styles.subDataStyle}>
+                <Text style={styles.label}>Sales Person: </Text>
+                <Text style={styles.labelValue}>{item.sales_person}</Text>
+              </View>
+              <View style={styles.line} />
+            </View>
+            <View style={styles.dataStyle}>
+              <View style={styles.subDataStyle}>
+                <Text style={styles.label}>Enquiry Category: </Text>
+                <Text style={styles.labelValue}>{item.category_name}</Text>
+              </View>
+              <View style={styles.line} />
+            </View>
+            <View style={styles.dataStyle}>
+              <View style={styles.subDataStyle}>
+                <Text style={styles.label}>Phone Number: </Text>
+                <Text style={styles.labelValue}>{item.phone_number}</Text>
+              </View>
+              <View style={styles.line} />
+            </View>
+            <View style={styles.dataStyle}>
+              <View style={styles.subDataStyle}>
+                <Text style={styles.label}>WhatsApp Number: </Text>
+                <Text style={styles.labelValue}>{item.whatsapp_number}</Text>
+              </View>
+              <View style={styles.line} />
+            </View>
+            <View style={styles.dataStyle}>
+              <View style={styles.subDataStyle}>
+                <Text style={styles.label}>Delivery Date: </Text>
+                <Text style={styles.labelValue}>
+                  {moment(item.delivery_date).format('Do MMMM, YYYY')}
+                </Text>
+              </View>
+              <View style={styles.line} />
+            </View>
+            <View style={styles.dataStyle}>
+              <View style={styles.subDataStyle}>
+                <Text style={styles.label}>Taluka: </Text>
+                <Text style={styles.labelValue}>{item.taluka}</Text>
+              </View>
+              <View style={styles.line} />
+            </View>
+            <View style={styles.dataStyle}>
+              <View style={styles.subDataStyle}>
+                <Text style={styles.label}>Village: </Text>
+                <Text style={styles.labelValue}>{item.village}</Text>
+              </View>
+            </View>
+          </View>
+          <Text style={styles.labelStyle}>New Product</Text>
+          <View style={styles.detailsContainer}>
+            <View style={styles.dataStyle}>
+              <View style={styles.subDataStyle}>
+                <Text style={styles.label}>Manufacturer: </Text>
+                <Text style={styles.labelValue}>Sonalika</Text>
+              </View>
+              <View style={styles.line} />
+            </View>
+            <View style={styles.dataStyle}>
+              <View style={styles.subDataStyle}>
+                <Text style={styles.label}>Modal: </Text>
+                <Text style={styles.labelValue}>{item.product}</Text>
+              </View>
+            </View>
+          </View>
+          {isShow && (
+            <>
+              <Text style={styles.labelStyle}>Old Product</Text>
+              <View
+                style={styles.detailsContainer}
+                key={(item, index) => `old_${index + 1}`}>
+                {oldProductDetails &&
+                  oldProductDetails.map((item, index) => {
+                    return (
+                      <>
+                        <View style={styles.dataStyle}>
+                          <View style={styles.subDataStyle}>
+                            <Text style={styles.label}>Manufacturer: </Text>
+                            <Text style={styles.labelValue}>
+                              {item.company}
+                            </Text>
+                          </View>
+                          <View style={styles.line} />
+                        </View>
+                        <View style={styles.dataStyle}>
+                          <View style={styles.subDataStyle}>
+                            <Text style={styles.label}>Modal: </Text>
+                            <Text style={styles.labelValue}>
+                              {item.modalName}
+                            </Text>
+                          </View>
+                          <View style={styles.line} />
+                        </View>
+                        <View style={styles.dataStyle}>
+                          <View style={styles.subDataStyle}>
+                            <Text style={styles.label}>Year: </Text>
+                            <Text style={styles.labelValue}>
+                              {item.manufactur_year}
+                            </Text>
+                          </View>
+                          <View style={styles.line} />
+                        </View>
+                        <View style={styles.dataStyle}>
+                          <View style={styles.subDataStyle}>
+                            <Text style={styles.label}>Dealer Price: </Text>
+                            <Text style={styles.labelValue}>
+                              {item.dealer_purcahse_price.toLocaleString(
+                                'en-IN',
+                                {
+                                  style: 'currency',
+                                  currency: 'INR',
+                                },
+                              )}
+                            </Text>
+                          </View>
+                        </View>
+                      </>
+                    );
+                  })}
+              </View>
+            </>
+          )}
+          <Text style={styles.labelStyle}>Remark Notes</Text>
+          <View style={styles.detailsContainer}>
+            <View style={styles.callIconStyle}>
+              <TouchableOpacity
+                style={styles.greenButton}
+                onPress={() => {
+                  makePhoneCall(item.phone_number);
+                }}>
+                <Image
+                  style={styles.iconImg}
+                  source={require('../../assets/telephone.png')}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.greenButton}
+                onPress={() => {
+                  sendWhatsAppMessage(item.phone_number);
+                }}>
+                <Image
+                  style={styles.iconImg}
+                  source={require('../../assets/whatsapp.png')}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.greenButton}
+                onPress={() => {
+                  sendMessage(item.phone_number);
+                }}>
+                <Image
+                  style={styles.iconImg}
+                  source={require('../../assets/chat.png')}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.greenButton}>
+                <Image
+                  style={styles.iconImg}
+                  source={require('../../assets/credit.png')}
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+          <View style={styles.buttonContainer}>
             <TouchableOpacity
+              style={styles.followUpButton}
               onPress={() => {
-                openEditEnquiry(item);
+                handleSheduleCall(item);
               }}>
-              <Image
-                style={styles.editImg}
-                source={require('../../assets/edit.png')}
-              />
+              <Text style={styles.followupButton}>FOLLOW UP</Text>
             </TouchableOpacity>
           </View>
-          <View style={styles.dataStyle}>
-            <View style={styles.subDataStyle}>
-              <Text style={styles.label}>Customer Name: </Text>
-              <Text style={styles.labelValue}>
-                {item.first_name} {item.last_name ? ' ' + item.last_name : ''}
-              </Text>
-            </View>
-            <View style={styles.line} />
-          </View>
-          <View style={styles.dataStyle}>
-            <View style={styles.subDataStyle}>
-              <Text style={styles.label}>Sales Person: </Text>
-              <Text style={styles.labelValue}>{item.sales_person}</Text>
-            </View>
-            <View style={styles.line} />
-          </View>
-          <View style={styles.dataStyle}>
-            <View style={styles.subDataStyle}>
-              <Text style={styles.label}>Enquiry Category: </Text>
-              <Text style={styles.labelValue}>{item.category_name}</Text>
-            </View>
-            <View style={styles.line} />
-          </View>
-          <View style={styles.dataStyle}>
-            <View style={styles.subDataStyle}>
-              <Text style={styles.label}>Phone Number: </Text>
-              <Text style={styles.labelValue}>{item.phone_number}</Text>
-            </View>
-            <View style={styles.line} />
-          </View>
-          <View style={styles.dataStyle}>
-            <View style={styles.subDataStyle}>
-              <Text style={styles.label}>WhatsApp Number: </Text>
-              <Text style={styles.labelValue}>{item.whatsapp_number}</Text>
-            </View>
-            <View style={styles.line} />
-          </View>
-          <View style={styles.dataStyle}>
-            <View style={styles.subDataStyle}>
-              <Text style={styles.label}>Delivery Date: </Text>
-              <Text style={styles.labelValue}>
-                {moment(item.delivery_date).format('LL')}
-              </Text>
-            </View>
-            <View style={styles.line} />
-          </View>
-          <View style={styles.dataStyle}>
-            <View style={styles.subDataStyle}>
-              <Text style={styles.label}>Taluka: </Text>
-              <Text style={styles.labelValue}>{item.taluka}</Text>
-            </View>
-            <View style={styles.line} />
-          </View>
-          <View style={styles.dataStyle}>
-            <View style={styles.subDataStyle}>
-              <Text style={styles.label}>Village: </Text>
-              <Text style={styles.labelValue}>{item.village}</Text>
-            </View>
-          </View>
         </View>
-        <Text style={styles.labelStyle}>New Product</Text>
-        <View style={styles.detailsContainer}>
-          <View style={styles.dataStyle}>
-            <View style={styles.subDataStyle}>
-              <Text style={styles.label}>Manufacturer: </Text>
-              <Text style={styles.labelValue}>Sonalika</Text>
-            </View>
-            <View style={styles.line} />
-          </View>
-          <View style={styles.dataStyle}>
-            <View style={styles.subDataStyle}>
-              <Text style={styles.label}>Modal: </Text>
-              <Text style={styles.labelValue}>{item.product}</Text>
-            </View>
-          </View>
-        </View>
-        <Text style={styles.labelStyle}>Old Product</Text>
-        <View style={styles.detailsContainer}>
-          <View style={styles.dataStyle}>
-            <View style={styles.subDataStyle}>
-              <Text style={styles.label}>Manufacturer: </Text>
-              <Text style={styles.labelValue}>Sonalika</Text>
-            </View>
-            <View style={styles.line} />
-          </View>
-          <View style={styles.dataStyle}>
-            <View style={styles.subDataStyle}>
-              <Text style={styles.label}>Modal: </Text>
-              <Text style={styles.labelValue}>{item.product}</Text>
-            </View>
-            <View style={styles.line} />
-          </View>
-        </View>
-      </View>
+      </ScrollView>
     </View>
   );
 };
@@ -317,5 +437,34 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 15,
   },
+  callIconStyle: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    marginVertical: 10,
+  },
+  iconImg: {
+    width: 40,
+    height: 40,
+  },
+  greenButton: {
+    backgroundColor: 'green',
+    padding: 5,
+    borderRadius: 8,
+  },
+  followUpButton: {
+    backgroundColor: '#3AA4F7',
+    borderRadius: 20,
+    padding: 10,
+    alignItems: 'center',
+  },
+  followupButton: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  buttonContainer : {
+    marginBottom: 15
+  }
 });
 export default AdditonalDetails;

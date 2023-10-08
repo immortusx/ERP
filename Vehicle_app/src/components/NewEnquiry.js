@@ -26,7 +26,7 @@ import ConfirmBox from './subCom/Confirm';
 import SimpleAlert from './subCom/SimpleAlert';
 import {setEnquiryType} from '../redux/slice/enquiryTypeSlice';
 
-const LastMonthEnquiry = () => {
+const NewEnquiry = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const [resultData, setResultData] = useState([]);
@@ -45,27 +45,20 @@ const LastMonthEnquiry = () => {
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    // setEnquiryType('All');
+    dispatch(setEnquiryType('Followed Enquiry'));
     // dispatch(getEnquiryData());
     setTimeout(() => {
       setRefreshing(false);
     }, 2000);
   }, []);
-  // useEffect(() => {
-  //   const getEnquiry = () => {
-  //     dispatch(getEnquiryData());
-  //   };
-  //   getEnquiry();
-  // }, []);
 
   // useEffect(() => {
   //   if (result) {
-  //     // console.log(result.result, 'tttttttttt');
+  //     console.log(result.result, 'tttttttttt');
   //     setResultData(result.result);
   //   }
   // }, [result]);
   useEffect(() => {
-    // dispatch(getEnquiryData());
     handleNewEnquiry();
   }, []);
   const handleSheduleCall = item => {
@@ -107,7 +100,7 @@ const LastMonthEnquiry = () => {
     setLoading(false);
   };
   const handleConfirm = () => {
-    dispatch(setEnquiryType('Today'));
+    dispatch(setEnquiryType('Followed Enquiry'));
     setIsConfiromation(false);
   };
   return (
@@ -409,4 +402,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LastMonthEnquiry;
+export default NewEnquiry;

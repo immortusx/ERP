@@ -468,4 +468,26 @@ router.get(
   }
 );
 
+//=================get Old Product Details=================//
+router.get(
+  "/get-old-product/:enquiryId",
+  tokenCheck,
+  async (req, res) => {
+    console.log(
+      ">>>>>>/get-old-product/:enquiryId",
+      req.params.enquiryId
+    );
+    const enquiryId = req.params.enquiryId;
+    const newSqlQuery = `CALL sp_get_old_products(${enquiryId})`;
+    db.query(newSqlQuery, (err, newSqlResult) => {
+      if (err) {
+        console.log({ isSuccess: false, result: err });
+        res.send({ isSuccess: false, result: "error" });
+      } else {
+        console.log({ isSuccess: true, result: newSqlQuery });
+        res.send({ isSuccess: true, result: newSqlResult[0] });
+      }
+    });
+  }
+);
 module.exports = router;
