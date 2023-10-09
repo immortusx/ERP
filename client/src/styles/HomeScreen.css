@@ -162,7 +162,10 @@ p {
     animation: var(--myFadeAnimation);
     border-radius:10px ;
 }
-
+.logoDiv {
+    cursor: pointer;
+  }
+  
 .asideNav .logoDiv img {
 
     height: 100%;
