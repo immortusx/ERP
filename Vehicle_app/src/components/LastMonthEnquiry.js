@@ -23,13 +23,14 @@ import ToastMessage from './subCom/ToastMessage';
 import TimeAgo from './subCom/TImeAgo';
 import ConfirmationDialog from './subCom/ConfirmationDialog';
 import ConfirmBox from './subCom/Confirm';
+import SimpleAlert from './subCom/SimpleAlert';
+import {setEnquiryType} from '../redux/slice/enquiryTypeSlice';
 
 const LastMonthEnquiry = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const [resultData, setResultData] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [enquiryType, setEnquiryType] = useState('All');
   const [todayEnquiryList, setTodayEnquiryList] = useState([]);
   const [newEnquiryList, setNewEnquiryList] = useState([]);
   const [lastMonthEnquiryList, setLastMonthEnquiryList] = useState([]);
@@ -43,27 +44,13 @@ const LastMonthEnquiry = () => {
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    setEnquiryType('All');
-    dispatch(getEnquiryData());
+    dispatch(setEnquiryType('Followed Enquiry'));
+    // dispatch(getEnquiryData());
     setTimeout(() => {
       setRefreshing(false);
     }, 2000);
   }, []);
   useEffect(() => {
-    const getEnquiry = () => {
-      dispatch(getEnquiryData());
-    };
-    getEnquiry();
-  }, []);
-
-  useEffect(() => {
-    if (result) {
-      // console.log(result.result, 'tttttttttt');
-      setResultData(result.result);
-    }
-  }, [result]);
-  useEffect(() => {
-    // dispatch(getEnquiryData());
     handleLastMonthEnquiry();
   }, []);
   const handleSheduleCall = item => {
@@ -98,21 +85,21 @@ const LastMonthEnquiry = () => {
     setLoading(true);
     console.log(config);
     await axios.get(url, config).then(response => {
-        // console.log(response.data.result, 'last Montht')
-        setNewEnquiryList(response.data.result);
+      setLastMonthEnquiryList(response.data.result);
+      setIsConfiromation(true);
     });
     setLoading(false);
   };
   const handleConfirm = () => {
-    setEnquiryType('All');
+    dispatch(setEnquiryType('Followed Enquiry'));
     setIsConfiromation(false);
   };
   return (
     <View style={styles.container}>
       <View>
-        {newEnquiryList && newEnquiryList.length > [] ? (
+        {lastMonthEnquiryList && lastMonthEnquiryList.length > 0 ? (
           <FlatList
-            data={newEnquiryList}
+            data={lastMonthEnquiryList}
             keyExtractor={(item, index) => `enquiry_${index}`}
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -200,18 +187,10 @@ const LastMonthEnquiry = () => {
             }}
           />
         ) : (
-          <ConfirmBox
-            visible={true}
-            message={
-              <>
-                <Text>New Enquiry Not found.</Text>
-                {'\n'}
-                <Text style={{fontWeight: 'bold', color: '#C0392B'}}>
-                  Please Check After Sometimes
-                </Text>
-              </>
-            }
-            onCancel={() => setIsConfiromation(false)}
+          <SimpleAlert
+            isVisible={isConfirmation}
+            text1={'Alert !'}
+            text2={'There is No Last Month Enquiry Available'}
             onConfirm={handleConfirm}
           />
         )}

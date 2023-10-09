@@ -22,6 +22,8 @@ const AdditonalDetails = ({route}) => {
   const navigation = useNavigation();
   const [callStartTime, setCallStartTime] = useState(null);
   const [callDuration, setCallDuration] = useState(null);
+  const [isShow, setIsShow] = useState(false);
+  const [oldProductDetails, setOldProductDetails] = useState([]);
   const [appState, setAppState] = useState(AppState.currentState);
   const {item} = route.params;
 
@@ -94,6 +96,32 @@ const AdditonalDetails = ({route}) => {
     };
   }, [appState, callStartTime]);
 
+  const getOldProductDetails = async enquiryId => {
+    console.log('Old Product....');
+    const url = `${API_URL}/api/get-old-product/${enquiryId}`;
+    console.log('get new enqiry', url);
+    const token = await AsyncStorage.getItem('rbacToken');
+    const config = {
+      headers: {
+        token: token ? token : '',
+      },
+    };
+    // setLoading(true);
+    console.log(config);
+    await axios.get(url, config).then(response => {
+      console.log(response.data.result, 'old product');
+      setOldProductDetails(response.data.result);
+    });
+    // setLoading(false);
+  };
+  useEffect(() => {
+    if (item) {
+      getOldProductDetails(item.enquiry_id);
+      if (item.oldOwned === 'Yes') {
+        setIsShow(true);
+      }
+    }
+  }, [item]);
   const uploadcallLog = async durationInSeconds => {
     const hours = Math.floor(durationInSeconds / 3600);
     const minutes = Math.floor((durationInSeconds % 3600) / 60);
@@ -149,7 +177,10 @@ const AdditonalDetails = ({route}) => {
     <View style={styles.mainContainer}>
       <ScrollView>
         <View style={styles.contentContainer}>
-          <View>
+          <View style={styles.headerStyle}>
+            <Text style={styles.labelStyle}>Details</Text>
+          </View>
+          <View style={styles.detailsContainer}>
             <View style={styles.imageContainer}>
               <TouchableOpacity
                 onPress={() => {
@@ -161,72 +192,141 @@ const AdditonalDetails = ({route}) => {
                 />
               </TouchableOpacity>
             </View>
-            <View style={styles.line} />
-            <View style={styles.contentStyles}>
-              <View style={styles.leftContainer}>
-                <Text style={styles.contactInfo}>Name</Text>
-                <Text style={styles.contactInfo}>Category</Text>
-                <Text style={styles.contactInfo}>Phone</Text>
-                <Text style={styles.contactInfo}>whatsApp</Text>
-                <Text style={styles.contactInfo}>Email</Text>
-                <Text style={styles.contactInfo}>Product</Text>
-                <Text style={styles.contactInfo}>Enquiry Date</Text>
-                <Text style={styles.contactInfo}>Delivery Date</Text>
-                <Text style={styles.contactInfo}>Enquiry Source</Text>
-                <Text style={styles.contactInfo}>Sales Person</Text>
-                <Text style={styles.contactInfo}>District</Text>
-                <Text style={styles.contactInfo}>Taluka</Text>
-                <Text style={styles.contactInfo}>Village</Text>
+            <View style={styles.dataStyle}>
+              <View style={styles.subDataStyle}>
+                <Text style={styles.label}>Customer Name: </Text>
+                <Text style={styles.labelValue}>
+                  {item.first_name} {item.last_name ? ' ' + item.last_name : ''}
+                </Text>
               </View>
-              <View style={styles.rightContainer}>
-                <Text style={[styles.contactInfo, styles.contactStyle]}>
-                {item.first_name} {item.last_name === 'null' ? '': item.last_name}
+              <View style={styles.line} />
+            </View>
+            <View style={styles.dataStyle}>
+              <View style={styles.subDataStyle}>
+                <Text style={styles.label}>Sales Person: </Text>
+                <Text style={styles.labelValue}>{item.sales_person}</Text>
+              </View>
+              <View style={styles.line} />
+            </View>
+            <View style={styles.dataStyle}>
+              <View style={styles.subDataStyle}>
+                <Text style={styles.label}>Enquiry Category: </Text>
+                <Text style={styles.labelValue}>{item.category_name}</Text>
+              </View>
+              <View style={styles.line} />
+            </View>
+            <View style={styles.dataStyle}>
+              <View style={styles.subDataStyle}>
+                <Text style={styles.label}>Phone Number: </Text>
+                <Text style={styles.labelValue}>{item.phone_number}</Text>
+              </View>
+              <View style={styles.line} />
+            </View>
+            <View style={styles.dataStyle}>
+              <View style={styles.subDataStyle}>
+                <Text style={styles.label}>WhatsApp Number: </Text>
+                <Text style={styles.labelValue}>{item.whatsapp_number}</Text>
+              </View>
+              <View style={styles.line} />
+            </View>
+            <View style={styles.dataStyle}>
+              <View style={styles.subDataStyle}>
+                <Text style={styles.label}>Delivery Date: </Text>
+                <Text style={styles.labelValue}>
+                  {moment(item.delivery_date).format('Do MMMM, YYYY')}
                 </Text>
-                <Text style={[styles.contactInfo, styles.contactStyle]}>-</Text>
-                <Text style={[styles.contactInfo, styles.contactStyle]}>
-                  {item.phone_number}
-                </Text>
-                <Text style={[styles.contactInfo, styles.contactStyle]}>
-                  {item.whatsapp_number ? item.whatsapp_number : '-'}
-                </Text>
-                <Text style={[styles.contactInfo, styles.contactStyle]}>
-                  {item.email ? item.email : '-'}
-                </Text>
-                <Text style={[styles.contactInfo, styles.contactStyle]}>
-                  {item.product ? item.product : '-'}
-                </Text>
-                <Text style={[styles.contactInfo, styles.contactStyle]}>
-                  {moment(item.date).format('LL')}
-                </Text>
-                <Text style={[styles.contactInfo, styles.contactStyle]}>
-                  {moment(item.delivery_date).format('LL')}
-                </Text>
-                <Text
-                  style={[
-                    styles.contactInfo,
-                    styles.contactStyle,
-                    {fontSize: 15},
-                  ]}>
-                  {item.enquiry_source ? item.enquiry_source : '-'}
-                </Text>
-                <Text style={[styles.contactInfo, styles.contactStyle]}>
-                  {item.sales_person}
-                </Text>
-                <Text style={[styles.contactInfo, styles.contactStyle]}>
-                  {item.district ? item.district : '-'}
-                </Text>
-                <Text style={[styles.contactInfo, styles.contactStyle]}>
-                  {item.taluka ? item.taluka : '-'}
-                </Text>
-                <Text style={[styles.contactInfo, styles.contactStyle]}>
-                  {item.village ? item.village : '-'}
-                </Text>
+              </View>
+              <View style={styles.line} />
+            </View>
+            <View style={styles.dataStyle}>
+              <View style={styles.subDataStyle}>
+                <Text style={styles.label}>Taluka: </Text>
+                <Text style={styles.labelValue}>{item.taluka}</Text>
+              </View>
+              <View style={styles.line} />
+            </View>
+            <View style={styles.dataStyle}>
+              <View style={styles.subDataStyle}>
+                <Text style={styles.label}>Village: </Text>
+                <Text style={styles.labelValue}>{item.village}</Text>
               </View>
             </View>
           </View>
-          <View style={styles.recentBox}>
-            <Text style={styles.detailsText}>Recent Notes *</Text>
-            <View style={styles.line} />
+          <Text style={styles.labelStyle}>New Product</Text>
+          <View style={styles.detailsContainer}>
+            <View style={styles.dataStyle}>
+              <View style={styles.subDataStyle}>
+                <Text style={styles.label}>Manufacturer: </Text>
+                <Text style={styles.labelValue}>Sonalika</Text>
+              </View>
+              <View style={styles.line} />
+            </View>
+            <View style={styles.dataStyle}>
+              <View style={styles.subDataStyle}>
+                <Text style={styles.label}>Modal: </Text>
+                <Text style={styles.labelValue}>{item.product}</Text>
+              </View>
+            </View>
+          </View>
+          {isShow && (
+            <>
+              <Text style={styles.labelStyle}>Old Product</Text>
+              <View
+                style={styles.detailsContainer}
+                key={(item, index) => `old_${index + 1}`}>
+                {oldProductDetails &&
+                  oldProductDetails.map((item, index) => {
+                    return (
+                      <>
+                        <View style={styles.dataStyle}>
+                          <View style={styles.subDataStyle}>
+                            <Text style={styles.label}>Manufacturer: </Text>
+                            <Text style={styles.labelValue}>
+                              {item.company}
+                            </Text>
+                          </View>
+                          <View style={styles.line} />
+                        </View>
+                        <View style={styles.dataStyle}>
+                          <View style={styles.subDataStyle}>
+                            <Text style={styles.label}>Modal: </Text>
+                            <Text style={styles.labelValue}>
+                              {item.modalName}
+                            </Text>
+                          </View>
+                          <View style={styles.line} />
+                        </View>
+                        <View style={styles.dataStyle}>
+                          <View style={styles.subDataStyle}>
+                            <Text style={styles.label}>Year: </Text>
+                            <Text style={styles.labelValue}>
+                              {item.manufactur_year}
+                            </Text>
+                          </View>
+                          <View style={styles.line} />
+                        </View>
+                        <View style={styles.dataStyle}>
+                          <View style={styles.subDataStyle}>
+                            <Text style={styles.label}>Dealer Price: </Text>
+                            <Text style={styles.labelValue}>
+                              {item.dealer_purcahse_price.toLocaleString(
+                                'en-IN',
+                                {
+                                  style: 'currency',
+                                  currency: 'INR',
+                                },
+                              )}
+                            </Text>
+                          </View>
+                        </View>
+                      </>
+                    );
+                  })}
+              </View>
+            </>
+          )}
+          <Text style={styles.labelStyle}>Remark Notes</Text>
+          <View style={styles.detailsContainer}>
             <View style={styles.callIconStyle}>
               <TouchableOpacity
                 style={styles.greenButton}
@@ -266,7 +366,7 @@ const AdditonalDetails = ({route}) => {
               </TouchableOpacity>
             </View>
           </View>
-          <View>
+          <View style={styles.buttonContainer}>
             <TouchableOpacity
               style={styles.followUpButton}
               onPress={() => {
@@ -284,68 +384,73 @@ const AdditonalDetails = ({route}) => {
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    // backgroundColor: '#A29BC5',
+    backgroundColor: '#f6f7f9',
   },
   contentContainer: {
+    marginHorizontal: 15,
+  },
+  headerStyle: {
+    marginTop: 5,
+    marginVertical: 2,
+  },
+  labelStyle: {
+    color: 'grey',
+    fontSize: 18,
+  },
+  detailsContainer: {
     backgroundColor: 'white',
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
-    padding: 16,
-    marginBottom: 16,
-    elevation: 4,
+    paddingVertical: 5,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 4},
+    shadowOpacity: 0.3,
+    shadowRadius: 2,
+    elevation: 0.5,
+    marginBottom: 15,
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: 'black',
+  },
+  labelValue: {
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   line: {
-    flex: 1,
-    height: 1,
-    backgroundColor: '#2980B9',
-  },
-  contentStyles: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginHorizontal: 10,
-    marginVertical: 8,
-  },
-  contactInfo: {
-    color: 'grey',
-    fontWeight: '400',
-  },
-  detailsText: {
-    color: 'black',
-    marginBottom: 5,
-  },
-  leftContainer: {
-    marginRight: 10,
-  },
-  rightContainer: {
-    flex: 1,
-    alignItems: 'flex-start',
-  },
-  contactStyle: {
-    color: 'black',
-  },
-  iconImg: {
-    width: 40,
-    height: 40,
-  },
-  callIconStyle: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    marginVertical: 20,
+    backgroundColor: '#f6f7f9',
+    height: 2,
+    alignSelf: 'stretch',
+    marginVertical: 9,
   },
   imageContainer: {
     marginLeft: 'auto',
-    marginBottom: 6,
+    marginHorizontal: 8,
+    marginBottom: 5,
   },
   editImg: {
     width: 22,
     height: 22,
   },
+  subDataStyle: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 15,
+  },
+  callIconStyle: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    marginVertical: 10,
+  },
+  iconImg: {
+    width: 40,
+    height: 40,
+  },
   greenButton: {
     backgroundColor: 'green',
     padding: 5,
     borderRadius: 8,
-    marginTop: 10,
   },
   followUpButton: {
     backgroundColor: '#3AA4F7',
@@ -358,8 +463,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
-  recentBox: {
-    marginVertical: 110,
-  },
+  buttonContainer : {
+    marginBottom: 15
+  }
 });
 export default AdditonalDetails;

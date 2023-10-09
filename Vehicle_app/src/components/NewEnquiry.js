@@ -23,18 +23,20 @@ import ToastMessage from './subCom/ToastMessage';
 import TimeAgo from './subCom/TImeAgo';
 import ConfirmationDialog from './subCom/ConfirmationDialog';
 import ConfirmBox from './subCom/Confirm';
+import SimpleAlert from './subCom/SimpleAlert';
+import {setEnquiryType} from '../redux/slice/enquiryTypeSlice';
 
 const NewEnquiry = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const [resultData, setResultData] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [enquiryType, setEnquiryType] = useState('All');
   const [todayEnquiryList, setTodayEnquiryList] = useState([]);
   const [newEnquiryList, setNewEnquiryList] = useState([]);
   const [lastMonthEnquiryList, setLastMonthEnquiryList] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [isConfirmation, setIsConfiromation] = useState(false);
+  const enquiryType = useSelector(state => state.enquiryType.enquiryType);
   const profileData = useSelector(
     state => state.getUserProfileSlice.profile.currentUserData.result,
   );
@@ -43,27 +45,20 @@ const NewEnquiry = () => {
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    setEnquiryType('All');
-    dispatch(getEnquiryData());
+    dispatch(setEnquiryType('Followed Enquiry'));
+    // dispatch(getEnquiryData());
     setTimeout(() => {
       setRefreshing(false);
     }, 2000);
   }, []);
-  useEffect(() => {
-    const getEnquiry = () => {
-      dispatch(getEnquiryData());
-    };
-    getEnquiry();
-  }, []);
 
+  // useEffect(() => {
+  //   if (result) {
+  //     console.log(result.result, 'tttttttttt');
+  //     setResultData(result.result);
+  //   }
+  // }, [result]);
   useEffect(() => {
-    if (result) {
-      // console.log(result.result, 'tttttttttt');
-      setResultData(result.result);
-    }
-  }, [result]);
-  useEffect(() => {
-    // dispatch(getEnquiryData());
     handleNewEnquiry();
   }, []);
   const handleSheduleCall = item => {
@@ -82,9 +77,9 @@ const NewEnquiry = () => {
   if (loading) {
     return <CustomLoadingSpinner />;
   }
-  if (isFetching) {
-    return <CustomLoadingSpinner />;
-  }
+  // if (isFetching) {
+  //   return <CustomLoadingSpinner />;
+  // }
   const handleNewEnquiry = async () => {
     console.log('New enquiries....');
     const url = `${API_URL}/api/enquiry/get-new-enquiries-list`;
@@ -98,19 +93,20 @@ const NewEnquiry = () => {
     setLoading(true);
     console.log(config);
     await axios.get(url, config).then(response => {
-      // console.log(response.data.result, 'enquiry today list');
+      // console.log(response.data.result, 'enquiry new list');
       setNewEnquiryList(response.data.result);
+      setIsConfiromation(true)
     });
     setLoading(false);
   };
   const handleConfirm = () => {
-    setEnquiryType('All');
+    dispatch(setEnquiryType('Followed Enquiry'));
     setIsConfiromation(false);
   };
   return (
     <View style={styles.container}>
       <View>
-        {newEnquiryList && newEnquiryList.length > [] ? (
+        {newEnquiryList && newEnquiryList.length > 0 ? (
           <FlatList
             data={newEnquiryList}
             keyExtractor={(item, index) => `enquiry_${index}`}
@@ -162,15 +158,13 @@ const NewEnquiry = () => {
                             </Text>
                           </TouchableOpacity>
                           <Text style={styles.label}>
-                            {item.product
-                              ? item.product
-                              : 'Sonalika Sikander DLX'}
+                            {item.product ? item.product : '-'}
                           </Text>
                           <Text style={styles.label}>
                             {item.sales_person ? item.sales_person : '-'}
                           </Text>
                           <Text style={styles.label}>
-                            {item.village ? item.village : 'Dhrangadhra'}
+                            {item.village ? item.village : '-'}
                           </Text>
                         </View>
                       </View>
@@ -200,18 +194,10 @@ const NewEnquiry = () => {
             }}
           />
         ) : (
-          <ConfirmBox
-            visible={true}
-            message={
-              <>
-                <Text>New Enquiry Not found.</Text>
-                {'\n'}
-                <Text style={{fontWeight: 'bold', color: '#C0392B'}}>
-                  Please Check After Sometimes
-                </Text>
-              </>
-            }
-            onCancel={() => setIsConfiromation(false)}
+          <SimpleAlert
+            isVisible={isConfirmation}
+            text1={'Alert !'}
+            text2={'Currently, There is New Enquiry Not Available'}
             onConfirm={handleConfirm}
           />
         )}

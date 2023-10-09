@@ -26,13 +26,13 @@ const Login = ({navigation}) => {
     state => state.getUserProfileSlice.profile.currentUserData.result,
   );
   const [loginData, setLoginData] = useState({
-    email: '',
+    username: '',
     password: '',
   });
 
   const onChangeHandler = (value, field) => {
-    if (field === 'email') {
-      setLoginData(registerData => ({...loginData, email: value}));
+    if (field === 'username') {
+      setLoginData(registerData => ({...loginData, username: value}));
     } else if (field === 'password') {
       setLoginData(registerData => ({...loginData, password: value}));
     }
@@ -61,7 +61,7 @@ const Login = ({navigation}) => {
           console.log(token, 'token_--__--he');
           navigation.navigate('Main');
           setLoginData({
-            email: '',
+            username: '',
             password: '',
           });
         });
@@ -84,14 +84,14 @@ const Login = ({navigation}) => {
 
   useEffect(()=> {
     if(profileData){
-      const email = profileData?.email ?? '';
-      setLoginData((prevData) => ({ ...prevData, email }));
+      const username = profileData?.email ?? '';
+      setLoginData((prevData) => ({ ...prevData, username }));
       const password = 'admin';
       setLoginData((prevData) => ({ ...prevData, password }));
     }
   },[profileData])
   const handleLogin = () => {
-    if (loginData.email.length > 0 && loginData.password.length > 0) {
+    if (loginData.username.length > 0 && loginData.password.length > 0) {
       dispatch(getLoginUser(loginData));
     } else {
       // dispatch(setShowMessage("Please fill all the field"));
@@ -121,12 +121,10 @@ const Login = ({navigation}) => {
             /> */}
             <TextInput
               style={styles.input}
-              placeholder="Email"
+              placeholder="Enter Email/Mobile Number"
               autoCapitalize="none"
-              keyboardType="email-address"
-              textContentType="emailAddress"
-              value={loginData.email}
-              onChangeText={value => onChangeHandler(value, 'email')}
+              value={loginData.username}
+              onChangeText={value => onChangeHandler(value, 'username')}
             />
           </View>
           <View style={styles.inputView}>
@@ -138,7 +136,7 @@ const Login = ({navigation}) => {
             /> */}
             <TextInput
               style={styles.input}
-              placeholder="Password"
+              placeholder="Enter Password"
               secureTextEntry={true}
               autoCapitalize="none"
               value={loginData.password}

@@ -27,42 +27,29 @@ import EnquiryContainer from './EnquiryContainer';
 import NewEnquiry from './NewEnquiry';
 import LastMonthEnquiry from './LastMonthEnquiry';
 import TodayEnquiry from './TodayEnquiry';
+import {setEnquiryType} from '../redux/slice/enquiryTypeSlice';
+import FollowedEnquiry from './FollowedEnquiry';
 
 const AddMore = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const [resultData, setResultData] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [enquiryType, setEnquiryType] = useState('All');
   const [todayEnquiryList, setTodayEnquiryList] = useState([]);
   const [newEnquiryList, setNewEnquiryList] = useState([]);
   const [lastMonthEnquiryList, setLastMonthEnquiryList] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [isConfirmation, setIsConfiromation] = useState(false);
-
-  useEffect(() => {
-    // dispatch(getEnquiryData());
-    setEnquiryType('New');
-  }, []);
-
-  // if (loading) {
-  //   return <CustomLoadingSpinner />;
-  // }
-  // if (isFetching) {
-  //   return <CustomLoadingSpinner />;
-  // }
+  const enquiryType = useSelector(state => state.enquiryType.enquiryType);
 
   const handleTodayEnquiry = () => {
-    console.log('Today');
-    setEnquiryType('Today');
+    dispatch(setEnquiryType('Today'));
   };
   const handleNewEnquiry = () => {
-    console.log('New');
-    setEnquiryType('New');
+    dispatch(setEnquiryType('New'));
   };
   const handleLastMonthEnquiry = () => {
-    console.log('Last Month');
-    setEnquiryType('Last Month');
+    dispatch(setEnquiryType('Last Month'));
   };
   return (
     <View style={styles.container}>
@@ -107,6 +94,7 @@ const AddMore = () => {
       {enquiryType === 'New' && <NewEnquiry />}
       {enquiryType === 'Today' && <TodayEnquiry />}
       {enquiryType === 'Last Month' && <LastMonthEnquiry />}
+      {enquiryType === 'Followed Enquiry' && <FollowedEnquiry />}
     </View>
   );
 };
@@ -121,12 +109,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingHorizontal: 12,
-    marginVertical: 1,
     marginBottom: 4,
-    paddingBottom: 0.5,
+    paddingBottom: 0.6,
   },
   buttonStyle: {
-    paddingVertical: 10,
+    paddingVertical: 8,
     paddingHorizontal: 15,
     marginHorizontal: 2,
   },

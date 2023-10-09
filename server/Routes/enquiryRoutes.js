@@ -1736,7 +1736,7 @@ router.get("/get-enquiries-by-salesperson", tokenCheck, async (req, res) => {
   let branchId = req.myData.branchId;
   let isSuperAdmin = req.myData.isSuperAdmin;
   let userId = req.myData.userId;
-  const urlNew = `CALL sp_get_enquiries_list_by_salesperson(${branchId},${isSuperAdmin}, ${userId})`;
+  const urlNew = `CALL sp_get_followed_enquiry(${branchId},${isSuperAdmin}, ${userId})`;
   await db.query(urlNew, async (err, result) => {
     if (err) {
       console.log({ isSuccess: false, result: err });
@@ -1798,7 +1798,7 @@ router.get("/get-current-date-enquiries", tokenCheck, async (req, res) => {
     let branchId = req.myData.branchId;
     let isSuperAdmin = req.myData.isSuperAdmin;
     let userId = req.myData.userId;
-    const urlNew = `CALL sp_get_todays_enquiry_list()`;
+    const urlNew = `CALL sp_get_todays_enquiry_list(${branchId}, ${isSuperAdmin}, ${userId})`;
     await db.query(urlNew, async (err, result) => {
       if (err) {
         console.log({ isSuccess: false, result: err });
@@ -1820,7 +1820,7 @@ router.get("/get-last-month-enquiries", tokenCheck, async (req, res) => {
     let branchId = req.myData.branchId;
     let isSuperAdmin = req.myData.isSuperAdmin;
     let userId = req.myData.userId;
-    const urlNew = `CALL sp_get_last_month_enquiry_list()`;
+    const urlNew = `CALL sp_get_last_month_enquiry_list(${branchId}, ${isSuperAdmin}, ${userId})`;
     await db.query(urlNew, async (err, result) => {
       if (err) {
         console.log({ isSuccess: false, result: err });
@@ -1837,12 +1837,11 @@ router.get("/get-last-month-enquiries", tokenCheck, async (req, res) => {
 
 //========================Get New (Not Followed) Enquiry List======================//
 router.get("/get-new-enquiries-list", tokenCheck, async (req, res) => {
-  try {
     console.log(">>>>>>>>>/get-new-enquiries-list", req.myData);
     let branchId = req.myData.branchId;
     let isSuperAdmin = req.myData.isSuperAdmin;
     let userId = req.myData.userId;
-    const urlNew = `CALL sp_get_new_enquiry_list()`;
+    const urlNew = `CALL sp_get_new_enquiry_list(${branchId}, ${isSuperAdmin}, ${userId})`;
     await db.query(urlNew, async (err, result) => {
       if (err) {
         console.log({ isSuccess: false, result: err });
@@ -1852,9 +1851,6 @@ router.get("/get-new-enquiries-list", tokenCheck, async (req, res) => {
         res.send({ isSuccess: "success", result: result[0] });
       }
     });
-  } catch (err) {
-    console.log(err);
-  }
 });
 
 //====================get total enquiry-booking==================
