@@ -63,7 +63,14 @@ const AddMore = () => {
           onPress={() => {
             handleNewEnquiry();
           }}>
-          <Text style={[styles.buttonText, {paddingHorizontal: 25}]}>NEW</Text>
+          <Text
+            style={[
+              styles.buttonText,
+              {paddingHorizontal: 25},
+              enquiryType === 'New' && styles.newActiveText,
+            ]}>
+            NEW
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[
@@ -74,7 +81,12 @@ const AddMore = () => {
           onPress={() => {
             handleTodayEnquiry();
           }}>
-          <Text style={[styles.buttonText, {paddingHorizontal: 15}]}>
+          <Text
+            style={[
+              styles.buttonText,
+              {paddingHorizontal: 15},
+              enquiryType === 'Today' && styles.todayActiveText,
+            ]}>
             TODAY
           </Text>
         </TouchableOpacity>
@@ -88,7 +100,13 @@ const AddMore = () => {
           onPress={() => {
             handleLastMonthEnquiry();
           }}>
-          <Text style={[styles.buttonText]}>LAST MONTH</Text>
+          <Text
+            style={[
+              styles.buttonText,
+              enquiryType === 'Last Month' && styles.lastActiveText,
+            ]}>
+            LAST MONTH
+          </Text>
         </TouchableOpacity>
       </View>
       {enquiryType === 'New' && <NewEnquiry />}
@@ -110,7 +128,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 12,
     marginBottom: 4,
-    paddingBottom: 0.6,
   },
   buttonStyle: {
     paddingVertical: 8,
@@ -123,16 +140,28 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   lastMonthActive: {
-    borderBottomWidth: 4,
-    borderColor: 'white',
+    // borderBottomWidth: 4,
+    // borderColor: 'white',
+    backgroundColor: 'white',
   },
   newActive: {
-    borderBottomWidth: 4,
-    borderColor: 'white',
+    // borderBottomWidth: 4,
+    // borderColor: 'white',
+    backgroundColor: 'white',
   },
   todayActive: {
-    borderBottomWidth: 4,
-    borderColor: 'white',
+    // borderBottomWidth: 4,
+    // borderColor: 'white',
+    backgroundColor: 'white',
+  },
+  newActiveText: {
+    color: '#2471A2',
+  },
+  todayActiveText: {
+    color: '#2471A2',
+  },
+  lastActiveText: {
+    color: '#2471A2',
   },
 });
 
