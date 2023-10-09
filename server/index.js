@@ -61,14 +61,14 @@ app.get("/api", (req, res) => {
 
 app.get('/api/download', (req, res) => {
   const fileName = `Vehicle-ERP-${moment().format("YYYYMMDD")}-${process.env.BUILD_TAG}-${process.env.BUILD_ID}.apk`;
-  const filePath = path.join(__dirname, 'server', 'app-release.apk'); // Assuming your server folder is in the same directory as your script
+  const filePath = path.join(__dirname, '.', 'app-release.apk'); // Assuming your server folder is in the same directory as your script
 
   // Check if the file exists
   fs.access(filePath, fs.constants.F_OK, (err) => {
     if (err) {
-      // File does not exist, send plain text response with error
+      // File does not exist, send JSON response with error status
       console.error('Application not found');
-      res.status(404).send('Application not found');
+      res.status(404).json({ error: 'Application not found' });
       return;
     }
 
