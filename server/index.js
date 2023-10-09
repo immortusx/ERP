@@ -60,20 +60,32 @@ app.get("/api", (req, res) => {
 });
 
 app.get('/api/download', (req, res) => {
-  const filePath = "/usr/src/app/server/app-release.apk";
   const fileName = `Vehicle-ERP-${moment().format("YYYYMMDD")}-${process.env.BUILD_TAG}-${process.env.BUILD_ID}.apk`;
-  res.setHeader('Content-Type', 'application/vnd.android.package-archive');
-  res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
+  const filePath = path.join(__dirname, 'server', 'app-release.apk'); // Assuming your server folder is in the same directory as your script
 
-
-  res.sendFile(filePath, (err) => {
+  // Check if the file exists
+  fs.access(filePath, fs.constants.F_OK, (err) => {
     if (err) {
-      // Handle any errors here, like 404 Not Found or 500 Internal Server Error.
-      console.error(err);
-      res.status(500).send('Internal Server Error');
+      // File does not exist, send plain text response with error
+      console.error('Application not found');
+      res.status(404).send('Application not found');
+      return;
     }
+
+    // File exists, set headers and send the file
+    res.setHeader('Content-Type', 'application/vnd.android.package-archive');
+    res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
+
+    res.sendFile(filePath, (err) => {
+      if (err) {
+        // Handle any errors here, like 500 Internal Server Error.
+        console.error(err);
+        res.status(500).send('Internal Server Error');
+      }
+    });
   });
 });
+
 
 app.listen(process.env.ENV_PORT, (req, res) => {
   console.log({
