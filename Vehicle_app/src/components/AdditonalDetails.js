@@ -10,6 +10,7 @@ import {
   ScrollView,
   AppState,
   Alert,
+  FlatList,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
@@ -23,7 +24,9 @@ const AdditonalDetails = ({route}) => {
   const [callStartTime, setCallStartTime] = useState(null);
   const [callDuration, setCallDuration] = useState(null);
   const [isShow, setIsShow] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [oldProductDetails, setOldProductDetails] = useState([]);
+  const [scheduleDetails, setScheduleDetails] = useState([]);
   const [appState, setAppState] = useState(AppState.currentState);
   const {item} = route.params;
 
@@ -96,6 +99,25 @@ const AdditonalDetails = ({route}) => {
     };
   }, [appState, callStartTime]);
 
+  const getFollowUpDetils = async customerId => {
+    const url = `${API_URL}/api/enquiry/get-follow-up/${customerId}`;
+    console.log('get follow up', url);
+    const token = await AsyncStorage.getItem('rbacToken');
+    const config = {
+      headers: {
+        token: token ? token : '',
+      },
+    };
+    // setLoading(true);
+    console.log(config);
+    await axios.get(url, config).then(response => {
+      if (response) {
+        console.log(response.data, 'get.......');
+        setScheduleDetails(response.data.result);
+      }
+    });
+    // setLoading(false);
+  };
   const getOldProductDetails = async enquiryId => {
     console.log('Old Product....');
     const url = `${API_URL}/api/get-old-product/${enquiryId}`;
@@ -117,6 +139,7 @@ const AdditonalDetails = ({route}) => {
   useEffect(() => {
     if (item) {
       getOldProductDetails(item.enquiry_id);
+      getFollowUpDetils(item.id);
       if (item.oldOwned === 'Yes') {
         setIsShow(true);
       }
@@ -329,19 +352,27 @@ const AdditonalDetails = ({route}) => {
             )}
             <Text style={styles.labelStyle}>Next Follow Up Details</Text>
             <View style={styles.detailsContainer}>
-              <View style={styles.dataStyle}>
-                <View style={styles.subDataStyle}>
-                  <Text style={styles.label}>Manufacturer: </Text>
-                  <Text style={styles.labelValue}>Sonalika</Text>
-                </View>
-                <View style={styles.line} />
-              </View>
-              <View style={styles.dataStyle}>
-                <View style={styles.subDataStyle}>
-                  <Text style={styles.label}>Modal: </Text>
-                  <Text style={styles.labelValue}>{item.product}</Text>
-                </View>
-              </View>
+              {loading ? (
+                <CustomLoadingSpinner />
+              ) : scheduleDetails && scheduleDetails.length === 0 ? (
+                <Text style={styles.noScheduleText}>No Call Schedule</Text>
+              ) : (
+                scheduleDetails &&
+                scheduleDetails.map(item => {
+                  return (
+                    <View style={styles.callBox}>
+                      <View style={styles.leftContainer}>
+                        <Text style={{color: '#229954'}}>
+                          {item.last_discussion}
+                        </Text>
+                        <Text style={{color: '#5DADE2'}}>
+                          {moment(item.next_followup_date).format('LL')}
+                        </Text>
+                      </View>
+                    </View>
+                  );
+                })
+              )}
             </View>
           </View>
         </View>
@@ -488,7 +519,47 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   staticContainer: {
-    marginHorizontal: 15
-  }
+    marginHorizontal: 15,
+  },
+  noScheduleText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: 'red',
+    textAlign: 'center',
+    marginTop: 20,
+  },
+  callBox: {
+    width: '95%',
+    padding: 10,
+    backgroundColor: 'white',
+    marginHorizontal: 10,
+    marginVertical: 5,
+    shadowColor: '#F39C12 ',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 1,
+    borderRadius: 5,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    borderWidth: 0.2,
+    borderColor: '#2471A2'
+  },
+  leftContainer: {
+    maxWidth: '80%',
+    marginRight: 16,
+  },
+  rightContainer: {
+    marginLeft: 16,
+  },
+  personImg: {
+    width: 40,
+    height: 40,
+  },
 });
 export default AdditonalDetails;
