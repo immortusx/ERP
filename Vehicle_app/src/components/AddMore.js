@@ -29,6 +29,7 @@ import LastMonthEnquiry from './LastMonthEnquiry';
 import TodayEnquiry from './TodayEnquiry';
 import {setEnquiryType} from '../redux/slice/enquiryTypeSlice';
 import FollowedEnquiry from './FollowedEnquiry';
+import DueEnquiry from './DueEnquiry';
 
 const AddMore = () => {
   const navigation = useNavigation();
@@ -51,6 +52,9 @@ const AddMore = () => {
   const handleLastMonthEnquiry = () => {
     dispatch(setEnquiryType('Last Month'));
   };
+  const handleDueEnquiry = () => {
+    dispatch(setEnquiryType('Due'));
+  };
   return (
     <View style={styles.container}>
       <View style={styles.wrapper}>
@@ -66,7 +70,6 @@ const AddMore = () => {
           <Text
             style={[
               styles.buttonText,
-              {paddingHorizontal: 25},
               enquiryType === 'New' && styles.newActiveText,
             ]}>
             NEW
@@ -84,7 +87,6 @@ const AddMore = () => {
           <Text
             style={[
               styles.buttonText,
-              {paddingHorizontal: 15},
               enquiryType === 'Today' && styles.todayActiveText,
             ]}>
             TODAY
@@ -108,11 +110,29 @@ const AddMore = () => {
             LAST MONTH
           </Text>
         </TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            styles.buttonStyle,
+            styles.monthButton,
+            enquiryType === 'Due' && styles.lastMonthActive,
+          ]}
+          onPress={() => {
+            handleDueEnquiry();
+          }}>
+          <Text
+            style={[
+              styles.buttonText,
+              enquiryType === 'Due' && styles.lastActiveText,
+            ]}>
+            PENDING
+          </Text>
+        </TouchableOpacity>
       </View>
       {enquiryType === 'New' && <NewEnquiry />}
       {enquiryType === 'Today' && <TodayEnquiry />}
       {enquiryType === 'Last Month' && <LastMonthEnquiry />}
       {enquiryType === 'Followed Enquiry' && <FollowedEnquiry />}
+      {enquiryType === 'Due' && <DueEnquiry />}
     </View>
   );
 };
@@ -126,13 +146,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#2471A2',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingHorizontal: 12,
     marginBottom: 4,
   },
   buttonStyle: {
     paddingVertical: 8,
     paddingHorizontal: 15,
-    marginHorizontal: 2,
+    marginHorizontal: 0.2,
   },
   buttonText: {
     color: 'white',

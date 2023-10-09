@@ -177,206 +177,227 @@ const AdditonalDetails = ({route}) => {
     <View style={styles.mainContainer}>
       <ScrollView>
         <View style={styles.contentContainer}>
-          <View style={styles.headerStyle}>
-            <Text style={styles.labelStyle}>Details</Text>
-          </View>
-          <View style={styles.detailsContainer}>
-            <View style={styles.imageContainer}>
-              <TouchableOpacity
-                onPress={() => {
-                  openEditEnquiry(item);
-                }}>
-                <Image
-                  style={styles.editImg}
-                  source={require('../../assets/edit.png')}
-                />
-              </TouchableOpacity>
+          <View>
+            <View style={styles.headerStyle}>
+              <Text style={styles.labelStyle}>Details</Text>
             </View>
-            <View style={styles.dataStyle}>
-              <View style={styles.subDataStyle}>
-                <Text style={styles.label}>Customer Name: </Text>
-                <Text style={styles.labelValue}>
-                  {item.first_name} {item.last_name ? ' ' + item.last_name : ''}
-                </Text>
+            <View style={styles.detailsContainer}>
+              <View style={styles.imageContainer}>
+                <TouchableOpacity
+                  onPress={() => {
+                    openEditEnquiry(item);
+                  }}>
+                  <Image
+                    style={styles.editImg}
+                    source={require('../../assets/edit.png')}
+                  />
+                </TouchableOpacity>
               </View>
-              <View style={styles.line} />
-            </View>
-            <View style={styles.dataStyle}>
-              <View style={styles.subDataStyle}>
-                <Text style={styles.label}>Sales Person: </Text>
-                <Text style={styles.labelValue}>{item.sales_person}</Text>
+              <View style={styles.dataStyle}>
+                <View style={styles.subDataStyle}>
+                  <Text style={styles.label}>Customer Name: </Text>
+                  <Text style={styles.labelValue}>
+                    {item.first_name}{' '}
+                    {item.last_name ? ' ' + item.last_name : ''}
+                  </Text>
+                </View>
+                <View style={styles.line} />
               </View>
-              <View style={styles.line} />
-            </View>
-            <View style={styles.dataStyle}>
-              <View style={styles.subDataStyle}>
-                <Text style={styles.label}>Enquiry Category: </Text>
-                <Text style={styles.labelValue}>{item.category_name}</Text>
+              <View style={styles.dataStyle}>
+                <View style={styles.subDataStyle}>
+                  <Text style={styles.label}>Sales Person: </Text>
+                  <Text style={styles.labelValue}>{item.sales_person}</Text>
+                </View>
+                <View style={styles.line} />
               </View>
-              <View style={styles.line} />
-            </View>
-            <View style={styles.dataStyle}>
-              <View style={styles.subDataStyle}>
-                <Text style={styles.label}>Phone Number: </Text>
-                <Text style={styles.labelValue}>{item.phone_number}</Text>
+              <View style={styles.dataStyle}>
+                <View style={styles.subDataStyle}>
+                  <Text style={styles.label}>Enquiry Category: </Text>
+                  <Text style={styles.labelValue}>{item.category_name}</Text>
+                </View>
+                <View style={styles.line} />
               </View>
-              <View style={styles.line} />
-            </View>
-            <View style={styles.dataStyle}>
-              <View style={styles.subDataStyle}>
-                <Text style={styles.label}>WhatsApp Number: </Text>
-                <Text style={styles.labelValue}>{item.whatsapp_number}</Text>
+              <View style={styles.dataStyle}>
+                <View style={styles.subDataStyle}>
+                  <Text style={styles.label}>Phone Number: </Text>
+                  <Text style={styles.labelValue}>{item.phone_number}</Text>
+                </View>
+                <View style={styles.line} />
               </View>
-              <View style={styles.line} />
-            </View>
-            <View style={styles.dataStyle}>
-              <View style={styles.subDataStyle}>
-                <Text style={styles.label}>Delivery Date: </Text>
-                <Text style={styles.labelValue}>
-                  {moment(item.delivery_date).format('Do MMMM, YYYY')}
-                </Text>
+              <View style={styles.dataStyle}>
+                <View style={styles.subDataStyle}>
+                  <Text style={styles.label}>WhatsApp Number: </Text>
+                  <Text style={styles.labelValue}>{item.whatsapp_number}</Text>
+                </View>
+                <View style={styles.line} />
               </View>
-              <View style={styles.line} />
-            </View>
-            <View style={styles.dataStyle}>
-              <View style={styles.subDataStyle}>
-                <Text style={styles.label}>Taluka: </Text>
-                <Text style={styles.labelValue}>{item.taluka}</Text>
+              <View style={styles.dataStyle}>
+                <View style={styles.subDataStyle}>
+                  <Text style={styles.label}>Delivery Date: </Text>
+                  <Text style={styles.labelValue}>
+                    {moment(item.delivery_date).format('Do MMMM, YYYY')}
+                  </Text>
+                </View>
+                <View style={styles.line} />
               </View>
-              <View style={styles.line} />
-            </View>
-            <View style={styles.dataStyle}>
-              <View style={styles.subDataStyle}>
-                <Text style={styles.label}>Village: </Text>
-                <Text style={styles.labelValue}>{item.village}</Text>
+              <View style={styles.dataStyle}>
+                <View style={styles.subDataStyle}>
+                  <Text style={styles.label}>Taluka: </Text>
+                  <Text style={styles.labelValue}>{item.taluka}</Text>
+                </View>
+                <View style={styles.line} />
               </View>
-            </View>
-          </View>
-          <Text style={styles.labelStyle}>New Product</Text>
-          <View style={styles.detailsContainer}>
-            <View style={styles.dataStyle}>
-              <View style={styles.subDataStyle}>
-                <Text style={styles.label}>Manufacturer: </Text>
-                <Text style={styles.labelValue}>Sonalika</Text>
-              </View>
-              <View style={styles.line} />
-            </View>
-            <View style={styles.dataStyle}>
-              <View style={styles.subDataStyle}>
-                <Text style={styles.label}>Modal: </Text>
-                <Text style={styles.labelValue}>{item.product}</Text>
+              <View style={styles.dataStyle}>
+                <View style={styles.subDataStyle}>
+                  <Text style={styles.label}>Village: </Text>
+                  <Text style={styles.labelValue}>{item.village}</Text>
+                </View>
               </View>
             </View>
-          </View>
-          {isShow && (
-            <>
-              <Text style={styles.labelStyle}>Old Product</Text>
-              <View
-                style={styles.detailsContainer}
-                key={(item, index) => `old_${index + 1}`}>
-                {oldProductDetails &&
-                  oldProductDetails.map((item, index) => {
-                    return (
-                      <>
-                        <View style={styles.dataStyle}>
-                          <View style={styles.subDataStyle}>
-                            <Text style={styles.label}>Manufacturer: </Text>
-                            <Text style={styles.labelValue}>
-                              {item.company}
-                            </Text>
+            <Text style={styles.labelStyle}>New Product</Text>
+            <View style={styles.detailsContainer}>
+              <View style={styles.dataStyle}>
+                <View style={styles.subDataStyle}>
+                  <Text style={styles.label}>Manufacturer: </Text>
+                  <Text style={styles.labelValue}>Sonalika</Text>
+                </View>
+                <View style={styles.line} />
+              </View>
+              <View style={styles.dataStyle}>
+                <View style={styles.subDataStyle}>
+                  <Text style={styles.label}>Modal: </Text>
+                  <Text style={styles.labelValue}>{item.product}</Text>
+                </View>
+              </View>
+            </View>
+            {isShow && (
+              <>
+                <Text style={styles.labelStyle}>Old Product</Text>
+                <View
+                  style={styles.detailsContainer}
+                  key={(item, index) => `old_${index + 1}`}>
+                  {oldProductDetails &&
+                    oldProductDetails.map((item, index) => {
+                      return (
+                        <>
+                          <View style={styles.dataStyle}>
+                            <View style={styles.subDataStyle}>
+                              <Text style={styles.label}>Manufacturer: </Text>
+                              <Text style={styles.labelValue}>
+                                {item.company}
+                              </Text>
+                            </View>
+                            <View style={styles.line} />
                           </View>
-                          <View style={styles.line} />
-                        </View>
-                        <View style={styles.dataStyle}>
-                          <View style={styles.subDataStyle}>
-                            <Text style={styles.label}>Modal: </Text>
-                            <Text style={styles.labelValue}>
-                              {item.modalName}
-                            </Text>
+                          <View style={styles.dataStyle}>
+                            <View style={styles.subDataStyle}>
+                              <Text style={styles.label}>Modal: </Text>
+                              <Text style={styles.labelValue}>
+                                {item.modalName}
+                              </Text>
+                            </View>
+                            <View style={styles.line} />
                           </View>
-                          <View style={styles.line} />
-                        </View>
-                        <View style={styles.dataStyle}>
-                          <View style={styles.subDataStyle}>
-                            <Text style={styles.label}>Year: </Text>
-                            <Text style={styles.labelValue}>
-                              {item.manufactur_year}
-                            </Text>
+                          <View style={styles.dataStyle}>
+                            <View style={styles.subDataStyle}>
+                              <Text style={styles.label}>Year: </Text>
+                              <Text style={styles.labelValue}>
+                                {item.manufactur_year}
+                              </Text>
+                            </View>
+                            <View style={styles.line} />
                           </View>
-                          <View style={styles.line} />
-                        </View>
-                        <View style={styles.dataStyle}>
-                          <View style={styles.subDataStyle}>
-                            <Text style={styles.label}>Dealer Price: </Text>
-                            <Text style={styles.labelValue}>
-                              {item.dealer_purcahse_price.toLocaleString(
-                                'en-IN',
-                                {
-                                  style: 'currency',
-                                  currency: 'INR',
-                                },
-                              )}
-                            </Text>
+                          <View style={styles.dataStyle}>
+                            <View style={styles.subDataStyle}>
+                              <Text style={styles.label}>Dealer Price: </Text>
+                              <Text style={styles.labelValue}>
+                                {item.dealer_purcahse_price.toLocaleString(
+                                  'en-IN',
+                                  {
+                                    style: 'currency',
+                                    currency: 'INR',
+                                  },
+                                )}
+                              </Text>
+                            </View>
                           </View>
-                        </View>
-                      </>
-                    );
-                  })}
+                        </>
+                      );
+                    })}
+                </View>
+              </>
+            )}
+            <Text style={styles.labelStyle}>Next Follow Up Details</Text>
+            <View style={styles.detailsContainer}>
+              <View style={styles.dataStyle}>
+                <View style={styles.subDataStyle}>
+                  <Text style={styles.label}>Manufacturer: </Text>
+                  <Text style={styles.labelValue}>Sonalika</Text>
+                </View>
+                <View style={styles.line} />
               </View>
-            </>
-          )}
-          <Text style={styles.labelStyle}>Remark Notes</Text>
-          <View style={styles.detailsContainer}>
-            <View style={styles.callIconStyle}>
-              <TouchableOpacity
-                style={styles.greenButton}
-                onPress={() => {
-                  makePhoneCall(item.phone_number);
-                }}>
-                <Image
-                  style={styles.iconImg}
-                  source={require('../../assets/telephone.png')}
-                />
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.greenButton}
-                onPress={() => {
-                  sendWhatsAppMessage(item.phone_number);
-                }}>
-                <Image
-                  style={styles.iconImg}
-                  source={require('../../assets/whatsapp.png')}
-                />
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.greenButton}
-                onPress={() => {
-                  sendMessage(item.phone_number);
-                }}>
-                <Image
-                  style={styles.iconImg}
-                  source={require('../../assets/chat.png')}
-                />
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.greenButton}>
-                <Image
-                  style={styles.iconImg}
-                  source={require('../../assets/credit.png')}
-                />
-              </TouchableOpacity>
+              <View style={styles.dataStyle}>
+                <View style={styles.subDataStyle}>
+                  <Text style={styles.label}>Modal: </Text>
+                  <Text style={styles.labelValue}>{item.product}</Text>
+                </View>
+              </View>
             </View>
-          </View>
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity
-              style={styles.followUpButton}
-              onPress={() => {
-                handleSheduleCall(item);
-              }}>
-              <Text style={styles.followupButton}>FOLLOW UP</Text>
-            </TouchableOpacity>
           </View>
         </View>
       </ScrollView>
+      <View style={styles.staticContainer}>
+        <Text style={styles.labelStyle}>Remark Notes</Text>
+        <View style={styles.detailsContainer}>
+          <View style={styles.callIconStyle}>
+            <TouchableOpacity
+              style={styles.greenButton}
+              onPress={() => {
+                makePhoneCall(item.phone_number);
+              }}>
+              <Image
+                style={styles.iconImg}
+                source={require('../../assets/telephone.png')}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.greenButton}
+              onPress={() => {
+                sendWhatsAppMessage(item.phone_number);
+              }}>
+              <Image
+                style={styles.iconImg}
+                source={require('../../assets/whatsapp.png')}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.greenButton}
+              onPress={() => {
+                sendMessage(item.phone_number);
+              }}>
+              <Image
+                style={styles.iconImg}
+                source={require('../../assets/chat.png')}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.greenButton}>
+              <Image
+                style={styles.iconImg}
+                source={require('../../assets/credit.png')}
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            style={styles.followUpButton}
+            onPress={() => {
+              handleSheduleCall(item);
+            }}>
+            <Text style={styles.followupButton}>FOLLOW UP</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
     </View>
   );
 };
@@ -463,8 +484,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
-  buttonContainer : {
-    marginBottom: 15
+  buttonContainer: {
+    marginBottom: 15,
+  },
+  staticContainer: {
+    marginHorizontal: 15
   }
 });
 export default AdditonalDetails;
