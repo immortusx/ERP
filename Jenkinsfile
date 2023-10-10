@@ -87,6 +87,7 @@ pipeline {
     always {
       sh 'docker logout'
       catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS'){
+        sh 'docker image prune  -f'
         sh "sudo rm -rf ${WORKSPACE}" 
       }
     }
