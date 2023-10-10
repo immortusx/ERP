@@ -27,7 +27,7 @@ import EnquiryContainer from './EnquiryContainer';
 import NewEnquiry from './NewEnquiry';
 import LastMonthEnquiry from './LastMonthEnquiry';
 import TodayEnquiry from './TodayEnquiry';
-import {setEnquiryType} from '../redux/slice/enquiryTypeSlice';
+import {setEnquiryFilter, setEnquiryType} from '../redux/slice/enquiryTypeSlice';
 import FollowedEnquiry from './FollowedEnquiry';
 import DueEnquiry from './DueEnquiry';
 
@@ -42,7 +42,14 @@ const AddMore = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [isConfirmation, setIsConfiromation] = useState(false);
   const enquiryType = useSelector(state => state.enquiryType.enquiryType);
+  const enquiryFilter = useSelector(state => state.enquiryType.enquiryFilter);
 
+  const handleTemporalEnquiry = () => {
+    dispatch(setEnquiryFilter('Temporal'));
+  };
+  const handlePriorityEnquiry = () => {
+    dispatch(setEnquiryFilter('Priority'));
+  };
   const handleTodayEnquiry = () => {
     dispatch(setEnquiryType('Today'));
   };
@@ -53,11 +60,47 @@ const AddMore = () => {
     dispatch(setEnquiryType('Last Month'));
   };
   const handleDueEnquiry = () => {
+    console.log(enquiryFilter, 'enquiryFIlte');
     dispatch(setEnquiryType('Due'));
   };
   return (
     <View style={styles.container}>
-      <View></View>
+      <View style={styles.enquiryCategorrized}>
+        <TouchableOpacity
+          style={[
+            styles.buttonStyle,
+            styles.monthButton,
+            enquiryFilter === 'Temporal' && styles.lastMonthActive,
+          ]}
+          onPress={() => {
+            handleTemporalEnquiry();
+          }}>
+          <Text
+            style={[
+              styles.buttonText,
+              enquiryFilter === 'Temporal' && styles.lastActiveText,
+            ]}>
+            TEMPORAL ENQUIRY
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            styles.buttonStyle,
+            styles.monthButton,
+            enquiryType === 'Due' && styles.lastMonthActive,
+          ]}
+          onPress={() => {
+            handlePriorityEnquiry();
+          }}>
+          <Text
+            style={[
+              styles.buttonText,
+              enquiryType === 'Due' && styles.lastActiveText,
+            ]}>
+            PRIORITY ENQUIRY
+          </Text>
+        </TouchableOpacity>
+      </View>
       <View style={styles.wrapper}>
         <TouchableOpacity
           style={[
@@ -129,11 +172,11 @@ const AddMore = () => {
           </Text>
         </TouchableOpacity>
       </View>
-      {enquiryType === 'New' && <NewEnquiry />}
-      {enquiryType === 'Today' && <TodayEnquiry />}
-      {enquiryType === 'Last Month' && <LastMonthEnquiry />}
-      {enquiryType === 'Followed Enquiry' && <FollowedEnquiry />}
-      {enquiryType === 'Due' && <DueEnquiry />}
+      {enquiryFilter === 'Temporal' && enquiryType === 'New' && <NewEnquiry />}
+      {enquiryFilter === 'Temporal' && enquiryType === 'Today' && <TodayEnquiry />}
+      {enquiryFilter === 'Temporal' && enquiryType === 'Last Month' && <LastMonthEnquiry />}
+      {enquiryFilter === 'Temporal' && enquiryType === 'Followed Enquiry' && <FollowedEnquiry />}
+      {enquiryFilter === 'Temporal' && enquiryType === 'Due' && <DueEnquiry />}
     </View>
   );
 };
@@ -182,6 +225,11 @@ const styles = StyleSheet.create({
   },
   lastActiveText: {
     color: '#2471A2',
+  },
+  enquiryCategorrized: {
+    backgroundColor: '#2471A2',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
   },
 });
 

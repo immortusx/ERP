@@ -2,6 +2,7 @@ import {createSlice} from '@reduxjs/toolkit';
 
 const initialState = {
   enquiryType: 'New',
+  enquiryFilter: 'Temporal',
 };
 
 const enquiryTypeSlice = createSlice({
@@ -11,8 +12,11 @@ const enquiryTypeSlice = createSlice({
     setEnquiryType: (state, action) => {
       state.enquiryType = action.payload;
     },
+    setEnquiryFilter: (state, action) => {
+      state.enquiryFilter = action.payload;
+    },
   },
 });
 
-export const {setEnquiryType} = enquiryTypeSlice.actions;
+export const {setEnquiryType, setEnquiryFilter} = enquiryTypeSlice.actions;
 export default enquiryTypeSlice.reducer;

@@ -4,7 +4,7 @@ import React from 'react'
 const DueEnquiry = () => {
   return (
     <View>
-      <Text>DueEnquiry</Text>
+      <Text>Priority Enquiry</Text>
     </View>
   )
 }
