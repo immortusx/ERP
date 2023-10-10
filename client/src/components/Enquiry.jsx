@@ -934,7 +934,7 @@ export default function Enquiry({ workFor, villageId }) {
               name="mobileNumber"
               defaultValue={enquiryData.mobileNumber}
             />
-          </section>
+          </section> 
         );
 
         break;

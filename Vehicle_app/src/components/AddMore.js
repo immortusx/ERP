@@ -57,6 +57,7 @@ const AddMore = () => {
   };
   return (
     <View style={styles.container}>
+      <View></View>
       <View style={styles.wrapper}>
         <TouchableOpacity
           style={[
@@ -124,7 +125,7 @@ const AddMore = () => {
               styles.buttonText,
               enquiryType === 'Due' && styles.lastActiveText,
             ]}>
-            PENDING
+            DUE
           </Text>
         </TouchableOpacity>
       </View>

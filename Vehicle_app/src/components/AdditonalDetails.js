@@ -325,12 +325,12 @@ const AdditonalDetails = ({route}) => {
                             <View style={styles.subDataStyle}>
                               <Text style={styles.label}>Year: </Text>
                               <Text style={styles.labelValue}>
-                                {item.manufactur_year}
+                                {item.year_of_manufactur}
                               </Text>
                             </View>
                             <View style={styles.line} />
                           </View>
-                          <View style={styles.dataStyle}>
+                          {/* <View style={styles.dataStyle}>
                             <View style={styles.subDataStyle}>
                               <Text style={styles.label}>Dealer Price: </Text>
                               <Text style={styles.labelValue}>
@@ -343,7 +343,7 @@ const AdditonalDetails = ({route}) => {
                                 )}
                               </Text>
                             </View>
-                          </View>
+                          </View> */}
                         </>
                       );
                     })}
