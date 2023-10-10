@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { useSelector} from "react-redux";
+import { useSelector } from "react-redux";
 import Typography from '@mui/material/Typography';
 import HomeIcon from '@mui/icons-material/Home';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -75,7 +75,7 @@ const BreadCrumb = () => {
           </div>
         </div>
         <div className='col-md-3' style={{ display: 'flex', justifyContent: 'flex-end' }}>
-          <div className="download-container">
+          <div className="download-container" style={{ display: 'flex', justifyContent: 'center', marginTop: '-2px' }}>
             <div className="download-bar" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
               {isHovered ? (
                 <div className="download-menu-container">

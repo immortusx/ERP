@@ -152,7 +152,7 @@ export default function Login() {
                                     <img
                                         src={downloadIcon}
                                         alt="app"
-                                        height={25}
+                                        height={20}
                                         width={25}
                                         style={{ marginRight: '2px', marginTop: '1px' }}
                                     />
