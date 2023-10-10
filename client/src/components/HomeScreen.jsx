@@ -27,6 +27,7 @@ import Products from "./Products";
 import Master from "./Master";
 import Employees from "./Employees";
 import MyTask from "./MyTask";
+import Login from "./Login";
 import AreaAssignListList from "./AreaAssignListList";
 import AddAssignArea from "./AddAssignArea";
 import Total_Enquiry from "./Master/Work Assign/Total_Enquiry";
@@ -234,6 +235,14 @@ export default function HomeScreen() {
     dispatch(clearProfileDataSliceState());
 
     navigate("/login");
+    <NavLink
+      className={({ isActive }) =>
+        isActive ? "activeLink" : ""
+      }
+      to="login"
+    >
+      {translations[currentLanguage].products}
+    </NavLink>
   }
   function getDateTime(time) {
     const data = new Date(time);
@@ -254,6 +263,10 @@ export default function HomeScreen() {
       document.getElementById("root").classList.add("toggleSideBar");
     }
   }
+  const handleLogoClick = () => {
+    navigate('/home/dashboard');
+  };
+
   const openDashboard = () => {
     navigate("/home/dashboard");
   };
@@ -294,7 +307,7 @@ export default function HomeScreen() {
         </button>
         <main className="asideMain">
           <section className="outerSection">
-            <div className="logoDiv">
+            <div className="logoDiv" onClick={handleLogoClick}>
               {loading ? (
                 <Spinner className="spinner-white" size={10} />
               ) : agencyData.angencyLogo ? (
@@ -329,6 +342,7 @@ export default function HomeScreen() {
                 width={70}
               />
             </div>
+
             <ul id="accordionExample" className="outUl">
               {checkTabGrant(["profile"]) && (
                 <li className="outLi">
@@ -555,7 +569,7 @@ export default function HomeScreen() {
                             }
                             to="management/my-task"
                           >
-                           {translations[currentLanguage].mytask}
+                            {translations[currentLanguage].mytask}
                           </NavLink>
                         </li>
                       )}
@@ -634,7 +648,7 @@ export default function HomeScreen() {
                               }
                               to="administration/employees"
                             >
-                                {translations[currentLanguage].employee}
+                              {translations[currentLanguage].employee}
                             </NavLink>
                           </li>
                         )}
@@ -646,7 +660,7 @@ export default function HomeScreen() {
                               }
                               to="administration/configuration"
                             >
-                               {translations[currentLanguage].configuration}
+                              {translations[currentLanguage].configuration}
                             </NavLink>
                           </li>
                         )}
@@ -1155,6 +1169,16 @@ export default function HomeScreen() {
               exact
             />
             <Route
+              path="login"
+              element={
+                <CheckPermission path="login">
+                  <Login />
+                </CheckPermission>
+              }
+              exact
+            />
+
+            <Route
               path="management/my-task/task-detail"
               element={
                 <CheckPermission path="manage">
@@ -1421,7 +1445,9 @@ export default function HomeScreen() {
               exact
             />
 
-            <Route path="*" element={<Navigate to="/home" />} />
+            <Route path="login" element={<Login />} exact />
+
+            <Route path="*" element={<Navigate to="/home/dashboard" />} />
           </Routes>
         </div>
       </main>

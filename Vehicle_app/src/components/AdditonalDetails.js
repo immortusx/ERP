@@ -10,6 +10,7 @@ import {
   ScrollView,
   AppState,
   Alert,
+  FlatList,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
@@ -23,7 +24,9 @@ const AdditonalDetails = ({route}) => {
   const [callStartTime, setCallStartTime] = useState(null);
   const [callDuration, setCallDuration] = useState(null);
   const [isShow, setIsShow] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [oldProductDetails, setOldProductDetails] = useState([]);
+  const [scheduleDetails, setScheduleDetails] = useState([]);
   const [appState, setAppState] = useState(AppState.currentState);
   const {item} = route.params;
 
@@ -96,6 +99,25 @@ const AdditonalDetails = ({route}) => {
     };
   }, [appState, callStartTime]);
 
+  const getFollowUpDetils = async customerId => {
+    const url = `${API_URL}/api/enquiry/get-follow-up/${customerId}`;
+    console.log('get follow up', url);
+    const token = await AsyncStorage.getItem('rbacToken');
+    const config = {
+      headers: {
+        token: token ? token : '',
+      },
+    };
+    // setLoading(true);
+    console.log(config);
+    await axios.get(url, config).then(response => {
+      if (response) {
+        console.log(response.data, 'get.......');
+        setScheduleDetails(response.data.result);
+      }
+    });
+    // setLoading(false);
+  };
   const getOldProductDetails = async enquiryId => {
     console.log('Old Product....');
     const url = `${API_URL}/api/get-old-product/${enquiryId}`;
@@ -117,6 +139,7 @@ const AdditonalDetails = ({route}) => {
   useEffect(() => {
     if (item) {
       getOldProductDetails(item.enquiry_id);
+      getFollowUpDetils(item.id);
       if (item.oldOwned === 'Yes') {
         setIsShow(true);
       }
@@ -177,206 +200,235 @@ const AdditonalDetails = ({route}) => {
     <View style={styles.mainContainer}>
       <ScrollView>
         <View style={styles.contentContainer}>
-          <View style={styles.headerStyle}>
-            <Text style={styles.labelStyle}>Details</Text>
-          </View>
-          <View style={styles.detailsContainer}>
-            <View style={styles.imageContainer}>
-              <TouchableOpacity
-                onPress={() => {
-                  openEditEnquiry(item);
-                }}>
-                <Image
-                  style={styles.editImg}
-                  source={require('../../assets/edit.png')}
-                />
-              </TouchableOpacity>
+          <View>
+            <View style={styles.headerStyle}>
+              <Text style={styles.labelStyle}>Details</Text>
             </View>
-            <View style={styles.dataStyle}>
-              <View style={styles.subDataStyle}>
-                <Text style={styles.label}>Customer Name: </Text>
-                <Text style={styles.labelValue}>
-                  {item.first_name} {item.last_name ? ' ' + item.last_name : ''}
-                </Text>
+            <View style={styles.detailsContainer}>
+              <View style={styles.imageContainer}>
+                <TouchableOpacity
+                  onPress={() => {
+                    openEditEnquiry(item);
+                  }}>
+                  <Image
+                    style={styles.editImg}
+                    source={require('../../assets/edit.png')}
+                  />
+                </TouchableOpacity>
               </View>
-              <View style={styles.line} />
-            </View>
-            <View style={styles.dataStyle}>
-              <View style={styles.subDataStyle}>
-                <Text style={styles.label}>Sales Person: </Text>
-                <Text style={styles.labelValue}>{item.sales_person}</Text>
+              <View style={styles.dataStyle}>
+                <View style={styles.subDataStyle}>
+                  <Text style={styles.label}>Customer Name: </Text>
+                  <Text style={styles.labelValue}>
+                    {item.first_name}{' '}
+                    {item.last_name ? ' ' + item.last_name : ''}
+                  </Text>
+                </View>
+                <View style={styles.line} />
               </View>
-              <View style={styles.line} />
-            </View>
-            <View style={styles.dataStyle}>
-              <View style={styles.subDataStyle}>
-                <Text style={styles.label}>Enquiry Category: </Text>
-                <Text style={styles.labelValue}>{item.category_name}</Text>
+              <View style={styles.dataStyle}>
+                <View style={styles.subDataStyle}>
+                  <Text style={styles.label}>Sales Person: </Text>
+                  <Text style={styles.labelValue}>{item.sales_person}</Text>
+                </View>
+                <View style={styles.line} />
               </View>
-              <View style={styles.line} />
-            </View>
-            <View style={styles.dataStyle}>
-              <View style={styles.subDataStyle}>
-                <Text style={styles.label}>Phone Number: </Text>
-                <Text style={styles.labelValue}>{item.phone_number}</Text>
+              <View style={styles.dataStyle}>
+                <View style={styles.subDataStyle}>
+                  <Text style={styles.label}>Enquiry Category: </Text>
+                  <Text style={styles.labelValue}>{item.category_name}</Text>
+                </View>
+                <View style={styles.line} />
               </View>
-              <View style={styles.line} />
-            </View>
-            <View style={styles.dataStyle}>
-              <View style={styles.subDataStyle}>
-                <Text style={styles.label}>WhatsApp Number: </Text>
-                <Text style={styles.labelValue}>{item.whatsapp_number}</Text>
+              <View style={styles.dataStyle}>
+                <View style={styles.subDataStyle}>
+                  <Text style={styles.label}>Phone Number: </Text>
+                  <Text style={styles.labelValue}>{item.phone_number}</Text>
+                </View>
+                <View style={styles.line} />
               </View>
-              <View style={styles.line} />
-            </View>
-            <View style={styles.dataStyle}>
-              <View style={styles.subDataStyle}>
-                <Text style={styles.label}>Delivery Date: </Text>
-                <Text style={styles.labelValue}>
-                  {moment(item.delivery_date).format('Do MMMM, YYYY')}
-                </Text>
+              <View style={styles.dataStyle}>
+                <View style={styles.subDataStyle}>
+                  <Text style={styles.label}>WhatsApp Number: </Text>
+                  <Text style={styles.labelValue}>{item.whatsapp_number}</Text>
+                </View>
+                <View style={styles.line} />
               </View>
-              <View style={styles.line} />
-            </View>
-            <View style={styles.dataStyle}>
-              <View style={styles.subDataStyle}>
-                <Text style={styles.label}>Taluka: </Text>
-                <Text style={styles.labelValue}>{item.taluka}</Text>
+              <View style={styles.dataStyle}>
+                <View style={styles.subDataStyle}>
+                  <Text style={styles.label}>Delivery Date: </Text>
+                  <Text style={styles.labelValue}>
+                    {moment(item.delivery_date).format('Do MMMM, YYYY')}
+                  </Text>
+                </View>
+                <View style={styles.line} />
               </View>
-              <View style={styles.line} />
-            </View>
-            <View style={styles.dataStyle}>
-              <View style={styles.subDataStyle}>
-                <Text style={styles.label}>Village: </Text>
-                <Text style={styles.labelValue}>{item.village}</Text>
+              <View style={styles.dataStyle}>
+                <View style={styles.subDataStyle}>
+                  <Text style={styles.label}>Taluka: </Text>
+                  <Text style={styles.labelValue}>{item.taluka}</Text>
+                </View>
+                <View style={styles.line} />
               </View>
-            </View>
-          </View>
-          <Text style={styles.labelStyle}>New Product</Text>
-          <View style={styles.detailsContainer}>
-            <View style={styles.dataStyle}>
-              <View style={styles.subDataStyle}>
-                <Text style={styles.label}>Manufacturer: </Text>
-                <Text style={styles.labelValue}>Sonalika</Text>
-              </View>
-              <View style={styles.line} />
-            </View>
-            <View style={styles.dataStyle}>
-              <View style={styles.subDataStyle}>
-                <Text style={styles.label}>Modal: </Text>
-                <Text style={styles.labelValue}>{item.product}</Text>
+              <View style={styles.dataStyle}>
+                <View style={styles.subDataStyle}>
+                  <Text style={styles.label}>Village: </Text>
+                  <Text style={styles.labelValue}>{item.village}</Text>
+                </View>
               </View>
             </View>
-          </View>
-          {isShow && (
-            <>
-              <Text style={styles.labelStyle}>Old Product</Text>
-              <View
-                style={styles.detailsContainer}
-                key={(item, index) => `old_${index + 1}`}>
-                {oldProductDetails &&
-                  oldProductDetails.map((item, index) => {
-                    return (
-                      <>
-                        <View style={styles.dataStyle}>
-                          <View style={styles.subDataStyle}>
-                            <Text style={styles.label}>Manufacturer: </Text>
-                            <Text style={styles.labelValue}>
-                              {item.company}
-                            </Text>
+            <Text style={styles.labelStyle}>New Product</Text>
+            <View style={styles.detailsContainer}>
+              <View style={styles.dataStyle}>
+                <View style={styles.subDataStyle}>
+                  <Text style={styles.label}>Manufacturer: </Text>
+                  <Text style={styles.labelValue}>Sonalika</Text>
+                </View>
+                <View style={styles.line} />
+              </View>
+              <View style={styles.dataStyle}>
+                <View style={styles.subDataStyle}>
+                  <Text style={styles.label}>Modal: </Text>
+                  <Text style={styles.labelValue}>{item.product}</Text>
+                </View>
+              </View>
+            </View>
+            {isShow && (
+              <>
+                <Text style={styles.labelStyle}>Old Product</Text>
+                <View
+                  style={styles.detailsContainer}
+                  key={(item, index) => `old_${index + 1}`}>
+                  {oldProductDetails &&
+                    oldProductDetails.map((item, index) => {
+                      return (
+                        <>
+                          <View style={styles.dataStyle}>
+                            <View style={styles.subDataStyle}>
+                              <Text style={styles.label}>Manufacturer: </Text>
+                              <Text style={styles.labelValue}>
+                                {item.company}
+                              </Text>
+                            </View>
+                            <View style={styles.line} />
                           </View>
-                          <View style={styles.line} />
-                        </View>
-                        <View style={styles.dataStyle}>
-                          <View style={styles.subDataStyle}>
-                            <Text style={styles.label}>Modal: </Text>
-                            <Text style={styles.labelValue}>
-                              {item.modalName}
-                            </Text>
+                          <View style={styles.dataStyle}>
+                            <View style={styles.subDataStyle}>
+                              <Text style={styles.label}>Modal: </Text>
+                              <Text style={styles.labelValue}>
+                                {item.modalName}
+                              </Text>
+                            </View>
+                            <View style={styles.line} />
                           </View>
-                          <View style={styles.line} />
-                        </View>
-                        <View style={styles.dataStyle}>
-                          <View style={styles.subDataStyle}>
-                            <Text style={styles.label}>Year: </Text>
-                            <Text style={styles.labelValue}>
-                              {item.manufactur_year}
-                            </Text>
+                          <View style={styles.dataStyle}>
+                            <View style={styles.subDataStyle}>
+                              <Text style={styles.label}>Year: </Text>
+                              <Text style={styles.labelValue}>
+                                {item.year_of_manufactur}
+                              </Text>
+                            </View>
+                            <View style={styles.line} />
                           </View>
-                          <View style={styles.line} />
-                        </View>
-                        <View style={styles.dataStyle}>
-                          <View style={styles.subDataStyle}>
-                            <Text style={styles.label}>Dealer Price: </Text>
-                            <Text style={styles.labelValue}>
-                              {item.dealer_purcahse_price.toLocaleString(
-                                'en-IN',
-                                {
-                                  style: 'currency',
-                                  currency: 'INR',
-                                },
-                              )}
-                            </Text>
-                          </View>
-                        </View>
-                      </>
-                    );
-                  })}
-              </View>
-            </>
-          )}
-          <Text style={styles.labelStyle}>Remark Notes</Text>
-          <View style={styles.detailsContainer}>
-            <View style={styles.callIconStyle}>
-              <TouchableOpacity
-                style={styles.greenButton}
-                onPress={() => {
-                  makePhoneCall(item.phone_number);
-                }}>
-                <Image
-                  style={styles.iconImg}
-                  source={require('../../assets/telephone.png')}
-                />
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.greenButton}
-                onPress={() => {
-                  sendWhatsAppMessage(item.phone_number);
-                }}>
-                <Image
-                  style={styles.iconImg}
-                  source={require('../../assets/whatsapp.png')}
-                />
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.greenButton}
-                onPress={() => {
-                  sendMessage(item.phone_number);
-                }}>
-                <Image
-                  style={styles.iconImg}
-                  source={require('../../assets/chat.png')}
-                />
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.greenButton}>
-                <Image
-                  style={styles.iconImg}
-                  source={require('../../assets/credit.png')}
-                />
-              </TouchableOpacity>
+                          {/* <View style={styles.dataStyle}>
+                            <View style={styles.subDataStyle}>
+                              <Text style={styles.label}>Dealer Price: </Text>
+                              <Text style={styles.labelValue}>
+                                {item.dealer_purcahse_price.toLocaleString(
+                                  'en-IN',
+                                  {
+                                    style: 'currency',
+                                    currency: 'INR',
+                                  },
+                                )}
+                              </Text>
+                            </View>
+                          </View> */}
+                        </>
+                      );
+                    })}
+                </View>
+              </>
+            )}
+            <Text style={styles.labelStyle}>Next Follow Up Details</Text>
+            <View style={styles.detailsContainer}>
+              {loading ? (
+                <CustomLoadingSpinner />
+              ) : scheduleDetails && scheduleDetails.length === 0 ? (
+                <Text style={styles.noScheduleText}>No Call Schedule</Text>
+              ) : (
+                scheduleDetails &&
+                scheduleDetails.map(item => {
+                  return (
+                    <View style={styles.callBox}>
+                      <View style={styles.leftContainer}>
+                        <Text style={{color: '#229954'}}>
+                          {item.last_discussion}
+                        </Text>
+                        <Text style={{color: '#5DADE2'}}>
+                          {moment(item.next_followup_date).format('LL')}
+                        </Text>
+                      </View>
+                    </View>
+                  );
+                })
+              )}
             </View>
-          </View>
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity
-              style={styles.followUpButton}
-              onPress={() => {
-                handleSheduleCall(item);
-              }}>
-              <Text style={styles.followupButton}>FOLLOW UP</Text>
-            </TouchableOpacity>
           </View>
         </View>
       </ScrollView>
+      <View style={styles.staticContainer}>
+        <Text style={styles.labelStyle}>Remark Notes</Text>
+        <View style={styles.detailsContainer}>
+          <View style={styles.callIconStyle}>
+            <TouchableOpacity
+              style={styles.greenButton}
+              onPress={() => {
+                makePhoneCall(item.phone_number);
+              }}>
+              <Image
+                style={styles.iconImg}
+                source={require('../../assets/telephone.png')}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.greenButton}
+              onPress={() => {
+                sendWhatsAppMessage(item.phone_number);
+              }}>
+              <Image
+                style={styles.iconImg}
+                source={require('../../assets/whatsapp.png')}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.greenButton}
+              onPress={() => {
+                sendMessage(item.phone_number);
+              }}>
+              <Image
+                style={styles.iconImg}
+                source={require('../../assets/chat.png')}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.greenButton}>
+              <Image
+                style={styles.iconImg}
+                source={require('../../assets/credit.png')}
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            style={styles.followUpButton}
+            onPress={() => {
+              handleSheduleCall(item);
+            }}>
+            <Text style={styles.followupButton}>FOLLOW UP</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
     </View>
   );
 };
@@ -463,8 +515,51 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
-  buttonContainer : {
-    marginBottom: 15
-  }
+  buttonContainer: {
+    marginBottom: 15,
+  },
+  staticContainer: {
+    marginHorizontal: 15,
+  },
+  noScheduleText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: 'red',
+    textAlign: 'center',
+    marginTop: 20,
+  },
+  callBox: {
+    width: '95%',
+    padding: 10,
+    backgroundColor: 'white',
+    marginHorizontal: 10,
+    marginVertical: 5,
+    shadowColor: '#F39C12 ',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 1,
+    borderRadius: 5,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    borderWidth: 0.2,
+    borderColor: '#2471A2'
+  },
+  leftContainer: {
+    maxWidth: '80%',
+    marginRight: 16,
+  },
+  rightContainer: {
+    marginLeft: 16,
+  },
+  personImg: {
+    width: 40,
+    height: 40,
+  },
 });
 export default AdditonalDetails;
