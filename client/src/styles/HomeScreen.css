@@ -41,7 +41,6 @@
     padding-bottom: 10px;
     background-color: #0000008a;
     position: relative;
-    border-radius:10px ;
 }
 
 .asideNav .headBtn[aria-expanded="true"]::before {
@@ -61,54 +60,54 @@
 
 .download-container {
     margin-right: 10px;
+    align-self: top;
+
+    margin-top: 0px;
 }
 
 .download-bar {
     cursor: pointer;
     padding: 10px;
     border-radius: 10px;
+    border: 1px solid #02020275;
+    background-color: #ffffff;
+    color: rgb(12, 12, 12);
+    height: 30px;
+    transition: background-color 0.2s, padding 0.2s;
+    display: flex;
+    align-items: center; /* Center vertically */
+    justify-content: space-between; /* Distributes the content evenly along the main axis */
+}
+
+.download-button {
     background-color: #6faef1;
     color: white;
     padding: 1px 10px;
-    transition: background-color 0.2s, padding 0.2s;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-size: 12px;
+    margin-right: 5px; /* Adjust margin as needed for spacing */
+}
 
+/* Add this if you want to remove margin from the last download-button */
+.download-button:last-child {
+    margin-right: 0;
 }
 
 .download-menu-container {
     display: flex;
-    justify-content: space-evenly;
     align-items: center;
-    height: 30px;
-    padding: 1px 10px;
-    background-color: #6faef1;
-
-}
-
-
-.download-button {
-    display: fixed;
-    background-color: #6faef1;
-    color: white;
-    padding: 1px 10px;
-    border: 10px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-
-
-}
-
-.download-button:hover {
-    background-color: #6faef1;
-    padding: 1px 10px;
-}
-
-p {
-    margin: 0;
 }
 
 .download-menu-container p {
     display: none;
     background-color: #6faef1;
+}
+
+.download-button:hover {
+    background-color: #6faef1;
+    padding: 1px 10px;
 }
 
 .asideNav .headBtn {

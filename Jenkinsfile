@@ -15,10 +15,10 @@ pipeline {
     skipDefaultCheckout true
     buildDiscarder(logRotator(numToKeepStr: '5'))
   }
-  environment {
-    DOCKERHUB_CREDENTIALS_1 = credentials('dockerhub-1')
-    DOCKERHUB_CREDENTIALS_2 = credentials('dockerhub-2')
-  }
+  // environment {
+  //   DOCKERHUB_CREDENTIALS_1 = credentials('dockerhub-1')
+  //   DOCKERHUB_CREDENTIALS_2 = credentials('dockerhub-2')
+  // }
   
   stages {
     stage('SCM Checkout') {
@@ -45,23 +45,29 @@ pipeline {
         )
       }
     }
-    stage('Push client image') {
-      steps {
-        sh 'echo $DOCKERHUB_CREDENTIALS_1_PSW | docker login -u $DOCKERHUB_CREDENTIALS_1_USR --password-stdin'
-        sh "docker push raptor1702/client:${BUILD_TAG}"
-      }
-    }
-    stage('Logout') {
-      steps {
-        sh 'docker logout'
-      }
-    }
-    stage('Push server image') {
-      steps {
-        sh 'echo $DOCKERHUB_CREDENTIALS_2_PSW | docker login -u $DOCKERHUB_CREDENTIALS_2_USR --password-stdin'
-        sh "docker push raptor2103/server:${BUILD_TAG}"
-      }
-    }
+    // stage('Push client image') {
+    //   steps {
+    //     sh 'echo $DOCKERHUB_CREDENTIALS_1_PSW | docker login -u $DOCKERHUB_CREDENTIALS_1_USR --password-stdin'
+    //     sh "docker push <username-1>/client:${BUILD_TAG}"
+    //   }
+    // }
+    // stage('Logout') {
+    //   steps {
+    //     sh 'docker logout'
+    //   }
+    // }
+    // stage('Push server image') {
+    //   steps {
+    //     sh 'echo $DOCKERHUB_CREDENTIALS_2_PSW | docker login -u $DOCKERHUB_CREDENTIALS_2_USR --password-stdin'
+    //     sh "docker push <username-2>/server:${BUILD_TAG}"
+    //   }
+    // }
+
+
+    /*To enable the functionality of pushing the docker images to dockerhub repository. Uncomment the three stages above and post action of docker logout at the end of jenkins commands
+      And you add dockerhub username in place of <username-1> & <username-2>. Also set up the jenkins credentials to according to your username and password. !*/
+
+
     stage('Remove Current Images') {
       steps {
 
@@ -85,8 +91,9 @@ pipeline {
   }
   post {
     always {
-      sh 'docker logout'
+      // sh 'docker logout'
       catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS'){
+        sh 'docker image prune  -f'
         sh "sudo rm -rf ${WORKSPACE}" 
       }
     }

@@ -264,7 +264,7 @@ export default function HomeScreen() {
     }
   }
   const handleLogoClick = () => {
-    navigate('/home');
+    navigate('/home/dashboard');
   };
 
   const openDashboard = () => {
@@ -1447,7 +1447,7 @@ export default function HomeScreen() {
 
             <Route path="login" element={<Login />} exact />
 
-            {/* <Route path="home" element={<Navigate to="/home" />} /> */}
+            <Route path="*" element={<Navigate to="/home/dashboard" />} />
           </Routes>
         </div>
       </main>
