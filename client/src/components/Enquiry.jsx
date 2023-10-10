@@ -44,6 +44,7 @@ export default function Enquiry({ workFor, villageId }) {
   const [editEnquiryDate, setEditEnquiryDate] = useState(null);
   const [editdeliveryDate, setEditDeliveryDate] = useState(null);
   const [seletedOwned, setSelectedOwned] = useState('No');
+  const [error, setError] = useState('');
   const [editEnquiryData, setEditEnquiryData] = useState({});
   const [currentCategoryData, setCurrentCategoryData] = useState({
     id: "",
@@ -655,6 +656,35 @@ export default function Enquiry({ workFor, villageId }) {
       dispatch(setEnquiryDb(enquiryData));
     }
   };
+  const isPhoneNumberExist = async () => {
+    console.log("djfjdg")
+    const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/get-enquiry-mobile-number-exist/${enquiryData.mobileNumber}/${enquiryData.category}`;
+    const config = {
+      headers: {
+        token: localStorage.getItem("rbacToken"),
+      },
+    };
+
+    const response = await axios.get(url, config);
+    if (response.data && response.data.result === true) {
+      setError('* Mobile Number Already Exist !');
+    }
+  }
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => {
+        setError('');
+      }, 2000);
+      return () => {
+        clearTimeout(timer);
+      };
+    }
+  }, [error]);
+  const onFocusOut = () => {
+    console.log("Iels Left");
+    console.log(enquiryData, 'enquirutrt')
+    isPhoneNumberExist()
+  }
 
   function getSelectedFields(data) {
     switch (data.field) {
@@ -766,6 +796,7 @@ export default function Enquiry({ workFor, villageId }) {
               name="fatherName"
               defaultValue={enquiryData.fatherName}
             />
+
           </section>
         );
         break;
@@ -929,11 +960,13 @@ export default function Enquiry({ workFor, villageId }) {
             <input
               onChange={changeHandler}
               className="myInput inputElement"
+              onBlur={onFocusOut}
               autoComplete="false"
               type="text"
               name="mobileNumber"
               defaultValue={enquiryData.mobileNumber}
             />
+            {error && <div style={{ color: 'red' }}>{error}</div>}
           </section>
         );
 
@@ -1004,7 +1037,7 @@ export default function Enquiry({ workFor, villageId }) {
                       newEnquiryList.listMake.length > 0 &&
                       newEnquiryList.listMake.map((i, index) => {
                         return (
-                          <option selected={i.id === newEnquiryData.manufacturers ? true : false } key={index} value={i.id} className="myLabel">
+                          <option selected={i.id === newEnquiryData.manufacturers ? true : false} key={index} value={i.id} className="myLabel">
                             {i.name}
                           </option>
                         );
@@ -1268,14 +1301,14 @@ export default function Enquiry({ workFor, villageId }) {
     // if (value === "") {
     //   clearState();
     // } else {
-      setEnquiryData((enquiryData) => ({ ...enquiryData, [name]: value }));
-      if (name === "oldTractorOwned") {
-        setNewEnquiryData((prevState) => ({
-          ...prevState,
-          oldTractorOwned: value,
-        }));
-        setSelectedOwned(value);
-      }
+    setEnquiryData((enquiryData) => ({ ...enquiryData, [name]: value }));
+    if (name === "oldTractorOwned") {
+      setNewEnquiryData((prevState) => ({
+        ...prevState,
+        oldTractorOwned: value,
+      }));
+      setSelectedOwned(value);
+    }
     // }
   }
 

@@ -1074,7 +1074,7 @@ router.post("/set-new-detail-enquiry", tokenCheck, async (req, res) => {
               }
             }
           );
-        }else if(salesperson_id){
+        } else if (salesperson_id) {
           const fastSql = `INSERT INTO customers (first_name, last_name, phone_number, whatsapp_number, state, district, taluka, village) VALUES (?,?,?,?,?,?,?,?)`;
           await db.query(
             fastSql,
@@ -1837,20 +1837,20 @@ router.get("/get-last-month-enquiries", tokenCheck, async (req, res) => {
 
 //========================Get New (Not Followed) Enquiry List======================//
 router.get("/get-new-enquiries-list", tokenCheck, async (req, res) => {
-    console.log(">>>>>>>>>/get-new-enquiries-list", req.myData);
-    let branchId = req.myData.branchId;
-    let isSuperAdmin = req.myData.isSuperAdmin;
-    let userId = req.myData.userId;
-    const urlNew = `CALL sp_get_new_enquiry_list(${branchId}, ${isSuperAdmin}, ${userId})`;
-    await db.query(urlNew, async (err, result) => {
-      if (err) {
-        console.log({ isSuccess: false, result: err });
-        res.send({ isSuccess: false, result: "error" });
-      } else {
-        console.log({ isSuccess: "success", result: urlNew });
-        res.send({ isSuccess: "success", result: result[0] });
-      }
-    });
+  console.log(">>>>>>>>>/get-new-enquiries-list", req.myData);
+  let branchId = req.myData.branchId;
+  let isSuperAdmin = req.myData.isSuperAdmin;
+  let userId = req.myData.userId;
+  const urlNew = `CALL sp_get_new_enquiry_list(${branchId}, ${isSuperAdmin}, ${userId})`;
+  await db.query(urlNew, async (err, result) => {
+    if (err) {
+      console.log({ isSuccess: false, result: err });
+      res.send({ isSuccess: false, result: "error" });
+    } else {
+      console.log({ isSuccess: "success", result: urlNew });
+      res.send({ isSuccess: "success", result: result[0] });
+    }
+  });
 });
 
 //====================get total enquiry-booking==================
@@ -2141,5 +2141,46 @@ router.post("/upload-work-log", tokenCheck, async (req, res) => {
     console.log(err);
   }
 });
+
+router.get("/get-enquiry-mobile-number-exist/:mobileno/:categoryId", tokenCheck, async (req, res) => {
+  console.log("/get-enquiry-mobile-number-exist?????????", req.params);
+  try {
+    const mobileno = req.params.mobileno;
+    const categoryId = req.params.categoryId;
+
+    const urlNew = `CALL sp_check_enquiry_mobile_number_exist(${mobileno}, ${categoryId})`;
+    await db.query(urlNew, async (err, result) => {
+      if (err) {
+        console.log({ isSuccess: false, result: err });
+        res.send({ isSuccess: false, result: "error" });
+      } else {
+        // console.log({ isSuccess: "success", result: result });
+        // res.send({ isSuccess: "success", result: result });
+        const isMobileNumberExist = (result) => {
+          console.log(result, 'kd')
+          if (result && result[0] && result[0][0] && result[0][0].phone_number) {
+            return true;
+          } else {
+            return false;
+          }
+        };
+        const isPhoneNumber = isMobileNumberExist(result);
+        if (isPhoneNumber) {
+          console.log(isPhoneNumber, 'dssss')
+          // console.log({ isSuccess: "success", result: result });
+          res.send({ isSuccess: "success", result: true });
+        }
+        else{
+          console.log(isPhoneNumber, 'else')
+          // console.log({ isSuccess: "success", result: result });
+          res.send({ isSuccess: "success", result: false });
+        }
+      }
+    });
+  } catch (err) {
+    console.log(err);
+  }
+});
+
 
 module.exports = router;
