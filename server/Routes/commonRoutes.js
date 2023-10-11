@@ -150,8 +150,8 @@ router.post("/addtask-data", tokenCheck, async (req, res) => {
     const tasktypePeriod = req.body.tasktimePeriod;
     const taskStatus = req.body.taskStatus;
     const taskCategory = req.body.taskCategory;
-    const startDate = req.body.startDate.split("T")[0]; 
-    const endDate = req.body.endDate.split("T")[0]; 
+    const startDate = req.body.startDate.split("T")[0];
+    const endDate = req.body.endDate.split("T")[0];
 
     const url = `INSERT INTO addtask_data (employee, tasktype, task, taskcount, startdate, enddate,tasktime_period,task_status,category_name) VALUES (?,?,?,?,?,?,?,?,?)`;
 
@@ -170,13 +170,13 @@ router.post("/addtask-data", tokenCheck, async (req, res) => {
           endDate,
           tasktypePeriod,
           taskStatus,
-          taskCategory
+          taskCategory,
         ]);
         console.log({ isSuccess: true, result: "Task Add Successfully" });
       } catch (err) {
         console.log({ isSuccess: false, result: err });
         res.send({ isSuccess: false, result: "error" });
-        return; 
+        return;
       }
     }
 
@@ -469,25 +469,108 @@ router.get(
 );
 
 //=================get Old Product Details=================//
-router.get(
-  "/get-old-product/:enquiryId",
-  tokenCheck,
-  async (req, res) => {
-    console.log(
-      ">>>>>>/get-old-product/:enquiryId",
-      req.params.enquiryId
-    );
-    const enquiryId = req.params.enquiryId;
-    const newSqlQuery = `CALL sp_get_old_products(${enquiryId})`;
-    db.query(newSqlQuery, (err, newSqlResult) => {
+router.get("/get-old-product/:enquiryId", tokenCheck, async (req, res) => {
+  console.log(">>>>>>/get-old-product/:enquiryId", req.params.enquiryId);
+  const enquiryId = req.params.enquiryId;
+  const newSqlQuery = `CALL sp_get_old_products(${enquiryId})`;
+  db.query(newSqlQuery, (err, newSqlResult) => {
+    if (err) {
+      console.log({ isSuccess: false, result: err });
+      res.send({ isSuccess: false, result: "error" });
+    } else {
+      console.log({ isSuccess: true, result: newSqlQuery });
+      res.send({ isSuccess: true, result: newSqlResult[0] });
+    }
+  });
+});
+
+//=======================Get-User-Created-Enquiry============================//
+router.get("/get-user-created-enquiry", tokenCheck, async (req, res) => {
+  console.log(">>>>>//get-user-created-enquiry");
+  try {
+    const userId = req.myData.userId;
+    const url = `CALL sp_get_user_created_enquiry(${userId})`;
+    db.query(url, async (err, result) => {
       if (err) {
-        console.log({ isSuccess: false, result: err });
-        res.send({ isSuccess: false, result: "error" });
+        console.error(err);
+        res.status(500).json({ isSuccess: false, result: "error" });
       } else {
-        console.log({ isSuccess: true, result: newSqlQuery });
-        res.send({ isSuccess: true, result: newSqlResult[0] });
+        console.log({ isSuccess: true, result: result });
+        res.status(200).json({ isSuccess: true, result: result[0] });
       }
     });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ isSuccess: false, result: "error" });
   }
-);
+});
+
+//=======================Get-Hot-Enquiry============================//
+router.get("/get-hot-enquiry", tokenCheck, async (req, res) => {
+  console.log(">>>>>//get-hot-enquiry");
+  try {
+    let branchId = req.myData.branchId;
+    let isSuperAdmin = req.myData.isSuperAdmin;
+    let userId = req.myData.userId;
+    const url = `CALL sp_get_hot_enquiry(${branchId}, ${isSuperAdmin}, ${userId})`;
+    db.query(url, async (err, result) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ isSuccess: false, result: "error" });
+      } else {
+        console.log({ isSuccess: true, result: result });
+        res.status(200).json({ isSuccess: true, result: result[0] });
+      }
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ isSuccess: false, result: "error" });
+  }
+});
+
+//=======================Get-Cold-Enquiry============================//
+router.get("/get-Cold-enquiry", tokenCheck, async (req, res) => {
+  console.log(">>>>>/get-Cold-enquiry");
+  try {
+    let branchId = req.myData.branchId;
+    let isSuperAdmin = req.myData.isSuperAdmin;
+    let userId = req.myData.userId;
+    const url = `CALL sp_get_cold_enquiry(${branchId}, ${isSuperAdmin}, ${userId})`;
+    db.query(url, async (err, result) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ isSuccess: false, result: "error" });
+      } else {
+        console.log({ isSuccess: true, result: result });
+        res.status(200).json({ isSuccess: true, result: result[0] });
+      }
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ isSuccess: false, result: "error" });
+  }
+});
+
+//=======================Get-Warm-Enquiry============================//
+router.get("/get-Warm-enquiry", tokenCheck, async (req, res) => {
+  console.log(">>>>>/get-Warm-enquiry");
+  try {
+    let branchId = req.myData.branchId;
+    let isSuperAdmin = req.myData.isSuperAdmin;
+    let userId = req.myData.userId;
+    const url = `CALL sp_get_warm_enquiry(${branchId}, ${isSuperAdmin}, ${userId})`;
+    db.query(url, async (err, result) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ isSuccess: false, result: "error" });
+      } else {
+        console.log({ isSuccess: true, result: result });
+        res.status(200).json({ isSuccess: true, result: result[0] });
+      }
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ isSuccess: false, result: "error" });
+  }
+});
 module.exports = router;

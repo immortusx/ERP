@@ -618,6 +618,7 @@ const DetailEnquiry = ({route}) => {
                       />
                     </View>
                   </View>
+                  {/* */}
                   <View style={styles.sourceContainer}>
                     <View style={styles.enquirySourceContainer}>
                       {/* {renderLabel()} */}

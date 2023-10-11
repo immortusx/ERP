@@ -26,7 +26,7 @@ import {
   import SimpleAlert from './subCom/SimpleAlert';
   import {setEnquiryType} from '../redux/slice/enquiryTypeSlice';
   
-  const WarmEnquiry = () => {
+  const ColdEnquiry = () => {
     const navigation = useNavigation();
     const dispatch = useDispatch();
     const [resultData, setResultData] = useState([]);
@@ -48,8 +48,8 @@ import {
         getColdEnquiry();
     },[])
     const getColdEnquiry = async () => {
-        console.log('Warm ENquiry....');
-        const url = `${API_URL}/api/get-Warm-enquiry`;
+        console.log('cold ENquiry....');
+        const url = `${API_URL}/api/get-Cold-enquiry`;
         console.log('get user created', url);
         const token = await AsyncStorage.getItem('rbacToken');
         const config = {
@@ -60,7 +60,7 @@ import {
         setLoading(true);
         console.log(config);
         await axios.get(url, config).then(response => {
-          console.log(response.data.result, 'warm enquiry');
+          console.log(response.data.result, 'cold enquiry');
           setResultData(response.data.result);
           setIsConfiromation(true)
         });
@@ -102,7 +102,7 @@ import {
     // }
    
     const handleConfirm = () => {
-      dispatch(setEnquiryType('Followed Enquiry'));
+    //   dispatch(setEnquiryType('Followed Enquiry'));
       setIsConfiromation(false);
     };
     return (
@@ -199,7 +199,7 @@ import {
             <SimpleAlert
               isVisible={isConfirmation}
               text1={'Alert !'}
-              text2={'Currently, There Warm Enquiry Not Available'}
+              text2={'Currently, Cold Enquiry Not Available'}
               onConfirm={handleConfirm}
             />
           )}
@@ -404,5 +404,5 @@ import {
     },
   });
   
-  export default WarmEnquiry;
+  export default ColdEnquiry;
   

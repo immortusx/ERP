@@ -34,6 +34,7 @@ import HotEnquiry from './HotEnquiry';
 import WarmEnquiry from './WarmEnquiry';
 import CategorisedEnquiry from './CategorisedEnquiry';
 import UserCreatedEnquiry from './UserCreatedEnquiry';
+import ColdEnquiry from './ColdEnquiry';
 
 const AddMore = () => {
   const navigation = useNavigation();
@@ -58,6 +59,9 @@ const AddMore = () => {
     },
     {
       type: 'Hot',
+    },
+    {
+      type: 'Cold',
     },
     {
       type: 'Warm',
@@ -108,6 +112,7 @@ const AddMore = () => {
       {enquiryType === 'Last Month' && <LastMonthEnquiry />}
       {enquiryType === 'Due' && <DueEnquiry />}
       {enquiryType === 'Hot' && <HotEnquiry />}
+      {enquiryType === 'Cold' && <ColdEnquiry />}
       {enquiryType === 'Warm' && <WarmEnquiry />}
       {enquiryType === 'Categorised' && <CategorisedEnquiry />}
       {enquiryType === 'User Created' && <UserCreatedEnquiry />}
