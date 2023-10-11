@@ -27,9 +27,13 @@ import EnquiryContainer from './EnquiryContainer';
 import NewEnquiry from './NewEnquiry';
 import LastMonthEnquiry from './LastMonthEnquiry';
 import TodayEnquiry from './TodayEnquiry';
-import {setEnquiryFilter, setEnquiryType} from '../redux/slice/enquiryTypeSlice';
+import {setEnquiryType} from '../redux/slice/enquiryTypeSlice';
 import FollowedEnquiry from './FollowedEnquiry';
 import DueEnquiry from './DueEnquiry';
+import HotEnquiry from './HotEnquiry';
+import WarmEnquiry from './WarmEnquiry';
+import CategorisedEnquiry from './CategorisedEnquiry';
+import UserCreatedEnquiry from './UserCreatedEnquiry';
 
 const AddMore = () => {
   const navigation = useNavigation();
@@ -42,141 +46,72 @@ const AddMore = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [isConfirmation, setIsConfiromation] = useState(false);
   const enquiryType = useSelector(state => state.enquiryType.enquiryType);
-  const enquiryFilter = useSelector(state => state.enquiryType.enquiryFilter);
-
-  const handleTemporalEnquiry = () => {
-    dispatch(setEnquiryFilter('Temporal'));
-  };
-  const handlePriorityEnquiry = () => {
-    dispatch(setEnquiryFilter('Priority'));
-  };
-  const handleTodayEnquiry = () => {
-    dispatch(setEnquiryType('Today'));
-  };
-  const handleNewEnquiry = () => {
-    dispatch(setEnquiryType('New'));
-  };
-  const handleLastMonthEnquiry = () => {
-    dispatch(setEnquiryType('Last Month'));
-  };
-  const handleDueEnquiry = () => {
-    console.log(enquiryFilter, 'enquiryFIlte');
-    dispatch(setEnquiryType('Due'));
+  const enquiryFilters = [
+    {
+      type: 'New',
+    },
+    {
+      type: 'Today',
+    },
+    {
+      type: 'Last Month',
+    },
+    {
+      type: 'Hot',
+    },
+    {
+      type: 'Warm',
+    },
+    {
+      type: 'Categorised',
+    },
+    {
+      type: 'User Created',
+    },
+  ];
+  const handleScreen = type => {
+    console.log(type, 'screen');
+    dispatch(setEnquiryType(type));
   };
   return (
     <View style={styles.container}>
-      <View style={styles.enquiryCategorrized}>
-        <TouchableOpacity
-          style={[
-            styles.buttonStyle,
-            styles.monthButton,
-            enquiryFilter === 'Temporal' && styles.lastMonthActive,
-          ]}
-          onPress={() => {
-            handleTemporalEnquiry();
-          }}>
-          <Text
-            style={[
-              styles.buttonText,
-              enquiryFilter === 'Temporal' && styles.lastActiveText,
-            ]}>
-            TEMPORAL ENQUIRY
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.buttonStyle,
-            styles.monthButton,
-            enquiryType === 'Due' && styles.lastMonthActive,
-          ]}
-          onPress={() => {
-            handlePriorityEnquiry();
-          }}>
-          <Text
-            style={[
-              styles.buttonText,
-              enquiryType === 'Due' && styles.lastActiveText,
-            ]}>
-            PRIORITY ENQUIRY
-          </Text>
-        </TouchableOpacity>
-      </View>
       <View style={styles.wrapper}>
-        <TouchableOpacity
-          style={[
-            styles.buttonStyle,
-            styles.newButton,
-            enquiryType === 'New' && styles.newActive,
-          ]}
-          onPress={() => {
-            handleNewEnquiry();
-          }}>
-          <Text
-            style={[
-              styles.buttonText,
-              enquiryType === 'New' && styles.newActiveText,
-            ]}>
-            NEW
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.buttonStyle,
-            styles.todayButton,
-            enquiryType === 'Today' && styles.todayActive,
-          ]}
-          onPress={() => {
-            handleTodayEnquiry();
-          }}>
-          <Text
-            style={[
-              styles.buttonText,
-              enquiryType === 'Today' && styles.todayActiveText,
-            ]}>
-            TODAY
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[
-            styles.buttonStyle,
-            styles.monthButton,
-            enquiryType === 'Last Month' && styles.lastMonthActive,
-          ]}
-          onPress={() => {
-            handleLastMonthEnquiry();
-          }}>
-          <Text
-            style={[
-              styles.buttonText,
-              enquiryType === 'Last Month' && styles.lastActiveText,
-            ]}>
-            LAST MONTH
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.buttonStyle,
-            styles.monthButton,
-            enquiryType === 'Due' && styles.lastMonthActive,
-          ]}
-          onPress={() => {
-            handleDueEnquiry();
-          }}>
-          <Text
-            style={[
-              styles.buttonText,
-              enquiryType === 'Due' && styles.lastActiveText,
-            ]}>
-            DUE
-          </Text>
-        </TouchableOpacity>
+        <FlatList
+          data={enquiryFilters}
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+          renderItem={({item, index}) => {
+            return (
+              <TouchableOpacity
+                style={[
+                  styles.buttonStyle,
+                  styles.newButton,
+                  enquiryType === item.type && styles.newActive,
+                ]}
+                onPress={() => {
+                  handleScreen(item.type);
+                }}>
+                <Text
+                  style={[
+                    styles.buttonText,
+                    enquiryType === item.type && styles.newActiveText,
+                  ]}>
+                  {item.type.toLocaleUpperCase()}
+                </Text>
+              </TouchableOpacity>
+            );
+          }}
+        />
       </View>
-      {enquiryFilter === 'Temporal' && enquiryType === 'New' && <NewEnquiry />}
-      {enquiryFilter === 'Temporal' && enquiryType === 'Today' && <TodayEnquiry />}
-      {enquiryFilter === 'Temporal' && enquiryType === 'Last Month' && <LastMonthEnquiry />}
-      {enquiryFilter === 'Temporal' && enquiryType === 'Followed Enquiry' && <FollowedEnquiry />}
-      {enquiryFilter === 'Temporal' && enquiryType === 'Due' && <DueEnquiry />}
+      {enquiryType === 'New' && <NewEnquiry />}
+      {enquiryType === 'Today' && <TodayEnquiry />}
+      {enquiryType === 'Last Month' && <LastMonthEnquiry />}
+      {enquiryType === 'Due' && <DueEnquiry />}
+      {enquiryType === 'Hot' && <HotEnquiry />}
+      {enquiryType === 'Warm' && <WarmEnquiry />}
+      {enquiryType === 'Categorised' && <CategorisedEnquiry />}
+      {enquiryType === 'User Created' && <UserCreatedEnquiry />}
+      {enquiryType === 'Followed Enquiry' && <FollowedEnquiry />}
     </View>
   );
 };
@@ -225,11 +160,6 @@ const styles = StyleSheet.create({
   },
   lastActiveText: {
     color: '#2471A2',
-  },
-  enquiryCategorrized: {
-    backgroundColor: '#2471A2',
-    flexDirection: 'row',
-    justifyContent: 'space-around',
   },
 });
 
