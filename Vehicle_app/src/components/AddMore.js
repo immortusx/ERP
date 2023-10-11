@@ -30,6 +30,11 @@ import TodayEnquiry from './TodayEnquiry';
 import {setEnquiryType} from '../redux/slice/enquiryTypeSlice';
 import FollowedEnquiry from './FollowedEnquiry';
 import DueEnquiry from './DueEnquiry';
+import HotEnquiry from './HotEnquiry';
+import WarmEnquiry from './WarmEnquiry';
+import CategorisedEnquiry from './CategorisedEnquiry';
+import UserCreatedEnquiry from './UserCreatedEnquiry';
+import ColdEnquiry from './ColdEnquiry';
 
 const AddMore = () => {
   const navigation = useNavigation();
@@ -42,98 +47,76 @@ const AddMore = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [isConfirmation, setIsConfiromation] = useState(false);
   const enquiryType = useSelector(state => state.enquiryType.enquiryType);
-
-  const handleTodayEnquiry = () => {
-    dispatch(setEnquiryType('Today'));
-  };
-  const handleNewEnquiry = () => {
-    dispatch(setEnquiryType('New'));
-  };
-  const handleLastMonthEnquiry = () => {
-    dispatch(setEnquiryType('Last Month'));
-  };
-  const handleDueEnquiry = () => {
-    dispatch(setEnquiryType('Due'));
+  const enquiryFilters = [
+    {
+      type: 'New',
+    },
+    {
+      type: 'Today',
+    },
+    {
+      type: 'Last Month',
+    },
+    {
+      type: 'Hot',
+    },
+    {
+      type: 'Cold',
+    },
+    {
+      type: 'Warm',
+    },
+    {
+      type: 'Categorised',
+    },
+    {
+      type: 'User Created',
+    },
+  ];
+  const handleScreen = type => {
+    console.log(type, 'screen');
+    dispatch(setEnquiryType(type));
   };
   return (
     <View style={styles.container}>
-      <View></View>
       <View style={styles.wrapper}>
-        <TouchableOpacity
-          style={[
-            styles.buttonStyle,
-            styles.newButton,
-            enquiryType === 'New' && styles.newActive,
-          ]}
-          onPress={() => {
-            handleNewEnquiry();
-          }}>
-          <Text
-            style={[
-              styles.buttonText,
-              enquiryType === 'New' && styles.newActiveText,
-            ]}>
-            NEW
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.buttonStyle,
-            styles.todayButton,
-            enquiryType === 'Today' && styles.todayActive,
-          ]}
-          onPress={() => {
-            handleTodayEnquiry();
-          }}>
-          <Text
-            style={[
-              styles.buttonText,
-              enquiryType === 'Today' && styles.todayActiveText,
-            ]}>
-            TODAY
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[
-            styles.buttonStyle,
-            styles.monthButton,
-            enquiryType === 'Last Month' && styles.lastMonthActive,
-          ]}
-          onPress={() => {
-            handleLastMonthEnquiry();
-          }}>
-          <Text
-            style={[
-              styles.buttonText,
-              enquiryType === 'Last Month' && styles.lastActiveText,
-            ]}>
-            LAST MONTH
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.buttonStyle,
-            styles.monthButton,
-            enquiryType === 'Due' && styles.lastMonthActive,
-          ]}
-          onPress={() => {
-            handleDueEnquiry();
-          }}>
-          <Text
-            style={[
-              styles.buttonText,
-              enquiryType === 'Due' && styles.lastActiveText,
-            ]}>
-            DUE
-          </Text>
-        </TouchableOpacity>
+        <FlatList
+          data={enquiryFilters}
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+          renderItem={({item, index}) => {
+            return (
+              <TouchableOpacity
+                style={[
+                  styles.buttonStyle,
+                  styles.newButton,
+                  enquiryType === item.type && styles.newActive,
+                ]}
+                onPress={() => {
+                  handleScreen(item.type);
+                }}>
+                <Text
+                  style={[
+                    styles.buttonText,
+                    enquiryType === item.type && styles.newActiveText,
+                  ]}>
+                  {item.type.toLocaleUpperCase()}
+                </Text>
+              </TouchableOpacity>
+            );
+          }}
+        />
       </View>
       {enquiryType === 'New' && <NewEnquiry />}
       {enquiryType === 'Today' && <TodayEnquiry />}
       {enquiryType === 'Last Month' && <LastMonthEnquiry />}
-      {enquiryType === 'Followed Enquiry' && <FollowedEnquiry />}
       {enquiryType === 'Due' && <DueEnquiry />}
+      {enquiryType === 'Hot' && <HotEnquiry />}
+      {enquiryType === 'Cold' && <ColdEnquiry />}
+      {enquiryType === 'Warm' && <WarmEnquiry />}
+      {enquiryType === 'Categorised' && <CategorisedEnquiry />}
+      {enquiryType === 'User Created' && <UserCreatedEnquiry />}
+      {enquiryType === 'Followed Enquiry' && <FollowedEnquiry />}
     </View>
   );
 };

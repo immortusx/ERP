@@ -1,73 +1,93 @@
 import React, {useState} from 'react';
-import {StyleSheet} from 'react-native';
-import {Dropdown} from 'react-native-element-dropdown';
-// import AntDesign from '@expo/vector-icons/AntDesign';
+import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 
 const data = [
-  {label: 'Item 1', value: '1'},
-  {label: 'Item 2', value: '2'},
-  {label: 'Item 3', value: '3'},
-  {label: 'Item 4', value: '4'},
-  {label: 'Item 5', value: '5'},
-  {label: 'Item 6', value: '6'},
-  {label: 'Item 7', value: '7'},
-  {label: 'Item 8', value: '8'},
+  {label: 'All', value: '1'},
+  {label: 'New Tractor', value: '2'},
+  {label: 'Old Tractor', value: '3'},
+  {label: 'Utility Tractor ', value: '4'},
+  {label: 'Industrial Tractor', value: '5'},
 ];
 
-const DropdownComponent = () => {
-  const [value, setValue] = useState(null);
+const CustomDropdown = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
+
+  const toggleDropdown = () => {
+    setIsOpen(!isOpen);
+  };
+
+  const handleSelectItem = item => {
+    setSelectedItem(item);
+    setIsOpen(false);
+  };
 
   return (
-    <Dropdown
-      style={styles.dropdown}
-      placeholderStyle={styles.placeholderStyle}
-      selectedTextStyle={styles.selectedTextStyle}
-      inputSearchStyle={styles.inputSearchStyle}
-      iconStyle={styles.iconStyle}
-      data={data}
-      search
-      maxHeight={300}
-      labelField="label"
-      valueField="value"
-      placeholder="Select item"
-      searchPlaceholder="Search..."
-      value={value}
-      onChange={item => {
-        setValue(item.value);
-      }}
-      renderLeftIcon={() => (
-        // <AntDesign style={styles.icon} color="black" name="Safety" size={20} />
-        <Text>{`>`}</Text>
+    <View style={styles.dropdownContainer}>
+      <TouchableOpacity onPress={toggleDropdown} style={styles.dropdownHeader}>
+        <Text style={styles.selectedText}>
+          {selectedItem ? selectedItem.label : 'SELECT CATEGORY'}
+        </Text>
+        <Text style={styles.icon}>{isOpen ? '▲' : '▼'}</Text>
+      </TouchableOpacity>
+      {isOpen && (
+        <View style={styles.dropdownList}>
+          {data.map(item => (
+            <TouchableOpacity
+              key={item.value}
+              style={styles.dropdownItem}
+              onPress={() => handleSelectItem(item)}>
+              <Text style={styles.dropLabel}>{item.label}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
       )}
-    />
+    </View>
   );
 };
 
-export default DropdownComponent;
-
 const styles = StyleSheet.create({
-  dropdown: {
-    marginTop: 30,
-    margin: 16,
-    height: 50,
-    borderBottomColor: 'gray',
-    borderBottomWidth: 0.5,
+  dropdownContainer: {
+    position: 'relative',
+    backgroundColor: '#2980B9',
+  },
+  dropdownHeader: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#3498DB',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  selectedText: {
+    fontSize: 16,
+    color: 'white',
+    fontWeight: 'bold',
   },
   icon: {
-    marginRight: 5,
-  },
-  placeholderStyle: {
     fontSize: 16,
+    color: 'white',
+    fontWeight: 'bold',
   },
-  selectedTextStyle: {
+  dropdownList: {
+    position: 'absolute',
+    top: 50,
+    left: 0,
+    right: 0,
+    backgroundColor: '#48A6E5',
+    borderWidth: 1,
+    borderColor: 'white',
+  },
+  dropdownItem: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: 'white',
+  },
+  dropLabel: {
+    color: 'white',
     fontSize: 16,
-  },
-  iconStyle: {
-    width: 20,
-    height: 20,
-  },
-  inputSearchStyle: {
-    height: 40,
-    fontSize: 16,
-  },
+    fontWeight: 'bold'
+  }
 });
+
+export default CustomDropdown;
