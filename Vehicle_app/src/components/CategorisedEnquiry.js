@@ -112,7 +112,6 @@ const CategorisedEnquiry = () => {
         <CustomDropdown />
       </View>
       <View>
-        <Text style={{fontSize: 20, color: 'black'}}>Enquiry List</Text>
       </View>
       {/* <View>
           {resultData && resultData.length > 0 ? (
