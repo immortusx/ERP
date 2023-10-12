@@ -76,6 +76,7 @@ const FastEnquiry = () => {
   const [branchTaluka, setBranchTaluka] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [mobileNumberError, setMobileNumberError] = useState('');
+  const [whatsNumberError, setWhatNumberError] = useState('');
   const [currentCategoryData, setcurrentCategoryData] = useState({
     id: '',
     fields: [],
@@ -188,7 +189,11 @@ const FastEnquiry = () => {
               placeholder="Enter WhatsApp Number"
               autoCapitalize="none"
               onChangeText={value => onChangeHandler(value, 'whatsappno')}
+              maxLength={10}
             />
+            {whatsNumberError ? (
+              <Text style={{ color: 'red' }}>{whatsNumberError}</Text>
+            ) : null}
           </View>
         );
         break;
@@ -394,6 +399,13 @@ const FastEnquiry = () => {
         setMobileNumberError('Invalid mobile number. It should be 10 digits.');
       } else {
         setMobileNumberError('');
+      }
+    }
+    if (field === 'whatsappno') {
+      if (!/^\d{10}$/.test(value)) {
+        setWhatNumberError('Invalid WhatsApp number. It should be 10 digits.');
+      } else {
+        setWhatNumberError('');
       }
     }
 
