@@ -628,33 +628,35 @@ const DetailEnquiry = ({ route }) => {
                       />
                     </View>
                   </View>
-                  <View style={styles.sourceContainer}>
-                    <View style={styles.enquirySourceContainer}>
-                      {/* {renderLabel()} */}
-                      <Dropdown
-                        style={[
-                          styles.dropdown,
-                          isFocus && { borderColor: 'blue' },
-                          { paddingHorizontal: 5 },
-                        ]}
-                        placeholderStyle={styles.placeholderStyle}
-                        selectedTextStyle={styles.selectedTextStyle}
-                        inputSearchStyle={styles.inputSearchStyle}
-                        iconStyle={styles.iconStyle}
-                        data={variantItem}
-                        search
-                        maxHeight={300}
-                        labelField="label"
-                        valueField="value"
-                        placeholder={!isFocus ? 'Select Variant' : ' '}
-                        searchPlaceholder="Search..."
-                        value={oldVariant}
-                        onChange={item => {
-                          setOldVariant(item.value);
-                        }}
-                      />
+                  {1 !== 1 && (
+                    <View style={styles.sourceContainer}>
+                      <View style={styles.enquirySourceContainer}>
+                        {/* {renderLabel()} */}
+                        <Dropdown
+                          style={[
+                            styles.dropdown,
+                            isFocus && {borderColor: 'blue'},
+                            {paddingHorizontal: 5},
+                          ]}
+                          placeholderStyle={styles.placeholderStyle}
+                          selectedTextStyle={styles.selectedTextStyle}
+                          inputSearchStyle={styles.inputSearchStyle}
+                          iconStyle={styles.iconStyle}
+                          data={variantItem}
+                          search
+                          maxHeight={300}
+                          labelField="label"
+                          valueField="value"
+                          placeholder={!isFocus ? 'Select Variant' : ' '}
+                          searchPlaceholder="Search..."
+                          value={oldVariant}
+                          onChange={item => {
+                            setOldVariant(item.value);
+                          }}
+                        />
+                      </View>
                     </View>
-                  </View>
+                  )}
 
                   <View style={{ marginBottom: 5 }}>
                     <View

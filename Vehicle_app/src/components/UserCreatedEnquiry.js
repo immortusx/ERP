@@ -102,7 +102,7 @@ import {
     // }
    
     const handleConfirm = () => {
-    //   dispatch(setEnquiryType('Followed Enquiry'));
+      dispatch(setEnquiryType('Followed Enquiry'));
       setIsConfiromation(false);
     };
     return (
@@ -199,7 +199,7 @@ import {
             <SimpleAlert
               isVisible={isConfirmation}
               text1={'Alert !'}
-              text2={'Currently, There is New Enquiry Not Available'}
+              text2={'Currently, User Created Enquiry Not Available'}
               onConfirm={handleConfirm}
             />
           )}
