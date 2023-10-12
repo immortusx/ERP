@@ -11,6 +11,7 @@ import editEnquirySlice from './slice/editEnquirySlice';
 import getUserProfile from './slice/getUserProfile';
 import addFollowUpSlice from './slice/addFollowUpSlice';
 import enquiryTypeSlice from './slice/enquiryTypeSlice';
+import SwipeScreenSlice from './slice/SwipeScreenSlice';
 
 export const store = configureStore({
   reducer: {
@@ -25,6 +26,7 @@ export const store = configureStore({
     editEnquirySlice: editEnquirySlice,
     getUserProfileSlice: getUserProfile,
     followUpSlice: addFollowUpSlice,
-    enquiryType: enquiryTypeSlice
+    enquiryType: enquiryTypeSlice,
+    swipe: SwipeScreenSlice
   },
 });
