@@ -12,22 +12,22 @@ import {
   Modal,
   ActivityIndicator,
 } from 'react-native';
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-native-date-picker';
 import DropDownPicker from 'react-native-dropdown-picker';
-import {Dropdown} from 'react-native-element-dropdown';
+import { Dropdown } from 'react-native-element-dropdown';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {API_URL} from '@env';
+import { API_URL } from '@env';
 import axios from 'axios';
 import CustomRadioButton from './subCom/CustomRadioButton';
-import {useDispatch, useSelector} from 'react-redux';
-import {clearEnquiryState, setEnquiryDb} from '../redux/slice/addEnquirySlice';
-import {saveEnquiryModalForm} from '../redux/slice/addEnquiryModal';
-import {clearModalData, saveModalData} from '../redux/slice/modalDataSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { clearEnquiryState, setEnquiryDb } from '../redux/slice/addEnquirySlice';
+import { saveEnquiryModalForm } from '../redux/slice/addEnquiryModal';
+import { clearModalData, saveModalData } from '../redux/slice/modalDataSlice';
 import SweetSuccessAlert from './subCom/SweetSuccessAlert';
-import {useNavigation} from '@react-navigation/native';
-import {getEnquiryData} from '../redux/slice/getEnquirySlice';
-import {clearManufacturerDetails} from '../redux/slice/manufacturerDetailsSlice';
+import { useNavigation } from '@react-navigation/native';
+import { getEnquiryData } from '../redux/slice/getEnquirySlice';
+import { clearManufacturerDetails } from '../redux/slice/manufacturerDetailsSlice';
 import {
   clearEditEnquiryState,
   setEditEnquiryDb,
@@ -35,14 +35,14 @@ import {
 import Calendars from './subCom/Calendars';
 import YearPicker from './subCom/YearPicker';
 import MinDateCalendars from './subCom/MinDateCalendars';
-const DetailEnquiry = ({route}) => {
+const DetailEnquiry = ({ route }) => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const enquiryState = useSelector(state => state.enquirySlice.enquiryState);
   const editEnquiryState = useSelector(
     state => state.editEnquirySlice.editEnquiryState,
   );
-  const {maker, modalName, variantName, year, condition_of} = useSelector(
+  const { maker, modalName, variantName, year, condition_of } = useSelector(
     state => state.modalData,
   );
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -84,6 +84,8 @@ const DetailEnquiry = ({route}) => {
   const [taluka, setTaluka] = useState(null);
   const [enquiryId, setEnquiryId] = useState(null);
   const [oldProductData, setOldProductData] = useState([]);
+  const [mobileNumberError, setMobileNumberError] = useState('');
+  const [whatsNumberError, setWhatNumberError] = useState('');
   const [currentCategoryData, setcurrentCategoryData] = useState({
     id: '',
     fields: [],
@@ -143,10 +145,10 @@ const DetailEnquiry = ({route}) => {
 
   let newTractorId = 2;
   const conditionType = [
-    {label: 'Good', value: 'Good'},
-    {label: 'Below Average', value: 'Below Average'},
-    {label: 'Average', value: 'Average'},
-    {label: 'Vey Good', value: 'Vey Good'},
+    { label: 'Good', value: 'Good' },
+    { label: 'Below Average', value: 'Below Average' },
+    { label: 'Average', value: 'Average' },
+    { label: 'Vey Good', value: 'Vey Good' },
   ];
 
   useEffect(() => {
@@ -280,7 +282,11 @@ const DetailEnquiry = ({route}) => {
               keyboardType="default"
               defaultValue={enquiryData.phone || ''}
               onChangeText={value => onChangeHandler(value, 'phone')}
+              maxLength={10}
             />
+            {mobileNumberError ? (
+              <Text style={{ color: 'red' }}>{mobileNumberError}</Text>
+            ) : null}
           </View>
         );
         break;
@@ -296,15 +302,19 @@ const DetailEnquiry = ({route}) => {
               keyboardType="default"
               defaultValue={enquiryData.whatsappno || ''}
               onChangeText={value => onChangeHandler(value, 'whatsappno')}
+              maxLength={10}
             />
+            {whatsNumberError ? (
+              <Text style={{ color: 'red' }}>{whatsNumberError}</Text>
+            ) : null}
           </View>
         );
         break;
       }
       case 'taluko': {
         return (
-          <View style={{marginBottom: 5}}>
-            <Text style={[styles.label, {marginBottom: 5}]}>
+          <View style={{ marginBottom: 5 }}>
+            <Text style={[styles.label, { marginBottom: 5 }]}>
               Select Taluka *
             </Text>
             <View style={styles.enquirySourceContainer}>
@@ -312,8 +322,8 @@ const DetailEnquiry = ({route}) => {
               <Dropdown
                 style={[
                   styles.dropdown,
-                  isFocus && {borderColor: 'blue'},
-                  {paddingHorizontal: 5},
+                  isFocus && { borderColor: 'blue' },
+                  { paddingHorizontal: 5 },
                 ]}
                 placeholderStyle={styles.placeholderStyle}
                 selectedTextStyle={styles.selectedTextStyle}
@@ -339,8 +349,8 @@ const DetailEnquiry = ({route}) => {
       case 'village': {
         return (
           <>
-            <View style={{marginBottom: 5}}>
-              <Text style={[styles.label, {marginBottom: 5}]}>
+            <View style={{ marginBottom: 5 }}>
+              <Text style={[styles.label, { marginBottom: 5 }]}>
                 Select Village *
               </Text>
               <View style={styles.enquirySourceContainer}>
@@ -348,8 +358,8 @@ const DetailEnquiry = ({route}) => {
                 <Dropdown
                   style={[
                     styles.dropdown,
-                    isFocus && {borderColor: 'blue'},
-                    {paddingHorizontal: 5},
+                    isFocus && { borderColor: 'blue' },
+                    { paddingHorizontal: 5 },
                   ]}
                   placeholderStyle={styles.placeholderStyle}
                   selectedTextStyle={styles.selectedTextStyle}
@@ -370,12 +380,12 @@ const DetailEnquiry = ({route}) => {
               </View>
               {loading ? (
                 <ActivityIndicator
-                  style={{alignItems: 'flex-start'}}
+                  style={{ alignItems: 'flex-start' }}
                   size={10}
                   color="#3498DB"
                 />
               ) : (
-                <Text style={{color: 'green', fontWeight: '400'}}>
+                <Text style={{ color: 'green', fontWeight: '400' }}>
                   {salePerson
                     ? 'Sales Person :-' + ' ' + salePerson.toUpperCase()
                     : ''}
@@ -388,14 +398,14 @@ const DetailEnquiry = ({route}) => {
       }
       case 'make': {
         return (
-          <View style={{marginBottom: 5}}>
-            <Text style={[styles.label, {marginBottom: 5}]}>Manufactur *</Text>
+          <View style={{ marginBottom: 5 }}>
+            <Text style={[styles.label, { marginBottom: 5 }]}>Manufactur *</Text>
             <View style={styles.enquirySourceContainer}>
               <Dropdown
                 style={[
                   styles.dropdown,
-                  isFocus && {borderColor: 'blue'},
-                  {paddingHorizontal: 5},
+                  isFocus && { borderColor: 'blue' },
+                  { paddingHorizontal: 5 },
                 ]}
                 placeholderStyle={styles.placeholderStyle}
                 selectedTextStyle={styles.selectedTextStyle}
@@ -420,14 +430,14 @@ const DetailEnquiry = ({route}) => {
       }
       case 'modal': {
         return (
-          <View style={{marginBottom: 5}}>
-            <Text style={[styles.label, {marginBottom: 5}]}>Modal *</Text>
+          <View style={{ marginBottom: 5 }}>
+            <Text style={[styles.label, { marginBottom: 5 }]}>Modal *</Text>
             <View style={styles.enquirySourceContainer}>
               <Dropdown
                 style={[
                   styles.dropdown,
-                  isFocus && {borderColor: 'blue'},
-                  {paddingHorizontal: 5},
+                  isFocus && { borderColor: 'blue' },
+                  { paddingHorizontal: 5 },
                 ]}
                 placeholderStyle={styles.placeholderStyle}
                 selectedTextStyle={styles.selectedTextStyle}
@@ -452,8 +462,8 @@ const DetailEnquiry = ({route}) => {
       }
       case 'primarySource': {
         return (
-          <View style={{marginBottom: 5}}>
-            <Text style={[styles.label, {marginBottom: 5}]}>
+          <View style={{ marginBottom: 5 }}>
+            <Text style={[styles.label, { marginBottom: 5 }]}>
               Enquiry Primary Source *
             </Text>
             <View style={styles.enquirySourceContainer}>
@@ -461,8 +471,8 @@ const DetailEnquiry = ({route}) => {
               <Dropdown
                 style={[
                   styles.dropdown,
-                  isFocus && {borderColor: 'blue'},
-                  {paddingHorizontal: 5},
+                  isFocus && { borderColor: 'blue' },
+                  { paddingHorizontal: 5 },
                 ]}
                 placeholderStyle={styles.placeholderStyle}
                 selectedTextStyle={styles.selectedTextStyle}
@@ -487,8 +497,8 @@ const DetailEnquiry = ({route}) => {
       }
       case 'sourceOfEnquiry': {
         return (
-          <View style={{marginBottom: 5}}>
-            <Text style={[styles.label, {marginBottom: 5}]}>
+          <View style={{ marginBottom: 5 }}>
+            <Text style={[styles.label, { marginBottom: 5 }]}>
               Enquiry Source *
             </Text>
             <View style={styles.enquirySourceContainer}>
@@ -496,8 +506,8 @@ const DetailEnquiry = ({route}) => {
               <Dropdown
                 style={[
                   styles.dropdown,
-                  isFocus && {borderColor: 'blue'},
-                  {paddingHorizontal: 5},
+                  isFocus && { borderColor: 'blue' },
+                  { paddingHorizontal: 5 },
                 ]}
                 placeholderStyle={styles.placeholderStyle}
                 selectedTextStyle={styles.selectedTextStyle}
@@ -522,17 +532,17 @@ const DetailEnquiry = ({route}) => {
       }
       case 'deliveryDate': {
         return (
-          <View style={{marginBottom: 5}}>
-            <Text style={[styles.label, {marginBottom: 5}]}>
+          <View style={{ marginBottom: 5 }}>
+            <Text style={[styles.label, { marginBottom: 5 }]}>
               Expected Delivery Date *
             </Text>
             <View style={styles.deliveryDateContainer}>
               <TouchableOpacity
-                style={{paddingHorizontal: 5}}
+                style={{ paddingHorizontal: 5 }}
                 onPress={() => {
                   setOpenExpDeliveryDate(true);
                 }}>
-                <Text style={{paddingVertical: 7}}>
+                <Text style={{ paddingVertical: 7 }}>
                   {expDeliveryDate === ''
                     ? new Date().toISOString().slice(0, 10)
                     : expDeliveryDate}
@@ -570,8 +580,8 @@ const DetailEnquiry = ({route}) => {
                       <Dropdown
                         style={[
                           styles.dropdown,
-                          isFocus && {borderColor: 'blue'},
-                          {paddingHorizontal: 5},
+                          isFocus && { borderColor: 'blue' },
+                          { paddingHorizontal: 5 },
                         ]}
                         placeholderStyle={styles.placeholderStyle}
                         selectedTextStyle={styles.selectedTextStyle}
@@ -597,8 +607,8 @@ const DetailEnquiry = ({route}) => {
                       <Dropdown
                         style={[
                           styles.dropdown,
-                          isFocus && {borderColor: 'blue'},
-                          {paddingHorizontal: 5},
+                          isFocus && { borderColor: 'blue' },
+                          { paddingHorizontal: 5 },
                         ]}
                         placeholderStyle={styles.placeholderStyle}
                         selectedTextStyle={styles.selectedTextStyle}
@@ -648,19 +658,19 @@ const DetailEnquiry = ({route}) => {
                     </View>
                   )}
 
-                  <View style={{marginBottom: 5}}>
+                  <View style={{ marginBottom: 5 }}>
                     <View
                       style={[
                         styles.deliveryDateContainer,
-                        {paddingVertical: 7},
+                        { paddingVertical: 7 },
                       ]}>
                       <View>
-                        <View style={{flex: 1}}>
+                        <View style={{ flex: 1 }}>
                           <TouchableOpacity
                             onPress={() => {
                               setIsPickerVisible(true);
                             }}>
-                            <Text style={{textAlign: 'left'}}>
+                            <Text style={{ textAlign: 'left' }}>
                               Manufactur Year{' :-'}
                               {manuYearDate ? manuYearDate : 'Select Year'}
                             </Text>
@@ -682,7 +692,7 @@ const DetailEnquiry = ({route}) => {
                       <Dropdown
                         style={[
                           styles.dropdown,
-                          isFocus && {borderColor: 'blue'},
+                          isFocus && { borderColor: 'blue' },
                         ]}
                         placeholderStyle={styles.placeholderStyle}
                         selectedTextStyle={styles.selectedTextStyle}
@@ -859,7 +869,7 @@ const DetailEnquiry = ({route}) => {
     if (route) {
       // console.log(route, '>>>>>>>>>>>>');
       // console.log(route.params,"para");
-      const {editData} = route.params;
+      const { editData } = route.params;
       console.log(editData, 'edit');
       setEditData(editData);
     }
@@ -973,6 +983,21 @@ const DetailEnquiry = ({route}) => {
     setSelectedOption('No');
   };
   const onChangeHandler = (value, field) => {
+    if (field === 'phone') {
+      if (!/^\d{10}$/.test(value)) {
+        setMobileNumberError('Invalid mobile number. It should be 10 digits.');
+      } else {
+        setMobileNumberError('');
+      }
+    }
+    if (field === 'whatsappno') {
+      if (!/^\d{10}$/.test(value)) {
+        setWhatNumberError('Invalid WhatsApp number. It should be 10 digits.');
+      } else {
+        setWhatNumberError('');
+      }
+    }
+
     setEnquiryData(preData => ({
       ...preData,
       [field]: value,
@@ -1011,7 +1036,7 @@ const DetailEnquiry = ({route}) => {
   }, [enquiryState]);
 
   const submitEnquiry = () => {
-    const {firstname, lastname, phone, whatsappno} = enquiryData;
+    const { firstname, lastname, phone, whatsappno } = enquiryData;
     const formData = {
       first_name: firstname,
       last_name: lastname,
@@ -1023,9 +1048,9 @@ const DetailEnquiry = ({route}) => {
       deliveryDate:
         expDeliveryDate !== ''
           ? new Date(expDeliveryDate)
-              .toISOString()
-              .slice(0, 19)
-              .replace('T', ' ')
+            .toISOString()
+            .slice(0, 19)
+            .replace('T', ' ')
           : new Date().toISOString().slice(0, 19).replace('T', ' '),
       make: make,
       modal: modal,
@@ -1113,10 +1138,10 @@ const DetailEnquiry = ({route}) => {
     setShowMessageModal(true);
   };
   const openAddLocation = editData => {
-    navigation.navigate('Add Location', {editData: editData});
+    navigation.navigate('Add Location', { editData: editData });
   };
   const openManufactureDetails = editData => {
-    navigation.navigate('Add Manufacturer Details', {editData: editData});
+    navigation.navigate('Add Manufacturer Details', { editData: editData });
   };
   return (
     <ScrollView>
@@ -1125,7 +1150,7 @@ const DetailEnquiry = ({route}) => {
           <View style={styles.categoryBox}>
             <View>
               <Text
-                style={{fontWeight: 'bold', color: '#2E86C1', marginBottom: 5}}>
+                style={{ fontWeight: 'bold', color: '#2E86C1', marginBottom: 5 }}>
                 Category
               </Text>
               <View style={styles.enquirySourceContainer}>
@@ -1133,8 +1158,8 @@ const DetailEnquiry = ({route}) => {
                 <Dropdown
                   style={[
                     styles.dropdown,
-                    isFocus && {borderColor: 'blue'},
-                    {paddingHorizontal: 5},
+                    isFocus && { borderColor: 'blue' },
+                    { paddingHorizontal: 5 },
                   ]}
                   placeholderStyle={styles.placeholderStyle}
                   selectedTextStyle={styles.selectedTextStyle}
@@ -1163,14 +1188,14 @@ const DetailEnquiry = ({route}) => {
                 })
               ) : (
                 <Text
-                  style={{color: 'grey', fontSize: 16, textAlign: 'center'}}>
+                  style={{ color: 'grey', fontSize: 16, textAlign: 'center' }}>
                   There are no selected fields
                 </Text>
               )}
             </View>
           )}
         </View>
-        <View style={{paddingHorizontal: 15, top: 20}}>
+        <View style={{ paddingHorizontal: 15, top: 20 }}>
           <TouchableOpacity style={styles.submitButton} onPress={submitEnquiry}>
             <Text style={styles.submitButtonText}>
               {editData ? 'Edit Enquiry' : 'Submit'}
