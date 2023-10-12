@@ -47,6 +47,9 @@ const AddMore = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [isConfirmation, setIsConfiromation] = useState(false);
   const enquiryType = useSelector(state => state.enquiryType.enquiryType);
+  useEffect(() => {
+    dispatch(setEnquiryType('New'));
+  }, []);
   const enquiryFilters = [
     {
       type: 'New',
