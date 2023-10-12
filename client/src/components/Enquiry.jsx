@@ -568,6 +568,9 @@ export default function Enquiry({ workFor, villageId }) {
       dispatch(setShowMessage("Enquiry Registered Successfully !"));
       dispatch(clearEnquiryState());
       navigate("/sale/enquiries");
+    } else if (enquiryState.result.result === "Mobile number already exists") {
+      dispatch(setShowMessage("*Please use a different mobile number to continue!"));
+      dispatch(clearEnquiryState());
     }
   }, [enquiryState]);
 

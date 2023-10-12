@@ -285,105 +285,121 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
   const lastName = req.body.lastName || null;
   const fatherName = req.body.fatherName || null;
   const mobileNumber = req.body.mobileNumber || null;
-  const whatsappNumber = req.body.whatsappNumber || null;
-  const email = req.body.emailId || null;
-  const isActive = 1;
-  const state = req.body.state || stateId;
-  const district = req.body.district || null;
-  const tehsil = req.body.tehsil || null;
-  const block = req.body.block || null;
-  const village = req.body.village || null;
 
-  const enquiryCategoryId = req.body.category || none;
-  const visitReason = "1" || null;
-  const branchId = req.body.branchId || null;
-  const dsp = req.body.dsp || none;
-  const model = req.body.model || none;
-  const make = req.body.make || none;
-  const manufacturers = req.body.manufacturers || null;
-  const product = req.body.product || null;
-  const variant = req.body.variant || null;
-  const modelYear = req.body.modelYear || none;
-  const condition = req.body.condition || null;
-  const oldTractorOwned = req.body.oldTractorOwned || null;
-  const enquiryDate = req.body.enquiryDate || null;
-  const deliveryDate = req.body.deliveryDate || null;
-  const sourceOfEnquiry = req.body.sourceOfEnquiry || null;
-  const enquiryPrimarySource = req.body.enquiryPrimarySource || null;
-
-  const url = `INSERT INTO customers (first_name, middle_name, last_name, phone_number, whatsapp_number, email, is_active, state, district, taluka, village) VALUES ('${firstName}','${fatherName}','${lastName}','${mobileNumber}','${whatsappNumber}','${email}','${isActive}','${state}','${district}','${tehsil}','${village}')`;
-
-  console.log("url", url);
-
-  db.query(url, async (err, result) => {
+  // Add a query to check if a record with the same mobile number already exists
+  const checkMobileQuery = `SELECT * FROM customers WHERE phone_number = '${mobileNumber}'`;
+console.log(checkMobileQuery,"checkMobileQuery");
+  db.query(checkMobileQuery, async (err, existingCustomer) => {
     if (err) {
       console.log({ isSuccess: false, result: err });
       res.send({ isSuccess: false, result: "error" });
-    } else if (result && result.insertId) {
-      const insertedId = result.insertId;
+    } else if (existingCustomer.length > 0) {
+      // If a record with the same mobile number exists, respond with an error
+      res.send({ isSuccess: false, result: "Mobile number already exists" });
+    } else {
+      const whatsappNumber = req.body.whatsappNumber || null;
+      const email = req.body.emailId || null;
+      const isActive = 1;
+      const state = req.body.state || stateId;
+      const district = req.body.district || null;
+      const tehsil = req.body.tehsil || null;
+      const block = req.body.block || null;
+      const village = req.body.village || null;
 
-      const newEnquiryDate = await getDateInFormate(enquiryDate);
-      const newDeliveryDate = await getDateInFormate(deliveryDate);
+      const enquiryCategoryId = req.body.category || none;
+      const visitReason = "1" || null;
+      const branchId = req.body.branchId || null;
+      const dsp = req.body.dsp || none;
+      const model = req.body.model || none;
+      const make = req.body.make || none;// Corrected 'none' to null
+      const manufacturers = req.body.manufacturers || null;
+      const product = req.body.product || null;
+      const variant = req.body.variant || null;
+      const modelYear = req.body.modelYear || none;
+      const condition = req.body.condition || null;
+      const oldTractorOwned = req.body.oldTractorOwned || null;
+      const enquiryDate = req.body.enquiryDate || null;
+      const deliveryDate = req.body.deliveryDate || null;
+      const sourceOfEnquiry = req.body.sourceOfEnquiry || null;
+      const enquiryPrimarySource = req.body.enquiryPrimarySource || null;
 
-      const urlNew = `INSERT INTO enquiries (branch_id, enquiry_category_id, salesperson_id, customer_id, modal_id, date, delivery_date, primary_source_id, enquiry_source_id, visitReason) VALUES('${branchId}','${enquiryCategoryId}','${dsp}','${insertedId}','${model}','${newEnquiryDate}','${newDeliveryDate}', '${enquiryPrimarySource}','${sourceOfEnquiry}','${visitReason}')`;
-      db.query(urlNew, async (err, result) => {
+      const url = `INSERT INTO customers (first_name, middle_name, last_name, phone_number, whatsapp_number, email, is_active, state, district, taluka, village) VALUES ('${firstName}', '${fatherName}', '${lastName}', '${mobileNumber}', '${whatsappNumber}', '${email}', '${isActive}', '${state}', '${district}', '${tehsil}', '${village}')`;
+
+      console.log("url", url);
+
+      db.query(url, async (err, result) => {
         if (err) {
           console.log({ isSuccess: false, result: err });
           res.send({ isSuccess: false, result: "error" });
         } else if (result && result.insertId) {
-          const insertedEnquiryId = result.insertId;
+          const insertedId = result.insertId;
 
-          const enquiryProductSql = `INSERT INTO enquiry_products (enquiry_id, manufacturer, modal) VALUES('${insertedEnquiryId}', '${make}', '${model}')`;
+          const newEnquiryDate = await getDateInFormate(enquiryDate);
+          const newDeliveryDate = await getDateInFormate(deliveryDate);
 
-          db.query(enquiryProductSql, async (err, result) => {
+          const urlNew = `INSERT INTO enquiries (branch_id, enquiry_category_id, salesperson_id, customer_id, modal_id, date, delivery_date, primary_source_id, enquiry_source_id, visitReason) VALUES ('${branchId}', '${enquiryCategoryId}', '${dsp}', '${insertedId}', '${model}', '${newEnquiryDate}', '${newDeliveryDate}', '${enquiryPrimarySource}', '${sourceOfEnquiry}', '${visitReason}')`;
+
+          db.query(urlNew, async (err, result) => {
             if (err) {
               console.log({ isSuccess: false, result: err });
               res.send({ isSuccess: false, result: "error" });
-            } else {
-              console.log({ isSuccess: "success", result: "success" });
-              res.send({ isSuccess: "success", result: "success" });
+            } else if (result && result.insertId) {
+              const insertedEnquiryId = result.insertId;
+
+              const enquiryProductSql = `INSERT INTO enquiry_products (enquiry_id, manufacturer, modal) VALUES ('${insertedEnquiryId}', '${make}', '${model}')`;
+
+              db.query(enquiryProductSql, async (err, result) => {
+                if (err) {
+                  console.log({ isSuccess: false, result: err });
+                  res.send({ isSuccess: false, result: "error" });
+                } else {
+                  console.log({ isSuccess: "success", result: "success" });
+                  res.send({ isSuccess: "success", result: "success" });
+                }
+              });
+
+              if (oldTractorOwned === "Yes") {
+                const urlSql = `INSERT INTO manufacturer_details (enquiry_id, maker, modalName, variantName, year_of_manufacture, condition_of, old_tractor) VALUES ('${insertedEnquiryId}', '${manufacturers}', '${product}', '${variant}', '${modelYear}', '${condition}', '${oldTractorOwned}')`;
+
+                db.query(urlSql, async (err, result) => {
+                  if (err) {
+                    console.log({ isSuccess: false, result: err });
+                    res.send({ isSuccess: false, result: "error" });
+                  } else {
+                    console.log({ isSuccess: "success", result: "success" });
+                    // res.send({ isSuccess: "success", result: "success" });
+                  }
+                });
+              } else if (oldTractorOwned === "No") {
+                const urlSql = `INSERT INTO manufacturer_details (enquiry_id, old_tractor) VALUES ('${insertedEnquiryId}', '${oldTractorOwned}')`;
+                db.query(urlSql, (err, result) => {
+                  if (err) {
+                    console.log(err);
+                  } else {
+                    console.log({
+                      result: "success",
+                      isSuccess: "success",
+                    });
+                    // res.send({
+                    //   isSuccess: "success",
+                    //   result: "success",
+                    // });
+                  }
+                });
+              } else {
+                res.send({
+                  isSuccess: "success",
+                  result: "success",
+                });
+              }
             }
           });
-
-          if (oldTractorOwned === "Yes") {
-            const urlSql = `INSERT INTO manufactur_details (enquiry_id, maker, modalName, variantName, year_of_manufactur, condition_of, old_tractor) VALUES('${insertedEnquiryId}', '${manufacturers}', '${product}', '${variant}', '${modelYear}', '${condition}', '${oldTractorOwned}')`;
-
-            db.query(urlSql, async (err, result) => {
-              if (err) {
-                console.log({ isSuccess: false, result: err });
-                res.send({ isSuccess: false, result: "error" });
-              } else {
-                console.log({ isSuccess: "success", result: "success" });
-                // res.send({ isSuccess: "success", result: "success" });
-              }
-            });
-          } else if (oldTractorOwned === "No") {
-            const urlSql = `INSERT INTO manufactur_details (enquiry_id, old_tractor) VALUES('${insertedEnquiryId}','${oldTractorOwned}')`;
-            db.query(urlSql, (err, result) => {
-              if (err) {
-                console.log(err);
-              } else {
-                console.log({
-                  result: "success",
-                  isSuccess: "success",
-                });
-                // res.send({
-                //   isSuccess: "success",
-                //   result: "success",
-                // });
-              }
-            });
-          } else {
-            res.send({
-              isSuccess: "success",
-              result: "success",
-            });
-          }
         }
       });
     }
   });
 });
+
 
 //=================edit Enquiry Data================//
 
@@ -2170,7 +2186,7 @@ router.get("/get-enquiry-mobile-number-exist/:mobileno/:categoryId", tokenCheck,
           // console.log({ isSuccess: "success", result: result });
           res.send({ isSuccess: "success", result: true });
         }
-        else{
+        else {
           console.log(isPhoneNumber, 'else')
           // console.log({ isSuccess: "success", result: result });
           res.send({ isSuccess: "success", result: false });
