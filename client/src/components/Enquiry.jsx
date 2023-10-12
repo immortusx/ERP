@@ -667,19 +667,10 @@ export default function Enquiry({ workFor, villageId }) {
 
     const response = await axios.get(url, config);
     if (response.data && response.data.result === true) {
-      setError('* Mobile Number Already Exist !');
+      dispatch(setShowMessage("* Mobile Number Already Exist !"));
     }
   }
-  useEffect(() => {
-    if (error) {
-      const timer = setTimeout(() => {
-        setError('');
-      }, 2000);
-      return () => {
-        clearTimeout(timer);
-      };
-    }
-  }, [error]);
+
   const onFocusOut = () => {
     console.log("Iels Left");
     console.log(enquiryData, 'enquirutrt')
@@ -966,7 +957,6 @@ export default function Enquiry({ workFor, villageId }) {
               name="mobileNumber"
               defaultValue={enquiryData.mobileNumber}
             />
-            {error && <div style={{ color: 'red' }}>{error}</div>}
           </section>
         );
 
