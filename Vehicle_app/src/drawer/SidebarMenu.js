@@ -48,7 +48,7 @@ const SidebarMenu = () => {
             drawerIcon: () => (
               <Image
                 style={styles.personImg}
-                source={require('../../assets/home.png')}
+                source={require('../../assets/hom.png')}
               />
             ),
           }}
