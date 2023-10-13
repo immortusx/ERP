@@ -61,13 +61,13 @@ const BreadCrumb = () => {
                       to={currentLink}
                       color={isLastCrumb ? "textPrimary" : "inherit"}
                     >
-                      {crumb.replace(/-/g, " ")}
+                      {translations[currentLanguage][crumb.replace(/-/g, " ")] || crumb.replace(/-/g, " ")}
                     </Link>
                     {index === array.length - 1 && !isLastCrumb && (
                       <ExpandMoreIcon fontSize="small" />
                     )}
-
                   </Typography>
+
                 );
 
               })}
@@ -79,8 +79,8 @@ const BreadCrumb = () => {
             <div className="download-bar" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
               {isHovered ? (
                 <div className="download-menu-container">
-                  <button className="download-button" onClick={handleDownloadIos}>iOS</button>
-                  <button className="download-button" onClick={handleDownloadAndroid}>Android</button>
+                  <button className="download-button" onClick={handleDownloadIos}>{translations[currentLanguage].ios}</button>
+                  <button className="download-button" onClick={handleDownloadAndroid}>{translations[currentLanguage].android}</button>
                 </div>
               ) : (
                 <p>{translations[currentLanguage].download}</p>

@@ -864,7 +864,7 @@ export default function HomeScreen() {
                         onClick={logOutHandler}
                         href=""
                       >
-                        Log out
+                        {translations[currentLanguage].logout}
                       </button>
                     </div>
                   </div>
