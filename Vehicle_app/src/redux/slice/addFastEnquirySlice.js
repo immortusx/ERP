@@ -1,7 +1,8 @@
 import axios from 'axios';
-import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
-import {API_URL} from '@env';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { API_URL } from '@env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
 const initialState = {
   fastEnquiryState: {
     isFetching: false,
@@ -13,7 +14,7 @@ const initialState = {
 
 export const setFastEnquiryDb = createAsyncThunk(
   'setFastEnquiryDb/addFastEnquirySlice',
-  async data => {
+  async (data) => {
     console.log('fastData', data);
     const id = await AsyncStorage.getItem('currentBranchId');
     const branchId = id ? id : '';
@@ -27,26 +28,28 @@ export const setFastEnquiryDb = createAsyncThunk(
       },
     };
     console.log(config);
-    await axios.post(url, data, config).then(response => {
-      console.log(response.data);
+
+    // You need to return the result of the axios request
+    return axios.post(url, data, config).then((response) => {
+      console.log(response.data, 'fastEnquirySlice');
       return response.data;
     });
-  },
+  }
 );
 
 const fastEnquirySlice = createSlice({
   name: 'fastEnquiryState',
   initialState,
   reducers: {
-    clearFastEnquiryState: state => {
+    clearFastEnquiryState: (state) => {
       state.fastEnquiryState.isFetching = false;
       state.fastEnquiryState.isSuccess = false;
       state.fastEnquiryState.isError = false;
       state.fastEnquiryState.result = '';
     },
   },
-  extraReducers: builder => {
-    builder.addCase(setFastEnquiryDb.pending, state => {
+  extraReducers: (builder) => {
+    builder.addCase(setFastEnquiryDb.pending, (state) => {
       state.fastEnquiryState.isFetching = true;
       state.fastEnquiryState.isError = false;
     });
@@ -62,5 +65,5 @@ const fastEnquirySlice = createSlice({
   },
 });
 
-export const {clearFastEnquiryState} = fastEnquirySlice.actions;
+export const { clearFastEnquiryState } = fastEnquirySlice.actions;
 export default fastEnquirySlice.reducer;

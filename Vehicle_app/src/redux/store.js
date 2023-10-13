@@ -1,4 +1,4 @@
-import {configureStore} from '@reduxjs/toolkit';
+import { configureStore } from '@reduxjs/toolkit';
 import getLoginSlice from './slice/getUserLogin';
 import enquirySlice from './slice/addEnquirySlice';
 import locationFormSlice from './slice/locationFormSlice';
@@ -12,6 +12,8 @@ import getUserProfile from './slice/getUserProfile';
 import addFollowUpSlice from './slice/addFollowUpSlice';
 import enquiryTypeSlice from './slice/enquiryTypeSlice';
 import SwipeScreenSlice from './slice/SwipeScreenSlice';
+import addEnquirySlice from './slice/addEnquirySlice';
+
 
 export const store = configureStore({
   reducer: {
@@ -22,7 +24,8 @@ export const store = configureStore({
     modalData: modalDataSlice,
     getVillageState: getAllVillageSlice,
     getEnquiryState: getEnquirySlice,
-    fastEnquirySlice: addFastEnquirySlice,
+    fastEnquiry: addFastEnquirySlice,
+    DetailEnquiry: addEnquirySlice,
     editEnquirySlice: editEnquirySlice,
     getUserProfileSlice: getUserProfile,
     followUpSlice: addFollowUpSlice,
