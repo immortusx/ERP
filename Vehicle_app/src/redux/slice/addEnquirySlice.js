@@ -14,7 +14,7 @@ const initialState = {
 
 export const setEnquiryDb = createAsyncThunk(
   'setEnquiryDb/enquirySlice',
-  async data => {
+  async (data) => {
     console.log('data', data);
     const id = await AsyncStorage.getItem('currentBranchId');
     const branchId = id ? id : ''
@@ -28,7 +28,7 @@ export const setEnquiryDb = createAsyncThunk(
       },
     };
     console.log(config);
-    await axios.post(url, data, config).then(response => {
+    return axios.post(url, data, config).then(response => {
       return response.data;
     });
   },
@@ -37,7 +37,7 @@ const enquirySlice = createSlice({
   name: 'enquiryState',
   initialState,
   reducers: {
-    clearEnquiryState: state => {
+    clearEnquiryState: (state) => {
       state.enquiryState.isError = false;
       state.enquiryState.isSuccess = false;
       state.enquiryState.isFetching = false;
@@ -45,9 +45,10 @@ const enquirySlice = createSlice({
       return state;
     },
   },
-  extraReducers: builder => {
+  extraReducers: (builder) => {
     builder.addCase(setEnquiryDb.pending, state => {
       state.enquiryState.isFetching = true;
+      state.enquiryState.isError = false;
     });
     builder.addCase(setEnquiryDb.fulfilled, (state, action) => {
       state.enquiryState.isFetching = false;

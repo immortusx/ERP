@@ -32,15 +32,11 @@ import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_URL } from '@env';
-
 const FastEnquiry = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  // const enquiryState = useSelector(state => state.enquriySlice.enquiryState);
   const locationForm = useSelector(state => state.locationForm);
-  const fastEnquiryState = useSelector(
-    state => state.fastEnquirySlice.fastEnquiryState,
-  );
+  const fastEnquiryState = useSelector(state => state.fastEnquiry.fastEnquiryState);
   const getVillageState = useSelector(state => state.getVillageState);
   const { isFetching, isSuccess, isError, result } = getVillageState;
   const { maker, modalName, variantName, year, condition_of } = useSelector(
@@ -426,15 +422,15 @@ const FastEnquiry = () => {
   }, [categoryData]);
 
   useEffect(() => {
-    if (fastEnquiryState && fastEnquiryState.isSuccess === true) {
+    if (fastEnquiryState && fastEnquiryState.result.result === 'Already Exist') {
+      setMobileNumberError("*Allready Exist!")
+      dispatch(clearFastEnquiryState());
+    }
+    else if (fastEnquiryState && fastEnquiryState.result.result === "success") {
       dispatch(clearFastEnquiryState());
       setMessage('Enquiry Submitted');
-      // console.log('Enquiry submitted');
       openModal();
       navigation.navigate('HOME');
-      // dispatch(getEnquiryData()).then(() => {
-      //   navigation.navigate('HOME');
-      // });
     }
   }, [fastEnquiryState]);
 

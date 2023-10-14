@@ -38,7 +38,7 @@ import MinDateCalendars from './subCom/MinDateCalendars';
 const DetailEnquiry = ({ route }) => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
-  const enquiryState = useSelector(state => state.enquirySlice.enquiryState);
+  const enquiryState = useSelector(state => state.DetailEnquiry.enquiryState)
   const editEnquiryState = useSelector(
     state => state.editEnquirySlice.editEnquiryState,
   );
@@ -635,8 +635,8 @@ const DetailEnquiry = ({ route }) => {
                         <Dropdown
                           style={[
                             styles.dropdown,
-                            isFocus && {borderColor: 'blue'},
-                            {paddingHorizontal: 5},
+                            isFocus && { borderColor: 'blue' },
+                            { paddingHorizontal: 5 },
                           ]}
                           placeholderStyle={styles.placeholderStyle}
                           selectedTextStyle={styles.selectedTextStyle}
@@ -1020,19 +1020,24 @@ const DetailEnquiry = ({ route }) => {
   }, [editEnquiryState]);
 
   useEffect(() => {
-    if (enquiryState && enquiryState.isSuccess === true) {
+    if (enquiryState && enquiryState.result.result === 'allready exists') {
+      setMobileNumberError("*Already Exist!");
+      console.log(enquiryState, "enquiryStatedirdtrif")
+      dispatch(clearEnquiryState());
+      dispatch(clearManufacturerDetails());
+      dispatch(clearModalData());
+    }
+    else if (enquiryState && enquiryState.result.result === 'success') {
       dispatch(clearEnquiryState());
       dispatch(clearManufacturerDetails());
       dispatch(clearModalData());
       setMessage('Enquiry Submitted');
-      // console.log('Enquiry submitted');
-      // openModal();
+      openModal();
+      setMobileNumberError('')
       setShowMessageModal(true);
       navigation.navigate('HOME');
-      // dispatch(getEnquiryData()).then(() => {
-      //   navigation.navigate('HOME');
-      // });
     }
+
   }, [enquiryState]);
 
   const submitEnquiry = () => {
