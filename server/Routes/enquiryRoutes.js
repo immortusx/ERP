@@ -146,7 +146,7 @@ router.get("/get-enquiries", tokenCheck, async (req, res) => {
 //   });
 // });
 router.get("/get-multiple-enquiriesbyId/:ids", tokenCheck, async (req, res) => {
-  console.log(">>>>>>>>>get-enquiries", req.myData);
+  console.log(">>>>>>>>>get-multiple-enquiriesbyId", req.myData);
   const userIds = req.params.ids.split(","); // Split the comma-separated IDs into an array
   const urlNew = `select * from enquiries where customer_id IN (${userIds.join(
     ","
