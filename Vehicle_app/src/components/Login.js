@@ -17,11 +17,15 @@ import BackgroundImage from '../../assets/cover.jpg';
 import {getLoginUser} from '../redux/slice/getUserLogin';
 import getUserProfile, {getProfileData} from '../redux/slice/getUserProfile';
 import LoadingSpinner from './subCom/LoadingSpinner';
+import UpdatePopUp from './AppUpdatePopUp';
 const Login = ({navigation}) => {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const [isLoggedIn, setLoggedIn] = useState(false);
+  const [updateScreen, setUpdateScreen] = useState(false);
   const loginState = useSelector(state => state.getLoginSlice.loginState);
+  const appVersion = '1.0';
+  const updated = '1.2';
   const profileData = useSelector(
     state => state.getUserProfileSlice.profile.currentUserData.result,
   );
@@ -37,7 +41,30 @@ const Login = ({navigation}) => {
       setLoginData(registerData => ({...loginData, password: value}));
     }
   };
-  
+  const updateDetails = {
+    features: [
+      'Added a some new feature.',
+      'Improved performance and stability.',
+      'Enhanced user interface.',
+    ],
+    bugFixes: ['Fixed a crash issue when loading the profile.'],
+  };
+  // useEffect(() => {
+  //   if (appVersion !== updated) {
+  //     setUpdateScreen(true);
+  //   }
+  // }, [updated]);
+
+  const handleUpdateNow = () => {
+    // Implement code to navigate to the app store or initiate the update.
+    // For simplicity, we'll just dismiss the pop-up here.
+    setUpdateScreen(false);
+  };
+
+  const handleUpdateDismiss = () => {
+    setUpdateScreen(false);
+  };
+
   useEffect(() => {
     if (loginState.isSuccess === true) {
       if (loginState.result.message === 'success') {
@@ -82,14 +109,14 @@ const Login = ({navigation}) => {
     console.log('loginState', loginState);
   }, [loginState]);
 
-  useEffect(()=> {
-    if(profileData){
+  useEffect(() => {
+    if (profileData) {
       const username = profileData?.email ?? '';
-      setLoginData((prevData) => ({ ...prevData, username }));
+      setLoginData(prevData => ({...prevData, username}));
       const password = 'admin';
-      setLoginData((prevData) => ({ ...prevData, password }));
+      setLoginData(prevData => ({...prevData, password}));
     }
-  },[profileData])
+  }, [profileData]);
   const handleLogin = () => {
     if (loginData.username.length > 0 && loginData.password.length > 0) {
       dispatch(getLoginUser(loginData));
@@ -101,67 +128,75 @@ const Login = ({navigation}) => {
   };
 
   return (
-    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-      <View style={styles.container}>
-        <View style={{flex: 1}}>
-          <Image
-            style={{flex: 1, width: null, marginTop: -500}}
-            source={BackgroundImage}
-          />
-        </View>
-        <Text>Keshav Tractors</Text>
-        <View style={styles.bottomView}>
-          <Text style={styles.loginText}>Login</Text>
-          <View style={styles.inputView}>
-            {/* <Icon
+    <>
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        <View style={styles.container}>
+          <View style={{flex: 1}}>
+            <Image
+              style={{flex: 1, width: null, marginTop: -500}}
+              source={BackgroundImage}
+            />
+          </View>
+          <Text>Keshav Tractors</Text>
+          <View style={styles.bottomView}>
+            <Text style={styles.loginText}>Login</Text>
+            <View style={styles.inputView}>
+              {/* <Icon
               style={styles.inputIcon}
               name="person"
               type="ionicons"
               color="#5352ed"
             /> */}
-            <TextInput
-              style={styles.input}
-              placeholder="Enter Email/Mobile Number"
-              autoCapitalize="none"
-              value={loginData.username}
-              onChangeText={value => onChangeHandler(value, 'username')}
-            />
-          </View>
-          <View style={styles.inputView}>
-            {/* <Icon
+              <TextInput
+                style={styles.input}
+                placeholder="Enter Email/Mobile Number"
+                autoCapitalize="none"
+                value={loginData.username}
+                onChangeText={value => onChangeHandler(value, 'username')}
+              />
+            </View>
+            <View style={styles.inputView}>
+              {/* <Icon
               style={styles.inputIcon}
               name="lock"
               type="ionicons"
               color="#5352ed"
             /> */}
-            <TextInput
-              style={styles.input}
-              placeholder="Enter Password"
-              secureTextEntry={true}
-              autoCapitalize="none"
-              value={loginData.password}
-              onChangeText={value => onChangeHandler(value, 'password')}
-            />
+              <TextInput
+                style={styles.input}
+                placeholder="Enter Password"
+                secureTextEntry={true}
+                autoCapitalize="none"
+                value={loginData.password}
+                onChangeText={value => onChangeHandler(value, 'password')}
+              />
+            </View>
+            <Text style={styles.fpText}>Forgot Password?</Text>
+            <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+              <Text style={styles.loginButtonText}>
+                {isLoading ? (
+                  <ActivityIndicator size="large" color="white" />
+                ) : (
+                  'Login'
+                )}
+              </Text>
+            </TouchableOpacity>
+            <Text style={styles.registerText}>
+              Don't have an account?
+              <Text style={{color: '#006400', fontFamily: 'SourceSansProBold'}}>
+                {' Register'}
+              </Text>
+            </Text>
           </View>
-          <Text style={styles.fpText}>Forgot Password?</Text>
-          <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-            <Text style={styles.loginButtonText}>
-              {isLoading ? (
-                <ActivityIndicator size="large" color="white" />
-              ) : (
-                'Login'
-              )}
-            </Text>
-          </TouchableOpacity>
-          <Text style={styles.registerText}>
-            Don't have an account?
-            <Text style={{color: '#006400', fontFamily: 'SourceSansProBold'}}>
-              {' Register'}
-            </Text>
-          </Text>
         </View>
-      </View>
-    </TouchableWithoutFeedback>
+      </TouchableWithoutFeedback>
+      <UpdatePopUp
+        isVisible={updateScreen}
+        onUpdate={handleUpdateNow}
+        onDismiss={handleUpdateDismiss}
+        updateDetails={updateDetails}
+      />
+    </>
   );
 };
 

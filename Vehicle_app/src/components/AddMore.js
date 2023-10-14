@@ -23,7 +23,6 @@ import ToastMessage from './subCom/ToastMessage';
 import TimeAgo from './subCom/TImeAgo';
 import ConfirmationDialog from './subCom/ConfirmationDialog';
 import ConfirmBox from './subCom/Confirm';
-import EnquiryContainer from './EnquiryContainer';
 import NewEnquiry from './NewEnquiry';
 import LastMonthEnquiry from './LastMonthEnquiry';
 import TodayEnquiry from './TodayEnquiry';
