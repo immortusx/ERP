@@ -145,8 +145,8 @@ export default function Login() {
                             <div className="download-bar" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
                                 {isHovered ? (
                                     <div className="download-menu-container">
-                                        <button className="download-button" onClick={downloadiOsApp}>iOS</button>
-                                        <button className="download-button" onClick={downloadAndroidApp}>Android</button>
+                                        <button className="download-button" onClick={downloadiOsApp}>{translations[currentLanguage].ios}</button>
+                                        <button className="download-button" onClick={downloadAndroidApp}>{translations[currentLanguage].android}</button>
                                     </div>
                                 ) : (
                                     <img

@@ -329,6 +329,7 @@ export default function AddUser({ workFor }) {
         setPopUpScreen(false)
     }
 
+
     return (
         <>
             <div className='addUser  bg-white rounded p-3'>
@@ -429,7 +430,7 @@ export default function AddUser({ workFor }) {
                                                                 {item.role.map((i, index) => {
                                                                     console.log(item, 'item')
                                                                     console.log(
-                                                                      item.role,"itemrole$$$$$$$$$$$4"
+                                                                        item.role, "itemrole$$$$$$$$$$$4"
                                                                     );
                                                                     return <span key={index} value={i.id} className='myTag myH7 m-1'>{i.role}</span>
                                                                 })}
@@ -452,7 +453,7 @@ export default function AddUser({ workFor }) {
             </div >
             {
                 popUpScreen && <section className='popUpScreen'>
-                    <main className='shadow col-10 col-md-8 col-lg-7  p-3'>
+                    <main className='shadow col-10 col-md-8 col-lg-7  p-3' style={{ position: 'relative' }}>
 
                         <h5 className='m-0'>Select role</h5>
                         <div className=' row m-0'>
@@ -462,7 +463,26 @@ export default function AddUser({ workFor }) {
                             </section>
                             <section className='d-flex mt-3  flex-column flex-sm-row'>
                                 <button onClick={confirmClicked} className='col-12 col-sm-5 col-lg-2 myBtn py-2' type='button'>Done</button>
-                                {/* <button onClick={cancelClicked} className='ms-0 ms-sm-3 mt-3 mt-sm-0 col-12 col-sm-5 col-lg-2 myBtn py-2' type='button'>Cancel</button> */}
+                                <button onClick={handleCancel} className='ms-0 ms-sm-3 mt-3 mt-sm-0 col-12 col-sm-5 col-lg-2 myBtn py-2' type='button'>Cancel</button>
+                                <Button
+                                    variant="btn btn-warning mx-1"
+                                    style={{
+                                        width: '70px',
+                                        height: '35px',
+                                        fontSize: '14px',
+                                        borderRadius: '20px',
+                                        position: 'absolute',
+                                        top: '15px',   
+                                        right: '10px', 
+                                        padding: '5px 10px',
+                                        fontWeight: 'bold',
+                                    }}
+                                    onClick={() => {
+                                        confirmClicked();
+                                    }}
+                                >
+                                    BACK
+                                </Button>
                             </section>
                         </div>
                     </main>
