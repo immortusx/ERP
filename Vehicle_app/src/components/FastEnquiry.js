@@ -423,7 +423,7 @@ const FastEnquiry = () => {
 
   useEffect(() => {
     if (fastEnquiryState && fastEnquiryState.result.result === 'Already Exist') {
-      setMobileNumberError("*Allready Exist!")
+      setMobileNumberError("*Already Exist!")
       dispatch(clearFastEnquiryState());
     }
     else if (fastEnquiryState && fastEnquiryState.result.result === "success") {
