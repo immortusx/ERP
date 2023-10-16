@@ -171,7 +171,7 @@
 }
 
 .asideNav .logoDiv {
-    height: 60px;
+    /* height: 60px; */
     display: flex;
     justify-content: start;
     margin: 20px 0;
@@ -479,7 +479,10 @@
 
     .asideNav .logoDiv .logoT {
         display: block !important;
-        margin: auto;
+        margin-top: 60px !important;
+        margin-left: -100px !important;
+        margin-right: 5px !important;
+        /* margin: auto; */
     }
 
     .asideNav .outLi .show {
