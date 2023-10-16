@@ -306,7 +306,7 @@ const CategorisedEnquiry = () => {
           <SimpleAlert
             isVisible={isConfirmation}
             text1={'Alert !'}
-            text2={'Currently, There is New Enquiry Not Available'}
+            text2={'Currently, There is Enquiry Not Available'}
             onConfirm={handleConfirm}
           />
         )}
