@@ -145,7 +145,7 @@ const CategorisedEnquiry = () => {
       await axios.get(url, config).then(response => {
         if (response) {
           const filteredCategory = response.data.result.filter((item) => item.id !== 1);
-          setSelectedCategory(filteredCategory);
+          setCategoryData(filteredCategory);
         }
       });
     };
