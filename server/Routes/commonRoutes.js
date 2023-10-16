@@ -574,27 +574,4 @@ router.get("/get-Warm-enquiry", tokenCheck, async (req, res) => {
   }
 });
 
-//======Get Enquiry By New Tractor====================
-router.get("/get-enquiryby-newtractor", tokenCheck, async (req, res) => {
-  console.log(">>>>>/get-Cold-enquiry");
-  try {
-    let branchId = req.myData.branchId;
-    let isSuperAdmin = req.myData.isSuperAdmin;
-    let userId = req.myData.userId;
-    const url = `CALL sp_get_enquiry_by_newtractor(${branchId}, ${isSuperAdmin}, ${userId})`;
-    db.query(url, async (err, result) => {
-      if (err) {
-        console.error(err);
-        res.status(500).json({ isSuccess: false, result: "error" });
-      } else {
-        console.log({ isSuccess: true, result: result });
-        res.status(200).json({ isSuccess: true, result: result[0] });
-      }
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ isSuccess: false, result: "error" });
-  }
-});
-
 module.exports = router;

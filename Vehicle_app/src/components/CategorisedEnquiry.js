@@ -45,32 +45,8 @@ const CategorisedEnquiry = () => {
   );
   const getEnquiryState = useSelector(state => state.getEnquiryState);
   const { isFetching, isSuccess, isError, result } = getEnquiryState;
-  // const categoryList = [
-  //   {
-  //     label: "New Tractor",
-  //     value: 1,
-  //   },
-  //   {
-  //     label: "New Tractor",
-  //     value: 1,
-  //   },
-  //   {
-  //     label: "New Tractor",
-  //     value: 1,
-  //   },
-  //   {
-  //     label: "New Tractor",
-  //     value: 1,
-  //   },
-  //   {
-  //     label: "New Tractor",
-  //     value: 1,
-  //   },
-  //   {
-  //     label: "New Tractor",
-  //     value: 1,
-  //   },
-  // ]
+  const [selectedCategory, setSelectedCategory] = useState(null);
+
   const categoryList = categoryData.map(category => ({
     label: category.category_name,
     value: category.id,
@@ -161,7 +137,7 @@ const CategorisedEnquiry = () => {
       const url = `${API_URL}/api/enquiry/get-enquiry-categories`;
       const token = await AsyncStorage.getItem('rbacToken');
       const config = {
-        headers: {
+        headers: {  
           token: token ? token : '',
         },
       };
@@ -169,7 +145,7 @@ const CategorisedEnquiry = () => {
       await axios.get(url, config).then(response => {
         if (response) {
           const filteredCategory = response.data.result.filter((item) => item.id !== 1);
-          setCategoryData(filteredCategory);
+          setSelectedCategory(filteredCategory);
         }
       });
     };
@@ -180,6 +156,27 @@ const CategorisedEnquiry = () => {
     //   dispatch(setEnquiryType('Followed Enquiry'));
     setIsConfiromation(false);
   };
+ const handleCategoryChange = async categoryId => {
+    const url = `${API_URL}/api/get-enquiries-by-category/${categoryId}`;
+    console.log('get enquries', url);
+    const token = await AsyncStorage.getItem('rbacToken');
+    const config = {
+      headers: {
+        token: token ? token : '',
+      },
+    };
+    setLoading(true);
+    console.log(config);
+    await axios.get(url, config).then(response => {
+      if (response) {
+        console.log(response.data.result, 'enquirie catrogrit');
+        setNewEnquiryList(response.data.result);
+      }
+    });
+    setLoading(false);
+  };
+
+
   return (
     <View style={styles.container}>
       <View style={styles.dropDownContainer}>
@@ -204,11 +201,13 @@ const CategorisedEnquiry = () => {
                 valueField="value"
                 placeholder={!isFocus ? 'Select Category' : ' '}
                 searchPlaceholder="Search..."
-                value={category}
-                onChange={item => {
-                  setCategory(item.value);
+                value={selectedCategory} 
+                onChange={(item) => {
+                  setSelectedCategory(item.value);
+                  handleCategoryChange(item.value);
                 }}
               />
+
             </View>
           </View>
         </View>
