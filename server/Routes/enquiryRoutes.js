@@ -1701,6 +1701,23 @@ router.get("/get-total-enquiry-booking", tokenCheck, async (req, res) => {
     console.log(err);
   }
 });
+router.get("/get-todays-enquiry-booking", tokenCheck, async (req, res) => {
+  try {
+    console.log(">>>>>>>>>/get-total-enquiry-booking");
+    const urlNew = `CALL sp_get_todays_enquiry_list()`;
+    await db.query(urlNew, async (err, result) => {
+      if (err) {
+        console.log({ isSuccess: false, result: err });
+        res.send({ isSuccess: false, result: "error" });
+      } else {
+        console.log({ isSuccess: "success", result: urlNew });
+        res.send({ isSuccess: "success", result: result[0] });
+      }
+    });
+  } catch (err) {
+    console.log(err);
+  }
+});
 
 router.get("/delete-enquiry/:id", tokenCheck, async (req, res) => {
   try {
