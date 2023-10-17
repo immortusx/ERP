@@ -308,7 +308,7 @@ export default function HomeScreen() {
         </button>
         <main className="asideMain">
           <section className="outerSection">
-            <div className="logoDiv" onClick={handleLogoClick}>
+            <div className="logoDiv d-flex flex-wrap" onClick={handleLogoClick}>
               {loading ? (
                 <Spinner className="spinner-white" size={10} />
               ) : agencyData.angencyLogo ? (
@@ -336,7 +336,7 @@ export default function HomeScreen() {
               <h6 className="agency-style">{agencyData.agencyName}</h6>
 
               <img
-                className="logoT d-none rounded"
+                className="logoT d-none rounded "
                 src={`${process.env.REACT_APP_NODE_URL}/api${agencyData.angencyLogo}`}
                 alt="Logo"
                 height={70}
