@@ -1411,7 +1411,6 @@ router.post("/set-new-booking/:id", tokenCheck, async (req, res) => {
       deliveryDate,
       retailDate,
       selectedOption,
-
       maker,
       modalName,
       variantName,
@@ -1422,38 +1421,42 @@ router.post("/set-new-booking/:id", tokenCheck, async (req, res) => {
       oldChassisNo,
     } = req.body;
     const customer_id = req.params.id;
+
     const setEnquiryStage = async () => {
       const enquiry_stage = "DELIVERY";
-      const stageSql = `UPDATE enquiries SET enquiry_stage = ? WHERE customer_id = ${customer_id}`;
-      await db.query(stageSql, [enquiry_stage], (err, result) => {
+      const stageSql = `UPDATE enquiries SET enquiry_stage = ? WHERE customer_id = ?`;
+      await db.query(stageSql, [enquiry_stage, customer_id], (err, result) => {
         if (err) {
           console.log({ isSuccess: false, result: err });
           res.send({ isSuccess: false, result: "error" });
         } else {
           console.log({ isSuccess: true, result: stageSql });
           console.log({ isSuccess: true, result: "Enquiry stage updated" });
-          // res.send({ isSuccess: true, result: result });
         }
       });
     };
+
     await db.query(
-      `SELECT id FROM enquiries WHERE customer_id = ${customer_id}`,
+      `SELECT id FROM enquiries WHERE customer_id = ?`,
+      [customer_id],
       async (err, enquiryResult) => {
         if (err) {
           console.log({ isSuccess: false, result: err });
           res.send({ isSuccess: false, result: "error" });
         } else {
           console.log({ isSuccess: true, result: enquiryResult });
-          // res.send({ isSuccess: true, result: result });
           const enquiry_id = enquiryResult[0].id;
+
           const formattedDeliveryDate = new Date(deliveryDate)
             .toISOString()
             .split("T")[0];
-          const formattedretailDate = new Date(retailDate)
+          const formattedRetailDate = new Date(retailDate)
             .toISOString()
             .split("T")[0];
-          console.log(enquiry_id);
-          const bookingEnquirySql = `INSERT INTO booking (customer_id, enquiry_id, phone_number, modal, variant, chassis_no, mode_of_finance, bank_name, delivery_date, retail_date) VALUES (?,?,?,?,?,?,?,?,?,?)`;
+          const currentDate = new Date().toISOString().split("T")[0];
+
+          const bookingEnquirySql = `INSERT INTO booking (customer_id, enquiry_id, phone_number, modal, variant, chassis_no, mode_of_finance, bank_name, booking_date, delivery_date, retail_date) VALUES (?,?,?,?,?,?,?,?,?,?,?)`;
+
           await db.query(
             bookingEnquirySql,
             [
@@ -1465,8 +1468,9 @@ router.post("/set-new-booking/:id", tokenCheck, async (req, res) => {
               chassis_no,
               mode_of_finance,
               bank_name,
+              currentDate, // Use the current date here
               formattedDeliveryDate,
-              formattedretailDate,
+              formattedRetailDate,
             ],
             async (err, result) => {
               if (err) {
@@ -1499,7 +1503,7 @@ router.post("/set-new-booking/:id", tokenCheck, async (req, res) => {
                         setEnquiryStage();
                         res.send({
                           isSuccess: true,
-                          result: "Booking Succesfully",
+                          result: "Booking Successfully",
                         });
                       }
                     }
@@ -1517,8 +1521,10 @@ router.post("/set-new-booking/:id", tokenCheck, async (req, res) => {
     );
   } catch (err) {
     console.log({ isSuccess: false, result: err });
+    res.send({ isSuccess: false, result: "error" });
   }
 });
+
 
 //=============Get Area DSP================//
 router.get("/get-area-sale-person/:id", tokenCheck, async (req, res) => {
