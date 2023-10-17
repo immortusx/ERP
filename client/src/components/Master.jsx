@@ -355,6 +355,33 @@ export default function Master() {
                 <span className="ms-2">{translations[currentLanguage].enqsources}</span>
               </main>
             </li>
+            <li className="col-12 col-sm-4 col-md-4  d-flex align-items-center p-2">
+              <main
+                onClick={() => {
+                  navigate("/administration/configuration/holiday");
+                }}
+                className="d-flex align-items-center"
+              >
+                <div className="myBtnRight">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="currentColor"
+                    className="bi bi-chevron-double-right"
+                    viewBox="0 0 16 16"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708z"
+                    />
+                    <path
+                      fill-rule="evenodd"
+                      d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708z"
+                    />
+                  </svg>
+                </div>
+                <span className="ms-2">{translations[currentLanguage].holiday}</span>
+              </main>
+            </li>
 
           </ul>
         </section>

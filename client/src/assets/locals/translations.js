@@ -106,9 +106,10 @@ const translations = {
     addcategory: "Add Category",
     profiles: "Profiles",
     enquiries: "Enquiries",
-    mytask : "My Task",
+    mytask: "My Task",
     employees: "Employees",
     logout: "Logout",
+    holiday: "Holiday",
   },
   gj: {
     login: "લોગિન",
@@ -217,9 +218,10 @@ const translations = {
     addcategory: "શ્રેણી ઉમેરો",
     profiles: "પ્રોફાઇલ્સ",
     enquiries: "પૂછપરછો",
-    mytask : "મારું કાર્ય",
+    mytask: "મારું કાર્ય",
     employees: "કર્મચારીઓ",
     logout: "લૉગ આઉટ",
+    holiday: "छुट्टी",
   },
 };
 
