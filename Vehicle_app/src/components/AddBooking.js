@@ -62,6 +62,9 @@ const AddBooking = ({item}) => {
   useEffect(() => {
     if (item) {
       setEnquiryData(item);
+      setDeliveryData({
+        phone: item.phone_number,
+      });
       setCustomerId(item.id);
     }
   }, [item]);
@@ -132,7 +135,7 @@ const AddBooking = ({item}) => {
         setManuYearDate(oldVehicleData.year_of_manufactur);
         setCondtion(oldVehicleData.condition_of);
       } else {
-        setSelectedOption('Exchange No');
+        setSelectedOption(selectedOption);
       }
     }
   }, [modalVisible, oldVehicleData]);
@@ -311,6 +314,7 @@ const AddBooking = ({item}) => {
               style={styles.inputField}
               placeholder="Enter Phone Number"
               onChangeText={value => onChangeInputField(value, 'phone')}
+              value={deliveryData.phone}
             />
           </View>
           <View style={styles.inputContainer}>
@@ -339,32 +343,34 @@ const AddBooking = ({item}) => {
               />
             </View>
           </View>
-          <View style={styles.inputContainer}>
-            <View style={styles.dropDownStyle}>
-              <Dropdown
-                style={[
-                  styles.dropdown,
-                  isFocus && {borderColor: 'blue'},
-                  {paddingHorizontal: 5},
-                ]}
-                placeholderStyle={styles.placeholderStyle}
-                selectedTextStyle={styles.selectedTextStyle}
-                inputSearchStyle={styles.inputSearchStyle}
-                iconStyle={styles.iconStyle}
-                data={variantItem}
-                search
-                maxHeight={200}
-                labelField="label"
-                valueField="value"
-                placeholder={!isFocus ? 'Select Variant' : ' '}
-                searchPlaceholder="Search..."
-                value={variant}
-                onChange={item => {
-                  setVariant(item.value);
-                }}
-              />
+          {1 !== 1 && (
+            <View style={styles.inputContainer}>
+              <View style={styles.dropDownStyle}>
+                <Dropdown
+                  style={[
+                    styles.dropdown,
+                    isFocus && {borderColor: 'blue'},
+                    {paddingHorizontal: 5},
+                  ]}
+                  placeholderStyle={styles.placeholderStyle}
+                  selectedTextStyle={styles.selectedTextStyle}
+                  inputSearchStyle={styles.inputSearchStyle}
+                  iconStyle={styles.iconStyle}
+                  data={variantItem}
+                  search
+                  maxHeight={200}
+                  labelField="label"
+                  valueField="value"
+                  placeholder={!isFocus ? 'Select Variant' : ' '}
+                  searchPlaceholder="Search..."
+                  value={variant}
+                  onChange={item => {
+                    setVariant(item.value);
+                  }}
+                />
+              </View>
             </View>
-          </View>
+          )}
           <View style={styles.inputContainer}>
             <TextInput
               style={styles.inputField}
@@ -552,33 +558,35 @@ const AddBooking = ({item}) => {
                     />
                   </View>
                 </View>
-                <View style={styles.sourceContainer}>
-                  <View style={styles.enquirySourceContainer}>
-                    {/* {renderLabel()} */}
-                    <Dropdown
-                      style={[
-                        styles.dropdown,
-                        isFocus && {borderColor: 'blue'},
-                        {paddingHorizontal: 5},
-                      ]}
-                      placeholderStyle={styles.placeholderStyle}
-                      selectedTextStyle={styles.selectedTextStyle}
-                      inputSearchStyle={styles.inputSearchStyle}
-                      iconStyle={styles.iconStyle}
-                      data={variantItem}
-                      search
-                      maxHeight={300}
-                      labelField="label"
-                      valueField="value"
-                      placeholder={!isFocus ? 'Select Variant' : ' '}
-                      searchPlaceholder="Search..."
-                      value={oldVariant}
-                      onChange={item => {
-                        setOldVariant(item.value);
-                      }}
-                    />
+                {1 !== 1 && (
+                  <View style={styles.sourceContainer}>
+                    <View style={styles.enquirySourceContainer}>
+                      {/* {renderLabel()} */}
+                      <Dropdown
+                        style={[
+                          styles.dropdown,
+                          isFocus && {borderColor: 'blue'},
+                          {paddingHorizontal: 5},
+                        ]}
+                        placeholderStyle={styles.placeholderStyle}
+                        selectedTextStyle={styles.selectedTextStyle}
+                        inputSearchStyle={styles.inputSearchStyle}
+                        iconStyle={styles.iconStyle}
+                        data={variantItem}
+                        search
+                        maxHeight={300}
+                        labelField="label"
+                        valueField="value"
+                        placeholder={!isFocus ? 'Select Variant' : ' '}
+                        searchPlaceholder="Search..."
+                        value={oldVariant}
+                        onChange={item => {
+                          setOldVariant(item.value);
+                        }}
+                      />
+                    </View>
                   </View>
-                </View>
+                )}
 
                 <View style={{marginBottom: 5}}>
                   <View
