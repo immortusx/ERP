@@ -25,8 +25,8 @@ import ConfirmationDialog from './subCom/ConfirmationDialog';
 import ConfirmBox from './subCom/Confirm';
 import SimpleAlert from './subCom/SimpleAlert';
 import { setEnquiryType } from '../redux/slice/enquiryTypeSlice';
-import { Dropdown } from 'react-native-element-dropdown';
-const CategorisedEnquiry = () => {
+
+const CategorisedEnquiry = ({ categoryId }) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const [resultData, setResultData] = useState([]);
@@ -34,10 +34,7 @@ const CategorisedEnquiry = () => {
   const [todayEnquiryList, setTodayEnquiryList] = useState([]);
   const [newEnquiryList, setNewEnquiryList] = useState([]);
   const [lastMonthEnquiryList, setLastMonthEnquiryList] = useState([]);
-  const [isFocus, setIsFocus] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const [category, setCategory] = useState(null);
-  const [categoryData, setCategoryData] = useState([]);
   const [isConfirmation, setIsConfiromation] = useState(false);
   const enquiryType = useSelector(state => state.enquiryType.enquiryType);
   const profileData = useSelector(
@@ -45,74 +42,15 @@ const CategorisedEnquiry = () => {
   );
   const getEnquiryState = useSelector(state => state.getEnquiryState);
   const { isFetching, isSuccess, isError, result } = getEnquiryState;
-  const [selectedCategory, setSelectedCategory] = useState(null);
 
-  const categoryList = categoryData.map(category => ({
-    label: category.category_name,
-    value: category.id,
-  }));
-  useEffect(() => {
-    // dispatch(getEnquiryData());
-    getHotENquiry();
-  }, []);
-
-  const getHotENquiry = async () => {
-    console.log('New enquiries....');
-    const url = `${API_URL}/api/get-hot-enquiry`;
-    console.log('get user created', url);
-    const token = await AsyncStorage.getItem('rbacToken');
-    const config = {
-      headers: {
-        token: token ? token : '',
-      },
-    };
-    setLoading(true);
-    console.log(config);
-    await axios.get(url, config).then(response => {
-      console.log(response.data.result, 'hot enquiry');
-      setResultData(response.data.result);
-      setIsConfiromation(true);
-    });
-    setLoading(false);
-  };
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    //   dispatch(setEnquiryType('Followed Enquiry'));
-    dispatch(getEnquiryData());
+    dispatch(setEnquiryType('All'));
     setTimeout(() => {
       setRefreshing(false);
     }, 2000);
   }, []);
-  useEffect(() => {
-    handleNewEnquiry();
-  }, []);
-  const handleNewEnquiry = async () => {
-    console.log('New enquiries....');
-    const url = `${API_URL}/api/enquiry/get-new-enquiries-list`;
-    console.log('get new enqiry', url);
-    const token = await AsyncStorage.getItem('rbacToken');
-    const config = {
-      headers: {
-        token: token ? token : '',
-      },
-    };
-    setLoading(true);
-    console.log(config);
-    await axios.get(url, config).then(response => {
-      // console.log(response.data.result, 'enquiry new list');
-      setNewEnquiryList(response.data.result);
-      setIsConfiromation(true)
-    });
-    setLoading(false);
-  };
 
-
-  useEffect(() => {
-    if (result) {
-      console.log(result.result, 'tttttttttt');
-      setResultData(result.result);
-    }
-  }, [result]);
   const handleSheduleCall = item => {
     navigation.navigate('Schedule Call', { item: item });
   };
@@ -125,95 +63,45 @@ const CategorisedEnquiry = () => {
     console.log(item, '>>>>>>>>>>>>>>>.');
     navigation.navigate('Additional Details', { item: item });
   };
+  useEffect(() => {
+    if (categoryId) {
+      console.log(categoryId, "Categorironqueri")
+      const getCategoryEnquiry = async () => {
+        const url = `${API_URL}/api/get-enquiries-by-category/${categoryId}`;
+        console.log('get enquries', url);
+        const token = await AsyncStorage.getItem('rbacToken');
+        const config = {
+          headers: {
+            token: token ? token : '',
+          },
+        };
+        setLoading(true);
+        console.log(config);
+        await axios.get(url, config).then(response => {
+          if (response) {
+            console.log(response.data.result, 'enquirie catrogrit');
+            setNewEnquiryList(response.data.result);
+          }
+        });
+        setLoading(false);
+        // dispatch(setEnquiryType('All'));
+      }
+      getCategoryEnquiry();
+    }
+  }, [categoryId])
 
-  // if (loading) {
-  //   return <CustomLoadingSpinner />;
-  // }
-  if (isFetching) {
+  if (loading) {
     return <CustomLoadingSpinner />;
   }
-  useEffect(() => {
-    const getCategoryies = async () => {
-      const url = `${API_URL}/api/enquiry/get-enquiry-categories`;
-      const token = await AsyncStorage.getItem('rbacToken');
-      const config = {
-        headers: {  
-          token: token ? token : '',
-        },
-      };
-      console.log(config);
-      await axios.get(url, config).then(response => {
-        if (response) {
-          const filteredCategory = response.data.result.filter((item) => item.id !== 1);
-          setCategoryData(filteredCategory);
-        }
-      });
-    };
-    getCategoryies();
-  }, []);
-
+  // if (isFetching) {
+  //   return <CustomLoadingSpinner />;
+  // }
   const handleConfirm = () => {
-    //   dispatch(setEnquiryType('Followed Enquiry'));
+    dispatch(setEnquiryType('Followed Enquiry'));
     setIsConfiromation(false);
   };
- const handleCategoryChange = async categoryId => {
-    const url = `${API_URL}/api/get-enquiries-by-category/${categoryId}`;
-    console.log('get enquries', url);
-    const token = await AsyncStorage.getItem('rbacToken');
-    const config = {
-      headers: {
-        token: token ? token : '',
-      },
-    };
-    setLoading(true);
-    console.log(config);
-    await axios.get(url, config).then(response => {
-      if (response) {
-        console.log(response.data.result, 'enquirie catrogrit');
-        setNewEnquiryList(response.data.result);
-      }
-    });
-    setLoading(false);
-  };
-
-
   return (
     <View style={styles.container}>
-      <View style={styles.dropDownContainer}>
-        <View style={styles.categoryBox}>
-          <View>
-            <View style={styles.enquirySourceContainer}>
-              {/* {renderLabel()} */}
-              <Dropdown
-                style={[
-                  styles.dropdown,
-                  isFocus && { borderColor: 'blue' },
-                  { paddingHorizontal: 5 },
-                ]}
-                placeholderStyle={styles.placeholderStyle}
-                selectedTextStyle={styles.selectedTextStyle}
-                inputSearchStyle={styles.inputSearchStyle}
-                iconStyle={styles.iconStyle}
-                data={categoryList}
-                search
-                maxHeight={200}
-                labelField="label"
-                valueField="value"
-                placeholder={!isFocus ? 'Select Category' : ' '}
-                searchPlaceholder="Search..."
-                value={selectedCategory} 
-                onChange={(item) => {
-                  setSelectedCategory(item.value);
-                  handleCategoryChange(item.value);
-                }}
-              />
-
-            </View>
-          </View>
-        </View>
-      </View>
-      <View>
-      </View>
       <View>
         {newEnquiryList && newEnquiryList.length > 0 ? (
           <FlatList
@@ -306,7 +194,7 @@ const CategorisedEnquiry = () => {
           <SimpleAlert
             isVisible={isConfirmation}
             text1={'Alert !'}
-            text2={'Currently, There is Enquiry Not Available'}
+            text2={'Currently, There is New Enquiry Not Available'}
             onConfirm={handleConfirm}
           />
         )}
@@ -319,19 +207,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#EBF5FB',
-  },
-  dropDownContainer: {
-    marginHorizontal: 10,
-  },
-  categoryBox: {
-    backgroundColor: '#EAF2F8',
-    padding: 5,
-  },
-  enquirySourceContainer: {
-    marginBottom: 10,
-    borderColor: '#0984DF',
-    borderWidth: 1,
-    borderRadius: 5,
   },
   boxContainer: {
     marginVertical: 4,
