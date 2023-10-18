@@ -8,6 +8,7 @@ import {
   Image,
   TouchableWithoutFeedback,
   RefreshControl,
+  TextInput
 } from 'react-native';
 import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -48,6 +49,8 @@ const AddMore = () => {
   const [isConfirmation, setIsConfiromation] = useState(false);
   const enquiryType = useSelector(state => state.enquiryType.enquiryType);
   const [isFocus, setIsFocus] = useState(false);
+  const [searchText, setSearchText] = useState(''); // State for the search input
+  const [filteredEnquiries, setFilteredEnquiries] = useState([]);
   useEffect(() => {
     dispatch(setEnquiryType('All'));
   }, []);
@@ -157,6 +160,33 @@ const AddMore = () => {
       console.log(selectedCategory, 'slelr')
     }
   }, [selectedCategory])
+
+  const searchMobileNumber = async (mobileno) => {
+    const url = `${API_URL}/api/get-enquiries-by-mobileno/${mobileno}`;
+    const token = await AsyncStorage.getItem('rbacToken');
+    const config = {
+      headers: {
+        token: token ? token : '',
+      },
+    };
+    console.log(config);
+    await axios.get(url, config).then(response => {
+      if (response) {
+        console.log(response.data.result, 'Serached Data');
+        dispatch(setEnquiryType('Searched Enquiry'))
+        setNewEnquiryList(response.data.result);
+        setIsConfiromation(true)
+      }
+    });
+  }
+
+  useEffect(() => {
+    console.log(searchText, "jsefuhusfuerfierfjfghfdghdfhghdfxjdjfjg")
+    if (searchText.length === 10) {
+      searchMobileNumber(searchText)
+    }
+  }, [searchText])
+
   return (
     <View style={styles.container}>
       <View style={styles.categoryContainer}>
@@ -188,10 +218,21 @@ const AddMore = () => {
                     handleCategoryChange(item.value);
                   }}
                 />
-
               </View>
             </View>
           </View>
+        </View>
+        <View>
+          <TextInput
+            style={styles.searchInput}
+            placeholder="SEARCH BY MOBILE NUMBER..."
+            value={searchText}
+            maxLength={10}
+            onChangeText={(text) => {
+              setSearchText(text);
+            }}
+          />
+
         </View>
       </View>
       <View style={styles.wrapper}>
@@ -233,7 +274,7 @@ const AddMore = () => {
       {enquiryType === 'Followed Enquiry' && <FollowedEnquiry />}
       {enquiryType === 'All' && <CategorisedEnquiry categoryId={selectedCategory} />}
       <View>
-        {newEnquiryList && newEnquiryList.length > 0 ? (
+        {enquiryType != 'All' && newEnquiryList && newEnquiryList.length > 0 ? (
           <FlatList
             data={newEnquiryList}
             keyExtractor={(item, index) => `enquiry_${index}`}
@@ -493,6 +534,16 @@ const styles = StyleSheet.create({
   discussionText: {
     color: 'white',
     textAlign: 'center',
+  },
+
+  searchInput: {
+    height: 35,
+    backgroundColor: '#EAF2F8',
+    borderColor: 'gray',
+    borderWidth: 1,
+    margin: 10,
+    borderRadius: 5,
+    paddingHorizontal: 10,
   },
 });
 
