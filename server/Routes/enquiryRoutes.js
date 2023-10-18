@@ -1786,12 +1786,12 @@ router.get(
     console.log(req.params, "req**************8");
     const customerId = req.params.customerId;
     const url = `SELECT c.*, e.*,m.*,p.*
-  FROM enquiries AS e
-  INNER JOIN customers AS c ON c.id = e.customer_id
-INNER JOIN manufactur_details AS m ON  m.enquiry_id = e.id
-INNER JOIN enquiry_products AS p ON  p.enquiry_id = e.id
-  WHERE e.customer_id = ${customerId}
-  `;
+                 FROM enquiries AS e
+                 LEFT JOIN customers AS c ON c.id = e.customer_id
+                 LEFT JOIN manufactur_details AS m ON  m.enquiry_id = e.id
+                 LEFT JOIN enquiry_products AS p ON  p.enquiry_id = e.id
+                 WHERE e.customer_id = ${customerId}
+                 `;
 
     try {
       await db.query(url, async (err, result) => {
