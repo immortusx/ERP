@@ -451,8 +451,10 @@ router.get(
     console.log(">>>>>/get-enquiries-by-category/:categoryId");
     try {
       const categoryId = req.params.categoryId;
+      console.log(categoryId, "dfhbdhhdsbfdhbhd")
       const url = `CALL sp_get_enquiries_by_enquiry_category(${categoryId})`;
-      db.query(url, async (err, result) => {
+      const newUrl = `CALL sp_get_enquiries_by_enquiry_category(${categoryId})`;
+      db.query(categoryId === 1 ? newUrl : url, async (err, result) => {
         if (err) {
           console.error(err);
           res.status(500).json({ isSuccess: true, result: result });
@@ -573,5 +575,31 @@ router.get("/get-Warm-enquiry", tokenCheck, async (req, res) => {
     res.status(500).json({ isSuccess: false, result: "error" });
   }
 });
+
+
+//===========Get Enquiry By Mobile Number=============
+router.get(
+  "/get-enquiries-by-mobileno/:mobileno",
+  tokenCheck,
+  async (req, res) => {
+    console.log(">>>>>/get-enquiries-by-mobileno/:mobileno");
+    try {
+      const mobileno = req.params.mobileno;
+      const url = `CALL sp_get_enquiries_by_mobile_number(${mobileno})`;
+      db.query(url, async (err, result) => {
+        if (err) {
+          console.error(err);
+          res.status(500).json({ isSuccess: true, result: result });
+        } else {
+          console.log({ isSuccess: true, result: result });
+          res.status(200).json({ isSuccess: true, result: result[0] });
+        }
+      });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ isSuccess: false, result: "error" });
+    }
+  }
+);
 
 module.exports = router;
