@@ -64,12 +64,12 @@ const AddMore = () => {
     {
       type: 'New',
     },
-    {
-      type: 'Today',
-    },
-    {
-      type: 'Last Month',
-    },
+    // {
+    //   type: 'Today',
+    // },
+    // {
+    //   type: 'Last Month',
+    // },
     {
       type: 'Hot',
     },
@@ -264,8 +264,8 @@ const AddMore = () => {
         />
       </View>
       {enquiryType === 'New' && <NewEnquiry />}
-      {enquiryType === 'Today' && <TodayEnquiry />}
-      {enquiryType === 'Last Month' && <LastMonthEnquiry />}
+      {/* {enquiryType === 'Today' && <TodayEnquiry />}
+      {enquiryType === 'Last Month' && <LastMonthEnquiry />} */}
       {enquiryType === 'Due' && <DueEnquiry />}
       {enquiryType === 'Hot' && <HotEnquiry />}
       {enquiryType === 'Cold' && <ColdEnquiry />}
