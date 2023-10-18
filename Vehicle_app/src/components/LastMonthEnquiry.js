@@ -111,7 +111,7 @@ const LastMonthEnquiry = () => {
                     openAdditonalEnquiry(item);
                   }}>
                   <View key={index} style={styles.enquiryBox}>
-                    <View style={styles.dataStyle}>
+                    <View style={styles.leftDataStyle}>
                       <View style={styles.dataContainer}>
                         <View style={styles.iconContainer}>
                           <Image
@@ -149,30 +149,27 @@ const LastMonthEnquiry = () => {
                             </Text>
                           </TouchableOpacity>
                           <Text style={styles.label}>
-                            {item.product
-                              ? item.product
-                              : 'Sonalika Sikander DLX'}
+                            {item.product ? item.product : '-'}
                           </Text>
                           <Text style={styles.label}>
                             {item.sales_person ? item.sales_person : '-'}
                           </Text>
                           <Text style={styles.label}>
-                            {item.village ? item.village : 'Dhrangadhra'}
+                            {item.village ? item.village : '-'}
                           </Text>
                         </View>
                       </View>
                     </View>
                     <View style={styles.rightDataStyle}>
-                      <View style={styles.daysContainer}>
-                        <TouchableOpacity style={styles.dayBack}>
-                          <Text style={styles.dateText}>
-                            {item.last_follow_up_date
-                              ? moment(item.last_follow_up_date).format('LL')
-                              : 'Not Followed'}
-                          </Text>
-                        </TouchableOpacity>
-                      </View>
-                      <TimeAgo date={item.date} />
+                      <Text style={styles.dateText}>
+                        {moment(item.next_followup_date).format(
+                          'Do MMMM, YYYY',
+                        )}
+                      </Text>
+                      <Text style={styles.salesText}>{item.sales_person}</Text>
+                      <TouchableOpacity style={styles.dayBack}>
+                        <TimeAgo date={item.date} />
+                      </TouchableOpacity>
                       <TouchableOpacity
                         onPress={() => {
                           handleSheduleCall(item);
@@ -297,7 +294,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
   },
-  dataStyle: {
+  leftDataStyle: {
     flexDirection: 'column',
     alignItems: 'flex-start',
     flex: 1,
@@ -305,8 +302,6 @@ const styles = StyleSheet.create({
   rightDataStyle: {
     flexDirection: 'column',
     alignItems: 'flex-end',
-    flexShrink: 1,
-    marginLeft: 16,
   },
   daysContainer: {
     position: 'absolute',
@@ -315,10 +310,16 @@ const styles = StyleSheet.create({
     borderColor: 'green',
   },
   dateText: {
-    marginBottom: 4,
     color: '#21618C',
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  salesText: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#21618C',
+    marginBottom: 5,
   },
   discussionText: {
     color: 'gray',
@@ -335,6 +336,7 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     color: 'white',
     padding: 2,
+    marginBottom: 5,
   },
   discussionButton: {
     backgroundColor: '#2ECC71',
@@ -342,7 +344,7 @@ const styles = StyleSheet.create({
     borderColor: '#138D75',
     borderWidth: 0.1,
     paddingHorizontal: 5,
-    right: -9,
+    marginBottom: 5,
   },
   discussionText: {
     color: 'white',

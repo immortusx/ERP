@@ -3,8 +3,6 @@ import { Text, StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
   dayText: {
-    top: -9,
-    right: -6,
     color: '#A93226',
     fontSize: 12,
     fontWeight: 'bold',
