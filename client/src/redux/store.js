@@ -5,7 +5,7 @@ import addUserSlice from './slices/addUserSlice'
 import addemployeeSlice from './slices/addemployeeSlice'
 import getUserListSlice from './slices/getUserListSlice'
 import getemployeeListSlice from './slices/getemployeeListSlice'
-
+import holidaySlice from './slices/Master/Holiday/holidaySlice';
 import profileDataSlice from './slices/profileSlice'
 import AdminSlice from './slices/adminSlice'
 import getFeatureSlice from './slices/getFeatureSlice'
@@ -77,10 +77,11 @@ export const store = configureStore({
     addassigneAreaSlice: addassigneAreaSlice,
     addTaskSlice: addTaskSlice,
     editEnquiryState: editEnquirySlice,
-    addEnquirySourcesSlice:addEnquirySourcesSlice,
+    addEnquirySourcesSlice: addEnquirySourcesSlice,
     enquiryFollowupSlice: followupSlice,
     editTaskAssignSlice: editTaskAssignSlice,
-    gettaskAssignListSlice:gettaskAssignListSlice,
+    gettaskAssignListSlice: gettaskAssignListSlice,
     language: languageReducer,
+    holidaySlice: holidaySlice,
   },
 });  
