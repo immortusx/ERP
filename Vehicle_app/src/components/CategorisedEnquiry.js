@@ -350,10 +350,6 @@ const styles = StyleSheet.create({
     color: 'white',
     textAlign: 'center',
   },
-  discussionText: {
-    color: 'gray',
-  },
-  
   notAvailableText: {
     fontSize: 18,
     color: 'red',
