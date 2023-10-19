@@ -55,7 +55,7 @@ const AddMore = () => {
     dispatch(setEnquiryType('All'));
   }, []);
   const [categoryData, setCategoryData] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState(1);
+  const [selectedCategory, setSelectedCategory] = useState(2);
   const categoryList = categoryData.map(category => ({
     label: category.category_name,
     value: category.id,
@@ -100,25 +100,6 @@ const AddMore = () => {
     navigation.navigate('Additional Details', { item: item });
   };
 
-  const handleNewEnquiry = async () => {
-    console.log('New enquiries....');
-    const url = `${API_URL}/api/enquiry/get-new-enquiries-list`;
-    console.log('get new enqiry', url);
-    const token = await AsyncStorage.getItem('rbacToken');
-    const config = {
-      headers: {
-        token: token ? token : '',
-      },
-    };
-    setLoading(true);
-    console.log(config);
-    await axios.get(url, config).then(response => {
-      // console.log(response.data.result, 'enquiry new list');
-      setNewEnquiryList(response.data.result);
-      setIsConfiromation(true)
-    });
-    setLoading(false);
-  };
   const handleConfirm = () => {
     //   dispatch(setEnquiryType('Followed Enquiry'));
     setIsConfiromation(false);
@@ -210,7 +191,6 @@ const AddMore = () => {
                   maxHeight={200}
                   labelField="label"
                   valueField="value"
-                  placeholder={!isFocus ? 'All' : ' '}
                   searchPlaceholder="Search..."
                   value={selectedCategory}
                   onChange={(item) => {
