@@ -1710,7 +1710,7 @@ router.get("/get-total-enquiry-booking", tokenCheck, async (req, res) => {
 router.get("/get-todays-enquiry-booking", tokenCheck, async (req, res) => {
   try {
     console.log(">>>>>>>>>/get-total-enquiry-booking");
-    const urlNew = `CALL sp_get_todays_enquiry_list()`;
+    const urlNew = `CALL sp_get_todays_enquiry_bookin_count()`;
     await db.query(urlNew, async (err, result) => {
       if (err) {
         console.log({ isSuccess: false, result: err });

@@ -140,6 +140,32 @@ router.get("/get-taskstatus-list", tokenCheck, async (req, res) => {
   });
 });
 
+router.post("/addholiday-data", tokenCheck, async (req, res) => {
+  try {
+    console.log("/addtask-data>>>>>>>>>>>>", req.body);
+    const holidayname = req.body.holidayname;
+    const description = req.body.description;
+
+    const date = req.body.date.split("T")[0];
+
+    const url = `INSERT INTO holiday_data (holidayname,holiday_date, description) VALUES (?,?,?)`;
+
+    console.log("url", url);
+
+    try {
+      await db.query(url, [holidayname, date, description]);
+      console.log({ isSuccess: true, result: "Task Add Successfully" });
+    } catch (err) {
+      console.log({ isSuccess: false, result: err });
+      res.send({ isSuccess: false, result: "error" });
+      return;
+    }
+
+    res.send({ isSuccess: true, result: "Task Add Successfully" });
+  } catch (err) {
+    console.log(err);
+  }
+});
 router.post("/addtask-data", tokenCheck, async (req, res) => {
   try {
     console.log("/addtask-data>>>>>>>>>>>>", req.body);
