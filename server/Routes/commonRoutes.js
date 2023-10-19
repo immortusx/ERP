@@ -479,8 +479,8 @@ router.get(
       const categoryId = req.params.categoryId;
       console.log(categoryId, "dfhbdhhdsbfdhbhd")
       const url = `CALL sp_get_enquiries_by_enquiry_category(${categoryId})`;
-      const newUrl = `CALL sp_get_enquiries_by_enquiry_category(${categoryId})`;
-      db.query(categoryId === 1 ? newUrl : url, async (err, result) => {
+     
+      db.query(url, async (err, result) => {
         if (err) {
           console.error(err);
           res.status(500).json({ isSuccess: true, result: result });
