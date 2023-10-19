@@ -170,6 +170,9 @@ const NewEnquiry = () => {
                       </View>
                     </View>
                     <View style={styles.rightDataStyle}>
+                      <Text style={styles.dateText}>
+                        Not Followed
+                      </Text>
                       <Text style={styles.salesText}>{item.sales_person}</Text>
                       <TouchableOpacity style={styles.dayBack}>
                         <TimeAgo date={item.date} />
@@ -295,7 +298,7 @@ const styles = StyleSheet.create({
     elevation: 5,
     marginHorizontal: 10,
     borderRadius: 5,
-    paddingHorizontal: 16,
+    paddingHorizontal: 10,
     paddingVertical: 8,
   },
   leftDataStyle: {
@@ -306,37 +309,31 @@ const styles = StyleSheet.create({
   rightDataStyle: {
     flexDirection: 'column',
     alignItems: 'flex-end',
-  },
-  salesText: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#21618C',
-    marginBottom: 5,
-  },
-  daysContainer: {
-    position: 'absolute',
-    bottom: 60,
-    left: 10,
-    borderColor: 'green',
+    marginLeft: 5,
   },
   dateText: {
-    color: '#21618C',
+    color: 'white',
     fontSize: 12,
     fontWeight: 'bold',
+    backgroundColor: '#3ab1d3',
+    borderRadius: 20,
+    borderColor: '#138D75',
+    borderWidth: 0.1,
+    paddingHorizontal: 5,
+    marginBottom: 10,
+  },
+  salesText: {
+    color: 'white',
+    fontSize: 12,
+    fontWeight: 'bold',
+    backgroundColor: '#3ab1d3',
+    borderRadius: 20,
+    borderColor: '#138D75',
+    borderWidth: 0.1,
+    paddingHorizontal: 5,
     marginBottom: 5,
   },
-  discussionText: {
-    color: 'gray',
-  },
-  dayText: {
-    top: -9,
-    right: -6,
-    color: '#A93226',
-    fontSize: 12,
-    fontWeight: 'bold',
-  },
   dayBack: {
-    // backgroundColor: '#2E86C1',
     borderRadius: 30,
     color: 'white',
     padding: 2,
