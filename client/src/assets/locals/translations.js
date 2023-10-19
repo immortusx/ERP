@@ -113,6 +113,7 @@ const translations = {
     holiday: "Holiday",
     holidayname: "Holiday Name",
     date: "Date",
+    editHoliday: "Edit Holiday",
   },
   gj: {
     login: "લોગિન",
@@ -228,6 +229,7 @@ const translations = {
     holiday: "छुट्टी",
     holidayname: "રજાનું નામ",
     date: "તારીખ",
+    editHoliday: "રજા સંપાદિત કરો",
   },
 };
 
