@@ -9,24 +9,24 @@ import {
   TouchableWithoutFeedback,
   RefreshControl,
 } from 'react-native';
-import React, { useState, useEffect, useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { getEnquiryData } from '../redux/slice/getEnquirySlice';
-import { useNavigation } from '@react-navigation/native';
+import React, {useState, useEffect, useCallback} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
+import {getEnquiryData} from '../redux/slice/getEnquirySlice';
+import {useNavigation} from '@react-navigation/native';
 import CustomLoadingSpinner from './subCom/CustomLoadingSpinner';
-import { Linking } from 'react-native';
+import {Linking} from 'react-native';
 import moment from 'moment';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { API_URL } from '@env';
+import {API_URL} from '@env';
 import ToastMessage from './subCom/ToastMessage';
 import TimeAgo from './subCom/TImeAgo';
 import ConfirmationDialog from './subCom/ConfirmationDialog';
 import ConfirmBox from './subCom/Confirm';
 import SimpleAlert from './subCom/SimpleAlert';
-import { setEnquiryType } from '../redux/slice/enquiryTypeSlice';
+import {setEnquiryType} from '../redux/slice/enquiryTypeSlice';
 
-const CategorisedEnquiry = ({ categoryId }) => {
+const CategorisedEnquiry = ({categoryId}) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const [resultData, setResultData] = useState([]);
@@ -41,7 +41,7 @@ const CategorisedEnquiry = ({ categoryId }) => {
     state => state.getUserProfileSlice.profile.currentUserData.result,
   );
   const getEnquiryState = useSelector(state => state.getEnquiryState);
-  const { isFetching, isSuccess, isError, result } = getEnquiryState;
+  const {isFetching, isSuccess, isError, result} = getEnquiryState;
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -52,7 +52,7 @@ const CategorisedEnquiry = ({ categoryId }) => {
   }, []);
 
   const handleSheduleCall = item => {
-    navigation.navigate('Schedule Call', { item: item });
+    navigation.navigate('Schedule Call', {item: item});
   };
   const makePhoneCall = mobileNumber => {
     console.log('Calling...', mobileNumber);
@@ -61,11 +61,11 @@ const CategorisedEnquiry = ({ categoryId }) => {
 
   const openAdditonalEnquiry = item => {
     console.log(item, '>>>>>>>>>>>>>>>.');
-    navigation.navigate('Additional Details', { item: item });
+    navigation.navigate('Additional Details', {item: item});
   };
   useEffect(() => {
     if (categoryId) {
-      console.log(categoryId, "Categorironqueri")
+      console.log(categoryId, 'Categorironqueri');
       const getCategoryEnquiry = async () => {
         const url = `${API_URL}/api/get-enquiries-by-category/${categoryId}`;
         console.log('get enquries', url);
@@ -85,10 +85,10 @@ const CategorisedEnquiry = ({ categoryId }) => {
         });
         setLoading(false);
         // dispatch(setEnquiryType('All'));
-      }
+      };
       getCategoryEnquiry();
     }
-  }, [categoryId])
+  }, [categoryId]);
 
   if (loading) {
     return <CustomLoadingSpinner />;
@@ -110,14 +110,14 @@ const CategorisedEnquiry = ({ categoryId }) => {
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }
-            renderItem={({ item, index }) => {
+            renderItem={({item, index}) => {
               return (
                 <TouchableWithoutFeedback
                   onPress={() => {
                     openAdditonalEnquiry(item);
                   }}>
                   <View key={index} style={styles.enquiryBox}>
-                    <View style={styles.dataStyle}>
+                    <View style={styles.leftDataStyle}>
                       <View style={styles.dataContainer}>
                         <View style={styles.iconContainer}>
                           <Image
@@ -167,16 +167,15 @@ const CategorisedEnquiry = ({ categoryId }) => {
                       </View>
                     </View>
                     <View style={styles.rightDataStyle}>
-                      <View style={styles.daysContainer}>
-                        <TouchableOpacity style={styles.dayBack}>
-                          <Text style={styles.dateText}>
-                            {item.last_follow_up_date
-                              ? moment(item.last_follow_up_date).format('LL')
-                              : 'Not Followed'}
-                          </Text>
-                        </TouchableOpacity>
-                      </View>
-                      <TimeAgo date={item.date} />
+                      <Text style={styles.dateText}>
+                        {moment(item.next_followup_date).format(
+                          'Do MMMM, YYYY',
+                        )}
+                      </Text>
+                      <Text style={styles.salesText}>{item.sales_person}</Text>
+                      <TouchableOpacity style={styles.dayBack}>
+                        <TimeAgo date={item.date} />
+                      </TouchableOpacity>
                       <TouchableOpacity
                         onPress={() => {
                           handleSheduleCall(item);
@@ -298,10 +297,10 @@ const styles = StyleSheet.create({
     elevation: 5,
     marginHorizontal: 10,
     borderRadius: 5,
-    paddingHorizontal: 16,
+    paddingHorizontal: 10,
     paddingVertical: 8,
   },
-  dataStyle: {
+  leftDataStyle: {
     flexDirection: 'column',
     alignItems: 'flex-start',
     flex: 1,
@@ -309,36 +308,35 @@ const styles = StyleSheet.create({
   rightDataStyle: {
     flexDirection: 'column',
     alignItems: 'flex-end',
-    flexShrink: 1,
-    marginLeft: 16,
-  },
-  daysContainer: {
-    position: 'absolute',
-    bottom: 60,
-    left: 10,
-    borderColor: 'green',
+    marginLeft: 5,
   },
   dateText: {
-    marginBottom: 4,
-    color: '#21618C',
-    fontSize: 10,
-    fontWeight: 'bold',
-  },
-  discussionText: {
-    color: 'gray',
-  },
-  dayText: {
-    top: -9,
-    right: -6,
-    color: '#A93226',
+    color: 'white',
     fontSize: 12,
     fontWeight: 'bold',
+    backgroundColor: '#3ab1d3',
+    borderRadius: 20,
+    borderColor: '#138D75',
+    borderWidth: 0.1,
+    paddingHorizontal: 5,
+    marginBottom: 10,
+  },
+  salesText: {
+    color: 'white',
+    fontSize: 12,
+    fontWeight: 'bold',
+    backgroundColor: '#3ab1d3',
+    borderRadius: 20,
+    borderColor: '#138D75',
+    borderWidth: 0.1,
+    paddingHorizontal: 5,
+    marginBottom: 5,
   },
   dayBack: {
-    // backgroundColor: '#2E86C1',
     borderRadius: 30,
     color: 'white',
     padding: 2,
+    marginBottom: 5,
   },
   discussionButton: {
     backgroundColor: '#2ECC71',
@@ -346,7 +344,7 @@ const styles = StyleSheet.create({
     borderColor: '#138D75',
     borderWidth: 0.1,
     paddingHorizontal: 5,
-    right: -9,
+    marginBottom: 5,
   },
   discussionText: {
     color: 'white',
