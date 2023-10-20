@@ -9,23 +9,23 @@ import {
   TouchableWithoutFeedback,
   RefreshControl,
 } from 'react-native';
-import React, {useState, useEffect, useCallback} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
-import {getEnquiryData} from '../redux/slice/getEnquirySlice';
-import {useNavigation} from '@react-navigation/native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { getEnquiryData } from '../redux/slice/getEnquirySlice';
+import { useNavigation } from '@react-navigation/native';
 import CustomLoadingSpinner from './subCom/CustomLoadingSpinner';
-import {Linking} from 'react-native';
+import { Linking } from 'react-native';
 import moment from 'moment';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {API_URL} from '@env';
+import { API_URL } from '@env';
 import ToastMessage from './subCom/ToastMessage';
 import TimeAgo from './subCom/TImeAgo';
 import ConfirmationDialog from './subCom/ConfirmationDialog';
 import ConfirmBox from './subCom/Confirm';
 import SimpleAlert from './subCom/SimpleAlert';
-import {setEnquiryType} from '../redux/slice/enquiryTypeSlice';
-
+import { setEnquiryType } from '../redux/slice/enquiryTypeSlice';
+import DayAgo from './subCom/DayAgo';
 const HotEnquiry = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -41,7 +41,7 @@ const HotEnquiry = () => {
     state => state.getUserProfileSlice.profile.currentUserData.result,
   );
   const getEnquiryState = useSelector(state => state.getEnquiryState);
-  const {isFetching, isSuccess, isError, result} = getEnquiryState;
+  const { isFetching, isSuccess, isError, result } = getEnquiryState;
 
   useEffect(() => {
     // dispatch(getEnquiryData());
@@ -82,7 +82,7 @@ const HotEnquiry = () => {
     }
   }, [result]);
   const handleSheduleCall = item => {
-    navigation.navigate('Schedule Call', {item: item});
+    navigation.navigate('Schedule Call', { item: item });
   };
   const makePhoneCall = mobileNumber => {
     console.log('Calling...', mobileNumber);
@@ -91,7 +91,7 @@ const HotEnquiry = () => {
 
   const openAdditonalEnquiry = item => {
     console.log(item, '>>>>>>>>>>>>>>>.');
-    navigation.navigate('Additional Details', {item: item});
+    navigation.navigate('Additional Details', { item: item });
   };
 
   if (loading) {
@@ -114,7 +114,7 @@ const HotEnquiry = () => {
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }
-            renderItem={({item, index}) => {
+            renderItem={({ item, index }) => {
               return (
                 <TouchableWithoutFeedback
                   onPress={() => {
@@ -176,9 +176,9 @@ const HotEnquiry = () => {
                           'Do MMMM, YYYY',
                         )}
                       </Text>
-                      <Text style={styles.salesText}>{item.sales_person}</Text>
+                      {item.sales_person && (<Text style={styles.salesText}>{item.sales_person}</Text>)}
                       <TouchableOpacity style={styles.dayBack}>
-                        <TimeAgo date={item.date} />
+                        <DayAgo nextFollowUpDate={item.next_followup_date} date={item.date} />
                       </TouchableOpacity>
                       <TouchableOpacity
                         onPress={() => {

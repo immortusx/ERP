@@ -307,9 +307,7 @@ const AddMore = () => {
                           <Text style={styles.label}>
                             {item.product ? item.product : '-'}
                           </Text>
-                          <Text style={styles.label}>
-                            {item.sales_person ? item.sales_person : '-'}
-                          </Text>
+                          {item.sales_person && (<Text style={styles.salesText}>{item.sales_person}</Text>)}
                           <Text style={styles.label}>
                             {item.village ? item.village : '-'}
                           </Text>
