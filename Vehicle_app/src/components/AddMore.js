@@ -163,7 +163,7 @@ const AddMore = () => {
 
   useEffect(() => {
     console.log(searchText, "jsefuhusfuerfierfjfghfdghdfhghdfxjdjfjg")
-    if (searchText.length === 10) {
+    if (searchText.length > 1) {
       searchMobileNumber(searchText)
     }
   }, [searchText])
@@ -202,7 +202,7 @@ const AddMore = () => {
             </View>
           </View>
         </View>
-        <View>
+        <View style={styles.searchBox}>
           <TextInput
             style={styles.searchInput}
             placeholder="SEARCH BY MOBILE NUMBER..."
@@ -212,7 +212,6 @@ const AddMore = () => {
               setSearchText(text);
             }}
           />
-
         </View>
       </View>
       <View style={styles.wrapper}>
@@ -516,14 +515,23 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 
-  searchInput: {
+  searchBox: {
     height: 35,
-    backgroundColor: '#EAF2F8',
-    borderColor: 'gray',
-    borderWidth: 1,
-    margin: 10,
-    borderRadius: 5,
-    paddingHorizontal: 10,
+    borderRadius: 4,
+    backgroundColor: '#f1f3f6',
+    display: 'flex',
+    marginVertical: 5,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: 10
+  },
+  searchInput: {
+    height: 40,
+    flex: 1,
+    fontFamily: 'SourceSansProRegular',
+    fontSize: 16,
+    color: 'black',
+    paddingHorizontal: 10
   },
 });
 
