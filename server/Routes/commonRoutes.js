@@ -146,14 +146,14 @@ router.post("/addholiday-data", tokenCheck, async (req, res) => {
     const holidayname = req.body.holidayname;
     const description = req.body.description;
 
-    const date = req.body.date.split("T")[0];
+    const holiday_date = req.body.holiday_date.split("T")[0];
 
     const url = `INSERT INTO holiday_data (holidayname,holiday_date, description) VALUES (?,?,?)`;
 
     console.log("url", url);
 
     try {
-      await db.query(url, [holidayname, date, description]);
+      await db.query(url, [holidayname, holiday_date, description]);
       console.log({ isSuccess: true, result: "Task Add Successfully" });
     } catch (err) {
       console.log({ isSuccess: false, result: err });
@@ -211,6 +211,71 @@ router.post("/addtask-data", tokenCheck, async (req, res) => {
     console.log(err);
   }
 });
+
+router.get("/get-holiday-list", tokenCheck, async (req, res) => {
+  try {
+    console.log(">>>>>get-holiday-list");
+    const id = req.params.id;
+    const query = "SELECT * FROM holiday_data";
+
+    await db.query(query, async (err, result) => {
+      if (err) {
+        console.log({ isSuccess: false, result: err });
+        res.status(500).json({ isSuccess: false, result: "error" });
+      } else {
+        console.log({ isSuccess: true, result: "success" });
+        res.status(200).json({ isSuccess: true, result: result });
+      }
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ isSuccess: false, result: "error" });
+  }
+});
+
+
+router.get("/get-holiday/:id", tokenCheck, async (req, res) => {
+  try {
+    console.log(">>>>>get-holiday");
+    const id = req.params.id;
+    const query = "SELECT * FROM holiday_data WHERE id = ?";
+
+    await db.query(query, [id], async (err, result) => {
+      if (err) {
+        console.log({ isSuccess: false, result: err });
+        res.status(500).json({ isSuccess: false, result: "error" });
+      } else {
+        console.log({ isSuccess: true, result: "success" });
+        res.status(200).json({ isSuccess: true, result: result });
+      }
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ isSuccess: false, result: "error" });
+  }
+});
+
+
+
+router.get("/update-holidayStatus/:id", async (req, res) => {
+  console.log(">>>>>update-taskstatus");
+const holidayname = req.body.holidayname;
+const description = req.body.description;
+
+const holiday_date = req.body.holiday_date.split("T")[0];
+  const id = req.params.id;
+  sql = `UPDATE holiday_data SET holidayname = ${holidayname},holiday_date = ${holiday_date},description = ${description} WHERE id = ${id};`;
+  await db.query(sql, async (err, result) => {
+    if (err) {
+      console.log({ isSuccess: true, result: err });
+      res.send({ isSuccess: true, result, result: err });
+    } else {
+      console.log({ isSuccess: true, result: sql });
+      res.send({ isSuccess: true, result: "success" });
+    }
+  });
+});
+
 
 router.get("/get-task-list", tokenCheck, async (req, res) => {
   console.log(">>>>>>>>>get-task-list");

@@ -14,6 +14,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsisV } from "@fortawesome/free-solid-svg-icons/faEllipsisV";
 import { Tooltip } from "@mui/material";
 import { setShowMessage } from "../../../redux/slices/notificationSlice";
+import moment from "moment/moment";
+
 const Holiday = () => {
   const currentLanguage = useSelector((state) => state.language.language);
   const navigate = useNavigate();
@@ -23,7 +25,7 @@ const Holiday = () => {
   };
   const [holiday, setHoliday] = useState({
     holidayname: "",
-    date: new Date(),
+    holiday_date: new Date(),
     description: "",
   });
 
@@ -31,9 +33,10 @@ const Holiday = () => {
   const [show, setShow] = useState(0);
   const [selectAll, setSelectAll] = useState(false);
   const [rowData, setRowData] = useState([]);
+  const [holidaylist, setHolidayList] = useState([]);
   const [categoryList, setCategoryList] = useState([]);
   const [displayConfirmationModal, setDisplayConfirmationModal] =
-    useState(false);
+  useState(false);
   const [type, setType] = useState(null);
   const [id, setId] = useState(null);
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
@@ -64,7 +67,7 @@ const Holiday = () => {
     setShow(0);
     setHoliday({
       holidayname: "",
-      date: new Date(),
+      holiday_date: new Date(),
       description: "",
     });
   };
@@ -78,10 +81,78 @@ const Holiday = () => {
 
   const savedata = () => {
     console.log(holiday, "asdnm,fdghjfkhj");
-    console.log(holiday, "forAdd");
     dispatch(addHolidayToDb(holiday));
-    dispatch(setShowMessage("Holiday Added"))
+    dispatch(setShowMessage("Holiday Added"));
   };
+
+  useEffect(() => {
+    const fetchHolidayList = async () => {
+      try {
+        const url = `${process.env.REACT_APP_NODE_URL}/api/get-holiday-list`;
+        const token = localStorage.getItem("rbacToken");
+        const config = {
+          headers: {
+            token: token,
+          },
+        };
+
+        const response = await Axios.get(url, config);
+
+        if (response.data?.isSuccess) {
+          console.log(response.data.result, "response.data.result");
+          setHolidayList(response.data.result);
+        } else {
+          console.error("API request was not successful");
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchHolidayList(); // Call the function to fetch data
+  }, []);
+
+  const editeHoliday = async (id) => {
+    try {
+      const url = `${process.env.REACT_APP_NODE_URL}/api/get-holiday/${id}`;
+      const token = localStorage.getItem("rbacToken");
+      const config = {
+        headers: {
+          token: token,
+        },
+      };
+
+      const response = await Axios.get(url, config);
+
+      if (response.data?.isSuccess) {
+        console.log(response.data.result[0], "response.data.result");
+
+        const apiDate = new Date(response.data.result[0].holiday_date);
+
+        setHoliday({
+          ...response.data.result[0],
+          holiday_date: apiDate,
+        });
+
+        setShow(2);
+      } else {
+        console.error("API request was not successful");
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+
+  useEffect(() => {
+    console.log(holidaylist, "holidaylist");
+    const rowsData = holidaylist.map((item, index) => ({
+      ...item,
+      rowNumber: item.id,
+      checkbox: selectAll,
+    }));
+    setRowData(rowsData);
+  }, [holidaylist, selectAll]);
 
   const columns = [
     {
@@ -105,25 +176,31 @@ const Holiday = () => {
     },
 
     {
-      field: "holiday_name",
+      field: "holidayname",
       headerAlign: "left",
       align: "left",
       headerName: translations[currentLanguage].holidayname,
       minWidth: 120,
       flex: 1,
       valueGetter: (params) => {
-        return `${params.row.holiday_name ? params.row.holiday_name : "-"}`;
+        return `${params.row.holidayname ? params.row.holidayname : "-"}`;
       },
     },
     {
-      field: "date",
+      field: "holiday_date",
       headerAlign: "left",
       align: "left",
       headerName: translations[currentLanguage].date,
       minWidth: 250,
       flex: 1,
       valueGetter: (params) => {
-        return `${params.row.date ? params.row.date : "-"}`;
+        const date = new Date(params.row.holiday_date);
+        const options = {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        };
+        return date.toLocaleDateString(undefined, options);
       },
     },
     {
@@ -156,9 +233,9 @@ const Holiday = () => {
             <Tooltip title={translations[currentLanguage].edit}>
               <button
                 className="myActionBtn m-1"
-                // onClick={() => {
-                //   editeStateModal(params.row);
-                // }}
+                onClick={() => {
+                  editeHoliday(params.row.id);
+                }}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -294,7 +371,11 @@ const Holiday = () => {
 
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
-          <h5>{translations[currentLanguage].addholiday}</h5>
+          <h5>
+            {show === 1
+              ? translations[currentLanguage].addholiday
+              : translations[currentLanguage].editHoliday}
+          </h5>
         </Modal.Header>
         <Modal.Body>
           <div className="">
@@ -317,12 +398,12 @@ const Holiday = () => {
               <div>
                 <DatePicker
                   className="form-control"
-                  selected={holiday.date}
+                  selected={holiday.holiday_date}
                   dateFormat="dd/MM/yyyy"
                   onChange={(date) =>
                     setHoliday((holiday) => ({
                       ...holiday,
-                      ["date"]: date,
+                      ["holiday_date"]: date,
                     }))
                   }
                 />
