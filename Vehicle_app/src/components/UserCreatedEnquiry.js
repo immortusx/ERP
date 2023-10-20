@@ -177,7 +177,7 @@ const UserCreatedEnquiry = () => {
                           'Do MMMM, YYYY',
                         )}
                       </Text>
-                      <Text style={styles.salesText}>{item.sales_person}</Text>
+                      {item.sales_person && (<Text style={styles.salesText}>{item.sales_person}</Text>)}
                       <TouchableOpacity style={styles.dayBack}>
                         <TimeAgo date={item.date} />
                       </TouchableOpacity>
