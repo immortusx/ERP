@@ -40,6 +40,7 @@ import addEnquirySourcesSlice from './slices/Master/EnquirySources/addEnquirySou
 import editTaskAssignSlice from './slices/editTaskAssignSlice';
 import gettaskAssignListSlice from './slices/gettaskAssignListSlice';
 import languageReducer from './slices/languageSlice'
+import editholidaySlice from './slices/Master/Holiday/editholidaySlice';
 export const store = configureStore({
   reducer: {
     getRegisterSlice: getRegisterSlice,
@@ -82,6 +83,7 @@ export const store = configureStore({
     editTaskAssignSlice: editTaskAssignSlice,
     gettaskAssignListSlice: gettaskAssignListSlice,
     language: languageReducer,
-    holidaySlice: holidaySlice,
+    holidayState: holidaySlice,
+    editholidaySlice: editholidaySlice,
   },
 });  
