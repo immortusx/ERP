@@ -65,7 +65,7 @@ export default function Login() {
         }
     };
 
-      const downloadiOsApp = async () => {
+    const downloadiOsApp = async () => {
         console.log("Downloading iOs.....")
         window.alert("App Not Found")
     }
@@ -187,17 +187,37 @@ export default function Login() {
                                         />
                                     </section>
                                     <section>
-                                        <label htmlFor="password" style={{ fontSize: '17px', marginLeft: '5px' }}>{translations[currentLanguage].password} </label>
-                                        <div style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
+                                        <label
+                                            htmlFor="password"
+                                            style={{ fontSize: '17px', marginLeft: '5px' }}
+                                        >
+                                            {translations[currentLanguage].password}
+                                        </label>
+                                        <div
+                                            style={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                position: 'relative',
+                                                width: '100%', // Ensure the container takes the full width
+                                            }}
+                                        >
                                             <input
-                                                className='myInputl'
-                                                onChange={(e) => { setLoginData({ ...loginData, password: e.target.value }); }}
+                                                className='myInput'
+                                                onChange={(e) => {
+                                                    setLoginData({ ...loginData, password: e.target.value });
+                                                }}
                                                 onKeyDown={handleKeyDown}
                                                 type={showPassword ? 'text' : 'password'}
                                                 id='password'
                                                 name="password"
                                                 placeholder='Enter Password'
-                                                style={{ flex: '1' }}
+                                                style={{
+                                                    flex: '1',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    position: 'relative',
+                                                    width: '100%', // Make the input take the full width
+                                                }}
                                             />
                                             <img
                                                 src={showPassword ? eyeIconClose : eyeIcon}
@@ -205,11 +225,23 @@ export default function Login() {
                                                 height={20}
                                                 width={20}
                                                 onClick={() => setShowPassword(!showPassword)}
-                                                style={{ cursor: 'pointer', position: 'absolute', right: '7px', top: '50%', transform: 'translateY(-50%)' }}
+                                                style={{
+                                                    cursor: 'pointer',
+                                                    position: 'absolute',
+                                                    right: '7px',
+                                                    top: '50%',
+                                                    transform: 'translateY(-50%)',
+                                                }}
                                             />
                                         </div>
                                     </section>
-                                    <section className="remember-me" style={{ fontSize: '14px', display: 'inline-block' }}>
+
+                                    <section className="remember-me" style={{
+                                        fontSize: '14px', display: 'flex',
+                                        alignItems: 'center',
+                                        position: 'relative',
+                                        width: '100%',
+                                    }}>
                                         <label htmlFor="rememberMe" className="checkbox-label" style={{ verticalAlign: 'middle' }}>
                                             <input
                                                 style={{ marginRight: '7px', marginLeft: '15px', width: '18px', height: '18px', verticalAlign: 'middle' }}

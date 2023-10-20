@@ -233,7 +233,6 @@ router.get("/get-holiday-list", tokenCheck, async (req, res) => {
   }
 });
 
-
 router.get("/get-holiday/:id", tokenCheck, async (req, res) => {
   try {
     console.log(">>>>>get-holiday");
@@ -273,7 +272,6 @@ const description = req.body.description;
     }
   });
 });
-
 
 router.get("/get-task-list", tokenCheck, async (req, res) => {
   console.log(">>>>>>>>>get-task-list");
@@ -540,9 +538,9 @@ router.get(
     console.log(">>>>>/get-enquiries-by-category/:categoryId");
     try {
       const categoryId = req.params.categoryId;
-      console.log(categoryId, "dfhbdhhdsbfdhbhd")
+      console.log(categoryId, "dfhbdhhdsbfdhbhd");
       const url = `CALL sp_get_enquiries_by_enquiry_category(${categoryId})`;
-     
+
       db.query(url, async (err, result) => {
         if (err) {
           console.error(err);
@@ -665,16 +663,16 @@ router.get("/get-Warm-enquiry", tokenCheck, async (req, res) => {
   }
 });
 
-
 //===========Get Enquiry By Mobile Number=============
 router.get(
-  "/get-enquiries-by-mobileno/:mobileno",
+  "/get-enquiries-by-mobileno/:mobileno/:categoryId",
   tokenCheck,
   async (req, res) => {
-    console.log(">>>>>/get-enquiries-by-mobileno/:mobileno");
+    console.log(">>>>>/get-enquiries-by-mobileno/:mobileno/:categoryId");
     try {
       const mobileno = req.params.mobileno;
-      const url = `CALL sp_get_enquiries_by_mobile_number(${mobileno})`;
+      const categoryId = req.params.categoryId;
+      const url = `CALL sp_get_enquiries_by_mobile_number(${mobileno}, ${categoryId})`;
       db.query(url, async (err, result) => {
         if (err) {
           console.error(err);

@@ -52,7 +52,7 @@ const AddMore = () => {
   const [searchText, setSearchText] = useState(''); // State for the search input
   const [filteredEnquiries, setFilteredEnquiries] = useState([]);
   useEffect(() => {
-    dispatch(setEnquiryType('All'));
+    dispatch(setEnquiryType('New'));
   }, []);
   const [categoryData, setCategoryData] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(2);
@@ -142,8 +142,8 @@ const AddMore = () => {
     }
   }, [selectedCategory])
 
-  const searchMobileNumber = async (mobileno) => {
-    const url = `${API_URL}/api/get-enquiries-by-mobileno/${mobileno}`;
+  const searchMobileNumber = async (mobileno, selectedCategory) => {
+    const url = `${API_URL}/api/get-enquiries-by-mobileno/${mobileno}/${selectedCategory}`;
     const token = await AsyncStorage.getItem('rbacToken');
     const config = {
       headers: {
@@ -164,9 +164,9 @@ const AddMore = () => {
   useEffect(() => {
     console.log(searchText, "jsefuhusfuerfierfjfghfdghdfhghdfxjdjfjg")
     if (searchText.length > 1) {
-      searchMobileNumber(searchText)
+      searchMobileNumber(searchText, selectedCategory)
     }
-  }, [searchText])
+  }, [searchText, selectedCategory])
 
   return (
     <View style={styles.container}>
@@ -307,9 +307,7 @@ const AddMore = () => {
                           <Text style={styles.label}>
                             {item.product ? item.product : '-'}
                           </Text>
-                          <Text style={styles.label}>
-                            {item.sales_person ? item.sales_person : '-'}
-                          </Text>
+                          {item.sales_person && (<Text style={styles.salesText}>{item.sales_person}</Text>)}
                           <Text style={styles.label}>
                             {item.village ? item.village : '-'}
                           </Text>
