@@ -291,7 +291,7 @@ const AddBooking = ({item}) => {
         if (response && response.data.isSuccess) {
           console.log(response.data, 'booking');
           setShowMessageModal(true);
-          navigation.navigate('Schedule Call');
+          // navigation.navigate('Schedule Call');
         }
       });
     } else {
@@ -475,7 +475,7 @@ const AddBooking = ({item}) => {
                   setOpenRetailDate(true);
                 }}>
                 <Text style={{paddingVertical: 7}}>
-                  Target Retail Price {':- '}
+                  Target Retail Date {':- '}
                   {retailDate === ''
                     ? new Date().toISOString().slice(0, 10)
                     : retailDate}
