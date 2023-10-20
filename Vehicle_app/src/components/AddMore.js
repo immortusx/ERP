@@ -52,7 +52,7 @@ const AddMore = () => {
   const [searchText, setSearchText] = useState(''); // State for the search input
   const [filteredEnquiries, setFilteredEnquiries] = useState([]);
   useEffect(() => {
-    dispatch(setEnquiryType('All'));
+    dispatch(setEnquiryType('New'));
   }, []);
   const [categoryData, setCategoryData] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(2);
