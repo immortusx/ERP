@@ -142,8 +142,8 @@ const AddMore = () => {
     }
   }, [selectedCategory])
 
-  const searchMobileNumber = async (mobileno) => {
-    const url = `${API_URL}/api/get-enquiries-by-mobileno/${mobileno}`;
+  const searchMobileNumber = async (mobileno, selectedCategory) => {
+    const url = `${API_URL}/api/get-enquiries-by-mobileno/${mobileno}/${selectedCategory}`;
     const token = await AsyncStorage.getItem('rbacToken');
     const config = {
       headers: {
@@ -164,9 +164,9 @@ const AddMore = () => {
   useEffect(() => {
     console.log(searchText, "jsefuhusfuerfierfjfghfdghdfhghdfxjdjfjg")
     if (searchText.length > 1) {
-      searchMobileNumber(searchText)
+      searchMobileNumber(searchText, selectedCategory)
     }
-  }, [searchText])
+  }, [searchText, selectedCategory])
 
   return (
     <View style={styles.container}>
