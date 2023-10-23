@@ -4,7 +4,11 @@ const { tokenCheck } = require("../Auth/TokenCheck");
 const { getDateInFormate } = require("../Utils/timeFunctions");
 
 const { db } = require("../Database/dbConfig");
+const uploadFile = require("../Utils/multerMiddaeware");
+const path = require("path");
 
+const fs = require("fs");
+const csv = require("fast-csv");
 const router = express.Router();
 
 router.get("/get-state-list", tokenCheck, async (req, res) => {
@@ -255,9 +259,9 @@ router.get("/get-holiday/:id", tokenCheck, async (req, res) => {
 });
 
 router.post("/update-holidayStatus", async (req, res) => {
-  console.log(">>>>>update-taskstatus" ,req.body);
-const holidayname = req.body.holidayname;
-const description = req.body.description;
+  console.log(">>>>>update-taskstatus", req.body);
+  const holidayname = req.body.holidayname;
+  const description = req.body.description;
 
   const holiday_date = req.body.holiday_date.split("T")[0];
   const id = req.body.id;
@@ -689,4 +693,162 @@ router.get(
   }
 );
 
+//=================================Upload enquiry CSV file=================================//
+router.post(
+  "/upload-csv",
+  tokenCheck,
+  uploadFile.single("enquiryCSV"),
+  async (req, res) => {
+    try {
+      console.log("/uploadCsv", req.file);
+      const parentPath = path.join(__dirname, "..");
+      console.log(parentPath, "parentPath");
+
+      const newFilePath = path.join(parentPath, "upload", req.file.filename);
+      console.log("New file path:", newFilePath);
+
+      // Parse the CSV file and insert data into the database
+      uploadCSV(newFilePath);
+
+      // ...
+    } catch (err) {
+      console.log(err);
+    }
+  }
+);
+
+const uploadCSV = (path) => {
+  console.log(path, "functionc");
+  let stream = fs.createReadStream(path);
+  let csvDataColl = [];
+  let headers = []; // Store field names (header row)
+
+  let fileStream = csv
+    .parse({ headers: true })
+    .on("headers", (headerList) => {
+      // Save the headers (field names)
+      headers = headerList;
+    })
+    .on("data", (data) => {
+      // Create an object with key-value pairs
+      const rowData = {};
+      headers.forEach((header) => {
+        rowData[header] = data[header];
+      });
+
+      csvDataColl.push(rowData);
+    })
+    .on("end", async () => {
+      // csvDataColl.shift(); // Remove the header row
+      console.log(csvDataColl, "csvData");
+      // csvDataColl = csvDataColl.map((obj) => {
+      //   console.log(obj.first_name, "obje");
+      //   return {
+      //     first_name: obj.first_name || null,
+      //     middle_name: obj.middle_name || null,
+      //     last_name: obj.last_name || null,
+      //     phone_number: obj.phone_number || null,
+      //     whatsapp_number: obj.whatsapp_number || null,
+      //     email: obj.email || null,
+      //     is_active: obj.is_active || null,
+      //     state: obj.state || 2,
+      //     district: obj.district || 2,
+      //     taluka: obj.taluka || null,
+      //     block: obj.block || null,
+      //     village: obj.village || null,
+      //     city: obj.city || null,
+      //     branch_id: obj.branch_id || null,
+      //     enquiry_category_id: obj.enquiry_category_id || 1,
+      //     salesperson_id: obj.salesperson_id || null,
+      //     modal_id: obj.modal_id || null,
+      //     date: new Date(),
+      //     delivery_date: new Date(obj.delivery_date),
+      //     primary_source_id: obj.primary_source_id || null,
+      //     enquiry_source_id: obj.enquiry_source_id || null,
+      //     visitReason: obj.visitReason || "1",
+      //     user_created: obj.user_created || null,
+      //     manufacturer: obj.manufacturer || null,
+      //     modal: obj.modal || null,
+      //     variant: obj.variant || null,
+      //     maker: obj.maker || null,
+      //     modalName: obj.modalName || null,
+      //     variantName: obj.variantName || null,
+      //     year_of_manufactur: obj.year_of_manufactur || null,
+      //     condition_of: obj.condition_of || null,
+      //     old_tractor: obj.old_tractor || null,
+      //   };
+      // });
+      // console.log(csvDataColl, 'csv')
+      let P_JSON = JSON.stringify(csvDataColl);
+      // insertDataUsingSP(P_JSON);
+    });
+
+  stream.pipe(fileStream);
+};
+
+// const uploadCSV = (path) => {
+//   console.log(path, "functionc");
+//   let stream = fs.createReadStream(path);
+//   let csvDataColl = [];
+
+//   let fileStream = csv
+//     .parse()
+//     .on("data", async (data) => {
+//       csvDataColl.push(data);
+//     })
+//     .on("end", async () => {
+//       csvDataColl.shift(); // Remove the header row
+//       console.log(csvDataColl[0], 'csvData')
+//       // csvDataColl = csvDataColl.map((obj) => {
+//       //   console.log(obj, 'obje')
+//       //   return {
+//       //     first_name: obj.first_name || null,
+//       //     middle_name: obj.middle_name || null,
+//       //     last_name: obj.last_name || null,
+//       //     phone_number: obj.phone_number || null,
+//       //     whatsapp_number: obj.whatsapp_number || null,
+//       //     email: obj.email || null,
+//       //     is_active: obj.is_active || null,
+//       //     state: obj.state || 2,
+//       //     district: obj.district || 2,
+//       //     taluka: obj.taluka || null,
+//       //     block: obj.block || null,
+//       //     village: obj.village || null,
+//       //     city: obj.city || null,
+//       //     branch_id: obj.branch_id || null,
+//       //     enquiry_category_id: obj.enquiry_category_id || 1,
+//       //     salesperson_id: obj.salesperson_id || null,
+//       //     modal_id: obj.modal_id || null,
+//       //     date: new Date(),
+//       //     delivery_date: new Date(obj.delivery_date),
+//       //     primary_source_id: obj.primary_source_id || null,
+//       //     enquiry_source_id: obj.enquiry_source_id || null,
+//       //     visitReason: obj.visitReason || "1",
+//       //     user_created: obj.user_created || null,
+//       //     manufacturer: obj.manufacturer || null,
+//       //     modal: obj.modal || null,
+//       //     variant: obj.variant || null,
+//       //     maker: obj.maker || null,
+//       //     modalName: obj.modalName || null,
+//       //     variantName: obj.variantName || null,
+//       //     year_of_manufactur: obj.year_of_manufactur || null,
+//       //     condition_of: obj.condition_of || null,
+//       //     old_tractor: obj.old_tractor || null,
+//       //   };
+//       // });
+//       let P_JSON = JSON.stringify(csvDataColl);
+//       // insertDataUsingSP(P_JSON);
+//     });
+
+//   stream.pipe(fileStream);
+// };
+const insertDataUsingSP = (jsonData) => {
+  db.query("CALL InsertEnquiryData(?)", [jsonData], (err, results) => {
+    if (err) {
+      console.error("Error inserting data:", err);
+    } else {
+      console.log("Data inserted successfully:", results);
+    }
+  });
+};
 module.exports = router;

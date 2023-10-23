@@ -4,13 +4,12 @@ const moment = require("moment");
 const async = require("async");
 const path = require("path");
 const jwt = require("jsonwebtoken");
-const fs = require('fs');
+const fs = require("fs");
 
 dotenv.config();
 
 const app = express();
 const cors = require("cors");
-
 
 const { tokenCheck } = require("./Auth/TokenCheck");
 const { checkUserPermission } = require("./Auth/userPermission");
@@ -42,7 +41,7 @@ app.use("/api/roles", require("./Routes/rolesRoutes"));
 app.use("/api/agency", require("./Routes/agencyRoutes"));
 app.use("/api/branch", require("./Routes/branchRoutes"));
 app.use("/api/", require("./Routes/commonRoutes"));
-app.use('/api/areaAssign', require('./Routes/areaAssignRoutes'))
+app.use("/api/areaAssign", require("./Routes/areaAssignRoutes"));
 
 app.get("/api", (req, res) => {
   console.log({
@@ -59,33 +58,34 @@ app.get("/api", (req, res) => {
   });
 });
 
-app.get('/api/download', (req, res) => {
-  const fileName = `Vehicle-ERP-${moment().format("YYYYMMDD")}-${process.env.BUILD_TAG}-${process.env.BUILD_ID}.apk`;
-  const filePath = path.join(__dirname, '.', 'app-release.apk'); // Assuming your server folder is in the same directory as your script
+app.get("/api/download", (req, res) => {
+  const fileName = `Vehicle-ERP-${moment().format("YYYYMMDD")}-${
+    process.env.BUILD_TAG
+  }-${process.env.BUILD_ID}.apk`;
+  const filePath = path.join(__dirname, ".", "app-release.apk"); // Assuming your server folder is in the same directory as your script
 
   // Check if the file exists
   fs.access(filePath, fs.constants.F_OK, (err) => {
     if (err) {
       // File does not exist, send JSON response with error status
-      console.error('Application not found');
-      res.status(404).json({ error: 'Application not found' });
+      console.error("Application not found");
+      res.status(404).json({ error: "Application not found" });
       return;
     }
 
     // File exists, set headers and send the file
-    res.setHeader('Content-Type', 'application/vnd.android.package-archive');
-    res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
+    res.setHeader("Content-Type", "application/vnd.android.package-archive");
+    res.setHeader("Content-Disposition", `attachment; filename="${fileName}"`);
 
     res.sendFile(filePath, (err) => {
       if (err) {
         // Handle any errors here, like 500 Internal Server Error.
         console.error(err);
-        res.status(500).send('Internal Server Error');
+        res.status(500).send("Internal Server Error");
       }
     });
   });
 });
-
 
 app.listen(process.env.ENV_PORT, (req, res) => {
   console.log({

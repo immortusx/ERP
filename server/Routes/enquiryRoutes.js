@@ -400,9 +400,7 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
   });
 });
 
-
 //=================edit Enquiry Data================//
-
 router.post(
   "/set-edit-enquiry-data/:customerId",
   tokenCheck,
