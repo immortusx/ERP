@@ -20,17 +20,9 @@ const Enquiries = ({route}) => {
   const [loading, setLoading] = useState(false);
   const [enquiriesList, setEnquiriesList] = useState([]);
   const [categoryName, setCategoryName] = useState(null);
+  const {item} = route.params;
 
-  useEffect(() => {
-    if (route) {
-      const {categoryDetails} = route.params;
-      console.log(categoryDetails, 'categoe');
-      setCategoryName(categoryDetails.category_name);
-      getEnquiries(categoryDetails.category_id);
-    }
-  }, [route]);
-
-  const getEnquiries = async categoryId => {
+  const getLockedEnquiries = async categoryId => {
     const url = `${API_URL}/api/get-enquiries-by-category/${categoryId}`;
     console.log('get enquries', url);
     const token = await AsyncStorage.getItem('rbacToken');
@@ -56,7 +48,50 @@ const Enquiries = ({route}) => {
         <TouchableOpacity style={styles.touchableOpacityStyle}>
           <Text style={styles.taskListStyle}>{categoryName}</Text>
         </TouchableOpacity>
-        {loading ? (
+        <View style={styles.contentContainer}>
+          <View style={styles.dataContainer}>
+            <View style={styles.leftContainer}>
+              <Text style={styles.taskLabel}>Task Assigned:</Text>
+              <Text style={styles.taskLabel}>Task Type:</Text>
+              <Text style={styles.taskLabel}>Tasks:</Text>
+              <Text style={styles.taskLabel}>Task Performed: </Text>
+              <Text style={styles.taskLabel}>Category: </Text>
+              <Text style={styles.taskLabel}>Start Date: </Text>
+              <Text style={styles.taskLabel}>End Date: </Text>
+              <Text style={styles.taskLabel}>Task Time Period: </Text>
+            </View>
+            <View style={styles.mainRightContainer}>
+              <View style={styles.rightContainer}>
+                <Text style={styles.listStyle}>{item.employee}</Text>
+                <Text style={styles.listStyle}>{item.tasktype_name}</Text>
+                <Text style={styles.listStyle}>{item.task_name}</Text>
+                <TouchableOpacity
+                  style={styles.perfomedTaskBtn}
+                  onPress={() => {
+                    openTaskDetails(item);
+                  }}>
+                  <Text style={[styles.listStyle, styles.taskPerformed]}>
+                    {item.taskCompleted}/{item.taskcount}
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.perfomedTaskBtn}>
+                  <Text style={styles.listStyle}>{item.category_name}</Text>
+                </TouchableOpacity>
+                <Text style={styles.listStyle}>
+                  {moment(item.startdate).format('Do MMMM, YYYY')}
+                </Text>
+                <Text style={styles.listStyle}>
+                  {moment(item.enddate).format('Do MMMM, YYYY')}
+                </Text>
+                <Text style={styles.listStyle}>{item.period_name}</Text>
+              </View>
+            </View>
+          </View>
+        </View>
+        <View>
+          <Text style={styles.enquiryLine}>Enquiries</Text>
+          <View style={styles.line} />
+          {/* {loading ? (
           <CustomLoadingSpinner />
         ) : enquiriesList && enquiriesList.length > 0 ? (
           <FlatList
@@ -128,7 +163,8 @@ const Enquiries = ({route}) => {
           />
         ) : (
           <Text style={styles.NoTaskStyle}>Task Not Performed</Text>
-        )}
+        )} */}
+        </View>
       </View>
     </View>
   );
@@ -243,14 +279,25 @@ const styles = StyleSheet.create({
   subContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    position: 'absolute'
+    position: 'absolute',
   },
   startContainer: {
     alignSelf: 'flex-end',
     bottom: 5,
     marginHorizontal: 5,
-    left: 100
-  }
+    left: 100,
+  },
+  enquiryLine: {
+    color: '#2471A3',
+    fontWeight: 'bold',
+    marginBottom: 6,
+  },
+  line: {
+    backgroundColor: '#3498DB',
+    height: 1,
+    alignSelf: 'stretch',
+    marginBottom: 10,
+  },
 });
 
 export default Enquiries;
