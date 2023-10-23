@@ -167,11 +167,11 @@ const CategorisedEnquiry = ({categoryId}) => {
                       </View>
                     </View>
                     <View style={styles.rightDataStyle}>
-                      <Text style={styles.dateText}>
+                      {/* <Text style={styles.dateText}>
                         {moment(item.next_followup_date).format(
                           'Do MMMM, YYYY',
                         )}
-                      </Text>
+                      </Text> */}
                       <Text style={styles.salesText}>{item.sales_person}</Text>
                       <TouchableOpacity style={styles.dayBack}>
                         <TimeAgo date={item.date} />

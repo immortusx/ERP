@@ -1,4 +1,11 @@
-import {View, Text, StyleSheet, TouchableOpacity, FlatList} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  FlatList,
+  Button,
+} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -38,10 +45,10 @@ const Tasks = () => {
     console.log(taskDetails, 'taskDetials');
     navigation.navigate('Task Details', {taskDetails: taskDetails});
   };
-  const redirectEnquiriesList = (categoryDetails) => {
-    console.log(categoryDetails, 'cateogir');
-    navigation.navigate('Enquiries', {categoryDetails: categoryDetails});
-  }
+  const redirectEnquiriesList = item => {
+    console.log(item, 'item')
+    navigation.navigate('Enquiries', {item: item});
+  };
   return (
     <View style={StyleSheet.mainContainer}>
       <View style={styles.container}>
@@ -75,35 +82,45 @@ const Tasks = () => {
                       <Text style={styles.taskLabel}>End Date: </Text>
                       <Text style={styles.taskLabel}>Task Time Period: </Text>
                     </View>
-                    <View style={styles.rightContainer}>
-                      <Text style={styles.listStyle}>{item.employee}</Text>
-                      <Text style={styles.listStyle}>{item.tasktype_name}</Text>
-                      <Text style={styles.listStyle}>{item.task_name}</Text>
-                      <TouchableOpacity
-                        style={styles.perfomedTaskBtn}
-                        onPress={() => {
-                          openTaskDetails(item);
-                        }}>
-                        <Text style={[styles.listStyle, styles.taskPerformed]}>
-                          {item.taskCompleted}/{item.taskcount}
-                        </Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        style={styles.perfomedTaskBtn}
-                        onPress={() => {
-                          redirectEnquiriesList(item);
-                        }}>
+                    <View style={styles.mainRightContainer}>
+                      <View style={styles.rightContainer}>
+                        <Text style={styles.listStyle}>{item.employee}</Text>
                         <Text style={styles.listStyle}>
-                          {item.category_name}
+                          {item.tasktype_name}
                         </Text>
-                      </TouchableOpacity>
-                      <Text style={styles.listStyle}>
-                        {moment(item.startdate).format('Do MMMM, YYYY')}
-                      </Text>
-                      <Text style={styles.listStyle}>
-                        {moment(item.enddate).format('Do MMMM, YYYY')}
-                      </Text>
-                      <Text style={styles.listStyle}>{item.period_name}</Text>
+                        <Text style={styles.listStyle}>{item.task_name}</Text>
+                        <TouchableOpacity
+                          style={styles.perfomedTaskBtn}
+                          onPress={() => {
+                            openTaskDetails(item);
+                          }}>
+                          <Text
+                            style={[styles.listStyle, styles.taskPerformed]}>
+                            {item.taskCompleted}/{item.taskcount}
+                          </Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.perfomedTaskBtn}>
+                          <Text style={styles.listStyle}>
+                            {item.category_name}
+                          </Text>
+                        </TouchableOpacity>
+                        <Text style={styles.listStyle}>
+                          {moment(item.startdate).format('Do MMMM, YYYY')}
+                        </Text>
+                        <Text style={styles.listStyle}>
+                          {moment(item.enddate).format('Do MMMM, YYYY')}
+                        </Text>
+                        <Text style={styles.listStyle}>{item.period_name}</Text>
+                      </View>
+                      <View>
+                        <TouchableOpacity
+                          style={styles.taskStartBtn}
+                          onPress={() => {
+                            redirectEnquiriesList(item);
+                          }}>
+                          <Text style={styles.startText}>Start Task</Text>
+                        </TouchableOpacity>
+                      </View>
                     </View>
                   </View>
                 </View>
@@ -194,7 +211,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'lightblue',
     paddingHorizontal: 12,
     borderRadius: 20,
-    marginVertical: 1.5
+    marginVertical: 1.5,
   },
   NoTaskStyle: {
     fontSize: 16,
@@ -203,6 +220,22 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 20,
     fontStyle: 'italic',
+  },
+  taskStartBtn: {
+    backgroundColor: '#27AE60',
+    padding: 5,
+    borderRadius: 5,
+  },
+  mainRightContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+  },
+  startText: {
+    fontSize: 12,
+    color: 'white',
+    fontWeight: 'bold',
   },
 });
 
