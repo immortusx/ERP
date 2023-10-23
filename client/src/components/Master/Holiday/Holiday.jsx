@@ -2,7 +2,11 @@ import translations from "../../../assets/locals/translations";
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Modal, Button } from "react-bootstrap";
-import { addHolidayToDb } from "../../../redux/slices/Master/Holiday/holidaySlice";
+import {
+  addHolidayToDb,
+  clearaddHoliday,
+} from "../../../redux/slices/Master/Holiday/holidaySlice";
+import { editHolidayToDb } from "../../../redux/slices/Master/Holiday/editholidaySlice";
 import Axios from "axios";
 import { getCategory } from "../Category/getEditCategory";
 import DatePicker from "react-datepicker";
@@ -18,6 +22,7 @@ import moment from "moment/moment";
 
 const Holiday = () => {
   const currentLanguage = useSelector((state) => state.language.language);
+  const holidayState = useSelector((state) => state.holidayState.holidayState);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const redirectModal = () => {
@@ -80,9 +85,22 @@ const Holiday = () => {
   }
 
   const savedata = () => {
-    console.log(holiday, "asdnm,fdghjfkhj");
-    dispatch(addHolidayToDb(holiday));
-    dispatch(setShowMessage("Holiday Added"));
+    if (show===2) {
+      console.log(holiday, "holidayholidayholiday");
+      dispatch(editHolidayToDb(holiday));
+      dispatch(setShowMessage("Holiday Edited"));
+      setShow(0);
+      setHoliday({
+        holidayname: "",
+        holiday_date: new Date(),
+        description: "",
+      });
+    } else {
+      dispatch(addHolidayToDb(holiday));
+        clearInpHook();
+      setShow(0);
+       console.log(holiday, "holidayholidayholiday");
+    }
   };
 
   useEffect(() => {
@@ -109,8 +127,25 @@ const Holiday = () => {
       }
     };
 
-    fetchHolidayList(); // Call the function to fetch data
+    fetchHolidayList(); 
   }, []);
+
+  const clearInpHook=()=>{
+setHoliday({
+   holidayname: "",
+   holiday_date: new Date(),
+   description: "",
+ });
+  }
+
+  useEffect(() => {
+    if(holidayState?.isSuccess){
+      if (holidayState.message.result === "success"){
+        dispatch(setShowMessage("Holiday Added"));
+        dispatch(clearaddHoliday());
+      }
+      }
+  }, [holidayState]);
 
   const editeHoliday = async (id) => {
     try {

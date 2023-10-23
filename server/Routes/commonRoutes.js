@@ -254,21 +254,21 @@ router.get("/get-holiday/:id", tokenCheck, async (req, res) => {
   }
 });
 
-router.get("/update-holidayStatus/:id", async (req, res) => {
-  console.log(">>>>>update-taskstatus");
-  const holidayname = req.body.holidayname;
-  const description = req.body.description;
+router.post("/update-holidayStatus", async (req, res) => {
+  console.log(">>>>>update-taskstatus" ,req.body);
+const holidayname = req.body.holidayname;
+const description = req.body.description;
 
   const holiday_date = req.body.holiday_date.split("T")[0];
-  const id = req.params.id;
-  sql = `UPDATE holiday_data SET holidayname = ${holidayname},holiday_date = ${holiday_date},description = ${description} WHERE id = ${id};`;
+  const id = req.body.id;
+  sql = `UPDATE holiday_data SET holidayname = '${holidayname}', holiday_date = '${holiday_date}',description = '${description}' WHERE id = ${id};`;
   await db.query(sql, async (err, result) => {
     if (err) {
       console.log({ isSuccess: true, result: err });
       res.send({ isSuccess: true, result, result: err });
     } else {
-      console.log({ isSuccess: true, result: sql });
-      res.send({ isSuccess: true, result: "success" });
+      console.log({ isSuccess: true, result: "Success" });
+      res.send({ isSuccess: true, result: result });
     }
   });
 });
