@@ -146,23 +146,22 @@ router.post("/add-assigneArea", tokenCheck, async (req, res) => {
   }
 });
 router.get("/delete-area/:id/:category", tokenCheck, async (req, res) => {
-
-    const userId = req.params.id;
-    const category = req.params.category;
-    const dId = req.params.dId;
-    console.log(category, "category");
-    // const sqlQuery = `DELETE FROM area_assign_user WHERE user_id=${userId} and distribution_type=${dId} and category_id=${category}`;
-    const url = `DELETE FROM area_assign_user WHERE user_id='${userId}' and category_id='${category}'`;
-    await db.query(url, async (err, updateData) => {
-      if (err) {
-        console.log({ isSuccess: false, result: err })
-        res.send({ isSuccess: false, result: 'err' })
-      } else {
-        console.log({ isSuccess: true, result: url })
-        res.send({ isSuccess: true, result: 'success' })
-      }
-    })
-  })
+  const userId = req.params.id;
+  const category = req.params.category;
+  const dId = req.params.dId;
+  console.log(category, "category");
+  // const sqlQuery = `DELETE FROM area_assign_user WHERE user_id=${userId} and distribution_type=${dId} and category_id=${category}`;
+  const url = `DELETE FROM area_assign_user WHERE user_id='${userId}' and category_id='${category}'`;
+  await db.query(url, async (err, updateData) => {
+    if (err) {
+      console.log({ isSuccess: false, result: err });
+      res.send({ isSuccess: false, result: "err" });
+    } else {
+      console.log({ isSuccess: true, result: url });
+      res.send({ isSuccess: true, result: "success" });
+    }
+  });
+});
 
 // router.get("/delete-area/:id/:category/:dId", tokenCheck, async (req, res) => {
 //   try {
