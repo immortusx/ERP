@@ -76,9 +76,12 @@ export default function EnquiryList() {
     formData.append("enquiryCSV", csvFile);
     try {
       const response = await Axios.post(url, formData, config);
-      if (response.data) {
-        // setDocumentId(response.data.result.insertId);
-        console.log(response.data.result, "CVEROTE");
+      if (response.data && response.data.message === "CSV success") {
+        console.log(response.data.message, "CVEROTE");
+        dispatch(setShowMessage("Data Successfully Inserted"));
+        getEnquiriesFromDb();
+      } else if (response.data && response.data.error === "CSV failed") {
+        dispatch(setShowMessage("Failed"));
       }
     } catch (error) {
       // Handle any errors here

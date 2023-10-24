@@ -708,7 +708,22 @@ router.post(
       console.log("New file path:", newFilePath);
 
       // Parse the CSV file and insert data into the database
-      uploadCSV(newFilePath);
+      uploadCSV(newFilePath, (err, result) => {
+        if (err) {
+          console.error(err);
+          res
+            .status(500)
+            .json({ error: "CSV failed" });
+        } else {
+          console.log("CSV success");
+          res
+            .status(200)
+            .json({
+              isSuccess: true,
+              message: "CSV success",
+            });
+        }
+      });
 
       // ...
     } catch (err) {
@@ -717,7 +732,7 @@ router.post(
   }
 );
 
-const uploadCSV = (path) => {
+const uploadCSV = (path, callback) => {
   console.log(path, "functionc");
   let stream = fs.createReadStream(path);
   let csvDataColl = [];
@@ -732,11 +747,11 @@ const uploadCSV = (path) => {
     .on("data", (data) => {
       const rowData = {};
       headers.forEach((header) => {
-        const cleanedHeader = header.trim().replace(/ /g, '_'); // Trim and replace spaces with underscores
+        const cleanedHeader = header.trim().replace(/ /g, "_"); // Trim and replace spaces with underscores
         const value = data[header].trim(); // Trim spaces from the value
         rowData[cleanedHeader] = value;
       });
-    
+
       csvDataColl.push(rowData);
     })
     .on("end", async () => {
@@ -745,26 +760,26 @@ const uploadCSV = (path) => {
       csvDataColl = csvDataColl.map((obj) => {
         console.log(obj.Email);
         return {
-          first_name: obj.first_name,
-          middle_name: obj.middle_name,
-          last_name: obj.last_name,
-          phone_number: obj.phone_number,
-          whatsapp_number: obj.whatsapp_number,
-          email: obj.email,
-          state: obj.state || 2,
-          district: obj.district || 2,
-          taluka: obj.taluka || 2,
-          village: obj.village || 2,
-          branch_id: obj.branch_id || 1,
-          enquiry_category_id: obj.enquiry_category_id || 1,
-          salesperson_id: obj.salesperson_id || null,
+          first_name: obj.FirstName,
+          middle_name: obj.MiddleName,
+          last_name: obj.LastName,
+          phone_number: obj.PhoneNumber,
+          whatsapp_number: obj.WhatsappNumber,
+          email: obj.Email,
+          state: obj.State || 2,
+          district: obj.District || 2,
+          taluka: obj.Taluka || 2,
+          village: obj.Village || 2,
+          branch_id: obj.Branch || 1,
+          enquiry_category_id: obj.EnquiryCategory || 1,
+          salesperson_id: obj.SalespersonId || null,
           modal_id: obj.modal_id || 1,
-          date: obj.data,
-          delivery_date: obj.delivery_date,
-          primary_source_id: obj.primary_source_id || null,
-          enquiry_source_id: obj.enquiry_source_id || null,
-          manufacturer: obj.manufacturer || 1,
-          modal: obj.modal || 1,
+          date: obj.EnquiryDate,
+          delivery_date: obj.DeliveryDate,
+          primary_source_id: obj.PrimarySourceId || null,
+          enquiry_source_id: obj.EnquirySourceId || null,
+          manufacturer: obj.Manufacturer || 1,
+          modal: obj.modalId || 1,
           maker: obj.maker || 1,
           modalName: obj.modalName || 1,
           year_of_manufactur: obj.modalYear || null,
@@ -772,15 +787,26 @@ const uploadCSV = (path) => {
           old_tractor: obj.oldTractorOwned,
         };
       });
-      // console.log(csvDataColl, "csv");
+      console.log(csvDataColl, "csvdata");
       let P_JSON = JSON.stringify(csvDataColl);
-      // console.log(P_JSON, "css");
-      // insertDataUsingSP(P_JSON);
+      console.log(P_JSON, "csvjsondata");
+      insertDataUsingSP(P_JSON, callback);
     });
 
   stream.pipe(fileStream);
 };
 
+const insertDataUsingSP = (jsonData, callback) => {
+  db.query(`CALL InsertEnquiryData('${jsonData}')`, (err, results) => {
+    if (err) {
+      console.error("Error inserting data:", err);
+      callback(err, null);
+    } else {
+      console.log("csv file inserted", results.insertId);
+      callback(null, results);
+    }
+  });
+};
 // const uploadCSV = (path) => {
 //   console.log(path, "functionc");
 //   let stream = fs.createReadStream(path);
@@ -830,13 +856,5 @@ const uploadCSV = (path) => {
 
 //   stream.pipe(fileStream);
 // };
-const insertDataUsingSP = (jsonData) => {
-  db.query(`CALL InsertEnquiryData('${jsonData}')`, (err, results) => {
-    if (err) {
-      console.error("Error inserting data:", err);
-    } else {
-      console.log("Data inserted successfully:", results.insertId);
-    }
-  });
-};
+
 module.exports = router;
