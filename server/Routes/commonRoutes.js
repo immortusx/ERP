@@ -730,54 +730,51 @@ const uploadCSV = (path) => {
       headers = headerList;
     })
     .on("data", (data) => {
-      // Create an object with key-value pairs
       const rowData = {};
       headers.forEach((header) => {
-        rowData[header] = data[header];
+        const cleanedHeader = header.trim().replace(/ /g, '_'); // Trim and replace spaces with underscores
+        const value = data[header].trim(); // Trim spaces from the value
+        rowData[cleanedHeader] = value;
       });
-
+    
       csvDataColl.push(rowData);
     })
     .on("end", async () => {
       // csvDataColl.shift(); // Remove the header row
       console.log(csvDataColl, "csvData");
       csvDataColl = csvDataColl.map((obj) => {
-        console.log(obj.first_name, "obje");
+        console.log(obj.Email);
         return {
-          first_name: "div",
-          middle_name: "D",
-          last_name: "Kuma",
-          phone_number: "112212102",
-          whatsapp_number: "45390303",
-          email: "diyan@123",
+          first_name: obj.first_name,
+          middle_name: obj.middle_name,
+          last_name: obj.last_name,
+          phone_number: obj.phone_number,
+          whatsapp_number: obj.whatsapp_number,
+          email: obj.email,
           state: obj.state || 2,
           district: obj.district || 2,
           taluka: obj.taluka || 2,
-          village: 8,
-          branch_id: 1 || null,
-          enquiry_category_id: 2 || 1,
-          salesperson_id: 1 || null,
-          modal_id: 2 || null,
-          date: new Date(),
-          delivery_date: new Date(),
-          primary_source_id: 1 || null,
-          enquiry_source_id: 1 || null,
-          // visitReason: obj.visitReason || "1",
-          // user_created: obj.user_created || null,
-          // manufacturer: obj.manufacturer || null,
-          // modal: obj.modal || null,
-          // variant: obj.variant || null,
-          // maker: obj.maker || null,
-          // modalName: obj.modalName || null,
-          // variantName: obj.variantName || null,
-          // year_of_manufactur: obj.year_of_manufactur || null,
-          // condition_of: obj.condition_of || null,
-          // old_tractor: obj.old_tractor || null,
+          village: obj.village || 2,
+          branch_id: obj.branch_id || 1,
+          enquiry_category_id: obj.enquiry_category_id || 1,
+          salesperson_id: obj.salesperson_id || null,
+          modal_id: obj.modal_id || 1,
+          date: obj.data,
+          delivery_date: obj.delivery_date,
+          primary_source_id: obj.primary_source_id || null,
+          enquiry_source_id: obj.enquiry_source_id || null,
+          manufacturer: obj.manufacturer || 1,
+          modal: obj.modal || 1,
+          maker: obj.maker || 1,
+          modalName: obj.modalName || 1,
+          year_of_manufactur: obj.modalYear || null,
+          condition_of: obj.modalCondition,
+          old_tractor: obj.oldTractorOwned,
         };
       });
-      console.log(csvDataColl, "csv");
+      // console.log(csvDataColl, "csv");
       let P_JSON = JSON.stringify(csvDataColl);
-      console.log(P_JSON, "css");
+      // console.log(P_JSON, "css");
       // insertDataUsingSP(P_JSON);
     });
 
@@ -799,40 +796,33 @@ const uploadCSV = (path) => {
 //       console.log(csvDataColl[0], 'csvData')
 //       // csvDataColl = csvDataColl.map((obj) => {
 //       //   console.log(obj, 'obje')
-//       //   return {
-//       //     first_name: obj.first_name || null,
-//       //     middle_name: obj.middle_name || null,
-//       //     last_name: obj.last_name || null,
-//       //     phone_number: obj.phone_number || null,
-//       //     whatsapp_number: obj.whatsapp_number || null,
-//       //     email: obj.email || null,
-//       //     is_active: obj.is_active || null,
-//       //     state: obj.state || 2,
-//       //     district: obj.district || 2,
-//       //     taluka: obj.taluka || null,
-//       //     block: obj.block || null,
-//       //     village: obj.village || null,
-//       //     city: obj.city || null,
-//       //     branch_id: obj.branch_id || null,
-//       //     enquiry_category_id: obj.enquiry_category_id || 1,
-//       //     salesperson_id: obj.salesperson_id || null,
-//       //     modal_id: obj.modal_id || null,
-//       //     date: new Date(),
-//       //     delivery_date: new Date(obj.delivery_date),
-//       //     primary_source_id: obj.primary_source_id || null,
-//       //     enquiry_source_id: obj.enquiry_source_id || null,
-//       //     visitReason: obj.visitReason || "1",
-//       //     user_created: obj.user_created || null,
-//       //     manufacturer: obj.manufacturer || null,
-//       //     modal: obj.modal || null,
-//       //     variant: obj.variant || null,
-//       //     maker: obj.maker || null,
-//       //     modalName: obj.modalName || null,
-//       //     variantName: obj.variantName || null,
-//       //     year_of_manufactur: obj.year_of_manufactur || null,
-//       //     condition_of: obj.condition_of || null,
-//       //     old_tractor: obj.old_tractor || null,
-//       //   };
+//       // return {
+//   first_name: obj.first_name,
+//   middle_name: obj.middle_name,
+//   last_name: obj.last_name,
+//   phone_number: obj.phone_number,
+//   whatsapp_number: obj.whatsapp_number,
+//   email: obj.email,
+//   state: obj.state || 2,
+//   district: obj.district || 2,
+//   taluka: obj.taluka || 2,
+//   village: obj.village || 2,
+//   branch_id: obj.branch_id || 1,
+//   enquiry_category_id: obj.enquiry_category_id || 1,
+//   salesperson_id: obj.salesperson_id || null,
+//   modal_id: obj.modal_id || 1,
+//   date: obj.data,
+//   delivery_date: obj.delivery_date,
+//   primary_source_id: obj.primary_source_id || null,
+//   enquiry_source_id: obj.enquiry_source_id || null,
+//   manufacturer: obj.manufacturer || 1,
+//   modal: obj.modal || 1,
+//   maker: obj.maker || 1,
+//   modalName: obj.modalName || 1,
+//   year_of_manufactur: obj.modalYear || null,
+//   condition_of: obj.modalCondtion,
+//   old_tractor: obj.oldTractorOwned,
+// };
 //       // });
 //       let P_JSON = JSON.stringify(csvDataColl);
 //       // insertDataUsingSP(P_JSON);
