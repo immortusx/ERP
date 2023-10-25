@@ -97,7 +97,7 @@ const AddMore = () => {
 
   const openAdditonalEnquiry = item => {
     console.log(item, '>>>>>>>>>>>>>>>.');
-    navigation.navigate('Additional Details', { item: item });
+    navigation.navigate('Additional Details', {item: item });
   };
 
   const handleConfirm = () => {
