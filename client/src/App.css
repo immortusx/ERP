@@ -914,3 +914,9 @@ select.myInput {
 .cursorpointer {
   cursor: pointer;
 }
+.custom-label {
+  font-size: 18px; 
+  color: #3c90e9; 
+  margin-right: 10px; 
+  font-weight: bold; 
+}

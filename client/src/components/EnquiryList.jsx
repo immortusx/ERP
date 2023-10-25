@@ -19,7 +19,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import { faEllipsisV } from "@fortawesome/free-solid-svg-icons/faEllipsisV";
 
 import "../styles/Users.css";
-import translations from '../assets/locals/translations'
+import translations from "../assets/locals/translations";
 import Checkbox from "@mui/material/Checkbox";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { setShowMessage } from "../redux/slices/notificationSlice";
@@ -32,6 +32,7 @@ export default function EnquiryList() {
   const [customerId, setCustomerId] = useState([]);
   const [enquiryId, setEnquiryId] = useState(null);
   const [selecteduser, setSelectedUser] = useState({});
+  const [csvFile, setCsvFile] = useState("No File Selected");
   const [id, setId] = useState(null);
   const [displayConfirmationModal, setDisplayConfirmationModal] =
     useState(false);
@@ -48,8 +49,45 @@ export default function EnquiryList() {
   const currentBranch = localStorage.getItem("currentDealerId");
   console.log(currentBranch, "currentBranch*******");
 
-  function editActionCall() { }
-
+  function editActionCall() {}
+  const fileInputRef = useRef(null);
+  function onChangeCSVFile(e) {
+    const file = e.target.files[0];
+    if (file) {
+      console.log(file, "csv file");
+      setCsvFile(file);
+    } else {
+      setCsvFile("No file selected");
+    }
+    // const name = e.target.name;
+    // const files = e.target.files;
+    // setEmployeeProfilelogo({ ...employeeData, [name]: files[0] });
+    // console.log(employeeData, "employeeData");
+  }
+  const handleCSVUpload = async () => {
+    console.log(csvFile, "csdielf");
+    const url = `${process.env.REACT_APP_NODE_URL}/api/upload-csv`;
+    const config = {
+      headers: {
+        token: localStorage.getItem("rbacToken"),
+      },
+    };
+    const formData = new FormData();
+    formData.append("enquiryCSV", csvFile);
+    try {
+      const response = await Axios.post(url, formData, config);
+      if (response.data && response.data.message === "CSV success") {
+        console.log(response.data.message, "CVEROTE");
+        dispatch(setShowMessage("Data Successfully Inserted"));
+        getEnquiriesFromDb();
+      } else if (response.data && response.data.error === "CSV failed") {
+        dispatch(setShowMessage("Failed"));
+      }
+    } catch (error) {
+      // Handle any errors here
+      console.error("Error uploading CSV:", error);
+    }
+  };
   const [selectAll, setSelectAll] = useState(false);
   const [rowData, setRowData] = useState([]);
 
@@ -183,7 +221,7 @@ export default function EnquiryList() {
   const deleteActionCall = (data) => {
     setType("enquiry_delete");
     setEnquiryId(data.id);
-    console.log(data.id, "ghsghghsd")
+    console.log(data.id, "ghsghghsd");
     setDeleteMessage(
       `Are You Sure You Want To Delete The Enquiry '${data.first_name} ${data.last_name}'?`
     );
@@ -263,7 +301,8 @@ export default function EnquiryList() {
       renderCell: (params) => {
         const fistName = params.row.first_name || "-";
         return (
-          <div className='myBtnForEdit'
+          <div
+            className="myBtnForEdit"
             onClick={() => {
               editEnquiryCell(params.row);
             }}
@@ -281,7 +320,8 @@ export default function EnquiryList() {
       renderCell: (params) => {
         const lastName = params.row.last_name || "-";
         return (
-          <div className='myBtnForEdit'
+          <div
+            className="myBtnForEdit"
             onClick={() => {
               editActionCall(params.row);
             }}
@@ -382,7 +422,9 @@ export default function EnquiryList() {
     },
     {
       field: "menu",
-      headerName: <FontAwesomeIcon icon={faEllipsisV} style={{ marginRight: "15px" }} />,
+      headerName: (
+        <FontAwesomeIcon icon={faEllipsisV} style={{ marginRight: "15px" }} />
+      ),
       className: "bg-dark",
       sortable: false,
       filterable: false,
@@ -514,10 +556,30 @@ export default function EnquiryList() {
       <div>
         <div className="myTbl">
           <div className="my-3  d-flex align-items-end justify-content-end">
+            <div className="file-upload-container mx-2">
+              <label className="custom-label mx-1" htmlFor="csv">
+                Upload Enquiry
+              </label>
+              <input
+                ref={fileInputRef}
+                onChange={onChangeCSVFile}
+                autoComplete="off"
+                type="file"
+                name="enquiryCSV"
+                required
+                accept=".csv"
+                className="myInput inputElement"
+              />
+              <button
+                className="btn btn-primary mx-1"
+                onClick={handleCSVUpload}
+              >
+                Upload
+              </button>
+            </div>
             <div
               onClick={() => {
                 navigate("/sale/enquiries/enquiry");
-
               }}
               className="d-flex align-items-center px-1"
               type="button"
@@ -533,7 +595,9 @@ export default function EnquiryList() {
                 <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
                 <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
               </svg>
-              <h6 className="m-0 ps-1">{translations[currentLanguage].addenq}</h6>
+              <h6 className="m-0 ps-1">
+                {translations[currentLanguage].addenq}
+              </h6>
             </div>
             <div
               onClick={handleworkAssign}
@@ -541,7 +605,9 @@ export default function EnquiryList() {
               type="button"
             >
               <PersonIcon />
-              <h6 className="m-0 ps-1">{translations[currentLanguage].workassign}</h6>
+              <h6 className="m-0 ps-1">
+                {translations[currentLanguage].workassign}
+              </h6>
             </div>
           </div>
 

@@ -5,7 +5,7 @@ import {
   clearAddemployeeState,
 } from "../redux/slices/addemployeeSlice";
 import DownloadIcon from "@mui/icons-material/Download";
-import download1 from "../assets/images/download1.png"
+import download1 from "../assets/images/download1.png";
 import {
   clearEditemployeeState,
   clearEditemployeeData,
@@ -204,7 +204,7 @@ export default function Addemployee({ workFor }) {
           lastName: editemployeeData.last_name,
           email: editemployeeData.email,
           // password: editemployeeData.password,
-          password:"..................",
+          password: "..................",
           phoneNumber: editemployeeData.phone_number,
           bloodgroup: editemployeeData.bloodgroup,
         });
@@ -240,6 +240,7 @@ export default function Addemployee({ workFor }) {
   useEffect(() => {
     const uploadLogo = async () => {
       if (employeeprofilelogo.logo != null) {
+        console.log(employeeprofilelogo.logo, 'lfogg')
         const url = `${process.env.REACT_APP_NODE_URL}/api/employees/upload-document`;
         const config = {
           headers: {
@@ -247,12 +248,12 @@ export default function Addemployee({ workFor }) {
           },
         };
         const formData = new FormData();
-        formData.append('document', employeeprofilelogo.logo);
+        formData.append("document", employeeprofilelogo.logo);
         try {
           const response = await Axios.post(url, formData, config);
           if (response.data) {
-            setDocumentId(response.data.result.insertId)
-            console.log(response.data.result, "sdasdasdasdas")
+            setDocumentId(response.data.result.insertId);
+            console.log(response.data.result, "sdasdasdasdas");
           }
         } catch (error) {
           // Handle any errors here
@@ -271,7 +272,7 @@ export default function Addemployee({ workFor }) {
         headers: {
           token: localStorage.getItem("rbacToken"),
         },
-        responseType: 'blob',
+        responseType: "blob",
       };
 
       const data = {
@@ -286,22 +287,20 @@ export default function Addemployee({ workFor }) {
         const url = window.URL.createObjectURL(blob);
 
         // Create a link element and trigger a click to download the file
-        const a = document.createElement('a');
-        a.style.display = 'none';
+        const a = document.createElement("a");
+        a.style.display = "none";
         a.href = url;
         a.download = employeeprofilelogo.logo; // Set the desired file name
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
       } else {
-        console.error('File download failed:', response.statusText);
+        console.error("File download failed:", response.statusText);
       }
     } catch (err) {
-      console.error('Error:', err);
+      console.error("Error:", err);
     }
   };
-
-
 
   function clearInpHook() {
     setemployeeData({
@@ -547,7 +546,7 @@ export default function Addemployee({ workFor }) {
   function confirmClicked() {
     setPopUpScreen(false);
   }
-  const handleNoAccess = () => { };
+  const handleNoAccess = () => {};
   const onChangeAccess = async (e) => {
     const selectedValue = e.target.value;
     const [id, role] = selectedValue.split(",");
