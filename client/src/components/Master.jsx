@@ -395,7 +395,7 @@ export default function Master() {
             <li className="col-12 col-sm-4 col-md-3  d-flex align-items-center p-2">
               <main
                 onClick={() => {
-                  navigate("/administration/configuration/part-list");
+                  navigate("/administration/configuration/partlist");
                 }}
                 className="d-flex align-items-center"
               >
