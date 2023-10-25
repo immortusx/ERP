@@ -273,6 +273,21 @@ const description = req.body.description;
   });
 });
 
+router.get("/delete-holidayStatus/:id", async (req, res) => {
+  console.log(">>>>>delete-holidayStatus", req.params);
+  const id = req.params.id;
+  sql = `DELETE  FROM holiday_data  WHERE id = ${id}`;
+  await db.query(sql, async (err, result) => {
+    if (err) {
+      console.log({ isSuccess: true, result: err });
+      res.send({ isSuccess: true, result, result: err });
+    } else {
+      console.log({ isSuccess: true, result: "Success" });
+      res.send({ isSuccess: true, result: result });
+    }
+  });
+});
+
 router.get("/get-task-list", tokenCheck, async (req, res) => {
   console.log(">>>>>>>>>get-task-list");
   const urlNew = `CALL sp_get_task_list()`;

@@ -97,11 +97,21 @@ const Holiday = () => {
       });
     } else {
       dispatch(addHolidayToDb(holiday));
+      dispatch(setShowMessage("Holiday Added"));
         clearInpHook();
       setShow(0);
        console.log(holiday, "holidayholidayholiday");
     }
   };
+
+
+  useEffect(() => {
+    if (holidayState?.isSuccess) {
+      if (holidayState.message.result === "success") {
+        dispatch(clearaddHoliday());
+      }
+    }
+  }, [holidayState]);
 
   useEffect(() => {
     const fetchHolidayList = async () => {
@@ -130,6 +140,51 @@ const Holiday = () => {
     fetchHolidayList(); 
   }, []);
 
+
+   const deleteActionCall = (data) => {
+    console.log(data,"ddddddfghjkl;")
+     setType("holiday_delete");
+     setId(data.id);
+     setDeleteMessage(
+       `Are You Sure You Want To Delete The Holiday '${data.holidayname}'?`
+     );
+     setDisplayConfirmationModal(true);
+   };
+
+ const submitDelete = async (e,id) => {
+   try {
+     const url = `${process.env.REACT_APP_NODE_URL}/api/delete-holidayStatus/${id}`;
+     const config = {
+       headers: {
+         token: localStorage.getItem("rbacToken"),
+       },
+     };
+     const response = await Axios.get(url, config);
+
+     if (response.data && response.data.isSuccess) {
+       console.log("Holiday Deleted");
+       dispatch(setShowMessage("Holiday Deleted"));
+       setDisplayConfirmationModal(false);
+     } else {
+       console.log("Failed to delete");
+       dispatch(setShowMessage("Failed to delete"));
+     }
+   } catch (error) {
+     console.error("An error occurred:", error);
+     // Handle the error appropriately, e.g., show an error message to the user.
+   }
+ };
+
+
+useEffect(() => {
+  if (holidayState?.isSuccess) {
+    if (holidayState.message.result === "success") {
+      dispatch(clearaddHoliday());
+    }
+  }
+}, [holidayState]);
+
+
   const clearInpHook=()=>{
 setHoliday({
    holidayname: "",
@@ -137,15 +192,6 @@ setHoliday({
    description: "",
  });
   }
-
-  useEffect(() => {
-    if(holidayState?.isSuccess){
-      if (holidayState.message.result === "success"){
-        dispatch(setShowMessage("Holiday Added"));
-        dispatch(clearaddHoliday());
-      }
-      }
-  }, [holidayState]);
 
   const editeHoliday = async (id) => {
     try {
@@ -288,9 +334,9 @@ setHoliday({
             </Tooltip>
             <Tooltip title={translations[currentLanguage].delete}>
               <button
-                // onClick={() => {
-                //   deleteActionCall(params.row);
-                // }}
+                onClick={() => {
+                  deleteActionCall(params.row);
+                }}
                 className="myActionBtn m-1"
               >
                 <svg
@@ -398,6 +444,7 @@ setHoliday({
         <AlertDeleteModal
           showModal={displayConfirmationModal}
           hideModal={hideConfirmationModal}
+          confirmModal={submitDelete}
           type={type}
           id={id}
           message={deleteMessage}

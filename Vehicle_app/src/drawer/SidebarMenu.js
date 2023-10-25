@@ -12,6 +12,7 @@ import Master from '../components/Master';
 import Sales from '../components/Sales';
 import Products from '../components/Products';
 import Manage from '../components/Manage';
+import Holiday from '../components/Holiday';
 import CustomDrawer from '../components/CustomDrawer';
 import DeliveryScreen from '../components/Delivery';
 import DropScreen from '../components/DropScreen';
@@ -28,7 +29,8 @@ const SidebarMenu = () => {
       <Drawer.Navigator
         drawerContent={props => <CustomDrawer {...props} />}
         screenOptions={{
-          headerShown: false, drawerLabelStyle: { marginLeft: -11 },
+          headerShown: false,
+          drawerLabelStyle: {marginLeft: -11},
           drawerActiveBackgroundColor: '#0984DF',
           drawerActiveTintColor: 'white',
         }}>
@@ -42,7 +44,7 @@ const SidebarMenu = () => {
               elevation: 0,
             },
             headerTitleStyle: {
-              color: 'white'
+              color: 'white',
             },
             headerTintColor: 'white',
             drawerIcon: () => (
@@ -240,10 +242,25 @@ const SidebarMenu = () => {
             ),
           }}
         />
-
+        <Drawer.Screen
+          name="Holiday"
+          component={Holiday}
+          options={{
+            headerShown: true,
+            headerStyle: {
+              borderWidth: 0.9,
+              borderColor: 'grey',
+            },
+            drawerIcon: () => (
+              <Image
+                style={styles.personImg}
+                source={require('../../assets/set.png')}
+              />
+            ),
+          }}
+        />
       </Drawer.Navigator>
     </>
-
   );
 };
 
