@@ -1047,7 +1047,7 @@ router.post("/edit-new-detail-enquiry", tokenCheck, async (req, res) => {
     const whatsapp_number = req.body.whatsapp_number || null;
 
     const branch_id = req.body.branchId || null;
-    const salesperson_id = 1;
+    const salesperson_id = req.body.sales_person;
 
     const taluka = req.body.taluka || null;
     const village = req.body.village || null;

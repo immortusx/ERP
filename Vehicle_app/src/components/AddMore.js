@@ -97,7 +97,7 @@ const AddMore = () => {
 
   const openAdditonalEnquiry = item => {
     console.log(item, '>>>>>>>>>>>>>>>.');
-    navigation.navigate('Additional Details', {item: item });
+    navigation.navigate('Additional Details', { item: item });
   };
 
   const handleConfirm = () => {
@@ -162,7 +162,6 @@ const AddMore = () => {
   }
 
   useEffect(() => {
-    console.log(searchText, "jsefuhusfuerfierfjfghfdghdfhghdfxjdjfjg")
     if (searchText.length > 1) {
       searchMobileNumber(searchText, selectedCategory)
     }
@@ -250,7 +249,7 @@ const AddMore = () => {
       {enquiryType === 'Cold' && <ColdEnquiry />}
       {enquiryType === 'Warm' && <WarmEnquiry />}
       {enquiryType === 'User Created' && <UserCreatedEnquiry />}
-      {enquiryType === 'Followed Enquiry' && <FollowedEnquiry />}
+      {/* {enquiryType === 'Followed Enquiry' && <FollowedEnquiry />} */}
       {enquiryType === 'All' && <CategorisedEnquiry categoryId={selectedCategory} />}
       <View>
         {enquiryType != 'All' && newEnquiryList && newEnquiryList.length > 0 ? (
