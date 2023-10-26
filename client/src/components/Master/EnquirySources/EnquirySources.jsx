@@ -89,7 +89,7 @@ const EnquirySources = ({workFor}) => {
     }, [addEnquirySourcesState]);
 
     const redirectaddmodal = (enquirySource) => {
-        navigate("/administration/configuration/enquirysources-model", {
+        navigate("/administration/configuration/enquirysourcesmodel", {
             state: { enquirySource: enquirySource },
         });
     };

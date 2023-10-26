@@ -1008,7 +1008,7 @@ export default function HomeScreen() {
               exact
             />
             <Route
-              path="administration/configuration/part-list"
+              path="administration/configuration/partlist"
               element={
                 <CheckPermission path="profile">
                   <Part_List />
@@ -1089,7 +1089,7 @@ export default function HomeScreen() {
               exact
             />
             <Route
-              path="administration/configuration/enquirysources-model"
+              path="administration/configuration/enquirysourcesmodel"
               element={
                 <CheckPermission path="profile">
                   <EnquirySources_model />
