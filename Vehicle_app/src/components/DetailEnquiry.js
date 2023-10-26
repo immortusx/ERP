@@ -53,7 +53,6 @@ const DetailEnquiry = ({ route }) => {
   const [manuYearDate, setManuYearDate] = useState('');
   const [openManuYearDate, setOpenManufacturer] = useState(false);
   const [showMessageModal, setShowMessageModal] = useState(false);
-  const [salePersonData, setSalePersonData] = useState([]);
   const [isFocus, setIsFocus] = useState(false);
   const [message, setMessage] = useState('');
   const [enquiry, setEnquiry] = useState(null);
@@ -89,6 +88,10 @@ const DetailEnquiry = ({ route }) => {
   const [currentCategoryData, setcurrentCategoryData] = useState({
     id: '',
     fields: [],
+  });
+  const [salePersonData, setSalePersonData] = useState({
+    id: null,
+    ssp: ''
   });
   const [primarySourceItem, setPrimarySourceItem] = useState([]);
   const [enquirySourceItem, setEnquirySourceItem] = useState([]);
@@ -150,7 +153,6 @@ const DetailEnquiry = ({ route }) => {
     { label: 'Average', value: 'Average' },
     { label: 'Vey Good', value: 'Vey Good' },
   ];
-
   useEffect(() => {
     if (village) {
       const getAssignedPerson = async () => {
@@ -166,8 +168,14 @@ const DetailEnquiry = ({ route }) => {
         console.log(config);
         await axios.get(url, config).then(response => {
           if (response) {
-            // console.log(response.data.result[0].salesperson, 'assigned person');
-            setSalePersonData(response.data.result);
+            console.log(response.data.result, 'assigned person');
+            response.data.result.map((item) => {
+              setSalePersonData({
+                id: item.id,
+                ssp: item.salesperson
+              });
+            })
+
           }
         });
         setLoading(false);
@@ -386,8 +394,8 @@ const DetailEnquiry = ({ route }) => {
                 />
               ) : (
                 <Text style={{ color: 'green', fontWeight: '400' }}>
-                  {salePerson
-                    ? 'Sales Person :-' + ' ' + salePerson.toUpperCase()
+                  {salePersonData.ssp
+                    ? 'Sales Person :-' + ' ' + salePersonData.ssp.toUpperCase()
                     : ''}
                 </Text>
               )}
@@ -1002,6 +1010,7 @@ const DetailEnquiry = ({ route }) => {
       ...preData,
       [field]: value,
     }));
+
   };
 
   useEffect(() => {
@@ -1070,8 +1079,9 @@ const DetailEnquiry = ({ route }) => {
     };
     if (enquiryData.firstname.length > 0) {
       if (editData) {
-        console.log('Edit Enquiry');
         formData.customer_id = editData.id;
+        formData.sales_person = salePersonData.id
+        console.log(formData, 'Edit Enquirydkfkd');
         dispatch(setEditEnquiryDb(formData));
       } else {
         console.log('Add Enquiry');

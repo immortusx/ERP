@@ -9,22 +9,22 @@ import {
   TouchableWithoutFeedback,
   RefreshControl,
 } from 'react-native';
-import React, {useState, useEffect, useCallback} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
-import {getEnquiryData} from '../redux/slice/getEnquirySlice';
-import {useNavigation} from '@react-navigation/native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { getEnquiryData } from '../redux/slice/getEnquirySlice';
+import { useNavigation } from '@react-navigation/native';
 import CustomLoadingSpinner from './subCom/CustomLoadingSpinner';
-import {Linking} from 'react-native';
+import { Linking } from 'react-native';
 import moment from 'moment';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {API_URL} from '@env';
+import { API_URL } from '@env';
 import ToastMessage from './subCom/ToastMessage';
 import TimeAgo from './subCom/TImeAgo';
 import ConfirmationDialog from './subCom/ConfirmationDialog';
 import ConfirmBox from './subCom/Confirm';
 import SimpleAlert from './subCom/SimpleAlert';
-import {setEnquiryType} from '../redux/slice/enquiryTypeSlice';
+import { setEnquiryType } from '../redux/slice/enquiryTypeSlice';
 
 const NewEnquiry = () => {
   const navigation = useNavigation();
@@ -41,11 +41,11 @@ const NewEnquiry = () => {
     state => state.getUserProfileSlice.profile.currentUserData.result,
   );
   const getEnquiryState = useSelector(state => state.getEnquiryState);
-  const {isFetching, isSuccess, isError, result} = getEnquiryState;
+  const { isFetching, isSuccess, isError, result } = getEnquiryState;
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    dispatch(setEnquiryType('Followed Enquiry'));
+    dispatch(setEnquiryType('New'));
     // dispatch(getEnquiryData());
     setTimeout(() => {
       setRefreshing(false);
@@ -62,7 +62,7 @@ const NewEnquiry = () => {
     handleNewEnquiry();
   }, []);
   const handleSheduleCall = item => {
-    navigation.navigate('Schedule Call', {item: item});
+    navigation.navigate('Schedule Call', { item: item });
   };
   const makePhoneCall = mobileNumber => {
     console.log('Calling...', mobileNumber);
@@ -71,7 +71,7 @@ const NewEnquiry = () => {
 
   const openAdditonalEnquiry = item => {
     console.log(item, '>>>>>>>>>>>>>>>.');
-    navigation.navigate('Additional Details', {item: item});
+    navigation.navigate('Additional Details', { item: item });
   };
 
   if (loading) {
@@ -113,7 +113,7 @@ const NewEnquiry = () => {
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }
-            renderItem={({item, index}) => {
+            renderItem={({ item, index }) => {
               return (
                 <TouchableWithoutFeedback
                   onPress={() => {
@@ -191,12 +191,13 @@ const NewEnquiry = () => {
             }}
           />
         ) : (
-          <SimpleAlert
-            isVisible={isConfirmation}
-            text1={'Alert !'}
-            text2={'Currently, There is New Enquiry Not Available'}
-            onConfirm={handleConfirm}
-          />
+          // <SimpleAlert
+          //   isVisible={isConfirmation}
+          //   text1={'Alert !'}
+          //   text2={'Currently, There is New Enquiry Not Available'}
+          //   onConfirm={handleConfirm}
+          // />
+          <Text style={styles.NoTaskStyle}>Currently, There is New Enquiry Not Available</Text>
         )}
       </View>
     </View>
@@ -395,6 +396,14 @@ const styles = StyleSheet.create({
   },
   detailContainer: {
     alignItems: 'flex-start',
+  },
+  NoTaskStyle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: 'red',
+    textAlign: 'center',
+    marginTop: 20,
+    fontStyle: 'italic',
   },
 });
 

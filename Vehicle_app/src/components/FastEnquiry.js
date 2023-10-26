@@ -106,7 +106,7 @@ const FastEnquiry = () => {
     { label: 'Good', value: '1' },
     { label: 'Below Average', value: '2' },
     { label: 'Average', value: '3' },
-    { label: 'Vey Good', value: '4' },
+    { label: 'Very Good', value: '4' },
   ];
 
   const getCurrentCategoriesField = async categoryId => {

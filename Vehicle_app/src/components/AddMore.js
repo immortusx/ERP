@@ -53,6 +53,7 @@ const AddMore = () => {
   const [filteredEnquiries, setFilteredEnquiries] = useState([]);
   useEffect(() => {
     dispatch(setEnquiryType('New'));
+    console.log('earling qaqawasqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq')
   }, []);
   const [categoryData, setCategoryData] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(2);
@@ -162,7 +163,6 @@ const AddMore = () => {
   }
 
   useEffect(() => {
-    console.log(searchText, "jsefuhusfuerfierfjfghfdghdfhghdfxjdjfjg")
     if (searchText.length > 1) {
       searchMobileNumber(searchText, selectedCategory)
     }
@@ -250,7 +250,7 @@ const AddMore = () => {
       {enquiryType === 'Cold' && <ColdEnquiry />}
       {enquiryType === 'Warm' && <WarmEnquiry />}
       {enquiryType === 'User Created' && <UserCreatedEnquiry />}
-      {enquiryType === 'Followed Enquiry' && <FollowedEnquiry />}
+      {/* {enquiryType === 'Followed Enquiry' && <FollowedEnquiry />} */}
       {enquiryType === 'All' && <CategorisedEnquiry categoryId={selectedCategory} />}
       <View>
         {enquiryType != 'All' && newEnquiryList && newEnquiryList.length > 0 ? (
