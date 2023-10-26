@@ -14,6 +14,7 @@ import DetailEnquiry from './components/DetailEnquiry';
 import DeliveryScreen from './components/Delivery';
 import EnquiryList from './components/EnquiryList';
 import WorkList from './components/WorkList'
+import TaslList from './components/Tasklist';
 import EnquiryVillageList from './components/EnquiryVillageList';
 import Category from './components/Category';
 import VillageEnquiryLists from './components/VillageEnquiryLists';
@@ -150,7 +151,18 @@ const AppNavigator = () => {
             },
           }}
         />
-        
+        <Stack.Screen
+          name="Task Report List"
+          component={TaslList}
+          options={{
+            headerShown: true,
+            headerStyle: {
+              borderWidth: 0.9,
+              borderColor: 'grey',
+            },
+          }}
+        />
+
         <Stack.Screen
           name="Village List"
           component={EnquiryVillageList}
