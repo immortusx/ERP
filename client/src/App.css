@@ -920,3 +920,17 @@ select.myInput {
   margin-right: 10px; 
   font-weight: bold; 
 }
+.centered-text-with-modern-style {
+  text-align: center;
+  font-size: 24px;
+  color: white;
+  font-style: italic;
+  background: linear-gradient(45deg, #FF5733, #FFDD33);
+  padding: 10px;
+  margin: 8px;
+  border-radius: 33px 0px 22px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.login-container {
+  background: linear-gradient(45deg, #2c8bb9, #5ba5c9, #72b2d0, #8abfd8);
+}
