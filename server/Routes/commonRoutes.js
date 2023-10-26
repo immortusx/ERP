@@ -487,6 +487,33 @@ router.get(
     }
   }
 );
+router.get(
+  "/get-task-completed-by-employee/:userId",
+  tokenCheck,
+  async (req, res) => {
+    console.log(">>>>>/get-work-report-details");
+    try {
+      let EmployeeId = req.params.userId;
+      let taskTypeId = req.params.taskTypeId;
+      let taskId = req.params.taskId;
+      const userId = req.myData.userId;
+      let isAdmin = req.myData.isSuperAdmin;
+      const url = `CALL sp_get_task_completed_by_employee(${userId}, ${isAdmin}, ${EmployeeId})`;
+      db.query(url, async (err, result) => {
+        if (err) {
+          console.error(err);
+          res.status(500).json({ isSuccess: false, result: "error" });
+        } else {
+          console.log({ isSuccess: true, result: result });
+          res.status(200).json({ isSuccess: true, result: result[0] });
+        }
+      });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ isSuccess: false, result: "error" });
+    }
+  }
+);
 
 router.get("/get-employee-work-report-today", tokenCheck, async (req, res) => {
   console.log(">>>>>get-employee-work-report-today");

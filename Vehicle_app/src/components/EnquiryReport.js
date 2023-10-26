@@ -8,8 +8,11 @@ const EnquiryReport = () => {
     navigation.navigate('Enquiry List');
   };
 
-  const openDlieveryreport = () => {
+  const openWorkreport = () => {
     navigation.navigate('WorkReport List');
+  };
+  const openTaskreport = () => {
+    navigation.navigate('Task Report List');
   };
   return (
     <View style={styles.mainContainer}>
@@ -31,14 +34,23 @@ const EnquiryReport = () => {
               <Text style={styles.enquiryText}>Enquiry</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={styles.deliveryStyle}
-              onPress={openDlieveryreport}>
+              style={styles.enquiryStyle}
+              onPress={openWorkreport}>
               <Image
                 style={styles.deliveryIcon}
                 source={require('../../assets/work.png')}
               />
               <Text style={styles.deliveryText}>Work</Text>
-            </TouchableOpacity> 
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.enquiryStyle}
+              onPress={openTaskreport}>
+              <Image
+                style={styles.deliveryIcon}
+                source={require('../../assets/tasks.png')}
+              />
+              <Text style={styles.deliveryText}>Tasklist</Text>
+            </TouchableOpacity>
           </View>
         </View>
         {/* <View style={styles.categoryContainer}>
@@ -89,6 +101,7 @@ const styles = StyleSheet.create({
     width: 160,
     height: 100,
     backgroundColor: '#DFECFF',
+    marginBottom:20,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -103,32 +116,33 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  deliveryStyle: {
-    width: 160,
-    height: 100,
-    backgroundColor: '#DFECFF',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 2,
-    elevation: 2,
-    borderRadius: 4,
-    borderColor: 'grey',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+  // deliveryStyle: {
+  //   width: 160,
+  //   height: 100,
+  //   backgroundColor: '#DFECFF',
+  //   shadowColor: '#000',
+  //   shadowOffset: {
+  //     width: 0,
+  //     height: 2,
+  //   },
+  //   shadowOpacity: 0.3,
+  //   shadowRadius: 2,
+  //   elevation: 2,
+  //   borderRadius: 4,
+  //   borderColor: 'grey',
+  //   justifyContent: 'center',
+  //   alignItems: 'center',
+  // },
   buttonContainer: {
     marginVertical: 12,
     flexDirection: 'row',
+    flexWrap:"wrap",
     justifyContent: 'space-around',
     borderEndWidth: 0.5,
   },
   deliveryIcon: {
     width: 50,
-    height: 60,
+    height: 50,
     justifyContent: 'center',
   },
   enquiryIcon: {
