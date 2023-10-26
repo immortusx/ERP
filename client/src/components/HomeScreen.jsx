@@ -135,7 +135,7 @@ export default function HomeScreen() {
       setLoading(true);
       await axios.get(url, config).then((response) => {
         if (response && response.data) {
-          console.log(response.data.result[3].value);
+          console.log(response.data.result[3].value, 'the real');
           setAgencyData({
             agencyName: response.data.result[0].value,
             angencyLogo: response.data.result[3].value,
@@ -312,13 +312,16 @@ export default function HomeScreen() {
               {loading ? (
                 <Spinner className="spinner-white" size={10} />
               ) : agencyData.angencyLogo ? (
-                <img
+                <div>
+                  <img
                   className="rounded logoB"
                   src={`${process.env.REACT_APP_NODE_URL}/api${agencyData.angencyLogo}`}
                   alt="Agency"
                   height={100}
                   width={100}
                 />
+                </div>
+                
               ) : (
                 <div className="alert alert-danger text-center" role="alert">
                   <p
