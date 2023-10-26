@@ -53,7 +53,6 @@ const AddMore = () => {
   const [filteredEnquiries, setFilteredEnquiries] = useState([]);
   useEffect(() => {
     dispatch(setEnquiryType('New'));
-    console.log('earling qaqawasqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq')
   }, []);
   const [categoryData, setCategoryData] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(2);
@@ -98,7 +97,7 @@ const AddMore = () => {
 
   const openAdditonalEnquiry = item => {
     console.log(item, '>>>>>>>>>>>>>>>.');
-    navigation.navigate('Additional Details', {item: item });
+    navigation.navigate('Additional Details', { item: item });
   };
 
   const handleConfirm = () => {

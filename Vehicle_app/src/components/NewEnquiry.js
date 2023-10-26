@@ -17,6 +17,7 @@ import CustomLoadingSpinner from './subCom/CustomLoadingSpinner';
 import { Linking } from 'react-native';
 import moment from 'moment';
 import axios from 'axios';
+import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_URL } from '@env';
 import ToastMessage from './subCom/ToastMessage';
@@ -43,6 +44,12 @@ const NewEnquiry = () => {
   const getEnquiryState = useSelector(state => state.getEnquiryState);
   const { isFetching, isSuccess, isError, result } = getEnquiryState;
 
+  useFocusEffect(
+    React.useCallback(() => {
+      // This code will run when the component is focused (e.g., navigated to).
+      handleNewEnquiry();
+    }, [])
+  );
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     dispatch(setEnquiryType('New'));
@@ -60,7 +67,7 @@ const NewEnquiry = () => {
   // }, [result]);
   useEffect(() => {
     handleNewEnquiry();
-  }, []);
+  }, [navigation]);
   const handleSheduleCall = item => {
     navigation.navigate('Schedule Call', { item: item });
   };
