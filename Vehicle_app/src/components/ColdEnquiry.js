@@ -195,12 +195,13 @@ const ColdEnquiry = () => {
             }}
           />
         ) : (
-          <SimpleAlert
-            isVisible={isConfirmation}
-            text1={'Alert !'}
-            text2={'Currently, Cold Enquiry Not Available'}
-            onConfirm={handleConfirm}
-          />
+          // <SimpleAlert
+          //   isVisible={isConfirmation}
+          //   text1={'Alert !'}
+          //   text2={'Currently, Cold Enquiry Not Available'}
+          //   onConfirm={handleConfirm}
+          // />
+          <Text style={styles.NoTaskStyle}>Currently, There is Cold Enquiry Not Available</Text>
         )}
       </View>
     </View>
@@ -399,6 +400,14 @@ const styles = StyleSheet.create({
   },
   detailContainer: {
     alignItems: 'flex-start',
+  },
+  NoTaskStyle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: 'red',
+    textAlign: 'center',
+    marginTop: 20,
+    fontStyle: 'italic',
   },
 });
 

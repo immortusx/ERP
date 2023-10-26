@@ -12,14 +12,14 @@ import {
   Alert,
   FlatList,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
-import {useNavigation} from '@react-navigation/native';
+import React, { useEffect, useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
 import moment from 'moment';
-import {API_URL} from '@env';
+import { API_URL } from '@env';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SweetSuccessAlert from './subCom/SweetSuccessAlert';
-const AdditonalDetails = ({route}) => {
+const AdditonalDetails = ({ route }) => {
   const navigation = useNavigation();
   const [callStartTime, setCallStartTime] = useState(null);
   const [callDuration, setCallDuration] = useState(null);
@@ -28,7 +28,7 @@ const AdditonalDetails = ({route}) => {
   const [oldProductDetails, setOldProductDetails] = useState([]);
   const [scheduleDetails, setScheduleDetails] = useState([]);
   const [appState, setAppState] = useState(AppState.currentState);
-  const {item} = route.params;
+  const { item } = route.params;
 
   const whatsAppWelcomeMessage = `Welcome to New Keshav Tractors!
     Hello ${item.first_name} ${item.last_name},
@@ -58,12 +58,14 @@ const AdditonalDetails = ({route}) => {
 
     Best regards,
     The Keshav Tractor Team`;
-
+  useEffect(() => {
+    console.log("New to Lofi")
+  }, [])
   const handleSheduleCall = item => {
-    navigation.navigate('Schedule Call', {item: item});
+    navigation.navigate('Schedule Call', { item: item });
   };
   const openEditEnquiry = editData => {
-    navigation.navigate('Edit Detail Enquiry', {editData: editData});
+    navigation.navigate('Edit Detail Enquiry', { editData: editData });
   };
   const makePhoneCall = mobileNumber => {
     setCallStartTime(new Date());
@@ -362,10 +364,10 @@ const AdditonalDetails = ({route}) => {
                   return (
                     <View style={styles.callBox}>
                       <View style={styles.leftContainer}>
-                        <Text style={{color: '#229954'}}>
+                        <Text style={{ color: '#229954' }}>
                           {item.last_discussion}
                         </Text>
-                        <Text style={{color: '#5DADE2'}}>
+                        <Text style={{ color: '#5DADE2' }}>
                           {moment(item.next_followup_date).format('LL')}
                         </Text>
                       </View>
@@ -454,7 +456,7 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     borderRadius: 10,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 4},
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 2,
     elevation: 0.5,
