@@ -53,6 +53,7 @@ const AddMore = () => {
   const [filteredEnquiries, setFilteredEnquiries] = useState([]);
   useEffect(() => {
     dispatch(setEnquiryType('New'));
+    console.log('earling qaqawasqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq')
   }, []);
   const [categoryData, setCategoryData] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(2);
