@@ -24,7 +24,7 @@ const CustomDrawer = props => {
   const profileData = useSelector(
     state => state.getUserProfileSlice.profile.currentUserData.result,
   );
-  console.log(profileData, 'profileData');
+  // console.log(profileData, 'profileData');
   const firstName = profileData?.first_name ?? '';
   const lastName = profileData?.last_name ?? '';
   const phoneNumber = profileData?.phone_number ?? '';
