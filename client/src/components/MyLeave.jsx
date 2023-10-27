@@ -48,6 +48,13 @@ const MyLeave = () => {
         setShowModal(false);
     };
 
+    const leaveTypeMapping = {
+        1: "Leave Without Pay",
+        2: "Casual Pay",
+
+    };
+
+
     const onChangeHandler = (e) => {
         const { name, value } = e.target;
         setLeaveData({
@@ -73,6 +80,12 @@ const MyLeave = () => {
             console.error('Error fetching leave data: ' + error.message);
         }
     }
+
+
+    const rowsWithLeaveType = leaveList.map((row) => ({
+        ...row,
+        LeaveType: leaveTypeMapping[row.LeaveType],
+    }));
 
 
     const handleRowSelection = (selection) => {
@@ -172,7 +185,7 @@ const MyLeave = () => {
                     onClick={handleOpenDialog}
                     style={{ padding: '6px', margin: '2px', borderRadius: '20px', margin: '10px' }}
                 >
-                    <p>Add Leave</p>
+                    <p>{translations[currentLanguage].addleave}</p>
                 </Button>
                 <Button
                     variant="btn btn-warning mx-1"
@@ -183,18 +196,18 @@ const MyLeave = () => {
                         borderRadius: "20px",
                         margin: "10px",
                     }}
-                //   onClick={() => {
-                //     navigate("/management/manage");
+                    onClick={() => {
+                        navigate("/management/manage");
 
 
-                //   }}
+                    }}
                 >
-                    <p>BACK</p>
+                    <p>{translations[currentLanguage].back}</p>
                 </Button>
             </div>
             <div style={{ position: "relative" }}>
                 <DataGrid
-                    rows={leaveList}
+                    rows={rowsWithLeaveType}
                     columns={columns}
                     components={{
                         Toolbar: () => (

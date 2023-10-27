@@ -33,12 +33,12 @@ export default function Manage() {
     <div className="master bg-white myBorder rounded">
       <main className="my-3">
         <div className="mx-3 m-0">
-          <h6 className="fw-bold m-0">Manage</h6>
+          <h6 className="fw-bold m-0"><p>{translations[currentLanguage].manage}</p></h6>
         </div>
         <section>
           <hr />
           <div className="mx-3 m-0">
-            <h6 className="fw-bold myH9 m-0">My Leave</h6>
+            <h6 className="fw-bold myH9 m-0"><p>{translations[currentLanguage].myleave}</p></h6>
           </div>
           <hr />
           <ul className="row m-0 px-2">
@@ -66,7 +66,7 @@ export default function Manage() {
                     />
                   </svg>
                 </div>
-                <span className="ms-2">My Leave</span>
+                <span className="ms-2"><p>{translations[currentLanguage].myleave}</p></span>
               </main>
             </li>
           </ul>
