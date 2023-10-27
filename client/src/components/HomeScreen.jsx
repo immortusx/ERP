@@ -91,6 +91,7 @@ import EnquirySources_model from "./Master/EnquirySources/EnquirySources_modal";
 import WorkReport from "./WorkReport";
 import WorkReportDetails from "./WorkReportDetails";
 import translations from '../assets/locals/translations'
+import MyLeave from "./MyLeave";
 const CheckPermission = ({ children, path }) => {
   // return checkList.includes(path) ? children : <Navigate to="../no-access" />
   // return checkList.includes(path) ? children : <h3>No access</h3>
@@ -1170,6 +1171,15 @@ export default function HomeScreen() {
               element={
                 <CheckPermission path="manage">
                   <Manage />
+                </CheckPermission>
+              }
+              exact
+            />
+            <Route
+              path="management/manage/myleave"
+              element={
+                <CheckPermission path="manage">
+                  <MyLeave />
                 </CheckPermission>
               }
               exact
