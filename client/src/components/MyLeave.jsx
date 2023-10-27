@@ -63,7 +63,7 @@ const MyLeave = () => {
 
     async function fetchLeaveList() {
         try {
-            const response = await axios.get('http://localhost:2223/api/leave/getleaves');
+            const response = await axios.get(`${process.env.REACT_APP_NODE_URL}/api/leave/getleaves`);
             if (response.data.isSuccess) {
                 setLeaveList(response.data.result);
             } else {
