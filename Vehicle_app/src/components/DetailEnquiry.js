@@ -28,6 +28,7 @@ import SweetSuccessAlert from './subCom/SweetSuccessAlert';
 import { useNavigation } from '@react-navigation/native';
 import { getEnquiryData } from '../redux/slice/getEnquirySlice';
 import { clearManufacturerDetails } from '../redux/slice/manufacturerDetailsSlice';
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 import {
   clearEditEnquiryState,
   setEditEnquiryDb,
@@ -35,6 +36,7 @@ import {
 import Calendars from './subCom/Calendars';
 import YearPicker from './subCom/YearPicker';
 import MinDateCalendars from './subCom/MinDateCalendars';
+import moment from 'moment';
 const DetailEnquiry = ({ route }) => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
@@ -183,7 +185,12 @@ const DetailEnquiry = ({ route }) => {
       getAssignedPerson();
     }
   }, [village]);
-
+  const handleConfirm = (date) => {
+    const formattedDate = moment(date).format('YYYY-MM-DD');
+    console.log(formattedDate, 'formatteddat')
+    setExpDeliveryDate(formattedDate);
+    setOpenExpDeliveryDate(false);
+  };
   useEffect(() => {
     if (salePersonData.length > []) {
       setSalePerson(salePersonData[0].salesperson);
@@ -546,25 +553,21 @@ const DetailEnquiry = ({ route }) => {
         return (
           <View style={{ marginBottom: 5 }}>
             <Text style={[styles.label, { marginBottom: 5 }]}>
-              Expected Delivery Date *
+              Delivery Date *
             </Text>
             <View style={styles.deliveryDateContainer}>
-              <TouchableOpacity
-                style={{ paddingHorizontal: 5 }}
-                onPress={() => {
-                  setOpenExpDeliveryDate(true);
-                }}>
+              <TouchableOpacity   style={{ paddingHorizontal: 5 }} onPress={() => { setOpenExpDeliveryDate(true) }}>
                 <Text style={{ paddingVertical: 7 }}>
+                  Start Date {':- '}
                   {expDeliveryDate === ''
                     ? new Date().toISOString().slice(0, 10)
                     : expDeliveryDate}
-                </Text>
-              </TouchableOpacity>
-              <MinDateCalendars
-                showModal={openExpDeliveryDate}
-                selectedDate={expDeliveryDate}
-                handleCalendarDate={handleCalendarDate}
-                onClose={() => setOpenExpDeliveryDate(false)}
+                </Text></TouchableOpacity>
+              <DateTimePickerModal
+                isVisible={openExpDeliveryDate}
+                mode="date"
+                onConfirm={handleConfirm}
+                onCancel={() => { setOpenExpDeliveryDate(false) }}
               />
             </View>
           </View>

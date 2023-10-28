@@ -122,7 +122,7 @@ const TaslList = ({route}) => {
   }
   const handleCalendarDate = selectedDate => {
     const formattedDate = moment(selectedDate).format('YYYY-MM-DD');
-    console.log(formattedDate, 'deliverydate');
+    console.log(formattedDate, 'deliverydgkgr');
     setstartDate(formattedDate);
     setOpenStartDate(false);
   };

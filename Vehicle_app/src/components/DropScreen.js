@@ -1,15 +1,16 @@
-import {View, Text, StyleSheet, Image} from 'react-native';
-import React, {useState, useEffect} from 'react';
-import {TextInput, TouchableOpacity} from 'react-native-gesture-handler';
-import {Dropdown} from 'react-native-element-dropdown';
+import { View, Text, StyleSheet, Image } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
+import { Dropdown } from 'react-native-element-dropdown';
 import Calendars from './subCom/Calendars';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {API_URL} from '@env';
+import { API_URL } from '@env';
 import moment from 'moment';
 import SweetSuccessAlert from './subCom/SweetSuccessAlert';
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 
-const DropScreen = ({item}) => {
+const DropScreen = ({ item }) => {
   const [isFocus, setIsFocus] = useState(false);
   const [modal, setModal] = useState(null);
   const [isShow, setIsShow] = useState(false);
@@ -65,9 +66,10 @@ const DropScreen = ({item}) => {
     value: item.id,
   }));
 
-  const handleCalendarDate = selectedDate => {
-    console.log(selectedDate.dateString, 'lost');
-    setEnquiryLostDate(selectedDate.dateString);
+  const handleCalendarDate = (date) => {
+    const formattedDate = moment(date).format('YYYY-MM-DD');
+    console.log(formattedDate, 'formatteddat')
+    setEnquiryLostDate(formattedDate);
     setOpenEnquiryLostDate(false);
   };
   useEffect(() => {
@@ -83,7 +85,6 @@ const DropScreen = ({item}) => {
       console.log(config);
       await axios.get(url, config).then(response => {
         if (response) {
-          console.log(response.data.result, 'mmmmmmmmmmmmmmmmmmmmm');
           setManufacurerData(response.data.result);
         }
       });
@@ -224,7 +225,7 @@ const DropScreen = ({item}) => {
         <View style={styles.inputContainer}>
           <View style={styles.dropDownStyle}>
             <Dropdown
-              style={[styles.dropdown, isFocus && {borderColor: 'blue'},{paddingHorizontal: 5},]}
+              style={[styles.dropdown, isFocus && { borderColor: 'blue' }, { paddingHorizontal: 5 },]}
               placeholderStyle={styles.placeholderStyle}
               selectedTextStyle={styles.selectedTextStyle}
               inputSearchStyle={styles.inputSearchStyle}
@@ -246,7 +247,7 @@ const DropScreen = ({item}) => {
         <View style={styles.inputContainer}>
           <View style={styles.dropDownStyle}>
             <Dropdown
-              style={[styles.dropdown, isFocus && {borderColor: 'blue'},{paddingHorizontal: 5},]}
+              style={[styles.dropdown, isFocus && { borderColor: 'blue' }, { paddingHorizontal: 5 },]}
               placeholderStyle={styles.placeholderStyle}
               selectedTextStyle={styles.selectedTextStyle}
               inputSearchStyle={styles.inputSearchStyle}
@@ -265,16 +266,16 @@ const DropScreen = ({item}) => {
                 setModal(item.value);
                 setIsFocus(false);
               }}
-              // renderLeftIcon={() => (
-              //   <Text>{isFocus ? 'blue' : 'black'}</Text>
-              // )}
+            // renderLeftIcon={() => (
+            //   <Text>{isFocus ? 'blue' : 'black'}</Text>
+            // )}
             />
           </View>
         </View>
         <View style={styles.inputContainer}>
           <View style={styles.dropDownStyle}>
             <Dropdown
-              style={[styles.dropdown, isFocus && {borderColor: 'blue'}, {paddingHorizontal: 5},]}
+              style={[styles.dropdown, isFocus && { borderColor: 'blue' }, { paddingHorizontal: 5 },]}
               placeholderStyle={styles.placeholderStyle}
               selectedTextStyle={styles.selectedTextStyle}
               inputSearchStyle={styles.inputSearchStyle}
@@ -296,7 +297,7 @@ const DropScreen = ({item}) => {
         <View style={styles.inputContainer}>
           <View style={styles.dropDownStyle}>
             <Dropdown
-              style={[styles.dropdown, isFocus && {borderColor: 'blue'},{paddingHorizontal: 5},]}
+              style={[styles.dropdown, isFocus && { borderColor: 'blue' }, { paddingHorizontal: 5 },]}
               placeholderStyle={styles.placeholderStyle}
               selectedTextStyle={styles.selectedTextStyle}
               inputSearchStyle={styles.inputSearchStyle}
@@ -319,7 +320,7 @@ const DropScreen = ({item}) => {
         <View style={styles.inputContainer}>
           <View style={styles.dropDownStyle}>
             <Dropdown
-              style={[styles.dropdown, isFocus && {borderColor: 'blue'},{paddingHorizontal: 5},]}
+              style={[styles.dropdown, isFocus && { borderColor: 'blue' }, { paddingHorizontal: 5 },]}
               placeholderStyle={styles.placeholderStyle}
               selectedTextStyle={styles.selectedTextStyle}
               inputSearchStyle={styles.inputSearchStyle}
@@ -338,7 +339,7 @@ const DropScreen = ({item}) => {
             />
           </View>
         </View>
-        <View style={{marginBottom: 5, marginTop: 10}}>
+        <View style={{ marginBottom: 5, marginTop: 10 }}>
           <View style={styles.deliveryDateContainer}>
             <TouchableOpacity
               style={{
@@ -350,7 +351,7 @@ const DropScreen = ({item}) => {
               onPress={() => {
                 setOpenEnquiryLostDate(true);
               }}>
-              <Text style={{paddingVertical: 7}}>
+              <Text style={{ paddingVertical: 7 }}>
                 Enquiry Lost Date {':- '}
                 {enquiryLostDate === ''
                   ? new Date().toISOString().slice(0, 10)
@@ -361,11 +362,11 @@ const DropScreen = ({item}) => {
                 source={require('../../assets/date.png')}
               />
             </TouchableOpacity>
-            <Calendars
-              showModal={openEnquiryLostDate}
-              selectedDate={enquiryLostDate}
-              handleCalendarDate={handleCalendarDate}
-              onClose={() => setOpenEnquiryLostDate(false)}
+            <DateTimePickerModal
+              isVisible={openEnquiryLostDate}
+              mode="date"
+              onConfirm={handleCalendarDate}
+              onCancel={() => { setOpenEnquiryLostDate(false) }}
             />
           </View>
         </View>
