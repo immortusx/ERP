@@ -922,11 +922,11 @@ select.myInput {
 }
 .centered-text-with-modern-style {
   text-align: center;
-  font-size: 24px;
+  font-size: 18px;
   color: white;
   font-style: italic;
   background: linear-gradient(45deg, #FF5733, #FFDD33);
-  padding: 10px;
+  padding: 6px;
   margin: 8px;
   border-radius: 33px 0px 22px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);

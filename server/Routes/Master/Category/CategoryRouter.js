@@ -111,7 +111,7 @@ router.get("/get-category-list", tokenCheck, async (req, res) => {
 router.get("/get-selected-category-field", tokenCheck, async (req, res) => {
   try {
     await db.query(
-      "SELECT * FROM enquiry_fields WHERE field = 'firstName' OR field = 'mobileNumber' OR field = 'state' OR field = 'district' OR field = 'taluko' OR field = 'village' OR field = 'dsp'",
+      "SELECT * FROM enquiry_fields WHERE field = 'firstName' OR field = 'mobileNumber'",
       (err, results) => {
         if (err) {
           console.log({ isSuccess: false, result: "error" });
