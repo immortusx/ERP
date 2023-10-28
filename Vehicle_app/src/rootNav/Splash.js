@@ -5,15 +5,20 @@ import {useDispatch, useSelector} from 'react-redux';
 import {getProfileData} from '../redux/slice/getUserProfile';
 import {API_URL} from '@env';
 import axios from 'axios';
+import { agencyDb } from '../redux/slice/agencyDataSlice';
 
 const Splash = ({navigation}) => {
   const dispatch = useDispatch();
   const [initialCheckDone, setInitialCheckDone] = useState(false);
   const [agencydata, setAgencyData] = useState([]);
   const profileData = useSelector(state => state.getUserProfileSlice.profile);
+  const agencyData = useSelector(
+    state => state.agencyDataSlice.agencyDataState,
+  );
+  console.log(agencyData, 'agencyDataagencyDataagencyDataagencyData');
 
   const getAgencyData = async () => {
-    const url = `${API_URL}/api/agency/get-agencybyid`;
+    const url = `${API_URL}/api/agency/get-agencylogo`;
     const token = await AsyncStorage.getItem('rbacToken');
     const config = {
       headers: {
@@ -47,6 +52,10 @@ const Splash = ({navigation}) => {
   const logo = valuesByKey['logo'];
 
  
+console.log('Name:', name);
+console.log('Contact:', contact);
+console.log('Email:', email);
+console.log('Logo:', logo);
 
   useEffect(() => {
     const checkLoginAndNavigate = async () => {

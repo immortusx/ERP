@@ -13,6 +13,7 @@ import addFollowUpSlice from './slice/addFollowUpSlice';
 import enquiryTypeSlice from './slice/enquiryTypeSlice';
 import SwipeScreenSlice from './slice/SwipeScreenSlice';
 import addEnquirySlice from './slice/addEnquirySlice';
+import agencyDataSlice from './slice/agencyDataSlice';
 
 
 export const store = configureStore({
@@ -30,6 +31,7 @@ export const store = configureStore({
     getUserProfileSlice: getUserProfile,
     followUpSlice: addFollowUpSlice,
     enquiryType: enquiryTypeSlice,
-    swipe: SwipeScreenSlice
+    swipe: SwipeScreenSlice,
+    agencyDataSlice:agencyDataSlice,
   },
 });

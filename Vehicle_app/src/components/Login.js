@@ -39,7 +39,7 @@ const Login = ({navigation}) => {
   });
 
   const getAgencyData = async () => {
-    const url = `${API_URL}/api/agency/get-agencybyid`;
+    const url = `${API_URL}/api/agency/get-agencylogo`;
     const token = await AsyncStorage.getItem('rbacToken');
     const config = {
       headers: {
@@ -49,7 +49,7 @@ const Login = ({navigation}) => {
     try {
       const response = await axios.get(url, config);
       if (response && response.data.result) {
-        console.log(response.data.result, 'AgencyData');
+        // console.log(response.data.result, 'AgencyData');
         setAgencyData(response.data.result);
       }
     } catch (error) {
@@ -72,10 +72,7 @@ const Login = ({navigation}) => {
   const email = valuesByKey['email'];
   const logo = valuesByKey['logo'];
 
-  console.log('Name:', name);
-  console.log('Contact:', contact);
-  console.log('Email:', email);
-  console.log('Logo:', logo);
+  
 
 
   const onChangeHandler = (value, field) => {
