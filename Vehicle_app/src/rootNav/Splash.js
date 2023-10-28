@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   text: {
-    color: 'blackr',
+    color: 'black',
     fontSize: 60,
     fontWeight: 'bold',
     textAlign: 'center',
