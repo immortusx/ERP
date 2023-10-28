@@ -46,10 +46,7 @@ const Splash = ({navigation}) => {
   const email = valuesByKey['email'];
   const logo = valuesByKey['logo'];
 
-  console.log('Name:', name);
-  console.log('Contact:', contact);
-  console.log('Email:', email);
-  console.log('Logo:', logo);
+ 
 
   useEffect(() => {
     const checkLoginAndNavigate = async () => {
@@ -84,11 +81,9 @@ const Splash = ({navigation}) => {
   return (
     <View style={styles.container}>
       <ImageBackground
-        source={require('../../assets/cover.jpg')}
+        source={{uri: `${API_URL}/api${logo}`}}
         style={styles.image}>
-        <View style={styles.logoContainer}>
-          <Image source={{uri: `${API_URL}/api${logo}`}} style={styles.logo} />
-        </View>
+        
         <Text style={styles.text}> {name}</Text>
       </ImageBackground>
     </View>
@@ -105,14 +100,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   text: {
-    color: 'white',
+    color: 'blackr',
     fontSize: 60,
     fontWeight: 'bold',
     textAlign: 'center',
   },
   logoContainer: {
-    alignItems: 'center', 
-    
+    alignItems: 'center',   
   },
   logo: {
     height: 100,

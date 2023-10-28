@@ -11,6 +11,8 @@ import {
   Image,
   ActivityIndicator,
 } from 'react-native';
+import axios from 'axios';
+import {API_URL} from '@env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useDispatch, useSelector} from 'react-redux';
 import BackgroundImage from '../../assets/cover.jpg';
@@ -23,16 +25,58 @@ const Login = ({navigation}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isLoggedIn, setLoggedIn] = useState(false);
   const [updateScreen, setUpdateScreen] = useState(false);
+  const [agencydata, setAgencyData] = useState([]);
   const loginState = useSelector(state => state.getLoginSlice.loginState);
   const appVersion = '1.0';
   const updated = '1.2';
   const profileData = useSelector(
     state => state.getUserProfileSlice.profile.currentUserData.result,
   );
+ 
   const [loginData, setLoginData] = useState({
     username: '',
     password: '',
   });
+
+  const getAgencyData = async () => {
+    const url = `${API_URL}/api/agency/get-agencybyid`;
+    const token = await AsyncStorage.getItem('rbacToken');
+    const config = {
+      headers: {
+        token: token ? token : '',
+      },
+    };
+    try {
+      const response = await axios.get(url, config);
+      if (response && response.data.result) {
+        console.log(response.data.result, 'AgencyData');
+        setAgencyData(response.data.result);
+      }
+    } catch (error) {
+      console.error('Error fetching user task list:', error);
+    }
+  };
+
+  useEffect(() => {
+    getAgencyData();
+  }, []);
+
+  const valuesByKey = {};
+
+  for (const item of agencydata) {
+    valuesByKey[item.key_name] = item.value;
+  }
+
+  const name = valuesByKey['name'];
+  const contact = valuesByKey['contact'];
+  const email = valuesByKey['email'];
+  const logo = valuesByKey['logo'];
+
+  console.log('Name:', name);
+  console.log('Contact:', contact);
+  console.log('Email:', email);
+  console.log('Logo:', logo);
+
 
   const onChangeHandler = (value, field) => {
     if (field === 'username') {
@@ -133,8 +177,8 @@ const Login = ({navigation}) => {
         <View style={styles.container}>
           <View style={{flex: 1}}>
             <Image
-              style={{flex: 1, width: null, marginTop: -500}}
-              source={BackgroundImage}
+              style={styles.image}
+              source={{uri: `${API_URL}/api${logo}`}}
             />
           </View>
           <Text>Keshav Tractors</Text>
@@ -203,6 +247,11 @@ const Login = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  image: {
+    flex: 1,
+    resizeMode: 'cover',
+    justifyContent: 'center',
   },
   titleText: {
     position: 'absolute',
