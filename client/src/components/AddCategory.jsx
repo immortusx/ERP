@@ -274,7 +274,7 @@ export default function AddCategory({ workFor }) {
     Axios.get(newurl, config).then((response) => {
       if (response) {
         if (response.data.isSuccess) {
-          console.log(response.data.result, "response.data.result");
+          console.log(response.data.result, "checkedField");
           setCheckField(response.data.result);
         }
       }
@@ -381,7 +381,7 @@ export default function AddCategory({ workFor }) {
                         <input
                           type="checkbox"
                           checked={data.isChecked}
-                          disabled={data.disabled}
+                          // disabled={data.disabled}
                           className="myCheckBox inputElement"
                           onChange={(e) => {
                             onChangeHandle(e, data.id);
