@@ -69,7 +69,8 @@ const HotEnquiry = () => {
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     //   dispatch(setEnquiryType('Followed Enquiry'));
-    dispatch(getEnquiryData());
+    // dispatch(getEnquiryData());
+    getHotENquiry();
     setTimeout(() => {
       setRefreshing(false);
     }, 2000);

@@ -16,7 +16,8 @@ import {API_URL} from '@env';
 import {useNavigation} from '@react-navigation/native';
 import Calendars from './subCom/Calendars';
 import DatePicker from 'react-native-neat-date-picker';
-
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import moment from 'moment';
 const formatDate = datetime => {
   const options = {year: 'numeric', month: 'long', day: 'numeric'};
   return new Date(datetime).toLocaleDateString(undefined, options);
@@ -24,7 +25,7 @@ const formatDate = datetime => {
 
 const TaslList = ({route}) => {
   const [loading, setLoading] = useState(false);
-  const [selectedEmployeeId, setSelectedEmployeeId] = useState(null);
+  const [selectedEmployeeId, setSelectedEmployeeId] = useState([]);
 
   const [userTaskList, setUserTaskList] = useState([]);
   const [extractedData, setExtractedData] = useState([]);
@@ -33,25 +34,25 @@ const TaslList = ({route}) => {
   const [startDate, setstartDate] = useState('');
   const [EndDate, setEndDate] = useState('');
 
-const [filteredData, setFilteredData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
 
-const filterDataByDateRange = (start, end) => {
-  if (!start && !end) {
-     setFilteredData(selectedEmployeeId || []); 
-    return;
-  }
+  const filterDataByDateRange = (start, end) => {
+    if (!start && !end) {
+      setFilteredData(selectedEmployeeId || []);
+      return;
+    }
 
-  const filtered = selectedEmployeeId.filter(item => {
-    const itemDate = new Date(item.datetime);
-    return itemDate >= new Date(start) && itemDate <= new Date(end);
-  });
+    const filtered = selectedEmployeeId.filter(item => {
+      const itemDate = new Date(item.datetime);
+      return itemDate >= new Date(start) && itemDate <= new Date(end);
+    });
 
-  setFilteredData(filtered);
-};
+    setFilteredData(filtered);
+  };
 
-useEffect(() => {
-  filterDataByDateRange(startDate, EndDate);
-}, [startDate, EndDate]);
+  useEffect(() => {
+    filterDataByDateRange(startDate, EndDate);
+  }, [startDate, EndDate]);
 
   const getUserTaskLists = async () => {
     const url = `${API_URL}/api/get-user-task-list`;
@@ -120,19 +121,22 @@ useEffect(() => {
     return <CustomLoadingSpinner />;
   }
   const handleCalendarDate = selectedDate => {
-    console.log(selectedDate.dateString, 'deliverydate');
-    console.log(selectedDate, 'deliverydate');
-    setstartDate(selectedDate.dateString);
+    const formattedDate = moment(selectedDate).format('YYYY-MM-DD');
+    console.log(formattedDate, 'deliverydate');
+    setstartDate(formattedDate);
     setOpenStartDate(false);
   };
+
   const handleEndDate = selectedDate => {
-    setEndDate(selectedDate.dateString);
+    const formattedDate = moment(selectedDate).format('YYYY-MM-DD');
+    console.log(formattedDate, 'deliverydate');
+    setEndDate(formattedDate);
     setOpenEndDate(false);
   };
 
   return (
     <View style={styles.container}>
-      <View style={{backgroundColor:"white",padding:10}}>
+      <View style={{backgroundColor: 'white', padding: 10}}>
         <View style={styles.enquiryBox}>
           <TouchableOpacity
             style={{
@@ -155,11 +159,12 @@ useEffect(() => {
               source={require('../../assets/date.png')}
             />
           </TouchableOpacity>
-          <Calendars
-            showModal={openStartDate}
-            selectedDate={startDate}
-            handleCalendarDate={handleCalendarDate}
-            onClose={() => setOpenStartDate(false)}
+          <DateTimePickerModal
+            isVisible={openStartDate}
+            onConfirm={handleCalendarDate}
+            mode="date"
+            // handleCalendarDate={handleCalendarDate}
+            onCancel={() => setOpenStartDate(false)}
           />
         </View>
         <View style={styles.enquiryBox}>
@@ -182,11 +187,12 @@ useEffect(() => {
               source={require('../../assets/date.png')}
             />
           </TouchableOpacity>
-          <Calendars
-            showModal={openEndDate}
-            selectedDate={EndDate}
-            handleCalendarDate={handleEndDate}
-            onClose={() => setOpenEndDate(false)}
+
+          <DateTimePickerModal
+            isVisible={openEndDate}
+            onConfirm={handleEndDate}
+            mode="date"
+            onCancel={() => setOpenStartDate(false)}
           />
         </View>
       </View>
