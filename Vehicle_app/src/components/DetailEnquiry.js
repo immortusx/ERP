@@ -382,6 +382,10 @@ const DetailEnquiry = ({ route }) => {
                   searchPlaceholder="Search..."
                   value={village}
                   onChange={item => {
+                    setSalePersonData({
+                      id: '',
+                      ssp: ''
+                    })
                     setVillage(item.value);
                   }}
                 />

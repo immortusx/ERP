@@ -54,6 +54,7 @@ const NewEnquiry = () => {
     setRefreshing(true);
     dispatch(setEnquiryType('New'));
     // dispatch(getEnquiryData());
+    handleNewEnquiry();
     setTimeout(() => {
       setRefreshing(false);
     }, 2000);

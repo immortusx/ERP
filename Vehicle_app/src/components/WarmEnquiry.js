@@ -69,7 +69,7 @@ const WarmEnquiry = () => {
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     //   dispatch(setEnquiryType('Followed Enquiry'));
-    dispatch(getEnquiryData());
+    // dispatch(getEnquiryData());
     setTimeout(() => {
       setRefreshing(false);
     }, 2000);

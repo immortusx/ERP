@@ -69,7 +69,8 @@ const ColdEnquiry = () => {
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     //   dispatch(setEnquiryType('Followed Enquiry'));
-    dispatch(getEnquiryData());
+    // dispatch(getEnquiryData());
+    getColdEnquiry()
     setTimeout(() => {
       setRefreshing(false);
     }, 2000);
