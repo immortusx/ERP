@@ -1,5 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import {View, Image, Text, ImageBackground, StyleSheet} from 'react-native';
+import {
+  View,
+  Image,
+  Text,
+  ImageBackground,
+  StyleSheet,
+  ActivityIndicator,
+} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useDispatch, useSelector} from 'react-redux';
 import {getProfileData} from '../redux/slice/getUserProfile';
@@ -24,6 +31,15 @@ const Splash = ({navigation}) => {
   useEffect(() => {
     if (agencyData && agencyData.result) {
       console.log(agencyData.result, 'agencyDta spalsh');
+      const valueObj = {};
+      for (const item of agencyData.result) {
+        valueObj[item.key_name] = item.value;
+      }
+      const {name, logo} = valueObj;
+      setAgency({
+        agencyName: name,
+        agencyLogo: logo,
+      });
     }
   }, [agencyData]);
   useEffect(() => {
@@ -58,11 +74,18 @@ const Splash = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-      {/* <ImageBackground
-        source={require('../../assets/cover.jpg')}
-        style={styles.image}>
-        <Text style={styles.text}>New Keshav Tractors</Text>
-      </ImageBackground> */}
+      <View style={styles.centerContent}>
+        <View style={styles.logoContainer}>
+          <Image
+            source={{uri: `${API_URL}/api${agency.agencyLogo}`}}
+            style={styles.logo}
+          />
+        </View>
+        <Text style={styles.agencyName}>{agency.agencyName}</Text>
+      </View>
+      <View style={styles.bottomContent}>
+        <ActivityIndicator size={16} color="#2471A3" />
+      </View>
     </View>
   );
 };
@@ -70,26 +93,46 @@ const Splash = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#397fab',
-  },
-  image: {
-    flex: 1,
-    resizeMode: 'cover',
+    backgroundColor: '#FFFFFF',
     justifyContent: 'center',
-  },
-  text: {
-    color: 'white',
-    fontSize: 60,
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  logoContainer: {
     alignItems: 'center',
   },
+  centerContent: {
+    alignItems: 'center',
+  },
+  logoContainer: {
+    shadowColor: 'rgba(0, 0, 0, 0.2)',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.8,
+    shadowRadius: 4,
+    elevation: 4,
+    borderRadius: 150,
+  },
   logo: {
-    height: 100,
-    width: 100,
-    borderRadius: 50,
+    width: 150,
+    height: 150,
+    borderRadius: 150,
+    padding: 10
+  },
+  agencyName: {
+    fontSize: 20,
+    fontFamily: 'Helvetica',
+    color: '#333',
+    letterSpacing: 1,
+    textAlign: 'center',
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: {width: 1, height: 1},
+    textShadowRadius: 2,
+    paddingVertical: 6,
+  },
+  bottomContent: {
+    alignItems: 'center',
+    paddingVertical: 10
   },
 });
 
