@@ -35,7 +35,7 @@ const Login = ({navigation}) => {
     agencyLogo: null,
   });
   const profileData = useSelector(
-    state => state.getUserProfileSlice.profile.currentUserData.result,
+    state => state.getUserProfileSlice.profile.currentUserData,
   );
   const [loginData, setLoginData] = useState({
     username: '',
@@ -132,7 +132,9 @@ const Login = ({navigation}) => {
 
   useEffect(() => {
     if (profileData) {
-      const username = profileData?.email ?? '';
+      console.log(profileData.isSuccess, 'profilelell')
+      const username = profileData?.result?.email ?? '';
+      console.log(username, 'usekk')
       setLoginData(prevData => ({...prevData, username}));
       const password = 'adminadmin';
       setLoginData(prevData => ({...prevData, password}));
@@ -153,15 +155,13 @@ const Login = ({navigation}) => {
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <View style={styles.container}>
           <View style={styles.centerContent}>
-            <View style={{marginVertical: 140}}>
-              <View style={styles.logoContainer}>
-                <Image
-                  source={{uri: `${API_URL}/api${agency.agencyLogo}`}}
-                  style={styles.logo}
-                />
-              </View>
-            <Text style={styles.agencyName}>{agency.agencyName}</Text>
+            <View style={styles.logoContainer}>
+              <Image
+                source={{uri: `${API_URL}/api${agency.agencyLogo}`}}
+                style={styles.logo}
+              />
             </View>
+            <Text style={styles.agencyName}>{agency.agencyName}</Text>
           </View>
           <View style={styles.bottomView}>
             <Text style={styles.loginText}>Login</Text>
@@ -228,6 +228,7 @@ const Login = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    position: 'relative',
   },
   titleText: {
     position: 'absolute',
@@ -246,7 +247,7 @@ const styles = StyleSheet.create({
     elevation: 16,
   },
   bottomView: {
-    backgroundColor: '#fff',
+    backgroundColor: '#FFFFFF',
     opacity: 0.95,
     position: 'absolute',
     bottom: 0,
@@ -264,6 +265,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     marginTop: 12,
     marginBottom: 4,
+    fontWeight: 'bold',
   },
   inputView: {
     height: 40,
@@ -295,6 +297,7 @@ const styles = StyleSheet.create({
     fontFamily: 'SourceSansProBold',
     alignSelf: 'center',
     fontSize: 18,
+    fontWeight: 'bold',
   },
   registerText: {
     alignSelf: 'center',
@@ -310,21 +313,21 @@ const styles = StyleSheet.create({
     color: '#006400',
   },
   centerContent: {
+    position: 'absolute',
+    top: '20%',
+    left: 0,
+    right: 0,
+    transform: [{translateY: -50}],
     alignItems: 'center',
     justifyContent: 'center',
   },
-  logoContainer: {
-    borderRadius: 150,
-    padding: 6,
-  },
   logo: {
-    width: 150,
-    height: 150,
+    width: 250,
+    height: 250,
     borderRadius: 150,
-    padding: 10,
   },
   agencyName: {
-    fontSize: 20,
+    fontSize: 30,
     fontFamily: 'Helvetica',
     color: '#333',
     letterSpacing: 1,
