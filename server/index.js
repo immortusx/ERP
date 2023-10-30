@@ -42,6 +42,7 @@ app.use("/api/agency", require("./Routes/agencyRoutes"));
 app.use("/api/branch", require("./Routes/branchRoutes"));
 app.use("/api/", require("./Routes/commonRoutes"));
 app.use("/api/areaAssign", require("./Routes/areaAssignRoutes"));
+app.use ("/api/leave", require('./Routes/Leave/LeaveRoutes'));
 
 app.get("/api", (req, res) => {
   console.log({
