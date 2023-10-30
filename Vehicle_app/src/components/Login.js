@@ -314,14 +314,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   logoContainer: {
-    shadowColor: 'rgba(0, 0, 0, 0.2)',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.8,
-    shadowRadius: 4,
-    elevation: 5,
     borderRadius: 150,
     padding: 6,
   },

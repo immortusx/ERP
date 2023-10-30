@@ -73,7 +73,7 @@ router.get("/get-manufacturerbyid/:id", tokenCheck, async (req, res) => {
     console.log(manucaturerById);
     await db.query(
       "SELECT id as manufacturerId, name as manufacturerName, description as manufacturerDescription, isActive FROM manufacturers where isActive = 1 and id=" +
-      manucaturerById,
+        manucaturerById,
       (err, MfacturerIdData) => {
         if (err) {
           console.log({ isSuccess: false, result: "error" });
@@ -225,7 +225,7 @@ router.post(
                 if (resultNew.insertId) {
                   insertIdArray.push({
                     insertId: resultNew.insertId,
-                    documentId: insertedIds[key]
+                    documentId: insertedIds[key],
                   });
                 }
                 callback();
@@ -243,11 +243,11 @@ router.post(
 
             for (let i = 0; i < insertIdArray.length; i++) {
               const { insertId, documentId } = insertIdArray[i];
-              console.log(documentId, insertId, 'jjjjjjjjjddddddddddddddddd');
+              console.log(documentId, insertId, "jjjjjjjjjddddddddddddddddd");
               // Insert document ID here
               db.query(
                 documentSql,
-                [documentId, insertId,logoImage],
+                [documentId, insertId, logoImage],
                 (documentErr, documentResult) => {
                   if (documentErr) {
                     console.log({ isSuccess: true, result: documentErr });
@@ -270,7 +270,6 @@ router.post(
     }
   }
 );
-
 
 //==========getModalist=============
 router.get("/getmodal/:id", tokenCheck, async (req, res) => {
@@ -296,18 +295,15 @@ router.get("/getmodal/:id", tokenCheck, async (req, res) => {
 //==========get All Modalist=============
 router.get("/getallmodallist", tokenCheck, async (req, res) => {
   try {
-    await db.query(
-      `Select * FROM modal WHERE isActive = 1`,
-      (err, results) => {
-        if (err) {
-          console.log({ isSuccess: false, result: err });
-          res.send({ isSuccess: false, result: "error" });
-        } else {
-          console.log({ isSuccess: true, result: results });
-          res.send({ isSuccess: true, result: results });
-        }
+    await db.query(`Select * FROM modal WHERE isActive = 1`, (err, results) => {
+      if (err) {
+        console.log({ isSuccess: false, result: err });
+        res.send({ isSuccess: false, result: "error" });
+      } else {
+        console.log({ isSuccess: true, result: results });
+        res.send({ isSuccess: true, result: results });
       }
-    );
+    });
   } catch (err) {
     console.log(err);
   }
@@ -404,6 +400,25 @@ router.post("/deletemanufacturer", tokenCheck, async (req, res) => {
     });
   } catch (err) {
     console.log(err);
+  }
+});
+
+//========================get First Manufacurer============================//
+router.get("/get-first-maker", tokenCheck, async (req, res) => {
+  try {
+    const query = `SELECT * FROM manufacturers WHERE id = 1`;
+    await db.query(query, (err, results) => {
+      if (err) {
+        console.log({ isSuccess: false, result: err });
+        res.send({ isSuccess: false, result: "error" });
+      } else {
+        console.log({ isSuccess: true, result: results });
+        res.send({ isSuccess: true, result: results });
+      }
+    });
+  } catch (err) {
+    console.log(err);
+    res.send({ isSuccess: false, result: "error" });
   }
 });
 
