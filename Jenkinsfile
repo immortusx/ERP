@@ -7,7 +7,8 @@ pipeline {
       string (defaultValue: '95.216.144.126', description: 'Choose Host', name: 'ENV_HOST')
       string (defaultValue: 'vehical_crm_db', description: 'Choose Database for server', name: 'ENV_DATABASE')
       string (defaultValue: 'https://dev.balkrushna.com', description: 'Choose react app node url', name: 'REACT_APP_NODE_URL')
-      string (defaultValue: "dev", description: 'Build Tag', name: 'BUILD_TAG')
+      editableChoice(defaultValue: 'dev',name: 'BUILD_TAG',choices: ['winners-capital', 'newkeshav', 'crm'], description: 'Build Tag',restrict: true,filterConfig: filterConfig(prefix: true, caseInsensitive: false))
+      //string (defaultValue: "dev", description: 'Build Tag', name: 'BUILD_TAG')
       string (defaultValue: "Vehicle_crm", description: 'App Name', name: 'APP_NAME')
       booleanParam(name: 'skip_app_building', defaultValue: false, description: 'Set to true to skip Apk building')
     }  
@@ -112,7 +113,7 @@ def execute_stage(stage_name, skip) {
         sh "echo 'API_URL=${REACT_APP_NODE_URL}' > ${WORKSPACE}/Vehicle_app/.env"
         sh "cd ${WORKSPACE}/Vehicle_app && sudo chmod +x package-name.sh && sudo chmod +x app-name.sh"
         sh "cd ${WORKSPACE}/Vehicle_app && sudo sh ./package-name.sh com.${BUILD_TAG}"
-        sh "cd ${WORKSPACE}/Vehicle_app && sudo sh ./app-name.sh ${APP_NAME}"
+        sh "cd ${WORKSPACE}/Vehicle_app && sudo sh ./app-name.sh \"${APP_NAME}\""
         sh "sudo chmod +x insert-version-name.sh"
         sh "bash insert-version-name.sh"
         sh "sudo mv ${WORKSPACE}/Vehicle_app/android/app/src/main/java/com/vehicle_crm ${WORKSPACE}/Vehicle_app/android/app/src/main/java/com/${BUILD_TAG}"
