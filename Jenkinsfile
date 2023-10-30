@@ -112,7 +112,7 @@ def execute_stage(stage_name, skip) {
         sh "echo 'API_URL=${REACT_APP_NODE_URL}' > ${WORKSPACE}/Vehicle_app/.env"
         sh "cd ${WORKSPACE}/Vehicle_app && sudo chmod +x package-name.sh && sudo chmod +x app-name.sh"
         sh "cd ${WORKSPACE}/Vehicle_app && sudo sh ./package-name.sh com.${BUILD_TAG}"
-        sh "cd ${WORKSPACE}/Vehicle_app && sudo sh ./app-name.sh ${APP_NAME}"
+        sh "cd ${WORKSPACE}/Vehicle_app && sudo sh ./app-name.sh \"${APP_NAME}\""
         sh "sudo chmod +x insert-version-name.sh"
         sh "bash insert-version-name.sh"
         sh "sudo mv ${WORKSPACE}/Vehicle_app/android/app/src/main/java/com/vehicle_crm ${WORKSPACE}/Vehicle_app/android/app/src/main/java/com/${BUILD_TAG}"
