@@ -724,7 +724,7 @@ router.get(
           console.error(err);
           res.status(500).json({ isSuccess: true, result: result });
         } else {
-          console.log({ isSuccess: true, result: result });
+          console.log({ isSuccess: true, result: result }); 
           res.status(200).json({ isSuccess: true, result: result[0] });
         }
       });

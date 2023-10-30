@@ -17,6 +17,7 @@ import {getAgencyData} from '../redux/slice/AgencyDataSlice';
 const Splash = ({navigation}) => {
   const dispatch = useDispatch();
   const [initialCheckDone, setInitialCheckDone] = useState(false);
+  const [showSpinner, setShowSpinner] = useState(true);
   const profileData = useSelector(state => state.getUserProfileSlice.profile);
   const agencyData = useSelector(
     state => state.agencyData.agencyDataState.result,
@@ -48,13 +49,15 @@ const Splash = ({navigation}) => {
 
       if (token) {
         setTimeout(() => {
+          setShowSpinner(false);
           setInitialCheckDone(true);
           dispatch(getProfileData());
         }, 2000);
       } else {
         setTimeout(() => {
+          setShowSpinner(false);
           setInitialCheckDone(true);
-          // navigation.navigate('Login');
+          navigation.navigate('Login');
         }, 2000);
       }
     };
@@ -65,9 +68,9 @@ const Splash = ({navigation}) => {
   useEffect(() => {
     if (initialCheckDone) {
       if (profileData.isSuccess && profileData.currentUserData.isSuccess) {
-        // navigation.navigate('Main');
+        navigation.navigate('Main');
       } else {
-        // navigation.navigate('Login');
+        navigation.navigate('Login');
       }
     }
   }, [profileData, navigation, initialCheckDone]);
@@ -84,7 +87,7 @@ const Splash = ({navigation}) => {
         <Text style={styles.agencyName}>{agency.agencyName}</Text>
       </View>
       <View style={styles.bottomContent}>
-        <ActivityIndicator size={16} color="#2471A3" />
+        <ActivityIndicator animating={showSpinner} size={30} color="#2471A3" />
       </View>
     </View>
   );
@@ -96,6 +99,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     justifyContent: 'center',
     alignItems: 'center',
+    position: 'relative',
   },
   centerContent: {
     alignItems: 'center',
@@ -108,8 +112,9 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.8,
     shadowRadius: 4,
-    elevation: 4,
+    elevation: 5,
     borderRadius: 150,
+    padding: 6
   },
   logo: {
     width: 150,
@@ -132,7 +137,8 @@ const styles = StyleSheet.create({
   },
   bottomContent: {
     alignItems: 'center',
-    paddingVertical: 10
+    position: 'absolute',
+    bottom: 10
   },
 });
 

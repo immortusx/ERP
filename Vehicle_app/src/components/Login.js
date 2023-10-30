@@ -18,6 +18,7 @@ import {getLoginUser} from '../redux/slice/getUserLogin';
 import getUserProfile, {getProfileData} from '../redux/slice/getUserProfile';
 import LoadingSpinner from './subCom/LoadingSpinner';
 import UpdatePopUp from './AppUpdatePopUp';
+import {API_URL} from '@env';
 const Login = ({navigation}) => {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
@@ -26,6 +27,13 @@ const Login = ({navigation}) => {
   const loginState = useSelector(state => state.getLoginSlice.loginState);
   const appVersion = '1.0';
   const updated = '1.2';
+  const agencyData = useSelector(
+    state => state.agencyData.agencyDataState.result,
+  );
+  const [agency, setAgency] = useState({
+    agencyName: '',
+    agencyLogo: null,
+  });
   const profileData = useSelector(
     state => state.getUserProfileSlice.profile.currentUserData.result,
   );
@@ -33,7 +41,20 @@ const Login = ({navigation}) => {
     username: '',
     password: '',
   });
-
+  useEffect(() => {
+    if (agencyData && agencyData.result) {
+      console.log(agencyData.result, 'agencyDta spalsh');
+      const valueObj = {};
+      for (const item of agencyData.result) {
+        valueObj[item.key_name] = item.value;
+      }
+      const {name, logo} = valueObj;
+      setAgency({
+        agencyName: name,
+        agencyLogo: logo,
+      });
+    }
+  }, [agencyData]);
   const onChangeHandler = (value, field) => {
     if (field === 'username') {
       setLoginData(registerData => ({...loginData, username: value}));
@@ -113,7 +134,7 @@ const Login = ({navigation}) => {
     if (profileData) {
       const username = profileData?.email ?? '';
       setLoginData(prevData => ({...prevData, username}));
-      const password = 'admin';
+      const password = 'adminadmin';
       setLoginData(prevData => ({...prevData, password}));
     }
   }, [profileData]);
@@ -131,13 +152,17 @@ const Login = ({navigation}) => {
     <>
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <View style={styles.container}>
-          <View style={{flex: 1}}>
-            <Image
-              style={{flex: 1, width: null, marginTop: -500}}
-              source={BackgroundImage}
-            />
+          <View style={styles.centerContent}>
+            <View style={{marginVertical: 140}}>
+              <View style={styles.logoContainer}>
+                <Image
+                  source={{uri: `${API_URL}/api${agency.agencyLogo}`}}
+                  style={styles.logo}
+                />
+              </View>
+            <Text style={styles.agencyName}>{agency.agencyName}</Text>
+            </View>
           </View>
-          <Text>Keshav Tractors</Text>
           <View style={styles.bottomView}>
             <Text style={styles.loginText}>Login</Text>
             <View style={styles.inputView}>
@@ -283,6 +308,41 @@ const styles = StyleSheet.create({
     fontFamily: 'SourceSansProBold',
     fontSize: 16,
     color: '#006400',
+  },
+  centerContent: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  logoContainer: {
+    shadowColor: 'rgba(0, 0, 0, 0.2)',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.8,
+    shadowRadius: 4,
+    elevation: 5,
+    borderRadius: 150,
+    padding: 6,
+  },
+  logo: {
+    width: 150,
+    height: 150,
+    borderRadius: 150,
+    padding: 10,
+  },
+  agencyName: {
+    fontSize: 20,
+    fontFamily: 'Helvetica',
+    color: '#333',
+    letterSpacing: 1,
+    textAlign: 'center',
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: {width: 1, height: 1},
+    textShadowRadius: 2,
+    paddingVertical: 6,
   },
 });
 
