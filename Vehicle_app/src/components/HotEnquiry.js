@@ -9,22 +9,22 @@ import {
   TouchableWithoutFeedback,
   RefreshControl,
 } from 'react-native';
-import React, { useState, useEffect, useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { getEnquiryData } from '../redux/slice/getEnquirySlice';
-import { useNavigation } from '@react-navigation/native';
+import React, {useState, useEffect, useCallback} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
+import {getEnquiryData} from '../redux/slice/getEnquirySlice';
+import {useNavigation} from '@react-navigation/native';
 import CustomLoadingSpinner from './subCom/CustomLoadingSpinner';
-import { Linking } from 'react-native';
+import {Linking} from 'react-native';
 import moment from 'moment';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { API_URL } from '@env';
+import {API_URL} from '@env';
 import ToastMessage from './subCom/ToastMessage';
 import TimeAgo from './subCom/TImeAgo';
 import ConfirmationDialog from './subCom/ConfirmationDialog';
 import ConfirmBox from './subCom/Confirm';
 import SimpleAlert from './subCom/SimpleAlert';
-import { setEnquiryType } from '../redux/slice/enquiryTypeSlice';
+import {setEnquiryType} from '../redux/slice/enquiryTypeSlice';
 import DayAgo from './subCom/DayAgo';
 const HotEnquiry = () => {
   const navigation = useNavigation();
@@ -41,7 +41,7 @@ const HotEnquiry = () => {
     state => state.getUserProfileSlice.profile.currentUserData.result,
   );
   const getEnquiryState = useSelector(state => state.getEnquiryState);
-  const { isFetching, isSuccess, isError, result } = getEnquiryState;
+  const {isFetching, isSuccess, isError, result} = getEnquiryState;
 
   useEffect(() => {
     // dispatch(getEnquiryData());
@@ -83,7 +83,7 @@ const HotEnquiry = () => {
     }
   }, [result]);
   const handleSheduleCall = item => {
-    navigation.navigate('Schedule Call', { item: item });
+    navigation.navigate('Schedule Call', {item: item});
   };
   const makePhoneCall = mobileNumber => {
     console.log('Calling...', mobileNumber);
@@ -92,7 +92,7 @@ const HotEnquiry = () => {
 
   const openAdditonalEnquiry = item => {
     console.log(item, '>>>>>>>>>>>>>>>.');
-    navigation.navigate('Additional Details', { item: item });
+    navigation.navigate('Additional Details', {item: item});
   };
 
   if (loading) {
@@ -115,7 +115,7 @@ const HotEnquiry = () => {
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }
-            renderItem={({ item, index }) => {
+            renderItem={({item, index}) => {
               return (
                 <TouchableWithoutFeedback
                   onPress={() => {
@@ -124,50 +124,49 @@ const HotEnquiry = () => {
                   <View key={index} style={styles.enquiryBox}>
                     <View style={styles.leftDataStyle}>
                       <View style={styles.dataContainer}>
-                        <View style={styles.iconContainer}>
-                          <Image
-                            style={styles.personImg}
-                            source={require('../../assets/person.png')}
-                          />
-                          <Image
-                            style={styles.personImg}
-                            source={require('../../assets/phone.png')}
-                          />
-                          <Image
-                            style={styles.personImg}
-                            source={require('../../assets/product.png')}
-                          />
-                          <Image
-                            style={styles.personImg}
-                            source={require('../../assets/salesperson.png')}
-                          />
-                          <Image
-                            style={styles.personImg}
-                            source={require('../../assets/location.png')}
-                          />
-                        </View>
-                        <View style={styles.detailContainer}>
-                          <Text style={styles.label}>
-                            {item.first_name +
-                              (item.last_name ? ' ' + item.last_name : '')}
-                          </Text>
-                          <TouchableOpacity
-                            onPress={() => {
-                              makePhoneCall(item.phone_number);
-                            }}>
-                            <Text style={styles.label}>
-                              {item.phone_number}
+                        <View style={styles.textContainer}>
+                          <View style={styles.row}>
+                            <Image
+                              style={styles.personImg}
+                              source={require('../../assets/person.png')}
+                            />
+                            <Text style={styles.value}>
+                              {item.first_name +
+                                (item.last_name ? ' ' + item.last_name : '')}
                             </Text>
-                          </TouchableOpacity>
-                          <Text style={styles.label}>
-                            {item.product ? item.product : '-'}
-                          </Text>
-                          <Text style={styles.label}>
-                            {item.sales_person ? item.sales_person : '-'}
-                          </Text>
-                          <Text style={styles.label}>
-                            {item.village ? item.village : '-'}
-                          </Text>
+                          </View>
+                          <View style={styles.row}>
+                            <Image
+                              style={styles.personImg}
+                              source={require('../../assets/phone.png')}
+                            />
+                            <TouchableOpacity
+                              onPress={() => {
+                                makePhoneCall(item.phone_number);
+                              }}>
+                              <Text style={styles.value}>
+                                {item.phone_number}
+                              </Text>
+                            </TouchableOpacity>
+                          </View>
+                          <View style={styles.row}>
+                            <Image
+                              style={styles.personImg}
+                              source={require('../../assets/product.png')}
+                            />
+                            <Text style={styles.value}>
+                              {item.product ? item.product : '-'}
+                            </Text>
+                          </View>
+                          <View style={styles.row}>
+                            <Image
+                              style={styles.personImg}
+                              source={require('../../assets/location.png')}
+                            />
+                            <Text style={styles.value}>
+                              {item.village ? item.village : '-'}
+                            </Text>
+                          </View>
                         </View>
                       </View>
                     </View>
@@ -177,9 +176,16 @@ const HotEnquiry = () => {
                           'Do MMMM, YYYY',
                         )}
                       </Text>
-                      {item.sales_person && (<Text style={styles.salesText}>{item.sales_person}</Text>)}
+                      {item.sales_person && (
+                        <Text style={styles.salesText}>
+                          {item.sales_person}
+                        </Text>
+                      )}
                       <TouchableOpacity style={styles.dayBack}>
-                        <DayAgo nextFollowUpDate={item.next_followup_date} date={item.date} />
+                        <DayAgo
+                          nextFollowUpDate={item.next_followup_date}
+                          date={item.date}
+                        />
                       </TouchableOpacity>
                       <TouchableOpacity
                         onPress={() => {
@@ -202,8 +208,11 @@ const HotEnquiry = () => {
           //   onConfirm={handleConfirm}
           // />
 
-          <Text style={styles.NoTaskStyle}>Currently, There is Hot Enquiry Not Available</Text>
-
+          <View style={styles.noEnquiryContainer}>
+            <Text style={styles.NoTaskStyle}>
+              Currently, There is Hot Enquiry Not Available
+            </Text>
+          </View>
         )}
       </View>
     </View>
@@ -245,11 +254,6 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginBottom: 7,
   },
-  label: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 5,
-  },
   salesText: {
     fontSize: 16,
     fontWeight: '500',
@@ -278,12 +282,6 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
-  },
-  personImg: {
-    width: 21,
-    height: 21,
-    marginRight: 8,
-    marginBottom: 5,
   },
   newImg: {
     width: 30,
@@ -400,22 +398,54 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     backgroundColor: 'transparent',
   },
-  dataContainer: {
-    flexDirection: 'row',
-  },
-  iconContainer: {
-    alignItems: 'flex-start',
-  },
-  detailContainer: {
-    alignItems: 'flex-start',
+  noEnquiryContainer: {
+    backgroundColor: 'white',
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 3,
+    paddingVertical: 10
   },
   NoTaskStyle: {
     fontSize: 16,
     fontWeight: 'bold',
     color: 'red',
     textAlign: 'center',
-    marginTop: 20,
     fontStyle: 'italic',
+  },
+  dataContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  iconContainer: {
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  textContainer: {
+    flex: 1,
+  },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 5,
+  },
+  personImg: {
+    width: 21,
+    height: 21,
+    marginRight: 8,
+  },
+  label: {
+    width: 80,
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  value: {
+    flex: 1,
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 
