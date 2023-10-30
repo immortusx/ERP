@@ -28,6 +28,7 @@ import {CheckBox} from 'react-native-elements';
 import CustomCheckbox from './subCom/CustomCheckBox';
 import CustomRadioButton from './subCom/CustomRadioButton';
 import RadioButtons from './subCom/RadioButtons';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
 const FollowUpScreen = ({item}) => {
   //   const {item} = route.params;
   const dispatch = useDispatch();
@@ -103,9 +104,9 @@ const FollowUpScreen = ({item}) => {
     }
   };
   const handleCalendarDate = selectedDate => {
-    console.log(selectedDate.dateString);
-    console.log(selectedDate);
-    setScheduleDate(selectedDate.dateString);
+    const formattedDate = moment(selectedDate).format('YYYY-MM-DD');
+    console.log(formattedDate, 'itrit');
+    setScheduleDate(formattedDate);
     setOpenScheduleDate(false);
   };
   const handleBookingStage = () => {
@@ -152,11 +153,12 @@ const FollowUpScreen = ({item}) => {
                   : scheduleDate}
               </Text>
             </TouchableOpacity>
-            <Calendars
-              showModal={openScheduleDate}
-              selectedDate={scheduleDate}
-              handleCalendarDate={handleCalendarDate}
-              onClose={() => setOpenScheduleDate(false)}
+            <DateTimePickerModal
+              isVisible={openScheduleDate}
+              onConfirm={handleCalendarDate}
+              mode="date"
+              // handleCalendarDate={handleCalendarDate}
+              onCancel={() => setOpenScheduleDate(false)}
             />
           </View>
         </View>
