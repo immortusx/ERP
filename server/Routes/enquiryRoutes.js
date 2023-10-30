@@ -1673,12 +1673,13 @@ router.get("/get-last-month-enquiries", tokenCheck, async (req, res) => {
 });
 
 //========================Get New (Not Followed) Enquiry List======================//
-router.get("/get-new-enquiries-list", tokenCheck, async (req, res) => {
+router.get("/get-new-enquiries-list/:categoryId", tokenCheck, async (req, res) => {
   console.log(">>>>>>>>>/get-new-enquiries-list", req.myData);
   let branchId = req.myData.branchId;
   let isSuperAdmin = req.myData.isSuperAdmin;
   let userId = req.myData.userId;
-  const urlNew = `CALL sp_get_new_enquiry_list(${branchId}, ${isSuperAdmin}, ${userId})`;
+  let categoryId = req.params.categoryId;
+  const urlNew = `CALL sp_get_new_enquiry_list(${branchId}, ${isSuperAdmin}, ${userId}, ${categoryId})`;
   await db.query(urlNew, async (err, result) => {
     if (err) {
       console.log({ isSuccess: false, result: err });

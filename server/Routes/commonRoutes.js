@@ -620,11 +620,12 @@ router.get("/get-old-product/:enquiryId", tokenCheck, async (req, res) => {
 });
 
 //=======================Get-User-Created-Enquiry============================//
-router.get("/get-user-created-enquiry", tokenCheck, async (req, res) => {
-  console.log(">>>>>//get-user-created-enquiry");
+router.get("/get-user-created-enquiry/:categoryId", tokenCheck, async (req, res) => {
+  console.log(">>>>>//get-user-created-enquiry/:categoryId");
   try {
     const userId = req.myData.userId;
-    const url = `CALL sp_get_user_created_enquiry(${userId})`;
+    const categoryId = req.params.categoryId;
+    const url = `CALL sp_get_user_created_enquiry(${userId},${categoryId})`;
     db.query(url, async (err, result) => {
       if (err) {
         console.error(err);
@@ -641,13 +642,14 @@ router.get("/get-user-created-enquiry", tokenCheck, async (req, res) => {
 });
 
 //=======================Get-Hot-Enquiry============================//
-router.get("/get-hot-enquiry", tokenCheck, async (req, res) => {
+router.get("/get-hot-enquiry/:categoryId", tokenCheck, async (req, res) => {
   console.log(">>>>>//get-hot-enquiry");
   try {
     let branchId = req.myData.branchId;
     let isSuperAdmin = req.myData.isSuperAdmin;
     let userId = req.myData.userId;
-    const url = `CALL sp_get_hot_enquiry(${branchId}, ${isSuperAdmin}, ${userId})`;
+    let categoryId = req.params.categoryId;
+    const url = `CALL sp_get_hot_enquiry(${branchId}, ${isSuperAdmin}, ${userId},${categoryId})`;
     db.query(url, async (err, result) => {
       if (err) {
         console.error(err);
@@ -664,13 +666,14 @@ router.get("/get-hot-enquiry", tokenCheck, async (req, res) => {
 });
 
 //=======================Get-Cold-Enquiry============================//
-router.get("/get-Cold-enquiry", tokenCheck, async (req, res) => {
+router.get("/get-Cold-enquiry/:categoryId", tokenCheck, async (req, res) => {
   console.log(">>>>>/get-Cold-enquiry");
   try {
     let branchId = req.myData.branchId;
     let isSuperAdmin = req.myData.isSuperAdmin;
     let userId = req.myData.userId;
-    const url = `CALL sp_get_cold_enquiry(${branchId}, ${isSuperAdmin}, ${userId})`;
+    let categoryId = req.params.categoryId;
+    const url = `CALL sp_get_cold_enquiry(${branchId}, ${isSuperAdmin}, ${userId},${categoryId})`;
     db.query(url, async (err, result) => {
       if (err) {
         console.error(err);
@@ -687,13 +690,14 @@ router.get("/get-Cold-enquiry", tokenCheck, async (req, res) => {
 });
 
 //=======================Get-Warm-Enquiry============================//
-router.get("/get-Warm-enquiry", tokenCheck, async (req, res) => {
+router.get("/get-Warm-enquiry/:categoryId", tokenCheck, async (req, res) => {
   console.log(">>>>>/get-Warm-enquiry");
   try {
     let branchId = req.myData.branchId;
     let isSuperAdmin = req.myData.isSuperAdmin;
     let userId = req.myData.userId;
-    const url = `CALL sp_get_warm_enquiry(${branchId}, ${isSuperAdmin}, ${userId})`;
+    let categoryId = req.params.categoryId;
+    const url = `CALL sp_get_warm_enquiry(${branchId}, ${isSuperAdmin}, ${userId},${categoryId})`;
     db.query(url, async (err, result) => {
       if (err) {
         console.error(err);
