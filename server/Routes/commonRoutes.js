@@ -728,7 +728,7 @@ router.get(
           console.error(err);
           res.status(500).json({ isSuccess: true, result: result });
         } else {
-          console.log({ isSuccess: true, result: result });
+          console.log({ isSuccess: true, result: result }); 
           res.status(200).json({ isSuccess: true, result: result[0] });
         }
       });
@@ -853,54 +853,5 @@ const insertDataUsingSP = (jsonData, callback) => {
     }
   });
 };
-// const uploadCSV = (path) => {
-//   console.log(path, "functionc");
-//   let stream = fs.createReadStream(path);
-//   let csvDataColl = [];
-
-//   let fileStream = csv
-//     .parse()
-//     .on("data", async (data) => {
-//       csvDataColl.push(data);
-//     })
-//     .on("end", async () => {
-//       csvDataColl.shift(); // Remove the header row
-//       console.log(csvDataColl[0], 'csvData')
-//       // csvDataColl = csvDataColl.map((obj) => {
-//       //   console.log(obj, 'obje')
-//       // return {
-//   first_name: obj.first_name,
-//   middle_name: obj.middle_name,
-//   last_name: obj.last_name,
-//   phone_number: obj.phone_number,
-//   whatsapp_number: obj.whatsapp_number,
-//   email: obj.email,
-//   state: obj.state || 2,
-//   district: obj.district || 2,
-//   taluka: obj.taluka || 2,
-//   village: obj.village || 2,
-//   branch_id: obj.branch_id || 1,
-//   enquiry_category_id: obj.enquiry_category_id || 1,
-//   salesperson_id: obj.salesperson_id || null,
-//   modal_id: obj.modal_id || 1,
-//   date: obj.data,
-//   delivery_date: obj.delivery_date,
-//   primary_source_id: obj.primary_source_id || null,
-//   enquiry_source_id: obj.enquiry_source_id || null,
-//   manufacturer: obj.manufacturer || 1,
-//   modal: obj.modal || 1,
-//   maker: obj.maker || 1,
-//   modalName: obj.modalName || 1,
-//   year_of_manufactur: obj.modalYear || null,
-//   condition_of: obj.modalCondtion,
-//   old_tractor: obj.oldTractorOwned,
-// };
-//       // });
-//       let P_JSON = JSON.stringify(csvDataColl);
-//       // insertDataUsingSP(P_JSON);
-//     });
-
-//   stream.pipe(fileStream);
-// };
 
 module.exports = router;

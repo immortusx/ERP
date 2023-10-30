@@ -6,21 +6,22 @@ import {
   ScrollView,
   Pressable,
 } from 'react-native';
-import React, {useState, useEffect} from 'react';
-import {TextInput, TouchableOpacity} from 'react-native-gesture-handler';
-import {Dropdown} from 'react-native-element-dropdown';
+import React, { useState, useEffect } from 'react';
+import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
+import { Dropdown } from 'react-native-element-dropdown';
 import Calendars from './subCom/Calendars';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {API_URL} from '@env';
+import { API_URL } from '@env';
 import moment from 'moment';
 import CustomRadioButton from './subCom/CustomRadioButton';
 import RadioButtons from './subCom/RadioButtons';
 import SweetSuccessAlert from './subCom/SweetSuccessAlert';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import YearPicker from './subCom/YearPicker';
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 
-const AddBooking = ({item}) => {
+const AddBooking = ({ item }) => {
   const navigation = useNavigation();
   const [isFocus, setIsFocus] = useState(false);
   const [modal, setModal] = useState(null);
@@ -83,22 +84,22 @@ const AddBooking = ({item}) => {
   }));
 
   const modeOfFinance = [
-    {label: 'Cash', value: '1'},
-    {label: 'Credit Card', value: '2'},
-    {label: 'Debid Card', value: '3'},
+    { label: 'Cash', value: '1' },
+    { label: 'Credit Card', value: '2' },
+    { label: 'Debid Card', value: '3' },
   ];
   const bankName = [
-    {label: 'State Bank Of India', value: '1'},
-    {label: 'Bank Of Baroda', value: '2'},
-    {label: 'Kotak Mahindra Bank', value: '3'},
-    {label: 'ICICI Bank', value: '4'},
-    {label: 'Axis Bank', value: '5'},
+    { label: 'State Bank Of India', value: '1' },
+    { label: 'Bank Of Baroda', value: '2' },
+    { label: 'Kotak Mahindra Bank', value: '3' },
+    { label: 'ICICI Bank', value: '4' },
+    { label: 'Axis Bank', value: '5' },
   ];
   const conditionType = [
-    {label: 'Good', value: 'Good'},
-    {label: 'Below Average', value: 'Below Average'},
-    {label: 'Average', value: 'Average'},
-    {label: 'Vey Good', value: 'Vey Good'},
+    { label: 'Good', value: 'Good' },
+    { label: 'Below Average', value: 'Below Average' },
+    { label: 'Average', value: 'Average' },
+    { label: 'Vey Good', value: 'Vey Good' },
   ];
   const handleSelectedOption = option => {
     console.log(option, 'selected');
@@ -109,10 +110,11 @@ const AddBooking = ({item}) => {
       setModalVisible(false);
     }
   };
-  const handleCalendarDate = selectedDate => {
-    console.log(selectedDate.dateString, 'deliverydate');
-    console.log(selectedDate, 'deliverydate');
-    setExpDeliveryDate(selectedDate.dateString);
+
+  const handleCalendarDate = (date) => {
+    const formattedDate = moment(date).format('YYYY-MM-DD');
+    console.log(formattedDate, 'formatteddat')
+    setExpDeliveryDate(formattedDate);
     setOpenExpDeliveryDate(false);
   };
   const handleManufacturYearDate = selectedDate => {
@@ -121,11 +123,13 @@ const AddBooking = ({item}) => {
     setManuYearDate(selectedDate.dateString);
     setOpenManufacturer(false);
   };
-  const handleRetailDate = selectedDate => {
-    setRetailDate(selectedDate.dateString);
+
+  const handleRetailDate = (date) => {
+    const formattedDate = moment(date).format('YYYY-MM-DD');
+    console.log(formattedDate, 'formatteddat')
+    setRetailDate(formattedDate);
     setOpenRetailDate(false);
   };
-
   useEffect(() => {
     if (modalVisible && oldVehicleData) {
       if (oldVehicleData.old_tractor === 'Yes') {
@@ -322,8 +326,8 @@ const AddBooking = ({item}) => {
               <Dropdown
                 style={[
                   styles.dropdown,
-                  isFocus && {borderColor: 'blue'},
-                  {paddingHorizontal: 5},
+                  isFocus && { borderColor: 'blue' },
+                  { paddingHorizontal: 5 },
                 ]}
                 placeholderStyle={styles.placeholderStyle}
                 selectedTextStyle={styles.selectedTextStyle}
@@ -349,8 +353,8 @@ const AddBooking = ({item}) => {
                 <Dropdown
                   style={[
                     styles.dropdown,
-                    isFocus && {borderColor: 'blue'},
-                    {paddingHorizontal: 5},
+                    isFocus && { borderColor: 'blue' },
+                    { paddingHorizontal: 5 },
                   ]}
                   placeholderStyle={styles.placeholderStyle}
                   selectedTextStyle={styles.selectedTextStyle}
@@ -383,8 +387,8 @@ const AddBooking = ({item}) => {
               <Dropdown
                 style={[
                   styles.dropdown,
-                  isFocus && {borderColor: 'blue'},
-                  {paddingHorizontal: 5},
+                  isFocus && { borderColor: 'blue' },
+                  { paddingHorizontal: 5 },
                 ]}
                 placeholderStyle={styles.placeholderStyle}
                 selectedTextStyle={styles.selectedTextStyle}
@@ -410,8 +414,8 @@ const AddBooking = ({item}) => {
               <Dropdown
                 style={[
                   styles.dropdown,
-                  isFocus && {borderColor: 'blue'},
-                  {paddingHorizontal: 5},
+                  isFocus && { borderColor: 'blue' },
+                  { paddingHorizontal: 5 },
                 ]}
                 placeholderStyle={styles.placeholderStyle}
                 selectedTextStyle={styles.selectedTextStyle}
@@ -431,7 +435,7 @@ const AddBooking = ({item}) => {
               />
             </View>
           </View>
-          <View style={{marginBottom: 5, marginTop: 10}}>
+          <View style={{ marginBottom: 5, marginTop: 10 }}>
             <View style={styles.deliveryDateContainer}>
               <TouchableOpacity
                 style={{
@@ -443,7 +447,7 @@ const AddBooking = ({item}) => {
                 onPress={() => {
                   setOpenExpDeliveryDate(true);
                 }}>
-                <Text style={{paddingVertical: 7}}>
+                <Text style={{ paddingVertical: 7 }}>
                   Delivery Date {':- '}
                   {expDeliveryDate === ''
                     ? new Date().toISOString().slice(0, 10)
@@ -454,15 +458,15 @@ const AddBooking = ({item}) => {
                   source={require('../../assets/date.png')}
                 />
               </TouchableOpacity>
-              <Calendars
-                showModal={openExpDeliveryDate}
-                selectedDate={expDeliveryDate}
-                handleCalendarDate={handleCalendarDate}
-                onClose={() => setOpenExpDeliveryDate(false)}
+              <DateTimePickerModal
+                isVisible={openExpDeliveryDate}
+                mode="date"
+                onConfirm={handleCalendarDate}
+                onCancel={() => { setOpenExpDeliveryDate(false) }}
               />
             </View>
           </View>
-          <View style={{marginBottom: 5}}>
+          <View style={{ marginBottom: 5 }}>
             <View style={styles.deliveryDateContainer}>
               <TouchableOpacity
                 style={{
@@ -474,7 +478,7 @@ const AddBooking = ({item}) => {
                 onPress={() => {
                   setOpenRetailDate(true);
                 }}>
-                <Text style={{paddingVertical: 7}}>
+                <Text style={{ paddingVertical: 7 }}>
                   Target Retail Date {':- '}
                   {retailDate === ''
                     ? new Date().toISOString().slice(0, 10)
@@ -485,11 +489,11 @@ const AddBooking = ({item}) => {
                   source={require('../../assets/date.png')}
                 />
               </TouchableOpacity>
-              <Calendars
-                showModal={openRetailDate}
-                selectedDate={retailDate}
-                handleCalendarDate={handleRetailDate}
-                onClose={() => setOpenRetailDate(false)}
+              <DateTimePickerModal
+                isVisible={openRetailDate}
+                mode="date"
+                onConfirm={handleRetailDate}
+                onCancel={() => { setOpenRetailDate(false) }}
               />
             </View>
           </View>
@@ -510,8 +514,8 @@ const AddBooking = ({item}) => {
                     <Dropdown
                       style={[
                         styles.dropdown,
-                        isFocus && {borderColor: 'blue'},
-                        {paddingHorizontal: 5},
+                        isFocus && { borderColor: 'blue' },
+                        { paddingHorizontal: 5 },
                       ]}
                       placeholderStyle={styles.placeholderStyle}
                       selectedTextStyle={styles.selectedTextStyle}
@@ -537,8 +541,8 @@ const AddBooking = ({item}) => {
                     <Dropdown
                       style={[
                         styles.dropdown,
-                        isFocus && {borderColor: 'blue'},
-                        {paddingHorizontal: 5},
+                        isFocus && { borderColor: 'blue' },
+                        { paddingHorizontal: 5 },
                       ]}
                       placeholderStyle={styles.placeholderStyle}
                       selectedTextStyle={styles.selectedTextStyle}
@@ -565,8 +569,8 @@ const AddBooking = ({item}) => {
                       <Dropdown
                         style={[
                           styles.dropdown,
-                          isFocus && {borderColor: 'blue'},
-                          {paddingHorizontal: 5},
+                          isFocus && { borderColor: 'blue' },
+                          { paddingHorizontal: 5 },
                         ]}
                         placeholderStyle={styles.placeholderStyle}
                         selectedTextStyle={styles.selectedTextStyle}
@@ -588,19 +592,19 @@ const AddBooking = ({item}) => {
                   </View>
                 )}
 
-                <View style={{marginBottom: 5}}>
+                <View style={{ marginBottom: 5 }}>
                   <View
                     style={[
                       styles.deliveryDateContainer,
-                      {paddingVertical: 7},
+                      { paddingVertical: 7 },
                     ]}>
                     <View>
-                      <View style={{flex: 1}}>
+                      <View style={{ flex: 1 }}>
                         <TouchableOpacity
                           onPress={() => {
                             setIsPickerVisible(true);
                           }}>
-                          <Text style={{textAlign: 'left'}}>
+                          <Text style={{ textAlign: 'left' }}>
                             Manufactur Year{' :-'}
                             {manuYearDate ? manuYearDate : 'Select Year'}
                           </Text>
@@ -623,8 +627,8 @@ const AddBooking = ({item}) => {
                     <Dropdown
                       style={[
                         styles.dropdown,
-                        isFocus && {borderColor: 'blue'},
-                        {paddingHorizontal: 5},
+                        isFocus && { borderColor: 'blue' },
+                        { paddingHorizontal: 5 },
                       ]}
                       placeholderStyle={styles.placeholderStyle}
                       selectedTextStyle={styles.selectedTextStyle}
