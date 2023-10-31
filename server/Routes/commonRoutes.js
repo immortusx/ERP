@@ -668,11 +668,12 @@ router.get("/get-old-product/:enquiryId", tokenCheck, async (req, res) => {
 });
 
 //=======================Get-User-Created-Enquiry============================//
-router.get("/get-user-created-enquiry", tokenCheck, async (req, res) => {
-  console.log(">>>>>//get-user-created-enquiry");
+router.get("/get-user-created-enquiry/:categoryId", tokenCheck, async (req, res) => {
+  console.log(">>>>>//get-user-created-enquiry/:categoryId");
   try {
     const userId = req.myData.userId;
-    const url = `CALL sp_get_user_created_enquiry(${userId})`;
+    const categoryId = req.params.categoryId;
+    const url = `CALL sp_get_user_created_enquiry(${userId},${categoryId})`;
     db.query(url, async (err, result) => {
       if (err) {
         console.error(err);
@@ -689,13 +690,14 @@ router.get("/get-user-created-enquiry", tokenCheck, async (req, res) => {
 });
 
 //=======================Get-Hot-Enquiry============================//
-router.get("/get-hot-enquiry", tokenCheck, async (req, res) => {
+router.get("/get-hot-enquiry/:categoryId", tokenCheck, async (req, res) => {
   console.log(">>>>>//get-hot-enquiry");
   try {
     let branchId = req.myData.branchId;
     let isSuperAdmin = req.myData.isSuperAdmin;
     let userId = req.myData.userId;
-    const url = `CALL sp_get_hot_enquiry(${branchId}, ${isSuperAdmin}, ${userId})`;
+    let categoryId = req.params.categoryId;
+    const url = `CALL sp_get_hot_enquiry(${branchId}, ${isSuperAdmin}, ${userId},${categoryId})`;
     db.query(url, async (err, result) => {
       if (err) {
         console.error(err);
@@ -712,13 +714,14 @@ router.get("/get-hot-enquiry", tokenCheck, async (req, res) => {
 });
 
 //=======================Get-Cold-Enquiry============================//
-router.get("/get-Cold-enquiry", tokenCheck, async (req, res) => {
+router.get("/get-Cold-enquiry/:categoryId", tokenCheck, async (req, res) => {
   console.log(">>>>>/get-Cold-enquiry");
   try {
     let branchId = req.myData.branchId;
     let isSuperAdmin = req.myData.isSuperAdmin;
     let userId = req.myData.userId;
-    const url = `CALL sp_get_cold_enquiry(${branchId}, ${isSuperAdmin}, ${userId})`;
+    let categoryId = req.params.categoryId;
+    const url = `CALL sp_get_cold_enquiry(${branchId}, ${isSuperAdmin}, ${userId},${categoryId})`;
     db.query(url, async (err, result) => {
       if (err) {
         console.error(err);
@@ -735,13 +738,14 @@ router.get("/get-Cold-enquiry", tokenCheck, async (req, res) => {
 });
 
 //=======================Get-Warm-Enquiry============================//
-router.get("/get-Warm-enquiry", tokenCheck, async (req, res) => {
+router.get("/get-Warm-enquiry/:categoryId", tokenCheck, async (req, res) => {
   console.log(">>>>>/get-Warm-enquiry");
   try {
     let branchId = req.myData.branchId;
     let isSuperAdmin = req.myData.isSuperAdmin;
     let userId = req.myData.userId;
-    const url = `CALL sp_get_warm_enquiry(${branchId}, ${isSuperAdmin}, ${userId})`;
+    let categoryId = req.params.categoryId;
+    const url = `CALL sp_get_warm_enquiry(${branchId}, ${isSuperAdmin}, ${userId},${categoryId})`;
     db.query(url, async (err, result) => {
       if (err) {
         console.error(err);
@@ -772,7 +776,7 @@ router.get(
           console.error(err);
           res.status(500).json({ isSuccess: true, result: result });
         } else {
-          console.log({ isSuccess: true, result: result });
+          console.log({ isSuccess: true, result: result }); 
           res.status(200).json({ isSuccess: true, result: result[0] });
         }
       });
@@ -893,54 +897,5 @@ const insertDataUsingSP = (jsonData, callback) => {
     }
   });
 };
-// const uploadCSV = (path) => {
-//   console.log(path, "functionc");
-//   let stream = fs.createReadStream(path);
-//   let csvDataColl = [];
-
-//   let fileStream = csv
-//     .parse()
-//     .on("data", async (data) => {
-//       csvDataColl.push(data);
-//     })
-//     .on("end", async () => {
-//       csvDataColl.shift(); // Remove the header row
-//       console.log(csvDataColl[0], 'csvData')
-//       // csvDataColl = csvDataColl.map((obj) => {
-//       //   console.log(obj, 'obje')
-//       // return {
-//   first_name: obj.first_name,
-//   middle_name: obj.middle_name,
-//   last_name: obj.last_name,
-//   phone_number: obj.phone_number,
-//   whatsapp_number: obj.whatsapp_number,
-//   email: obj.email,
-//   state: obj.state || 2,
-//   district: obj.district || 2,
-//   taluka: obj.taluka || 2,
-//   village: obj.village || 2,
-//   branch_id: obj.branch_id || 1,
-//   enquiry_category_id: obj.enquiry_category_id || 1,
-//   salesperson_id: obj.salesperson_id || null,
-//   modal_id: obj.modal_id || 1,
-//   date: obj.data,
-//   delivery_date: obj.delivery_date,
-//   primary_source_id: obj.primary_source_id || null,
-//   enquiry_source_id: obj.enquiry_source_id || null,
-//   manufacturer: obj.manufacturer || 1,
-//   modal: obj.modal || 1,
-//   maker: obj.maker || 1,
-//   modalName: obj.modalName || 1,
-//   year_of_manufactur: obj.modalYear || null,
-//   condition_of: obj.modalCondtion,
-//   old_tractor: obj.oldTractorOwned,
-// };
-//       // });
-//       let P_JSON = JSON.stringify(csvDataColl);
-//       // insertDataUsingSP(P_JSON);
-//     });
-
-//   stream.pipe(fileStream);
-// };
 
 module.exports = router;

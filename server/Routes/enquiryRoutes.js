@@ -2,7 +2,7 @@ const async = require("async");
 const express = require("express");
 const { tokenCheck } = require("../Auth/TokenCheck");
 const { getDateInFormate } = require("../Utils/timeFunctions");
-
+const moment = require("moment");
 const { db } = require("../Database/dbConfig");
 
 const router = express.Router();
@@ -334,10 +334,11 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
         } else if (result && result.insertId) {
           const insertedId = result.insertId;
 
-          const newEnquiryDate = await getDateInFormate(enquiryDate);
+          // const newEnquiryDate = await getDateInFormate(enquiryDate);
+          let cdate = moment().format('YYYY-MM-DD H:m:s');
           const newDeliveryDate = await getDateInFormate(deliveryDate);
 
-          const urlNew = `INSERT INTO enquiries (branch_id, enquiry_category_id, salesperson_id, customer_id, modal_id, date, delivery_date, primary_source_id, enquiry_source_id, visitReason) VALUES ('${branchId}', '${enquiryCategoryId}', '${dsp}', '${insertedId}', '${model}', '${newEnquiryDate}', '${newDeliveryDate}', '${enquiryPrimarySource}', '${sourceOfEnquiry}', '${visitReason}')`;
+          const urlNew = `INSERT INTO enquiries (branch_id, enquiry_category_id, salesperson_id, customer_id, modal_id, date, delivery_date, primary_source_id, enquiry_source_id, visitReason) VALUES ('${branchId}', '${enquiryCategoryId}', '${dsp}', '${insertedId}', '${model}', '${cdate}', '${newDeliveryDate}', '${enquiryPrimarySource}', '${sourceOfEnquiry}', '${visitReason}')`;
 
           db.query(urlNew, async (err, result) => {
             if (err) {
@@ -780,6 +781,7 @@ router.post("/set-new-fast-enquiry", tokenCheck, async (req, res) => {
                   console.log({ isSuccess: true, result: fastSql });
                   const customer_id = fastEnquiry.insertId;
                   console.log(customer_id);
+                  let cdate = moment().format('YYYY-MM-DD H:m:s');
                   const enquirySql = `INSERT INTO enquiries (branch_id, enquiry_category_id, salesperson_id, modal_id, customer_id, date, user_created) VALUES (?,?,?,?,?,?,?)`;
                   await db.query(
                     enquirySql,
@@ -789,7 +791,7 @@ router.post("/set-new-fast-enquiry", tokenCheck, async (req, res) => {
                       salesperson_id ? salesperson_id : null,
                       none,
                       customer_id,
-                      new Date(),
+                      cdate,
                       user_Id,
                     ],
                     async (err, enquiryResult) => {
@@ -928,6 +930,7 @@ router.post("/set-new-detail-enquiry", tokenCheck, async (req, res) => {
                     .replace("T", " ");
                   console.log(enquiryDate);
                   console.log(customer_id);
+                  let cdate = moment().format('YYYY-MM-DD H:m:s');
                   const enquirySql = `INSERT INTO enquiries (branch_id, enquiry_category_id, salesperson_id, customer_id, primary_source_id, enquiry_source_id, modal_id, date, delivery_date, user_created) VALUES (?,?,?,?,?,?,?,?,?,?)`;
                   await db.query(
                     enquirySql,
@@ -939,7 +942,7 @@ router.post("/set-new-detail-enquiry", tokenCheck, async (req, res) => {
                       enquiryPrimarySource,
                       sourceOfEnquiry,
                       modal,
-                      new Date(),
+                      cdate,
                       deliveryDate,
                       user_Id,
                     ],
@@ -1670,12 +1673,13 @@ router.get("/get-last-month-enquiries", tokenCheck, async (req, res) => {
 });
 
 //========================Get New (Not Followed) Enquiry List======================//
-router.get("/get-new-enquiries-list", tokenCheck, async (req, res) => {
+router.get("/get-new-enquiries-list/:categoryId", tokenCheck, async (req, res) => {
   console.log(">>>>>>>>>/get-new-enquiries-list", req.myData);
   let branchId = req.myData.branchId;
   let isSuperAdmin = req.myData.isSuperAdmin;
   let userId = req.myData.userId;
-  const urlNew = `CALL sp_get_new_enquiry_list(${branchId}, ${isSuperAdmin}, ${userId})`;
+  let categoryId = req.params.categoryId;
+  const urlNew = `CALL sp_get_new_enquiry_list(${branchId}, ${isSuperAdmin}, ${userId}, ${categoryId})`;
   await db.query(urlNew, async (err, result) => {
     if (err) {
       console.log({ isSuccess: false, result: err });

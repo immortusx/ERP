@@ -27,7 +27,7 @@ import ConfirmBox from './subCom/Confirm';
 import SimpleAlert from './subCom/SimpleAlert';
 import { setEnquiryType } from '../redux/slice/enquiryTypeSlice';
 
-const NewEnquiry = () => {
+const NewEnquiry = ({ selectedCategory }) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const [resultData, setResultData] = useState([]);
@@ -46,10 +46,12 @@ const NewEnquiry = () => {
 
   useFocusEffect(
     React.useCallback(() => {
-      // This code will run when the component is focused (e.g., navigated to).
       handleNewEnquiry();
-    }, [])
+    }, []),
   );
+  useEffect(() => {
+    handleNewEnquiry();
+  }, [selectedCategory]);
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     dispatch(setEnquiryType('New'));
@@ -89,8 +91,8 @@ const NewEnquiry = () => {
   //   return <CustomLoadingSpinner />;
   // }
   const handleNewEnquiry = async () => {
-    console.log('New enquiries....');
-    const url = `${API_URL}/api/enquiry/get-new-enquiries-list`;
+    console.log('New enquiries....', selectedCategory);
+    const url = `${API_URL}/api/enquiry/get-new-enquiries-list/${selectedCategory}`;
     console.log('get new enqiry', url);
     const token = await AsyncStorage.getItem('rbacToken');
     const config = {
@@ -130,58 +132,59 @@ const NewEnquiry = () => {
                   <View key={index} style={styles.enquiryBox}>
                     <View style={styles.leftDataStyle}>
                       <View style={styles.dataContainer}>
-                        <View style={styles.iconContainer}>
-                          <Image
-                            style={styles.personImg}
-                            source={require('../../assets/person.png')}
-                          />
-                          <Image
-                            style={styles.personImg}
-                            source={require('../../assets/phone.png')}
-                          />
-                          <Image
-                            style={styles.personImg}
-                            source={require('../../assets/product.png')}
-                          />
-                          <Image
-                            style={styles.personImg}
-                            source={require('../../assets/salesperson.png')}
-                          />
-                          <Image
-                            style={styles.personImg}
-                            source={require('../../assets/location.png')}
-                          />
-                        </View>
-                        <View style={styles.detailContainer}>
-                          <Text style={styles.label}>
-                            {item.first_name +
-                              (item.last_name ? ' ' + item.last_name : '')}
-                          </Text>
-                          <TouchableOpacity
-                            onPress={() => {
-                              makePhoneCall(item.phone_number);
-                            }}>
-                            <Text style={styles.label}>
-                              {item.phone_number}
+                        <View style={styles.textContainer}>
+                          <View style={styles.row}>
+                            <Image
+                              style={styles.personImg}
+                              source={require('../../assets/person.png')}
+                            />
+                            <Text style={styles.value}>
+                              {item.first_name +
+                                (item.last_name ? ' ' + item.last_name : '')}
                             </Text>
-                          </TouchableOpacity>
-                          <Text style={styles.label}>
-                            {item.product ? item.product : '-'}
-                          </Text>
-                          <Text style={styles.label}>
-                            {item.sales_person ? item.sales_person : '-'}
-                          </Text>
-                          <Text style={styles.label}>
-                            {item.village ? item.village : '-'}
-                          </Text>
+                          </View>
+                          <View style={styles.row}>
+                            <Image
+                              style={styles.personImg}
+                              source={require('../../assets/phone.png')}
+                            />
+                            <TouchableOpacity
+                              onPress={() => {
+                                makePhoneCall(item.phone_number);
+                              }}>
+                              <Text style={styles.value}>
+                                {item.phone_number}
+                              </Text>
+                            </TouchableOpacity>
+                          </View>
+                          <View style={styles.row}>
+                            <Image
+                              style={styles.personImg}
+                              source={require('../../assets/product.png')}
+                            />
+                            <Text style={styles.value}>
+                              {item.product ? item.product : '-'}
+                            </Text>
+                          </View>
+                          <View style={styles.row}>
+                            <Image
+                              style={styles.personImg}
+                              source={require('../../assets/location.png')}
+                            />
+                            <Text style={styles.value}>
+                              {item.village ? item.village : '-'}
+                            </Text>
+                          </View>
                         </View>
                       </View>
                     </View>
                     <View style={styles.rightDataStyle}>
-                      <Text style={styles.dateText}>
-                        Not Followed
-                      </Text>
-                      {item.sales_person && (<Text style={styles.salesText}>{item.sales_person}</Text>)}
+                      <Text style={styles.dateText}>Not Followed</Text>
+                      {item.sales_person && (
+                        <Text style={styles.salesText}>
+                          {item.sales_person}
+                        </Text>
+                      )}
                       <TouchableOpacity style={styles.dayBack}>
                         <TimeAgo date={item.date} />
                       </TouchableOpacity>
@@ -205,7 +208,11 @@ const NewEnquiry = () => {
           //   text2={'Currently, There is New Enquiry Not Available'}
           //   onConfirm={handleConfirm}
           // />
-          <Text style={styles.NoTaskStyle}>Currently, There is New Enquiry Not Available</Text>
+          <View style={styles.noEnquiryContainer}>
+            <Text style={styles.NoTaskStyle}>
+              Currently, There is New Enquiry Not Available
+            </Text>
+          </View>
         )}
       </View>
     </View>
@@ -247,11 +254,6 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginBottom: 7,
   },
-  label: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 5,
-  },
   content: {
     fontSize: 14,
     marginBottom: 10,
@@ -274,12 +276,6 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
-  },
-  personImg: {
-    width: 21,
-    height: 21,
-    marginRight: 8,
-    marginBottom: 5,
   },
   newImg: {
     width: 30,
@@ -398,19 +394,51 @@ const styles = StyleSheet.create({
   },
   dataContainer: {
     flexDirection: 'row',
+    alignItems: 'center',
   },
   iconContainer: {
-    alignItems: 'flex-start',
+    flexDirection: 'column',
+    alignItems: 'center',
   },
-  detailContainer: {
-    alignItems: 'flex-start',
+  textContainer: {
+    flex: 1,
+  },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 5,
+  },
+  personImg: {
+    width: 21,
+    height: 21,
+    marginRight: 8,
+  },
+  label: {
+    width: 80,
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  value: {
+    flex: 1,
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  noEnquiryContainer: {
+    backgroundColor: 'white',
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 3,
+    paddingVertical: 10,
   },
   NoTaskStyle: {
     fontSize: 16,
     fontWeight: 'bold',
     color: 'red',
     textAlign: 'center',
-    marginTop: 20,
     fontStyle: 'italic',
   },
 });
