@@ -12,7 +12,6 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import axios from 'axios';
-import {API_URL} from '@env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useDispatch, useSelector} from 'react-redux';
 import BackgroundImage from '../../assets/cover.jpg';
