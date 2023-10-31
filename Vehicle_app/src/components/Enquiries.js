@@ -68,7 +68,7 @@ const Enquiries = ({route}) => {
                 <TouchableOpacity
                   style={styles.perfomedTaskBtn}
                   onPress={() => {
-                    openTaskDetails(item);
+                    // openTaskDetails(item);
                   }}>
                   <Text style={[styles.listStyle, styles.taskPerformed]}>
                     {item.taskCompleted}/{item.taskcount}
@@ -89,7 +89,7 @@ const Enquiries = ({route}) => {
           </View>
         </View>
         <View>
-          <Text style={styles.enquiryLine}>Enquiries</Text>
+          <Text style={styles.enquiryLine}> Locked Enquiry</Text>
           <View style={styles.line} />
           {/* {loading ? (
           <CustomLoadingSpinner />

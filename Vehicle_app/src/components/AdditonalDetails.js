@@ -90,7 +90,7 @@ const AdditonalDetails = ({route}) => {
         uploadcallLog(durationInSeconds);
       }
       setAppState(nextAppState);
-    };
+    }; 
 
     const appStateSubscription = AppState.addEventListener(
       'change',
@@ -204,9 +204,14 @@ const AdditonalDetails = ({route}) => {
   };
 
   const sendWhatsAppMessage = whatsAppNumber => {
+    if (whatsAppNumber.length != 10) {
+      return;
+    }
+    const countryCode = '+91';
+    const fullNumber = `${countryCode}${whatsAppNumber}`;
     const encodedMessage = encodeURIComponent(whatsAppWelcomeMessage);
     Linking.openURL(
-      `whatsapp://send?phone=${whatsAppNumber}&text=${encodedMessage}`,
+      `whatsapp://send?phone=${fullNumber}&text=${encodedMessage}`,
     )
       .then(() => {
         console.log('WhatsApp Opening....');

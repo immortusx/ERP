@@ -13,7 +13,7 @@ import {API_URL} from '@env';
 import moment from 'moment';
 import LoadingSpinner from './subCom/LoadingSpinner';
 import CustomLoadingSpinner from './subCom/CustomLoadingSpinner';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 
 const Tasks = () => {
   const navigation = useNavigation();
@@ -38,6 +38,11 @@ const Tasks = () => {
       setLoading(false);
     });
   };
+  useFocusEffect(
+    React.useCallback(() => {
+      getUserTaskLists();
+    }, []),
+  );
   useEffect(() => {
     getUserTaskLists();
   }, []);
@@ -46,7 +51,7 @@ const Tasks = () => {
     navigation.navigate('Task Details', {taskDetails: taskDetails});
   };
   const redirectEnquiriesList = item => {
-    console.log(item, 'item')
+    console.log(item, 'item');
     navigation.navigate('Enquiries', {item: item});
   };
   return (
