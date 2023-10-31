@@ -24,98 +24,78 @@ const formatDate = datetime => {
 };
 
 const TaslList = ({route}) => {
+  const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
   const [selectedEmployeeId, setSelectedEmployeeId] = useState([]);
 
   const [userTaskList, setUserTaskList] = useState([]);
-  const [extractedData, setExtractedData] = useState([]);
   const [openStartDate, setOpenStartDate] = useState(false);
   const [openEndDate, setOpenEndDate] = useState(false);
   const [startDate, setstartDate] = useState('');
   const [EndDate, setEndDate] = useState('');
-
-  const [filteredData, setFilteredData] = useState([]);
-
-  const filterDataByDateRange = (start, end) => {
-    if (!start && !end) {
-      setFilteredData(selectedEmployeeId || []);
-      return;
-    }
-
-    const filtered = selectedEmployeeId.filter(item => {
-      const itemDate = new Date(item.datetime);
-      return itemDate >= new Date(start) && itemDate <= new Date(end);
-    });
-
-    setFilteredData(filtered);
-  };
+  const [showUser, setShowUser] = useState(false);
+  const [employeename, setEmployeeName] = useState('');
 
   useEffect(() => {
-    filterDataByDateRange(startDate, EndDate);
-  }, [startDate, EndDate]);
+    setstartDate(moment().subtract(7, 'days').format('YYYY-MM-DD'));
+    setEndDate(moment().format('YYYY-MM-DD'));
+  }, []);
 
-  const getUserTaskLists = async () => {
-    const url = `${API_URL}/api/get-user-task-list`;
+  const getEmployeeTaskLists = async (startDate, endDate) => {
+    const url = `${API_URL}/api/get-task-assign-employee-list/${startDate}/${endDate}`;
     const token = await AsyncStorage.getItem('rbacToken');
     const config = {
       headers: {
         token: token ? token : '',
       },
     };
-    setLoading(true);
     try {
+      setLoading(true);
       const response = await axios.get(url, config);
+      setLoading(false);
       if (response && response.data.result) {
         setUserTaskList(response.data.result);
-        const data = response.data.result.map(item => ({
-          id: item.id,
-          employee: item.employee,
-        }));
-        setExtractedData(data);
-        console.log(data, 'extractedDataextractedData');
       }
     } catch (error) {
-      console.error('Error fetching user task list:', error);
-    } finally {
-      setLoading(false);
+      console.error('Error fetching skelglasj:', error);
     }
   };
-  useEffect(() => {
-    getUserTaskLists();
-    console.log(extractedData, 'extractedDataextractedData');
-  }, []);
 
   useEffect(() => {
-    const fetchWorkReports = async () => {
-      setLoading(true);
-      for (const data of extractedData) {
-        console.log(data, 'extractedDataextractedData');
-        try {
-          const url = `${API_URL}/api/get-task-completed-by-employee/${data.id}`;
-          const token = await AsyncStorage.getItem('rbacToken');
-          const config = {
-            headers: {
-              token: token ? token : '',
-            },
-          };
+    if (startDate && EndDate) {
+      getEmployeeTaskLists(startDate, EndDate);
+    }
+  }, [startDate, EndDate]);
 
-          const response = await axios.get(url, config);
-
-          if (response.data && response.data.result) {
-            console.log(
-              response.data.result,
-              'response.data.resultresponse.data.result',
-            );
-            setSelectedEmployeeId(response.data.result);
-          }
-        } catch (error) {
-          console.error('Error fetching work report:', error);
-        }
+  const getuserTaskData = async (id, startDate, endDate) => {
+    // const Sdate = moment(startDate).format('YYYY-MM-DD');
+    // const Edate = moment(endDate).format('YYYY-MM-DD');
+    console.log(id, startDate, endDate, 'idididididi');
+    try {
+      const url = `${API_URL}/api/get-user-task-by-UserId/${id}/${startDate}/${endDate}`;
+      const token = await AsyncStorage.getItem('rbacToken');
+      const config = {
+        headers: {
+          token: token ? token : '',
+        },
+      };
+      // setLoading(true);
+      const response = await axios.get(url, config);
+      if (response.data && response.data.result) {
+        console.log(
+          'har %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%',
+          response.data.result,
+          '%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% har',
+        );
+        const employeeName = response.data.result[0].employee;
+        setEmployeeName(employeeName);
+        setSelectedEmployeeId(response.data.result);
+        setShowUser(true);
       }
-      setLoading(false);
-    };
-    fetchWorkReports();
-  }, [extractedData]);
+    } catch (error) {
+      console.error('Error fetching usedfkdf:', error);
+    }
+  };
 
   if (loading) {
     return <CustomLoadingSpinner />;
@@ -134,10 +114,15 @@ const TaslList = ({route}) => {
     setOpenEndDate(false);
   };
 
+  const handletaskReport = data => {
+    console.log(data, 'uesrdata');
+    navigation.navigate('Detail Task Report List', {taskreport: data});
+  };
+
   return (
-    <View style={styles.container}>
-      <View style={{backgroundColor: 'white', padding: 10}}>
-        <View style={styles.enquiryBox}>
+    <View style={styles.modalContainer}>
+      <View style={styles.modalContent}>
+        <View style={styles.touchableOpacityStyle}>
           <TouchableOpacity
             style={{
               width: '100%',
@@ -167,7 +152,7 @@ const TaslList = ({route}) => {
             onCancel={() => setOpenStartDate(false)}
           />
         </View>
-        <View style={styles.enquiryBox}>
+        <View style={styles.touchableOpacityStyle}>
           <TouchableOpacity
             style={{
               width: '100%',
@@ -195,53 +180,60 @@ const TaslList = ({route}) => {
             onCancel={() => setOpenStartDate(false)}
           />
         </View>
-      </View>
-      {filteredData.length > 0 ? (
-        <FlatList
-          data={filteredData}
-          keyExtractor={(item, index) => `${index}`}
-          renderItem={({item, index}) => {
-            return (
-              <ScrollView>
-                <TouchableWithoutFeedback>
-                  <View key={index} style={styles.enquiryBox}>
-                    <View style={styles.dataStyle}>
-                      <View style={styles.lablecontent}>
-                        <Text style={{fontSize: 18, color: 'white'}}>
-                          {index + 1}. {item.Employee}
+        {showUser && selectedEmployeeId ? (
+          <>
+            <View style={styles.categoryItem}>
+              <Text style={styles.categoryText}>{employeename}</Text>
+            </View>
+            <FlatList
+              data={selectedEmployeeId}
+              keyExtractor={(item, index) => `${index}`}
+              renderItem={({item, index}) => {
+                return (
+                  <ScrollView>
+                    <TouchableOpacity
+                      style={styles.categoryItem}
+                      onPress={() => handletaskReport(item)}>
+                      <View style={styles.taskstyle}>
+                        <Text style={styles.categoryText}>
+                          {index + 1}. {item.task_name}
                         </Text>
-                        <Text style={{fontSize: 18, color: 'white'}}>
-                          {item.task_name}
+                        <Text style={styles.categoryText}>
+                          {item.taskcount}
                         </Text>
                       </View>
-                      <Text style={styles.label}>
-                        <Text style={{color: 'black'}}>TaskType</Text> -
-                        {item.tasktype_name}
-                      </Text>
-                      <Text style={styles.label}>
-                        <Text style={{color: 'black'}}>Date</Text> -
-                        {formatDate(item.datetime)}
-                      </Text>
-                      <Text style={styles.label}>
-                        <Text style={{color: 'black'}}>Work-Discription</Text> -
-                        {item.work_description}
-                      </Text>
-                      <Text style={styles.label}>
-                        <Text style={{color: 'black'}}>SpendTime</Text> -
-                        {item.spendtime}
-                      </Text>
-                    </View>
-                  </View>
-                </TouchableWithoutFeedback>
-              </ScrollView>
-            );
-          }}
-        />
-      ) : (
-        <Text style={{fontSize: 18, margin: 20, color: 'red'}}>
-          No data available for the selected date range !
-        </Text>
-      )}
+                    </TouchableOpacity>
+                  </ScrollView>
+                );
+              }}
+            />
+          </>
+        ) : userTaskList.length > 0 ? (
+          <FlatList
+            data={userTaskList}
+            keyExtractor={(item, index) => `${index}`}
+            renderItem={({item, index}) => {
+              return (
+                <ScrollView>
+                  <TouchableOpacity
+                    style={styles.categoryItem}
+                    onPress={() =>
+                      getuserTaskData(item.id, startDate, EndDate)
+                    }>
+                    <Text style={styles.categoryText}>
+                      {index + 1}. {item.employee}
+                    </Text>
+                  </TouchableOpacity>
+                </ScrollView>
+              );
+            }}
+          />
+        ) : (
+          <Text style={styles.NoTaskStyle}>
+            No task available for the selected date range!
+          </Text>
+        )}
+      </View>
     </View>
   );
 };
@@ -255,36 +247,61 @@ const styles = StyleSheet.create({
     width: 25,
     height: 25,
   },
-  lablecontent: {
-    backgroundColor: '#2471A2',
-    paddingVertical: 5,
-    paddingHorizontal: 5,
-    width: '100%',
+  modalContainer: {
+    flex: 1,
+    backgroundColor: '#F5EEF8',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    paddingHorizontal: 20,
+    paddingVertical: 20,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.25,
+    elevation: 4,
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    marginVertical: 0.9,
+  },
+  categoryItem: {
+    backgroundColor: '#DFECFF',
+    padding: 10,
+    borderRadius: 3,
+    marginBottom: 10,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 3,
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
-
+  categoryText: {
+    alignItems: 'center',
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#1A5276',
+  },
+  taskstyle: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  touchableOpacityStyle: {
+    backgroundColor: '#2471A3',
+    padding: 10,
+    borderRadius: 20,
+    marginVertical: 8,
+  },
   label: {
+    color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 5,
   },
-  content: {
-    fontSize: 14,
-    marginBottom: 10,
-  },
-  personImg: {
-    width: 20,
-    height: 20,
-  },
-  newImg: {
-    width: 30,
-    height: 30,
-  },
-  newContainer: {
-    alignItems: 'center',
-    margin: 2,
-  },
+
   enquiryBox: {
     marginTop: 10,
     flexDirection: 'row',
@@ -306,53 +323,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
   },
-  dataStyle: {
-    flexDirection: 'column',
-    alignItems: 'flex-start',
-    flex: 1,
-  },
-  rightDataStyle: {
-    flexDirection: 'column',
-    alignItems: 'flex-end',
-    flexShrink: 1,
-    marginLeft: 16,
-  },
-  daysContainer: {
-    position: 'absolute',
-    top: -30,
-    right: -10,
-  },
-  dateText: {
-    marginBottom: 4,
-    color: '#21618C',
-    fontSize: 10,
+  NoTaskStyle: {
+    fontSize: 16,
     fontWeight: 'bold',
-  },
-
-  dayText: {
-    top: -9,
-    right: -6,
-    color: '#A93226',
-    fontSize: 12,
-    fontWeight: 'bold',
-  },
-  dayBack: {
-    // backgroundColor: '#2E86C1',
-    borderRadius: 30,
-    color: 'white',
-    padding: 2,
-  },
-  discussionButton: {
-    backgroundColor: '#2ECC71',
-    borderRadius: 20,
-    borderColor: '#138D75',
-    borderWidth: 0.1,
-    paddingHorizontal: 5,
-    right: -9,
-  },
-  discussionText: {
-    color: 'white',
+    color: 'red',
     textAlign: 'center',
+    marginTop: 20,
+    fontStyle: 'italic',
   },
 });
 export default TaslList;
