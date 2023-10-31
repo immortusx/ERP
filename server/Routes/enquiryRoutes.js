@@ -289,6 +289,8 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
   // Add a query to check if a record with the same mobile number already exists
   const checkMobileQuery = `SELECT * FROM customers WHERE phone_number = '${mobileNumber}'`;
   console.log(checkMobileQuery, "checkMobileQuery");
+
+  let taskStartTime = new Date();
   db.query(checkMobileQuery, async (err, existingCustomer) => {
     if (err) {
       console.log({ isSuccess: false, result: err });
@@ -326,7 +328,6 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
       const url = `INSERT INTO customers (first_name, middle_name, last_name, phone_number, whatsapp_number, email, is_active, state, district, taluka, village) VALUES ('${firstName}', '${fatherName}', '${lastName}', '${mobileNumber}', '${whatsappNumber}', '${email}', '${isActive}', '${state}', '${district}', '${tehsil}', '${village}')`;
 
       console.log("url", url);
-
       db.query(url, async (err, result) => {
         if (err) {
           console.log({ isSuccess: false, result: err });
@@ -360,7 +361,7 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
               });
 
               if (oldTractorOwned === "Yes") {
-                const urlSql = `INSERT INTO manufacturer_details (enquiry_id, maker, modalName, variantName, year_of_manufacture, condition_of, old_tractor) VALUES ('${insertedEnquiryId}', '${manufacturers}', '${product}', '${variant}', '${modelYear}', '${condition}', '${oldTractorOwned}')`;
+                const urlSql = `INSERT INTO manufactur_details (enquiry_id, maker, modalName, variantName, year_of_manufacture, condition_of, old_tractor) VALUES ('${insertedEnquiryId}', '${manufacturers}', '${product}', '${variant}', '${modelYear}', '${condition}', '${oldTractorOwned}')`;
 
                 db.query(urlSql, async (err, result) => {
                   if (err) {
@@ -369,10 +370,37 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
                   } else {
                     console.log({ isSuccess: "success", result: "success" });
                     // res.send({ isSuccess: "success", result: "success" });
+                    const uploadEnquiryWorklog = () => {
+                      let workDescription = `Enquiry Added ${firstName} ${lastName} which phone ${mobileNumber}`;
+                      let tasktype = 1;
+                      let task = 11;
+                      let cdate = moment().format('YYYY-MM-DD H:m:s');
+                      let taskEndTime = new Date();
+                      let spendTime = taskEndTime - taskStartTime;
+                      let spendTimeSeconds = Math.floor(spendTime / 1000);
+                      let hours = Math.floor(spendTimeSeconds / 3600);
+                      let minutes = Math.floor((spendTimeSeconds % 3600) / 60);
+                      let seconds = spendTimeSeconds % 60;
+                      let theSpendTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                      console.log(theSpendTime, 'spendTime');
+
+                      let userID = req.myData.userId;
+                      const workLogSql = `INSERT INTO worklog (user_id, tasktype, task, work_description, datetime, spendtime) VALUES('${userID}','${tasktype}','${task}','${workDescription}','${cdate}','${theSpendTime}')`;
+                      db.query(workLogSql, async (err, result) => {
+                        if (err) {
+                          console.log({ isSuccess: false, result: err });
+                          // res.send({ isSuccess: false, result: "error" });
+                        } else {
+                          console.log({ isSuccess: "success", result: "success" });
+                          // res.send({ isSuccess: "success", result: "success" });
+                        }
+                      });
+                    }
+                    uploadEnquiryWorklog();
                   }
                 });
               } else if (oldTractorOwned === "No") {
-                const urlSql = `INSERT INTO manufacturer_details (enquiry_id, old_tractor) VALUES ('${insertedEnquiryId}', '${oldTractorOwned}')`;
+                const urlSql = `INSERT INTO manufactur_details (enquiry_id, old_tractor) VALUES ('${insertedEnquiryId}', '${oldTractorOwned}')`;
                 db.query(urlSql, (err, result) => {
                   if (err) {
                     console.log(err);
@@ -381,6 +409,34 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
                       result: "success",
                       isSuccess: "success",
                     });
+                    const uploadEnquiryWorklog = () => {
+                      const salesperson = getSSP()
+                      let workDescription = `For Enquiry ${firstName} which phone ${mobileNumber} by ${req.params.sales_person}`;
+                      let tasktype = 1;
+                      let task = 11;
+                      let cdate = moment().format('YYYY-MM-DD H:m:s');
+                      let taskEndTime = new Date();
+                      let spendTime = taskEndTime - taskStartTime;
+                      let spendTimeSeconds = Math.floor(spendTime / 1000);
+                      let hours = Math.floor(spendTimeSeconds / 3600);
+                      let minutes = Math.floor((spendTimeSeconds % 3600) / 60);
+                      let seconds = spendTimeSeconds % 60;
+                      let theSpendTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                      console.log(theSpendTime, 'spendTime');
+
+                      let userID = req.myData.userId;
+                      const workLogSql = `INSERT INTO worklog (user_id, tasktype, task, work_description, datetime, spendtime) VALUES('${userID}','${tasktype}','${task}','${workDescription}','${cdate}','${theSpendTime}')`;
+                      db.query(workLogSql, async (err, result) => {
+                        if (err) {
+                          console.log({ isSuccess: false, result: err });
+                          // res.send({ isSuccess: false, result: "error" });
+                        } else {
+                          console.log({ isSuccess: "success", result: "success" });
+                          // res.send({ isSuccess: "success", result: "success" });
+                        }
+                      });
+                    }
+                    uploadEnquiryWorklog();
                     // res.send({
                     //   isSuccess: "success",
                     //   result: "success",
@@ -442,17 +498,17 @@ router.post(
       const newEnquiryDate = await getDateInFormate(enquiryDate);
 
       const updateCustomerSql = `
-      UPDATE customers 
-      SET 
+      UPDATE customers
+      SET
         first_name = ?,
-        middle_name = ?, 
-        last_name = ?, 
-        phone_number = ?, 
-        whatsapp_number = ?, 
-        email = ?, 
-        state = ?, 
-        district = ?, 
-        taluka = ?, 
+        middle_name = ?,
+        last_name = ?,
+        phone_number = ?,
+        whatsapp_number = ?,
+        email = ?,
+        state = ?,
+        district = ?,
+        taluka = ?,
         village = ?
       WHERE id = ?`;
 
@@ -481,8 +537,8 @@ router.post(
             console.log({ isSuccess: "success", result: "success" });
 
             const updateEnquirySql = `
-            UPDATE enquiries 
-            SET 
+            UPDATE enquiries
+            SET
               branch_id = ?,
               enquiry_category_id = ?,
               salesperson_id = ?,
