@@ -87,7 +87,7 @@ const Splash = ({navigation}) => {
         <Text style={styles.agencyName}>{agency.agencyName}</Text>
       </View>
       <View style={styles.bottomContent}>
-        <ActivityIndicator animating={showSpinner} size={30} color="#2471A3" />
+        <ActivityIndicator animating={showSpinner} size={30} color="grey" />
       </View>
     </View>
   );
@@ -105,14 +105,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   logoContainer: {
-    shadowColor: 'rgba(0, 0, 0, 0.2)',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.8,
-    shadowRadius: 4,
-    elevation: 5,
     borderRadius: 150,
     padding: 6
   },
