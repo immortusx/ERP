@@ -12,26 +12,26 @@ import {
   Modal,
   ActivityIndicator,
 } from 'react-native';
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-native-date-picker';
 import DropDownPicker from 'react-native-dropdown-picker';
-import {Dropdown} from 'react-native-element-dropdown';
+import { Dropdown } from 'react-native-element-dropdown';
 import CustomRadioButton from './subCom/CustomRadioButton';
-import {useDispatch, useSelector} from 'react-redux';
-import {clearEnquiryState, setEnquiryDb} from '../redux/slice/addEnquirySlice';
-import {saveEnquiryModalForm} from '../redux/slice/addEnquiryModal';
-import {saveModalData} from '../redux/slice/modalDataSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { clearEnquiryState, setEnquiryDb } from '../redux/slice/addEnquirySlice';
+import { saveEnquiryModalForm } from '../redux/slice/addEnquiryModal';
+import { saveModalData } from '../redux/slice/modalDataSlice';
 import SweetSuccessAlert from './subCom/SweetSuccessAlert';
-import {getVillageData} from '../redux/slice/getAllVillageSlice';
+import { getVillageData } from '../redux/slice/getAllVillageSlice';
 import {
   clearFastEnquiryState,
   setFastEnquiryDb,
 } from '../redux/slice/addFastEnquirySlice';
-import {getEnquiryData} from '../redux/slice/getEnquirySlice';
-import {useNavigation} from '@react-navigation/native';
+import { getEnquiryData } from '../redux/slice/getEnquirySlice';
+import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {API_URL} from '@env';
+import { API_URL } from '@env';
 const FastEnquiry = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -40,11 +40,11 @@ const FastEnquiry = () => {
     state => state.fastEnquiry.fastEnquiryState,
   );
   const getVillageState = useSelector(state => state.getVillageState);
-  const {isFetching, isSuccess, isError, result} = getVillageState;
-  const {maker, modalName, variantName, year, condition_of} = useSelector(
+  const { isFetching, isSuccess, isError, result } = getVillageState;
+  const { maker, modalName, variantName, year, condition_of } = useSelector(
     state => state.modalData,
   );
-  const {manufacturer, modal, variant} = useSelector(
+  const { manufacturer, modal, variant } = useSelector(
     state => state.manufacturerDetails,
   );
   const profileData = useSelector(
@@ -105,10 +105,10 @@ const FastEnquiry = () => {
 
   let newTractorId = 2;
   const conditionType = [
-    {label: 'Good', value: '1'},
-    {label: 'Below Average', value: '2'},
-    {label: 'Average', value: '3'},
-    {label: 'Very Good', value: '4'},
+    { label: 'Good', value: '1' },
+    { label: 'Below Average', value: '2' },
+    { label: 'Average', value: '3' },
+    { label: 'Very Good', value: '4' },
   ];
 
   const getCurrentCategoriesField = async categoryId => {
@@ -169,10 +169,10 @@ const FastEnquiry = () => {
               placeholder="Enter Phone Number"
               autoCapitalize="none"
               onChangeText={value => onChangeHandler(value, 'phone')}
-              maxLength={10}
+              maxLength={15}
             />
             {mobileNumberError ? (
-              <Text style={{color: 'red'}}>{mobileNumberError}</Text>
+              <Text style={{ color: 'red' }}>{mobileNumberError}</Text>
             ) : null}
           </View>
         );
@@ -187,10 +187,10 @@ const FastEnquiry = () => {
               placeholder="Enter WhatsApp Number"
               autoCapitalize="none"
               onChangeText={value => onChangeHandler(value, 'whatsappno')}
-              maxLength={10}
+              maxLength={15}
             />
             {whatsNumberError ? (
-              <Text style={{color: 'red'}}>{whatsNumberError}</Text>
+              <Text style={{ color: 'red' }}>{whatsNumberError}</Text>
             ) : null}
           </View>
         );
@@ -198,15 +198,15 @@ const FastEnquiry = () => {
       }
       case 'taluko': {
         return (
-          <View style={{marginBottom: 5}}>
+          <View style={{ marginBottom: 5 }}>
             <Text style={styles.label}>Select Taluka *</Text>
             <View style={styles.enquirySourceContainer}>
               {/* {renderLabel()} */}
               <Dropdown
                 style={[
                   styles.dropdown,
-                  isFocus && {borderColor: 'blue'},
-                  {paddingHorizontal: 5},
+                  isFocus && { borderColor: 'blue' },
+                  { paddingHorizontal: 5 },
                 ]}
                 placeholderStyle={styles.placeholderStyle}
                 selectedTextStyle={styles.selectedTextStyle}
@@ -232,15 +232,15 @@ const FastEnquiry = () => {
       case 'village': {
         return (
           <>
-            <View style={{marginBottom: 5}}>
+            <View style={{ marginBottom: 5 }}>
               <Text style={styles.label}>Select Village *</Text>
               <View style={styles.enquirySourceContainer}>
                 {/* {renderLabel()} */}
                 <Dropdown
                   style={[
                     styles.dropdown,
-                    isFocus && {borderColor: 'blue'},
-                    {paddingHorizontal: 5},
+                    isFocus && { borderColor: 'blue' },
+                    { paddingHorizontal: 5 },
                   ]}
                   placeholderStyle={styles.placeholderStyle}
                   selectedTextStyle={styles.selectedTextStyle}
@@ -261,12 +261,12 @@ const FastEnquiry = () => {
               </View>
               {loading ? (
                 <ActivityIndicator
-                  style={{alignItems: 'flex-start'}}
+                  style={{ alignItems: 'flex-start' }}
                   size={12}
                   color="#3498DB"
                 />
               ) : (
-                <Text style={{color: 'green', fontWeight: '400'}}>
+                <Text style={{ color: 'green', fontWeight: '400' }}>
                   {salePerson
                     ? 'Sales Person :-' + ' ' + salePerson.toUpperCase()
                     : ''}
@@ -370,7 +370,7 @@ const FastEnquiry = () => {
 
   useEffect(() => {
     if (result) {
-      const {talukaName, villageList} = result.result;
+      const { talukaName, villageList } = result.result;
       setBranchTaluka(talukaName);
       setResultData(villageList);
     }
@@ -393,15 +393,15 @@ const FastEnquiry = () => {
   };
   const onChangeHandler = (value, field) => {
     if (field === 'phone') {
-      if (!/^\d{10}$/.test(value)) {
-        setMobileNumberError('Invalid mobile number. It should be 10 digits.');
+      if (value.length < 10) {
+        setMobileNumberError('Invalid mobile number.');
       } else {
         setMobileNumberError('');
       }
     }
     if (field === 'whatsappno') {
-      if (!/^\d{10}$/.test(value)) {
-        setWhatNumberError('Invalid WhatsApp number. It should be 10 digits.');
+      if (value.length < 10) {
+        setWhatNumberError('Invalid WhatsApp number.');
       } else {
         setWhatNumberError('');
       }
@@ -529,7 +529,7 @@ const FastEnquiry = () => {
           <View style={styles.categoryBox}>
             <View>
               <Text
-                style={{fontWeight: 'bold', color: '#2E86C1', marginBottom: 5}}>
+                style={{ fontWeight: 'bold', color: '#2E86C1', marginBottom: 5 }}>
                 Category
               </Text>
               <View style={styles.enquirySourceContainer}>
@@ -537,8 +537,8 @@ const FastEnquiry = () => {
                 <Dropdown
                   style={[
                     styles.dropdown,
-                    isFocus && {borderColor: 'blue'},
-                    {paddingHorizontal: 5},
+                    isFocus && { borderColor: 'blue' },
+                    { paddingHorizontal: 5 },
                   ]}
                   placeholderStyle={styles.placeholderStyle}
                   selectedTextStyle={styles.selectedTextStyle}
@@ -567,14 +567,14 @@ const FastEnquiry = () => {
                 })
               ) : (
                 <Text
-                  style={{color: 'grey', fontSize: 16, textAlign: 'center'}}>
+                  style={{ color: 'grey', fontSize: 16, textAlign: 'center' }}>
                   There are no selected fields
                 </Text>
               )}
             </View>
           )}
         </View>
-        <View style={{paddingHorizontal: 15, marginTop: 20}}>
+        <View style={{ paddingHorizontal: 15, marginTop: 20 }}>
           <TouchableOpacity style={styles.submitButton} onPress={submitEnquiry}>
             <Text style={styles.submitButtonText}>Submit</Text>
           </TouchableOpacity>

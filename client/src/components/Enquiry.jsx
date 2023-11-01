@@ -958,6 +958,7 @@ export default function Enquiry({ workFor, villageId }) {
               autoComplete="false"
               type="text"
               name="mobileNumber"
+              maxLength={15}
               defaultValue={enquiryData.mobileNumber}
             />
           </section>
@@ -975,6 +976,7 @@ export default function Enquiry({ workFor, villageId }) {
               className="myInput inputElement"
               autoComplete="false"
               type="text"
+              maxLength={15}
               name="whatsappNumber"
               defaultValue={enquiryData.whatsappNumber}
             />

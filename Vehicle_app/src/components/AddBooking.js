@@ -317,6 +317,7 @@ const AddBooking = ({ item }) => {
             <TextInput
               style={styles.inputField}
               placeholder="Enter Phone Number"
+              maxLength={15}
               onChangeText={value => onChangeInputField(value, 'phone')}
               value={deliveryData.phone}
             />
