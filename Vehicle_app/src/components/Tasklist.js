@@ -43,7 +43,7 @@ const TaslList = () => {
         token: token ? token : '',
       },
     };
-    setLoading(true)
+    setLoading(true);
     console.log(config);
     await axios.get(url, config).then(response => {
       if (response) {
@@ -51,7 +51,7 @@ const TaslList = () => {
         setUserTaskList(response.data.result);
       }
     });
-    setLoading(false)
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -61,13 +61,12 @@ const TaslList = () => {
   }, [startDate, EndDate]);
 
   const openUserTaskList = id => {
-   
-    console.log(id, startDate, EndDate, 'krkefktivirgidi')
+    console.log(id, startDate, EndDate, 'krkefktivirgidi');
     const userParam = {
       userId: id,
       startDate: startDate,
-      EndDate: EndDate
-    }
+      EndDate: EndDate,
+    };
     navigation.navigate('User Task List', {userParam: userParam});
   };
 
@@ -90,14 +89,11 @@ const TaslList = () => {
 
   return (
     <View style={styles.modalContainer}>
-      <View style={styles.modalContent}>
+      <View style={styles.textStyle}>
         <View style={styles.touchableOpacityStyle}>
           <TouchableOpacity
             style={{
-              width: '100%',
               flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
             }}
             onPress={() => {
               setOpenStartDate(true);
@@ -117,16 +113,14 @@ const TaslList = () => {
             isVisible={openStartDate}
             onConfirm={handleCalendarDate}
             mode="date"
+            // handleCalendarDate={handleCalendarDate}
             onCancel={() => setOpenStartDate(false)}
           />
         </View>
         <View style={styles.touchableOpacityStyle}>
           <TouchableOpacity
             style={{
-              width: '100%',
               flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
             }}
             onPress={() => {
               setOpenEndDate(true);
@@ -148,6 +142,8 @@ const TaslList = () => {
             onCancel={() => setOpenStartDate(false)}
           />
         </View>
+      </View>
+      <View style={styles.modalContent}>
         {userTaskList.length > 0 ? (
           <FlatList
             data={userTaskList}
@@ -181,9 +177,21 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F5EEF8',
   },
+  label: {
+    color: 'white',
+    fontSize: 14,
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  textStyle: {
+    backgroundColor: 'white',
+    paddingVertical: 5,
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+  },
   dateImg: {
-    width: 25,
-    height: 25,
+    width: 20,
+    height: 20,
   },
   modalContainer: {
     flex: 1,
@@ -192,7 +200,7 @@ const styles = StyleSheet.create({
   modalContent: {
     backgroundColor: 'white',
     paddingHorizontal: 20,
-    paddingVertical: 20,
+    paddingVertical: 5,
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.25,
@@ -232,12 +240,6 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 20,
     marginVertical: 8,
-  },
-  label: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 5,
   },
 
   enquiryBox: {

@@ -100,14 +100,11 @@ const TaslList = ({route}) => {
 
   return (
     <View style={styles.modalContainer}>
-      <View style={styles.modalContent}>
+      <View style={styles.textStyle}>
         <View style={styles.touchableOpacityStyle}>
           <TouchableOpacity
             style={{
-              width: '100%',
               flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
             }}
             onPress={() => {
               setOpenStartDate(true);
@@ -127,16 +124,14 @@ const TaslList = ({route}) => {
             isVisible={openStartDate}
             onConfirm={handleCalendarDate}
             mode="date"
+            // handleCalendarDate={handleCalendarDate}
             onCancel={() => setOpenStartDate(false)}
           />
         </View>
         <View style={styles.touchableOpacityStyle}>
           <TouchableOpacity
             style={{
-              width: '100%',
               flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
             }}
             onPress={() => {
               setOpenEndDate(true);
@@ -158,6 +153,8 @@ const TaslList = ({route}) => {
             onCancel={() => setOpenStartDate(false)}
           />
         </View>
+      </View>
+      <View style={styles.modalContent}>
         <View style={styles.categoryItem}>
           <Text style={styles.categoryText}>{employeename}</Text>
         </View>
@@ -169,8 +166,7 @@ const TaslList = ({route}) => {
               <ScrollView>
                 <TouchableOpacity
                   style={styles.categoryItem}
-                  onPress={() => handletaskReport(item)}
-                >
+                  onPress={() => handletaskReport(item)}>
                   <View style={styles.taskstyle}>
                     <Text style={styles.categoryText}>
                       {index + 1}. {item.task_name}
@@ -192,9 +188,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F5EEF8',
   },
+  textStyle: {
+    backgroundColor: 'white',
+    paddingVertical: 5,
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+  },
   dateImg: {
-    width: 25,
-    height: 25,
+    width: 20,
+    height: 20,
   },
   modalContainer: {
     flex: 1,
@@ -203,7 +205,7 @@ const styles = StyleSheet.create({
   modalContent: {
     backgroundColor: 'white',
     paddingHorizontal: 20,
-    paddingVertical: 20,
+    paddingVertical: 5,
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.25,
@@ -246,7 +248,7 @@ const styles = StyleSheet.create({
   },
   label: {
     color: 'white',
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: 'bold',
     marginBottom: 5,
   },

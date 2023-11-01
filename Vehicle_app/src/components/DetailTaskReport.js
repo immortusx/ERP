@@ -37,14 +37,11 @@ const DetailTaskReport = ({route}) => {
   };
   return (
     <View style={styles.modalContainer}>
-      <View style={styles.modalContent}>
+      <View style={styles.textStyle}>
         <View style={styles.touchableOpacityStyle}>
           <TouchableOpacity
             style={{
-              width: '100%',
               flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
             }}
             onPress={() => {
               setOpenStartDate(true);
@@ -71,10 +68,7 @@ const DetailTaskReport = ({route}) => {
         <View style={styles.touchableOpacityStyle}>
           <TouchableOpacity
             style={{
-              width: '100%',
               flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
             }}
             onPress={() => {
               setOpenEndDate(true);
@@ -96,7 +90,8 @@ const DetailTaskReport = ({route}) => {
             onCancel={() => setOpenStartDate(false)}
           />
         </View>
-
+      </View>
+      <View style={styles.modalContent}>
         <TouchableOpacity style={styles.taskStyle}>
           <Text style={styles.taskTitle}>{data.employee}</Text>
           <Text style={styles.taskTitle}>{data.task_name}</Text>
@@ -145,18 +140,24 @@ const styles = StyleSheet.create({
   },
   label: {
     color: 'white',
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: 'bold',
     marginBottom: 5,
   },
+  textStyle:{
+    backgroundColor:'white',
+    paddingVertical:5,
+flexDirection:"row",
+justifyContent:"space-evenly"
+  },
   dateImg: {
-    width: 25,
-    height: 25,
+    width: 20,
+    height: 20,
   },
   modalContent: {
     backgroundColor: 'white',
     paddingHorizontal: 20,
-    paddingVertical: 20,
+    paddingVertical: 5,
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.25,
