@@ -11,6 +11,7 @@ import {
   Image,
   ActivityIndicator,
 } from 'react-native';
+import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useDispatch, useSelector} from 'react-redux';
 import BackgroundImage from '../../assets/cover.jpg';
@@ -24,6 +25,7 @@ const Login = ({navigation}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isLoggedIn, setLoggedIn] = useState(false);
   const [updateScreen, setUpdateScreen] = useState(false);
+  const [agencydata, setAgencyData] = useState([]);
   const loginState = useSelector(state => state.getLoginSlice.loginState);
   const appVersion = '1.0';
   const updated = '1.2';
@@ -37,6 +39,7 @@ const Login = ({navigation}) => {
   const profileData = useSelector(
     state => state.getUserProfileSlice.profile.currentUserData,
   );
+ 
   const [loginData, setLoginData] = useState({
     username: '',
     password: '',
