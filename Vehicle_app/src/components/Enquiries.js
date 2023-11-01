@@ -19,15 +19,30 @@ import {useNavigation} from '@react-navigation/native';
 const Enquiries = ({route}) => {
   const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
+  const [currentEnquiryIndex, setCurrentEnquiryIndex] = useState(1);
   const [enquiriesList, setEnquiriesList] = useState([]);
   const [categoryName, setCategoryName] = useState(null);
   const {item} = route.params;
+
   useEffect(() => {
     if (item) {
       console.log(item, 'itekem');
-      getLockedEnquiries(item.id, item.task, 1);
+      getLockedEnquiries(item.id, item.task, currentEnquiryIndex);
     }
   }, [item]);
+  const handleNextEnquiry = () => {
+    console.log('Next');
+    setCurrentEnquiryIndex(currentEnquiryIndex + 1);
+  };
+  const handleEnquirySkip = () => {
+    console.log('Skip');
+    setCurrentEnquiryIndex(currentEnquiryIndex + 1);
+  };
+  useEffect(() => {
+    if (currentEnquiryIndex) {
+      getLockedEnquiries(item.id, item.task, currentEnquiryIndex);
+    }
+  }, [currentEnquiryIndex]);
   const getLockedEnquiries = async (employeeId, taskId, indexNo) => {
     const url = `${API_URL}/api/enquiry/getworks/${employeeId}/${taskId}/${indexNo}`;
     console.log('get enquries', url);
@@ -52,7 +67,8 @@ const Enquiries = ({route}) => {
     <View style={StyleSheet.mainContainer}>
       <View style={styles.container}>
         <TouchableOpacity style={styles.touchableOpacityStyle}>
-          <Text style={styles.taskListStyle}>{categoryName}</Text>
+          <Text style={styles.taskListStyle}>{item.employee}</Text>
+          <Text style={styles.taskListStyle}>{item.task_name}</Text>
         </TouchableOpacity>
         <View style={styles.contentContainer}>
           <View style={styles.dataContainer}>
@@ -136,17 +152,25 @@ const Enquiries = ({route}) => {
                         </View>
                       </View>
                     </View>
-                    <TouchableOpacity style={styles.buttonTouchableStyle}>
-                      <Button title="SKIP" />
-                      <Button title="NEXT" />
-                    </TouchableOpacity>
                   </>
                 );
               }}
             />
           ) : (
-            <Text style={styles.NoTaskStyle}>Task Not Performed</Text>
+            <Text style={styles.NoTaskStyle}>Task Completed!</Text>
           )}
+          <TouchableOpacity style={styles.buttonTouchableStyle}>
+            <TouchableOpacity
+              style={styles.buttonContainer}
+              onPress={handleEnquirySkip}>
+              <Text style={styles.skipStyle}>SKIP</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.buttonContainer}
+              onPress={handleNextEnquiry}>
+              <Text style={styles.nextStyle}>NEXT</Text>
+            </TouchableOpacity>
+          </TouchableOpacity>
         </View>
       </View>
     </View>
@@ -174,6 +198,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#2471A3',
     padding: 10,
     borderRadius: 33,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   taskListStyle: {
     color: 'white',
@@ -229,11 +255,12 @@ const styles = StyleSheet.create({
     backgroundColor: 'lightblue',
     paddingHorizontal: 12,
     borderRadius: 20,
+    marginBottom: 2,
   },
   NoTaskStyle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: 'red',
+    color: 'green',
     textAlign: 'center',
     marginTop: 20,
     fontStyle: 'italic',
@@ -286,6 +313,30 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
+  },
+  buttonContainer: {
+    // backgroundColor: '#2980B9',
+    // borderRadius: 8,
+    // paddingHorizontal: 20,
+    // paddingVertical: 8,
+  },
+  skipStyle: {
+    backgroundColor: '#5DADE2',
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: 'white',
+    borderRadius: 8,
+    paddingHorizontal: 20,
+    paddingVertical: 7,
+  },
+  nextStyle: {
+    backgroundColor: '#F1C40F',
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: 'white',
+    borderRadius: 8,
+    paddingHorizontal: 20,
+    paddingVertical: 7,
   },
 });
 
