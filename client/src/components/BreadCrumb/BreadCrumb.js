@@ -51,28 +51,59 @@ const BreadCrumb = () => {
         const currentLink = `/${array.slice(0, index + 1).join('')}`;
         const isLastCrumb = index === array.length - 1;
 
-        const listItem = document.createElement('li');
-        const link = document.createElement('a');
-        link.href = currentLink;
-        link.textContent = translations[currentLanguage][crumb.replace(/-/g, " ")] || crumb.replace(/-/g, " ");
-        link.className = "crumb-link";
-        link.style.color = isLastCrumb ? "textPrimary" : "inherit";
+              {/* <ul id="breadcrumb">
+                <li><Link to="/">Home</Link></li>
+                <li><Link to="/profile">Profile</Link></li>
+                <li><Link to="/profile/agency">Agency</Link></li>
+              </ul>   */}
+{/* 
+              <Breadcrumbs aria-label="breadcrumb" separator="">
+                {crumbs.map((crumb, index, array) => {
+                  const currentLink = `/${array.slice(0, index + 1).join('')}`;
+                  const isLastCrumb = index === array.length - 1;
+                  const isCrumb = array.filter((crumb) => crumb !== 'home');
+                  return (
+                    <Typography key={index} color="textPrimary">
+                      <Link
+                        className="crumb-link"
+                        to={currentLink}
+                        color={isLastCrumb ? "textPrimary" : "inherit"}
+                      >
+                        {translations[currentLanguage][crumb.replace(/-/g, " ")] || crumb.replace(/-/g, " ")}
+                      </Link>
+                      {index === array.length - 1 && !isLastCrumb && (
+                        <ExpandMoreIcon fontSize="small" />
+                      )}
+                    </Typography>
+                  );
+                })}
+              </Breadcrumbs> */}
+              {/* <ul id="breadcrumb">
+                <li><a href="">Home</a></li>
+                <li><a href="">Profile</a></li>
+                <li><a href="">Agency</a></li>
+            
+              </ul> */}
 
-        listItem.appendChild(link);
-        if (index === array.length - 1 && !isLastCrumb) {
-          const expandIcon = document.createElement('span');
-          expandIcon.className = "expand-icon";
-          expandIcon.textContent = " > ";
-          listItem.appendChild(expandIcon);
-        }
+              
+              <Breadcrumbs aria-label="breadcrumb" separator="">
+                {crumbs.map((crumb, index, array) => {
+                  const currentLink = `/${array.slice(0, index + 1).join('/')}`;
+                  const isLastCrumb = index === array.length - 1;
 
-        breadcrumbContainer.appendChild(listItem);
-      });
-    }
-
-    
-    // window.addEventListener('load', updateBreadcrumbs);
-    window.addEventListener('popstate', updateBreadcrumbs);
+                  return (
+                    <Typography key={index} color="textPrimary">
+                      <Link
+                        component={RouterLink}
+                        to={currentLink}
+                        color={isLastCrumb ? 'textPrimary' : 'inherit'}
+                      >
+                        {crumb}
+                      </Link>
+                    </Typography>
+                  );
+                })}
+              </Breadcrumbs>
 
     // Initial update when the page loads
     updateBreadcrumbs();
