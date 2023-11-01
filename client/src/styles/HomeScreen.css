@@ -657,20 +657,28 @@
 
 #breadcrumb {
     list-style: none;
+    padding: 0 ;
+    margin: 0;
+    margin-left: 10px;
+}
+
+.headerListUi ol li {
     display: inline-block;
+    margin-right: 2px;
+    
 }
 
 .headerListUi ol a {
     color: white;
     display: block;
-    background: #3498db;
+    background:#3e5367;
     text-decoration:none; 
     position: relative;
     height: 40px;
     line-height: 40px;
-    padding: 0 10px 0 5px;
+    padding: 0 10px 0 6px;
     text-align: center;
-    margin-right: 10px;
+    margin-right: 13px;
 }
 
 .headerListUi ol a:not(:contains("Dashboard")) {
@@ -678,13 +686,13 @@
 }
 
 .headerListUi ol a:hover {
-    background-color: #1b0ceb;
+    background-color: #00ffff;
     color: white;
     text-decoration: none; 
 }
 
 .headerListUi ol a:active {
-    background-color: #1b0ceb;
+    background-color: #00ffff;
 }
 
 .headerListUi ol a:before,
@@ -692,8 +700,8 @@
     content: "";
     position: absolute;
     top: 0;
-    border: 0 solid #3498db;
-    border-width: 20px 10px;
+    border: 0 solid #3e5367;
+    border-width: 20px 11px;
     width: 0;
     height: 0;
     color: white;
@@ -707,27 +715,27 @@
 .headerListUi ol a:after {
     left: 100%;
     border-color: transparent;
-    border-left-color: #3498db;
+    border-left-color:#3e5367;
 }
 
 .headerListUi ol a:hover:before {
-    border-color: #1b0ceb;
+    border-color: #00ffff;
     border-left-color: transparent;
     color: white;
 }
 
 .headerListUi ol a:hover:after {
-    border-left-color: #1b0ceb;
+    border-left-color:#00ffff;
     color: white;
 }
 
 .headerListUi ol a:active:before {
-    border-color: #1b0ceb;
+    border-color: #00ffff;
     border-left-color: transparent;
 }
 
 .headerListUi ol a:active:after {
-    border-left-color: #1b0ceb;
+    border-left-color: #00ffff;
 }
 
 
