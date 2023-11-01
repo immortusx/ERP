@@ -21,6 +21,7 @@ import VillageEnquiryLists from './components/VillageEnquiryLists';
 import VillageEnquiry from './components/VillageEnquiry';
 import UserTaskDetails from './components/UserTaskDetails';
 import Enquiries from './components/Enquiries';
+import DetailTaskReport from './components/DetailTaskReport';
 const Stack = createStackNavigator();
 const AppNavigator = () => {
   return (
@@ -154,6 +155,17 @@ const AppNavigator = () => {
         <Stack.Screen
           name="Task Report List"
           component={TaslList}
+          options={{
+            headerShown: true,
+            headerStyle: {
+              borderWidth: 0.9,
+              borderColor: 'grey',
+            },
+          }}
+        />
+        <Stack.Screen
+          name="Detail Task Report List"
+          component={DetailTaskReport}
           options={{
             headerShown: true,
             headerStyle: {

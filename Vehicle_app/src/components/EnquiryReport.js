@@ -49,7 +49,7 @@ const EnquiryReport = () => {
                 style={styles.deliveryIcon}
                 source={require('../../assets/tasks.png')}
               />
-              <Text style={styles.deliveryText}>Tasklist</Text>
+              <Text style={styles.deliveryText}>Task Report</Text>
             </TouchableOpacity>
           </View>
         </View>

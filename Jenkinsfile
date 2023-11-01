@@ -7,7 +7,7 @@ pipeline {
       string (defaultValue: '95.216.144.126', description: 'Choose Host', name: 'ENV_HOST')
       string (defaultValue: 'vehical_crm_db', description: 'Choose Database for server', name: 'ENV_DATABASE')
       string (defaultValue: 'https://dev.balkrushna.com', description: 'Choose react app node url', name: 'REACT_APP_NODE_URL')
-      editableChoice(defaultValue: 'dev',name: 'BUILD_TAG',choices: ['winners-capital', 'newkeshav', 'crm'], description: 'Build Tag',restrict: true,filterConfig: filterConfig(prefix: true, caseInsensitive: false))
+      editableChoice(defaultValue: 'dev',name: 'BUILD_TAG',choices: ['winners-capital', 'newkeshav', 'crm', 'dev'], description: 'Build Tag',restrict: true,filterConfig: filterConfig(prefix: true, caseInsensitive: false))
       //string (defaultValue: "dev", description: 'Build Tag', name: 'BUILD_TAG')
       string (defaultValue: "Vehicle_crm", description: 'App Name', name: 'APP_NAME')
       booleanParam(name: 'skip_app_building', defaultValue: false, description: 'Set to true to skip Apk building')
@@ -25,6 +25,8 @@ pipeline {
     stage('SCM Checkout') {
       steps {
         checkout scm
+        // drop cache before building
+        sh "echo 1 | sudo tee /proc/sys/vm/drop_caches" 
       }
     }    
     stage('Defining Stage...') {
@@ -83,7 +85,7 @@ pipeline {
     }    
     stage('Run Images') {
       steps {
-        sh "COMPOSE_PROJECT_NAME=${BUILD_TAG} docker-compose up -d"
+        sh "COMPOSE_PROJECT_NAME=${BUILD_TAG} docker-compose build --no-cache && COMPOSE_PROJECT_NAME=${BUILD_TAG} docker-compose up -d"
         //sh "docker run --restart unless-stopped --name server_img-${BUILD_TAG} --network host -v /home/jenkins/upload/${BUILD_TAG}:/usr/src/app/server/upload -e BUILD_TAG=${BUILD_TAG} -e BUILD_ID=${BUILD_ID} -e ENV_PORT=${ENV_PORT} -e ENV_DATABASE=${ENV_DATABASE} -e ENV_HOST=${ENV_HOST} -d raptor2103/server:${BUILD_TAG}"
         //sh "docker run --restart unless-stopped --name client_img-${BUILD_TAG} --network host -e PORT=${PORT} -e REACT_APP_NODE_URL=${REACT_APP_NODE_URL} -d raptor1702/client:${BUILD_TAG} "
         sh 'sleep 7s'

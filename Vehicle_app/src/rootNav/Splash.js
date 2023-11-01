@@ -66,7 +66,7 @@ const Splash = ({navigation}) => {
   }, [navigation, dispatch]);
 
   useEffect(() => {
-    if (initialCheckDone) {
+    if (initialCheckDone && profileData.isSuccess) {
       if (profileData.isSuccess && profileData.currentUserData.isSuccess) {
         navigation.navigate('Main');
       } else {
@@ -88,6 +88,7 @@ const Splash = ({navigation}) => {
       </View>
       <View style={styles.bottomContent}>
         <ActivityIndicator animating={showSpinner} size={30} color="grey" />
+        <View style={styles.line}/>
       </View>
     </View>
   );
@@ -131,6 +132,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     position: 'absolute',
     bottom: 10
+  },
+  line: {
+    backgroundColor: 'lightgrey',
+    height: 2,
+    alignSelf: 'stretch',
+    marginVertical: 9,
   },
 });
 

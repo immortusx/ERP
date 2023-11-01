@@ -412,6 +412,54 @@ router.get("/get-user-task-list", tokenCheck, async (req, res) => {
   });
 });
 
+// ========================task assign employee list============================//
+
+router.get(
+  "/get-task-assign-employee-list/:startDate/:endDate",
+  tokenCheck,
+  async (req, res) => {
+    // console.log(">>>>>>>>/get-task-assign-employee-list", req.myData);
+    const userId = req.myData.userId;
+    let isAdmin = req.myData.isSuperAdmin;
+    const startDate = req.params.startDate;
+    const endDate = req.params.endDate;
+    console.log(startDate, endDate, "ekti");
+    const urlNew = `CALL sp_get_task_assign_employee_list(${userId}, ${isAdmin}, '${startDate}', '${endDate}')`;
+
+    await db.query(urlNew, async (err, result) => {
+      if (err) {
+        console.log({ isSuccess: false, result: 'error' });
+        res.send({ isSuccess: false, result: "error" });
+      } else {
+        console.log({ isSuccess: "success", result: urlNew });
+        res.send({ isSuccess: "success", result: result[0] });
+      }
+    });
+  }
+);
+
+//=====================get user-task-by-UserId========================//
+
+router.get("/get-user-task-by-UserId/:id/:startDate/:endDate", tokenCheck, async (req, res) => {
+  console.log(">>>>>>>>/get-user-task-list", req.myData);
+  const userId = req.myData.userId;
+  let isAdmin = req.myData.isSuperAdmin;
+  const startDate = req.params.startDate;
+  const endDate = req.params.endDate;
+  const id = req.params.id;
+  console.log(startDate, endDate, id, "eotjjjjjjjjjjjjjj");
+  const urlNew = `CALL sp_get_user_task_by_UserId(${id}, ${isAdmin}, '${startDate}', '${endDate}')`;
+  await db.query(urlNew, async (err, result) => {
+    if (err) {
+      console.log({ isSuccess: false, result: err });
+      res.send({ isSuccess: false, result: "error" });
+    } else {
+      console.log({ isSuccess: "success", result: urlNew });
+      res.send({ isSuccess: "success", result: result[0] }); // Send the entire result
+    }
+  });
+});
+
 //=====================Retrieve Assigned Sale Person===================//
 router.get(
   "/retrieve-area-assigned-person/:category/:village",
@@ -757,17 +805,13 @@ router.post(
       uploadCSV(newFilePath, (err, result) => {
         if (err) {
           console.error(err);
-          res
-            .status(500)
-            .json({ error: "CSV failed" });
+          res.status(500).json({ error: "CSV failed" });
         } else {
           console.log("CSV success");
-          res
-            .status(200)
-            .json({
-              isSuccess: true,
-              message: "CSV success",
-            });
+          res.status(200).json({
+            isSuccess: true,
+            message: "CSV success",
+          });
         }
       });
 
