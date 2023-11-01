@@ -12,7 +12,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {getProfileData} from '../redux/slice/getUserProfile';
 import {API_URL} from '@env';
 import axios from 'axios';
-import {getAgencyData} from '../redux/slice/AgencyDataSlice';
+import { getAgencyData } from '../redux/slice/AgencyDataSlice';
 
 const Splash = ({navigation}) => {
   const dispatch = useDispatch();
