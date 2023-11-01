@@ -285,7 +285,18 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
   const lastName = req.body.lastName || null;
   const fatherName = req.body.fatherName || null;
   const mobileNumber = req.body.mobileNumber || null;
-
+  const getSSP = (callback) => {
+    let userID = req.myData.userId;
+    const sql = `SELECT CONCAT(u.first_name, ' ', u.last_name) AS full_name FROM users AS u WHERE u.id = ${userID}`;
+    db.query(sql, async (err, result) => {
+      if (err) {
+        console.log({ isSuccess: false, result: err });
+      } else {
+        const fullName = result[0].full_name;
+        callback(fullName);
+      }
+    });
+  };
   // Add a query to check if a record with the same mobile number already exists
   const checkMobileQuery = `SELECT * FROM customers WHERE phone_number = '${mobileNumber}'`;
   console.log(checkMobileQuery, "checkMobileQuery");
@@ -343,6 +354,7 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
 
           db.query(urlNew, async (err, result) => {
             if (err) {
+              myData
               console.log({ isSuccess: false, result: err });
               res.send({ isSuccess: false, result: "error" });
             } else if (result && result.insertId) {
@@ -371,31 +383,32 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
                     console.log({ isSuccess: "success", result: "success" });
                     // res.send({ isSuccess: "success", result: "success" });
                     const uploadEnquiryWorklog = () => {
-                      let workDescription = `Enquiry Added ${firstName} ${lastName} which phone ${mobileNumber}`;
-                      let tasktype = 1;
-                      let task = 11;
-                      let cdate = moment().format('YYYY-MM-DD H:m:s');
-                      let taskEndTime = new Date();
-                      let spendTime = taskEndTime - taskStartTime;
-                      let spendTimeSeconds = Math.floor(spendTime / 1000);
-                      let hours = Math.floor(spendTimeSeconds / 3600);
-                      let minutes = Math.floor((spendTimeSeconds % 3600) / 60);
-                      let seconds = spendTimeSeconds % 60;
-                      let theSpendTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-                      console.log(theSpendTime, 'spendTime');
+                      getSSP((salesperson) => {
+                        console.log(salesperson, "salesperson");
+                        let workDescription = `For Enquiry ${firstName} which phone ${mobileNumber} by ${salesperson}`;
+                        let tasktype = 1;
+                        let task = 11;
+                        let cdate = moment().format('YYYY-MM-DD H:m:s');
+                        let taskEndTime = new Date();
+                        let spendTime = taskEndTime - taskStartTime;
+                        let spendTimeSeconds = Math.floor(spendTime / 1000);
+                        let hours = Math.floor(spendTimeSeconds / 3600);
+                        let minutes = Math.floor((spendTimeSeconds % 3600) / 60);
+                        let seconds = spendTimeSeconds % 60;
+                        let theSpendTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                        console.log(theSpendTime, 'spendTime');
 
-                      let userID = req.myData.userId;
-                      const workLogSql = `INSERT INTO worklog (user_id, tasktype, task, work_description, datetime, spendtime) VALUES('${userID}','${tasktype}','${task}','${workDescription}','${cdate}','${theSpendTime}')`;
-                      db.query(workLogSql, async (err, result) => {
-                        if (err) {
-                          console.log({ isSuccess: false, result: err });
-                          // res.send({ isSuccess: false, result: "error" });
-                        } else {
-                          console.log({ isSuccess: "success", result: "success" });
-                          // res.send({ isSuccess: "success", result: "success" });
-                        }
+                        let userID = req.myData.userId;
+                        const workLogSql = `INSERT INTO worklog (user_id, tasktype, task, work_description, datetime, spendtime) VALUES('${userID}','${tasktype}','${task}','${workDescription}','${cdate}','${theSpendTime}')`;
+                        db.query(workLogSql, async (err, result) => {
+                          if (err) {
+                            console.log({ isSuccess: false, result: err });
+                          } else {
+                            console.log({ isSuccess: "success", result: "success" });
+                          }
+                        });
                       });
-                    }
+                    };
                     uploadEnquiryWorklog();
                   }
                 });
@@ -410,32 +423,32 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
                       isSuccess: "success",
                     });
                     const uploadEnquiryWorklog = () => {
-                      const salesperson = getSSP()
-                      let workDescription = `For Enquiry ${firstName} which phone ${mobileNumber} by ${req.params.sales_person}`;
-                      let tasktype = 1;
-                      let task = 11;
-                      let cdate = moment().format('YYYY-MM-DD H:m:s');
-                      let taskEndTime = new Date();
-                      let spendTime = taskEndTime - taskStartTime;
-                      let spendTimeSeconds = Math.floor(spendTime / 1000);
-                      let hours = Math.floor(spendTimeSeconds / 3600);
-                      let minutes = Math.floor((spendTimeSeconds % 3600) / 60);
-                      let seconds = spendTimeSeconds % 60;
-                      let theSpendTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-                      console.log(theSpendTime, 'spendTime');
+                      getSSP((salesperson) => {
+                        console.log(salesperson, "salesperson");
+                        let workDescription = `For Enquiry ${firstName} which phone ${mobileNumber} by ${salesperson}`;
+                        let tasktype = 1;
+                        let task = 11;
+                        let cdate = moment().format('YYYY-MM-DD H:m:s');
+                        let taskEndTime = new Date();
+                        let spendTime = taskEndTime - taskStartTime;
+                        let spendTimeSeconds = Math.floor(spendTime / 1000);
+                        let hours = Math.floor(spendTimeSeconds / 3600);
+                        let minutes = Math.floor((spendTimeSeconds % 3600) / 60);
+                        let seconds = spendTimeSeconds % 60;
+                        let theSpendTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                        console.log(theSpendTime, 'spendTime');
 
-                      let userID = req.myData.userId;
-                      const workLogSql = `INSERT INTO worklog (user_id, tasktype, task, work_description, datetime, spendtime) VALUES('${userID}','${tasktype}','${task}','${workDescription}','${cdate}','${theSpendTime}')`;
-                      db.query(workLogSql, async (err, result) => {
-                        if (err) {
-                          console.log({ isSuccess: false, result: err });
-                          // res.send({ isSuccess: false, result: "error" });
-                        } else {
-                          console.log({ isSuccess: "success", result: "success" });
-                          // res.send({ isSuccess: "success", result: "success" });
-                        }
+                        let userID = req.myData.userId;
+                        const workLogSql = `INSERT INTO worklog (user_id, tasktype, task, work_description, datetime, spendtime) VALUES('${userID}','${tasktype}','${task}','${workDescription}','${cdate}','${theSpendTime}')`;
+                        db.query(workLogSql, async (err, result) => {
+                          if (err) {
+                            console.log({ isSuccess: false, result: err });
+                          } else {
+                            console.log({ isSuccess: "success", result: "success" });
+                          }
+                        });
                       });
-                    }
+                    };
                     uploadEnquiryWorklog();
                     // res.send({
                     //   isSuccess: "success",
