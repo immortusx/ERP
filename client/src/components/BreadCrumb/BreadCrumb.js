@@ -48,7 +48,7 @@ const BreadCrumb = () => {
       <div class="row">
         <div class="col-md-9">
           <div className='mb-3'>
-            <div className='headerListUi'> 
+            <div className='headerListUi'>
 
 
 
@@ -57,7 +57,7 @@ const BreadCrumb = () => {
                 <li><Link to="/profile">Profile</Link></li>
                 <li><Link to="/profile/agency">Agency</Link></li>
               </ul>   */}
-{/* 
+              {/* 
               <Breadcrumbs aria-label="breadcrumb" separator="">
                 {crumbs.map((crumb, index, array) => {
                   const currentLink = `/${array.slice(0, index + 1).join('')}`;
@@ -86,23 +86,29 @@ const BreadCrumb = () => {
             
               </ul> */}
 
-              
-              <Breadcrumbs aria-label="breadcrumb" separator="">
+              <Breadcrumbs  aria-label="breadcrumb">
+
                 {crumbs.map((crumb, index, array) => {
                   const currentLink = `/${array.slice(0, index + 1).join('/')}`;
                   const isLastCrumb = index === array.length - 1;
-
+                  const isCrumb = array.filter((crumb) => crumb !== 'home');
                   return (
+
                     <Typography key={index} color="textPrimary">
                       <Link
-                        component={RouterLink}
+                        className="crumb-link"
                         to={currentLink}
-                        color={isLastCrumb ? 'textPrimary' : 'inherit'}
+                        color={isLastCrumb ? "textPrimary" : "inherit"}
                       >
-                        {crumb}
+                        {translations[currentLanguage][crumb.replace(/-/g, " ")] || crumb.replace(/-/g, " ")}
                       </Link>
+                      {index === array.length - 1 && !isLastCrumb && (
+                        <ExpandMoreIcon fontSize="small" />
+                      )}
                     </Typography>
+
                   );
+
                 })}
               </Breadcrumbs>
 
