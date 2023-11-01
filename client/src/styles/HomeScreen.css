@@ -75,8 +75,10 @@
     height: 30px;
     transition: background-color 0.2s, padding 0.2s;
     display: flex;
-    align-items: center; /* Center vertically */
-    justify-content: space-between; /* Distributes the content evenly along the main axis */
+    align-items: center;
+    /* Center vertically */
+    justify-content: space-between;
+    /* Distributes the content evenly along the main axis */
 }
 
 .download-button {
@@ -87,7 +89,8 @@
     cursor: pointer;
     transition: background-color 0.2s;
     font-size: 12px;
-    margin-right: 5px; /* Adjust margin as needed for spacing */
+    margin-right: 5px;
+    /* Adjust margin as needed for spacing */
 }
 
 /* Add this if you want to remove margin from the last download-button */
@@ -144,7 +147,7 @@
 
 .asideNav .profileSection .logoutSideBar a {
     color: white;
-    border-radius:10px ;
+    border-radius: 10px;
 }
 
 .asideNav .profileSection .logoutSideBar {
@@ -159,12 +162,13 @@
     padding: 15px;
     background: #7e8891;
     animation: var(--myFadeAnimation);
-    border-radius:10px ;
+    border-radius: 10px;
 }
+
 .logoDiv {
     cursor: pointer;
-  }
-  
+}
+
 .asideNav .logoDiv img {
 
     height: 100%;
@@ -179,7 +183,7 @@
 
 .asideNav .inLi a.activeLink {
     background-color: #00ffff91;
-    border-radius:10px ;
+    border-radius: 10px;
 }
 
 .asideNav .inLi a:hover {
@@ -191,7 +195,7 @@
 
 .asideNav .inUl {
     animation: var(--myFadeAnimation);
-    border-radius:10px ;
+    border-radius: 10px;
 
 }
 
@@ -202,7 +206,7 @@
 .asideNav .outLi {
     list-style: none;
     padding-bottom: 15px;
-    border-radius:10px ;
+    border-radius: 10px;
 }
 
 .asideNav .outerSection {
@@ -364,7 +368,7 @@
 .toggleSideBar .asideNav .profileSection {
     display: flex;
     justify-content: center;
-    border-radius:10px ;
+    border-radius: 10px;
 }
 
 
@@ -539,7 +543,7 @@
         width: 210px;
         z-index: 1500;
         background: #7e8891;
-        border-radius:10px ;
+        border-radius: 10px;
     }
 
 
@@ -580,7 +584,7 @@
     .asideNav .profileSection {
         display: flex;
         justify-content: center;
-        border-radius:10px ;
+        border-radius: 10px;
     }
 
 
@@ -628,7 +632,7 @@
     .toggleSideBar .asideNav .inUl {
         background-color: red;
         display: none;
-        border-radius:10px ;
+        border-radius: 10px;
     }
 
 
@@ -655,7 +659,95 @@
 
 }
 
-#breadcrumb {
+/* headerListUI code start */
+
+.headerListUi ol {
+    list-style: none;
+    padding: 0 ;
+    margin: 0;
+    margin-left: 10px;
+}
+
+.headerListUi ol li {
+    display: inline-block;
+    margin-right: 2px;
+    
+}
+
+.headerListUi ol a {
+    color: white;
+    display: block;
+    background:#55a6d8;
+    text-decoration:none; 
+    position: relative;
+    height: 40px;
+    line-height: 40px;
+    padding: 0 10px 0 6px;
+    text-align: center;
+    margin-right: 13px;
+}
+
+.headerListUi ol a:not(:contains("Dashboard")) {
+    text-decoration: none; 
+}
+
+.headerListUi ol a:hover {
+    background-color: #4c6c88;
+    color: white;
+    text-decoration: none; 
+}
+
+.headerListUi ol a:active {
+    background-color:#4c6c88;
+}
+
+.headerListUi ol a:before,
+.headerListUi ol a:after {
+    content: "";
+    position: absolute;
+    top: 0;
+    border: 0 solid #55a6d8;
+    border-width: 20px 11px;
+    width: 0;
+    height: 0;
+    color: white;
+}
+
+.headerListUi ol a:before {
+    left: -20px;
+    border-left-color: transparent;
+}
+
+.headerListUi ol a:after {
+    left: 100%;
+    border-color: transparent;
+    border-left-color:#55a6d8;
+}
+
+.headerListUi ol a:hover:before {
+    border-color:#4c6c88;
+    border-left-color: transparent;
+    color: white;
+}
+
+.headerListUi ol a:hover:after {
+    border-left-color:#4c6c88;
+    color: white;
+}
+
+.headerListUi ol a:active:before {
+    border-color:#4c6c88;
+    border-left-color: transparent;
+}
+
+.headerListUi ol a:active:after {
+    border-left-color: #4c6c88;
+}
+
+
+/* headerListUI code end */
+
+/* #breadcrumb li {
     list-style: none;
     padding: 0 ;
     margin: 0;
@@ -802,27 +894,27 @@
 }
 
 #breadcrumb li a:hover {
-    background-color: #1abc9c;
+    background-color: #1b0ceb;
 }
 
 #breadcrumb li a:hover:before {
-    border-color: #1abc9c;
+    border-color: #1b0ceb;
     border-left-color: transparent;
 }
 
 #breadcrumb li a:hover:after {
-    border-left-color: #1abc9c;
+    border-left-color: #1b0ceb;
 }
 
 #breadcrumb li a:active {
-    background-color: #16a085;
+    background-color: #1b0ceb;
 }
 
 #breadcrumb li a:active:before {
-    border-color: #16a085;
+    border-color: #1b0ceb;
     border-left-color: transparent;
 }
 
 #breadcrumb li a:active:after {
-    border-left-color: #16a085;
-}
+    border-left-color: #1b0ceb;
+} */

@@ -2,10 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useSelector } from "react-redux";
 import Typography from '@mui/material/Typography';
+import HomeIcon from '@mui/icons-material/Home';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import LanguageSelector from '../languageSelector';
 import translations from '../../assets/locals/translations';
+import RouterLink from 'react'
 
 const BreadCrumb = () => {
   const currentLanguage = useSelector((state) => state.language.language);
@@ -47,15 +50,7 @@ const BreadCrumb = () => {
           <div className='mb-3'>
             <div className='headerListUi'>
 
-  useEffect(() => {
-    
-    function updateBreadcrumbs() {
-      const breadcrumbContainer = document.getElementById('breadcrumb');
-      breadcrumbContainer.innerHTML = ''; 
 
-      crumbs.forEach((crumb, index, array) => {
-        const currentLink = `/${array.slice(0, index + 1).join('')}`;
-        const isLastCrumb = index === array.length - 1;
 
               {/* <ul id="breadcrumb">
                 <li><Link to="/">Home</Link></li>
@@ -117,21 +112,7 @@ const BreadCrumb = () => {
                 })}
               </Breadcrumbs>
 
-    // Initial update when the page loads
-    updateBreadcrumbs();
-  }, [crumbs, currentLanguage]);
 
-  return (
-    <div class="container">
-      <div class="row">
-        <div class="col-md-9">
-          <div className='mb-3'>
-            <div>
-              <ul id="breadcrumb">
-                <li><Link to="/">Home</Link></li>
-                <li><Link to="/profile">Profile</Link></li>
-                <li><Link to="/profile/agency">Agency</Link></li>
-              </ul>
             </div>
           </div>
         </div>
@@ -152,6 +133,9 @@ const BreadCrumb = () => {
             <LanguageSelector onChangeLanguage={(e) => setLanguage(e.target.value)} />
           </div>
         </div>
+
+
+
       </div>
     </div>
   );
