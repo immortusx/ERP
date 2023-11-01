@@ -677,7 +677,7 @@
 .headerListUi ol a {
     color: white;
     display: block;
-    background:#3e5367;
+    background:#55a6d8;
     text-decoration:none; 
     position: relative;
     height: 40px;
@@ -692,13 +692,13 @@
 }
 
 .headerListUi ol a:hover {
-    background-color: #00ffff;
+    background-color: #4c6c88;
     color: white;
     text-decoration: none; 
 }
 
 .headerListUi ol a:active {
-    background-color: #00ffff;
+    background-color:#4c6c88;
 }
 
 .headerListUi ol a:before,
@@ -706,7 +706,7 @@
     content: "";
     position: absolute;
     top: 0;
-    border: 0 solid #3e5367;
+    border: 0 solid #55a6d8;
     border-width: 20px 11px;
     width: 0;
     height: 0;
@@ -721,27 +721,27 @@
 .headerListUi ol a:after {
     left: 100%;
     border-color: transparent;
-    border-left-color:#3e5367;
+    border-left-color:#55a6d8;
 }
 
 .headerListUi ol a:hover:before {
-    border-color: #00ffff;
+    border-color:#4c6c88;
     border-left-color: transparent;
     color: white;
 }
 
 .headerListUi ol a:hover:after {
-    border-left-color:#00ffff;
+    border-left-color:#4c6c88;
     color: white;
 }
 
 .headerListUi ol a:active:before {
-    border-color: #00ffff;
+    border-color:#4c6c88;
     border-left-color: transparent;
 }
 
 .headerListUi ol a:active:after {
-    border-left-color: #00ffff;
+    border-left-color: #4c6c88;
 }
 
 
