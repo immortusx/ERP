@@ -57,7 +57,7 @@ const BreadCrumb = () => {
                 <li><Link to="/profile">Profile</Link></li>
                 <li><Link to="/profile/agency">Agency</Link></li>
               </ul>   */}
-
+{/* 
               <Breadcrumbs aria-label="breadcrumb" separator="">
                 {crumbs.map((crumb, index, array) => {
                   const currentLink = `/${array.slice(0, index + 1).join('')}`;
@@ -78,7 +78,7 @@ const BreadCrumb = () => {
                     </Typography>
                   );
                 })}
-              </Breadcrumbs>
+              </Breadcrumbs> */}
               {/* <ul id="breadcrumb">
                 <li><a href="">Home</a></li>
                 <li><a href="">Profile</a></li>
@@ -86,7 +86,7 @@ const BreadCrumb = () => {
             
               </ul> */}
 
-              {/* 
+              
               <Breadcrumbs aria-label="breadcrumb" separator="">
                 {crumbs.map((crumb, index, array) => {
                   const currentLink = `/${array.slice(0, index + 1).join('/')}`;
@@ -104,7 +104,7 @@ const BreadCrumb = () => {
                     </Typography>
                   );
                 })}
-              </Breadcrumbs> */}
+              </Breadcrumbs>
 
 
             </div>

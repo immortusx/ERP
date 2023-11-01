@@ -685,13 +685,13 @@
 }
 
 .headerListUi ol a:not(:contains("Dashboard")) {
-    text-decoration: none; /* Remove underline for links that don't contain "Dashboard" */
+    text-decoration: none; 
 }
 
 .headerListUi ol a:hover {
     background-color: #1b0ceb;
     color: white;
-    text-decoration: none; /* Remove underline on hover for all links */
+    text-decoration: none; 
 }
 
 .headerListUi ol a:active {
