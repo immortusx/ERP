@@ -41,7 +41,7 @@ const Holiday = () => {
   const [holidaylist, setHolidayList] = useState([]);
   const [categoryList, setCategoryList] = useState([]);
   const [displayConfirmationModal, setDisplayConfirmationModal] =
-  useState(false);
+    useState(false);
   const [type, setType] = useState(null);
   const [id, setId] = useState(null);
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
@@ -85,7 +85,7 @@ const Holiday = () => {
   }
 
   const savedata = () => {
-    if (show===2) {
+    if (show === 2) {
       console.log(holiday, "holidayholidayholiday");
       dispatch(editHolidayToDb(holiday));
       dispatch(setShowMessage("Holiday Edited"));
@@ -98,9 +98,75 @@ const Holiday = () => {
     } else {
       dispatch(addHolidayToDb(holiday));
       dispatch(setShowMessage("Holiday Added"));
-        clearInpHook();
+      clearInpHook();
       setShow(0);
-       console.log(holiday, "holidayholidayholiday");
+      console.log(holiday, "holidayholidayholiday");
+      fetchHolidayList()
+    }
+  };
+  useEffect(() => {
+    if (holidayState?.isSuccess) {
+      if (holidayState.message.result === "success") {
+        dispatch(clearaddHoliday());
+      }
+    }
+  }, [holidayState]);
+
+
+  const fetchHolidayList = async () => {
+    try {
+      const url = `${process.env.REACT_APP_NODE_URL}/api/get-holiday-list`;
+      const token = localStorage.getItem("rbacToken");
+      const config = {
+        headers: {
+          token: token,
+        },
+      };
+
+      const response = await Axios.get(url, config);
+
+      if (response.data?.isSuccess) {
+        console.log(response.data.result, "response.data.result");
+        setHolidayList(response.data.result);
+      } else {
+        console.error("API request was not successful");
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  const deleteActionCall = (data) => {
+    console.log(data, "ddddddfghjkl;")
+    setType("holiday_delete");
+    setId(data.id);
+    setDeleteMessage(
+      `Are You Sure You Want To Delete The Holiday '${data.holidayname}'?`
+    );
+    setDisplayConfirmationModal(true);
+  };
+
+  const submitDelete = async (e, id) => {
+    try {
+      const url = `${process.env.REACT_APP_NODE_URL}/api/delete-holidayStatus/${id}`;
+      const config = {
+        headers: {
+          token: localStorage.getItem("rbacToken"),
+        },
+      };
+      const response = await Axios.get(url, config);
+
+      if (response.data && response.data.isSuccess) {
+        console.log("Holiday Deleted");
+        dispatch(setShowMessage("Holiday Deleted"));
+        setDisplayConfirmationModal(false);
+      } else {
+        console.log("Failed to delete");
+        dispatch(setShowMessage("Failed to delete"));
+      }
+    } catch (error) {
+      console.error("An error occurred:", error);
+      // Handle the error appropriately, e.g., show an error message to the user.
     }
   };
 
@@ -113,84 +179,13 @@ const Holiday = () => {
     }
   }, [holidayState]);
 
-  useEffect(() => {
-    const fetchHolidayList = async () => {
-      try {
-        const url = `${process.env.REACT_APP_NODE_URL}/api/get-holiday-list`;
-        const token = localStorage.getItem("rbacToken");
-        const config = {
-          headers: {
-            token: token,
-          },
-        };
 
-        const response = await Axios.get(url, config);
-
-        if (response.data?.isSuccess) {
-          console.log(response.data.result, "response.data.result");
-          setHolidayList(response.data.result);
-        } else {
-          console.error("API request was not successful");
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    fetchHolidayList(); 
-  }, []);
-
-
-   const deleteActionCall = (data) => {
-    console.log(data,"ddddddfghjkl;")
-     setType("holiday_delete");
-     setId(data.id);
-     setDeleteMessage(
-       `Are You Sure You Want To Delete The Holiday '${data.holidayname}'?`
-     );
-     setDisplayConfirmationModal(true);
-   };
-
- const submitDelete = async (e,id) => {
-   try {
-     const url = `${process.env.REACT_APP_NODE_URL}/api/delete-holidayStatus/${id}`;
-     const config = {
-       headers: {
-         token: localStorage.getItem("rbacToken"),
-       },
-     };
-     const response = await Axios.get(url, config);
-
-     if (response.data && response.data.isSuccess) {
-       console.log("Holiday Deleted");
-       dispatch(setShowMessage("Holiday Deleted"));
-       setDisplayConfirmationModal(false);
-     } else {
-       console.log("Failed to delete");
-       dispatch(setShowMessage("Failed to delete"));
-     }
-   } catch (error) {
-     console.error("An error occurred:", error);
-     // Handle the error appropriately, e.g., show an error message to the user.
-   }
- };
-
-
-useEffect(() => {
-  if (holidayState?.isSuccess) {
-    if (holidayState.message.result === "success") {
-      dispatch(clearaddHoliday());
-    }
-  }
-}, [holidayState]);
-
-
-  const clearInpHook=()=>{
-setHoliday({
-   holidayname: "",
-   holiday_date: new Date(),
-   description: "",
- });
+  const clearInpHook = () => {
+    setHoliday({
+      holidayname: "",
+      holiday_date: new Date(),
+      description: "",
+    });
   }
 
   const editeHoliday = async (id) => {
