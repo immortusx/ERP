@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   FlatList,
   Image,
+  Button,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import axios from 'axios';
@@ -18,12 +19,32 @@ import {useNavigation} from '@react-navigation/native';
 const Enquiries = ({route}) => {
   const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
+  const [currentEnquiryIndex, setCurrentEnquiryIndex] = useState(1);
   const [enquiriesList, setEnquiriesList] = useState([]);
   const [categoryName, setCategoryName] = useState(null);
   const {item} = route.params;
 
-  const getLockedEnquiries = async categoryId => {
-    const url = `${API_URL}/api/get-enquiries-by-category/${categoryId}`;
+  useEffect(() => {
+    if (item) {
+      console.log(item, 'itekem');
+      getLockedEnquiries(item.id, item.task, currentEnquiryIndex);
+    }
+  }, [item]);
+  const handleNextEnquiry = () => {
+    console.log('Next');
+    setCurrentEnquiryIndex(currentEnquiryIndex + 1);
+  };
+  const handleEnquirySkip = () => {
+    console.log('Skip');
+    setCurrentEnquiryIndex(currentEnquiryIndex + 1);
+  };
+  useEffect(() => {
+    if (currentEnquiryIndex) {
+      getLockedEnquiries(item.id, item.task, currentEnquiryIndex);
+    }
+  }, [currentEnquiryIndex]);
+  const getLockedEnquiries = async (employeeId, taskId, indexNo) => {
+    const url = `${API_URL}/api/enquiry/getworks/${employeeId}/${taskId}/${indexNo}`;
     console.log('get enquries', url);
     const token = await AsyncStorage.getItem('rbacToken');
     const config = {
@@ -35,7 +56,7 @@ const Enquiries = ({route}) => {
     console.log(config);
     await axios.get(url, config).then(response => {
       if (response) {
-        // console.log(response.data.result, 'enquirie catrogrit');
+        console.log(response.data.result, 'enquirie locked');
         setEnquiriesList(response.data.result);
       }
     });
@@ -46,7 +67,8 @@ const Enquiries = ({route}) => {
     <View style={StyleSheet.mainContainer}>
       <View style={styles.container}>
         <TouchableOpacity style={styles.touchableOpacityStyle}>
-          <Text style={styles.taskListStyle}>{categoryName}</Text>
+          <Text style={styles.taskListStyle}>{item.employee}</Text>
+          <Text style={styles.taskListStyle}>{item.task_name}</Text>
         </TouchableOpacity>
         <View style={styles.contentContainer}>
           <View style={styles.dataContainer}>
@@ -91,79 +113,64 @@ const Enquiries = ({route}) => {
         <View>
           <Text style={styles.enquiryLine}> Locked Enquiry</Text>
           <View style={styles.line} />
-          {/* {loading ? (
-          <CustomLoadingSpinner />
-        ) : enquiriesList && enquiriesList.length > 0 ? (
-          <FlatList
-            style={{marginBottom: 60}}
-            data={enquiriesList}
-            keyExtractor={(item, index) => `task_${index}`}
-            renderItem={({item, index}) => {
-              return (
-                <View style={styles.contentContainer}>
-                  <View style={styles.dataContainer}>
-                    <View style={styles.leftContainer}>
-                      <Image
-                        style={styles.personImg}
-                        source={require('../../assets/person.png')}
-                      />
-                      <Image
-                        style={styles.personImg}
-                        source={require('../../assets/phone.png')}
-                      />
-                      <Image
-                        style={styles.personImg}
-                        source={require('../../assets/product.png')}
-                      />
-                      <Image
-                        style={styles.personImg}
-                        source={require('../../assets/salesperson.png')}
-                      />
-                      <Image
-                        style={styles.personImg}
-                        source={require('../../assets/location.png')}
-                      />
-                    </View>
-                    <View style={styles.rightContainer}>
-                      <View style={styles.subContainer}>
-                        <View style={{alignItems: 'flex-start'}}>
-                          <Text style={styles.label}>
-                            {item.first_name +
-                              (item.last_name ? ' ' + item.last_name : '')}
-                          </Text>
-                          <TouchableOpacity
-                            onPress={() => {
-                              // makePhoneCall(item.phone_number);
-                            }}>
-                            <Text style={styles.label}>
-                              {item.phone_number}
-                            </Text>
-                          </TouchableOpacity>
-                          <Text style={styles.label}>{item.product}</Text>
-                          <Text style={styles.label}>
-                            {item.sales_person ? item.sales_person : '-'}
-                          </Text>
-                          <Text style={styles.label}>{item.village}</Text>
+          {loading ? (
+            <CustomLoadingSpinner />
+          ) : enquiriesList && enquiriesList.length > 0 ? (
+            <FlatList
+              style={{marginBottom: 60}}
+              data={enquiriesList}
+              keyExtractor={(item, index) => `task_${index}`}
+              renderItem={({item, index}) => {
+                return (
+                  <>
+                    <View style={styles.contentContainer}>
+                      <View style={styles.dataContainer}>
+                        <View style={styles.leftContainer}>
+                          <Image
+                            style={styles.personImg}
+                            source={require('../../assets/person.png')}
+                          />
+                          <Image
+                            style={styles.personImg}
+                            source={require('../../assets/phone.png')}
+                          />
                         </View>
-                        <View style={styles.startContainer}>
-                          <TouchableOpacity
-                            style={styles.startTaskButton}
-                            onPress={() => {}}>
-                            <Text style={styles.startTaskButtonText}>
-                              Start Task {'>>'}
-                            </Text>
-                          </TouchableOpacity>
+                        <View style={styles.rightContainer}>
+                          <View style={styles.subContainer}>
+                            <View style={{alignItems: 'flex-start'}}>
+                              <Text style={styles.label}>{item.customer}</Text>
+                              <TouchableOpacity
+                                onPress={() => {
+                                  // makePhoneCall(item.phone_number);
+                                }}>
+                                <Text style={styles.label}>
+                                  {item.phone_number}
+                                </Text>
+                              </TouchableOpacity>
+                            </View>
+                          </View>
                         </View>
                       </View>
                     </View>
-                  </View>
-                </View>
-              );
-            }}
-          />
-        ) : (
-          <Text style={styles.NoTaskStyle}>Task Not Performed</Text>
-        )} */}
+                  </>
+                );
+              }}
+            />
+          ) : (
+            <Text style={styles.NoTaskStyle}>Task Completed!</Text>
+          )}
+          <TouchableOpacity style={styles.buttonTouchableStyle}>
+            <TouchableOpacity
+              style={styles.buttonContainer}
+              onPress={handleEnquirySkip}>
+              <Text style={styles.skipStyle}>SKIP</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.buttonContainer}
+              onPress={handleNextEnquiry}>
+              <Text style={styles.nextStyle}>NEXT</Text>
+            </TouchableOpacity>
+          </TouchableOpacity>
         </View>
       </View>
     </View>
@@ -191,6 +198,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#2471A3',
     padding: 10,
     borderRadius: 33,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   taskListStyle: {
     color: 'white',
@@ -246,11 +255,12 @@ const styles = StyleSheet.create({
     backgroundColor: 'lightblue',
     paddingHorizontal: 12,
     borderRadius: 20,
+    marginBottom: 2,
   },
   NoTaskStyle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: 'red',
+    color: 'green',
     textAlign: 'center',
     marginTop: 20,
     fontStyle: 'italic',
@@ -297,6 +307,36 @@ const styles = StyleSheet.create({
     height: 1,
     alignSelf: 'stretch',
     marginBottom: 10,
+  },
+  buttonTouchableStyle: {
+    padding: 10,
+    borderRadius: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  buttonContainer: {
+    // backgroundColor: '#2980B9',
+    // borderRadius: 8,
+    // paddingHorizontal: 20,
+    // paddingVertical: 8,
+  },
+  skipStyle: {
+    backgroundColor: '#5DADE2',
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: 'white',
+    borderRadius: 8,
+    paddingHorizontal: 20,
+    paddingVertical: 7,
+  },
+  nextStyle: {
+    backgroundColor: '#F1C40F',
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: 'white',
+    borderRadius: 8,
+    paddingHorizontal: 20,
+    paddingVertical: 7,
   },
 });
 

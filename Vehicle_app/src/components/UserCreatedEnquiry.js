@@ -69,7 +69,7 @@ const UserCreatedEnquiry = ({selectedCategory}) => {
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     //   dispatch(setEnquiryType('Followed Enquiry'));
-    dispatch(getEnquiryData());
+    getUserCreatedEnquiry();
     setTimeout(() => {
       setRefreshing(false);
     }, 2000);
