@@ -6,6 +6,7 @@ import {
   FlatList,
   Image,
   Button,
+  Linking,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import axios from 'axios';
@@ -15,6 +16,7 @@ import moment from 'moment';
 import LoadingSpinner from './subCom/LoadingSpinner';
 import CustomLoadingSpinner from './subCom/CustomLoadingSpinner';
 import {useNavigation} from '@react-navigation/native';
+import TimeAgo from './subCom/TImeAgo';
 
 const Enquiries = ({route}) => {
   const navigation = useNavigation();
@@ -32,12 +34,27 @@ const Enquiries = ({route}) => {
   }, [item]);
   const handleNextEnquiry = () => {
     console.log('Next');
-    setCurrentEnquiryIndex(currentEnquiryIndex + 1);
+    // setCurrentEnquiryIndex(currentEnquiryIndex + 1);
+    navigation.navigate('Additional Details', {item: item});
+
   };
   const handleEnquirySkip = () => {
     console.log('Skip');
     setCurrentEnquiryIndex(currentEnquiryIndex + 1);
   };
+  const handleSheduleCall = item => {
+    navigation.navigate('Schedule Call', {item: item});
+  };
+  const makePhoneCall = mobileNumber => {
+    console.log('Calling...', mobileNumber);
+    Linking.openURL(`tel:${mobileNumber}`);
+  };
+
+  const openAdditonalEnquiry = item => {
+    console.log(item, '>>>>>>>>>>>>>>>.');
+    navigation.navigate('Additional Details', {item: item});
+  };
+
   useEffect(() => {
     if (currentEnquiryIndex) {
       getLockedEnquiries(item.id, item.task, currentEnquiryIndex);
@@ -122,37 +139,74 @@ const Enquiries = ({route}) => {
               keyExtractor={(item, index) => `task_${index}`}
               renderItem={({item, index}) => {
                 return (
-                  <>
-                    <View style={styles.contentContainer}>
-                      <View style={styles.dataContainer}>
-                        <View style={styles.leftContainer}>
-                          <Image
-                            style={styles.personImg}
-                            source={require('../../assets/person.png')}
-                          />
-                          <Image
-                            style={styles.personImg}
-                            source={require('../../assets/phone.png')}
-                          />
-                        </View>
-                        <View style={styles.rightContainer}>
-                          <View style={styles.subContainer}>
-                            <View style={{alignItems: 'flex-start'}}>
-                              <Text style={styles.label}>{item.customer}</Text>
-                              <TouchableOpacity
-                                onPress={() => {
-                                  // makePhoneCall(item.phone_number);
-                                }}>
-                                <Text style={styles.label}>
-                                  {item.phone_number}
-                                </Text>
-                              </TouchableOpacity>
-                            </View>
+                  <View key={index} style={styles.enquiryBox}>
+                    <View style={styles.leftDataStyle}>
+                      <View style={styles.eDataContainer}>
+                        <View style={styles.textContainer}>
+                          <View style={styles.row}>
+                            <Image
+                              style={styles.personImg}
+                              source={require('../../assets/person.png')}
+                            />
+                            <Text style={styles.value}>
+                              {item.first_name +
+                                (item.last_name ? ' ' + item.last_name : '')}
+                            </Text>
+                          </View>
+                          <View style={styles.row}>
+                            <Image
+                              style={styles.personImg}
+                              source={require('../../assets/phone.png')}
+                            />
+                            <TouchableOpacity
+                              onPress={() => {
+                                makePhoneCall(item.phone_number);
+                              }}>
+                              <Text style={styles.value}>
+                                {item.phone_number}
+                              </Text>
+                            </TouchableOpacity>
+                          </View>
+                          <View style={styles.row}>
+                            <Image
+                              style={styles.personImg}
+                              source={require('../../assets/product.png')}
+                            />
+                            <Text style={styles.value}>
+                              {item.product ? item.product : '-'}
+                            </Text>
+                          </View>
+                          <View style={styles.row}>
+                            <Image
+                              style={styles.personImg}
+                              source={require('../../assets/location.png')}
+                            />
+                            <Text style={styles.value}>
+                              {item.village ? item.village : '-'}
+                            </Text>
                           </View>
                         </View>
                       </View>
                     </View>
-                  </>
+                    <View style={styles.rightDataStyle}>
+                      <Text style={styles.dateText}>Not Followed</Text>
+                      {item.sales_person && (
+                        <Text style={styles.salesText}>
+                          {item.sales_person}
+                        </Text>
+                      )}
+                      <TouchableOpacity style={styles.dayBack}>
+                        <TimeAgo date={item.date} />
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={() => {
+                          handleSheduleCall(item);
+                        }}
+                        style={styles.discussionButton}>
+                        <Text style={styles.discussionText}>Follow Up</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
                 );
               }}
             />
@@ -168,7 +222,7 @@ const Enquiries = ({route}) => {
             <TouchableOpacity
               style={styles.buttonContainer}
               onPress={handleNextEnquiry}>
-              <Text style={styles.nextStyle}>NEXT</Text>
+              <Text style={styles.nextStyle}>DONE & NEXT</Text>
             </TouchableOpacity>
           </TouchableOpacity>
         </View>
@@ -337,6 +391,107 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 20,
     paddingVertical: 7,
+  },
+  enquiryBox: {
+    marginTop: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 7,
+    width: '95%',
+    backgroundColor: 'white',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    marginHorizontal: 10,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+  },
+  leftDataStyle: {
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    flex: 1,
+  },
+  rightDataStyle: {
+    flexDirection: 'column',
+    alignItems: 'flex-end',
+    marginLeft: 5,
+  },
+  dateText: {
+    color: 'white',
+    fontSize: 12,
+    fontWeight: 'bold',
+    backgroundColor: '#3ab1d3',
+    borderRadius: 20,
+    borderColor: '#138D75',
+    borderWidth: 0.1,
+    paddingHorizontal: 5,
+    marginBottom: 10,
+  },
+  salesText: {
+    color: 'white',
+    fontSize: 12,
+    fontWeight: 'bold',
+    backgroundColor: '#3ab1d3',
+    borderRadius: 20,
+    borderColor: '#138D75',
+    borderWidth: 0.1,
+    paddingHorizontal: 5,
+    marginBottom: 5,
+  },
+  dayBack: {
+    borderRadius: 30,
+    color: 'white',
+    padding: 2,
+    marginBottom: 5,
+  },
+  discussionButton: {
+    backgroundColor: '#2ECC71',
+    borderRadius: 20,
+    borderColor: '#138D75',
+    borderWidth: 0.1,
+    paddingHorizontal: 5,
+    marginBottom: 5,
+  },
+  discussionText: {
+    color: 'white',
+    textAlign: 'center',
+  },
+  notAvailableText: {
+    fontSize: 18,
+    color: 'red',
+    fontStyle: 'italic',
+  },
+  noEnqiryBox: {
+    backgroundColor: 'lightcoral',
+    padding: 10,
+    borderRadius: 5,
+    marginHorizontal: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginVertical: 20,
+  },
+  eDataContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  textContainer: {
+    flex: 1,
+  },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  value: {
+    flex: 1,
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 

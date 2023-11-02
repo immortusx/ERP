@@ -119,14 +119,14 @@ const Tasks = () => {
                       </View>
                     </View>
                     <View style={styles.startTaskContainer}>
-                        <TouchableOpacity
-                          style={styles.taskStartBtn}
-                          onPress={() => {
-                            redirectEnquiriesList(item);
-                          }}>
-                          <Text style={styles.startText}>Start Task</Text>
-                        </TouchableOpacity>
-                      </View>
+                      <TouchableOpacity
+                        style={styles.taskStartBtn}
+                        onPress={() => {
+                          redirectEnquiriesList(item);
+                        }}>
+                        <Text style={styles.startText}>Start Task</Text>
+                      </TouchableOpacity>
+                    </View>
                   </View>
                 </View>
               );
@@ -193,13 +193,13 @@ const styles = StyleSheet.create({
   },
   dataContainer: {
     flexDirection: 'row',
-    marginHorizontal: 12,
     position: 'relative',
-    alignItems: 'flex-end'
+    justifyContent: 'space-between',
+    alignItems: 'flex-end',
+    marginHorizontal: 5,
   },
   leftContainer: {
     alignItems: 'flex-start',
-    marginRight: 10,
   },
   rightContainer: {
     alignItems: 'flex-start',
@@ -237,7 +237,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 16,
+    marginHorizontal: 2
   },
   startText: {
     fontSize: 12,
@@ -246,9 +246,9 @@ const styles = StyleSheet.create({
   },
   startTaskContainer: {
     position: 'relative',
-    top: 0,
-    padding: 2
-  }
+    padding: 2,
+    marginHorizontal: 10,
+  },
 });
 
 export default Tasks;
