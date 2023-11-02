@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "google-translate-api": "^2.3.0",
-    "react-tooltip": "^5.21.4"
-  }
-}
