@@ -697,6 +697,7 @@ export default function Addemployee({ workFor }) {
                 value={employeeData.phoneNumber}
                 className="myInput inputElement"
                 autoComplete="false"
+                maxLength={15}
                 onChange={(e) => {
                   onChangeHandler(e);
                 }}

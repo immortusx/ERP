@@ -638,7 +638,7 @@ export default function Branch({ workFor }) {
                                 </section>
                                 <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
                                     <label className='myLabel' htmlFor="email"> {translations[currentLanguage].mobileno} *</label>
-                                    <input defaultValue={branchData.mobileNumber} onChange={changeHandler} className='inpClr myInput inputElement' autoComplete='false' type="text" name="mobileNumber" />
+                                    <input maxLength={15} defaultValue={branchData.mobileNumber} onChange={changeHandler} className='inpClr myInput inputElement' autoComplete='false' type="text" name="mobileNumber" />
                                 </section>
                                 <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
                                     <label className='myLabel' htmlFor="email"> {translations[currentLanguage].email} *</label>
