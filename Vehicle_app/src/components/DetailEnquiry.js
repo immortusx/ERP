@@ -28,6 +28,7 @@ import SweetSuccessAlert from './subCom/SweetSuccessAlert';
 import { useNavigation } from '@react-navigation/native';
 import { getEnquiryData } from '../redux/slice/getEnquirySlice';
 import { clearManufacturerDetails } from '../redux/slice/manufacturerDetailsSlice';
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 import {
   clearEditEnquiryState,
   setEditEnquiryDb,
@@ -35,10 +36,11 @@ import {
 import Calendars from './subCom/Calendars';
 import YearPicker from './subCom/YearPicker';
 import MinDateCalendars from './subCom/MinDateCalendars';
+import moment from 'moment';
 const DetailEnquiry = ({ route }) => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
-  const enquiryState = useSelector(state => state.DetailEnquiry.enquiryState)
+  const enquiryState = useSelector(state => state.DetailEnquiry.enquiryState);
   const editEnquiryState = useSelector(
     state => state.editEnquirySlice.editEnquiryState,
   );
@@ -91,7 +93,7 @@ const DetailEnquiry = ({ route }) => {
   });
   const [salePersonData, setSalePersonData] = useState({
     id: null,
-    ssp: ''
+    ssp: '',
   });
   const [primarySourceItem, setPrimarySourceItem] = useState([]);
   const [enquirySourceItem, setEnquirySourceItem] = useState([]);
@@ -169,13 +171,12 @@ const DetailEnquiry = ({ route }) => {
         await axios.get(url, config).then(response => {
           if (response) {
             console.log(response.data.result, 'assigned person');
-            response.data.result.map((item) => {
+            response.data.result.map(item => {
               setSalePersonData({
                 id: item.id,
-                ssp: item.salesperson
+                ssp: item.salesperson,
               });
-            })
-
+            });
           }
         });
         setLoading(false);
@@ -183,7 +184,12 @@ const DetailEnquiry = ({ route }) => {
       getAssignedPerson();
     }
   }, [village]);
-
+  const handleConfirm = (date) => {
+    const formattedDate = moment(date).format('YYYY-MM-DD');
+    console.log(formattedDate, 'formatteddat')
+    setExpDeliveryDate(formattedDate);
+    setOpenExpDeliveryDate(false);
+  };
   useEffect(() => {
     if (salePersonData.length > []) {
       setSalePerson(salePersonData[0].salesperson);
@@ -290,7 +296,7 @@ const DetailEnquiry = ({ route }) => {
               keyboardType="default"
               defaultValue={enquiryData.phone || ''}
               onChangeText={value => onChangeHandler(value, 'phone')}
-              maxLength={10}
+              maxLength={15}
             />
             {mobileNumberError ? (
               <Text style={{ color: 'red' }}>{mobileNumberError}</Text>
@@ -310,7 +316,7 @@ const DetailEnquiry = ({ route }) => {
               keyboardType="default"
               defaultValue={enquiryData.whatsappno || ''}
               onChangeText={value => onChangeHandler(value, 'whatsappno')}
-              maxLength={10}
+              maxLength={15}
             />
             {whatsNumberError ? (
               <Text style={{ color: 'red' }}>{whatsNumberError}</Text>
@@ -384,8 +390,8 @@ const DetailEnquiry = ({ route }) => {
                   onChange={item => {
                     setSalePersonData({
                       id: '',
-                      ssp: ''
-                    })
+                      ssp: '',
+                    });
                     setVillage(item.value);
                   }}
                 />
@@ -546,25 +552,21 @@ const DetailEnquiry = ({ route }) => {
         return (
           <View style={{ marginBottom: 5 }}>
             <Text style={[styles.label, { marginBottom: 5 }]}>
-              Expected Delivery Date *
+              Delivery Date *
             </Text>
             <View style={styles.deliveryDateContainer}>
-              <TouchableOpacity
-                style={{ paddingHorizontal: 5 }}
-                onPress={() => {
-                  setOpenExpDeliveryDate(true);
-                }}>
+              <TouchableOpacity style={{ paddingHorizontal: 5 }} onPress={() => { setOpenExpDeliveryDate(true) }}>
                 <Text style={{ paddingVertical: 7 }}>
+                  Start Date {':- '}
                   {expDeliveryDate === ''
                     ? new Date().toISOString().slice(0, 10)
                     : expDeliveryDate}
-                </Text>
-              </TouchableOpacity>
-              <MinDateCalendars
-                showModal={openExpDeliveryDate}
-                selectedDate={expDeliveryDate}
-                handleCalendarDate={handleCalendarDate}
-                onClose={() => setOpenExpDeliveryDate(false)}
+                </Text></TouchableOpacity>
+              <DateTimePickerModal
+                isVisible={openExpDeliveryDate}
+                mode="date"
+                onConfirm={handleConfirm}
+                onCancel={() => { setOpenExpDeliveryDate(false) }}
               />
             </View>
           </View>
@@ -996,15 +998,15 @@ const DetailEnquiry = ({ route }) => {
   };
   const onChangeHandler = (value, field) => {
     if (field === 'phone') {
-      if (!/^\d{10}$/.test(value)) {
-        setMobileNumberError('Invalid mobile number. It should be 10 digits.');
+      if (value.length < 10) {
+        setMobileNumberError('Invalid mobile number.');sa       
       } else {
         setMobileNumberError('');
       }
     }
     if (field === 'whatsappno') {
-      if (!/^\d{10}$/.test(value)) {
-        setWhatNumberError('Invalid WhatsApp number. It should be 10 digits.');
+      if (value.length < 10) {
+        setWhatNumberError('Invalid WhatsApp number.');
       } else {
         setWhatNumberError('');
       }
@@ -1014,7 +1016,6 @@ const DetailEnquiry = ({ route }) => {
       ...preData,
       [field]: value,
     }));
-
   };
 
   useEffect(() => {
@@ -1034,23 +1035,21 @@ const DetailEnquiry = ({ route }) => {
 
   useEffect(() => {
     if (enquiryState && enquiryState.result.result === 'allready exists') {
-      setMobileNumberError("*Already Exist!");
-      console.log(enquiryState, "enquiryStatedirdtrif")
+      setMobileNumberError('*Already Exist!');
+      console.log(enquiryState, 'enquiryStatedirdtrif');
       dispatch(clearEnquiryState());
       dispatch(clearManufacturerDetails());
       dispatch(clearModalData());
-    }
-    else if (enquiryState && enquiryState.result.result === 'success') {
+    } else if (enquiryState && enquiryState.result.result === 'success') {
       dispatch(clearEnquiryState());
       dispatch(clearManufacturerDetails());
       dispatch(clearModalData());
       setMessage('Enquiry Submitted');
       openModal();
-      setMobileNumberError('')
+      setMobileNumberError('');
       setShowMessageModal(true);
       navigation.navigate('HOME');
     }
-
   }, [enquiryState]);
 
   const submitEnquiry = () => {
@@ -1084,7 +1083,7 @@ const DetailEnquiry = ({ route }) => {
     if (enquiryData.firstname.length > 0) {
       if (editData) {
         formData.customer_id = editData.id;
-        formData.sales_person = salePersonData.id
+        formData.sales_person = salePersonData.id;
         console.log(formData, 'Edit Enquirydkfkd');
         dispatch(setEditEnquiryDb(formData));
       } else {

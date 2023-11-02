@@ -9,24 +9,24 @@ import {
   TouchableWithoutFeedback,
   RefreshControl,
 } from 'react-native';
-import React, {useState, useEffect, useCallback} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
-import {getEnquiryData} from '../redux/slice/getEnquirySlice';
-import {useNavigation} from '@react-navigation/native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { getEnquiryData } from '../redux/slice/getEnquirySlice';
+import { useNavigation } from '@react-navigation/native';
 import CustomLoadingSpinner from './subCom/CustomLoadingSpinner';
-import {Linking} from 'react-native';
+import { Linking } from 'react-native';
 import moment from 'moment';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {API_URL} from '@env';
+import { API_URL } from '@env';
 import ToastMessage from './subCom/ToastMessage';
 import TimeAgo from './subCom/TImeAgo';
 import ConfirmationDialog from './subCom/ConfirmationDialog';
 import ConfirmBox from './subCom/Confirm';
 import SimpleAlert from './subCom/SimpleAlert';
-import {setEnquiryType} from '../redux/slice/enquiryTypeSlice';
+import { setEnquiryType } from '../redux/slice/enquiryTypeSlice';
 import DayAgo from './subCom/DayAgo';
-const ColdEnquiry = () => {
+const ColdEnquiry = ({ selectedCategory }) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const [resultData, setResultData] = useState([]);
@@ -41,15 +41,15 @@ const ColdEnquiry = () => {
     state => state.getUserProfileSlice.profile.currentUserData.result,
   );
   const getEnquiryState = useSelector(state => state.getEnquiryState);
-  const {isFetching, isSuccess, isError, result} = getEnquiryState;
+  const { isFetching, isSuccess, isError, result } = getEnquiryState;
 
   useEffect(() => {
     // dispatch(getEnquiryData());
     getColdEnquiry();
-  }, []);
+  }, [selectedCategory]);
   const getColdEnquiry = async () => {
     console.log('cold ENquiry....');
-    const url = `${API_URL}/api/get-Cold-enquiry`;
+    const url = `${API_URL}/api/get-Cold-enquiry/${selectedCategory}`;
     console.log('get user created', url);
     const token = await AsyncStorage.getItem('rbacToken');
     const config = {
@@ -83,7 +83,7 @@ const ColdEnquiry = () => {
     }
   }, [result]);
   const handleSheduleCall = item => {
-    navigation.navigate('Schedule Call', {item: item});
+    navigation.navigate('Schedule Call', { item: item });
   };
   const makePhoneCall = mobileNumber => {
     console.log('Calling...', mobileNumber);
@@ -92,7 +92,7 @@ const ColdEnquiry = () => {
 
   const openAdditonalEnquiry = item => {
     console.log(item, '>>>>>>>>>>>>>>>.');
-    navigation.navigate('Additional Details', {item: item});
+    navigation.navigate('Additional Details', { item: item });
   };
 
   if (loading) {
@@ -116,7 +116,7 @@ const ColdEnquiry = () => {
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }
-            renderItem={({item, index}) => {
+            renderItem={({ item, index }) => {
               return (
                 <TouchableWithoutFeedback
                   onPress={() => {
@@ -397,7 +397,7 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 4,
     elevation: 3,

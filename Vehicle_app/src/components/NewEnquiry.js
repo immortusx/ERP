@@ -9,25 +9,25 @@ import {
   TouchableWithoutFeedback,
   RefreshControl,
 } from 'react-native';
-import React, {useState, useEffect, useCallback} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
-import {getEnquiryData} from '../redux/slice/getEnquirySlice';
-import {useNavigation} from '@react-navigation/native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { getEnquiryData } from '../redux/slice/getEnquirySlice';
+import { useNavigation } from '@react-navigation/native';
 import CustomLoadingSpinner from './subCom/CustomLoadingSpinner';
-import {Linking} from 'react-native';
+import { Linking } from 'react-native';
 import moment from 'moment';
 import axios from 'axios';
-import {useFocusEffect} from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {API_URL} from '@env';
+import { API_URL } from '@env';
 import ToastMessage from './subCom/ToastMessage';
 import TimeAgo from './subCom/TImeAgo';
 import ConfirmationDialog from './subCom/ConfirmationDialog';
 import ConfirmBox from './subCom/Confirm';
 import SimpleAlert from './subCom/SimpleAlert';
-import {setEnquiryType} from '../redux/slice/enquiryTypeSlice';
+import { setEnquiryType } from '../redux/slice/enquiryTypeSlice';
 
-const NewEnquiry = () => {
+const NewEnquiry = ({ selectedCategory }) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const [resultData, setResultData] = useState([]);
@@ -42,14 +42,16 @@ const NewEnquiry = () => {
     state => state.getUserProfileSlice.profile.currentUserData.result,
   );
   const getEnquiryState = useSelector(state => state.getEnquiryState);
-  const {isFetching, isSuccess, isError, result} = getEnquiryState;
+  const { isFetching, isSuccess, isError, result } = getEnquiryState;
 
   useFocusEffect(
     React.useCallback(() => {
-      // This code will run when the component is focused (e.g., navigated to).
       handleNewEnquiry();
     }, []),
   );
+  useEffect(() => {
+    handleNewEnquiry();
+  }, [selectedCategory]);
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     dispatch(setEnquiryType('New'));
@@ -70,7 +72,7 @@ const NewEnquiry = () => {
     handleNewEnquiry();
   }, [navigation]);
   const handleSheduleCall = item => {
-    navigation.navigate('Schedule Call', {item: item});
+    navigation.navigate('Schedule Call', { item: item });
   };
   const makePhoneCall = mobileNumber => {
     console.log('Calling...', mobileNumber);
@@ -79,7 +81,7 @@ const NewEnquiry = () => {
 
   const openAdditonalEnquiry = item => {
     console.log(item, '>>>>>>>>>>>>>>>.');
-    navigation.navigate('Additional Details', {item: item});
+    navigation.navigate('Additional Details', { item: item });
   };
 
   if (loading) {
@@ -89,8 +91,8 @@ const NewEnquiry = () => {
   //   return <CustomLoadingSpinner />;
   // }
   const handleNewEnquiry = async () => {
-    console.log('New enquiries....');
-    const url = `${API_URL}/api/enquiry/get-new-enquiries-list`;
+    console.log('New enquiries....', selectedCategory);
+    const url = `${API_URL}/api/enquiry/get-new-enquiries-list/${selectedCategory}`;
     console.log('get new enqiry', url);
     const token = await AsyncStorage.getItem('rbacToken');
     const config = {
@@ -121,7 +123,7 @@ const NewEnquiry = () => {
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }
-            renderItem={({item, index}) => {
+            renderItem={({ item, index }) => {
               return (
                 <TouchableWithoutFeedback
                   onPress={() => {
@@ -426,7 +428,7 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 4,
     elevation: 3,

@@ -367,7 +367,7 @@ export default function AddUser({ workFor }) {
                         </section>
                         <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
                             <label className='myLabel' htmlFor="email">Phone Number</label>
-                            <input value={userData.phoneNumber} className='myInput inputElement' autoComplete='false' onChange={(e) => { onChangeHandler(e) }} type="text" name="phoneNumber" />
+                            <input maxLength={15} value={userData.phoneNumber} className='myInput inputElement' autoComplete='false' onChange={(e) => { onChangeHandler(e) }} type="text" name="phoneNumber" />
                         </section>
                         <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
                             <label className='myLabel' htmlFor="password">{workFor === 'forAdd' ? 'Password' : 'New password'}</label>

@@ -27,6 +27,7 @@ const AdditonalDetails = ({ route }) => {
   const [loading, setLoading] = useState(false);
   const [oldProductDetails, setOldProductDetails] = useState([]);
   const [scheduleDetails, setScheduleDetails] = useState([]);
+  const [firstMaker, setFirstMaker] = useState('');
   const [appState, setAppState] = useState(AppState.currentState);
   const { item } = route.params;
 
@@ -59,8 +60,8 @@ const AdditonalDetails = ({ route }) => {
     Best regards,
     The Keshav Tractor Team`;
   useEffect(() => {
-    console.log("New to Lofi")
-  }, [])
+    console.log('New to Lofi');
+  }, []);
   const handleSheduleCall = item => {
     navigation.navigate('Schedule Call', { item: item });
   };
@@ -138,10 +139,29 @@ const AdditonalDetails = ({ route }) => {
     });
     // setLoading(false);
   };
+  const getFirstMaker = async () => {
+    console.log('First Maker....');
+    const url = `${API_URL}/api/master/get-first-maker`;
+    console.log('get first maker', url);
+    const token = await AsyncStorage.getItem('rbacToken');
+    const config = {
+      headers: {
+        token: token ? token : '',
+      },
+    };
+    console.log(config);
+    await axios.get(url, config).then(response => {
+      console.log(response.data.result, 'first maker');
+      if (response.data && response.data.result.length > 0) {
+        setFirstMaker(response.data.result[0].name);
+      }
+    });
+  };
   useEffect(() => {
     if (item) {
       getOldProductDetails(item.enquiry_id);
       getFollowUpDetils(item.id);
+      getFirstMaker();
       if (item.oldOwned === 'Yes') {
         setIsShow(true);
       }
@@ -184,9 +204,14 @@ const AdditonalDetails = ({ route }) => {
   };
 
   const sendWhatsAppMessage = whatsAppNumber => {
+    if (whatsAppNumber.length != 10) {
+      return;
+    }
+    const countryCode = '+91';
+    const fullNumber = `${countryCode}${whatsAppNumber}`;
     const encodedMessage = encodeURIComponent(whatsAppWelcomeMessage);
     Linking.openURL(
-      `whatsapp://send?phone=${whatsAppNumber}&text=${encodedMessage}`,
+      `whatsapp://send?phone=${fullNumber}&text=${encodedMessage}`,
     )
       .then(() => {
         console.log('WhatsApp Opening....');
@@ -284,7 +309,7 @@ const AdditonalDetails = ({ route }) => {
               <View style={styles.dataStyle}>
                 <View style={styles.subDataStyle}>
                   <Text style={styles.label}>Manufacturer: </Text>
-                  <Text style={styles.labelValue}>Sonalika</Text>
+                  <Text style={styles.labelValue}>{firstMaker}</Text>
                 </View>
                 <View style={styles.line} />
               </View>
@@ -463,13 +488,18 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   label: {
+    flex: 1,
     fontSize: 16,
     fontWeight: 'bold',
     color: 'black',
+    justifyContent: 'flex-start',
   },
   labelValue: {
+    flex: 1,
     fontSize: 16,
     fontWeight: 'bold',
+    justifyContent: 'flex-end',
+    marginLeft:20
   },
   line: {
     backgroundColor: '#f6f7f9',
@@ -550,7 +580,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 16,
     borderWidth: 0.2,
-    borderColor: '#2471A2'
+    borderColor: '#2471A2',
   },
   leftContainer: {
     maxWidth: '80%',
@@ -563,6 +593,6 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
   },
-  dataStyle: {}
+  dataStyle: {},
 });
 export default AdditonalDetails;

@@ -15,59 +15,65 @@ import {API_URL} from '@env';
 import {useNavigation} from '@react-navigation/native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import moment from 'moment';
-const formatDate = datetime => {
-  const options = {year: 'numeric', month: 'long', day: 'numeric'};
-  return new Date(datetime).toLocaleDateString(undefined, options);
-};
 
-const TaslList = () => {
+
+const TaslList = ({route}) => {
   const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
+  const [selectedEmployeeId, setSelectedEmployeeId] = useState([]);
 
-  const [userTaskList, setUserTaskList] = useState([]);
   const [openStartDate, setOpenStartDate] = useState(false);
   const [openEndDate, setOpenEndDate] = useState(false);
   const [startDate, setstartDate] = useState('');
   const [EndDate, setEndDate] = useState('');
-  useEffect(() => {
-    setstartDate(moment().subtract(7, 'days').format('YYYY-MM-DD'));
-    setEndDate(moment().format('YYYY-MM-DD'));
-  }, []);
+  const [employeename, setEmployeeName] = useState('');
+  const [data,setData] =useState([])
 
-  const getEmployeeTaskLists = async (startDate, endDate) => {
-    const url = `${API_URL}/api/get-task-assign-employee-list/${startDate}/${endDate}`;
-    console.log('get employee list', url);
-    const token = await AsyncStorage.getItem('rbacToken');
-    const config = {
-      headers: {
-        token: token ? token : '',
-      },
-    };
-    setLoading(true);
-    console.log(config);
-    await axios.get(url, config).then(response => {
-      if (response) {
-        console.log(response.data.result, 'resoulr');
-        setUserTaskList(response.data.result);
-      }
-    });
-    setLoading(false);
-  };
+  useEffect(() => {
+    if (route) {
+      const {userParam} = route.params;
+      console.log(userParam, 'uskedlf');
+      setData(userParam);
+      setstartDate(userParam.startDate);
+      setEndDate(userParam.EndDate);
+      getUserTaskList(userParam.userId, userParam.startDate, userParam.EndDate);
+    }
+  }, [route]);
 
   useEffect(() => {
     if (startDate && EndDate) {
-      getEmployeeTaskLists(startDate, EndDate);
+      console.log(
+        data.userId,
+        startDate,
+        EndDate,
+        'tttttttttttttttttttttttttt',
+      );
+      getUserTaskList(data.userId, startDate, EndDate);
     }
   }, [startDate, EndDate]);
 
-  const openUserTaskList = id => {
-    console.log(id, startDate, EndDate, 'krkefktivirgidi');
-    const userParam = {
-      userId: id,
-      startDate: startDate,
-      EndDate: EndDate,
-    };
-    navigation.navigate('User Task List', {userParam: userParam});
+
+  const getUserTaskList = async (id, startDate, endDate) => {
+    try {
+      const url = `${API_URL}/api/get-user-task-by-UserId/${id}/${startDate}/${endDate}`;
+      const token = await AsyncStorage.getItem('rbacToken');
+      const config = {
+        headers: {
+          token: token ? token : '',
+        },
+      };
+      setLoading(true);
+      const response = await axios.get(url, config);
+      if (response.data && response.data.result) {
+        console.log(response.data.result, 'userTaskilsificier');
+        const employeeName = response.data.result[0].employee;
+        setEmployeeName(employeeName);
+        setSelectedEmployeeId(response.data.result);
+      }
+      setLoading(false)
+    } catch (error) {
+      console.error('Error fetching usedfkdf:', error);
+    }
   };
 
   if (loading) {
@@ -85,6 +91,11 @@ const TaslList = () => {
     console.log(formattedDate, 'deliverydate');
     setEndDate(formattedDate);
     setOpenEndDate(false);
+  };
+
+  const handletaskReport = data => {
+    console.log(data, 'uesrdata');
+    navigation.navigate('Detail Task Report List', {taskreport: data});
   };
 
   return (
@@ -144,29 +155,29 @@ const TaslList = () => {
         </View>
       </View>
       <View style={styles.modalContent}>
-        {userTaskList.length > 0 ? (
-          <FlatList
-            data={userTaskList}
-            keyExtractor={(item, index) => `${index}`}
-            renderItem={({item, index}) => {
-              return (
-                <ScrollView>
-                  <TouchableOpacity
-                    style={styles.categoryItem}
-                    onPress={() => openUserTaskList(item.id)}>
+        <View style={styles.categoryItem}>
+          <Text style={styles.categoryText}>{employeename}</Text>
+        </View>
+        <FlatList
+          data={selectedEmployeeId}
+          keyExtractor={(item, index) => `${index}`}
+          renderItem={({item, index}) => {
+            return (
+              <ScrollView>
+                <TouchableOpacity
+                  style={styles.categoryItem}
+                  onPress={() => handletaskReport(item)}>
+                  <View style={styles.taskstyle}>
                     <Text style={styles.categoryText}>
-                      {index + 1}. {item.employee}
+                      {index + 1}. {item.task_name}
                     </Text>
-                  </TouchableOpacity>
-                </ScrollView>
-              );
-            }}
-          />
-        ) : (
-          <Text style={styles.NoTaskStyle}>
-            No task available for the selected date range !
-          </Text>
-        )}
+                    <Text style={styles.categoryText}>{item.taskcount}</Text>
+                  </View>
+                </TouchableOpacity>
+              </ScrollView>
+            );
+          }}
+        />
       </View>
     </View>
   );
@@ -176,12 +187,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F5EEF8',
-  },
-  label: {
-    color: 'white',
-    fontSize: 14,
-    fontWeight: 'bold',
-    marginBottom: 5,
   },
   textStyle: {
     backgroundColor: 'white',
@@ -240,6 +245,12 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 20,
     marginVertical: 8,
+  },
+  label: {
+    color: 'white',
+    fontSize: 14,
+    fontWeight: 'bold',
+    marginBottom: 5,
   },
 
   enquiryBox: {

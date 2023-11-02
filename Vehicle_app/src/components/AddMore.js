@@ -127,14 +127,14 @@ const AddMore = () => {
           const filteredCategory = response.data.result.filter((item) => item.id !== 1);
           filteredCategory.unshift({ id: 1, category_name: 'All' });
           setCategoryData(filteredCategory);
+          dispatch(setEnquiryType('New'));
         }
       });
     };
     getCategoryies();
   }, []);
   const handleCategoryChange = async categoryId => {
-    console.log(categoryId, 'rcaiett')
-    dispatch(setEnquiryType('All'));
+    dispatch(setEnquiryType('New'));
   };
   useEffect(() => {
     if (selectedCategory) {
@@ -241,14 +241,14 @@ const AddMore = () => {
           }}
         />
       </View>
-      {enquiryType === 'New' && <NewEnquiry />}
+      {enquiryType === 'New' && <NewEnquiry selectedCategory={selectedCategory} />}
       {/* {enquiryType === 'Today' && <TodayEnquiry />}
       {enquiryType === 'Last Month' && <LastMonthEnquiry />} */}
       {enquiryType === 'Due' && <DueEnquiry />}
-      {enquiryType === 'Hot' && <HotEnquiry />}
-      {enquiryType === 'Cold' && <ColdEnquiry />}
-      {enquiryType === 'Warm' && <WarmEnquiry />}
-      {enquiryType === 'User Created' && <UserCreatedEnquiry />}
+      {enquiryType === 'Hot' && <HotEnquiry selectedCategory={selectedCategory} />}
+      {enquiryType === 'Cold' && <ColdEnquiry selectedCategory={selectedCategory} />}
+      {enquiryType === 'Warm' && <WarmEnquiry selectedCategory={selectedCategory} />}
+      {enquiryType === 'User Created' && <UserCreatedEnquiry selectedCategory={selectedCategory} />}
       {/* {enquiryType === 'Followed Enquiry' && <FollowedEnquiry />} */}
       {enquiryType === 'All' && <CategorisedEnquiry categoryId={selectedCategory} />}
       <View>

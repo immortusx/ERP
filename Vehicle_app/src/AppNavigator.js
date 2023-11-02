@@ -14,13 +14,15 @@ import DetailEnquiry from './components/DetailEnquiry';
 import DeliveryScreen from './components/Delivery';
 import EnquiryList from './components/EnquiryList';
 import WorkList from './components/WorkList'
-import TaslList from './components/Tasklist';
 import EnquiryVillageList from './components/EnquiryVillageList';
 import Category from './components/Category';
 import VillageEnquiryLists from './components/VillageEnquiryLists';
 import VillageEnquiry from './components/VillageEnquiry';
 import UserTaskDetails from './components/UserTaskDetails';
 import Enquiries from './components/Enquiries';
+import DetailTaskReport from './components/DetailTaskReport';
+import TaskList from './components/Tasklist';
+import UserTaskList from './components/UserTaskList';
 const Stack = createStackNavigator();
 const AppNavigator = () => {
   return (
@@ -153,7 +155,29 @@ const AppNavigator = () => {
         />
         <Stack.Screen
           name="Task Report List"
-          component={TaslList}
+          component={TaskList}
+          options={{
+            headerShown: true,
+            headerStyle: {
+              borderWidth: 0.9,
+              borderColor: 'grey',
+            },
+          }}
+        />
+        <Stack.Screen
+          name="User Task List"
+          component={UserTaskList}
+          options={{
+            headerShown: true,
+            headerStyle: {
+              borderWidth: 0.9,
+              borderColor: 'grey',
+            },
+          }}
+        />
+        <Stack.Screen
+          name="Detail Task Report List"
+          component={DetailTaskReport}
           options={{
             headerShown: true,
             headerStyle: {

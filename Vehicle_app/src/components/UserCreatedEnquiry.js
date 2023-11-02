@@ -26,7 +26,7 @@ import ConfirmBox from './subCom/Confirm';
 import SimpleAlert from './subCom/SimpleAlert';
 import {setEnquiryType} from '../redux/slice/enquiryTypeSlice';
 
-const UserCreatedEnquiry = () => {
+const UserCreatedEnquiry = ({selectedCategory}) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const [resultData, setResultData] = useState([]);
@@ -46,10 +46,10 @@ const UserCreatedEnquiry = () => {
   useEffect(() => {
     // dispatch(getEnquiryData());
     getUserCreatedEnquiry();
-  }, []);
+  }, [selectedCategory]);
   const getUserCreatedEnquiry = async () => {
     console.log('New enquiries....');
-    const url = `${API_URL}/api/get-user-created-enquiry`;
+    const url = `${API_URL}/api/get-user-created-enquiry/${selectedCategory}`;
     console.log('get user created', url);
     const token = await AsyncStorage.getItem('rbacToken');
     const config = {
@@ -69,7 +69,7 @@ const UserCreatedEnquiry = () => {
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     //   dispatch(setEnquiryType('Followed Enquiry'));
-    dispatch(getEnquiryData());
+    getUserCreatedEnquiry();
     setTimeout(() => {
       setRefreshing(false);
     }, 2000);

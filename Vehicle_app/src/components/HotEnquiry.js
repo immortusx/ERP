@@ -26,7 +26,7 @@ import ConfirmBox from './subCom/Confirm';
 import SimpleAlert from './subCom/SimpleAlert';
 import {setEnquiryType} from '../redux/slice/enquiryTypeSlice';
 import DayAgo from './subCom/DayAgo';
-const HotEnquiry = () => {
+const HotEnquiry = ({selectedCategory}) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const [resultData, setResultData] = useState([]);
@@ -46,10 +46,10 @@ const HotEnquiry = () => {
   useEffect(() => {
     // dispatch(getEnquiryData());
     getHotENquiry();
-  }, []);
+  }, [selectedCategory]);
   const getHotENquiry = async () => {
     console.log('New enquiries....');
-    const url = `${API_URL}/api/get-hot-enquiry`;
+    const url = `${API_URL}/api/get-hot-enquiry/${selectedCategory}`;
     console.log('get user created', url);
     const token = await AsyncStorage.getItem('rbacToken');
     const config = {

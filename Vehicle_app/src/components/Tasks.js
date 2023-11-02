@@ -13,7 +13,7 @@ import {API_URL} from '@env';
 import moment from 'moment';
 import LoadingSpinner from './subCom/LoadingSpinner';
 import CustomLoadingSpinner from './subCom/CustomLoadingSpinner';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 
 const Tasks = () => {
   const navigation = useNavigation();
@@ -38,6 +38,11 @@ const Tasks = () => {
       setLoading(false);
     });
   };
+  useFocusEffect(
+    React.useCallback(() => {
+      getUserTaskLists();
+    }, []),
+  );
   useEffect(() => {
     getUserTaskLists();
   }, []);
@@ -46,7 +51,7 @@ const Tasks = () => {
     navigation.navigate('Task Details', {taskDetails: taskDetails});
   };
   const redirectEnquiriesList = item => {
-    console.log(item, 'item')
+    console.log(item, 'item');
     navigation.navigate('Enquiries', {item: item});
   };
   return (
@@ -112,7 +117,8 @@ const Tasks = () => {
                         </Text>
                         <Text style={styles.listStyle}>{item.period_name}</Text>
                       </View>
-                      <View>
+                    </View>
+                    <View style={styles.startTaskContainer}>
                         <TouchableOpacity
                           style={styles.taskStartBtn}
                           onPress={() => {
@@ -121,7 +127,6 @@ const Tasks = () => {
                           <Text style={styles.startText}>Start Task</Text>
                         </TouchableOpacity>
                       </View>
-                    </View>
                   </View>
                 </View>
               );
@@ -189,6 +194,8 @@ const styles = StyleSheet.create({
   dataContainer: {
     flexDirection: 'row',
     marginHorizontal: 12,
+    position: 'relative',
+    alignItems: 'flex-end'
   },
   leftContainer: {
     alignItems: 'flex-start',
@@ -237,6 +244,11 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
   },
+  startTaskContainer: {
+    position: 'relative',
+    top: 0,
+    padding: 2
+  }
 });
 
 export default Tasks;

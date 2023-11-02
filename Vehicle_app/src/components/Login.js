@@ -11,6 +11,7 @@ import {
   Image,
   ActivityIndicator,
 } from 'react-native';
+import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useDispatch, useSelector} from 'react-redux';
 import BackgroundImage from '../../assets/cover.jpg';
@@ -18,22 +19,45 @@ import {getLoginUser} from '../redux/slice/getUserLogin';
 import getUserProfile, {getProfileData} from '../redux/slice/getUserProfile';
 import LoadingSpinner from './subCom/LoadingSpinner';
 import UpdatePopUp from './AppUpdatePopUp';
+import {API_URL} from '@env';
 const Login = ({navigation}) => {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const [isLoggedIn, setLoggedIn] = useState(false);
   const [updateScreen, setUpdateScreen] = useState(false);
+  const [agencydata, setAgencyData] = useState([]);
   const loginState = useSelector(state => state.getLoginSlice.loginState);
   const appVersion = '1.0';
   const updated = '1.2';
-  const profileData = useSelector(
-    state => state.getUserProfileSlice.profile.currentUserData.result,
+  const agencyData = useSelector(
+    state => state.agencyData.agencyDataState.result,
   );
+  const [agency, setAgency] = useState({
+    agencyName: '',
+    agencyLogo: null,
+  });
+  const profileData = useSelector(
+    state => state.getUserProfileSlice.profile.currentUserData,
+  );
+ 
   const [loginData, setLoginData] = useState({
     username: '',
     password: '',
   });
-
+  useEffect(() => {
+    if (agencyData && agencyData.result) {
+      console.log(agencyData.result, 'agencyDta spalsh');
+      const valueObj = {};
+      for (const item of agencyData.result) {
+        valueObj[item.key_name] = item.value;
+      }
+      const {name, logo} = valueObj;
+      setAgency({
+        agencyName: name,
+        agencyLogo: logo,
+      });
+    }
+  }, [agencyData]);
   const onChangeHandler = (value, field) => {
     if (field === 'username') {
       setLoginData(registerData => ({...loginData, username: value}));
@@ -111,9 +135,11 @@ const Login = ({navigation}) => {
 
   useEffect(() => {
     if (profileData) {
-      const username = profileData?.email ?? '';
+      console.log(profileData.isSuccess, 'profilelell')
+      const username = profileData?.result?.email ?? '';
+      console.log(username, 'usekk')
       setLoginData(prevData => ({...prevData, username}));
-      const password = 'admin';
+      const password = 'adminadmin';
       setLoginData(prevData => ({...prevData, password}));
     }
   }, [profileData]);
@@ -131,13 +157,15 @@ const Login = ({navigation}) => {
     <>
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <View style={styles.container}>
-          <View style={{flex: 1}}>
-            <Image
-              style={{flex: 1, width: null, marginTop: -500}}
-              source={BackgroundImage}
-            />
+          <View style={styles.centerContent}>
+            <View style={styles.logoContainer}>
+              <Image
+                source={{uri: `${API_URL}/api${agency.agencyLogo}`}}
+                style={styles.logo}
+              />
+            </View>
+            <Text style={styles.agencyName}>{agency.agencyName}</Text>
           </View>
-          <Text>Keshav Tractors</Text>
           <View style={styles.bottomView}>
             <Text style={styles.loginText}>Login</Text>
             <View style={styles.inputView}>
@@ -203,6 +231,7 @@ const Login = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    position: 'relative',
   },
   titleText: {
     position: 'absolute',
@@ -221,7 +250,7 @@ const styles = StyleSheet.create({
     elevation: 16,
   },
   bottomView: {
-    backgroundColor: '#fff',
+    backgroundColor: '#FFFFFF',
     opacity: 0.95,
     position: 'absolute',
     bottom: 0,
@@ -239,6 +268,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     marginTop: 12,
     marginBottom: 4,
+    fontWeight: 'bold',
   },
   inputView: {
     height: 40,
@@ -270,6 +300,7 @@ const styles = StyleSheet.create({
     fontFamily: 'SourceSansProBold',
     alignSelf: 'center',
     fontSize: 18,
+    fontWeight: 'bold',
   },
   registerText: {
     alignSelf: 'center',
@@ -283,6 +314,33 @@ const styles = StyleSheet.create({
     fontFamily: 'SourceSansProBold',
     fontSize: 16,
     color: '#006400',
+  },
+  centerContent: {
+    position: 'absolute',
+    top: '20%',
+    left: 0,
+    right: 0,
+    transform: [{translateY: -50}],
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  logo: {
+    width: 250,
+    height: 250,
+    borderRadius: 150,
+  },
+  agencyName: {
+    fontSize: 30,
+    fontFamily: 'Helvetica',
+    color: '#333',
+    letterSpacing: 1,
+    textAlign: 'center',
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: {width: 1, height: 1},
+    textShadowRadius: 2,
+    paddingVertical: 6,
   },
 });
 
