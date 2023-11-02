@@ -49,6 +49,9 @@ const FollowUpScreen = ({item}) => {
   const enquiryStage = ['Follow Up', 'Booking', 'Drop', 'Invalid   '];
   const [selectedOption, setSelectedOption] = useState('Follow Up');
 
+  useEffect(()=> {
+console.log(item, 'tekltl')
+  },[item])
   useEffect(() => {
     if (followUpState.isSuccess && followUpState.result === 'success') {
       dispatch(clearFollowUpState());
@@ -97,6 +100,9 @@ const FollowUpScreen = ({item}) => {
         next_followup_date: scheduleDate,
         customer_id: item.id,
       };
+      if (item.isRowIndex !== undefined) {
+        formData.isRowIndex = item.isRowIndex;
+      }
       dispatch(setFollowUpDb(formData));
       setDiscussion('');
     } else {
@@ -139,7 +145,11 @@ const FollowUpScreen = ({item}) => {
           <SweetSuccessAlert message={'Call Schedule'} modalShow={true} />
         )}
         <View style={styles.dateContainer}>
-          <Text style={[styles.selectDateText, alertError && styles.alertErrorDate]}>
+          <Text
+            style={[
+              styles.selectDateText,
+              alertError && styles.alertErrorDate,
+            ]}>
             Select Next Follow Up Date:
           </Text>
           <View style={styles.dateStyle}>
@@ -147,7 +157,8 @@ const FollowUpScreen = ({item}) => {
               onPress={() => {
                 setOpenScheduleDate(true);
               }}>
-              <Text style={[styles.dateText, alertError && styles.alertErrorDate]}>
+              <Text
+                style={[styles.dateText, alertError && styles.alertErrorDate]}>
                 {scheduleDate === ''
                   ? new Date().toISOString().slice(0, 10)
                   : scheduleDate}
@@ -177,10 +188,16 @@ const FollowUpScreen = ({item}) => {
         </TouchableOpacity>
       </View>
       <View style={styles.callBodyContainer}>
-      <Text style={{fontWeight: 'bold', marginHorizontal: 10, fontSize: 18, marginVertical: 5}}>
+        <Text
+          style={{
+            fontWeight: 'bold',
+            marginHorizontal: 10,
+            fontSize: 18,
+            marginVertical: 5,
+          }}>
           Next Follow Up Details
         </Text>
-        <View style={styles.line}/>
+        <View style={styles.line} />
         {loading ? (
           <CustomLoadingSpinner />
         ) : scheduleDetails && scheduleDetails.length === 0 ? (
@@ -322,7 +339,7 @@ const styles = StyleSheet.create({
   selectDateText: {
     fontWeight: 'bold',
     color: 'black',
-    fontSize: 17
+    fontSize: 17,
   },
   enquiryStageContainer: {
     width: '96%',
@@ -336,7 +353,7 @@ const styles = StyleSheet.create({
   },
   alertErrorDate: {
     color: 'red',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   line: {
     backgroundColor: '#3498DB',

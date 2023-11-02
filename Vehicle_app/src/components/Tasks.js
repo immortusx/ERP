@@ -124,7 +124,7 @@ const Tasks = () => {
                         onPress={() => {
                           redirectEnquiriesList(item);
                         }}>
-                        <Text style={styles.startText}>Start Task</Text>
+                        <Text style={styles.startText}>START TASK</Text>
                       </TouchableOpacity>
                     </View>
                   </View>
