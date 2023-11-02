@@ -892,7 +892,7 @@ export default function HomeScreen() {
               path="profile"
               element={
                 <CheckPermission path="profile">
-                  <Profile />
+                  <Profile/>
                 </CheckPermission>
               }
               exact
@@ -901,7 +901,7 @@ export default function HomeScreen() {
               path="enquiry"
               element={
                 <CheckPermission path="profile">
-                  <Enquiry />
+                  <Enquiry/>
                 </CheckPermission>
               }
               exact

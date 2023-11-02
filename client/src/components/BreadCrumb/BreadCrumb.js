@@ -8,6 +8,7 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import LanguageSelector from '../languageSelector';
 import translations from '../../assets/locals/translations';
+import RouterLink from 'react'
 
 const BreadCrumb = () => {
   const currentLanguage = useSelector((state) => state.language.language);
@@ -47,31 +48,72 @@ const BreadCrumb = () => {
       <div class="row">
         <div class="col-md-9">
           <div className='mb-3'>
-            <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />} aria-label="breadcrumb">
+            <div className='headerListUi'>
 
-              {crumbs.map((crumb, index, array) => {
-                const currentLink = `/${array.slice(0, index + 1).join('/')}`;
-                const isLastCrumb = index === array.length - 1;
-                const isCrumb = array.filter((crumb) => crumb !== 'home');
-                return (
 
-                  <Typography key={index} color="textPrimary">
-                    <Link
-                      className="crumb-link"
-                      to={currentLink}
-                      color={isLastCrumb ? "textPrimary" : "inherit"}
-                    >
-                      {translations[currentLanguage][crumb.replace(/-/g, " ")] || crumb.replace(/-/g, " ")}
-                    </Link>
-                    {index === array.length - 1 && !isLastCrumb && (
-                      <ExpandMoreIcon fontSize="small" />
-                    )}
-                  </Typography>
 
-                );
+              {/* <ul id="breadcrumb">
+                <li><Link to="/">Home</Link></li>
+                <li><Link to="/profile">Profile</Link></li>
+                <li><Link to="/profile/agency">Agency</Link></li>
+              </ul>   */}
+              {/* 
+              <Breadcrumbs aria-label="breadcrumb" separator="">
+                {crumbs.map((crumb, index, array) => {
+                  const currentLink = `/${array.slice(0, index + 1).join('')}`;
+                  const isLastCrumb = index === array.length - 1;
+                  const isCrumb = array.filter((crumb) => crumb !== 'home');
+                  return (
+                    <Typography key={index} color="textPrimary">
+                      <Link
+                        className="crumb-link"
+                        to={currentLink}
+                        color={isLastCrumb ? "textPrimary" : "inherit"}
+                      >
+                        {translations[currentLanguage][crumb.replace(/-/g, " ")] || crumb.replace(/-/g, " ")}
+                      </Link>
+                      {index === array.length - 1 && !isLastCrumb && (
+                        <ExpandMoreIcon fontSize="small" />
+                      )}
+                    </Typography>
+                  );
+                })}
+              </Breadcrumbs> */}
+              {/* <ul id="breadcrumb">
+                <li><a href="">Home</a></li>
+                <li><a href="">Profile</a></li>
+                <li><a href="">Agency</a></li>
+            
+              </ul> */}
 
-              })}
-            </Breadcrumbs>
+              <Breadcrumbs  aria-label="breadcrumb">
+
+                {crumbs.map((crumb, index, array) => {
+                  const currentLink = `/${array.slice(0, index + 1).join('/')}`;
+                  const isLastCrumb = index === array.length - 1;
+                  const isCrumb = array.filter((crumb) => crumb !== 'home');
+                  return (
+
+                    <Typography key={index} color="textPrimary">
+                      <Link
+                        className="crumb-link"
+                        to={currentLink}
+                        color={isLastCrumb ? "textPrimary" : "inherit"}
+                      >
+                        {translations[currentLanguage][crumb.replace(/-/g, " ")] || crumb.replace(/-/g, " ")}
+                      </Link>
+                      {index === array.length - 1 && !isLastCrumb && (
+                        <ExpandMoreIcon fontSize="small" />
+                      )}
+                    </Typography>
+
+                  );
+
+                })}
+              </Breadcrumbs>
+
+
+            </div>
           </div>
         </div>
         <div className='col-md-3' style={{ display: 'flex', justifyContent: 'flex-end' }}>
