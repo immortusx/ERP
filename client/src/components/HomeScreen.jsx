@@ -574,7 +574,7 @@ export default function HomeScreen() {
                             className={({ isActive }) =>
                               isActive ? "activeLink" : ""
                             }
-                            to="management/my-task"
+                            to="management/mytask"
                           >
                             {translations[currentLanguage].mytask}
                           </NavLink>
@@ -1185,7 +1185,7 @@ export default function HomeScreen() {
               exact
             />
             <Route
-              path="management/my-task"
+              path="management/mytask"
               element={
                 <CheckPermission path="manage">
                   <MyTask />
@@ -1204,7 +1204,7 @@ export default function HomeScreen() {
             />
 
             <Route
-              path="management/my-task/task-detail"
+              path="management/mytask/task-detail"
               element={
                 <CheckPermission path="manage">
                   <UserTaskDetails />
