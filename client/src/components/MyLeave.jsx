@@ -14,7 +14,7 @@ import { color } from "@mui/system";
 const MyLeave = () => {
     const [showModal, setShowModal] = useState(false);
     const [rowData, setRowData] = useState([]);
-    const [taskData, setTaskData] = useState([]);
+    const [leaveTypeData, setLeaveTypeData] = useState([]);
     const [selectAll, setSelectAll] = useState(false);
     const [leaveData, setLeaveData] = useState({
         leaveTypes: "",
@@ -104,7 +104,7 @@ const MyLeave = () => {
                 email: leave.email,
             }));
 
-            setTaskData(formattedData);
+            setLeaveTypeData(formattedData);
         }
     }
     useEffect(() => {
@@ -191,14 +191,14 @@ const MyLeave = () => {
         setRowData(leaveList);
     }, [leaveList]);
     useEffect(() => {
-        const rowsData = taskData.map((item, index) => ({
+        const rowsData = leaveTypeData.map((item, index) => ({
             ...item,
             id: index + 1,
             // id: item.id,
             checkbox: selectAll,
         }));
         setRowData(rowsData);
-    }, [taskData, selectAll]);
+    }, [leaveTypeData, selectAll]);
     return (
 
         <div>
