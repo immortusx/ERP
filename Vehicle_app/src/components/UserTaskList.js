@@ -93,9 +93,11 @@ const TaslList = ({route}) => {
     setOpenEndDate(false);
   };
 
-  const handletaskReport = data => {
-    console.log(data, 'uesrdata');
-    navigation.navigate('Detail Task Report List', {taskreport: data});
+  const handletaskReport = taskDetails => {
+    console.log(taskDetails, 'taskDetials');
+    navigation.navigate('Task Details', {taskDetails: taskDetails});
+    // console.log(data, 'uesrdata');
+    // navigation.navigate('Detail Task Report List', {taskreport: data});
   };
 
   return (

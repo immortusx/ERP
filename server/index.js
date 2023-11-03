@@ -43,6 +43,7 @@ app.use("/api/branch", require("./Routes/branchRoutes"));
 app.use("/api/", require("./Routes/commonRoutes"));
 app.use("/api/areaAssign", require("./Routes/areaAssignRoutes"));
 app.use ("/api/leave", require('./Routes/Leave/LeaveRoutes'));
+app.use("/api/sendmail", require("./Routes/mailRoute"));
 
 app.get("/api", (req, res) => {
   console.log({
