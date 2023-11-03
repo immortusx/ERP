@@ -73,7 +73,7 @@ const formatDate = (startdate) => {
 };
 
 const handletaskdetail = (data) => {
-  navigate("/management/my-task/task-detail", {
+  navigate("/management/mytask/task-detail", {
     state: { taskdata: data },
   });
 };
