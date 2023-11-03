@@ -1,46 +1,54 @@
-import {StyleSheet, Text, View, TouchableOpacity,FlatList} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, FlatList } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CustomLoadingSpinner from './subCom/CustomLoadingSpinner';
-import {API_URL} from '@env';
+import { API_URL } from '@env';
 import axios from 'axios';
 import moment from 'moment';
+import { useFocus } from 'native-base/lib/typescript/components/primitives';
+import { useFocusEffect } from '@react-navigation/native';
 
 const Holiday = () => {
   const [holidaylist, setHolidayList] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const fetchHolidayList = async () => {
-      try {
-        const url = `${API_URL}/api/get-holiday-list`;
-        const token = await AsyncStorage.getItem('rbacToken');
-        const config = {
-          headers: {
-            token: token,
-          },
-        };
-        setLoading(true);
-        const response = await axios.get(url, config);
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchHolidayList();
+    }, []),
+  );
+  const fetchHolidayList = async () => {
+    try {
+      const url = `${API_URL}/api/get-holiday-list`;
+      const token = await AsyncStorage.getItem('rbacToken');
+      const config = {
+        headers: {
+          token: token,
+        },
+      };
+      setLoading(true);
+      const response = await axios.get(url, config);
+      setLoading(false);
+      if (response.data?.isSuccess) {
+        console.log('Data successfully fetched:', response.data.result);
+        setHolidayList(response.data.result);
 
-        if (response.data?.isSuccess) {
-          console.log('Data successfully fetched:', response.data.result);
-          setHolidayList(response.data.result);
-          setLoading(false);
-        } else {
-          console.error(
-            'API request was not successful. Response:',
-            response.data,
-          );
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error);
+      } else {
+        console.error(
+          'API request was not successful. Response:',
+          response.data,
+        );
       }
-    };
-
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+  useEffect(() => {
     fetchHolidayList();
   }, []);
-
+  if (loading) {
+    return <CustomLoadingSpinner />;
+  }
   return (
     <View style={styles.mainContainer}>
       <View style={styles.container}>
@@ -51,10 +59,10 @@ const Holiday = () => {
           <CustomLoadingSpinner />
         ) : holidaylist && holidaylist.length > 0 ? (
           <FlatList
-            style={{marginBottom: 60}}
+            style={{ marginBottom: 60 }}
             data={holidaylist}
             keyExtractor={(item, index) => `holiday_${index}`}
-            renderItem={({item, index}) => {
+            renderItem={({ item, index }) => {
               return (
                 <View style={styles.contentContainer}>
                   <TouchableOpacity style={styles.taskStyle}>
@@ -71,11 +79,11 @@ const Holiday = () => {
                       {/* Add the description here */}
                     </View>
                     <View style={styles.mainRightContainer}>
-                    <View style={styles.rightContainer}>
-                    <Text style={styles.listStyle}>{item.description}</Text>
+                      <View style={styles.rightContainer}>
+                        <Text style={styles.listStyle}>{item.description}</Text>
+                      </View>
                     </View>
-                    </View>
-                    </View>
+                  </View>
                 </View>
               );
             }}
@@ -100,7 +108,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 20,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     elevation: 4,
     borderBottomLeftRadius: 20,
@@ -122,7 +130,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
     paddingVertical: 4,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     elevation: 3,
     borderRadius: 7,
