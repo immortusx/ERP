@@ -6,6 +6,8 @@ import {
   FlatList,
   Image,
   Button,
+  Linking,
+  AppState,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import axios from 'axios';
@@ -15,29 +17,157 @@ import moment from 'moment';
 import LoadingSpinner from './subCom/LoadingSpinner';
 import CustomLoadingSpinner from './subCom/CustomLoadingSpinner';
 import {useNavigation} from '@react-navigation/native';
+import TimeAgo from './subCom/TImeAgo';
 
 const Enquiries = ({route}) => {
   const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
   const [currentEnquiryIndex, setCurrentEnquiryIndex] = useState(1);
   const [enquiriesList, setEnquiriesList] = useState([]);
+  const [callStartTime, setCallStartTime] = useState(null);
+  const [callDuration, setCallDuration] = useState(null);
+  const [taskId, setTaskId] = useState(null);
+  const [spendTime, setSpendTime] = useState(null);
   const [categoryName, setCategoryName] = useState(null);
+  const [itemData, setItemData] = useState(null);
+  const [appState, setAppState] = useState(AppState.currentState);
   const {item} = route.params;
+  const [renderIconData, setRenderIconData] = useState({
+    task_type: null,
+    contact_type: null,
+  });
 
+  useEffect(() => {
+    const handleAppStateChange = nextAppState => {
+      if (
+        appState.match(/inactive|background/) &&
+        nextAppState === 'active' &&
+        callStartTime
+      ) {
+        const callEndTime = new Date();
+        const durationInMilliseconds = callEndTime - callStartTime;
+        const durationInSeconds = Math.floor(durationInMilliseconds / 1000);
+        setCallDuration(durationInSeconds);
+        setCallStartTime(null);
+
+        console.log('Call Duration:', durationInSeconds, 'seconds');
+        uploadcallLog(durationInSeconds);
+      }
+      setAppState(nextAppState);
+    };
+
+    const appStateSubscription = AppState.addEventListener(
+      'change',
+      handleAppStateChange,
+    );
+
+    return () => {
+      appStateSubscription.remove();
+    };
+  }, [appState, callStartTime]);
+  useEffect(() => {
+    if (callDuration) {
+      const hours = Math.floor(durationInSeconds / 3600);
+      const minutes = Math.floor((durationInSeconds % 3600) / 60);
+      const seconds = durationInSeconds % 60;
+      const formattedDuration = `${String(hours).padStart(2, '0')}:${String(
+        minutes,
+      ).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+      setSpendTime(formattedDuration);
+    }
+  }, [callDuration]);
+
+  function formatPhoneNumber(phoneNumber) {
+    const formattedPhoneNumber = phoneNumber.replace(
+      /(\d{2})(\d{5})(\d{3})/,
+      '+91 $1 $2 $3',
+    );
+    return formattedPhoneNumber;
+  }
   useEffect(() => {
     if (item) {
       console.log(item, 'itekem');
+      setTaskId(item.task);
       getLockedEnquiries(item.id, item.task, currentEnquiryIndex);
+      const types = [{type: 'call'}, {type: 'whatsapp'}, {type: 'sms'}];
+
+      setRenderIconData({
+        task_type: types,
+        item: item,
+      });
     }
   }, [item]);
   const handleNextEnquiry = () => {
     console.log('Next');
-    setCurrentEnquiryIndex(currentEnquiryIndex + 1);
+    // setCurrentEnquiryIndex(currentEnquiryIndex + 1);
+    let isRowIndex = true;
+    let workDescription = `Called customer ${itemData.first_name} ${itemData.last_name} regarding ${itemData.product} enquiry`;
+    itemData.isRowIndex = isRowIndex;
+    itemData.spendTime = spendTime;
+    itemData.workDescription = workDescription;
+    itemData.taskId = taskId;
+    navigation.navigate('Schedule Call', {item: itemData});
   };
   const handleEnquirySkip = () => {
     console.log('Skip');
     setCurrentEnquiryIndex(currentEnquiryIndex + 1);
   };
+  const handleSheduleCall = item => {
+    navigation.navigate('Schedule Call', {item: item});
+  };
+  const makePhoneCall = mobileNumber => {
+    console.log('Calling...', mobileNumber);
+    setCallStartTime(new Date());
+    Linking.openURL(`tel:${mobileNumber}`);
+  };
+
+  const renderIconAndData = item => {
+    switch (item.phone_number) {
+      case 'phone_number':
+        return (
+          <View style={styles.taskIconContainer}>
+            <TouchableOpacity
+              style={styles.greenButton}
+              onPress={() => {
+                makePhoneCall(item.phone_number);
+              }}>
+              <Text style={styles.taskDataText}>
+                {formatPhoneNumber(item.phone_number)}
+              </Text>
+              <Image
+                style={styles.iconImg}
+                source={require('../../assets/telephone.png')}
+              />
+            </TouchableOpacity>
+          </View>
+        );
+
+      case 'whatsapp_number':
+        return (
+          <View style={styles.taskIconContainer}>
+            <TouchableOpacity
+              style={styles.greenButton}
+              onPress={() => {
+                // Handle WhatsApp action here
+              }}>
+              <Text style={styles.taskDataText}>{item.whatsapp_number}</Text>
+              <Image
+                style={styles.iconImg}
+                source={require('../../assets/whatsapp.png')}
+              />
+            </TouchableOpacity>
+          </View>
+        );
+
+      default:
+        return null;
+    }
+  };
+  const openAdditonalEnquiry = item => {
+    console.log(item, '>>>>>>>>>>>>>>>.');
+    navigation.navigate('Additional Details', {item: item});
+  };
+
   useEffect(() => {
     if (currentEnquiryIndex) {
       getLockedEnquiries(item.id, item.task, currentEnquiryIndex);
@@ -58,6 +188,8 @@ const Enquiries = ({route}) => {
       if (response) {
         console.log(response.data.result, 'enquirie locked');
         setEnquiriesList(response.data.result);
+        const [item] = response.data.result;
+        setItemData(item);
       }
     });
     setLoading(false);
@@ -123,34 +255,91 @@ const Enquiries = ({route}) => {
               renderItem={({item, index}) => {
                 return (
                   <>
-                    <View style={styles.contentContainer}>
-                      <View style={styles.dataContainer}>
-                        <View style={styles.leftContainer}>
-                          <Image
-                            style={styles.personImg}
-                            source={require('../../assets/person.png')}
-                          />
-                          <Image
-                            style={styles.personImg}
-                            source={require('../../assets/phone.png')}
-                          />
-                        </View>
-                        <View style={styles.rightContainer}>
-                          <View style={styles.subContainer}>
-                            <View style={{alignItems: 'flex-start'}}>
-                              <Text style={styles.label}>{item.customer}</Text>
+                    <View key={index} style={styles.enquiryBox}>
+                      <View style={styles.leftDataStyle}>
+                        <View style={styles.eDataContainer}>
+                          <View style={styles.textContainer}>
+                            <View style={styles.row}>
+                              <Image
+                                style={styles.personImg}
+                                source={require('../../assets/person.png')}
+                              />
+                              <Text style={styles.value}>
+                                {item.first_name +
+                                  (item.last_name ? ' ' + item.last_name : '')}
+                              </Text>
+                            </View>
+                            <View style={styles.row}>
+                              <Image
+                                style={styles.personImg}
+                                source={require('../../assets/phone.png')}
+                              />
                               <TouchableOpacity
                                 onPress={() => {
-                                  // makePhoneCall(item.phone_number);
+                                  makePhoneCall(item.phone_number);
                                 }}>
-                                <Text style={styles.label}>
+                                <Text style={styles.value}>
                                   {item.phone_number}
                                 </Text>
                               </TouchableOpacity>
                             </View>
+                            <View style={styles.row}>
+                              <Image
+                                style={styles.personImg}
+                                source={require('../../assets/product.png')}
+                              />
+                              <Text style={styles.value}>
+                                {item.product ? item.product : '-'}
+                              </Text>
+                            </View>
+                            <View style={styles.row}>
+                              <Image
+                                style={styles.personImg}
+                                source={require('../../assets/location.png')}
+                              />
+                              <Text style={styles.value}>
+                                {item.village ? item.village : '-'}
+                              </Text>
+                            </View>
                           </View>
                         </View>
                       </View>
+                      <View style={styles.rightDataStyle}>
+                        <Text style={styles.dateText}>Not Followed</Text>
+                        {item.sales_person && (
+                          <Text style={styles.salesText}>
+                            {item.sales_person}
+                          </Text>
+                        )}
+                        <TouchableOpacity style={styles.dayBack}>
+                          <TimeAgo date={item.date} />
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          onPress={() => {
+                            handleSheduleCall(item);
+                          }}
+                          style={styles.discussionButton}>
+                          <Text style={styles.discussionText}>Follow Up</Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                    <View style={styles.taskIconContainer}>
+                      <TouchableOpacity style={styles.greenButton}>
+                        <TouchableOpacity>
+                          <Text style={styles.taskDataText}>
+                            {formatPhoneNumber(item.phone_number)}
+                          </Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          onPress={() => {
+                            makePhoneCall(item.phone_number);
+                          }}>
+                          <Image
+                            style={styles.iconImg}
+                            source={require('../../assets/telephone.png')}
+                          />
+                        </TouchableOpacity>
+                      </TouchableOpacity>
                     </View>
                   </>
                 );
@@ -168,7 +357,7 @@ const Enquiries = ({route}) => {
             <TouchableOpacity
               style={styles.buttonContainer}
               onPress={handleNextEnquiry}>
-              <Text style={styles.nextStyle}>NEXT</Text>
+              <Text style={styles.nextStyle}>DONE & NEXT</Text>
             </TouchableOpacity>
           </TouchableOpacity>
         </View>
@@ -337,6 +526,129 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 20,
     paddingVertical: 7,
+  },
+  enquiryBox: {
+    marginTop: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 7,
+    width: '95%',
+    backgroundColor: 'white',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    marginHorizontal: 10,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+  },
+  leftDataStyle: {
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    flex: 1,
+  },
+  rightDataStyle: {
+    flexDirection: 'column',
+    alignItems: 'flex-end',
+    marginLeft: 5,
+  },
+  dateText: {
+    color: 'white',
+    fontSize: 12,
+    fontWeight: 'bold',
+    backgroundColor: '#3ab1d3',
+    borderRadius: 20,
+    borderColor: '#138D75',
+    borderWidth: 0.1,
+    paddingHorizontal: 5,
+    marginBottom: 10,
+  },
+  salesText: {
+    color: 'white',
+    fontSize: 12,
+    fontWeight: 'bold',
+    backgroundColor: '#3ab1d3',
+    borderRadius: 20,
+    borderColor: '#138D75',
+    borderWidth: 0.1,
+    paddingHorizontal: 5,
+    marginBottom: 5,
+  },
+  dayBack: {
+    borderRadius: 30,
+    color: 'white',
+    padding: 2,
+    marginBottom: 5,
+  },
+  discussionButton: {
+    backgroundColor: '#2ECC71',
+    borderRadius: 20,
+    borderColor: '#138D75',
+    borderWidth: 0.1,
+    paddingHorizontal: 5,
+    marginBottom: 5,
+  },
+  discussionText: {
+    color: 'white',
+    textAlign: 'center',
+  },
+  notAvailableText: {
+    fontSize: 18,
+    color: 'red',
+    fontStyle: 'italic',
+  },
+  noEnqiryBox: {
+    backgroundColor: 'lightcoral',
+    padding: 10,
+    borderRadius: 5,
+    marginHorizontal: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginVertical: 20,
+  },
+  eDataContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  textContainer: {
+    flex: 1,
+  },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  value: {
+    flex: 1,
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  taskIconContainer: {
+    marginHorizontal: 8,
+    marginVertical: 5,
+  },
+  greenButton: {
+    backgroundColor: 'green',
+    padding: 10,
+    borderRadius: 8,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  iconImg: {
+    width: 40,
+    height: 40,
+  },
+  taskDataText: {
+    color: 'white',
+    fontSize: 20,
+    marginRight: 10,
+    fontWeight: 'bold',
   },
 });
 

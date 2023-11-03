@@ -354,7 +354,7 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
 
           db.query(urlNew, async (err, result) => {
             if (err) {
-              myData
+              myData;
               console.log({ isSuccess: false, result: err });
               res.send({ isSuccess: false, result: "error" });
             } else if (result && result.insertId) {
@@ -388,15 +388,23 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
                         let workDescription = `For Enquiry ${firstName} which phone ${mobileNumber} by ${salesperson}`;
                         let tasktype = 1;
                         let task = 11;
-                        let cdate = moment().format('YYYY-MM-DD H:m:s');
+                        let cdate = moment().format("YYYY-MM-DD H:m:s");
                         let taskEndTime = new Date();
                         let spendTime = taskEndTime - taskStartTime;
                         let spendTimeSeconds = Math.floor(spendTime / 1000);
                         let hours = Math.floor(spendTimeSeconds / 3600);
-                        let minutes = Math.floor((spendTimeSeconds % 3600) / 60);
+                        let minutes = Math.floor(
+                          (spendTimeSeconds % 3600) / 60
+                        );
                         let seconds = spendTimeSeconds % 60;
-                        let theSpendTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-                        console.log(theSpendTime, 'spendTime');
+                        let theSpendTime = `${hours
+                          .toString()
+                          .padStart(2, "0")}:${minutes
+                          .toString()
+                          .padStart(2, "0")}:${seconds
+                          .toString()
+                          .padStart(2, "0")}`;
+                        console.log(theSpendTime, "spendTime");
 
                         let userID = req.myData.userId;
                         const workLogSql = `INSERT INTO worklog (user_id, tasktype, task, work_description, datetime, spendtime) VALUES('${userID}','${tasktype}','${task}','${workDescription}','${cdate}','${theSpendTime}')`;
@@ -404,7 +412,10 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
                           if (err) {
                             console.log({ isSuccess: false, result: err });
                           } else {
-                            console.log({ isSuccess: "success", result: "success" });
+                            console.log({
+                              isSuccess: "success",
+                              result: "success",
+                            });
                           }
                         });
                       });
@@ -428,15 +439,23 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
                         let workDescription = `For Enquiry ${firstName} which phone ${mobileNumber} by ${salesperson}`;
                         let tasktype = 1;
                         let task = 11;
-                        let cdate = moment().format('YYYY-MM-DD H:m:s');
+                        let cdate = moment().format("YYYY-MM-DD H:m:s");
                         let taskEndTime = new Date();
                         let spendTime = taskEndTime - taskStartTime;
                         let spendTimeSeconds = Math.floor(spendTime / 1000);
                         let hours = Math.floor(spendTimeSeconds / 3600);
-                        let minutes = Math.floor((spendTimeSeconds % 3600) / 60);
+                        let minutes = Math.floor(
+                          (spendTimeSeconds % 3600) / 60
+                        );
                         let seconds = spendTimeSeconds % 60;
-                        let theSpendTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-                        console.log(theSpendTime, 'spendTime');
+                        let theSpendTime = `${hours
+                          .toString()
+                          .padStart(2, "0")}:${minutes
+                          .toString()
+                          .padStart(2, "0")}:${seconds
+                          .toString()
+                          .padStart(2, "0")}`;
+                        console.log(theSpendTime, "spendTime");
 
                         let userID = req.myData.userId;
                         const workLogSql = `INSERT INTO worklog (user_id, tasktype, task, work_description, datetime, spendtime) VALUES('${userID}','${tasktype}','${task}','${workDescription}','${cdate}','${theSpendTime}')`;
@@ -444,7 +463,10 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
                           if (err) {
                             console.log({ isSuccess: false, result: err });
                           } else {
-                            console.log({ isSuccess: "success", result: "success" });
+                            console.log({
+                              isSuccess: "success",
+                              result: "success",
+                            });
                           }
                         });
                       });
@@ -1283,7 +1305,8 @@ router.post("/edit-new-detail-enquiry", tokenCheck, async (req, res) => {
 router.post("/set-follow-up", tokenCheck, async (req, res) => {
   console.log(">>>>>>>>>/set-follow-up", req.body);
   try {
-    const { last_discussion, next_followup_date, customer_id } = req.body;
+    const { last_discussion, next_followup_date, customer_id, isRowIndex } =
+      req.body;
     await db.query(
       `SELECT id FROM enquiries WHERE customer_id = ${customer_id}`,
       async (err, result) => {
@@ -1305,6 +1328,10 @@ router.post("/set-follow-up", tokenCheck, async (req, res) => {
               console.log({ isSuccess: false, result: err });
               res.status(500).send({ isSuccess: false, error: "error" });
             } else {
+              if (isRowIndex) {
+                console.log("uploading worklog....");
+                uploadWorkLog();
+              }
               console.log({ isSuccess: true, result: followUpResult });
               res.send({ isSuccess: true, result: "success" });
             }
