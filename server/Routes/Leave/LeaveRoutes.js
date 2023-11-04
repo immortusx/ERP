@@ -41,10 +41,10 @@ router.post('/add-leave', tokenCheck, async (req, res) => {
   };
 
   // 3. Move the insertQuery and values declaration inside the callback to ensure the full name is obtained first.
-  // getFullName((fullName) => {
-    const insertQuery = 'INSERT INTO leave_details (LeaveType, StartDate, EndDate, Reason, Email, user_id) VALUES (?, ?, ?, ?, ?, ?)';
+  getFullName((fullName) => {
+    const insertQuery = 'INSERT INTO leave_details (userName,LeaveType, StartDate, EndDate, Reason, Email, user_id) VALUES (?,?, ?, ?, ?, ?, ?)';
 
-    const values = [leaveTypes, startDate, endDate, reason, email, userID];
+    const values = [fullName,leaveTypes, startDate, endDate, reason, email, userID];
 
     db.query(insertQuery, values, (err, result) => {
       if (err) {
@@ -55,7 +55,7 @@ router.post('/add-leave', tokenCheck, async (req, res) => {
       }
     });
   });
-// });
+});
 
 
 

@@ -97,6 +97,7 @@ const MyLeave = () => {
         if (response.data && response.data.isSuccess) {
             const formattedData = response.data.result.map((leave, index) => ({
                 leaveid: leave.leaveid,
+                userName:leave.userName,
                 LeaveType: leave.LeaveType,
                 startDate: leave.startDate,
                 endDate: leave.endDate,
@@ -121,7 +122,8 @@ const MyLeave = () => {
     };
 
     const columns = [
-        checkboxColumn,
+        checkboxColumn, 
+         { field: "userName", headerName: "User Name", width: 260 },
 
         { field: "LeaveType", headerName: "Leave Type", width: 260 },
         {
