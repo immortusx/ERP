@@ -8,17 +8,26 @@ import moment from 'moment';
 import { useFocusEffect } from '@react-navigation/native';
 
 const Manage = () => {
-  const [myLeavelist, setMyLeaveList] = useState([]);
+  const [userLeavelist, setUserLeaveList] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (route) {
+      const {leaveList} = route.params;
+      console.log(leaveList, 'taskdetiald');
+      const userId = leaveList.id;
+      getWorkReportDetails(userId);
+    }
+  }, [route]);
   useFocusEffect(
     React.useCallback(() => {
-      fetchMyLeaveList();
+      fetchUserLeaveList();
     }, []),
   );
 
-  const fetchMyLeaveList = async () => {
+  const fetchUserLeaveList = async (userId) => {
     try {
-      const url = `${API_URL}/api/leave/get-leave-details`;
+      const url = `${API_URL}/api/leave/get-leave-details/${userId}`;
       const token = await AsyncStorage.getItem('rbacToken');
       const config = {
         headers: {
@@ -30,7 +39,7 @@ const Manage = () => {
 
       if (response.data?.isSuccess) {
         console.log('Data successfully fetched:', response.data.result);
-        setMyLeaveList(response.data.result);
+        setUserLeaveList(response.data.result);
         setLoading(false);
       } else {
         console.error(
@@ -43,7 +52,7 @@ const Manage = () => {
     }
   };
   useEffect(() => {
-    fetchMyLeaveList();
+    fetchuserLeaveList();
   }, []);
   if (loading) {
     return <CustomLoadingSpinner />;
@@ -56,10 +65,10 @@ const Manage = () => {
         </TouchableOpacity>
         {loading ? (
           <CustomLoadingSpinner />
-        ) : myLeavelist && myLeavelist.length > 0 ? (
+        ) : userLeavelist && userLeavelist.length > 0 ? (
           <FlatList
             style={{ marginBottom: 60 }}
-            data={myLeavelist}
+            data={userLeavelist}
             keyExtractor={(item, index) => `holiday_${index}`}
             renderItem={({ item, index }) => {
               return (
