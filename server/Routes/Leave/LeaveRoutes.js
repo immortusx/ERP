@@ -24,7 +24,7 @@ const router = express.Router();
 // })
 router.post('/add-leave', tokenCheck, async (req, res) => {
   const { leaveTypes, startDate, endDate, reason, email } = req.body;
-
+  const userID = req.myData.userId;
   // 1. Change the function name to avoid conflicts.
   const getFullName = (callback) => {
     const userID = req.myData.userId;
@@ -42,9 +42,9 @@ router.post('/add-leave', tokenCheck, async (req, res) => {
 
   // 3. Move the insertQuery and values declaration inside the callback to ensure the full name is obtained first.
   getFullName((fullName) => {
-    const insertQuery = 'INSERT INTO leave_details (LeaveType, StartDate, EndDate, Reason, Email, user_name) VALUES (?, ?, ?, ?, ?, ?)';
+    const insertQuery = 'INSERT INTO leave_details (userName,LeaveType, StartDate, EndDate, Reason, Email, user_id) VALUES (?,?, ?, ?, ?, ?, ?)';
 
-    const values = [leaveTypes, startDate, endDate, reason, email, fullName];
+    const values = [fullName,leaveTypes, startDate, endDate, reason, email, userID];
 
     db.query(insertQuery, values, (err, result) => {
       if (err) {
@@ -56,6 +56,7 @@ router.post('/add-leave', tokenCheck, async (req, res) => {
     });
   });
 });
+
 
 
 // router.get('/get-leave-details', async (req, res) => {
@@ -73,7 +74,9 @@ router.post('/add-leave', tokenCheck, async (req, res) => {
 
 router.get("/get-leave-details", tokenCheck, async (req, res) => {
   console.log(">>>>>>>>>get-leave-details");
-  const urlNew = `CALL sp_get_leave_details()`;
+  const userId = req.myData.userId;
+  let isAdmin = req.myData.isSuperAdmin;
+  const urlNew = `CALL sp_get_leave_details(${userId},${isAdmin})`;
   await db.query(urlNew, async (err, result) => {
     if (err) {
       console.log({ isSuccess: false, result: err });
@@ -89,7 +92,6 @@ router.get("/get-leave-details", tokenCheck, async (req, res) => {
 router.get("/get-leave-type-list", tokenCheck, async (req, res) => {
   console.log(">>>>>/get-leave-type-list");
   const id = req.params.id;
-  console.log(id, "jdfffffffssssssssssssss")
   const url = `SELECT * FROM leave_type`;
   await db.query(url, async (err, result) => {
     if (err) {
