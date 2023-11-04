@@ -1330,7 +1330,7 @@ router.post("/set-follow-up", tokenCheck, async (req, res) => {
             } else {
               if (isRowIndex) {
                 console.log("uploading worklog....");
-                uploadWorkLog();
+              
               }
               console.log({ isSuccess: true, result: followUpResult });
               res.send({ isSuccess: true, result: "success" });
