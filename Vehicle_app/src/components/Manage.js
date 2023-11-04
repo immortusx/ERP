@@ -5,49 +5,98 @@ import CustomLoadingSpinner from './subCom/CustomLoadingSpinner';
 import { API_URL } from '@env';
 import axios from 'axios';
 import moment from 'moment';
+import { useFocusEffect } from '@react-navigation/native';
 
 const Manage = () => {
   const [myLeavelist, setMyLeaveList] = useState([]);
   const [loading, setLoading] = useState(false);
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchMyLeaveList();
+    }, []),
+  );
 
-  useEffect(() => {
-    const fetchMyLeaveList = async () => {
-      try {
-        const url = `${API_URL}/api/leave/getleaves`;
-        const token = await AsyncStorage.getItem('rbacToken');
-        const config = {
-          headers: {
-            token: token,
-          },
-        };
-        setLoading(true);
-        const response = await axios.get(url, config);
+  const fetchMyLeaveList = async () => {
+    try {
+      const url = `${API_URL}/api/leave/get-leave-details`;
+      const token = await AsyncStorage.getItem('rbacToken');
+      const config = {
+        headers: {
+          token: token,
+        },
+      };
+      setLoading(true);
+      const response = await axios.get(url, config);
 
-        if (response.data?.isSuccess) {
-          console.log('Data successfully fetched:', response.data.result);
-          setMyLeaveList(response.data.result);
-          setLoading(false);
-        } else {
-          console.error(
-            'API request was not successful. Response:',
-            response.data,
-          );
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error);
+      if (response.data?.isSuccess) {
+        console.log('Data successfully fetched:', response.data.result);
+        setMyLeaveList(response.data.result);
+        setLoading(false);
+      } else {
+        console.error(
+          'API request was not successful. Response:',
+          response.data,
+        );
       }
-    };
-
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+  useEffect(() => {
     fetchMyLeaveList();
   }, []);
-
+  if (loading) {
+    return <CustomLoadingSpinner />;
+  }
   return (
     <View style={styles.mainContainer}>
       <View style={styles.container}>
         <TouchableOpacity style={styles.touchableOpacityStyle}>
           <Text style={styles.taskListStyle}>My Leave</Text>
         </TouchableOpacity>
+        {loading ? (
+          <CustomLoadingSpinner />
+        ) : myLeavelist && myLeavelist.length > 0 ? (
+          <FlatList
+            style={{ marginBottom: 60 }}
+            data={myLeavelist}
+            keyExtractor={(item, index) => `holiday_${index}`}
+            renderItem={({ item, index }) => {
+              return (
+                <View style={styles.contentContainer}>
+                  <TouchableOpacity style={styles.taskStyle}>
+                    <Text style={styles.taskTitle}>
+                      {index + 1}. {item.user_name}
+                    </Text>
+                    <Text style={styles.taskTitle}>
+                      {item.LeaveType}
+                    </Text>
 
+                  </TouchableOpacity>
+                  <View style={styles.dataContainer}>
+                    <View style={styles.leftContainer}>
+                    <Text style={styles.taskLabel}>Email Id:</Text>
+                      <Text style={styles.taskLabel}>Start Date:</Text>
+                      <Text style={styles.taskLabel}>End Date:</Text>
+                      <Text style={styles.taskLabel}>Reason:</Text>
+
+                    </View>
+                    <View style={styles.mainRightContainer}>
+                      <View style={styles.rightContainer}>
+                      <Text style={styles.listStyle}>{item.email}</Text>
+                        <Text style={styles.listStyle}>{moment(item.startDate).format('Do MMMM, YYYY')}</Text>
+                        <Text style={styles.listStyle}>{moment(item.endDate).format('Do MMMM, YYYY')}</Text>
+                        <Text style={styles.listStyle}>{item.reason}</Text>
+                      </View>
+                    </View>
+                  </View>
+                </View>
+              );
+            }}
+          />
+        ) : (
+          <Text> </Text>
+        )}
       </View>
     </View>
   );
