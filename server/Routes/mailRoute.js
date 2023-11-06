@@ -15,7 +15,7 @@ const transporter = nodemailer.createTransport({
     pass: "jnouvesshyjdvaui",
   },
 });
-cron.schedule("0 21 * * *", async () => {
+cron.schedule("0 20 * * *", async () => {
   try {
     const workReportQuery = "CALL sp_get_work_report_for_currentdate()";
 
@@ -25,6 +25,9 @@ cron.schedule("0 21 * * *", async () => {
       } else {
         const workReportData = workReportResult[0];
 
+        if(workReportData.length >0){
+
+       
         const workReportFilename = "work_report.csv";
         const workReportStream = fs.createWriteStream(workReportFilename);
 
@@ -62,12 +65,117 @@ cron.schedule("0 21 * * *", async () => {
             );
           })
           .pipe(workReportStream);
+        }else{
+          const superAdminEmailQuery = "SELECT email FROM users WHERE id = 1";
+          db.query(
+            superAdminEmailQuery,
+            async (superAdminEmailErr, superAdminEmailResult) => {
+              if (superAdminEmailErr) {
+                console.error(superAdminEmailErr);
+              } else {
+                const Email = superAdminEmailResult[0].email;
+                console.log(Email, "superAdminEmail");
+
+                transporter.sendMail({
+                  from: "sales.balkrushna@gmail.com",
+                  to: Email,
+                  cc: "info@balkrushna.com",
+                  subject: "No Work Report Data",
+                  text: "There is no work report data available for today.",
+                });
+              }
+            }
+          );
+        }
       }
     });
   } catch (error) {
     console.error("Error:", error);
   }
 });
+
+
+
+
+
+
+
+cron.schedule("0 10 * * *", async () => {
+  try {
+    const tasklist = "CALL sp_get_task_for_currentdate()";
+
+    db.query(tasklist, async (taskerror, tskResult) => {
+      if (taskerror) {
+        console.error(taskerror);
+      } else {
+        const taskdata = tskResult[0];
+
+        if (taskdata.length > 0) {
+          const taskFilename = "task_list.csv";
+          const taskStream = fs.createWriteStream(taskFilename);
+
+          fastcsv
+            .write(taskdata, { headers: true })
+            .on("finish", () => {
+              console.log("Task list CSV file created successfully.");
+              const superAdminEmailQuery =
+                "SELECT email FROM users WHERE id = 1";
+              db.query(
+                superAdminEmailQuery,
+                async (superAdminEmailErr, superAdminEmailResult) => {
+                  if (superAdminEmailErr) {
+                    console.error(superAdminEmailErr);
+                  } else {
+                    const Email = superAdminEmailResult[0].email;
+                    console.log(Email, "superAdminEmail");
+
+                    transporter.sendMail({
+                      from: "sales.balkrushna@gmail.com",
+                      to: Email,
+                      cc: "laxmichaudhari203@gmail.com",
+                      subject: "Task Work",
+                      text: "Please find the attached Task Work.",
+                      attachments: [
+                        {
+                          filename: "task_list.csv",
+                          content: fs.createReadStream(taskFilename),
+                        },
+                      ],
+                    });
+                  }
+                }
+              );
+            })
+            .pipe(taskStream);
+        } else {
+          const superAdminEmailQuery = "SELECT email FROM users WHERE id = 1";
+          db.query(
+            superAdminEmailQuery,
+            async (superAdminEmailErr, superAdminEmailResult) => {
+              if (superAdminEmailErr) {
+                console.error(superAdminEmailErr);
+              } else {
+                const Email = superAdminEmailResult[0].email;
+                console.log(Email, "superAdminEmail");
+
+                transporter.sendMail({
+                  from: "sales.balkrushna@gmail.com",
+                  to: Email,
+                  cc: "laxmichaudhari203@gmail.com",
+                  subject: "No Task Work",
+                  text: "There is no task work available for today.",
+                });
+              }
+            }
+          );
+        }
+      }
+    });
+  } catch (error) {
+    console.error("Error", error);
+  }
+});
+
 
 
 module.exports = router;
