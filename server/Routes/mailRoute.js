@@ -25,47 +25,45 @@ cron.schedule("0 20 * * *", async () => {
       } else {
         const workReportData = workReportResult[0];
 
-        if(workReportData.length >0){
+        if (workReportData.length > 0) {
+          const workReportFilename = "work_report.csv";
+          const workReportStream = fs.createWriteStream(workReportFilename);
 
-       
-        const workReportFilename = "work_report.csv";
-        const workReportStream = fs.createWriteStream(workReportFilename);
+          fastcsv
+            .write(workReportData, { headers: true })
+            .on("finish", () => {
+              console.log("Work report CSV file created successfully.");
 
-        fastcsv
-          .write(workReportData, { headers: true })
-          .on("finish", () => {
-            console.log("Work report CSV file created successfully.");
+              const superAdminEmailQuery =
+                "SELECT email FROM users WHERE id = 1";
+              db.query(
+                superAdminEmailQuery,
+                async (superAdminEmailErr, superAdminEmailResult) => {
+                  if (superAdminEmailErr) {
+                    console.error(superAdminEmailErr);
+                  } else {
+                    const Email = superAdminEmailResult[0].email;
+                    console.log(Email, "superAdminEmail");
 
-            const superAdminEmailQuery =
-              "SELECT email FROM users WHERE id = 1";
-            db.query(
-              superAdminEmailQuery,
-              async (superAdminEmailErr, superAdminEmailResult) => {
-                if (superAdminEmailErr) {
-                  console.error(superAdminEmailErr);
-                } else {
-                  const Email = superAdminEmailResult[0].email;
-                  console.log(Email, "superAdminEmail");
-
-                  transporter.sendMail({
-                    from: "sales.balkrushna@gmail.com",
-                    to: Email,
-                    cc: "info@balkrushna.com",
-                    subject: "Work Report",
-                    text: "Please find the attached work report.",
-                    attachments: [
-                      {
-                        filename: "work_report.csv",
-                        content: fs.createReadStream(workReportFilename),
-                      },
-                    ],
-                  });
+                    transporter.sendMail({
+                      from: "sales.balkrushna@gmail.com",
+                      to: Email,
+                      cc: "info@balkrushna.com",
+                      subject: "Work Report",
+                      text: "Please find the attached work report.",
+                      attachments: [
+                        {
+                          filename: "work_report.csv",
+                          content: fs.createReadStream(workReportFilename),
+                        },
+                      ],
+                    });
+                  }
                 }
-              }
-            );
-          })
-          .pipe(workReportStream);
-        }else{
+              );
+            })
+            .pipe(workReportStream);
+        } else {
           const superAdminEmailQuery = "SELECT email FROM users WHERE id = 1";
           db.query(
             superAdminEmailQuery,
@@ -94,11 +92,7 @@ cron.schedule("0 20 * * *", async () => {
   }
 });
 
-
-
-
-
-
+////////////////////////////////////////////////////
 
 cron.schedule("0 10 * * *", async () => {
   try {
@@ -132,7 +126,7 @@ cron.schedule("0 10 * * *", async () => {
                     transporter.sendMail({
                       from: "sales.balkrushna@gmail.com",
                       to: Email,
-                      cc: "laxmichaudhari203@gmail.com",
+                      cc: "info@balkrushna.com",
                       subject: "Task Work",
                       text: "Please find the attached Task Work.",
                       attachments: [
@@ -161,7 +155,7 @@ cron.schedule("0 10 * * *", async () => {
                 transporter.sendMail({
                   from: "sales.balkrushna@gmail.com",
                   to: Email,
-                  cc: "laxmichaudhari203@gmail.com",
+                  cc: "info@balkrushna.com",
                   subject: "No Task Work",
                   text: "There is no task work available for today.",
                 });
@@ -175,7 +169,5 @@ cron.schedule("0 10 * * *", async () => {
     console.error("Error", error);
   }
 });
-
-
 
 module.exports = router;
