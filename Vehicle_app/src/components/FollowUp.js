@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -11,25 +11,25 @@ import {
   ScrollView,
 } from 'react-native';
 import DatePicker from 'react-native-date-picker';
-import {useDispatch, useSelector} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   clearFollowUpState,
   setFollowUpDb,
 } from '../redux/slice/addFollowUpSlice';
 import SweetSuccessAlert from './subCom/SweetSuccessAlert';
-import {Linking} from 'react-native';
+import { Linking } from 'react-native';
 import Calendars from './subCom/Calendars';
-import {API_URL} from '@env';
+import { API_URL } from '@env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import moment from 'moment';
 import CustomLoadingSpinner from './subCom/CustomLoadingSpinner';
-import {CheckBox} from 'react-native-elements';
+import { CheckBox } from 'react-native-elements';
 import CustomCheckbox from './subCom/CustomCheckBox';
 import CustomRadioButton from './subCom/CustomRadioButton';
 import RadioButtons from './subCom/RadioButtons';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
-const FollowUpScreen = ({item}) => {
+const FollowUpScreen = ({ item }) => {
   //   const {item} = route.params;
   const dispatch = useDispatch();
   const followUpState = useSelector(
@@ -49,9 +49,9 @@ const FollowUpScreen = ({item}) => {
   const enquiryStage = ['Follow Up', 'Booking', 'Drop', 'Invalid   '];
   const [selectedOption, setSelectedOption] = useState('Follow Up');
 
-  useEffect(()=> {
-console.log(item, 'tekltl')
-  },[item])
+  useEffect(() => {
+    console.log(item, 'tekltl')
+  }, [item])
   useEffect(() => {
     if (followUpState.isSuccess && followUpState.result === 'success') {
       dispatch(clearFollowUpState());
@@ -102,8 +102,12 @@ console.log(item, 'tekltl')
       };
       if (item.isRowIndex !== undefined) {
         formData.isRowIndex = item.isRowIndex;
+        formData.workDescription = item.workDescription;
+        formData.taskId = item.taskId;
+        formData.spendTime = item.spendTime;
       }
       dispatch(setFollowUpDb(formData));
+      console.log(formData, "dfssssshhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh")
       setDiscussion('');
     } else {
       getSelectedDateError();
@@ -206,17 +210,17 @@ console.log(item, 'tekltl')
           <FlatList
             data={scheduleDetails}
             keyExtractor={(item, index) => index.toString()}
-            renderItem={({item, index}) => {
+            renderItem={({ item, index }) => {
               return (
                 <View style={styles.callBox}>
                   <View style={styles.leftContainer}>
-                    <Text style={{color: '#229954'}}>
+                    <Text style={{ color: '#229954' }}>
                       {item.last_discussion}
                     </Text>
-                    <Text style={{color: '#5DADE2'}}>
+                    <Text style={{ color: '#5DADE2' }}>
                       {moment(item.next_followup_date).format('LL')}
                     </Text>
-                    <Text style={{color: '#1A5276', fontSize: 20}}>
+                    <Text style={{ color: '#1A5276', fontSize: 20 }}>
                       987654567
                     </Text>
                   </View>
