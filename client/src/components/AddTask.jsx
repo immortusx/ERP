@@ -7,6 +7,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { addTaskToDb, clearAddTaskState } from '../redux/slices/addTaskSlice'
 import Select from 'react-select';
 import { Modal, Button } from "react-bootstrap";
+import translations from '../assets/locals/translations';
 import { editTaskAssignUpdateToDb, clearEditTaskAssignState, clearEditTaskAssignData } from '../redux/slices/editTaskAssignSlice'
 const AssignTask = ({ workFor }) => {
   const navigate = useNavigate()
@@ -30,14 +31,14 @@ const AssignTask = ({ workFor }) => {
   const addTaskState = useSelector(state => state.addTaskSlice.addTaskState);
   const editTaskAssignSliceState = useSelector(state => state.editTaskAssignSlice.editTaskAssignSliceState)
   const editTaskAssignData = useSelector(state => state.editTaskAssignSlice.editTaskAssignData)
-
+  const currentLanguage = useSelector((state) => state.language.language);
   const [newAddTask, setNewAddTask] = useState({
     listDsp: [],
     listTasktype: [],
     listTask: [],
     listTasktimeperiod: [],
     listTaskStatus: [],
-    listTaskCategory:[],
+    listTaskCategory: [],
   });
 
   useEffect(() => {
@@ -286,12 +287,12 @@ const AssignTask = ({ workFor }) => {
     };
     await Axios.get(url, config).then((response) => {
       if (response) {
-      
-          setNewAddTask((newAddTask) => ({
-            ...newAddTask,
-            ["listTaskCategory"]: response.data.result,
-          }));
-    
+
+        setNewAddTask((newAddTask) => ({
+          ...newAddTask,
+          ["listTaskCategory"]: response.data.result,
+        }));
+
       }
     });
   }
@@ -315,7 +316,7 @@ const AssignTask = ({ workFor }) => {
       endDate: endDate,
       tasktimePeriod: tasktimePeriod,
       taskStatus: taskStatus,
-      taskCategory:taskCategory
+      taskCategory: taskCategory
     };
 
     if (workFor === "editTask") {
@@ -384,7 +385,7 @@ const AssignTask = ({ workFor }) => {
         <div className="row m-0">
           <div className="col-6">
             <h5 className='m-0'>
-              {workFor === 'addTask' ? 'Assign Task Management' : 'Edit Task Management'}
+              {workFor === 'addTask' ? translations[currentLanguage].assigntaskmgmt : translations[currentLanguage].edittaskmgmt}
             </h5>
           </div>
           <div className="col-6 d-flex align-items-end justify-content-end">
@@ -400,14 +401,14 @@ const AssignTask = ({ workFor }) => {
                 redirectModal();
               }}
             >
-              BACK
+              {translations[currentLanguage].back}
             </Button>
           </div>
         </div>
         <div className=' row mt-3 m-0'>
           <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
             <label className="myLabel" htmlFor="employee">
-              Employee
+              {translations[currentLanguage].employee}
             </label>
             <Select
               isMulti
@@ -422,7 +423,7 @@ const AssignTask = ({ workFor }) => {
           </section>
           <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
             <label className="myLabel" htmlFor="taskType">
-              Task Type
+              {translations[currentLanguage].tasktype}
             </label>
             <select onChange={onChangeTasktype} className="myInput" name="taskType" value={taskTypes}>
               <option value="" className="myLabel">
@@ -446,7 +447,7 @@ const AssignTask = ({ workFor }) => {
           </section>
           <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
             <label className="myLabel" htmlFor="task">
-              Task
+              {translations[currentLanguage].task}
             </label>
             <select onChange={onChangeTask} className="myInput" name="task" value={tasks}>
               <option value="" className="myLabel">
@@ -474,7 +475,7 @@ const AssignTask = ({ workFor }) => {
         <div className=' row mt-3 m-0'>
           <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
             <label className="myLabel" htmlFor="taskCount">
-              Task Count
+              {translations[currentLanguage].taskcount}
             </label>
             <input className='myInput inputElement' autoComplete='false' type="text" name="taskCount" onChange={onChangeTaskCount} value={taskCount} />
 
@@ -482,7 +483,7 @@ const AssignTask = ({ workFor }) => {
 
           <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
             <label className="myLabel" htmlFor="startDate">
-              Start Date
+              {translations[currentLanguage].startd}
             </label>
             <DatePicker
               selected={startDate}
@@ -497,7 +498,7 @@ const AssignTask = ({ workFor }) => {
 
           <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
             <label className="myLabel" htmlFor="endDate">
-              End Date
+              {translations[currentLanguage].endd}
             </label>
             <DatePicker
               selected={endDate}
@@ -514,7 +515,7 @@ const AssignTask = ({ workFor }) => {
         <div className=' row mt-3 m-0'>
           <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
             <label className="myLabel" htmlFor="task">
-              Task Time Period
+              {translations[currentLanguage].tasktimep}
             </label>
             <select onChange={onChangeTasktimePeriod} className="myInput" name="tasktimePeriod" value={tasktimePeriod}>
               <option value="" className="myLabel">
@@ -538,7 +539,7 @@ const AssignTask = ({ workFor }) => {
           </section>
           <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
             <label className="myLabel" htmlFor="task">
-              Task Status
+              {translations[currentLanguage].taskstatus}
             </label>
             <select onChange={onChangeTaskStatus} className="myInput" name="taskstatuss" value={taskStatus}>
               <option value="" className="myLabel">
@@ -562,7 +563,7 @@ const AssignTask = ({ workFor }) => {
           </section>
           <section className='d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4'>
             <label className="myLabel" htmlFor="category">
-            Category
+              {translations[currentLanguage].category}
             </label>
             <select onChange={onChangeTaskCategory} className="myInput" name="taskcategory" value={taskCategory}>
               <option value="" className="myLabel">
@@ -592,9 +593,9 @@ const AssignTask = ({ workFor }) => {
           className="col-12 col-sm-5 col-lg-2 myBtn py-2"
           onClick={handleSubmit}
           type="button">
-          {workFor === 'addTask' ? 'Assign Task' : 'Save'}
+          {workFor === 'addTask' ? translations[currentLanguage].AssignTask : translations[currentLanguage].save}
         </button>
-        <button className='ms-0 ms-sm-3 mt-3 mt-sm-0 col-12 col-sm-5 col-lg-2 myBtn py-2' onClick={handleCancel} type='button'>Cancel</button>
+        <button className='ms-0 ms-sm-3 mt-3 mt-sm-0 col-12 col-sm-5 col-lg-2 myBtn py-2' onClick={handleCancel} type='button'> {translations[currentLanguage].cancel} </button>
       </section>
     </div>
   );

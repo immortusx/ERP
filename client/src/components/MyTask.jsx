@@ -13,13 +13,13 @@ import edit from "../assets/images/editu.png";
 import { Button } from "react-bootstrap";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import Axios from "axios";
-
+import translations from '../assets/locals/translations';
 import "../styles/Users.css";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 export default function MyTask() {
 
-    const [task, setTask] = useState([]);
-   
+  const [task, setTask] = useState([]);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const userListState = useSelector(
@@ -27,6 +27,7 @@ export default function MyTask() {
   );
   const [selectAll, setSelectAll] = useState(false);
   const [rowData, setRowData] = useState([]);
+  const currentLanguage = useSelector((state) => state.language.language);
 
   const handleHeaderCheckboxClick = () => {
     console.log(!selectAll, "selectAll");
@@ -67,16 +68,16 @@ export default function MyTask() {
   };
 
 
-const formatDate = (startdate) => {
-  const options = { year: "numeric", month: "long", day: "numeric" };
-  return new Date(startdate).toLocaleDateString(undefined, options);
-};
+  const formatDate = (startdate) => {
+    const options = { year: "numeric", month: "long", day: "numeric" };
+    return new Date(startdate).toLocaleDateString(undefined, options);
+  };
 
-const handletaskdetail = (data) => {
-  navigate("/management/mytask/task-detail", {
-    state: { taskdata: data },
-  });
-};
+  const handletaskdetail = (data) => {
+    navigate("/management/mytask/task-detail", {
+      state: { taskdata: data },
+    });
+  };
 
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
   const columns = [
@@ -103,7 +104,7 @@ const handletaskdetail = (data) => {
       headerAlign: "center",
       align: "center",
       headerClassName: "custom-header",
-      headerName: "Employee",
+      headerName: translations[currentLanguage].employee,
       minWidth: 200,
       flex: 1,
       valueGetter: (params) => {
@@ -115,7 +116,7 @@ const handletaskdetail = (data) => {
       headerAlign: "left",
       align: "left",
       headerClassName: "custom-header",
-      headerName: "Task Type",
+      headerName: translations[currentLanguage].tasktype,
       minWidth: 200,
       flex: 1,
       valueGetter: (params) => {
@@ -127,7 +128,7 @@ const handletaskdetail = (data) => {
       headerAlign: "left",
       align: "left",
       headerClassName: "custom-header",
-      headerName: "Task",
+      headerName: translations[currentLanguage].task,
       minWidth: 200,
       flex: 1.2,
       valueGetter: (params) => {
@@ -139,7 +140,7 @@ const handletaskdetail = (data) => {
       headerAlign: "left",
       align: "left",
       headerClassName: "custom-header",
-      headerName: "TaskCount",
+      headerName: translations[currentLanguage].taskcount,
       minWidth: 200,
       flex: 1.2,
       renderCell: (params) => (
@@ -147,9 +148,8 @@ const handletaskdetail = (data) => {
           className="border-0 rounded p-2"
           onClick={() => handletaskdetail(params.row)}
         >
-          {`${params.row.taskCompleted ? params.row.taskCompleted : 0}/${
-            params.row.taskcount ? params.row.taskcount : "-"
-          }`}
+          {`${params.row.taskCompleted ? params.row.taskCompleted : 0}/${params.row.taskcount ? params.row.taskcount : "-"
+            }`}
         </button>
       ),
     },
@@ -159,7 +159,7 @@ const handletaskdetail = (data) => {
       headerAlign: "left",
       align: "left",
       headerClassName: "custom-header",
-      headerName: "Start Date",
+      headerName: translations[currentLanguage].startd,
       minWidth: 200,
       flex: 1.2,
       valueGetter: (params) => formatDate(params.row.startdate),
@@ -169,7 +169,7 @@ const handletaskdetail = (data) => {
       headerAlign: "left",
       align: "left",
       headerClassName: "custom-header",
-      headerName: "End Date",
+      headerName: translations[currentLanguage].endd,
       minWidth: 200,
       flex: 1.2,
       valueGetter: (params) => formatDate(params.row.enddate),
@@ -179,7 +179,7 @@ const handletaskdetail = (data) => {
       headerAlign: "left",
       align: "left",
       headerClassName: "custom-header",
-      headerName: "Task Time Period",
+      headerName: translations[currentLanguage].tasktimep,
       minWidth: 200,
       flex: 1.2,
       valueGetter: (params) => {
@@ -202,10 +202,10 @@ const handletaskdetail = (data) => {
     dispatch(getUserListFromDb());
   }, []);
 
- 
-//   const redirectModal = () => {
-//     navigate(-1);
-//   };
+
+  //   const redirectModal = () => {
+  //     navigate(-1);
+  //   };
   return (
     <>
       <div className="">

@@ -9,6 +9,7 @@ import Breadcrumbs from '@mui/material/Breadcrumbs';
 import LanguageSelector from '../languageSelector';
 import translations from '../../assets/locals/translations';
 import RouterLink from 'react'
+import { red } from '@mui/material/colors';
 
 const BreadCrumb = () => {
   const currentLanguage = useSelector((state) => state.language.language);
@@ -45,9 +46,9 @@ const BreadCrumb = () => {
   console.log(crumbs, "crumbscrumbscrumbscrumbs");
   return (
     <div class="container">
-      <div class="row">
-        <div class="col-md-9">
-          <div className='mb-3'>
+      <div class="row  shadow mb-3 bg-white rounded">
+        <div class="col-md-9 mt-2">
+          <div className='mb-2 '>
             <div className='headerListUi'>
 
 
@@ -116,7 +117,7 @@ const BreadCrumb = () => {
             </div>
           </div>
         </div>
-        <div className='col-md-3' style={{ display: 'flex', justifyContent: 'flex-end' }}>
+        <div className='col-md-3 mt-2' style={{ display: 'flex', justifyContent: 'flex-end' }}>
           <div className="download-container" style={{ display: 'flex', justifyContent: 'center', marginTop: '-2px' }}>
             <div className="download-bar" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
               {isHovered ? (

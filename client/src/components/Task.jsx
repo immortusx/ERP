@@ -12,7 +12,7 @@ import { Tooltip } from "@mui/material";
 import { Modal, Button } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsisV } from "@fortawesome/free-solid-svg-icons/faEllipsisV";
-
+import translations from '../assets/locals/translations';
 import { setEditTaskAssignData } from "../redux/slices/editTaskAssignSlice";
 const Task = () => {
 
@@ -34,9 +34,7 @@ const Task = () => {
    const currentBranch = localStorage.getItem("currentDealerId");
    const [selectedRowId, setSelectedRowId] = useState(null);
    const [showSelectionBox, setShowSelectionBox] = useState({});
-
-
-
+   const currentLanguage = useSelector((state) => state.language.language);
    const handleHeaderCheckboxClick = () => {
       setSelectAll(!selectAll);
    }
@@ -82,7 +80,7 @@ const Task = () => {
             tasktimeperiod: user.period_name,
             EmployeeId: user.EmployeeId,
             taskstatus: user.task_status,
-            taskcategory:user.category_name
+            taskcategory: user.category_name
 
          }));
 
@@ -268,7 +266,7 @@ const Task = () => {
          field: "employee",
          headerAlign: "left",
          align: "left",
-         headerName: "Employee",
+         headerName: translations[currentLanguage].employee,
          minWidth: 200,
          flex: 1,
          renderCell: (params) => {
@@ -290,7 +288,7 @@ const Task = () => {
          field: "tasktype",
          headerAlign: "left",
          align: "left",
-         headerName: "Task Type",
+         headerName: translations[currentLanguage].tasktype,
          minWidth: 200,
          flex: 1,
       },
@@ -298,7 +296,7 @@ const Task = () => {
          field: "task",
          headerAlign: "left",
          align: "left",
-         headerName: "Task",
+         headerName: translations[currentLanguage].task,
          minWidth: 200,
          flex: 1,
       },
@@ -306,7 +304,7 @@ const Task = () => {
          field: "taskcategory",
          headerAlign: "left",
          align: "left",
-         headerName: "Category",
+         headerName: translations[currentLanguage].category,
          minWidth: 200,
          flex: 1,
       },
@@ -314,7 +312,7 @@ const Task = () => {
          field: "taskstatus",
          headerAlign: "left",
          align: "left",
-         headerName: "Task Status",
+         headerName: translations[currentLanguage].taskstatus,
          minWidth: 200,
          flex: 1,
          renderCell: (params) => {
@@ -324,7 +322,7 @@ const Task = () => {
 
             return (
                <div className="">
-                
+
                   {
                      showSelectionBox[rowId] ? (
                         <select
@@ -369,7 +367,7 @@ const Task = () => {
          field: "taskcount",
          headerAlign: "left",
          align: "left",
-         headerName: "Task Count",
+         headerName: translations[currentLanguage].taskcount,
          minWidth: 200,
          flex: 1,
       },
@@ -377,7 +375,7 @@ const Task = () => {
          field: "startdate",
          headerAlign: "left",
          align: "left",
-         headerName: "Start Date",
+         headerName: translations[currentLanguage].startd,
          minWidth: 200,
          flex: 1,
       },
@@ -385,7 +383,7 @@ const Task = () => {
          field: "enddate",
          headerAlign: "left",
          align: "left",
-         headerName: "End Date",
+         headerName: translations[currentLanguage].endd,
          minWidth: 200,
          flex: 1,
       },
@@ -393,7 +391,7 @@ const Task = () => {
          field: "tasktimeperiod",
          headerAlign: "left",
          align: "left",
-         headerName: "Task Time Period",
+         headerName: translations[currentLanguage].tasktimep,
          minWidth: 200,
          flex: 1,
       },
@@ -413,7 +411,7 @@ const Task = () => {
             <div className="d-flex justify-content-center dotHover">
                <FontAwesomeIcon icon={faEllipsisV} />
                <div className="expandDiv">
-                  <Tooltip title="Edit">
+                  <Tooltip title={translations[currentLanguage].edit}>
                      <button
                         className="myActionBtn m-1"
                         onClick={() => {
@@ -434,7 +432,7 @@ const Task = () => {
                         </svg>
                      </button>
                   </Tooltip>
-                  <Tooltip title="Delete">
+                  <Tooltip title={translations[currentLanguage].delete}>
                      <button
                         onClick={() => {
                            deleteActionCall(params.row);
@@ -481,7 +479,7 @@ const Task = () => {
                className="d-flex align-items-center"
                type="button"
             >
-               <Tooltip title="Assign Task">
+               <Tooltip title={translations[currentLanguage].AssignTask}>
                   <svg
                      xmlns="http://www.w3.org/2000/svg"
                      width="23"
@@ -501,7 +499,7 @@ const Task = () => {
                      redirectModal();
                   }}
                >
-                  BACK
+                  {translations[currentLanguage].back}
                </Button>
             </div>
          </div>

@@ -610,16 +610,6 @@
     /* *******end******* */
 
     /* code that is repeating for responsive */
-
-
-
-
-
-
-
-
-
-
     .toggleSideBar #mainContainer {
         margin-left: 0 !important;
     }
@@ -677,15 +667,16 @@
 .headerListUi ol a {
     color: white;
     display: block;
-    background:#55a6d8;
-    text-decoration:none; 
+    background: #55a6d8;
+    text-decoration: none;
     position: relative;
-    height: 40px;
-    line-height: 40px;
+    height: 25px;
+    line-height: 25px; /* Adjusted line-height to match height for vertical centering */
     padding: 0 10px 0 6px;
-    text-align: center;
+    text-align: center; /* Center the text horizontally */
     margin-right: 13px;
 }
+
 
 .headerListUi ol a:not(:contains("Dashboard")) {
     text-decoration: none; 
@@ -707,7 +698,7 @@
     position: absolute;
     top: 0;
     border: 0 solid #55a6d8;
-    border-width: 20px 11px;
+    border-width: 13px 11px;
     width: 0;
     height: 0;
     color: white;
@@ -742,7 +733,7 @@
 
 .headerListUi ol a:active:after {
     border-left-color: #4c6c88;
-}
+} 
 
 
 /* headerListUI code end */
