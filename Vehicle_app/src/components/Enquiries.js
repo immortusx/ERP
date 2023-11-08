@@ -9,17 +9,17 @@ import {
   Linking,
   AppState,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {API_URL} from '@env';
+import { API_URL } from '@env';
 import moment from 'moment';
 import LoadingSpinner from './subCom/LoadingSpinner';
 import CustomLoadingSpinner from './subCom/CustomLoadingSpinner';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import TimeAgo from './subCom/TImeAgo';
 
-const Enquiries = ({route}) => {
+const Enquiries = ({ route }) => {
   const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
   const [currentEnquiryIndex, setCurrentEnquiryIndex] = useState(1);
@@ -31,7 +31,7 @@ const Enquiries = ({route}) => {
   const [categoryName, setCategoryName] = useState(null);
   const [itemData, setItemData] = useState(null);
   const [appState, setAppState] = useState(AppState.currentState);
-  const {item} = route.params;
+  const { item } = route.params;
   const [renderIconData, setRenderIconData] = useState({
     task_type: null,
     contact_type: null,
@@ -51,7 +51,7 @@ const Enquiries = ({route}) => {
         setCallStartTime(null);
 
         console.log('Call Duration:', durationInSeconds, 'seconds');
-        uploadcallLog(durationInSeconds);
+
       }
       setAppState(nextAppState);
     };
@@ -67,12 +67,10 @@ const Enquiries = ({route}) => {
   }, [appState, callStartTime]);
   useEffect(() => {
     if (callDuration) {
-      const hours = Math.floor(durationInSeconds / 3600);
-      const minutes = Math.floor((durationInSeconds % 3600) / 60);
-      const seconds = durationInSeconds % 60;
-      const formattedDuration = `${String(hours).padStart(2, '0')}:${String(
-        minutes,
-      ).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+      const hours = Math.floor(callDuration / 3600);
+      const minutes = Math.floor((callDuration % 3600) / 60);
+      const seconds = callDuration % 60;
+      const formattedDuration = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
       setSpendTime(formattedDuration);
     }
   }, [callDuration]);
@@ -89,7 +87,7 @@ const Enquiries = ({route}) => {
       console.log(item, 'itekem');
       setTaskId(item.task);
       getLockedEnquiries(item.id, item.task, currentEnquiryIndex);
-      const types = [{type: 'call'}, {type: 'whatsapp'}, {type: 'sms'}];
+      const types = [{ type: 'call' }, { type: 'whatsapp' }, { type: 'sms' }];
 
       setRenderIconData({
         task_type: types,
@@ -104,16 +102,17 @@ const Enquiries = ({route}) => {
     let workDescription = `Called customer ${itemData.first_name} ${itemData.last_name} regarding ${itemData.product} enquiry`;
     itemData.isRowIndex = isRowIndex;
     itemData.spendTime = spendTime;
+    console.log(spendTime, "rijrdgdfgdfgfdkgfdgkfddddddddddddddddddddddddd")
     itemData.workDescription = workDescription;
     itemData.taskId = taskId;
-    navigation.navigate('Schedule Call', {item: itemData});
+    navigation.navigate('Schedule Call', { item: itemData });
   };
   const handleEnquirySkip = () => {
     console.log('Skip');
     setCurrentEnquiryIndex(currentEnquiryIndex + 1);
   };
   const handleSheduleCall = item => {
-    navigation.navigate('Schedule Call', {item: item});
+    navigation.navigate('Schedule Call', { item: item });
   };
   const makePhoneCall = mobileNumber => {
     console.log('Calling...', mobileNumber);
@@ -165,7 +164,7 @@ const Enquiries = ({route}) => {
   };
   const openAdditonalEnquiry = item => {
     console.log(item, '>>>>>>>>>>>>>>>.');
-    navigation.navigate('Additional Details', {item: item});
+    navigation.navigate('Additional Details', { item: item });
   };
 
   useEffect(() => {
@@ -249,10 +248,10 @@ const Enquiries = ({route}) => {
             <CustomLoadingSpinner />
           ) : enquiriesList && enquiriesList.length > 0 ? (
             <FlatList
-              style={{marginBottom: 60}}
+              style={{ marginBottom: 60 }}
               data={enquiriesList}
               keyExtractor={(item, index) => `task_${index}`}
-              renderItem={({item, index}) => {
+              renderItem={({ item, index }) => {
                 return (
                   <>
                     <View key={index} style={styles.enquiryBox}>
@@ -376,7 +375,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 20,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     elevation: 4,
     borderBottomLeftRadius: 20,
@@ -399,7 +398,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
     paddingVertical: 4,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     elevation: 3,
     borderRadius: 7,
