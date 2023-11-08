@@ -400,10 +400,10 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
                         let theSpendTime = `${hours
                           .toString()
                           .padStart(2, "0")}:${minutes
-                          .toString()
-                          .padStart(2, "0")}:${seconds
-                          .toString()
-                          .padStart(2, "0")}`;
+                            .toString()
+                            .padStart(2, "0")}:${seconds
+                              .toString()
+                              .padStart(2, "0")}`;
                         console.log(theSpendTime, "spendTime");
 
                         let userID = req.myData.userId;
@@ -451,10 +451,10 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
                         let theSpendTime = `${hours
                           .toString()
                           .padStart(2, "0")}:${minutes
-                          .toString()
-                          .padStart(2, "0")}:${seconds
-                          .toString()
-                          .padStart(2, "0")}`;
+                            .toString()
+                            .padStart(2, "0")}:${seconds
+                              .toString()
+                              .padStart(2, "0")}`;
                         console.log(theSpendTime, "spendTime");
 
                         let userID = req.myData.userId;
@@ -1304,46 +1304,72 @@ router.post("/edit-new-detail-enquiry", tokenCheck, async (req, res) => {
 //=======================Add Follow Up==================//
 router.post("/set-follow-up", tokenCheck, async (req, res) => {
   console.log(">>>>>>>>>/set-follow-up", req.body);
+
   try {
-    const { last_discussion, next_followup_date, customer_id, isRowIndex } =
-      req.body;
-    await db.query(
-      `SELECT id FROM enquiries WHERE customer_id = ${customer_id}`,
-      async (err, result) => {
+    const { last_discussion, next_followup_date, customer_id, isRowIndex } = req.body;
+
+    // First, fetch the enquiry ID
+    const enquiryIdResult = await new Promise((resolve, reject) => {
+      db.query(`SELECT id FROM enquiries WHERE customer_id = ${customer_id}`, (err, result) => {
         if (err) {
-          console.log({ isSuccess: false, result: err });
-          res.status(500).send({ isSuccess: false, error: "Database error" });
+          reject(err);
         } else {
-          console.log({ isSuccess: true, result: result });
-          console.log(result[0].id);
-          const enquiry_id = result[0].id;
-          const followup_date = new Date().toISOString().split("T")[0];
-          const nextFollowupDate = new Date(next_followup_date)
-            .toISOString()
-            .split("T")[0];
-          const followUpSql = `INSERT INTO follow_up_details (customer_id, enquiry_id, last_discussion, followup_date, next_followup_date) VALUES ('${customer_id}', '${enquiry_id}', '${last_discussion}', '${followup_date}', '${nextFollowupDate}')`;
-          console.log(followUpSql, "followUpSql");
-          await db.query(followUpSql, async (err, followUpResult) => {
-            if (err) {
-              console.log({ isSuccess: false, result: err });
-              res.status(500).send({ isSuccess: false, error: "error" });
-            } else {
-              if (isRowIndex) {
-                console.log("uploading worklog....");
-                uploadWorkLog();
-              }
-              console.log({ isSuccess: true, result: followUpResult });
-              res.send({ isSuccess: true, result: "success" });
-            }
-          });
+          resolve(result);
         }
-      }
-    );
+      });
+    });
+
+    if (enquiryIdResult.length === 0) {
+      console.log({ isSuccess: false, error: "Enquiry not found" });
+      return res.status(400).send({ isSuccess: false, error: "Enquiry not found" });
+    }
+
+    const enquiry_id = enquiryIdResult[0].id;
+    const followup_date = new Date().toISOString().split("T")[0];
+    const nextFollowupDate = new Date(next_followup_date).toISOString().split("T")[0];
+
+    const followUpSql = `INSERT INTO follow_up_details (customer_id, enquiry_id, last_discussion, followup_date, next_followup_date) VALUES (?, ?, ?, ?, ?)`;
+    const followUpValues = [customer_id, enquiry_id, last_discussion, followup_date, nextFollowupDate];
+
+    // Insert follow-up details
+    await new Promise((resolve, reject) => {
+      db.query(followUpSql, followUpValues, (err, followUpResult) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(followUpResult);
+        }
+      });
+    });
+
+    if (isRowIndex) {
+      const { workDescription, spendTime, taskId, tasktype, task } = req.body;
+      const userId = req.myData.userId;
+
+      const workLogSql = `INSERT INTO worklog (user_id, tasktype, task, work_description, datetime, spendtime) VALUES (?, ?, ?, ?, ?, ?)`;
+      const workLogValues = [userId, tasktype || 1, task || 1, workDescription, new Date(), spendTime];
+
+      // Insert work log
+      await new Promise((resolve, reject) => {
+        db.query(workLogSql, workLogValues, (err, result) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(result);
+          }
+        });
+      });
+    }
+
+    console.log({ isSuccess: true, result: "success" });
+    res.send({ isSuccess: true, result: "success" });
+
   } catch (err) {
     console.log(err);
     res.status(500).send({ isSuccess: false, error: "Internal server error" });
   }
 });
+
 
 //======================Get Follow Up===========//
 router.get("/get-follow-up/:id", tokenCheck, async (req, res) => {

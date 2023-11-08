@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "async": "^3.2.4",
+    "axios": "^1.6.0",
     "bcrypt": "^5.1.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
@@ -23,7 +24,7 @@
     "mysql": "^2.18.1",
     "node-cron": "^3.0.2",
     "nodemailer": "^6.9.7",
-    "nodemon": "^2.0.21",
+    "nodemon": "^2.0.22",
     "path": "^0.12.7"
   }
 }
