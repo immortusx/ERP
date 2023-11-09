@@ -23,6 +23,7 @@ import Enquiries from './components/Enquiries';
 import DetailTaskReport from './components/DetailTaskReport';
 import TaskList from './components/Tasklist';
 import UserTaskList from './components/UserTaskList';
+import WhatsappChat from './components/WhatsappChat';
 const Stack = createStackNavigator();
 const AppNavigator = () => {
   return (
@@ -245,6 +246,17 @@ const AppNavigator = () => {
         <Stack.Screen
           name="Enquiries"
           component={Enquiries}
+          options={{
+            headerShown: true,
+            headerStyle: {
+              borderWidth: 0.9,
+              borderColor: 'grey',
+            },
+          }}
+        />
+        <Stack.Screen
+          name="Conversation"
+          component={WhatsappChat}
           options={{
             headerShown: true,
             headerStyle: {
