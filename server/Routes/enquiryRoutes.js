@@ -4,6 +4,8 @@ const { tokenCheck } = require("../Auth/TokenCheck");
 const { getDateInFormate } = require("../Utils/timeFunctions");
 const moment = require("moment");
 const { db } = require("../Database/dbConfig");
+const { InstantMessagingUtils } = require("../Utils/MessagingHelpers");
+const { instantEnquiryMessage } = require("../Utils/instantEnquiryCommunitor");
 
 const router = express.Router();
 const none = 1;
@@ -400,10 +402,10 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
                         let theSpendTime = `${hours
                           .toString()
                           .padStart(2, "0")}:${minutes
-                            .toString()
-                            .padStart(2, "0")}:${seconds
-                              .toString()
-                              .padStart(2, "0")}`;
+                          .toString()
+                          .padStart(2, "0")}:${seconds
+                          .toString()
+                          .padStart(2, "0")}`;
                         console.log(theSpendTime, "spendTime");
 
                         let userID = req.myData.userId;
@@ -421,6 +423,11 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
                       });
                     };
                     uploadEnquiryWorklog();
+                    const messagePayloads = {
+                      userId: Number(dsp),
+                      customerNumber: Number(whatsappNumber),
+                    };
+                    instantEnquiryMessage(messagePayloads);
                   }
                 });
               } else if (oldTractorOwned === "No") {
@@ -451,10 +458,10 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
                         let theSpendTime = `${hours
                           .toString()
                           .padStart(2, "0")}:${minutes
-                            .toString()
-                            .padStart(2, "0")}:${seconds
-                              .toString()
-                              .padStart(2, "0")}`;
+                          .toString()
+                          .padStart(2, "0")}:${seconds
+                          .toString()
+                          .padStart(2, "0")}`;
                         console.log(theSpendTime, "spendTime");
 
                         let userID = req.myData.userId;
@@ -472,6 +479,11 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
                       });
                     };
                     uploadEnquiryWorklog();
+                    const messagePayloads = {
+                      userId: Number(dsp),
+                      customerNumber: Number(whatsappNumber),
+                    };
+                    instantEnquiryMessage(messagePayloads);
                     // res.send({
                     //   isSuccess: "success",
                     //   result: "success",
@@ -483,6 +495,11 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
                   isSuccess: "success",
                   result: "success",
                 });
+                const messagePayloads = {
+                  userId: Number(dsp),
+                  customerNumber: Number(whatsappNumber),
+                };
+                instantEnquiryMessage(messagePayloads);
               }
             }
           });
@@ -926,6 +943,13 @@ router.post("/set-new-fast-enquiry", tokenCheck, async (req, res) => {
                                         isSuccess: "success",
                                         result: "success",
                                       });
+                                      if (salesperson_id !== null) {
+                                        const messagePayloads = {
+                                          userId: Number(salesperson_id),
+                                          customerNumber: Number(whatsapp_number),
+                                        };
+                                        instantEnquiryMessage(messagePayloads);
+                                      }
                                     }
                                   }
                                 );
@@ -1306,30 +1330,44 @@ router.post("/set-follow-up", tokenCheck, async (req, res) => {
   console.log(">>>>>>>>>/set-follow-up", req.body);
 
   try {
-    const { last_discussion, next_followup_date, customer_id, isRowIndex } = req.body;
+    const { last_discussion, next_followup_date, customer_id, isRowIndex } =
+      req.body;
 
     // First, fetch the enquiry ID
     const enquiryIdResult = await new Promise((resolve, reject) => {
-      db.query(`SELECT id FROM enquiries WHERE customer_id = ${customer_id}`, (err, result) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(result);
+      db.query(
+        `SELECT id FROM enquiries WHERE customer_id = ${customer_id}`,
+        (err, result) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(result);
+          }
         }
-      });
+      );
     });
 
     if (enquiryIdResult.length === 0) {
       console.log({ isSuccess: false, error: "Enquiry not found" });
-      return res.status(400).send({ isSuccess: false, error: "Enquiry not found" });
+      return res
+        .status(400)
+        .send({ isSuccess: false, error: "Enquiry not found" });
     }
 
     const enquiry_id = enquiryIdResult[0].id;
     const followup_date = new Date().toISOString().split("T")[0];
-    const nextFollowupDate = new Date(next_followup_date).toISOString().split("T")[0];
+    const nextFollowupDate = new Date(next_followup_date)
+      .toISOString()
+      .split("T")[0];
 
     const followUpSql = `INSERT INTO follow_up_details (customer_id, enquiry_id, last_discussion, followup_date, next_followup_date) VALUES (?, ?, ?, ?, ?)`;
-    const followUpValues = [customer_id, enquiry_id, last_discussion, followup_date, nextFollowupDate];
+    const followUpValues = [
+      customer_id,
+      enquiry_id,
+      last_discussion,
+      followup_date,
+      nextFollowupDate,
+    ];
 
     // Insert follow-up details
     await new Promise((resolve, reject) => {
@@ -1347,7 +1385,14 @@ router.post("/set-follow-up", tokenCheck, async (req, res) => {
       const userId = req.myData.userId;
 
       const workLogSql = `INSERT INTO worklog (user_id, tasktype, task, work_description, datetime, spendtime) VALUES (?, ?, ?, ?, ?, ?)`;
-      const workLogValues = [userId, tasktype || 1, task || 1, workDescription, new Date(), spendTime];
+      const workLogValues = [
+        userId,
+        tasktype || 1,
+        task || 1,
+        workDescription,
+        new Date(),
+        spendTime,
+      ];
 
       // Insert work log
       await new Promise((resolve, reject) => {
@@ -1363,13 +1408,11 @@ router.post("/set-follow-up", tokenCheck, async (req, res) => {
 
     console.log({ isSuccess: true, result: "success" });
     res.send({ isSuccess: true, result: "success" });
-
   } catch (err) {
     console.log(err);
     res.status(500).send({ isSuccess: false, error: "Internal server error" });
   }
 });
-
 
 //======================Get Follow Up===========//
 router.get("/get-follow-up/:id", tokenCheck, async (req, res) => {
