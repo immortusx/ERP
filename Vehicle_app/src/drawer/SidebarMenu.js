@@ -18,6 +18,8 @@ import DeliveryScreen from '../components/Delivery';
 import DropScreen from '../components/DropScreen';
 import EnquiryReport from '../components/EnquiryReport';
 import Tasks from '../components/Tasks';
+import WhatsappChat from '../components/WhatsappChat';
+import WhatsAppChat from '../components/subCom/WhatsAppChat';
 const Drawer = createDrawerNavigator();
 
 const SidebarMenu = () => {
@@ -119,6 +121,23 @@ const SidebarMenu = () => {
               <Image
                 style={styles.personImg}
                 source={require('../../assets/tasks.png')}
+              />
+            ),
+          }}
+        />
+        <Drawer.Screen
+          name="Send Message"
+          component={WhatsAppChat}
+          options={{
+            headerShown: true,
+            headerStyle: {
+              borderWidth: 0.9,
+              borderColor: 'grey',
+            },
+            drawerIcon: () => (
+              <Image
+                style={styles.personImg}
+                source={require('../../assets/whatsapp.png')}
               />
             ),
           }}

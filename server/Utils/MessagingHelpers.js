@@ -15,7 +15,7 @@ const InstantMessagingUtils = async (chatPayloads) => {
         authkey: authkey,
         to: phoneNumber,
         message: message,
-        file: files,
+        // file: files,
       },
     };
 

@@ -423,11 +423,13 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
                       });
                     };
                     uploadEnquiryWorklog();
-                    const messagePayloads = {
-                      userId: Number(dsp),
-                      customerNumber: Number(whatsappNumber),
-                    };
-                    instantEnquiryMessage(messagePayloads);
+                    if (dsp !== null) {
+                      const messagePayloads = {
+                        userId: Number(dsp),
+                        customerNumber: Number(whatsappNumber),
+                      };
+                      instantEnquiryMessage(messagePayloads);
+                    }
                   }
                 });
               } else if (oldTractorOwned === "No") {
@@ -479,11 +481,13 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
                       });
                     };
                     uploadEnquiryWorklog();
-                    const messagePayloads = {
-                      userId: Number(dsp),
-                      customerNumber: Number(whatsappNumber),
-                    };
-                    instantEnquiryMessage(messagePayloads);
+                    if(dsp !== null){
+                      const messagePayloads = {
+                        userId: Number(dsp),
+                        customerNumber: Number(whatsappNumber),
+                      };
+                      instantEnquiryMessage(messagePayloads);
+                    }
                     // res.send({
                     //   isSuccess: "success",
                     //   result: "success",
@@ -946,7 +950,8 @@ router.post("/set-new-fast-enquiry", tokenCheck, async (req, res) => {
                                       if (salesperson_id !== null) {
                                         const messagePayloads = {
                                           userId: Number(salesperson_id),
-                                          customerNumber: Number(whatsapp_number),
+                                          customerNumber:
+                                            Number(whatsapp_number),
                                         };
                                         instantEnquiryMessage(messagePayloads);
                                       }
@@ -1118,6 +1123,13 @@ router.post("/set-new-detail-enquiry", tokenCheck, async (req, res) => {
                                           isSuccess: "success",
                                           result: "success",
                                         });
+                                        if(salesperson_id !== null){
+                                          const messagePayloads = {
+                                            userId: Number(salesperson_id),
+                                            customerNumber: Number(whatsapp_number),
+                                          };
+                                          instantEnquiryMessage(messagePayloads);
+                                        }
                                       }
                                     }
                                   );
@@ -1138,6 +1150,13 @@ router.post("/set-new-detail-enquiry", tokenCheck, async (req, res) => {
                                           isSuccess: "success",
                                           result: "success",
                                         });
+                                        if(salesperson_id !== null){
+                                          const messagePayloads = {
+                                            userId: Number(salesperson_id),
+                                            customerNumber: Number(whatsapp_number),
+                                          };
+                                          instantEnquiryMessage(messagePayloads);
+                                        }
                                       }
                                     }
                                   );

@@ -1,93 +1,111 @@
+import {Dropdown} from 'react-native-element-dropdown';
 import React, {useState} from 'react';
-import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
-
-const data = [
-  {label: 'All', value: '1'},
-  {label: 'New Tractor', value: '2'},
-  {label: 'Old Tractor', value: '3'},
-  {label: 'Utility Tractor ', value: '4'},
-  {label: 'Industrial Tractor', value: '5'},
-];
+import {View, StyleSheet, Platform, Text} from 'react-native';
 
 const CustomDropdown = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [selectedItem, setSelectedItem] = useState(null);
+  const [recipients, setRecipients] = useState(null);
+  const [isFocus, setIsFocus] = useState(false);
 
-  const toggleDropdown = () => {
-    setIsOpen(!isOpen);
-  };
+  const RecipientData = [
+    {
+      label: 'CUSTOMERS',
+      value: 1,
+    },
+    {
+      label: 'SSP',
+      value: 2,
+    },
+    {
+      label: 'EMPLOYEES',
+      value: 3,
+    },
+  ];
+  const recipientList = RecipientData.map(val => ({
+    label: val.label,
+    value: val.value,
+  }));
 
-  const handleSelectItem = item => {
-    setSelectedItem(item);
-    setIsOpen(false);
+  const handleSelectedRecipient = value => {
+    console.log(value, 'vlals');
+    // Handle selected recipient
   };
 
   return (
-    <View style={styles.dropdownContainer}>
-      <TouchableOpacity onPress={toggleDropdown} style={styles.dropdownHeader}>
-        <Text style={styles.selectedText}>
-          {selectedItem ? selectedItem.label : 'SELECT CATEGORY'}
-        </Text>
-        <Text style={styles.icon}>{isOpen ? '▲' : '▼'}</Text>
-      </TouchableOpacity>
-      {isOpen && (
-        <View style={styles.dropdownList}>
-          {data.map(item => (
-            <TouchableOpacity
-              key={item.value}
-              style={styles.dropdownItem}
-              onPress={() => handleSelectItem(item)}>
-              <Text style={styles.dropLabel}>{item.label}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      )}
+    <View style={styles.container}>
+      <Text style={styles.selectRecipientsText}>Select Recipients</Text>
+      <View style={styles.dropContainer}>
+        <Dropdown
+          style={[
+            styles.dropdown,
+            isFocus && {borderColor: '#3498db', borderWidth: 2},
+          ]}
+          placeholderStyle={styles.placeholderStyle}
+          selectedTextStyle={styles.selectedTextStyle}
+          inputSearchStyle={styles.inputSearchStyle}
+          iconStyle={styles.iconStyle}
+          data={recipientList}
+          search
+          maxHeight={200}
+          labelField="label"
+          valueField="value"
+          searchPlaceholder="SELECT..."
+          value={recipients}
+          onChange={item => {
+            handleSelectedRecipient(item.value);
+          }}
+        />
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  dropdownContainer: {
-    position: 'relative',
-    backgroundColor: '#2980B9',
+  container: {
+    margin: 10,
   },
-  dropdownHeader: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#3498DB',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+  dropContainer: {
+    borderColor: '#3498db',
+    borderWidth: 1.5,
+    borderRadius: 2,
+    overflow: 'hidden',
   },
-  selectedText: {
-    fontSize: 16,
-    color: 'white',
+  dropdown: {
+    paddingHorizontal: 16,
+    backgroundColor: '#ecf0f1',
+    ...Platform.select({
+      android: {
+        elevation: 3,
+      },
+      ios: {
+        shadowColor: '#000',
+        shadowOpacity: 0.2,
+        shadowRadius: 2,
+        shadowOffset: {
+          width: 0,
+          height: 1,
+        },
+      },
+    }),
+  },
+  placeholderStyle: {
+    color: '#777',
+  },
+  selectedTextStyle: {
+    color: '#333',
     fontWeight: 'bold',
   },
-  icon: {
-    fontSize: 16,
-    color: 'white',
+  inputSearchStyle: {
+    borderBottomColor: '#95a5a6',
+  },
+  iconStyle: {
+    color: '#3498db',
+  },
+  selectRecipientsText: {
+    fontSize: 18,
     fontWeight: 'bold',
+    color: '#3498db',
+    marginBottom: 7,
   },
-  dropdownList: {
-    position: 'absolute',
-    top: 50,
-    left: 0,
-    right: 0,
-    backgroundColor: '#48A6E5',
-    borderWidth: 1,
-    borderColor: 'white',
-  },
-  dropdownItem: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: 'white',
-  },
-  dropLabel: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold'
-  }
 });
 
 export default CustomDropdown;

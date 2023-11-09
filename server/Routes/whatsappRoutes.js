@@ -31,9 +31,44 @@ router.post("/send-whatsapp", tokenCheck, (req, res) => {
         files: "https://www.africau.edu/images/default/sample.pdf",
       };
       InstantMessagingUtils(chatPayloads);
-      res.send({isSuccess: false, result: 'error'})
+      res.send({ isSuccess: false, result: "error" });
     }
   });
+});
+
+//=========================Send Message=======================//
+router.post("/send-message", tokenCheck, async (req, res) => {
+  try {
+    const { newMessage, chatID } = req.body;
+    console.log("/send-message", req.body);
+    const url = `SELECT c.whatsapp_number AS customerNumber FROM customers AS c`;
+    await db.query(url, async (err, result) => {
+      if (err) {
+        console.log({ isSuccess: false, result: err });
+        res.send({ isSuccess: false, result, result: "error" });
+      } else {
+        console.log({ isSuccess: true, result: result });
+        if (result && result.length > 0) {
+          console.log(result[0].customerNumber, "otroti");
+          const phoneNumbers = [];
+          for (const customer of result) {
+            let phoneNumber = Number(customer.customerNumber);
+            phoneNumbers.push(phoneNumber);
+          }
+          console.log(phoneNumbers, "phoneNumbers"); // This will log an array of phone numbers
+          const chatPayloads = {
+            phoneNumbers: phoneNumbers,
+            message: newMessage,
+            files: "https://www.africau.edu/images/default/sample.pdf",
+          };
+          InstantMessagingUtils(chatPayloads);
+        }
+        res.send({ isSuccess: true, result: 'success' });
+      }
+    });
+  } catch (err) {
+    console.log(err);
+  }
 });
 
 module.exports = router;

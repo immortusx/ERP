@@ -31,9 +31,24 @@ const instantEnquiryMessage = async (messagePayloads) => {
     let CustomerNumber = Number(customerNumber);
     let SSNumber = Number(sspNumber);
     const phoneNumbers = [CustomerNumber, SSNumber];
+    let message = `Subject: Inquiry for New Sonalika DI-27 - Customer: Vijay Sharma - Assigned Sales Representative: Bharat Vakani
+
+    Dear Vijay Sharma,
+    Greetings from Team New Keshav Tractors!
+
+    We have recently received an inquiry from Mr. Vijay Sharma regarding the acquisition of a new Sonalika DI-27. 
+    Mr. Sharma has been assigned to your capable hands, and we believe your expertise will greatly contribute to ensuring a seamless and satisfactory experience for him.
+    Your swift attention to this matter is highly appreciated, and we are confident that, under Mr. Vakani's guidance, Mr. Sharma will experience a seamless and satisfactory journey with our
+    products.
+
+    Should you have any further inquiries or require additional information, please do not hesitate to reach out.
+
+    Best regards,   
+    Team New Keshav Tractors`;
+
     const chatPayloads = {
       phoneNumbers: phoneNumbers,
-      message: "Enquiry created",
+      message: message,
       files: "https://www.africau.edu/images/default/sample.pdf",
     };
     InstantMessagingUtils(chatPayloads);
