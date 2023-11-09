@@ -42,8 +42,9 @@ app.use("/api/agency", require("./Routes/agencyRoutes"));
 app.use("/api/branch", require("./Routes/branchRoutes"));
 app.use("/api/", require("./Routes/commonRoutes"));
 app.use("/api/areaAssign", require("./Routes/areaAssignRoutes"));
-app.use ("/api/leave", require('./Routes/Leave/LeaveRoutes'));
+app.use("/api/leave", require('./Routes/Leave/LeaveRoutes'));
 app.use("/api/sendmail", require("./Routes/mailRoute"));
+app.use("/api/whatsapp-messages", require("./Routes/whatsappRoutes"));
 
 app.get("/api", (req, res) => {
   console.log({
@@ -61,9 +62,8 @@ app.get("/api", (req, res) => {
 });
 
 app.get("/api/download", (req, res) => {
-  const fileName = `ERP-${moment().format("YYYYMMDD")}-${
-    process.env.BUILD_TAG
-  }-${process.env.BUILD_ID}.apk`;
+  const fileName = `ERP-${moment().format("YYYYMMDD")}-${process.env.BUILD_TAG
+    }-${process.env.BUILD_ID}.apk`;
   const filePath = path.join(__dirname, ".", "app-release.apk"); // Assuming your server folder is in the same directory as your script
 
   // Check if the file exists
