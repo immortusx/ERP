@@ -31,27 +31,27 @@ const AdditonalDetails = ({ route }) => {
   const [appState, setAppState] = useState(AppState.currentState);
   const { item } = route.params;
 
-  const whatsAppWelcomeMessage = `Welcome to New Keshav Tractors!
-    Hello ${item.first_name} ${item.last_name},
-    Thank you for connecting with New Keshav Tractors on WhatsApp. We're thrilled to have you as part of our tractor community.
+  // const whatsAppWelcomeMessage = `Welcome to New Keshav Tractors!
+  //   Hello ${item.first_name} ${item.last_name},
+  //   Thank you for connecting with New Keshav Tractors on WhatsApp. We're thrilled to have you as part of our tractor community.
 
-    About Us:
-      At New Keshav Tractors, we're dedicated to delivering cutting-edge tractors designed to empower farmers and enhance agricultural productivity. Our range of tractors is built with precision engineering and advanced technology.
+  //   About Us:
+  //     At New Keshav Tractors, we're dedicated to delivering cutting-edge tractors designed to empower farmers and enhance agricultural productivity. Our range of tractors is built with precision engineering and advanced technology.
 
-    Our Offerings:
-      Explore our diverse range of tractors, from compact models for small farms to heavy-duty machines for large-scale operations.
-      Enjoy superior performance, fuel efficiency, and durability with our state-of-the-art tractor designs.
-      Benefit from our excellent after-sales service and support, ensuring your tractor runs smoothly throughout its lifetime.
+  //   Our Offerings:
+  //     Explore our diverse range of tractors, from compact models for small farms to heavy-duty machines for large-scale operations.
+  //     Enjoy superior performance, fuel efficiency, and durability with our state-of-the-art tractor designs.
+  //     Benefit from our excellent after-sales service and support, ensuring your tractor runs smoothly throughout its lifetime.
 
-    Stay Connected:
-      Have questions or need assistance? Feel free to ask us anything about our tractors, features, or services.
-      Stay tuned for the latest updates, tips, and offers that we'll be sharing exclusively with our WhatsApp community.
+  //   Stay Connected:
+  //     Have questions or need assistance? Feel free to ask us anything about our tractors, features, or services.
+  //     Stay tuned for the latest updates, tips, and offers that we'll be sharing exclusively with our WhatsApp community.
 
-    We're here to support you on your farming journey. Let's grow together!
+  //   We're here to support you on your farming journey. Let's grow together!
 
-    Best regards,
-    The New Keshav Tractors Team.
-    `;
+  //   Best regards,
+  //   The New Keshav Tractors Team.
+  //   `;
   const phoneMessage = `Hello ${item.first_name} ${item.last_name},
 
     Thank you for choosing Keshav tractors! We're delighted to have you as a valued customer. Our mission is to provide you with top-quality tractors and exceptional service.
@@ -204,21 +204,22 @@ const AdditonalDetails = ({ route }) => {
   };
 
   const sendWhatsAppMessage = whatsAppNumber => {
-    if (whatsAppNumber.length != 10) {
-      return;
-    }
-    const countryCode = '+91';
-    const fullNumber = `${countryCode}${whatsAppNumber}`;
-    const encodedMessage = encodeURIComponent(whatsAppWelcomeMessage);
-    Linking.openURL(
-      `whatsapp://send?phone=${fullNumber}&text=${encodedMessage}`,
-    )
-      .then(() => {
-        console.log('WhatsApp Opening....');
-      })
-      .catch(error => {
-        console.error('Whatsapp not Found. Please Install Whatsapp:', error);
-      });
+    // if (whatsAppNumber.length != 10) {
+    //   return;
+    // }
+    // const countryCode = '+91';
+    // const fullNumber = `${countryCode}${whatsAppNumber}`;
+    // const encodedMessage = encodeURIComponent(whatsAppWelcomeMessage);
+    // Linking.openURL(
+    //   `whatsapp://send?phone=${fullNumber}&text=${encodedMessage}`,
+    // )
+    //   .then(() => {
+    //     console.log('WhatsApp Opening....');
+    //   })
+    //   .catch(error => {
+    //     console.error('Whatsapp not Found. Please Install Whatsapp:', error);
+    //   });
+      navigation.navigate('Conversation', {data: item});
   };
   const sendMessage = mobileNumber => {
     Linking.openURL(`sms:${mobileNumber}?body=${phoneMessage}`);
@@ -421,7 +422,7 @@ const AdditonalDetails = ({ route }) => {
             <TouchableOpacity
               style={styles.greenButton}
               onPress={() => {
-                sendWhatsAppMessage(item.phone_number);
+                sendWhatsAppMessage(item);
               }}>
               <Image
                 style={styles.iconImg}
