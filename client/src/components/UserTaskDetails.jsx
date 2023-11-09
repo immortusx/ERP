@@ -14,16 +14,16 @@ import { Button } from "react-bootstrap";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { useLocation, useNavigate } from "react-router-dom";
 import Axios from "axios";
-
+import translations from '../assets/locals/translations';
 import "../styles/Users.css";
 export default function UserTaskDetails() {
-    const location = useLocation();
-    const userdata = location.state ? location.state.taskdata : {};
-    const Id = userdata.id;
-    const taskId = userdata.task;
-    const tasktype = userdata.tasktype;
+  const location = useLocation();
+  const userdata = location.state ? location.state.taskdata : {};
+  const Id = userdata.id;
+  const taskId = userdata.task;
+  const tasktype = userdata.tasktype;
   const [task, setTask] = useState([]);
-
+  const currentLanguage = useSelector((state) => state.language.language);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const userListState = useSelector(
@@ -55,7 +55,7 @@ export default function UserTaskDetails() {
   }
   useEffect(() => {
     getWorkTaskDetail(Id, tasktype, taskId);
-  }, []); 
+  }, []);
   const handleChildCheckboxClick = (itemId) => {
     console.log(itemId, "itemId");
     const updatedRowsData = rowData.map((row) => {
@@ -65,7 +65,7 @@ export default function UserTaskDetails() {
           checkbox: !row.checkbox,
         };
       }
-        return row;
+      return row;
     });
     console.log(updatedRowsData, "updatedRowsData");
     setRowData(updatedRowsData);
@@ -101,7 +101,7 @@ export default function UserTaskDetails() {
       headerAlign: "center",
       align: "center",
       headerClassName: "custom-header",
-      headerName: "Employee",
+      headerName: translations[currentLanguage].employee,
       minWidth: 200,
       flex: 1,
       valueGetter: (params) => {
@@ -113,7 +113,7 @@ export default function UserTaskDetails() {
       headerAlign: "left",
       align: "left",
       headerClassName: "custom-header",
-      headerName: "Task Type",
+      headerName: translations[currentLanguage].tasktype,
       minWidth: 200,
       flex: 1,
       valueGetter: (params) => {
@@ -125,7 +125,7 @@ export default function UserTaskDetails() {
       headerAlign: "left",
       align: "left",
       headerClassName: "custom-header",
-      headerName: "Task",
+      headerName: translations[currentLanguage].task,
       minWidth: 200,
       flex: 1.2,
       valueGetter: (params) => {
@@ -137,7 +137,7 @@ export default function UserTaskDetails() {
       headerAlign: "left",
       align: "left",
       headerClassName: "custom-header",
-      headerName: "Date",
+      headerName: translations[currentLanguage].date,
       minWidth: 200,
       flex: 1.2,
       valueGetter: (params) => formatDate(params.row.datetime),
@@ -148,7 +148,7 @@ export default function UserTaskDetails() {
       headerAlign: "left",
       align: "left",
       headerClassName: "custom-header",
-      headerName: "Task Time Period",
+      headerName: translations[currentLanguage].tasktimep,
       minWidth: 200,
       flex: 1.2,
       valueGetter: (params) => {
@@ -160,13 +160,12 @@ export default function UserTaskDetails() {
       headerAlign: "left",
       align: "left",
       headerClassName: "custom-header",
-      headerName: "Work Description",
+      headerName: translations[currentLanguage].workd,
       minWidth: 200,
       flex: 1.2,
       valueGetter: (params) => {
-        return `${
-          params.row.work_description ? params.row.work_description : "-"
-        }`;
+        return `${params.row.work_description ? params.row.work_description : "-"
+          }`;
       },
     },
   ];
@@ -184,9 +183,9 @@ export default function UserTaskDetails() {
     dispatch(getUserListFromDb());
   }, []);
 
- const redirectModal = () => {
-   navigate(-1);
- };
+  const redirectModal = () => {
+    navigate(-1);
+  };
   return (
     <>
       <div>
@@ -200,11 +199,11 @@ export default function UserTaskDetails() {
               borderRadius: "20px",
               marginLeft: "10px",
             }}
-              onClick={() => {
-                redirectModal();
-              }}
+            onClick={() => {
+              redirectModal();
+            }}
           >
-            BACK
+            {translations[currentLanguage].back}
           </Button>
         </div>
         <div

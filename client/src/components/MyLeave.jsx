@@ -10,7 +10,6 @@ import { useNavigate } from "react-router";
 import translations from '../assets/locals/translations';
 import { color } from "@mui/system";
 
-
 const MyLeave = () => {
     const [showModal, setShowModal] = useState(false);
     const [rowData, setRowData] = useState([]);
@@ -97,7 +96,7 @@ const MyLeave = () => {
         if (response.data && response.data.isSuccess) {
             const formattedData = response.data.result.map((leave, index) => ({
                 leaveid: leave.leaveid,
-                userName:leave.userName,
+                userName: leave.userName,
                 LeaveType: leave.LeaveType,
                 startDate: leave.startDate,
                 endDate: leave.endDate,
@@ -122,13 +121,13 @@ const MyLeave = () => {
     };
 
     const columns = [
-        checkboxColumn, 
-         { field: "userName", headerName: "User Name", width: 260 },
+        checkboxColumn,
+        { field: "userName", headerName: translations[currentLanguage].username, width: 260 },
 
-        { field: "LeaveType", headerName: "Leave Type", width: 260 },
+        { field: "LeaveType", headerName: translations[currentLanguage].leavetype, width: 260 },
         {
             field: "startDate",
-            headerName: "Start Date",
+            headerName: translations[currentLanguage].startd,
             width: 200,
             valueFormatter: (params) => {
                 const rawDate = new Date(params.value);
@@ -139,7 +138,7 @@ const MyLeave = () => {
 
         {
             field: "endDate",
-            headerName: "End Date",
+            headerName: translations[currentLanguage].endd,
             width: 200,
             valueFormatter: (params) => {
                 const rawDate = new Date(params.value);
@@ -147,8 +146,8 @@ const MyLeave = () => {
                 return formattedDate;
             },
         },
-        { field: "reason", headerName: "Reason", width: 200 },
-        { field: "email", headerName: "Email", width: 200 },
+        { field: "reason", headerName: translations[currentLanguage].reason, width: 200 },
+        { field: "email", headerName: translations[currentLanguage].email, width: 200 },
     ];
 
 
@@ -261,13 +260,13 @@ const MyLeave = () => {
 
                 <Modal show={showModal} onHide={handleCloseDialog}>
                     <Modal.Header closeButton>
-                        <Modal.Title > Add Leave</Modal.Title>
+                        <Modal.Title > {translations[currentLanguage].addleave}</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         <form>
                             <div className="mb-3">
                                 <label htmlFor="leave-type" className="col-form-label " style={{ fontWeight: 'bold' }}>
-                                    Leave Type:
+                                {translations[currentLanguage].leavetype}:
                                 </label>
                                 <select onChange={onChangeHandler} className="form-control" name="leaveTypes" value={leaveData.leaveTypes}>
                                     <option value="">Select Leave Type</option>
@@ -289,7 +288,7 @@ const MyLeave = () => {
                             </div>
                             <div className="mb-3">
                                 <label htmlFor="start-date" className="col-form-label" style={{ fontWeight: 'bold' }}>
-                                    Start Date:
+                                {translations[currentLanguage].startd}:
                                 </label>
                                 <input
                                     type="date"
@@ -302,7 +301,7 @@ const MyLeave = () => {
                             </div>
                             <div className="mb-3">
                                 <label htmlFor="end-date" className="col-form-label" style={{ fontWeight: 'bold' }}>
-                                    End Date:
+                                {translations[currentLanguage].endd}:
                                 </label>
                                 <input
                                     type="date"
@@ -315,7 +314,7 @@ const MyLeave = () => {
                             </div>
                             <div className="mb-3">
                                 <label htmlFor="reason" className="col-form-label" style={{ fontWeight: 'bold' }}>
-                                    Reason:
+                                {translations[currentLanguage].reason}:
                                 </label>
                                 <textarea
                                     className="form-control"
@@ -327,7 +326,7 @@ const MyLeave = () => {
                             </div>
                             <div className="mb-3">
                                 <label htmlFor="email" className="col-form-label" style={{ fontWeight: 'bold' }}>
-                                    Email:
+                                {translations[currentLanguage].email}:
                                 </label>
                                 <input
                                     type="email"
@@ -342,10 +341,10 @@ const MyLeave = () => {
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={handleCloseDialog}>
-                            Cancel
+                        {translations[currentLanguage].cancel}
                         </Button>
                         <Button variant="primary" onClick={handleSubmit}>
-                            Apply
+                        {translations[currentLanguage].apply}
                         </Button>
                         <p style={{ color: "red" }}>{validationMessage}</p>
                     </Modal.Footer>
