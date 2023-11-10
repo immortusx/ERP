@@ -41,7 +41,14 @@ router.post("/send-message", tokenCheck, async (req, res) => {
   try {
     const { newMessage, chatID } = req.body;
     console.log("/send-message", req.body);
-    const url = `SELECT c.whatsapp_number AS customerNumber FROM customers AS c`;
+    const url = `SELECT 
+    CASE 
+      WHEN c.whatsapp_number LIKE '91%' THEN c.whatsapp_number
+      ELSE CONCAT('91', c.whatsapp_number)
+    END AS customerNumber
+  FROM customers AS c
+  WHERE c.whatsapp_number IS NOT NULL AND c.whatsapp_number <> 'null' LIMIT 30
+  `;
     await db.query(url, async (err, result) => {
       if (err) {
         console.log({ isSuccess: false, result: err });
@@ -63,7 +70,7 @@ router.post("/send-message", tokenCheck, async (req, res) => {
           };
           InstantMessagingUtils(chatPayloads);
         }
-        res.send({ isSuccess: true, result: 'success' });
+        res.send({ isSuccess: true, result: "success" });
       }
     });
   } catch (err) {
