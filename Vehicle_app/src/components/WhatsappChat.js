@@ -2,6 +2,9 @@ import {StyleSheet, View, Image} from 'react-native'; // Import Image from react
 import React, {useState, useCallback, useEffect} from 'react';
 import {Bubble, GiftedChat} from 'react-native-gifted-chat';
 import {useRoute} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import {API_URL} from '@env';
 
 const WhatsappChat = () => {
   const route = useRoute();
@@ -9,7 +12,6 @@ const WhatsappChat = () => {
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
-    console.log(data, 'sdhskfjdijhttlifjucvmjn');
     setMessages([
       {
         _id: data.enquiry_id,
@@ -22,15 +24,45 @@ const WhatsappChat = () => {
     ]);
   }, []);
 
-  const onSend = useCallback((messages = []) => {
+  const onSend = async (messages = []) => {
     setMessages(previousMessages =>
       GiftedChat.append(previousMessages, messages),
     );
-  }, []);
+    const whatsappMessage = messages[0].text;
+    const customerPhoneNumber = data.phone_number;
+    console.log(customerPhoneNumber, 'customerPhoneNumber');
+
+    try {
+      const url = `${API_URL}/api/whatsapp-messages/send-whatsapp`;
+      console.log('Sending WhatsApp message to:', url);
+      const token = await AsyncStorage.getItem('rbacToken');
+      const config = {
+        headers: {
+          token: token ? token : '',
+        },
+      };
+      const response = await axios.post(
+        url,
+        {
+          whatsapp_message: whatsappMessage,
+          c_phone_number: customerPhoneNumber,
+        },
+        config,
+      );
+
+      if (response.data.isSuccess) {
+        console.log('WhatsApp message sent successfully');
+      } else {
+        console.error('Failed to send WhatsApp message:', response.data.result);
+      }
+    } catch (error) {
+      console.error('Error sending WhatsApp message:', error);
+    }
+  };
 
   const renderAvatar = props => {
     return (
-      <View >
+      <View>
         <View style={styles.avatar}>
           <Image
             source={require('../../assets/salesperson.png')}
@@ -42,25 +74,25 @@ const WhatsappChat = () => {
   };
   const renderBubble = props => {
     return (
-      <Bubble {...props}
-      wrapperStyle={{
-        left:{
+      <Bubble
+        {...props}
+        wrapperStyle={{
+          left: {
             backgroundColor: 'lightgray',
-        },
-        right:{
+          },
+          right: {
             backgroundColor: 'lightgray',
-        }
-      }}
-      textStyle={{
-        left:{
-            color:"black"
-        },
-        right:{
-            color:"black"
-        }
-      }}
+          },
+        }}
+        textStyle={{
+          left: {
+            color: 'black',
+          },
+          right: {
+            color: 'black',
+          },
+        }}
       />
-
     );
   };
 
@@ -68,7 +100,7 @@ const WhatsappChat = () => {
     <View style={styles.container}>
       <GiftedChat
         messages={messages}
-        onSend={messages => onSend(messages)}
+        onSend={onSend}
         user={{
           _id: data.enquiry_id,
         }}
@@ -82,15 +114,15 @@ const WhatsappChat = () => {
 };
 
 const styles = StyleSheet.create({
- container: {
-    flex: 1, 
+  container: {
+    flex: 1,
     backgroundColor: 'lightgray',
   },
   avatar: {
-    backgroundColor: 'lightblue', 
-    width:50,
-    height:50,
-    borderRadius:25
+    backgroundColor: 'lightblue',
+    width: 50,
+    height: 50,
+    borderRadius: 25,
   },
 });
 
