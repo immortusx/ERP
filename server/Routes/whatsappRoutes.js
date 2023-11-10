@@ -14,10 +14,10 @@ router.post('/send-whatsapp', tokenCheck, (req, res) => {
     let customerNumber = req.body.c_phone_number;
 
     const userId = req.myData.userId;
-
+console.log(req.myData,"tryturituitueioteruoirietruih");
     const salesPersonId = userId;
     
-    const salesPersonQuery = 'SELECT phone_number FROM users WHERE id = 75';
+    const salesPersonQuery = `SELECT phone_number FROM users WHERE id = '${salesPersonId}'`;
     db.query(salesPersonQuery, async (err, result) => {
         if (err) {
             console.log({ isSuccess: false, result: 'error' })
