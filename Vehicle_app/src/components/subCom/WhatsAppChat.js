@@ -1,10 +1,12 @@
 import {Dropdown} from 'react-native-element-dropdown';
 import React, {useState} from 'react';
 import {View, StyleSheet, Platform, Text} from 'react-native';
+import ChatTemplate from './ChatTemplate';
 
-const CustomDropdown = () => {
+const WhatsAppChat = () => {
   const [recipients, setRecipients] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
+  const [chatID, setChatID] = useState(null);
 
   const RecipientData = [
     {
@@ -27,40 +29,48 @@ const CustomDropdown = () => {
 
   const handleSelectedRecipient = value => {
     console.log(value, 'vlals');
+    setRecipients(value);
+    setChatID(value)
     // Handle selected recipient
   };
-
   return (
     <View style={styles.container}>
-      <Text style={styles.selectRecipientsText}>Select Recipients</Text>
-      <View style={styles.dropContainer}>
-        <Dropdown
-          style={[
-            styles.dropdown,
-            isFocus && {borderColor: '#3498db', borderWidth: 2},
-          ]}
-          placeholderStyle={styles.placeholderStyle}
-          selectedTextStyle={styles.selectedTextStyle}
-          inputSearchStyle={styles.inputSearchStyle}
-          iconStyle={styles.iconStyle}
-          data={recipientList}
-          search
-          maxHeight={200}
-          labelField="label"
-          valueField="value"
-          searchPlaceholder="SELECT..."
-          value={recipients}
-          onChange={item => {
-            handleSelectedRecipient(item.value);
-          }}
-        />
+      <View style={styles.mainContainer}>
+        <Text style={styles.selectRecipientsText}>Select Recipients</Text>
+        <View style={styles.dropContainer}>
+          <Dropdown
+            style={[
+              styles.dropdown,
+              isFocus && {borderColor: '#3498db', borderWidth: 2},
+            ]}
+            placeholderStyle={styles.placeholderStyle}
+            selectedTextStyle={styles.selectedTextStyle}
+            inputSearchStyle={styles.inputSearchStyle}
+            iconStyle={styles.iconStyle}
+            data={recipientList}
+            search
+            maxHeight={200}
+            labelField="label"
+            valueField="value"
+            searchPlaceholder="SELECT..."
+            value={recipients}
+            onChange={item => {
+              handleSelectedRecipient(item.value);
+            }}
+          />
+        </View>
       </View>
+      {chatID === 1 && <ChatTemplate chatID={chatID}/>}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+  },
+  mainContainer: {
     margin: 10,
   },
   dropContainer: {
@@ -108,4 +118,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CustomDropdown;
+export default WhatsAppChat;
