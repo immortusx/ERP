@@ -40,6 +40,11 @@ router.post("/send-whatsapp", tokenCheck, (req, res) => {
 router.post("/send-message", tokenCheck, async (req, res) => {
   try {
     const { newMessage, chatID } = req.body;
+    let whatsappMessage = `${newMessage},
+
+From, 
+Team Keshav Tractors.`;
+
     console.log("/send-message", req.body);
     const url = `SELECT 
     CASE 
@@ -47,7 +52,7 @@ router.post("/send-message", tokenCheck, async (req, res) => {
       ELSE CONCAT('91', c.whatsapp_number)
     END AS customerNumber
   FROM customers AS c
-  WHERE c.whatsapp_number IS NOT NULL AND c.whatsapp_number <> 'null' LIMIT 30
+  WHERE c.whatsapp_number IS NOT NULL AND c.whatsapp_number <> 'null'
   `;
     await db.query(url, async (err, result) => {
       if (err) {
@@ -65,7 +70,7 @@ router.post("/send-message", tokenCheck, async (req, res) => {
           console.log(phoneNumbers, "phoneNumbers"); // This will log an array of phone numbers
           const chatPayloads = {
             phoneNumbers: phoneNumbers,
-            message: newMessage,
+            message: whatsappMessage,
             files: "https://www.africau.edu/images/default/sample.pdf",
           };
           InstantMessagingUtils(chatPayloads);
