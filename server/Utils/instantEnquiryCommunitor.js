@@ -96,4 +96,26 @@ Team New Keshav Tractors`;
   });
 };
 
-module.exports = { instantEnquiryMessage };
+const sendTaskAssignmentNotification = async (employeeId) => {
+  const sql = `CALL sp_get_task_assignment_notification_data(${employeeId})`;
+  await db.query(sql, (error, dataResults) => {
+    if (error) {
+      console.log({ isSuccess: false, result: error });
+    } else {
+      console.log(dataResults, "dataResults");
+      if (dataResults && dataResults.length > 0) {
+        const rowDataPacket = dataResults[0][0];
+        const sales_person = rowDataPacket.sales_person;
+        const ssp_number = Number(rowDataPacket.ssp_number);
+        const message = `*Hello ${sales_person},*\n\nYou have a new task assigned. Please check your dashboard for details.\n\nBest regards,\nTeam New Keshav Tractors`;
+        const chatPayloads = {
+          phoneNumbers: [ssp_number],
+          message: message,
+          files: "https://www.example.com/task_details.pdf",
+        };
+        InstantMessagingUtils(chatPayloads);
+      }
+    }
+  });
+};
+module.exports = { instantEnquiryMessage, sendTaskAssignmentNotification };

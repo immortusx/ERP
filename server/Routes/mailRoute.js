@@ -4,6 +4,7 @@ const fastcsv = require("fast-csv");
 const { db } = require("../Database/dbConfig");
 const cron = require("node-cron");
 const nodemailer = require("nodemailer");
+const { InstantMessagingUtils } = require("../Utils/MessagingHelpers");
 const router = express.Router();
 
 const transporter = nodemailer.createTransport({
@@ -94,7 +95,7 @@ cron.schedule("0 20 * * *", async () => {
 
 ////////////////////////////////////////////////////
 
-cron.schedule("0 10 * * *", async () => {
+cron.schedule("29 18 * * *", async () => {
   try {
     const tasklist = "CALL sp_get_task_for_currentdate()";
 
@@ -113,7 +114,7 @@ cron.schedule("0 10 * * *", async () => {
             .on("finish", () => {
               console.log("Task list CSV file created successfully.");
               const superAdminEmailQuery =
-                "SELECT email FROM users WHERE id = 1";
+                "SELECT * FROM users WHERE id = 1";
               db.query(
                 superAdminEmailQuery,
                 async (superAdminEmailErr, superAdminEmailResult) => {
@@ -121,6 +122,7 @@ cron.schedule("0 10 * * *", async () => {
                     console.error(superAdminEmailErr);
                   } else {
                     const Email = superAdminEmailResult[0].email;
+                    const adminWhatsAppNumber = Number(superAdminEmailResult[0].phone_number)
                     console.log(Email, "superAdminEmail");
 
                     transporter.sendMail({
@@ -136,6 +138,12 @@ cron.schedule("0 10 * * *", async () => {
                         },
                       ],
                     });
+                    const payloads = {
+                      adminWhatsAppNumber: adminWhatsAppNumber,
+                      filename: "Task Report",
+                      file: 'https://i.pcmag.com/imagery/articles/01eGstfLC8DcJFtCbjOVe69-12..v1623096915.jpg',
+                    };
+                    sendTaskReportNotification(payloads);
                   }
                 }
               );
@@ -150,7 +158,7 @@ cron.schedule("0 10 * * *", async () => {
                 console.error(superAdminEmailErr);
               } else {
                 const Email = superAdminEmailResult[0].email;
-                console.log(Email, "superAdminEmail");
+                console.log(Email, "superAdminEmail, No Task Assigned");
 
                 transporter.sendMail({
                   from: "sales.balkrushna@gmail.com",
@@ -169,5 +177,13 @@ cron.schedule("0 10 * * *", async () => {
     console.error("Error", error);
   }
 });
-
+const sendTaskReportNotification = async (payloads) => {
+  const { adminWhatsAppNumber, filename, file } = payloads;
+  const chatPayloads = {
+    phoneNumbers: [adminWhatsAppNumber],
+    message: filename,
+    files: file,
+  };
+  InstantMessagingUtils(chatPayloads);
+};
 module.exports = router;
