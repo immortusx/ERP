@@ -1123,10 +1123,11 @@ router.post("/set-new-detail-enquiry", tokenCheck, async (req, res) => {
                                           isSuccess: "success",
                                           result: "success",
                                         });
-                                        if(salesperson_id !== null){
+                                        if(enquiryId){
                                           const messagePayloads = {
                                             userId: Number(salesperson_id),
                                             customerNumber: Number(whatsapp_number),
+                                            enquiryId: enquiryId
                                           };
                                           instantEnquiryMessage(messagePayloads);
                                         }
@@ -1150,10 +1151,11 @@ router.post("/set-new-detail-enquiry", tokenCheck, async (req, res) => {
                                           isSuccess: "success",
                                           result: "success",
                                         });
-                                        if(salesperson_id !== null){
+                                        if(enquiryId){
                                           const messagePayloads = {
                                             userId: Number(salesperson_id),
                                             customerNumber: Number(whatsapp_number),
+                                            enquiryId: enquiryId
                                           };
                                           instantEnquiryMessage(messagePayloads);
                                         }
