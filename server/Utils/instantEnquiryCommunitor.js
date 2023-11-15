@@ -7,7 +7,7 @@ const { db } = require("../Database/dbConfig");
 const { InstantMessagingUtils } = require("./MessagingHelpers");
 
 const instantEnquiryMessage = async (messagePayloads) => {
-  const { userId, enquiryId, customerNumber } = messagePayloads;
+  const { enquiryId } = messagePayloads;
   try {
     sendMessageToCustomer(enquiryId);
     sendMessageToSSP(enquiryId);
@@ -28,10 +28,12 @@ const sendMessageToCustomer = async (enquiryId) => {
 
         const customerName = rowDataPacket.customerName;
         const customerPhoneNumber = rowDataPacket.phone_number;
+        const customerWhatsAppNumber = Number(rowDataPacket.whatsapp_number);
         const customerProduct = rowDataPacket.product;
         const SSPNumber = Number(rowDataPacket.SSPNumber);
         const salesPersonName = rowDataPacket.salesPersonName;
         const acknowledgmentMessage = `Dear ${customerName}, 
+
         Thank you for your enquiry regarding ${customerProduct}. 
         We have received your request and one of our sales representatives, ${salesPersonName}, will contact you shortly to assist you further. 
         If you have any immediate questions, please feel free to contact us at ${SSPNumber}.
@@ -39,7 +41,7 @@ const sendMessageToCustomer = async (enquiryId) => {
         Best regards,
         Team New Keshav Tractors`;
         const chatPayloads = {
-          phoneNumbers: [customerPhoneNumber],
+          phoneNumbers: [customerWhatsAppNumber],
           message: acknowledgmentMessage,
           files: "https://www.africau.edu/images/default/sample.pdf",
         };
@@ -70,12 +72,13 @@ const sendMessageToSSP = async (enquiryId) => {
         const SSPNumber = Number(rowDataPacket.SSPNumber);
         console.log(SSPNumber, customerName, customerPhoneNumber, "mesashsd");
         const acknowledgmentMessage = `Hello,
-          You have a new enquiry from ${customerName} (${customerPhoneNumber}) regarding ${customerProduct}. 
-          Please contact the customer at your earliest convenience. 
-          For any immediate assistance, the customer's contact number is ${customerPhoneNumber}.
 
-          Best regards,
-          Team New Keshav Tractors`;
+        You have a new enquiry from ${customerName} (${customerPhoneNumber}) regarding ${customerProduct}. 
+        Please contact the customer at your earliest convenience. 
+        For any immediate assistance, the customer's contact number is ${customerPhoneNumber}.
+
+        Best regards,
+        Team New Keshav Tractors`;
         const chatPayloads = {
           phoneNumbers: [SSPNumber],
           message: acknowledgmentMessage,

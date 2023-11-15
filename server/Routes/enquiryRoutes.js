@@ -360,9 +360,9 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
               console.log({ isSuccess: false, result: err });
               res.send({ isSuccess: false, result: "error" });
             } else if (result && result.insertId) {
-              const insertedEnquiryId = result.insertId;
+              const enquiryId = result.insertId;
 
-              const enquiryProductSql = `INSERT INTO enquiry_products (enquiry_id, manufacturer, modal) VALUES ('${insertedEnquiryId}', '${make}', '${model}')`;
+              const enquiryProductSql = `INSERT INTO enquiry_products (enquiry_id, manufacturer, modal) VALUES ('${enquiryId}', '${make}', '${model}')`;
 
               db.query(enquiryProductSql, async (err, result) => {
                 if (err) {
@@ -375,7 +375,7 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
               });
 
               if (oldTractorOwned === "Yes") {
-                const urlSql = `INSERT INTO manufactur_details (enquiry_id, maker, modalName, variantName, year_of_manufacture, condition_of, old_tractor) VALUES ('${insertedEnquiryId}', '${manufacturers}', '${product}', '${variant}', '${modelYear}', '${condition}', '${oldTractorOwned}')`;
+                const urlSql = `INSERT INTO manufactur_details (enquiry_id, maker, modalName, variantName, year_of_manufacture, condition_of, old_tractor) VALUES ('${enquiryId}', '${manufacturers}', '${product}', '${variant}', '${modelYear}', '${condition}', '${oldTractorOwned}')`;
 
                 db.query(urlSql, async (err, result) => {
                   if (err) {
@@ -423,17 +423,16 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
                       });
                     };
                     uploadEnquiryWorklog();
-                    if (dsp !== null) {
+                    if (enquiryId) {
                       const messagePayloads = {
-                        userId: Number(dsp),
-                        customerNumber: Number(whatsappNumber),
+                        enquiryId: enquiryId,
                       };
                       instantEnquiryMessage(messagePayloads);
                     }
                   }
                 });
               } else if (oldTractorOwned === "No") {
-                const urlSql = `INSERT INTO manufactur_details (enquiry_id, old_tractor) VALUES ('${insertedEnquiryId}', '${oldTractorOwned}')`;
+                const urlSql = `INSERT INTO manufactur_details (enquiry_id, old_tractor) VALUES ('${enquiryId}', '${oldTractorOwned}')`;
                 db.query(urlSql, (err, result) => {
                   if (err) {
                     console.log(err);
@@ -481,10 +480,9 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
                       });
                     };
                     uploadEnquiryWorklog();
-                    if(dsp !== null){
+                    if (enquiryId) {
                       const messagePayloads = {
-                        userId: Number(dsp),
-                        customerNumber: Number(whatsappNumber),
+                        enquiryId: enquiryId,
                       };
                       instantEnquiryMessage(messagePayloads);
                     }
@@ -499,11 +497,12 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
                   isSuccess: "success",
                   result: "success",
                 });
-                const messagePayloads = {
-                  userId: Number(dsp),
-                  customerNumber: Number(whatsappNumber),
-                };
-                instantEnquiryMessage(messagePayloads);
+                if (enquiryId) {
+                  const messagePayloads = {
+                    enquiryId: enquiryId,
+                  };
+                  instantEnquiryMessage(messagePayloads);
+                }
               }
             }
           });
@@ -947,11 +946,9 @@ router.post("/set-new-fast-enquiry", tokenCheck, async (req, res) => {
                                         isSuccess: "success",
                                         result: "success",
                                       });
-                                      if (salesperson_id !== null) {
+                                      if (enquiryId) {
                                         const messagePayloads = {
-                                          userId: Number(salesperson_id),
-                                          customerNumber:
-                                            Number(whatsapp_number),
+                                          enquiryId: enquiryId,
                                         };
                                         instantEnquiryMessage(messagePayloads);
                                       }
@@ -1123,13 +1120,13 @@ router.post("/set-new-detail-enquiry", tokenCheck, async (req, res) => {
                                           isSuccess: "success",
                                           result: "success",
                                         });
-                                        if(enquiryId){
+                                        if (enquiryId) {
                                           const messagePayloads = {
-                                            userId: Number(salesperson_id),
-                                            customerNumber: Number(whatsapp_number),
-                                            enquiryId: enquiryId
+                                            enquiryId: enquiryId,
                                           };
-                                          instantEnquiryMessage(messagePayloads);
+                                          instantEnquiryMessage(
+                                            messagePayloads
+                                          );
                                         }
                                       }
                                     }
@@ -1151,13 +1148,13 @@ router.post("/set-new-detail-enquiry", tokenCheck, async (req, res) => {
                                           isSuccess: "success",
                                           result: "success",
                                         });
-                                        if(enquiryId){
+                                        if (enquiryId) {
                                           const messagePayloads = {
-                                            userId: Number(salesperson_id),
-                                            customerNumber: Number(whatsapp_number),
-                                            enquiryId: enquiryId
+                                            enquiryId: enquiryId,
                                           };
-                                          instantEnquiryMessage(messagePayloads);
+                                          instantEnquiryMessage(
+                                            messagePayloads
+                                          );
                                         }
                                       }
                                     }
