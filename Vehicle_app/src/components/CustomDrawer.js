@@ -5,18 +5,20 @@ import {
   Image,
   ActivityIndicator,
 } from 'react-native';
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   DrawerContentScrollView,
   DrawerItemList,
 } from '@react-navigation/drawer';
-import {useDispatch, useSelector} from 'react-redux';
-import {TouchableOpacity} from 'react-native-gesture-handler';
-import {useNavigation} from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {clearCurrentUserData} from '../redux/slice/getUserProfile';
-import {clearLoginState} from '../redux/slice/getUserLogin';
-import {API_URL} from '@env';
+import { clearCurrentUserData } from '../redux/slice/getUserProfile';
+import { clearLoginState } from '../redux/slice/getUserLogin';
+import { API_URL } from '@env';
+import LanguageOptions from './LanguageOptions';
+import translations from '../../assets/locals/translations';
 const CustomDrawer = props => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -24,6 +26,7 @@ const CustomDrawer = props => {
   const profileData = useSelector(
     state => state.getUserProfileSlice.profile.currentUserData.result,
   );
+  const currentLanguage = useSelector((state) => state.language.language);
   // console.log(profileData, 'profileData');
   const firstName = profileData?.first_name ?? '';
   const lastName = profileData?.last_name ?? '';
@@ -47,18 +50,18 @@ const CustomDrawer = props => {
       setIsloading(false);
     }
   };
-  
+
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       <DrawerContentScrollView
         {...props}
-        contentContainerStyle={{backgroundColor: '#AED6F1'}}>
+        contentContainerStyle={{ backgroundColor: '#AED6F1' }}>
         <ImageBackground
           source={require('../../assets/sidecover.jpg')}
-          style={{padding: 30}}>
+          style={{ padding: 30 }}>
           {documentPath ? (
             <Image
-              source={{uri: `${API_URL}/api${documentPath}`}}
+              source={{ uri: `${API_URL}/api${documentPath}` }}
               style={{
                 height: 80,
                 width: 80,
@@ -77,22 +80,22 @@ const CustomDrawer = props => {
                 height: 80,
                 width: 80,
                 borderRadius: 40,
-                textAlignVertical:'center',
-                textAlign:'center' 
-                 
+                textAlignVertical: 'center',
+                textAlign: 'center'
+
               }}>
               {firstName && lastName ? `${firstName[0]}${lastName[0]}` : 'A'}
             </Text>
           )}
-          <Text style={{color: 'white', fontSize: 16, fontWeight: 'bold'}}>
+          <Text style={{ color: 'white', fontSize: 16, fontWeight: 'bold' }}>
             {firstName} {lastName}
           </Text>
-          <Text style={{color: 'white', fontSize: 14, fontWeight: 'bold'}}>
+          <Text style={{ color: 'white', fontSize: 14, fontWeight: 'bold' }}>
             {phoneNumber}
           </Text>
         </ImageBackground>
 
-        <View style={{backgroundColor: 'white'}}>
+        <View style={{ backgroundColor: 'white' }}>
           <DrawerItemList {...props} />
         </View>
       </DrawerContentScrollView>
@@ -106,21 +109,28 @@ const CustomDrawer = props => {
         {isLoading ? (
           <View>
             <ActivityIndicator size={30} color="blue" />
-            <Text style={{color: '#2471A3', textAlign: 'center', marginTop: 2}}>
+            <Text style={{ color: '#2471A3', textAlign: 'center', marginTop: 2 }}>
               Signing You Out...
             </Text>
           </View>
         ) : (
-          <TouchableOpacity onPress={handleSignOut}>
-            <Text style={{fontSize: 16, fontWeight: 'bold'}}>
+          <TouchableOpacity >
+            <Text onPress={handleSignOut} style={{ fontSize: 16, fontWeight: 'bold' }}>
               {'  '}{' '}
               <Image
-                style={{width: 20, height: 20}}
+                style={{ width: 20, height: 20 }}
                 source={require('../../assets/signout.png')}
               />
-              {'   '} Sign Out
+              {'   '} {translations[currentLanguage]?.signout || "Sign Out"}
             </Text>
+            <View style={{
+              position: 'absolute',
+              right: 10
+            }}>
+              <LanguageOptions modalShow={true} />
+            </View>
           </TouchableOpacity>
+
         )}
       </View>
     </View>

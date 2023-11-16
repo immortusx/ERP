@@ -1,16 +1,18 @@
 import React from 'react';
 import {View, Text, TouchableOpacity, StyleSheet, Image} from 'react-native';
+import {useSelector } from 'react-redux';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import AddEnquiry from '../components/AddEnquiry';
 import AddMore from '../components/AddMore';
 import AddBooking from '../components/AddBooking';
 import {useNavigation} from '@react-navigation/native';
+import translations from '../../assets/locals/translations';
 
 const Bottom = createBottomTabNavigator();
 
 const BottomNavigator = () => {
   const navigation = useNavigation();
-
+  const currentLanguage = useSelector((state) => state.language.language);
   const handleNavigate = path => {
     navigation.navigate(path);
   };
@@ -28,15 +30,15 @@ const BottomNavigator = () => {
         tabBarLabelStyle: [styles.tabBarLabel, styles.tabBarLabelSmall],
         tabBarIcon: ({focused}) => {
           let iconName;
-          if (route.name === 'AddEnquiry') {
+          if (route.name === translations[currentLanguage]?.addenq || "Add Enquiry") {
             iconName = focused
               ? require('../../assets/addEnquiry.png')
               : require('../../assets/addEnquiry.png');
-          } else if (route.name === 'HOME') {
+          } else if (route.name === translations[currentLanguage]?.Home || "HOME") {
             iconName = focused
               ? require('../../assets/home.png')
               : require('../../assets/home.png');
-          } else if (route.name === 'AddBooking') {
+          } else if (route.name === translations[currentLanguage]?.addbooking || "Add Booking") {
             iconName = focused
               ? require('../../assets/addBooking.png')
               : require('../../assets/addBooking.png');
@@ -55,17 +57,17 @@ const BottomNavigator = () => {
         tabBarActiveTintColor: '#3AA4F7',
       })}>
       <Bottom.Screen
-        name="AddEnquiry"
+        name={translations[currentLanguage]?.addenq || "Add Enquiry"}
         component={AddEnquiry}
         options={{headerShown: false, tabBarLabel: 'Add Enquiry'}}
       />
       <Bottom.Screen
-        name="HOME"
+        name={translations[currentLanguage]?.Home || "HOME"}
         component={AddMore}
         options={{headerShown: false, tabBarLabel: 'HOME'}}
       />
       <Bottom.Screen
-        name="AddBooking"
+        name={translations[currentLanguage]?.addbooking || "Add Booking"}
         component={AddBooking}
         options={{headerShown: false, tabBarLabel: 'Add Booking'}}
       />
