@@ -46,14 +46,7 @@ From,
 Team Keshav Tractors.`;
 
     console.log("/send-message", req.body);
-    const url = `SELECT 
-    CASE 
-      WHEN c.whatsapp_number LIKE '91%' THEN c.whatsapp_number
-      ELSE CONCAT('91', c.whatsapp_number)
-    END AS customerNumber
-  FROM customers AS c
-  WHERE c.whatsapp_number IS NOT NULL AND c.whatsapp_number <> 'null'
-  `;
+    const url = `CALL sp_get_whatsapp_number(${chatID})`;
     await db.query(url, async (err, result) => {
       if (err) {
         console.log({ isSuccess: false, result: err });
@@ -61,10 +54,10 @@ Team Keshav Tractors.`;
       } else {
         console.log({ isSuccess: true, result: result });
         if (result && result.length > 0) {
-          console.log(result[0].customerNumber, "otroti");
+          console.log(result, "otroti");
           const phoneNumbers = [];
-          for (const customer of result) {
-            let phoneNumber = Number(customer.customerNumber);
+          for (const number of result[0]) {
+            let phoneNumber = Number(number.whatsAppNumber);
             phoneNumbers.push(phoneNumber);
           }
           console.log(phoneNumbers, "phoneNumbers"); // This will log an array of phone numbers

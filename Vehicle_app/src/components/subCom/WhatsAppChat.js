@@ -60,7 +60,7 @@ const WhatsAppChat = () => {
           />
         </View>
       </View>
-      {chatID === 1 && <ChatTemplate chatID={chatID}/>}
+      {chatID && <ChatTemplate chatID={chatID}/>}
     </View>
   );
 };
