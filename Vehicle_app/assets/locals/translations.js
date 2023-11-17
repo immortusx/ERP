@@ -39,7 +39,7 @@ const translations = {
     register: " નોંધણી કરો",
     forgotPassword: "તમે તમારો પાસવર્ડ ભૂલ્યો છો?",
     home: "હોમ",
-    Home: "હોમ",
+    Home: "હોમ ",
     profile: "પ્રોફાઇલ",
     enquiry: "પૂછપરછ",
     report: "રિપોર્ટ",

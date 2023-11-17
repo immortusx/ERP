@@ -125,6 +125,7 @@ const CustomDrawer = props => {
             </Text>
             <View style={{
               position: 'absolute',
+              justifyContent: 'space-between',
               right: 10
             }}>
               <LanguageOptions modalShow={true} />
