@@ -96,7 +96,7 @@ cron.schedule("0 20 * * *", async () => {
 
 ////////////////////////////////////////////////////
 
-cron.schedule("28 15 * * *", async () => {
+cron.schedule("59 15 * * *", async () => {
   try {
     const tasklist = "CALL sp_get_task_for_currentdate()";
 
