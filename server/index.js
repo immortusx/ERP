@@ -93,14 +93,14 @@ app.get("/api/download", (req, res) => {
 app.get("/api/csv", (req, res) => {
   try {
     const fileName = `task_list-${moment().format("YYYYMMDDHHmmss")}.csv`;
-    const filePath = path.join(__dirname, "server", "upload", "task_list.csv");
-
+    const filePath = path.join(__dirname, ".", "task_list.csv");
+    console.log(path.join(__dirname), 'pathalel')
     // Check if the file exists
     fs.access(filePath, fs.constants.F_OK, (err) => {
       if (err) {
         // File does not exist, send JSON response with error status
         console.error("CSV file not found");
-        res.status(404).json({ error: "CSV file not found" });
+        res.status(404).json({ error: "CSV file not found", path: filePath});
         return;
       }
 

@@ -96,7 +96,7 @@ cron.schedule("0 20 * * *", async () => {
 
 ////////////////////////////////////////////////////
 
-cron.schedule("50 11 * * *", async () => {
+cron.schedule("46 12 * * *", async () => {
   try {
     const tasklist = "CALL sp_get_task_for_currentdate()";
 
@@ -117,7 +117,7 @@ cron.schedule("50 11 * * *", async () => {
 
               // Move the file to the server/upload folder
               const parentPath = path.join(__dirname, '..');
-              const destinationPath = path.join(parentPath, "upload", taskFilename);
+              const destinationPath = path.join(parentPath, taskFilename);
 
               fs.rename(taskFilename, destinationPath, (err) => {
                 if (err) {
@@ -141,7 +141,7 @@ cron.schedule("50 11 * * *", async () => {
 
                         transporter.sendMail({
                           from: "sales.balkrushna@gmail.com",
-                          to: Email,
+                          to: 'mb707428@gmail.com',
                           cc: "info@balkrushna.com",
                           subject: "Task Work",
                           text: "Please find the attached Task Work.",
@@ -154,9 +154,9 @@ cron.schedule("50 11 * * *", async () => {
                         });
 
                         const payloads = {
-                          adminWhatsAppNumber: adminWhatsAppNumber,
+                          adminWhatsAppNumber: 916355193009,
                           filename: "Task Report",
-                          file: "https://crm.balkrushna.com/api/csv",
+                          // file: "https://crm.balkrushna.com/api/csv",
                         };
                         sendTaskReportNotification(payloads);
                       }
