@@ -4,6 +4,7 @@ const fastcsv = require("fast-csv");
 const { db } = require("../Database/dbConfig");
 const cron = require("node-cron");
 const nodemailer = require("nodemailer");
+const path = require("path");
 const { InstantMessagingUtils } = require("../Utils/MessagingHelpers");
 const router = express.Router();
 
@@ -95,7 +96,7 @@ cron.schedule("0 20 * * *", async () => {
 
 ////////////////////////////////////////////////////
 
-cron.schedule("29 18 * * *", async () => {
+cron.schedule("46 11 * * *", async () => {
   try {
     const tasklist = "CALL sp_get_task_for_currentdate()";
 
@@ -113,40 +114,56 @@ cron.schedule("29 18 * * *", async () => {
             .write(taskdata, { headers: true })
             .on("finish", () => {
               console.log("Task list CSV file created successfully.");
-              const superAdminEmailQuery =
-                "SELECT * FROM users WHERE id = 1";
-              db.query(
-                superAdminEmailQuery,
-                async (superAdminEmailErr, superAdminEmailResult) => {
-                  if (superAdminEmailErr) {
-                    console.error(superAdminEmailErr);
-                  } else {
-                    const Email = superAdminEmailResult[0].email;
-                    const adminWhatsAppNumber = Number(superAdminEmailResult[0].phone_number)
-                    console.log(Email, "superAdminEmail");
 
-                    transporter.sendMail({
-                      from: "sales.balkrushna@gmail.com",
-                      to: Email,
-                      cc: "info@balkrushna.com",
-                      subject: "Task Work",
-                      text: "Please find the attached Task Work.",
-                      attachments: [
-                        {
-                          filename: "task_list.csv",
-                          content: fs.createReadStream(taskFilename),
-                        },
-                      ],
-                    });
-                    const payloads = {
-                      adminWhatsAppNumber: adminWhatsAppNumber,
-                      filename: "Task Report",
-                      file: 'https://i.pcmag.com/imagery/articles/01eGstfLC8DcJFtCbjOVe69-12..v1623096915.jpg',
-                    };
-                    sendTaskReportNotification(payloads);
-                  }
+              // Move the file to the server/upload folder
+              const parentPath = path.join(__dirname, '..');
+              const destinationPath = path.join(parentPath, "upload", taskFilename);
+
+              fs.rename(taskFilename, destinationPath, (err) => {
+                if (err) {
+                  console.error("Error moving the file:", err);
+                } else {
+                  console.log("File moved successfully.");
+
+                  const superAdminEmailQuery =
+                    "SELECT * FROM users WHERE id = 1";
+                  db.query(
+                    superAdminEmailQuery,
+                    async (superAdminEmailErr, superAdminEmailResult) => {
+                      if (superAdminEmailErr) {
+                        console.error(superAdminEmailErr);
+                      } else {
+                        const Email = superAdminEmailResult[0].email;
+                        const adminWhatsAppNumber = Number(
+                          superAdminEmailResult[0].phone_number
+                        );
+                        console.log(Email, "superAdminEmail");
+
+                        transporter.sendMail({
+                          from: "sales.balkrushna@gmail.com",
+                          to: Email,
+                          cc: "info@balkrushna.com",
+                          subject: "Task Work",
+                          text: "Please find the attached Task Work.",
+                          attachments: [
+                            {
+                              filename: "task_list.csv",
+                              content: fs.createReadStream(destinationPath),
+                            },
+                          ],
+                        });
+
+                        const payloads = {
+                          adminWhatsAppNumber: adminWhatsAppNumber,
+                          filename: "Task Report",
+                          file: "https://crm.balkrushna.com/api/csv",
+                        };
+                        sendTaskReportNotification(payloads);
+                      }
+                    }
+                  );
                 }
-              );
+              });
             })
             .pipe(taskStream);
         } else {
