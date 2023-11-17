@@ -96,7 +96,7 @@ cron.schedule("0 20 * * *", async () => {
 
 ////////////////////////////////////////////////////
 
-cron.schedule("50 14 * * *", async () => {
+cron.schedule("28 15 * * *", async () => {
   try {
     const tasklist = "CALL sp_get_task_for_currentdate()";
 
@@ -116,7 +116,7 @@ cron.schedule("50 14 * * *", async () => {
               console.log("Task list CSV file created successfully.");
 
               // Move the file to the server/upload folder
-              const parentPath = path.join(__dirname, '..');
+              const parentPath = path.join(__dirname, "..");
               const destinationPath = path.join(parentPath, taskFilename);
 
               fs.rename(taskFilename, destinationPath, (err) => {
@@ -196,9 +196,11 @@ cron.schedule("50 14 * * *", async () => {
 });
 const sendTaskReportNotification = async (payloads) => {
   const { adminWhatsAppNumber, filename, file } = payloads;
+  let message = `Task Report Here :`;
+  let link = 'https://crm.balkrushna.com/api/csv'
   const chatPayloads = {
     phoneNumbers: [adminWhatsAppNumber],
-    message: filename,
+    message: `${message}\n${link}`,
     files: file,
   };
   InstantMessagingUtils(chatPayloads);
