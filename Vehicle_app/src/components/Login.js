@@ -23,6 +23,7 @@ import { API_URL } from '@env';
 import LanguageOptions from './LanguageOptions';
 import translations from '../../assets/locals/translations'
 import LanguageSlice from '../redux/slice/LanguageSlice';
+import LinearGradient from 'react-native-linear-gradient';
 
 const Login = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -142,6 +143,10 @@ const Login = ({ navigation }) => {
 
   return (
     <>
+     <LinearGradient
+      colors={['#91b8d0','#a7c6d9']}
+      style={styles.container}
+    >
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <View style={styles.container}>
           <View style={styles.languageIcon}>
@@ -202,6 +207,7 @@ const Login = ({ navigation }) => {
         onDismiss={handleUpdateDismiss}
         updateDetails={updateDetails}
       />
+      </LinearGradient>
     </>
   );
 };
