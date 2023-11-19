@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 
 const CustomRadioButton = ({ options, selectedOption, onSelect }) => {
@@ -10,10 +10,14 @@ const CustomRadioButton = ({ options, selectedOption, onSelect }) => {
           style={styles.radioButton}
           onPress={() => onSelect(option)}
         >
-          <View style={styles.radioButtonIcon}>
-            {option === selectedOption && <View style={styles.radioButtonIconSelected} />}
+          <View style={styles.radioButtonRow}>
+            <Text style={[styles.radioButtonLabel, option === 'English' && styles.selectedLabel]}>
+              {option}
+            </Text>
+            <View style={styles.radioButtonIcon}>
+              {option === selectedOption && <View style={styles.radioButtonIconSelected} />}
+            </View>
           </View>
-          <Text style={styles.radioButtonLabel}>{option}</Text>
         </TouchableOpacity>
       ))}
     </View>
@@ -22,9 +26,11 @@ const CustomRadioButton = ({ options, selectedOption, onSelect }) => {
 
 const styles = StyleSheet.create({
   radioButton: {
+    marginBottom: 10,
+  },
+  radioButtonRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10,
   },
   radioButtonIcon: {
     width: 20,
@@ -34,7 +40,7 @@ const styles = StyleSheet.create({
     borderColor: '#0984DF',
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 10,
+    marginLeft: 280,
   },
   radioButtonIconSelected: {
     width: 10,
@@ -44,6 +50,10 @@ const styles = StyleSheet.create({
   },
   radioButtonLabel: {
     fontSize: 16,
+  },
+  selectedLabel: {
+    fontWeight: 'bold',
+    color: '#0984DF',
   },
 });
 

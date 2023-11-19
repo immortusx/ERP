@@ -14,7 +14,7 @@ import enquiryTypeSlice from './slice/enquiryTypeSlice';
 import SwipeScreenSlice from './slice/SwipeScreenSlice';
 import addEnquirySlice from './slice/addEnquirySlice';
 import AgencyDataSlice from './slice/AgencyDataSlice';
-
+import LanguageSlice from './slice/LanguageSlice';
 
 export const store = configureStore({
   reducer: {
@@ -32,6 +32,7 @@ export const store = configureStore({
     followUpSlice: addFollowUpSlice,
     enquiryType: enquiryTypeSlice,
     swipe: SwipeScreenSlice,
-    agencyData: AgencyDataSlice
+    agencyData: AgencyDataSlice,
+    language: LanguageSlice,
   },
 });

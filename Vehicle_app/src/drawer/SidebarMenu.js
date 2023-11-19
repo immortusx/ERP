@@ -20,10 +20,13 @@ import EnquiryReport from '../components/EnquiryReport';
 import Tasks from '../components/Tasks';
 import WhatsappChat from '../components/WhatsappChat';
 import WhatsAppChat from '../components/subCom/WhatsAppChat';
+import {useSelector } from 'react-redux';
 const Drawer = createDrawerNavigator();
-
+import translations from '../../assets/locals/translations';
 const SidebarMenu = () => {
   const navigation = useNavigation();
+
+  const currentLanguage = useSelector((state) => state.language.language);
 
   return (
     <>
@@ -37,7 +40,7 @@ const SidebarMenu = () => {
           drawerActiveTintColor: 'white',
         }}>
         <Drawer.Screen
-          name="Home"
+          name= {translations[currentLanguage]?.home || "Home"}
           component={Home}
           options={{
             headerShown: true,
@@ -58,7 +61,7 @@ const SidebarMenu = () => {
           }}
         />
         <Drawer.Screen
-          name="Profile"
+          name={translations[currentLanguage]?.profile || "Profile"}
           component={Profile}
           options={{
             headerShown: true,
@@ -75,7 +78,7 @@ const SidebarMenu = () => {
           }}
         />
         <Drawer.Screen
-          name="Enquiry"
+          name={translations[currentLanguage]?.enquiry || "Enquiry"}
           component={AddEnquiry}
           options={{
             headerShown: true,
@@ -92,7 +95,7 @@ const SidebarMenu = () => {
           }}
         />
         <Drawer.Screen
-          name="Report"
+          name={translations[currentLanguage]?.report || "Report"}
           component={EnquiryReport}
           options={{
             headerShown: true,
@@ -109,7 +112,7 @@ const SidebarMenu = () => {
           }}
         />
         <Drawer.Screen
-          name="Tasks"
+          name={translations[currentLanguage]?.tasks || "Tasks"}
           component={Tasks}
           options={{
             headerShown: true,
@@ -126,7 +129,7 @@ const SidebarMenu = () => {
           }}
         />
         <Drawer.Screen
-          name="Send Message"
+          name={translations[currentLanguage]?.sendmsg || "Send Message"}
           component={WhatsAppChat}
           options={{
             headerShown: true,
@@ -143,7 +146,7 @@ const SidebarMenu = () => {
           }}
         />
         <Drawer.Screen
-          name="Booking"
+          name={translations[currentLanguage]?.booking || "Booking"}
           component={AddBooking}
           options={{
             headerShown: true,
@@ -160,7 +163,7 @@ const SidebarMenu = () => {
           }}
         />
         <Drawer.Screen
-          name="Delivery"
+          name={translations[currentLanguage]?.delivery || "Delivery"}
           component={DeliveryScreen}
           options={{
             headerShown: true,
@@ -177,7 +180,7 @@ const SidebarMenu = () => {
           }}
         />
         <Drawer.Screen
-          name="Drop"
+          name={translations[currentLanguage]?.drop || "Drop"}
           component={DropScreen}
           options={{
             headerShown: true,
@@ -194,7 +197,7 @@ const SidebarMenu = () => {
           }}
         />
         <Drawer.Screen
-          name="Master"
+          name={translations[currentLanguage]?.master || "Master"}
           component={Master}
           options={{
             headerShown: true,
@@ -211,7 +214,7 @@ const SidebarMenu = () => {
           }}
         />
         <Drawer.Screen
-          name="Sales"
+          name={translations[currentLanguage]?.sales || "Sales"}
           component={Sales}
           options={{
             headerShown: true,
@@ -228,7 +231,7 @@ const SidebarMenu = () => {
           }}
         />
         <Drawer.Screen
-          name="Products"
+          name={translations[currentLanguage]?.products || "Products"}
           component={Products}
           options={{
             headerShown: true,
@@ -245,7 +248,7 @@ const SidebarMenu = () => {
           }}
         />
         <Drawer.Screen
-          name="Manage"
+          name={translations[currentLanguage]?.manage || "Manage"}
           component={Manage}
           options={{
             headerShown: true,
@@ -262,7 +265,7 @@ const SidebarMenu = () => {
           }}
         />
         <Drawer.Screen
-          name="Holiday"
+          name={translations[currentLanguage]?.holiday || "Holiday"}
           component={Holiday}
           options={{
             headerShown: true,

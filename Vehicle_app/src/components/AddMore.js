@@ -37,6 +37,7 @@ import UserCreatedEnquiry from './UserCreatedEnquiry';
 import ColdEnquiry from './ColdEnquiry';
 import { Dropdown } from 'react-native-element-dropdown';
 import SimpleAlert from './subCom/SimpleAlert';
+import translations from '../../assets/locals/translations';
 const AddMore = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -60,9 +61,10 @@ const AddMore = () => {
     label: category.category_name,
     value: category.id,
   }));
+  const currentLanguage = useSelector((state) => state.language.language);
   const enquiryFilters = [
     {
-      type: 'New',
+      type: translations[currentLanguage]?.new || "New",
     },
     // {
     //   type: 'Today',
@@ -71,16 +73,16 @@ const AddMore = () => {
     //   type: 'Last Month',
     // },
     {
-      type: 'Hot',
+      type: translations[currentLanguage]?.hot || "Hot",
     },
     {
-      type: 'Cold',
+      type: translations[currentLanguage]?.cold || "Cold",
     },
     {
-      type: 'Warm',
+      type: translations[currentLanguage]?.warm || "Warm",
     },
     {
-      type: 'User Created',
+      type: translations[currentLanguage]?.usercreated || "User Created",
     },
   ];
   const handleScreen = type => {
@@ -204,7 +206,7 @@ const AddMore = () => {
         <View style={styles.searchBox}>
           <TextInput
             style={styles.searchInput}
-            placeholder="SEARCH BY MOBILE NUMBER..."
+            placeholder={translations[currentLanguage]?.searchbymobile || "SEARCH BY MOBILE NUMBER..."}
             value={searchText}
             maxLength={10}
             onChangeText={(text) => {
