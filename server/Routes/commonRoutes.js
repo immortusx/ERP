@@ -9,6 +9,7 @@ const path = require("path");
 
 const fs = require("fs");
 const csv = require("fast-csv");
+const { sendTaskAssignmentNotification } = require("../Utils/instantEnquiryCommunitor");
 const router = express.Router();
 
 router.get("/get-state-list", tokenCheck, async (req, res) => {
@@ -166,6 +167,7 @@ router.post("/addholiday-data", tokenCheck, async (req, res) => {
     }
 
     res.send({ isSuccess: true, result: "Task Add Successfully" });
+
   } catch (err) {
     console.log(err);
   }
@@ -211,6 +213,7 @@ router.post("/addtask-data", tokenCheck, async (req, res) => {
     }
 
     res.send({ isSuccess: true, result: "Task Add Successfully" });
+    sendTaskAssignmentNotification(employees)
   } catch (err) {
     console.log(err);
   }

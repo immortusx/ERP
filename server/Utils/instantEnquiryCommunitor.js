@@ -7,54 +7,115 @@ const { db } = require("../Database/dbConfig");
 const { InstantMessagingUtils } = require("./MessagingHelpers");
 
 const instantEnquiryMessage = async (messagePayloads) => {
-  const { userId, customerNumber } = messagePayloads;
-
-  const getSsp = () => {
-    return new Promise((resolve, reject) => {
-      const sql = `SELECT phone_number FROM users WHERE id = ${userId}`;
-      db.query(sql, (err, result) => {
-        if (err) {
-          reject(err);
-        } else {
-          if (result && result.length > 0) {
-            const sspNo = result[0].phone_number;
-            resolve(sspNo);
-          }
-        }
-      });
-    });
-  };
-
+  const { enquiryId } = messagePayloads;
   try {
-    const sspNumber = await getSsp();
-    console.log(sspNumber, "SSP Number");
-    let CustomerNumber = Number(customerNumber);
-    let SSNumber = Number(sspNumber);
-    const phoneNumbers = [CustomerNumber, SSNumber];
-    let message = `Subject: Inquiry for New Sonalika DI-27 - Customer: Vijay Sharma - Assigned Sales Representative: Bharat Vakani
-
-    Dear Vijay Sharma,
-    Greetings from Team New Keshav Tractors!
-
-    We have recently received an inquiry from Mr. Vijay Sharma regarding the acquisition of a new Sonalika DI-27. 
-    Mr. Sharma has been assigned to your capable hands, and we believe your expertise will greatly contribute to ensuring a seamless and satisfactory experience for him.
-    Your swift attention to this matter is highly appreciated, and we are confident that, under Mr. Vakani's guidance, Mr. Sharma will experience a seamless and satisfactory journey with our
-    products.
-
-    Should you have any further inquiries or require additional information, please do not hesitate to reach out.
-
-    Best regards,   
-    Team New Keshav Tractors`;
-
-    const chatPayloads = {
-      phoneNumbers: phoneNumbers,
-      message: message,
-      files: "https://www.africau.edu/images/default/sample.pdf",
-    };
-    InstantMessagingUtils(chatPayloads);
+    sendMessageToCustomer(enquiryId);
+    sendMessageToSSP(enquiryId);
   } catch (error) {
     console.log({ isSuccess: false, result: error });
   }
 };
+//For Customers Acknowledgement
+const sendMessageToCustomer = async (enquiryId) => {
+  const sql = `CALL sp_get_customer_message_data(${enquiryId})`;
+  await db.query(sql, (error, dataResults) => {
+    if (error) {
+      console.log({ isSuccess: false, result: error });
+    } else {
+      console.log(dataResults, "dataResults");
+      if (dataResults && dataResults.length > 0) {
+        const rowDataPacket = dataResults[0][0];
 
-module.exports = { instantEnquiryMessage };
+        const customerName = rowDataPacket.customerName;
+        const customerPhoneNumber = rowDataPacket.phone_number;
+        const customerWhatsAppNumber = Number(rowDataPacket.whatsapp_number);
+        const customerProduct = rowDataPacket.product;
+        const SSPNumber = Number(rowDataPacket.SSPNumber);
+        const salesPersonName = rowDataPacket.salesPersonName;
+        const acknowledgmentMessage = `*Dear ${customerName},*
+
+Thank you for your enquiry regarding *${customerProduct}*. 
+We have received your request and one of our sales representatives, *${salesPersonName}*, will contact you shortly to assist you further. 
+If you have any immediate questions, please feel free to contact us at *${SSPNumber}*.
+
+*Best regards,*
+Team New Keshav Tractors`;
+
+        const chatPayloads = {
+          phoneNumbers: [customerWhatsAppNumber],
+          message: acknowledgmentMessage,
+          files: "https://www.africau.edu/images/default/sample.pdf",
+        };
+
+        //Comment this while on Development
+        InstantMessagingUtils(chatPayloads);
+      } else {
+        console.log({ isSuccess: false, result: "No data found." });
+      }
+    }
+  });
+};
+
+//For Sales Person Acknowledgement
+const sendMessageToSSP = async (enquiryId) => {
+  const sql = `CALL sp_get_ssp_message_data(${enquiryId})`;
+  await db.query(sql, (error, dataResults) => {
+    if (error) {
+      console.log({ isSuccess: false, result: error });
+    } else {
+      console.log(dataResults, "dataResults");
+      if (dataResults && dataResults.length > 0) {
+        const rowDataPacket = dataResults[0][0];
+
+        const customerName = rowDataPacket.customerName;
+        const customerPhoneNumber = rowDataPacket.phone_number;
+        const customerProduct = rowDataPacket.product;
+        const SSPNumber = Number(rowDataPacket.SSPNumber);
+        const salesPersonName = rowDataPacket.salesPersonName;
+        console.log(SSPNumber, customerName, customerPhoneNumber, "mesashsd");
+        const acknowledgmentMessage = `*Hello, ${salesPersonName}.*
+
+You have a new enquiry from *${customerName}* *(${customerPhoneNumber})* regarding *${customerProduct}*. 
+Please contact the customer at your earliest convenience. 
+For any immediate assistance, the customer's contact number is *${customerPhoneNumber}*.
+
+*Best regards,*
+Team New Keshav Tractors`;
+        const chatPayloads = {
+          phoneNumbers: [SSPNumber],
+          message: acknowledgmentMessage,
+          files: "https://www.africau.edu/images/default/sample.pdf",
+        };
+
+        //Comment this while on Development
+        InstantMessagingUtils(chatPayloads);
+      } else {
+        console.log({ isSuccess: false, result: "No data found." });
+      }
+    }
+  });
+};
+
+const sendTaskAssignmentNotification = async (employeeId) => {
+  const sql = `CALL sp_get_task_assignment_notification_data(${employeeId})`;
+  await db.query(sql, (error, dataResults) => {
+    if (error) {
+      console.log({ isSuccess: false, result: error });
+    } else {
+      console.log(dataResults, "dataResults");
+      if (dataResults && dataResults.length > 0) {
+        const rowDataPacket = dataResults[0][0];
+        const sales_person = rowDataPacket.sales_person;
+        const ssp_number = Number(rowDataPacket.ssp_number);
+        const message = `*Hello ${sales_person},*\n\nYou have a new task assigned. Please check your dashboard for details.\n\nBest regards,\nTeam New Keshav Tractors`;
+        const chatPayloads = {
+          phoneNumbers: [ssp_number],
+          message: message,
+          files: "https://www.example.com/task_details.pdf",
+        };
+        InstantMessagingUtils(chatPayloads);
+      }
+    }
+  });
+};
+module.exports = { instantEnquiryMessage, sendTaskAssignmentNotification };

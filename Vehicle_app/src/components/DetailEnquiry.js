@@ -999,7 +999,7 @@ const DetailEnquiry = ({ route }) => {
   const onChangeHandler = (value, field) => {
     if (field === 'phone') {
       if (value.length < 10) {
-        setMobileNumberError('Invalid mobile number.');sa       
+        setMobileNumberError('Invalid mobile number.');  
       } else {
         setMobileNumberError('');
       }
