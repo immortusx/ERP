@@ -222,7 +222,6 @@ export default function Variants() {
             console.log(response.data.result, "sdasdasdasdas")
           }
         } catch (error) {
-          // Handle any errors here
           console.error("Error uploading document:", error);
         }
       }
@@ -247,14 +246,10 @@ export default function Variants() {
         console.log(response.data.result);
         setVariantList(response.data.result);
       } else {
-        // Handle error response
         console.log(response.data.result);
-        // Show error message or take appropriate action
       }
     } catch (error) {
-      // Handle error
       console.log(error);
-      // Show error message or take appropriate action
     } finally {
       setLoading(false);
     }
@@ -312,20 +307,7 @@ export default function Variants() {
   const handleFileChange = (e, modalIndex, variantIndex) => {
     const files = e.target.files[0];
     setVariantFile(files)
-    //setModalRowsArr((prevState) => {
-    //   const updatedModalRowsArr = [...prevState];
-    //   const modalRow = updatedModalRowsArr[modalIndex];
-    //   const variantRow = modalRow.variants[variantIndex];
-    //   variantRow.variantFile = files;
-    //   return updatedModalRowsArr;
-    // });
   };
-  // const handleFileChange = (e) => {
-  //   const selectedFile = fileInputRef.current.files[0];
-  //   console.log(selectedFile, "file>>>>>>>>>>>>");
-  //   setVariantFile(selectedFile);
-  // };
-
   return (
     <>
       <div>
@@ -395,14 +377,6 @@ export default function Variants() {
             <label className="myLabel mx-4" htmlFor="email">
               Modal Name
             </label>
-            {/* <select className='myInput' name="selectRole">
-                                <option value='0' className='myLabel' selected>select role</option>
-                                {
-                                    showRolesList && showRolesList.length > 0 && showRolesList.map((item, index) => {
-                                        return <option key={index} value={item.id}>{item.role}</option>
-                                    })
-                                }
-                            </select> */}
             <input
               disabled
               className="myInput mx-4"
@@ -649,137 +623,5 @@ export default function Variants() {
         </Modal.Footer>
       </Modal>
     </>
-
-    // <div>
-    //   <div className="my-3  d-flex align-items-end justify-content-end">
-    //     <div className="d-flex align-items-center" type="button">
-    //       <h6 className="m-0 ps-1"></h6>
-    //     </div>
-    //   </div>
-    //   <div className="card">
-    //     <div className="card-header">
-    //       <div className="d-flex">
-    //         <label className="form-label">Manufacturer Name:</label>
-    //         <p className="px-4">{rowData && rowData.length > 0 && rowData.map((val)=> val.manufacturerName)}</p>
-    //       </div>
-    //     </div>
-    //     <div className="card-body">
-    //       {modalRowsArr.length > 0 &&
-    //         modalRowsArr.map((modalRow, modalIndex) => (
-    //           <div className="row" key={`ModaleNumber_${modalIndex}`}>
-    //             <div className="col-6">
-    //               <label className="form-label">Modal Name:</label>
-    //               <div className="row">
-    //                 <div className="col-10">
-    //                   <input
-    //                     type="text"
-    //                     className={`form-control ${
-    //                       firstBlankField === modalIndex
-    //                         ? "is-invalid"
-    //                         : "was-validated"
-    //                     }`}
-    //                     id={`modalName_${modalIndex}`}
-    //                     name={`modalName_${modalIndex}`}
-    //                     value={modalRow.modalName}
-    //                     onChange={(event) =>
-    //                       onModalNameChange(event, modalIndex)
-    //                     }
-    //                     ref={
-    //                       firstBlankField === modalIndex ? autoFocusRef : null
-    //                     }
-    //                   />
-    //                 </div>
-    //                 <div className="col-2">
-    //                   {modalRowsArr.length === modalIndex + 1 ? (
-    //                     <Button
-    //                       variant="primary rounded-circle"
-    //                       onClick={() => onAddNewRowsHandler(modalIndex)}
-    //                     >
-    //                       +
-    //                     </Button>
-    //                   ) : (
-    //                     <Button
-    //                       variant="danger rounded-circle"
-    //                       onClick={() => onRemoveModalHandler(modalRow.id)}
-    //                     >
-    //                       -
-    //                     </Button>
-    //                   )}
-    //                 </div>
-    //               </div>
-    //             </div>
-    //             <div className="col-6">
-    //               <label
-    //                 htmlFor="exampleFormControlInput1"
-    //                 className="form-label"
-    //               >
-    //                 Variant Name:
-    //               </label>
-    //               {modalRow.variants.map((variantRow, variantIndex) => (
-    //                 <div
-    //                   className="row mb-2"
-    //                   key={`VariantNumber_${variantIndex}`}
-    //                 >
-    //                   <div className="col-10">
-    //                     <input
-    //                       type="text"
-    //                       className={`form-control ${
-    //                         firstBlankField === modalIndex
-    //                           ? "is-invalid"
-    //                           : "was-validated"
-    //                       }`}
-    //                       id={`variantName_${modalIndex}_${variantIndex}`}
-    //                       name={`variantName_${modalIndex}_${variantIndex}`}
-    //                       value={variantRow.variantName}
-    //                       onChange={(event) =>
-    //                         onVariantNameChange(event, modalIndex, variantIndex)
-    //                       }
-    //                       ref={
-    //                         firstBlankField === modalIndex ? autoFocusRef : null
-    //                       }
-    //                     />
-    //                   </div>
-    //                   <div className="col-2">
-    //                     {modalRow.variants.length === variantIndex + 1 ? (
-    //                       <Button
-    //                         variant="primary rounded-circle"
-    //                         onClick={() => onAddNewVariantHandler(modalIndex)}
-    //                       >
-    //                         +
-    //                       </Button>
-    //                     ) : (
-    //                       <Button
-    //                         variant="danger rounded-circle"
-    //                         onClick={() =>
-    //                           onRemoveVariantHandler(modalRow.id, variantIndex)
-    //                         }
-    //                       >
-    //                         -
-    //                       </Button>
-    //                     )}
-    //                   </div>
-    //                 </div>
-    //               ))}
-    //             </div>
-    //           </div>
-    //         ))}
-    //     </div>
-    //     <div className="card-footer">
-    //       <div className="d-flex align-items-center justify-content-center">
-    //         <Button
-    //           variant="btn btn-warning mx-1"
-    //           onClick={() => {
-    //             redirectaddmodal(rowData);
-    //           }}
-    //         >
-    //           CANCEL
-    //         </Button>
-    //         <Button variant="btn btn-success mx-1" onClick={handleSubmit}>
-    //           SAVE
-    //         </Button>
-    //       </div>
-    //     </div>
-    //   </div>
-    // </div>
   );
 }

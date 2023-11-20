@@ -31,7 +31,7 @@ const translations = {
     addenq: "Add Enquiry",
     addbooking:'Add Booking',
   },
-  Gujarati: {
+  ગુજરાતી: {
     login: "લોગિન",
     emailemobile: "ઈમેલ/મોબાઈલ નંબર દાખલ કરો",
     epassword: "પાસવર્ડ દાખલ કરો",

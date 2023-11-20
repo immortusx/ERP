@@ -9,9 +9,9 @@
     const currentLanguage = useSelector((state) => state.language.language);
 
     const [modalVisible, setModalVisible] = useState(false);
-    const [selectedOption, setSelectedOption] = useState('English ');
+    const [selectedOption, setSelectedOption] = useState('English');
 
-    const options = ['English ', 'Gujarati'];
+    const options = ['English', 'ગુજરાતી'];
 
     const handleSelect = (option) => {
       dispatch(setLanguage(option));

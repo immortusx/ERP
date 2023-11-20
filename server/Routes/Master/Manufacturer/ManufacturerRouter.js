@@ -73,7 +73,7 @@ router.get("/get-manufacturerbyid/:id", tokenCheck, async (req, res) => {
     console.log(manucaturerById);
     await db.query(
       "SELECT id as manufacturerId, name as manufacturerName, description as manufacturerDescription, isActive FROM manufacturers where isActive = 1 and id=" +
-        manucaturerById,
+      manucaturerById,
       (err, MfacturerIdData) => {
         if (err) {
           console.log({ isSuccess: false, result: "error" });
