@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   TextInput,
@@ -13,14 +13,19 @@ import {
 } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useDispatch, useSelector} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import BackgroundImage from '../../assets/cover.jpg';
-import {getLoginUser} from '../redux/slice/getUserLogin';
-import getUserProfile, {getProfileData} from '../redux/slice/getUserProfile';
+import { getLoginUser } from '../redux/slice/getUserLogin';
+import getUserProfile, { getProfileData } from '../redux/slice/getUserProfile';
 import LoadingSpinner from './subCom/LoadingSpinner';
 import UpdatePopUp from './AppUpdatePopUp';
-import {API_URL} from '@env';
-const Login = ({navigation}) => {
+import { API_URL } from '@env';
+import LanguageOptions from './LanguageOptions';
+import translations from '../../assets/locals/translations'
+import LanguageSlice from '../redux/slice/LanguageSlice';
+import LinearGradient from 'react-native-linear-gradient';
+
+const Login = ({ navigation }) => {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const [isLoggedIn, setLoggedIn] = useState(false);
@@ -39,49 +44,43 @@ const Login = ({navigation}) => {
   const profileData = useSelector(
     state => state.getUserProfileSlice.profile.currentUserData,
   );
- 
+  const currentLanguage = useSelector((state) => state.language.language);
   const [loginData, setLoginData] = useState({
     username: '',
     password: '',
   });
   useEffect(() => {
     if (agencyData && agencyData.result) {
-      console.log(agencyData.result, 'agencyDta spalsh');
       const valueObj = {};
       for (const item of agencyData.result) {
         valueObj[item.key_name] = item.value;
       }
-      const {name, logo} = valueObj;
+      const { name, logo } = valueObj;
       setAgency({
         agencyName: name,
         agencyLogo: logo,
       });
     }
   }, [agencyData]);
+
   const onChangeHandler = (value, field) => {
     if (field === 'username') {
-      setLoginData(registerData => ({...loginData, username: value}));
+      setLoginData(registerData => ({ ...loginData, username: value }));
     } else if (field === 'password') {
-      setLoginData(registerData => ({...loginData, password: value}));
+      setLoginData(registerData => ({ ...loginData, password: value }));
     }
   };
+
   const updateDetails = {
     features: [
-      'Added a some new feature.',
+      'Added some new features.',
       'Improved performance and stability.',
       'Enhanced user interface.',
     ],
     bugFixes: ['Fixed a crash issue when loading the profile.'],
   };
-  // useEffect(() => {
-  //   if (appVersion !== updated) {
-  //     setUpdateScreen(true);
-  //   }
-  // }, [updated]);
 
   const handleUpdateNow = () => {
-    // Implement code to navigate to the app store or initiate the update.
-    // For simplicity, we'll just dismiss the pop-up here.
     setUpdateScreen(false);
   };
 
@@ -93,7 +92,6 @@ const Login = ({navigation}) => {
     if (loginState.isSuccess === true) {
       if (loginState.result.message === 'success') {
         setIsLoading(true);
-        console.log(loginState.result.result.tokenIs);
         AsyncStorage.setItem(
           'branchesList',
           JSON.stringify(loginState.result.result.branchResult),
@@ -109,7 +107,6 @@ const Login = ({navigation}) => {
             return;
           }
           dispatch(getProfileData());
-          console.log(token, 'token_--__--he');
           navigation.navigate('Main');
           setLoginData({
             username: '',
@@ -118,101 +115,87 @@ const Login = ({navigation}) => {
         });
         setLoggedIn(true);
       } else if (loginState.result.message !== 'success') {
-        console.log('Credentials are wrong');
         alert('Credentials are wrong');
-        // dispatch(setShowMessage("Credentials are wrong"));
       } else {
-        console.log('Something is wrong');
         alert('Something is wrong');
-        // dispatch(setShowMessage("Something is wrong"));
       }
     } else if (loginState.isError === true) {
-      console.log('An error occurred. Please try again.');
       alert('An error occurred. Please try again.');
     }
-    console.log('loginState', loginState);
   }, [loginState]);
 
   useEffect(() => {
     if (profileData) {
-      console.log(profileData.isSuccess, 'profilelell')
       const username = profileData?.result?.email ?? '';
-      console.log(username, 'usekk')
-      setLoginData(prevData => ({...prevData, username}));
+      setLoginData(prevData => ({ ...prevData, username }));
       const password = 'adminadmin';
-      setLoginData(prevData => ({...prevData, password}));
+      setLoginData(prevData => ({ ...prevData, password }));
     }
   }, [profileData]);
+
   const handleLogin = () => {
     if (loginData.username.length > 0 && loginData.password.length > 0) {
       dispatch(getLoginUser(loginData));
     } else {
-      // dispatch(setShowMessage("Please fill all the field"));
-      console.log('please fill credentials first');
       alert('Please fill in all the fields');
     }
   };
 
   return (
     <>
+     <LinearGradient
+      colors={['#91b8d0','#a7c6d9']}
+      style={styles.container}
+    >
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <View style={styles.container}>
+          <View style={styles.languageIcon}>
+            <LanguageOptions modalShow={true} />
+          </View>
           <View style={styles.centerContent}>
             <View style={styles.logoContainer}>
               <Image
-                source={{uri: `${API_URL}/api${agency.agencyLogo}`}}
+                source={{ uri: `${API_URL}/api${agency.agencyLogo}` }}
                 style={styles.logo}
               />
             </View>
             <Text style={styles.agencyName}>{agency.agencyName}</Text>
           </View>
           <View style={styles.bottomView}>
-            <Text style={styles.loginText}>Login</Text>
+            <Text style={styles.loginText}>{translations[currentLanguage]?.login || 'Login'}</Text>
             <View style={styles.inputView}>
-              {/* <Icon
-              style={styles.inputIcon}
-              name="person"
-              type="ionicons"
-              color="#5352ed"
-            /> */}
               <TextInput
                 style={styles.input}
-                placeholder="Enter Email/Mobile Number"
+                placeholder={translations[currentLanguage]?.emailemobile || 'Enter Email/Mobile Number'}
                 autoCapitalize="none"
                 value={loginData.username}
                 onChangeText={value => onChangeHandler(value, 'username')}
               />
             </View>
             <View style={styles.inputView}>
-              {/* <Icon
-              style={styles.inputIcon}
-              name="lock"
-              type="ionicons"
-              color="#5352ed"
-            /> */}
               <TextInput
                 style={styles.input}
-                placeholder="Enter Password"
+                placeholder={translations[currentLanguage]?.epassword || 'Enter Password'}
                 secureTextEntry={true}
                 autoCapitalize="none"
                 value={loginData.password}
                 onChangeText={value => onChangeHandler(value, 'password')}
               />
             </View>
-            <Text style={styles.fpText}>Forgot Password?</Text>
+            <Text style={styles.fpText}>{translations[currentLanguage]?.forgotPassword || "Forgot Password?"}</Text>
             <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
               <Text style={styles.loginButtonText}>
                 {isLoading ? (
                   <ActivityIndicator size="large" color="white" />
                 ) : (
-                  'Login'
+                  translations[currentLanguage]?.login || "Login"
                 )}
               </Text>
             </TouchableOpacity>
             <Text style={styles.registerText}>
-              Don't have an account?
-              <Text style={{color: '#006400', fontFamily: 'SourceSansProBold'}}>
-                {' Register'}
+              {translations[currentLanguage]?.donthanaccount || "Don't have an account ?"}
+              <Text style={{ color: '#006400', fontFamily: 'SourceSansProBold' }}>
+                {translations[currentLanguage]?.register || "Register"}
               </Text>
             </Text>
           </View>
@@ -224,9 +207,11 @@ const Login = ({navigation}) => {
         onDismiss={handleUpdateDismiss}
         updateDetails={updateDetails}
       />
+      </LinearGradient>
     </>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {
@@ -320,7 +305,7 @@ const styles = StyleSheet.create({
     top: '20%',
     left: 0,
     right: 0,
-    transform: [{translateY: -50}],
+    transform: [{ translateY: -50 }],
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -338,10 +323,19 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textTransform: 'uppercase',
     textShadowColor: 'rgba(0, 0, 0, 0.3)',
-    textShadowOffset: {width: 1, height: 1},
+    textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 2,
     paddingVertical: 6,
   },
+  personImg: {
+    width: 30,
+    height: 30
+  },
+  languageIcon: {
+    position: 'absolute',
+    top: 10,
+    right: 10
+  }
 });
 
 export default Login;

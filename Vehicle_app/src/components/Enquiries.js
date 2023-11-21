@@ -323,16 +323,17 @@ const Enquiries = ({ route }) => {
                       </View>
                     </View>
                     <View style={styles.taskIconContainer}>
-                      <TouchableOpacity style={styles.greenButton}>
+                      <TouchableOpacity style={styles.greenButton}
+                      onPress={() => {
+                        makePhoneCall(item.phone_number);
+                      }}>
                         <TouchableOpacity>
                           <Text style={styles.taskDataText}>
                             {formatPhoneNumber(item.phone_number)}
                           </Text>
                         </TouchableOpacity>
                         <TouchableOpacity
-                          onPress={() => {
-                            makePhoneCall(item.phone_number);
-                          }}>
+                          >
                           <Image
                             style={styles.iconImg}
                             source={require('../../assets/telephone.png')}

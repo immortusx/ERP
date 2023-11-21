@@ -40,7 +40,7 @@ router.post(
   tokenCheck,
   uploadFile.single("agency"),
   async (req, res) => {
-    console.log("req.body *********", req.body);
+    console.log("add agency*********", req.body);
     const { name, contact, email } = req.body;
     console.log("file *********", req.file);
     const logoImage = `/upload/${req.file.filename}`;

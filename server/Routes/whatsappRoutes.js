@@ -40,15 +40,13 @@ router.post("/send-whatsapp", tokenCheck, (req, res) => {
 router.post("/send-message", tokenCheck, async (req, res) => {
   try {
     const { newMessage, chatID } = req.body;
+    let whatsappMessage = `${newMessage},
+
+From, 
+Team Keshav Tractors.`;
+
     console.log("/send-message", req.body);
-    const url = `SELECT 
-    CASE 
-      WHEN c.whatsapp_number LIKE '91%' THEN c.whatsapp_number
-      ELSE CONCAT('91', c.whatsapp_number)
-    END AS customerNumber
-  FROM customers AS c
-  WHERE c.whatsapp_number IS NOT NULL AND c.whatsapp_number <> 'null' LIMIT 30
-  `;
+    const url = `CALL sp_get_whatsapp_number(${chatID})`;
     await db.query(url, async (err, result) => {
       if (err) {
         console.log({ isSuccess: false, result: err });
@@ -56,16 +54,16 @@ router.post("/send-message", tokenCheck, async (req, res) => {
       } else {
         console.log({ isSuccess: true, result: result });
         if (result && result.length > 0) {
-          console.log(result[0].customerNumber, "otroti");
+          console.log(result, "otroti");
           const phoneNumbers = [];
-          for (const customer of result) {
-            let phoneNumber = Number(customer.customerNumber);
+          for (const number of result[0]) {
+            let phoneNumber = Number(number.whatsAppNumber);
             phoneNumbers.push(phoneNumber);
           }
           console.log(phoneNumbers, "phoneNumbers"); // This will log an array of phone numbers
           const chatPayloads = {
             phoneNumbers: phoneNumbers,
-            message: newMessage,
+            message: whatsappMessage,
             files: "https://www.africau.edu/images/default/sample.pdf",
           };
           InstantMessagingUtils(chatPayloads);
