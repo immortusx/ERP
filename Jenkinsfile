@@ -7,7 +7,7 @@ pipeline {
       string (defaultValue: '95.216.144.126', description: 'Choose Host', name: 'ENV_HOST')
       string (defaultValue: 'vehical_crm_db', description: 'Choose Database for server', name: 'ENV_DATABASE')
       string (defaultValue: 'https://dev.balkrushna.com', description: 'Choose react app node url', name: 'REACT_APP_NODE_URL')
-      editableChoice(defaultValue: 'dev',name: 'BUILD_TAG',choices: ['winners-capital', 'newkeshav', 'crm', 'dev'], description: 'Build Tag',restrict: true,filterConfig: filterConfig(prefix: true, caseInsensitive: false))
+      editableChoice(defaultValue: 'dev',name: 'BUILD_TAG',choices: ['winners-capital', 'newkeshav', 'crm', 'dev', 'sales'], description: 'Build Tag',restrict: true,filterConfig: filterConfig(prefix: true, caseInsensitive: false))
       //string (defaultValue: "dev", description: 'Build Tag', name: 'BUILD_TAG')
       string (defaultValue: "Vehicle_crm", description: 'App Name', name: 'APP_NAME')
       booleanParam(name: 'skip_app_building', defaultValue: false, description: 'Set to true to skip Apk building')
