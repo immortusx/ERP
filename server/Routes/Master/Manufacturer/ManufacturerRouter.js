@@ -30,13 +30,15 @@ router.get("/get-allmanufacturer", tokenCheck, async (req, res) => {
 });
 
 // ===== Add Manufacturer === //
-router.post("/add-manufacturer", tokenCheck, async (req, res) => {
+router.post("/add-manufacturer", tokenCheck, uploadFile.single("file"), async (req, res) => {
   console.log(">>>>>/add-manufacturer");
-  const { menufacturerName, menufacturerDiscription } = req.body;
-  console.log(menufacturerName, menufacturerDiscription);
+  const { menufacturerName, menufacturerDiscription, insertedId, menufacturerLink } = req.body;
+  const file = req.file;
+  const documentid = req.body.documentId;
   var mfacturerNamespace = menufacturerName.trim(" ");
   const firstLetter = mfacturerNamespace.charAt(0).toUpperCase();
   var capitalFirstLetter = firstLetter + mfacturerNamespace.slice(1);
+  const logoImage = `manufacturer_data`;
 
   const newUrl =
     "SELECT * FROM manufacturers WHERE isActive = 1 and name ='" +
@@ -53,8 +55,17 @@ router.post("/add-manufacturer", tokenCheck, async (req, res) => {
           console.log({ isSuccess: false, result: err });
           res.send({ isSuccess: false, result: "error" });
         } else {
-          console.log({ isSuccess: true, result: "success" });
-          res.send({ isSuccess: true, result: "success" });
+          const manufacturerId = result.insertId;
+          const suburl = `INSERT INTO document_details (document_id, mapping_id, mapping_table) VALUES('${documentid}','${manufacturerId}','${logoImage}')`;
+          await db.query(suburl, (suburlErr, suburlResult) => {
+            if (suburlErr) {
+              console.log({ isSuccess: false, result: suburlErr });
+              res.send({ isSuccess: false, result: "error" });
+            } else {
+              console.log({ isSuccess: true, result: "success" });
+              res.send({ isSuccess: true, result: "success" });
+            }
+          });
         }
       });
     } else {
@@ -64,6 +75,43 @@ router.post("/add-manufacturer", tokenCheck, async (req, res) => {
     }
   });
 });
+
+router.post("/addmodal", tokenCheck, async (req, res) => {
+  try {
+    const { modal, manufacturerId, insertedId } = req.body;
+    const logoImage = `manufacturerModal_data`;
+    const url = `INSERT INTO modal (modalName, manufacturerId) VALUES ('${modal}', '${manufacturerId}')`;
+    await db.query(url, async (err, result) => {
+      if (err) {
+        console.log({ isSuccess: false, result: err });
+        res.send({ isSuccess: false, result: "error" });
+      } else {
+        const manufacturerModelId = result.insertId;
+
+        const suburl = `INSERT INTO document_details (document_id, mapping_id, mapping_table) VALUES('${insertedId}','${manufacturerModelId}','${logoImage}')`;
+
+        await db.query(suburl, (suburlErr, suburlResult) => {
+          if (suburlErr) {
+            console.log({ isSuccess: false, result: suburlErr });
+            res.send({ isSuccess: false, result: "error" });
+          } else {
+            console.log({ isSuccess: true, result: "success" });
+            res.send({ isSuccess: true, result: "success" });
+          }
+        });
+      }
+    });
+
+  } catch (error) {
+    console.error("Error in addmodal:", error);
+    res.status(500).send({ isSuccess: false, result: "internalServerError" });
+  }
+});
+
+
+
+
+
 
 // ====get Manufacturer By Id === //
 router.get("/get-manufacturerbyid/:id", tokenCheck, async (req, res) => {
@@ -168,30 +216,30 @@ router.post("/delete-manufacturerbyId", tokenCheck, async (req, res) => {
 });
 
 //=========addModal==========
-router.post("/addmodal", tokenCheck, async (req, res) => {
-  try {
-    const { modal, manufacturerId } = req.body;
+// router.post("/addmodal", tokenCheck, async (req, res) => {
+//   try {
+//     const { modal, manufacturerId } = req.body;
 
-    const modalQuery =
-      "INSERT INTO modal (modalName, manufacturerId) VALUES (?, ?)";
+//     const modalQuery =
+//       "INSERT INTO modal (modalName, manufacturerId) VALUES (?, ?)";
 
-    await db.query(
-      modalQuery,
-      [modal, manufacturerId],
-      async (err, results) => {
-        if (err) {
-          console.log({ isSuccess: false, result: err });
-          res.send({ isSuccess: false, result: "error" });
-        } else {
-          console.log({ isSuccess: true, result: results });
-          res.send({ isSuccess: true, result: results });
-        }
-      }
-    );
-  } catch (err) {
-    console.log(err);
-  }
-});
+//     await db.query(
+//       modalQuery,
+//       [modal, manufacturerId],
+//       async (err, results) => {
+//         if (err) {
+//           console.log({ isSuccess: false, result: err });
+//           res.send({ isSuccess: false, result: "error" });
+//         } else {
+//           console.log({ isSuccess: true, result: results });
+//           res.send({ isSuccess: true, result: results });
+//         }
+//       }
+//     );
+//   } catch (err) {
+//     console.log(err);
+//   }
+// });
 
 //==================addVariant===================
 router.post(

@@ -46,7 +46,10 @@ export default function Manufacturer_modal() {
   const [firstBlankField, setFirstBlankField] = useState(null);
   const [loading, setLoading] = useState(false);
   const [modal, setModal] = useState("");
-
+  const [file, setFile] = useState(null);
+  const [modalLink, setModalLink] = useState(null);
+  const [insertedId, setInsertedId] = useState([]);
+  const [documentId, setDocumentId] = useState("");
   const onAddNewRowsHandler = () => {
     setModalRowsArr((prevState) => [
       ...prevState,
@@ -116,8 +119,6 @@ export default function Manufacturer_modal() {
   const handleModalSubmit = async (e) => {
     const manufacturerNameData = rowData;
     const manufacturerModalData = modalRowsArr;
-    console.log(manufacturerModalData);
-    console.log(manufacturerID);
 
     const url = `${process.env.REACT_APP_NODE_URL}/api/master/addmodal`;
     const config = {
@@ -128,74 +129,16 @@ export default function Manufacturer_modal() {
     const requestData = {
       modal: modal,
       manufacturerId: manufacturerID,
+      insertedId: insertedId,
     };
     await axios.post(url, requestData, config).then((response) => {
       if (response.data && response.data.isSuccess) {
-        // redirectManufacurer();
         handleClose();
         getModalList();
         dispatch(setShowMessage("Data Successfully Saved."));
-        // console.log(response.data.result)
       }
     });
   };
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   const manufacturerNameData = rowData;
-  //   const manufacturerModalVarData = modalRowsArr;
-
-  //   let firstBlankFieldIndex = null; // Index of the first blank field
-
-  //   if (
-  //     manufacturerNameData.length > 0 &&
-  //     manufacturerModalVarData.length > 0
-  //   ) {
-  //     for (let i = 0; i < manufacturerModalVarData.length; i++) {
-  //       const modalRow = manufacturerModalVarData[i];
-  //       if (modalRow.modalName.trim() === "") {
-  //         firstBlankFieldIndex = i;
-  //         break;
-  //       }
-  //       for (let j = 0; j < modalRow.variants.length; j++) {
-  //         const variantRow = modalRow.variants[j];
-  //         if (variantRow.variantName.trim() === "") {
-  //           firstBlankFieldIndex = i;
-  //           break;
-  //         }
-  //       }
-  //     }
-
-  //     if (firstBlankFieldIndex === null) {
-  //       // All fields are filled, submit the data #manufacturerId
-  //       console.log(manufacturerModalVarData);
-  //       console.log(manufacturerNameData, "row");
-
-  //       const url = `${process.env.REACT_APP_NODE_URL}/api/master/addmodal`;
-  //       const config = {
-  //         headers: {
-  //           token: localStorage.getItem("rbacToken"),
-  //         },
-  //       };
-  //       const requestData = {
-  //         manufacturerModalVarData: manufacturerModalVarData,
-  //         manufacturerId: manufacturerID,
-  //       };
-
-  //       await axios.post(url, requestData, config).then((response) => {
-  //         if (response.data && response.data.isSuccess) {
-  //           redirectaddmodal();
-  //           dispatch(setShowMessage("Data Successfully Saved."));
-  //           // console.log(response.data.result)
-  //         }
-  //       });
-  //     } else {
-  //       // Set focus on the first blank field
-  //       setFirstBlankField(firstBlankFieldIndex);
-  //     }
-  //   } else {
-  //     dispatch(setShowMessage("All Field Must be Required."));
-  //   }
-  // };
 
   const redirectManufacurer = () => {
     navigate(-1);
@@ -207,8 +150,10 @@ export default function Manufacturer_modal() {
     });
   };
   const onChangeHandler = (e) => {
-    console.log(e.target.value);
     setModal(e.target.value);
+  };
+  const onChangeModalLink = (e) => {
+    setModalLink(e.target.value);
   };
 
   const ErrorMsg = () => {
@@ -224,137 +169,7 @@ export default function Manufacturer_modal() {
     onAddNewRowsHandler();
   }, []);
 
-  // const columns = [
-  //   {
-  //     field: "rowNumber",
-  //     headerAlign: "center",
-  //     align: "center",
-  //     headerName: "No",
-  //     minWidth: 80,
-  //     flex: 1,
-  //   },
-  //   {
-  //     field: "manufacturerName",
-  //     headerAlign: "center",
-  //     align: "center",
-  //     headerName: "Manufacturer Name",
-  //     minWidth: 150,
-  //     flex: 1,
-  //     renderCell: (params) => (
-  //       <div>
-  //         <button
-  //           className="mfacturerActionBtn"
-  //           onClick={() => {
-  //             redirectaddmodal(params);
-  //           }}
-  //         >
-  //           {params.row.manufacturerName ? params.row.manufacturerName : "-"}
-  //         </button>
-  //       </div>
-  //     ),
-  //   },
-  //   {
-  //     field: "manufacturerDescription",
-  //     headerAlign: "left",
-  //     align: "left",
-  //     headerName: "Manufacturer Discription",
-  //     minWidth: 180,
-  //     flex: 1,
-  //     valueGetter: (params) => {
-  //       return `${
-  //         params.row.manufacturerDescription
-  //           ? params.row.manufacturerDescription
-  //           : "-"
-  //       }`;
-  //     },
-  //   },
-  //   {
-  //     field: "isActive",
-  //     headerName: "Active",
-  //     headerAlign: "left",
-  //     align: "left",
-  //     type: "number",
-  //     minWidth: 80,
-  //     flex: 1,
-  //     renderCell: (params) =>
-  //       params.row.isActive ? <CheckIcon /> : <ClearIcon />,
-  //   },
-  //   {
-  //     field: "actions",
-  //     headerName: "Actions",
-  //     className: "bg-dark",
-  //     sortable: false,
-  //     filterable: false,
-  //     headerAlign: "center",
-  //     align: "center",
-  //     disableColumnMenu: true,
-  //     minWidth: 200,
-  //     flex: 1,
-  //     position: "sticky",
-  //     renderCell: (params) => (
-  //       <div>
-  //         {/* <button onClick={() => { editActionCall(params.row) }} className='myActionBtn m-1'> */}
-  //         <button
-  //           className="myActionBtn m-1"
-  //           onClick={() => {
-  //             // handleAdd();
-  //             redirectToSubModal(rowData);
-  //           }}
-  //         >
-  //           <svg
-  //             xmlns="http://www.w3.org/2000/svg"
-  //             width="20"
-  //             height="20"
-  //             fill="currentColor"
-  //             className="bi bi-plus-circle"
-  //             viewBox="0 0 16 16"
-  //           >
-  //             <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
-  //             <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
-  //           </svg>
-  //         </button>
-
-  //         <button
-  //           className="myActionBtn m-1"
-  //           onClick={() => {
-  //             // editeStateModal(params.row);
-  //           }}
-  //         >
-  //           <svg
-  //             xmlns="http://www.w3.org/2000/svg"
-  //             fill="currentColor"
-  //             className="bi bi-pencil-square"
-  //             viewBox="0 0 16 16"
-  //           >
-  //             <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
-  //             <path
-  //               fillRule="evenodd"
-  //               d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"
-  //             />
-  //           </svg>
-  //         </button>
-  //         <button
-  //           className="myActionBtn m-1"
-  //           onClick={() => {
-  //             // deleteStateAlert(params.row);
-  //           }}
-  //         >
-  //           <svg
-  //             xmlns="http://www.w3.org/2000/svg"
-  //             fill="currentColor"
-  //             className="bi bi-trash3"
-  //             viewBox="0 0 16 16"
-  //           >
-  //             <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5ZM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0H11Zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5h9.916Zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5Z" />
-  //           </svg>
-  //         </button>
-  //       </div>
-  //     ),
-  //   },
-  // ];
-
   const getModalList = async () => {
-    console.log(manufacturerID, "get");
     const url = `${process.env.REACT_APP_NODE_URL}/api/master/getmodal/${manufacturerID}`;
     const config = {
       headers: {
@@ -417,6 +232,38 @@ export default function Manufacturer_modal() {
       }
     });
   };
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    setFile(selectedFile);
+  };
+
+  useEffect(() => {
+    if (file && modalLink !== null) {
+      const uploadDocument = async () => {
+        const url = `${process.env.REACT_APP_NODE_URL}/api/employees/upload-document`;
+        const config = {
+          headers: {
+            token: localStorage.getItem("rbacToken"),
+          },
+        };
+        const formData = new FormData();
+        formData.append('document', file);
+        formData.append("link", modalLink)
+        try {
+          await axios.post(url, formData, config).then((response) => {
+            if (response.data) {
+              setInsertedId(response.data.result.insertId);
+            }
+          })
+
+        } catch (error) {
+          console.error("Error uploading document:", error);
+        }
+      }
+      uploadDocument();
+    }
+  }, [file]);
+
   return (
     <>
       <div>
@@ -636,35 +483,6 @@ export default function Manufacturer_modal() {
                 </div>
               </div>
               <div className="card-body">
-                {/* {modalRowsArr.length > 0 &&
-            modalRowsArr.map((modalRow, modalIndex) => (
-              <div className="row" key={`ModaleNumber_${modalIndex}`}>
-                <div className="col-12">
-                  <label className="form-label">Modal Name:</label>
-                  <div className="row">
-                    <div className="col-10">
-                      <input
-                        type="text"
-                        className={`form-control ${
-                          firstBlankField === modalIndex
-                            ? "is-invalid"
-                            : "was-validated"
-                        }`}
-                        id={`modalName_${modalIndex}`}
-                        name={`modalName_${modalIndex}`}
-                        value={modalRow.modalName}
-                        onChange={(event) =>
-                          onModalNameChange(event, modalIndex)
-                        }
-                        ref={
-                          firstBlankField === modalIndex ? autoFocusRef : null
-                        }
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))} */}
                 <div className="">
                   <div className="mb-3">
                     <label
@@ -682,6 +500,30 @@ export default function Manufacturer_modal() {
                       onChange={(e) => {
                         onChangeHandler(e);
                       }}
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label htmlFor="file" className="col-form-label">
+                      Manufacturer Link:
+                    </label>
+                    <input
+                      type="modalLink"
+                      className="form-control"
+                      id="modalLink"
+                      name="modalLink"
+                      onChange={onChangeModalLink}
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label htmlFor="file" className="col-form-label">
+                      Manufacturer File:
+                    </label>
+                    <input
+                      type="file"
+                      className="form-control"
+                      id="file"
+                      name="file"
+                      onChange={handleFileChange}
                     />
                   </div>
                 </div>

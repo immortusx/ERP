@@ -165,7 +165,7 @@ export default function Variants() {
           variantsArray.push(variant);
           // formData.append("variantFiles", files);
         }
-      
+
         formData.append("variantFiles", JSON.stringify(insertedId));
         formData.append("variants", JSON.stringify(variantsArray));
         formData.append("modalid", modalId);

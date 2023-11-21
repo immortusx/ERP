@@ -39,17 +39,19 @@ export default function Manufacturer_list() {
   const addmfacturer = useSelector(
     (state) => state.addManufacturerSlice.addManufacturer
   );
-
+  const [documentId, setDocumentId] = useState("");
   //const { addManufacturerSlice } = useSelector(state => state.addManufacturerSlice)
   const [menufacturerData, Manufacturer] = useState({
     menufacturerName: "",
     menufacturerDiscription: "",
+    menufacturerLink: "",
   });
 
   function onChangeHandler(e) {
     const name = e.target.name;
     const value = e.target.value;
-    Manufacturer({ ...menufacturerData, [name]: value });
+    Manufacturer((prevData) => ({ ...prevData, [name]: value }));
+
   }
 
   const handleClose = () => {
@@ -62,7 +64,7 @@ export default function Manufacturer_list() {
   function handleSubmit() {
     const mName = menufacturerData.menufacturerName;
     const mDiscr = menufacturerData.menufacturerDiscription;
-    console.log(file, "sbdhjshsdchj")
+    const mLink = menufacturerData.menufacturerLink;
 
     if (mName.length > 0 && mDiscr.length > 0) {
       if (editMaFacturerById != "") {
@@ -89,9 +91,14 @@ export default function Manufacturer_list() {
             console.error("Error in updateStateAction:", error);
           });
       } else {
-        menufacturerData.file = file;
-        dispatch(addManufacturerToDb(menufacturerData));
-        console.log(menufacturerData, "dhfsdjhsfdsjhds")
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("menufacturerName", mName);
+        formData.append("menufacturerDiscription", mDiscr);
+        formData.append("menufacturerLink", mLink)
+        formData.append("insertedId", insertedId);
+        formData.append("documentId", documentId);
+        dispatch(addManufacturerToDb(formData));
       }
     } else {
       dispatch(setShowMessage("All Field Must be Required."));
@@ -178,7 +185,6 @@ export default function Manufacturer_list() {
   }
 
   const redirectaddmodal = (rmdata) => {
-    console.log(rmdata, "rmdata");
     navigate("/administration/configuration/manufacturer-modal", {
       state: { rowData: rmdata },
     });
@@ -209,8 +215,7 @@ export default function Manufacturer_list() {
     setFile(selectedFile);
   };
   useEffect(() => {
-    if (file !== null) {
-      console.log(file.name, 'fiell')
+    if (file && menufacturerData.menufacturerLink !== null) {
       const uploadDocument = async () => {
         const url = `${process.env.REACT_APP_NODE_URL}/api/employees/upload-document`;
         const config = {
@@ -220,13 +225,15 @@ export default function Manufacturer_list() {
         };
         const formData = new FormData();
         formData.append('document', file);
+        formData.append("link", menufacturerData.menufacturerLink)
         try {
-          console.log(file, 'dlfl')
-          const response = axios.post(url, formData, config);
-          if (response.data) {
-            setInsertedId([...insertedId, response.data.result.insertId]);
-            console.log(response.data.result, "sdasdasdasdas")
-          }
+          await axios.post(url, formData, config).then((response) => {
+            if (response.data) {
+              setInsertedId([...insertedId, response.data.result.insertId]);
+              setDocumentId(response.data.result.insertId);
+            }
+          })
+
         } catch (error) {
           console.error("Error uploading document:", error);
         }
@@ -234,6 +241,7 @@ export default function Manufacturer_list() {
       uploadDocument();
     }
   }, [file]);
+
   return (
     <>
       <Modal show={modalShow} onHide={handleClose}>
@@ -276,9 +284,22 @@ export default function Manufacturer_list() {
                 }}
               ></textarea>
             </div>
+
             <div className="mb-3">
               <label htmlFor="file" className="col-form-label">
-                Variant File:
+                Manufacturer Link:
+              </label>
+              <input
+                type="menufacturerLink"
+                className="form-control"
+                id="menufacturerLink"
+                name="menufacturerLink"
+                onChange={onChangeHandler}
+              />
+            </div>
+            <div className="mb-3">
+              <label htmlFor="file" className="col-form-label">
+                Manufacturer File:
               </label>
               <input
                 type="file"
