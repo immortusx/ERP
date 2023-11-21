@@ -90,7 +90,7 @@ export default function AddAgency({ workFor }) {
     formData.append("name", aname);
     formData.append("contact", acontact);
     formData.append("email", aemail);
-    formData.append("logo", alogo);
+    formData.append("agency", alogo);
     if ( aname.length > 0 && acontact !== "" && aemail !== "" && alogo !== null) {
       console.log("result save");
       
