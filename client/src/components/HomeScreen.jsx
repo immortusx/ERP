@@ -87,6 +87,7 @@ import axios from "axios";
 import { Spinner } from "react-bootstrap";
 import EnquirySources from "./Master/EnquirySources/EnquirySources";
 import Holiday from "./Master/Holiday/Holiday";
+import Message from "./Master/Message/Message";
 import EnquirySources_model from "./Master/EnquirySources/EnquirySources_modal";
 import WorkReport from "./WorkReport";
 import WorkReportDetails from "./WorkReportDetails";
@@ -315,14 +316,13 @@ export default function HomeScreen() {
               ) : agencyData.angencyLogo ? (
                 <div>
                   <img
-                  className="rounded logoB"
-                  src={`${process.env.REACT_APP_NODE_URL}/api${agencyData.angencyLogo}`}
-                  alt="Agency"
-                  height={100}
-                  width={100}
-                />
+                    className="rounded logoB"
+                    src={`${process.env.REACT_APP_NODE_URL}/api${agencyData.angencyLogo}`}
+                    alt="Agency"
+                    height={100}
+                    width={100}
+                  />
                 </div>
-                
               ) : (
                 <div className="alert alert-danger text-center" role="alert">
                   <p
@@ -892,7 +892,7 @@ export default function HomeScreen() {
               path="profile"
               element={
                 <CheckPermission path="profile">
-                  <Profile/>
+                  <Profile />
                 </CheckPermission>
               }
               exact
@@ -901,7 +901,7 @@ export default function HomeScreen() {
               path="enquiry"
               element={
                 <CheckPermission path="profile">
-                  <Enquiry/>
+                  <Enquiry />
                 </CheckPermission>
               }
               exact
@@ -1088,6 +1088,15 @@ export default function HomeScreen() {
               element={
                 <CheckPermission path="profile">
                   <Holiday />
+                </CheckPermission>
+              }
+              exact
+            />
+            <Route
+              path="administration/configuration/message"
+              element={
+                <CheckPermission path="profile">
+                  <Message />
                 </CheckPermission>
               }
               exact

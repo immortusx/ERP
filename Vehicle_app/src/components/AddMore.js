@@ -57,40 +57,51 @@ const AddMore = () => {
   }, []);
   const [categoryData, setCategoryData] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(2);
+   const [totalnewenquirynumber, setTotalNewWenquiryNumber] = useState('');
+   const [totalhotenquirynumber, setTotalHotWenquiryNumber] = useState('');
+   const [totalcoldenquirynumber, setTotalColdWenquiryNumber] = useState('');
+   const [totalwarmenquirynumber, setTotalWarmWenquiryNumber] = useState('');
+   const [totalusercreatedenquirynumber, setTotalUserCreatedenquiryNumber] =
+     useState('');
   const categoryList = categoryData.map(category => ({
     label: category.category_name,
     value: category.id,
   }));
   const currentLanguage = useSelector((state) => state.language.language);
-  const enquiryFilters = [
-    {
-      type: translations[currentLanguage]?.new || "New",
-    },
-    // {
-    //   type: 'Today',
-    // },
-    // {
-    //   type: 'Last Month',
-    // },
-    {
-      type: translations[currentLanguage]?.hot || "Hot",
-    },
-    {
-      type: translations[currentLanguage]?.cold || "Cold",
-    },
-    {
-      type: translations[currentLanguage]?.warm || "Warm",
-    },
-    {
-      type: translations[currentLanguage]?.usercreated || "User Created",
-    },
-  ];
+ const enquiryFilters = [
+   {
+     type: translations[currentLanguage]?.new || "New",
+     total_count: totalnewenquirynumber.total_count,
+   },
+   // {
+   //   type: 'Today',
+   // },
+   // {
+   //   type: 'Last Month',
+   // },
+   {
+     type: translations[currentLanguage]?.hot || "Hot",
+     total_count: totalhotenquirynumber.total_count,
+   },
+   {
+     type: translations[currentLanguage]?.cold || "Cold",
+     total_count: totalcoldenquirynumber.total_count,
+   },
+   {
+     type: translations[currentLanguage]?.warm || "Warm",
+     total_count: totalwarmenquirynumber.total_count,
+   },
+   {
+     type: translations[currentLanguage]?.usercreated || "User Created",
+     total_count: totalusercreatedenquirynumber.total_count,
+   },
+ ];
   const handleScreen = type => {
     console.log(type, 'screen');
     dispatch(setEnquiryType(type));
   };
   const handleSheduleCall = item => {
-    navigation.navigate('Schedule Call', { item: item });
+    navigation.navigate('Schedule Call', {item: item});
   };
   const makePhoneCall = mobileNumber => {
     console.log('Calling...', mobileNumber);
@@ -99,7 +110,7 @@ const AddMore = () => {
 
   const openAdditonalEnquiry = item => {
     console.log(item, '>>>>>>>>>>>>>>>.');
-    navigation.navigate('Additional Details', { item: item });
+    navigation.navigate('Additional Details', {item: item});
   };
 
   const handleConfirm = () => {
@@ -126,8 +137,10 @@ const AddMore = () => {
       console.log(config);
       await axios.get(url, config).then(response => {
         if (response) {
-          const filteredCategory = response.data.result.filter((item) => item.id !== 1);
-          filteredCategory.unshift({ id: 1, category_name: 'All' });
+          const filteredCategory = response.data.result.filter(
+            item => item.id !== 1,
+          );
+          filteredCategory.unshift({id: 1, category_name: 'All'});
           setCategoryData(filteredCategory);
           dispatch(setEnquiryType('New'));
         }
@@ -139,10 +152,100 @@ const AddMore = () => {
     dispatch(setEnquiryType('New'));
   };
   useEffect(() => {
-    if (selectedCategory) {
-      console.log(selectedCategory, 'slelr')
-    }
-  }, [selectedCategory])
+    countNewEnquiry();
+    countHotEnquiry();
+    countColdEnquiry();
+    countWarmEnquiry();
+    countUserCreatedEnquiry();
+  }, [selectedCategory]);
+
+ const countNewEnquiry = async () => {
+   console.log('New enquiries....', selectedCategory);
+   const url = `${API_URL}/api/enquiry/get-total-new-enquiry-count/${selectedCategory}`;
+   console.log('get new enqiry count', url);
+   const token = await AsyncStorage.getItem('rbacToken');
+   const config = {
+     headers: {
+       token: token ? token : '',
+     },
+   };
+   setLoading(true);
+   await axios.get(url, config).then(response => {
+     console.log(response.data.result, 'count new enquiry');
+     setTotalNewWenquiryNumber(response.data.result[0]);
+   });
+   setLoading(false);
+ };
+ const countHotEnquiry = async () => {
+   console.log('New enquiries....', selectedCategory);
+   const url = `${API_URL}/api/enquiry/get-total-hot-enquiry-count/${selectedCategory}`;
+   console.log('get hot enqiry count', url);
+   const token = await AsyncStorage.getItem('rbacToken');
+   const config = {
+     headers: {
+       token: token ? token : '',
+     },
+   };
+   setLoading(true);
+   await axios.get(url, config).then(response => {
+     console.log(response.data.result, 'count hot enquiry');
+     setTotalHotWenquiryNumber(response.data.result[0]);
+   });
+   setLoading(false);
+ };
+ const countColdEnquiry = async () => {
+   console.log('New enquiries....', selectedCategory);
+   const url = `${API_URL}/api/enquiry/get-total-cold-enquiry-count/${selectedCategory}`;
+   console.log('get hot enqiry count', url);
+   const token = await AsyncStorage.getItem('rbacToken');
+   const config = {
+     headers: {
+       token: token ? token : '',
+     },
+   };
+   setLoading(true);
+   await axios.get(url, config).then(response => {
+     console.log(response.data.result, 'count cold enquiry');
+     setTotalColdWenquiryNumber(response.data.result[0]);
+   });
+   setLoading(false);
+ };
+ const countWarmEnquiry = async () => {
+   console.log('New enquiries....', selectedCategory);
+   const url = `${API_URL}/api/enquiry/get-total-warm-enquiry-count/${selectedCategory}`;
+   console.log('get hot enqiry count', url);
+   const token = await AsyncStorage.getItem('rbacToken');
+   const config = {
+     headers: {
+       token: token ? token : '',
+     },
+   };
+   setLoading(true);
+   await axios.get(url, config).then(response => {
+     console.log(response.data.result, 'count warm enquiry');
+     setTotalWarmWenquiryNumber(response.data.result[0]);
+   });
+   setLoading(false);
+ };
+ const countUserCreatedEnquiry = async () => {
+   console.log('New enquiries....', selectedCategory);
+   const url = `${API_URL}/api/enquiry/get-total-user-created-enquiry-count/${selectedCategory}`;
+   console.log('get user created enqiry count', url);
+   const token = await AsyncStorage.getItem('rbacToken');
+   const config = {
+     headers: {
+       token: token ? token : '',
+     },
+   };
+   setLoading(true);
+   await axios.get(url, config).then(response => {
+     console.log(response.data.result, ' user created enqiry count');
+     setTotalUserCreatedenquiryNumber(response.data.result[0]);
+   });
+   setLoading(false);
+ };
+
+
 
   const searchMobileNumber = async (mobileno, selectedCategory) => {
     const url = `${API_URL}/api/get-enquiries-by-mobileno/${mobileno}/${selectedCategory}`;
@@ -156,18 +259,18 @@ const AddMore = () => {
     await axios.get(url, config).then(response => {
       if (response) {
         console.log(response.data.result, 'Serached Data');
-        dispatch(setEnquiryType('Searched Enquiry'))
+        dispatch(setEnquiryType('Searched Enquiry'));
         setNewEnquiryList(response.data.result);
-        setIsConfiromation(true)
+        setIsConfiromation(true);
       }
     });
-  }
+  };
 
   useEffect(() => {
     if (searchText.length > 1) {
-      searchMobileNumber(searchText, selectedCategory)
+      searchMobileNumber(searchText, selectedCategory);
     }
-  }, [searchText, selectedCategory])
+  }, [searchText, selectedCategory]);
 
   return (
     <View style={styles.container}>
@@ -180,8 +283,8 @@ const AddMore = () => {
                 <Dropdown
                   style={[
                     styles.dropdown,
-                    isFocus && { borderColor: 'blue' },
-                    { paddingHorizontal: 5 },
+                    isFocus && {borderColor: 'blue'},
+                    {paddingHorizontal: 5},
                   ]}
                   placeholderStyle={styles.placeholderStyle}
                   selectedTextStyle={styles.selectedTextStyle}
@@ -194,7 +297,7 @@ const AddMore = () => {
                   valueField="value"
                   searchPlaceholder="Search..."
                   value={selectedCategory}
-                  onChange={(item) => {
+                  onChange={item => {
                     setSelectedCategory(item.value);
                     handleCategoryChange(item.value);
                   }}
@@ -209,7 +312,7 @@ const AddMore = () => {
             placeholder={translations[currentLanguage]?.searchbymobile || "SEARCH BY MOBILE NUMBER..."}
             value={searchText}
             maxLength={10}
-            onChangeText={(text) => {
+            onChangeText={text => {
               setSearchText(text);
             }}
           />
@@ -220,7 +323,7 @@ const AddMore = () => {
           data={enquiryFilters}
           horizontal={true}
           showsHorizontalScrollIndicator={false}
-          renderItem={({ item, index }) => {
+          renderItem={({item, index}) => {
             return (
               <TouchableOpacity
                 style={[
@@ -231,28 +334,47 @@ const AddMore = () => {
                 onPress={() => {
                   handleScreen(item.type);
                 }}>
-                <Text
-                  style={[
-                    styles.buttonText,
-                    enquiryType === item.type && styles.newActiveText,
-                  ]}>
-                  {item.type.toLocaleUpperCase()}
-                </Text>
+                <View style={styles.buttonContent}>
+                  <Text
+                    style={[
+                      styles.buttonText,
+                      enquiryType === item.type && styles.newActiveText,
+                    ]}>
+                    {item.type.toLocaleUpperCase()}
+                  </Text>
+                  
+                    <Text style={styles.totalCountText}>
+                       {item.total_count}
+                    </Text>
+               
+                </View>
               </TouchableOpacity>
             );
           }}
         />
       </View>
-      {enquiryType === 'New' && <NewEnquiry selectedCategory={selectedCategory} />}
+      {enquiryType === 'New' && (
+        <NewEnquiry selectedCategory={selectedCategory} />
+      )}
       {/* {enquiryType === 'Today' && <TodayEnquiry />}
       {enquiryType === 'Last Month' && <LastMonthEnquiry />} */}
       {enquiryType === 'Due' && <DueEnquiry />}
-      {enquiryType === 'Hot' && <HotEnquiry selectedCategory={selectedCategory} />}
-      {enquiryType === 'Cold' && <ColdEnquiry selectedCategory={selectedCategory} />}
-      {enquiryType === 'Warm' && <WarmEnquiry selectedCategory={selectedCategory} />}
-      {enquiryType === 'User Created' && <UserCreatedEnquiry selectedCategory={selectedCategory} />}
+      {enquiryType === 'Hot' && (
+        <HotEnquiry selectedCategory={selectedCategory} />
+      )}
+      {enquiryType === 'Cold' && (
+        <ColdEnquiry selectedCategory={selectedCategory} />
+      )}
+      {enquiryType === 'Warm' && (
+        <WarmEnquiry selectedCategory={selectedCategory} />
+      )}
+      {enquiryType === 'User Created' && (
+        <UserCreatedEnquiry selectedCategory={selectedCategory} />
+      )}
       {/* {enquiryType === 'Followed Enquiry' && <FollowedEnquiry />} */}
-      {enquiryType === 'All' && <CategorisedEnquiry categoryId={selectedCategory} />}
+      {enquiryType === 'All' && (
+        <CategorisedEnquiry categoryId={selectedCategory} />
+      )}
       <View>
         {enquiryType != 'All' && newEnquiryList && newEnquiryList.length > 0 ? (
           <FlatList
@@ -261,7 +383,7 @@ const AddMore = () => {
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }
-            renderItem={({ item, index }) => {
+            renderItem={({item, index}) => {
               return (
                 <TouchableWithoutFeedback
                   onPress={() => {
@@ -308,7 +430,11 @@ const AddMore = () => {
                           <Text style={styles.label}>
                             {item.product ? item.product : '-'}
                           </Text>
-                          {item.sales_person && (<Text style={styles.salesText}>{item.sales_person}</Text>)}
+                          {item.sales_person && (
+                            <Text style={styles.salesText}>
+                              {item.sales_person}
+                            </Text>
+                          )}
                           <Text style={styles.label}>
                             {item.village ? item.village : '-'}
                           </Text>
@@ -366,10 +492,9 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   categoryContainer: {
-    backgroundColor: '#2471A2'
+    backgroundColor: '#2471A2',
   },
   enquirySourceContainer: {
-
     borderColor: '#0984DF',
     borderWidth: 1,
     borderRadius: 5,
@@ -522,7 +647,7 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     flexDirection: 'row',
     alignItems: 'center',
-    marginHorizontal: 10
+    marginHorizontal: 10,
   },
   searchInput: {
     height: 40,
@@ -530,8 +655,19 @@ const styles = StyleSheet.create({
     fontFamily: 'SourceSansProRegular',
     fontSize: 16,
     color: 'black',
-    paddingHorizontal: 10
+    paddingHorizontal: 10,
   },
+  buttonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  totalCountText:{
+    color:'black',
+    padding:5,
+    borderRadius:50,
+    backgroundColor:'2471A2',
+    marginBottom:15,
+  }
 });
 
 export default AddMore;
