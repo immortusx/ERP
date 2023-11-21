@@ -1890,7 +1890,137 @@ router.get(
     });
   }
 );
+//====================get total new enquiry count================
+router.get(
+  "/get-total-new-enquiry-count/:categoryId",
+  tokenCheck,
+  async (req, res) => {
+    try {
+      console.log(">>>>>>>>>/get-total-new-enquiry-count");
+      let isSuperAdmin = req.myData.isSuperAdmin;
+      let categoryId = req.params.categoryId;
+       let userId = req.myData.userId;
+      const urlNew = `CALL sp_get_new_enquiry_list_total_count(${isSuperAdmin}, ${userId},${categoryId})`;
+      await db.query(urlNew, async (err, result) => {
+        if (err) {
+          console.log({ isSuccess: false, result: err });
+          res.send({ isSuccess: false, result: "error" });
+        } else {
+          console.log({ isSuccess: "success", result: urlNew });
+          console.log({ isSuccess: "success", result: result[0] });
+          res.send({ isSuccess: "success", result: result[0] });
+        }
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  }
+);
+//====================get hot enquiry-list-total=================
+router.get(
+  "/get-total-hot-enquiry-count/:categoryId",
+  tokenCheck,
+  async (req, res) => {
+    try {
+      console.log(">>>>>>>>>/get-total-hot-enquiry-count");
+      let isSuperAdmin = req.myData.isSuperAdmin;
+      let categoryId = req.params.categoryId;
+      let userId = req.myData.userId;
+      const urlNew = `CALL sp_get_hot_enquiry_list_total_count(${isSuperAdmin}, ${userId},${categoryId})`;
+      await db.query(urlNew, async (err, result) => {
+        if (err) {
+          console.log({ isSuccess: false, result: err });
+          res.send({ isSuccess: false, result: "error" });
+        } else {
+          console.log({ isSuccess: "success", result: urlNew });
+          console.log({ isSuccess: "success", result: result[0] });
+          res.send({ isSuccess: "success", result: result[0] });
+        }
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  }
+);
+//====================get cold enquiry-list-total================
+router.get(
+  "/get-total-cold-enquiry-count/:categoryId",
+  tokenCheck,
+  async (req, res) => {
+    try {
+      console.log(">>>>>>>>>/get-total-cold-enquiry-count");
+      let isSuperAdmin = req.myData.isSuperAdmin;
+      let categoryId = req.params.categoryId;
+      let userId = req.myData.userId;
+      const urlNew = `CALL sp_get_cold_enquiry_list_total_count(${isSuperAdmin}, ${userId},${categoryId})`;
+      await db.query(urlNew, async (err, result) => {
+        if (err) {
+          console.log({ isSuccess: false, result: err });
+          res.send({ isSuccess: false, result: "error" });
+        } else {
+          console.log({ isSuccess: "success", result: urlNew });
+          console.log({ isSuccess: "success", result: result[0] });
+          res.send({ isSuccess: "success", result: result[0] });
+        }
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  }
+);
 
+//====================get warm enquiry-list-total================
+router.get(
+  "/get-total-warm-enquiry-count/:categoryId",
+  tokenCheck,
+  async (req, res) => {
+    try {
+      console.log(">>>>>>>>>/get-total-warm-enquiry-count");
+      let isSuperAdmin = req.myData.isSuperAdmin;
+      let categoryId = req.params.categoryId;
+      let userId = req.myData.userId;
+      const urlNew = `CALL sp_get_warm_enquiry_list_total_count(${isSuperAdmin}, ${userId},${categoryId})`;
+      await db.query(urlNew, async (err, result) => {
+        if (err) {
+          console.log({ isSuccess: false, result: err });
+          res.send({ isSuccess: false, result: "error" });
+        } else {
+          console.log({ isSuccess: "success", result: urlNew });
+          console.log({ isSuccess: "success", result: result[0] });
+          res.send({ isSuccess: "success", result: result[0] });
+        }
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  }
+);
+//====================get total user created enquiry list total==
+router.get(
+  "/get-total-user-created-enquiry-count/:categoryId",
+  tokenCheck,
+  async (req, res) => {
+    try {
+      console.log(">>>>>>>>>/get-total-warm-enquiry-count");
+      let isSuperAdmin = req.myData.isSuperAdmin;
+      let categoryId = req.params.categoryId;
+      let userId = req.myData.userId;
+      const urlNew = `CALL sp_get_user_created_enquiry_list_total_count(${userId},${categoryId})`;
+      await db.query(urlNew, async (err, result) => {
+        if (err) {
+          console.log({ isSuccess: false, result: err });
+          res.send({ isSuccess: false, result: "error" });
+        } else {
+          console.log({ isSuccess: "success", result: urlNew });
+          console.log({ isSuccess: "success", result: result[0] });
+          res.send({ isSuccess: "success", result: result[0] });
+        }
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  }
+);
 //====================get total enquiry-booking==================
 router.get("/get-total-enquiry-booking", tokenCheck, async (req, res) => {
   try {
