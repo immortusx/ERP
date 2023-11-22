@@ -504,7 +504,7 @@ export default function Manufacturer_modal() {
                   </div>
                   <div className="mb-3">
                     <label htmlFor="file" className="col-form-label">
-                      Manufacturer Link:
+                      Modal Link:
                     </label>
                     <input
                       type="modalLink"
@@ -516,7 +516,7 @@ export default function Manufacturer_modal() {
                   </div>
                   <div className="mb-3">
                     <label htmlFor="file" className="col-form-label">
-                      Manufacturer File:
+                      Modal File:
                     </label>
                     <input
                       type="file"
