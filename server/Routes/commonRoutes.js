@@ -901,4 +901,37 @@ const insertDataUsingSP = (jsonData, callback) => {
   });
 };
 
+//=======================Messages Api=========================
+
+
+router.get("/get-message-action", tokenCheck, async (req, res) => {
+  console.log(">>>>>/get-message-action");
+  const id = req.params.id;
+  const url = `SELECT * FROM message_action`;
+  await db.query(url, async (err, result) => {
+    if (err) {
+      console.log({ isSuccess: true, result: err });
+      res.send({ isSuccess: true, result: "error" });
+    } else {
+      console.log({ isSuccess: true, result: url });
+      res.send({ isSuccess: true, result: result });
+    }
+  });
+});
+
+router.get("/get-types", tokenCheck, async (req, res) => {
+  console.log(">>>>>/get-types");
+  const id = req.params.id;
+  const url = `SELECT * FROM types`;
+  await db.query(url, async (err, result) => {
+    if (err) {
+      console.log({ isSuccess: true, result: err });
+      res.send({ isSuccess: true, result: "error" });
+    } else {
+      console.log({ isSuccess: true, result: url });
+      res.send({ isSuccess: true, result: result });
+    }
+  });
+});
+
 module.exports = router;
