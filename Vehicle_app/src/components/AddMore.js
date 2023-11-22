@@ -13,7 +13,7 @@ import {
 import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getEnquiryData } from '../redux/slice/getEnquirySlice';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation, useFocusEffect} from '@react-navigation/native';
 import CustomLoadingSpinner from './subCom/CustomLoadingSpinner';
 import { Linking } from 'react-native';
 import moment from 'moment';
@@ -151,13 +151,23 @@ const AddMore = () => {
   const handleCategoryChange = async categoryId => {
     dispatch(setEnquiryType('New'));
   };
-  useEffect(() => {
-    countNewEnquiry();
-    countHotEnquiry();
-    countColdEnquiry();
-    countWarmEnquiry();
-    countUserCreatedEnquiry();
-  }, [selectedCategory]);
+  // useEffect(() => {
+  //   countNewEnquiry();
+  //   countHotEnquiry();
+  //   countColdEnquiry();
+  //   countWarmEnquiry();
+  //   countUserCreatedEnquiry();
+  // }, [selectedCategory]);
+
+   useFocusEffect(
+     React.useCallback(() => {
+       countNewEnquiry();
+       countHotEnquiry();
+       countColdEnquiry();
+       countWarmEnquiry();
+       countUserCreatedEnquiry();
+     }, [selectedCategory]),
+   );
 
  const countNewEnquiry = async () => {
    console.log('New enquiries....', selectedCategory);

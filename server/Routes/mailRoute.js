@@ -93,10 +93,92 @@ cron.schedule("0 20 * * *", async () => {
     console.error("Error:", error);
   }
 });
+cron.schedule("0 20 * * *", async () => {
+  try {
+    const workReportDetailQuery =
+      "CALL sp_get_work_report_detail_for_currentdate()";
+
+    db.query(
+      workReportDetailQuery,
+      async (workReportDetailErr, workReportDetailResult) => {
+        if (workReportDetailErr) {
+          console.error(workReportDetailErr);
+        } else {
+          const workReportDataDeatil = workReportDetailResult[0];
+
+          if (workReportDataDeatil.length > 0) {
+            const workReportFilename = "work_report.csv";
+            const workReportStream = fs.createWriteStream(workReportFilename);
+
+            fastcsv
+              .write(workReportDataDeatil, { headers: true })
+              .on("finish", () => {
+                console.log(
+                  "Work report Detail CSV file created successfully."
+                );
+
+                const superAdminEmailQuery =
+                  "SELECT email FROM users WHERE id = 1";
+                db.query(
+                  superAdminEmailQuery,
+                  async (superAdminEmailErr, superAdminEmailResult) => {
+                    if (superAdminEmailErr) {
+                      console.error(superAdminEmailErr);
+                    } else {
+                      const Email = superAdminEmailResult[0].email;
+                      console.log(Email, "superAdminEmail");
+
+                      transporter.sendMail({
+                        from: "sales.balkrushna@gmail.com",
+                        to: Email,
+                        cc: "info@balkrushna.com",
+                        subject: "Work Report",
+                        text: "Please find the attached work report.",
+                        attachments: [
+                          {
+                            filename: "work_report.csv",
+                            content: fs.createReadStream(workReportFilename),
+                          },
+                        ],
+                      });
+                    }
+                  }
+                );
+              })
+              .pipe(workReportStream);
+          } else {
+            const superAdminEmailQuery = "SELECT email FROM users WHERE id = 1";
+            db.query(
+              superAdminEmailQuery,
+              async (superAdminEmailErr, superAdminEmailResult) => {
+                if (superAdminEmailErr) {
+                  console.error(superAdminEmailErr);
+                } else {
+                  const Email = superAdminEmailResult[0].email;
+                  console.log(Email, "superAdminEmail");
+
+                  transporter.sendMail({
+                    from: "sales.balkrushna@gmail.com",
+                    to: Email,
+                    cc: "info@balkrushna.com",
+                    subject: "No Work Report Data",
+                    text: "There is no work report data available for today.",
+                  });
+                }
+              }
+            );
+          }
+        }
+      }
+    );
+  } catch (error) {
+    console.error("Error:", error);
+  }
+});
 
 ////////////////////////////////////////////////////
 
-cron.schedule("59 15 * * *", async () => {
+cron.schedule("0 10 * * *", async () => {
   try {
     const tasklist = "CALL sp_get_task_for_currentdate()";
 
