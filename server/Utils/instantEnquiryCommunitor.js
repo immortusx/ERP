@@ -139,7 +139,7 @@ const attachProductFile = (mappingId) => {
         if (dataResults && dataResults.length > 0) {
           const rowDataPacket = dataResults[0][0];
           const documentPath = rowDataPacket.document_path;
-          const documentLink = rowDataPacket.link;
+          // const documentLink = rowDataPacket.link;
           const filePath = `${process.env.REACT_APP_NODE_URL}${documentPath}`;
           resolve(filePath); // Resolve the promise with the file path
         } else {
