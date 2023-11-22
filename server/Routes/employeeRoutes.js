@@ -303,9 +303,8 @@ router.post(
     try {
       console.log(req.body, "reo");
       console.log(req.file.filename, "rer");
-      // const logoImage = `/upload/${req.file.filename}`;
-      // console.log(logoImage, "logoimg");
       let logoImage = req.body.logo;
+      let link = req.body.link;
       console.log("req.file", req.file);
       if (req.file) {
         logoImage = `/upload/${req.file.filename}`;
@@ -317,8 +316,8 @@ router.post(
         .replace("T", " ");
 
       const sql =
-        "INSERT INTO documents (document_path, created_at) VALUES (?, ?)";
-      const values = [logoImage, formattedDate];
+        "INSERT INTO documents (document_path, created_at,link) VALUES (?, ?,?)";
+      const values = [logoImage, formattedDate, link];
 
       db.query(sql, values, (err, result) => {
         if (err) {
