@@ -18,7 +18,7 @@ const instantEnquiryMessage = async (messagePayloads) => {
 //For Customers Acknowledgement
 const sendMessageToCustomer = async (enquiryId) => {
   const sql = `CALL sp_get_customer_message_data(${enquiryId})`;
-  await db.query(sql, (error, dataResults) => {
+  await db.query(sql, async (error, dataResults) => {
     if (error) {
       console.log({ isSuccess: false, result: error });
     } else {
@@ -32,6 +32,12 @@ const sendMessageToCustomer = async (enquiryId) => {
         const customerProduct = rowDataPacket.product;
         const SSPNumber = Number(rowDataPacket.SSPNumber);
         const salesPersonName = rowDataPacket.salesPersonName;
+        const manufacturerId = rowDataPacket.manufacturerId;
+        const modalId = rowDataPacket.modalId;
+        const modal = rowDataPacket.product;
+        const manufacturer = rowDataPacket.manufactureName;
+
+        const file = await attachProductFile(manufacturerId);
         const acknowledgmentMessage = `*Dear ${customerName},*
 
 Thank you for your enquiry regarding *${customerProduct}*. 
@@ -44,7 +50,7 @@ Team New Keshav Tractors`;
         const chatPayloads = {
           phoneNumbers: [customerWhatsAppNumber],
           message: acknowledgmentMessage,
-          files: "https://www.africau.edu/images/default/sample.pdf",
+          files: file,
         };
 
         //Comment this while on Development
@@ -118,4 +124,31 @@ const sendTaskAssignmentNotification = async (employeeId) => {
     }
   });
 };
+const attachProductFile = (mappingId) => {
+  return new Promise((resolve, reject) => {
+    const url = `CALL sp_get_product_documents_details(${mappingId}, ${1})`;
+
+    db.query(url, (err, dataResults) => {
+      if (err) {
+        console.log({ isSuccess: false, result: "error" });
+        reject(err);
+      } else {
+        // console.log({ isSuccess: true, result: result });
+        console.log(dataResults, "reiskekrerll");
+
+        if (dataResults && dataResults.length > 0) {
+          const rowDataPacket = dataResults[0][0];
+          const documentPath = rowDataPacket.document_path;
+          // const documentLink = rowDataPacket.link;
+          const filePath = `${process.env.REACT_APP_NODE_URL}${documentPath}`;
+          resolve(filePath); // Resolve the promise with the file path
+        } else {
+          console.log({ isSuccess: false, result: "No data found" });
+          resolve(null); // Resolve with null if no data is found
+        }
+      }
+    });
+  });
+};
+
 module.exports = { instantEnquiryMessage, sendTaskAssignmentNotification };
