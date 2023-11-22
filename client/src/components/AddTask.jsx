@@ -7,6 +7,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { addTaskToDb, clearAddTaskState } from '../redux/slices/addTaskSlice'
 import Select from 'react-select';
 import { Modal, Button } from "react-bootstrap";
+import moment from "moment/moment";
 import translations from '../assets/locals/translations';
 import { editTaskAssignUpdateToDb, clearEditTaskAssignState, clearEditTaskAssignData } from '../redux/slices/editTaskAssignSlice'
 const AssignTask = ({ workFor }) => {
@@ -305,6 +306,9 @@ const AssignTask = ({ workFor }) => {
     navigate('/administration/configuration/Task')
   }
   const handleSubmit = async () => {
+    const formatedStartDate = moment(startDate).format('YYYY-MM-DD');
+    const formatedEndDate = moment(endDate).format('YYYY-MM-DD');
+
     const selectedEmployeeIds = selectedEmployee.map(employee => employee.value);
 
     const data = {
@@ -312,8 +316,8 @@ const AssignTask = ({ workFor }) => {
       taskTypes: taskTypes,
       tasks: tasks,
       taskCount: taskCount,
-      startDate: startDate,
-      endDate: endDate,
+      startDate: formatedStartDate,
+      endDate: formatedEndDate,
       tasktimePeriod: tasktimePeriod,
       taskStatus: taskStatus,
       taskCategory: taskCategory

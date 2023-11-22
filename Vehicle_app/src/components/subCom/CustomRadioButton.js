@@ -11,7 +11,7 @@ const CustomRadioButton = ({ options, selectedOption, onSelect }) => {
           onPress={() => onSelect(option)}
         >
           <View style={styles.radioButtonRow}>
-            <Text style={[styles.radioButtonLabel, option === 'English' && styles.selectedLabel]}>
+            <Text style={[styles.radioButtonLabel, option === selectedOption && styles.selectedLabel]}>
               {option}
             </Text>
             <View style={styles.radioButtonIcon}>
@@ -31,6 +31,7 @@ const styles = StyleSheet.create({
   radioButtonRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between', // Added justifyContent to create space between label and icon
   },
   radioButtonIcon: {
     width: 20,
@@ -40,7 +41,6 @@ const styles = StyleSheet.create({
     borderColor: '#0984DF',
     justifyContent: 'center',
     alignItems: 'center',
-    marginLeft: 280,
   },
   radioButtonIconSelected: {
     width: 10,
