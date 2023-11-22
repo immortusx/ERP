@@ -182,8 +182,8 @@ router.post("/addtask-data", tokenCheck, async (req, res) => {
     const tasktypePeriod = req.body.tasktimePeriod;
     const taskStatus = req.body.taskStatus;
     const taskCategory = req.body.taskCategory;
-    const startDate = req.body.startDate.split("T")[0];
-    const endDate = req.body.endDate.split("T")[0];
+    const startDate = req.body.startDate;
+    const endDate = req.body.endDate;
 
     const url = `INSERT INTO addtask_data (employee, tasktype, task, taskcount, startdate, enddate,tasktime_period,task_status,category_name) VALUES (?,?,?,?,?,?,?,?,?)`;
 
