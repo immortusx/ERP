@@ -320,8 +320,8 @@ router.post("/set-task-edit/:id", tokenCheck, async (req, res) => {
     const tasktypePeriod = req.body.tasktimePeriod;
     const taskStatus = req.body.taskStatus;
     const taskCategory = req.body.taskCategory;
-    const startDate = req.body.startDate.split("T")[0];
-    const endDate = req.body.endDate.split("T")[0];
+    const startDate = req.body.startDate;
+    const endDate = req.body.endDate;
     const newUrl = `UPDATE addtask_data SET employee = '${employees}', tasktype = '${taskType}', task = '${tasks}', taskcount = '${taskCount}', startdate = '${startDate}', enddate = '${endDate}', tasktime_period = ${tasktypePeriod}, task_status=${taskStatus}, category_name=${taskCategory} WHERE id = '${EmployeeId}'`;
 
     await db.query(newUrl, async (err, newResult) => {
