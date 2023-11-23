@@ -17,166 +17,146 @@ const transporter = nodemailer.createTransport({
     pass: "jnouvesshyjdvaui",
   },
 });
-cron.schedule("0 20 * * *", async () => {
+
+
+const generateWorkReport = async () => {
   try {
     const workReportQuery = "CALL sp_get_work_report_for_currentdate()";
+     const workReportDetailQuery =
+       "CALL sp_get_work_report_detail_for_currentdate()";
+    const noWorkReportQuery = "CALL sp_get_no_work_report_for_currentdate()";
+    const superAdminEmailQuery = "SELECT email FROM users WHERE id = 1";
 
-    db.query(workReportQuery, async (workReportErr, workReportResult) => {
-      if (workReportErr) {
-        console.error(workReportErr);
-      } else {
-        const workReportData = workReportResult[0];
-
-        if (workReportData.length > 0) {
-          const workReportFilename = "work_report.csv";
-          const workReportStream = fs.createWriteStream(workReportFilename);
-
-          fastcsv
-            .write(workReportData, { headers: true })
-            .on("finish", () => {
-              console.log("Work report CSV file created successfully.");
-
-              const superAdminEmailQuery =
-                "SELECT email FROM users WHERE id = 1";
-              db.query(
-                superAdminEmailQuery,
-                async (superAdminEmailErr, superAdminEmailResult) => {
-                  if (superAdminEmailErr) {
-                    console.error(superAdminEmailErr);
-                  } else {
-                    const Email = superAdminEmailResult[0].email;
-                    console.log(Email, "superAdminEmail");
-
-                    transporter.sendMail({
-                      from: "sales.balkrushna@gmail.com",
-                      to: Email,
-                      cc: "info@balkrushna.com",
-                      subject: "Work Report",
-                      text: "Please find the attached work report.",
-                      attachments: [
-                        {
-                          filename: "work_report.csv",
-                          content: fs.createReadStream(workReportFilename),
-                        },
-                      ],
-                    });
-                  }
-                }
-              );
-            })
-            .pipe(workReportStream);
-        } else {
-          const superAdminEmailQuery = "SELECT email FROM users WHERE id = 1";
-          db.query(
-            superAdminEmailQuery,
-            async (superAdminEmailErr, superAdminEmailResult) => {
-              if (superAdminEmailErr) {
-                console.error(superAdminEmailErr);
-              } else {
-                const Email = superAdminEmailResult[0].email;
-                console.log(Email, "superAdminEmail");
-
-                transporter.sendMail({
-                  from: "sales.balkrushna@gmail.com",
-                  to: Email,
-                  cc: "info@balkrushna.com",
-                  subject: "No Work Report Data",
-                  text: "There is no work report data available for today.",
-                });
-              }
-            }
-          );
-        }
-      }
-    });
-  } catch (error) {
-    console.error("Error:", error);
-  }
-});
-cron.schedule("0 20 * * *", async () => {
-  try {
-    const workReportDetailQuery =
-      "CALL sp_get_work_report_detail_for_currentdate()";
-
-    db.query(
-      workReportDetailQuery,
-      async (workReportDetailErr, workReportDetailResult) => {
-        if (workReportDetailErr) {
-          console.error(workReportDetailErr);
-        } else {
-          const workReportDataDeatil = workReportDetailResult[0];
-
-          if (workReportDataDeatil.length > 0) {
-            const workReportFilename = "work_report.csv";
-            const workReportStream = fs.createWriteStream(workReportFilename);
-
-            fastcsv
-              .write(workReportDataDeatil, { headers: true })
-              .on("finish", () => {
-                console.log(
-                  "Work report Detail CSV file created successfully."
-                );
-
-                const superAdminEmailQuery =
-                  "SELECT email FROM users WHERE id = 1";
-                db.query(
-                  superAdminEmailQuery,
-                  async (superAdminEmailErr, superAdminEmailResult) => {
-                    if (superAdminEmailErr) {
-                      console.error(superAdminEmailErr);
-                    } else {
-                      const Email = superAdminEmailResult[0].email;
-                      console.log(Email, "superAdminEmail");
-
-                      transporter.sendMail({
-                        from: "sales.balkrushna@gmail.com",
-                        to: Email,
-                        cc: "info@balkrushna.com",
-                        subject: "Work Report",
-                        text: "Please find the attached work report.",
-                        attachments: [
-                          {
-                            filename: "work_report.csv",
-                            content: fs.createReadStream(workReportFilename),
-                          },
-                        ],
-                      });
-                    }
-                  }
-                );
-              })
-              .pipe(workReportStream);
+    const fetchWorkReport = (query, filename) => {
+      return new Promise((resolve, reject) => {
+        db.query(query, async (err, result) => {
+          if (err) {
+            console.error(err);
+            reject(err);
           } else {
-            const superAdminEmailQuery = "SELECT email FROM users WHERE id = 1";
-            db.query(
-              superAdminEmailQuery,
-              async (superAdminEmailErr, superAdminEmailResult) => {
-                if (superAdminEmailErr) {
-                  console.error(superAdminEmailErr);
-                } else {
-                  const Email = superAdminEmailResult[0].email;
-                  console.log(Email, "superAdminEmail");
-
-                  transporter.sendMail({
-                    from: "sales.balkrushna@gmail.com",
-                    to: Email,
-                    cc: "info@balkrushna.com",
-                    subject: "No Work Report Data",
-                    text: "There is no work report data available for today.",
-                  });
-                }
-              }
-            );
+            const data = result[0];
+            if (Array.isArray(data) && data.length > 0) {
+              const stream = fs.createWriteStream(filename);
+              fastcsv
+                .write(data, { headers: true })
+                .on("finish", () => {
+                  console.log(`${filename} CSV file created successfully.`);
+                  resolve({ data, stream });
+                })
+                .pipe(stream);
+            } else {
+              resolve(null);
+            }
           }
-        }
-      }
+        });
+      });
+    };
+
+    const workReport = await fetchWorkReport(
+      workReportQuery,
+      "work_report.csv"
     );
+    const workReportDetail = await fetchWorkReport(
+      workReportDetailQuery,
+      "work_report_detail.csv"
+    );
+    const noWorkReport = await fetchWorkReport(
+      noWorkReportQuery,
+      "no_work_report.csv"
+    );
+
+    if (workReport && workReport.data) {
+      const superAdminEmailResult = await new Promise((resolve, reject) => {
+        db.query(superAdminEmailQuery, (err, result) => {
+          if (err) {
+            console.error(err);
+            reject(err);
+          } else {
+            resolve(result[0]);
+          }
+        });
+      });
+
+      const Email = superAdminEmailResult.email;
+      console.log(Email, "superAdminEmail");
+
+      transporter.sendMail({
+        from: "sales.balkrushna@gmail.com",
+        to: Email,
+        cc: "info@balkrushna.com",
+        subject: "Work Report",
+        text: "Please find the attached work report.",
+        attachments: [
+          {
+            filename: "work_report.csv",
+            content: fs.createReadStream("work_report.csv"),
+          },
+        ],
+      });
+       if (workReportDetail && workReportDetail.data) {
+        const superAdminEmailResult = await new Promise((resolve, reject) => {
+          db.query(superAdminEmailQuery, (err, result) => {
+            if (err) {
+              console.error(err);
+              reject(err);
+            } else {
+              resolve(result[0]);
+            }
+          });
+        });
+         const Email = superAdminEmailResult.email;
+         console.log(Email, "superAdminEmail");
+
+         transporter.sendMail({
+           from: "sales.balkrushna@gmail.com",
+           to: Email,
+           cc: "info@balkrushna.com",
+           subject: "Work Report Detail",
+           text: "Please find the attached work report detail.",
+           attachments: [
+             {
+               filename: "work_report_detail.csv",
+               content: fs.createReadStream("work_report_detail.csv"),
+             },
+           ],
+         });
+       }
+    } else if (noWorkReport && noWorkReport.data) {
+      const superAdminEmailResult = await new Promise((resolve, reject) => {
+        db.query(superAdminEmailQuery, (err, result) => {
+          if (err) {
+            console.error(err);
+            reject(err);
+          } else {
+            resolve(result[0]);
+          }
+        });
+      });
+
+      const Email = superAdminEmailResult.email;
+      console.log(Email, "superAdminEmail");
+       transporter.sendMail({
+         from: "sales.balkrushna@gmail.com",
+         to: Email,
+         cc: "info@balkrushna.com",
+         subject: "No Work Report",
+         text: "There is no work report available for today.",
+         attachments: [
+           {
+             filename: "no_work_report.csv",
+             content: fs.createReadStream("no_work_report.csv"),
+           },
+         ],
+       });
+    }
   } catch (error) {
     console.error("Error:", error);
   }
-});
+};
 
-////////////////////////////////////////////////////
+cron.schedule("0 20 * * *", async () => {
+  generateWorkReport();
+});
 
 cron.schedule("0 10 * * *", async () => {
   try {
@@ -276,6 +256,7 @@ cron.schedule("0 10 * * *", async () => {
     console.error("Error", error);
   }
 });
+
 const sendTaskReportNotification = async (payloads) => {
   const { adminWhatsAppNumber, filename, file } = payloads;
   let message = `Task Report Here :`;
