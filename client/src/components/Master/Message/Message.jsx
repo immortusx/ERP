@@ -1,15 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import Axios from "axios";
 import { Button } from "react-bootstrap";
 import translations from "../../../assets/locals/translations";
+import axios from "axios";
+import { setShowMessage } from "../../../redux/slices/notificationSlice";
 const Message = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate()
   const [category, setCategory] = useState(null);
   const [messageAction, setMessageAction] = useState(null);
   const [types, setTypes] = useState(null);
+  const [message, setMessage] = useState(null);
   const currentLanguage = useSelector((state) => state.language.language);
+
   const redirectModal = () => {
     navigate(-1);
   };
@@ -24,10 +29,16 @@ const Message = () => {
   const onChangeMessageAction = (e) => {
     setMessageAction(e.target.value);
   }
+  function handleCancel() {
+    navigate('/administration/configuration')
+  }
 
   const onChangeTypes = (e) => {
     setTypes(e.target.value);
   }
+  const onChangeHandler = (e) => {
+    setMessage(e.target.value);
+  };
   async function getlistCategory() {
     const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/get-enquiry-categories`;
     const config = {
@@ -89,6 +100,26 @@ const Message = () => {
     getlistmsgAction();
     getlistTypes();
   }, [])
+  const handleSubmit = async (e) => {
+    const url = `${process.env.REACT_APP_NODE_URL}/api/add-messages`;
+    const config = {
+      headers: {
+        token: localStorage.getItem("rbacToken"),
+      },
+    };
+    const data = {
+      category: category,
+      messageAction: messageAction,
+      types: types,
+      message: message,
+    }
+    await axios.post(url, data, config).then((response) => {
+      if (response.data && response.data.isSuccess) {
+        dispatch(setShowMessage("Message Successfully Added."));
+        navigate('/administration/configuration')
+      }
+    });
+  };
 
   return (
     <div className='addUser  bg-white rounded p-3'>
@@ -190,18 +221,20 @@ const Message = () => {
             </select>
           </section>
         </div>
-        <section className='d-flex mt-3 flex-column col-12' style={{marginLeft:"10px"}}>
+        <section className='d-flex mt-3 flex-column col-12' style={{ marginLeft: "10px" }} >
           <label className='myLabel' htmlFor="email">Messages</label>
-          <textarea rows='4' className='myInput inputElement' autoComplete='false' type="text" name="roleDescription" style={{marginRight:"500px"}}/>
+          <textarea rows='4' className='myInput inputElement' autoComplete='false' type="text" name="roleDescription" style={{ marginRight: "500px" }} onChange={(e) => {
+            onChangeHandler(e);
+          }} />
         </section>
       </main>
       <section className="d-flex mt-3  flex-column flex-sm-row">
         <button
-          className="col-12 col-sm-5 col-lg-2 myBtn py-2"
+          className="col-12 col-sm-5 col-lg-2 myBtn py-2" onClick={handleSubmit}
           type="button">
-         Add Messages
+          Add Messages
         </button>
-        <button className='ms-0 ms-sm-3 mt-3 mt-sm-0 col-12 col-sm-5 col-lg-2 myBtn py-2' type='button'> {translations[currentLanguage].cancel} </button>
+        <button className='ms-0 ms-sm-3 mt-3 mt-sm-0 col-12 col-sm-5 col-lg-2 myBtn py-2' onClick={handleCancel} type='button'> {translations[currentLanguage].cancel} </button>
       </section>
     </div>
   )

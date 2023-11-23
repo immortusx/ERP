@@ -50,9 +50,6 @@ const BreadCrumb = () => {
         <div class="col-md-9 mt-2">
           <div className='mb-2 '>
             <div className='headerListUi'>
-
-
-
               {/* <ul id="breadcrumb">
                 <li><Link to="/">Home</Link></li>
                 <li><Link to="/profile">Profile</Link></li>
@@ -86,15 +83,12 @@ const BreadCrumb = () => {
                 <li><a href="">Agency</a></li>
             
               </ul> */}
-
               <Breadcrumbs  aria-label="breadcrumb">
-
                 {crumbs.map((crumb, index, array) => {
                   const currentLink = `/${array.slice(0, index + 1).join('/')}`;
                   const isLastCrumb = index === array.length - 1;
                   const isCrumb = array.filter((crumb) => crumb !== 'home');
                   return (
-
                     <Typography key={index} color="textPrimary">
                       <Link
                         className="crumb-link"
@@ -107,13 +101,9 @@ const BreadCrumb = () => {
                         <ExpandMoreIcon fontSize="small" />
                       )}
                     </Typography>
-
                   );
-
                 })}
               </Breadcrumbs>
-
-
             </div>
           </div>
         </div>
@@ -134,9 +124,6 @@ const BreadCrumb = () => {
             <LanguageSelector onChangeLanguage={(e) => setLanguage(e.target.value)} />
           </div>
         </div>
-
-
-
       </div>
     </div>
   );
