@@ -320,8 +320,8 @@ router.post("/set-task-edit/:id", tokenCheck, async (req, res) => {
     const tasktypePeriod = req.body.tasktimePeriod;
     const taskStatus = req.body.taskStatus;
     const taskCategory = req.body.taskCategory;
-    const startDate = req.body.startDate.split("T")[0];
-    const endDate = req.body.endDate.split("T")[0];
+    const startDate = req.body.startDate;
+    const endDate = req.body.endDate;
     const newUrl = `UPDATE addtask_data SET employee = '${employees}', tasktype = '${taskType}', task = '${tasks}', taskcount = '${taskCount}', startdate = '${startDate}', enddate = '${endDate}', tasktime_period = ${tasktypePeriod}, task_status=${taskStatus}, category_name=${taskCategory} WHERE id = '${EmployeeId}'`;
 
     await db.query(newUrl, async (err, newResult) => {
@@ -779,7 +779,7 @@ router.get(
           console.error(err);
           res.status(500).json({ isSuccess: true, result: result });
         } else {
-          console.log({ isSuccess: true, result: result }); 
+          console.log({ isSuccess: true, result: result });
           res.status(200).json({ isSuccess: true, result: result[0] });
         }
       });
@@ -910,8 +910,8 @@ router.get("/get-message-action", tokenCheck, async (req, res) => {
   const url = `SELECT * FROM message_action`;
   await db.query(url, async (err, result) => {
     if (err) {
-      console.log({ isSuccess: true, result: err });
-      res.send({ isSuccess: true, result: "error" });
+      console.log({ isSuccess: false, result: err });
+      res.send({ isSuccess: false, result: "error" });
     } else {
       console.log({ isSuccess: true, result: url });
       res.send({ isSuccess: true, result: result });
@@ -925,8 +925,8 @@ router.get("/get-types", tokenCheck, async (req, res) => {
   const url = `SELECT * FROM types`;
   await db.query(url, async (err, result) => {
     if (err) {
-      console.log({ isSuccess: true, result: err });
-      res.send({ isSuccess: true, result: "error" });
+      console.log({ isSuccess: false, result: err });
+      res.send({ isSuccess: false, result: "error" });
     } else {
       console.log({ isSuccess: true, result: url });
       res.send({ isSuccess: true, result: result });
@@ -934,4 +934,30 @@ router.get("/get-types", tokenCheck, async (req, res) => {
   });
 });
 
+router.post("/add-messages", tokenCheck, async (req, res) => {
+  try {
+    console.log("/add-messages>>>>>>>>>>>>", req.body);
+
+    const category = req.body.category;
+    const messageAction = req.body.messageAction;
+    const types = req.body.types;
+    const message = req.body.message;
+    const url = `INSERT INTO messages (category, action, type, message) VALUES (?,?,?,?)`;
+    console.log("url", url);
+    await db.query(url, [category, messageAction, types, message], async (err, result) => {
+      if (err) {
+        console.log({ isSuccess: false, result: err });
+        res.send({ isSuccess: false, result: "error" });
+      }
+      else {
+        console.log({ isSuccess: true, result: url });
+        res.send({ isSuccess: true, result: result });
+      }
+    });
+  } catch (err) {
+    console.log(err);
+  }
+});
+
 module.exports = router;
+  

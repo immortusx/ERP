@@ -21,7 +21,7 @@ function LanguageSelector() {
   };
 
   return (
-    <div className="custom-select" style={{marginTop:"2px"}}>
+    <div className="custom-select">
       {/* You can add the language flag image here */}
       <img src={lang} alt="Language" width="20" height="20" />
 

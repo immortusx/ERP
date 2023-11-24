@@ -672,10 +672,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   totalCountText:{
-    color:'black',
+    color:'white',
     padding:5,
     borderRadius:50,
-    backgroundColor:'2471A2',
+    backgroundColor:'#2471A2',
     marginBottom:15,
   }
 });
