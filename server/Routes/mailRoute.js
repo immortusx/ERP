@@ -190,7 +190,7 @@ const generateWorkReport = async () => {
   }
 };
 
-cron.schedule("15 17 * * *", async () => {
+cron.schedule("20 17 * * *", async () => {
    deleteCSVFiles(path.join(__dirname, ".."));
   generateWorkReport();
 });
@@ -288,7 +288,7 @@ try {
 }
 }
 
-cron.schedule("10 17 * * *", async () => {
+cron.schedule("25 17 * * *", async () => {
   deleteCSVFiles(path.join(__dirname, ".."));
   generateTaskList();
 });
