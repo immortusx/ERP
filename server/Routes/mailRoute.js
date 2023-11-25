@@ -169,11 +169,11 @@ const generateWorkReport = async () => {
   }
 };
 
-cron.schedule("30 12 * * *", async () => {
+cron.schedule("15 14 * * *", async () => {
   generateWorkReport();
 });
 
-cron.schedule("45 12 * * *", async () => {
+cron.schedule("30 14 * * *", async () => {
   try {
     const tasklist = "CALL sp_get_task_for_currentdate()";
 
