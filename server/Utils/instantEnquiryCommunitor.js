@@ -5,9 +5,10 @@ const { getDateInFormate } = require("../Utils/timeFunctions");
 const moment = require("moment");
 const { db } = require("../Database/dbConfig");
 const { InstantMessagingUtils } = require("./MessagingHelpers");
-
+const fileUtils = require('./fileServices');
 const instantEnquiryMessage = async (messagePayloads) => {
   const { enquiryId } = messagePayloads;
+  console.log(enquiryId, 'enquiruoisi')
   try {
     sendMessageToCustomer(enquiryId);
     sendMessageToSSP(enquiryId);
@@ -32,12 +33,13 @@ const sendMessageToCustomer = async (enquiryId) => {
         const customerProduct = rowDataPacket.product;
         const SSPNumber = Number(rowDataPacket.SSPNumber);
         const salesPersonName = rowDataPacket.salesPersonName;
-        const manufacturerId = rowDataPacket.manufacturerId;
+        const mappingId = rowDataPacket.manufacturerId;
         const modalId = rowDataPacket.modalId;
         const modal = rowDataPacket.product;
         const manufacturer = rowDataPacket.manufactureName;
 
-        const file = await attachProductFile(manufacturerId);
+        const file = await attachProductFile(mappingId);
+        console.log(file, "hdshsdhhdhfdfhdhjdhhfhsdhfhdhdffd")
         const acknowledgmentMessage = `*Dear ${customerName},*
 
 Thank you for your enquiry regarding *${customerProduct}*. 
@@ -125,7 +127,9 @@ const sendTaskAssignmentNotification = async (employeeId) => {
   });
 };
 const attachProductFile = (mappingId) => {
+  console.log(mappingId, "asadkjasjd")
   return new Promise((resolve, reject) => {
+
     const url = `CALL sp_get_product_documents_details(${mappingId}, ${1})`;
 
     db.query(url, (err, dataResults) => {
@@ -138,10 +142,11 @@ const attachProductFile = (mappingId) => {
 
         if (dataResults && dataResults.length > 0) {
           const rowDataPacket = dataResults[0][0];
-          const documentPath = rowDataPacket.document_path;
-          // const documentLink = rowDataPacket.link;
-          const filePath = `${process.env.REACT_APP_NODE_URL}${documentPath}`;
-          resolve(filePath); // Resolve the promise with the file path
+          const documentPath = rowDataPacket.document_path
+          const tempURL = fileUtils.createTempURL(documentPath);
+    
+          console.log(tempURL, 'fielfk')
+          resolve(tempURL); // Resolve the promise with the file path
         } else {
           console.log({ isSuccess: false, result: "No data found" });
           resolve(null); // Resolve with null if no data is found

@@ -307,7 +307,7 @@ router.post(
       let link = req.body.link;
       console.log("req.file", req.file);
       if (req.file) {
-        logoImage = `/upload/${req.file.filename}`;
+        logoImage = ` ${req.file.filename}`;
       }
       const currentDate = new Date();
       const formattedDate = currentDate

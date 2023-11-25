@@ -223,7 +223,7 @@ const Message = () => {
         </div>
         <section className='d-flex mt-3 flex-column col-12' style={{ marginLeft: "10px" }} >
           <label className='myLabel' htmlFor="email">Messages</label>
-          <textarea rows='4' className='myInput inputElement' autoComplete='false' type="text" name="roleDescription" style={{ marginRight: "500px" }} onChange={(e) => {
+          <textarea rows='4' className='myInput inputElement' autoComplete='false' type="text" name="roleDescription" style={{marginRight:"20px"}} onChange={(e) => {
             onChangeHandler(e);
           }} />
         </section>
