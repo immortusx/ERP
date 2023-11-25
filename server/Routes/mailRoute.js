@@ -81,12 +81,11 @@ const generateWorkReport = async () => {
 
       const Email = superAdminEmailResult.email;
       console.log(Email, "superAdminEmail");
-      const adminWhatsAppNumber = Number(superAdminEmailResult.phone_number);
+      const adminWhatsAppNumber = 919767832915;
 
       transporter.sendMail({
         from: "sales.balkrushna@gmail.com",
-        to: Email,
-        cc: "info@balkrushna.com",
+        to: "laxmichaudhari203@gmail.com",
         subject: "Work Report",
         text: "Please find the attached work report.",
         attachments: [
@@ -117,12 +116,10 @@ const generateWorkReport = async () => {
         const Email = superAdminEmailResult.email;
         console.log(Email, "superAdminEmail");
 
-        const adminWhatsAppNumber = Number(superAdminEmailResult.phone_number);
-
+       const adminWhatsAppNumber = 919767832915;
         transporter.sendMail({
           from: "sales.balkrushna@gmail.com",
-          to: Email,
-          cc: "info@balkrushna.com",
+          to:"laxmichaudhari203@gmail.com",
           subject: "Work Report Detail",
           text: "Please find the attached work report detail.",
           attachments: [
@@ -214,15 +211,12 @@ cron.schedule("15 12 * * *", async () => {
                         console.error(superAdminEmailErr);
                       } else {
                         const Email = superAdminEmailResult[0].email;
-                        const adminWhatsAppNumber = Number(
-                          superAdminEmailResult[0].phone_number
-                        );
+                        const adminWhatsAppNumber =919767832915
                         console.log(Email, "superAdminEmail");
 
                         transporter.sendMail({
                           from: "sales.balkrushna@gmail.com",
-                          to: Email,
-                          cc: "info@balkrushna.com",
+                          to:"laxmichaudhari203@gmail.com",
                           subject: "Task Work",
                           text: "Please find the attached Task Work.",
                           attachments: [
