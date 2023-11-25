@@ -95,7 +95,7 @@ const BreadCrumb = () => {
                         to={currentLink}
                         color={isLastCrumb ? "textPrimary" : "inherit"}
                       >
-                        {translations[currentLanguage][crumb.replace(/-/g, " ")] || crumb.replace(/-/g, " ")}
+                        {translations[currentLanguage][crumb.replace(/--/g, " ")] || crumb.replace(/--/g, " ")}
                       </Link>
                       {index === array.length - 1 && !isLastCrumb && (
                         <ExpandMoreIcon fontSize="small" />

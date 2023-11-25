@@ -19,6 +19,7 @@ import {
   deleteManufacturerAction,
 } from "./getEditeManufacturer";
 import AlertDeleteModal from "../../AlertDelete/AlertDeleteModal";
+import { setManufactureData } from "../../../redux/slices/manufactureDataSlice";
 
 export default function Manufacturer_list() {
   const dispatch = useDispatch();
@@ -184,10 +185,9 @@ export default function Manufacturer_list() {
     setEditMaFacturerById("");
   }
 
-  const redirectaddmodal = (rmdata) => {
-    navigate("/administration/configuration/manufacturer-modal", {
-      state: { rowData: rmdata },
-    });
+  const redirectaddmodal = (rowData) => {
+    navigate("/administration/configuration/manufacture/modal");
+    dispatch(setManufactureData(rowData))
   };
   const rowsData = allMfacturerData.map((item, index) => ({
     ...item,

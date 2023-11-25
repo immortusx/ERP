@@ -41,6 +41,7 @@ import editTaskAssignSlice from './slices/editTaskAssignSlice';
 import gettaskAssignListSlice from './slices/gettaskAssignListSlice';
 import languageReducer from './slices/languageSlice'
 import editholidaySlice from './slices/Master/Holiday/editholidaySlice';
+import manufactureDataSlice from './slices/manufactureDataSlice';
 export const store = configureStore({
   reducer: {
     getRegisterSlice: getRegisterSlice,
@@ -85,5 +86,6 @@ export const store = configureStore({
     language: languageReducer,
     holidayState: holidaySlice,
     editholidaySlice: editholidaySlice,
+    manufactureModal:manufactureDataSlice
   },
 });  
