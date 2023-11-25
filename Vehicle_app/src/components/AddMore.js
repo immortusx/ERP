@@ -519,7 +519,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   buttonStyle: {
-    paddingVertical: 8,
+    paddingVertical: 2,
     paddingHorizontal: 15,
     marginHorizontal: 0.2,
   },
@@ -672,11 +672,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   totalCountText:{
-    color:'white',
-    padding:5,
-    borderRadius:50,
-    backgroundColor:'#2471A2',
+    borderRadius:150,
     marginBottom:15,
+    padding:  1.8,
+    color: 'black',
   }
 });
 
