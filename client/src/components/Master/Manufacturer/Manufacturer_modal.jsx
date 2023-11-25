@@ -26,9 +26,9 @@ export default function Manufacturer_modal() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const autoFocusRef = useRef(null);
-
+  const rowData = useSelector((state) => state.manufactureModal);
   const location = useLocation();
-  const rowData = [location.state?.rowData];
+  // const rowData = [location.state?.rowData];
   const [allMfacturerData, setAllMfacturerData] = useState([]);
   const [editMaFacturerById, setEditMaFacturerById] = useState("");
   const [modalShow, setModalShow] = React.useState(false);
@@ -108,12 +108,7 @@ export default function Manufacturer_modal() {
   };
 
   useEffect(() => {
-    if (rowData) {
-      rowData.map((val) => {
-        console.log(val.manufacturerId);
-        setManufacturerID(val.manufacturerId);
-      });
-    }
+    if (rowData) { setManufacturerID(rowData.manufacturerId); }
   }, [rowData]);
 
   const handleModalSubmit = async (e) => {
@@ -145,7 +140,7 @@ export default function Manufacturer_modal() {
   };
 
   const redirectToVariantScreen = (rmdata) => {
-    navigate("/administration/configuration/manufacturer-modal/variants", {
+    navigate("/administration/configuration/manufacture/modal/variants", {
       state: { rowData: rmdata },
     });
   };
@@ -292,9 +287,7 @@ export default function Manufacturer_modal() {
                         </svg>
                       </div>
                       <span className="ms-2">
-                        {rowData &&
-                          rowData.length > 0 &&
-                          rowData.map((val) => val.manufacturerName)}
+                        {rowData.manufacturerName}
                       </span>
                     </main>
                   </li>
@@ -342,11 +335,7 @@ export default function Manufacturer_modal() {
               disabled
               className="myInput mx-4"
               name=""
-              value={
-                rowData &&
-                rowData.length > 0 &&
-                rowData.map((val) => val.manufacturerName)
-              }
+              value={rowData.manufacturerName}
             />
           </section>
           <section className="d-flex mt-3 flex-column col-12">
@@ -356,11 +345,7 @@ export default function Manufacturer_modal() {
             <textarea
               disabled
               rows="5"
-              value={
-                rowData &&
-                rowData.length > 0 &&
-                rowData.map((val) => val.manufacturerDescription)
-              }
+              value={rowData.manufacturerDescription}
               className="myInput inputElement mx-4"
               autoComplete="false"
               //  onChange={(e) => { onChangeHandler(e) }}

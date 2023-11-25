@@ -1057,7 +1057,7 @@ export default function HomeScreen() {
               exact
             />
             <Route
-              path="administration/configuration/manufacturer-modal"
+              path="/administration/configuration/manufacture/modal"
               element={
                 <CheckPermission path="profile">
                   <Manufacturer_modal />
@@ -1066,7 +1066,16 @@ export default function HomeScreen() {
               exact
             />
             <Route
-              path="administration/configuration/manufacturer-modal/variants"
+              path="administration/configuration/manufacture/modal"
+              element={
+                <CheckPermission path="profile">
+                  <Manufacturer_modal />
+                </CheckPermission>
+              }
+              exact
+            />
+            <Route
+              path="administration/configuration/manufacture/modal/variants"
               element={
                 <CheckPermission path="profile">
                   <Variants />
@@ -1224,7 +1233,7 @@ export default function HomeScreen() {
 
             <Route
               path="administration/*"
-              element={<Navigate to="/administration/roles" />}
+              element={<Navigate to="/administration/configuration/manufacturer" />}
               exact
             />
             <Route
