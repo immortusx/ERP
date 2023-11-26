@@ -18,26 +18,6 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-const deleteCSVFiles = (directoryPath) => {
-  fs.readdir(directoryPath, (err, files) => {
-    if (err) {
-      console.error("Error reading directory:", err);
-    } else {
-      files.forEach((file) => {
-        if (file.endsWith(".csv")) {
-          fs.unlink(path.join(directoryPath, file), (err) => {
-            if (err) {
-              console.error(`Error deleting file ${file}:`, err);
-            } else {
-              console.log(`File ${file} deleted successfully.`);
-            }
-          });
-        }
-      });
-    }
-  });
-};
-
 const generateWorkReport = async () => {
   try {
     const workReportQuery = "CALL sp_get_work_report_for_currentdate()";
@@ -84,9 +64,6 @@ const generateWorkReport = async () => {
       "no_work_report.csv"
     );
 
-    const parentPath = path.join(__dirname, "..");
-    const destinationPath = path.join(parentPath);
-
     if (workReport && workReport.data) {
       const superAdminEmailResult = await new Promise((resolve, reject) => {
         db.query(superAdminEmailQuery, (err, result) => {
@@ -101,11 +78,11 @@ const generateWorkReport = async () => {
 
       const Email = superAdminEmailResult.email;
       console.log(Email, "superAdminEmail");
-      const adminWhatsAppNumber = 919767832915;
 
       transporter.sendMail({
         from: "sales.balkrushna@gmail.com",
-        to: "laxmichaudhari203@gmail.com",
+        to: Email,
+        cc: "info@balkrushna.com",
         subject: "Work Report",
         text: "Please find the attached work report.",
         attachments: [
@@ -115,13 +92,6 @@ const generateWorkReport = async () => {
           },
         ],
       });
-
-      const payloads = {
-        adminWhatsAppNumber: adminWhatsAppNumber,
-        filename: "Task work Report",
-      };
-      sendTaskWorkReportNotification(payloads);
-
       if (workReportDetail && workReportDetail.data) {
         const superAdminEmailResult = await new Promise((resolve, reject) => {
           db.query(superAdminEmailQuery, (err, result) => {
@@ -136,10 +106,10 @@ const generateWorkReport = async () => {
         const Email = superAdminEmailResult.email;
         console.log(Email, "superAdminEmail");
 
-        const adminWhatsAppNumber = 919767832915;
         transporter.sendMail({
           from: "sales.balkrushna@gmail.com",
-          to: "laxmichaudhari203@gmail.com",
+          to: Email,
+          cc: "info@balkrushna.com",
           subject: "Work Report Detail",
           text: "Please find the attached work report detail.",
           attachments: [
@@ -149,11 +119,6 @@ const generateWorkReport = async () => {
             },
           ],
         });
-        const payloads = {
-          adminWhatsAppNumber: adminWhatsAppNumber,
-          filename: "Task work Report Detail",
-        };
-        sendTaskWorkReportDetailNotification(payloads);
       }
     } else if (noWorkReport && noWorkReport.data) {
       const superAdminEmailResult = await new Promise((resolve, reject) => {
@@ -169,7 +134,6 @@ const generateWorkReport = async () => {
 
       const Email = superAdminEmailResult.email;
       console.log(Email, "superAdminEmail");
-
       transporter.sendMail({
         from: "sales.balkrushna@gmail.com",
         to: Email,
@@ -190,13 +154,13 @@ const generateWorkReport = async () => {
 };
 
 cron.schedule("0 20 * * *", async () => {
-  deleteCSVFiles(path.join(__dirname, ".."));
   generateWorkReport();
 });
 
-const generateTaskList = () => {
+cron.schedule("0 10 * * *", async () => {
   try {
     const tasklist = "CALL sp_get_task_for_currentdate()";
+
     db.query(tasklist, async (taskerror, tskResult) => {
       if (taskerror) {
         console.error(taskerror);
@@ -231,12 +195,15 @@ const generateTaskList = () => {
                         console.error(superAdminEmailErr);
                       } else {
                         const Email = superAdminEmailResult[0].email;
-                        const adminWhatsAppNumber = 919767832915;
+                        const adminWhatsAppNumber = Number(
+                          superAdminEmailResult[0].phone_number
+                        );
                         console.log(Email, "superAdminEmail");
 
                         transporter.sendMail({
                           from: "sales.balkrushna@gmail.com",
-                          to: "laxmichaudhari203@gmail.com",
+                          to: Email,
+                          cc: "info@balkrushna.com",
                           subject: "Task Work",
                           text: "Please find the attached Task Work.",
                           attachments: [
@@ -286,37 +253,12 @@ const generateTaskList = () => {
   } catch (error) {
     console.error("Error", error);
   }
-};
-
-cron.schedule("40 22 * * *", async () => {
-  deleteCSVFiles(path.join(__dirname, ".."));
-  generateTaskList();
 });
 
 const sendTaskReportNotification = async (payloads) => {
   const { adminWhatsAppNumber, filename, file } = payloads;
   let message = `Task Report Here :`;
-  let link = `https://crm.balkrushna.com/api/csv`;
-  const chatPayloads = {
-    phoneNumbers: [adminWhatsAppNumber],
-    message: `${message}\n${link}`,
-  };
-  InstantMessagingUtils(chatPayloads);
-};
-const sendTaskWorkReportNotification = async (payloads) => {
-  const { adminWhatsAppNumber, filename, file } = payloads;
-  let message = `Task Work Report Here :`;
-  let link = `https://crm.balkrushna.com/api/csv`;
-  const chatPayloads = {
-    phoneNumbers: [adminWhatsAppNumber],
-    message: `${message}\n${link}`,
-  };
-  InstantMessagingUtils(chatPayloads);
-};
-const sendTaskWorkReportDetailNotification = async (payloads) => {
-  const { adminWhatsAppNumber, filename, file } = payloads;
-  let message = `Task Work Report Detail Here :`;
-  let link = `https://crm.balkrushna.com/api/csv`;
+  let link = "https://crm.balkrushna.com/api/csv";
   const chatPayloads = {
     phoneNumbers: [adminWhatsAppNumber],
     message: `${message}\n${link}`,
