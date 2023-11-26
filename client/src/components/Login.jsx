@@ -49,9 +49,14 @@ const Login = () => {
       };
       setLoading(true);
       await axios.get(url, config).then((response) => {
-        if (response && response.data && response.data.result && response.data.result.length > 0) {
+        if (
+          response &&
+          response.data &&
+          response.data.result &&
+          response.data.result.length > 0
+        ) {
           console.log(response.data, "agnecyc");
-          if(response.data.result[0].value === undefined){
+          if (response.data.result[0].value === undefined) {
             console.log(response.data.result[0].value, "test");
           }
           setAgencyData({
@@ -206,21 +211,26 @@ const Login = () => {
       );
     }
   };
-  
+
   return (
     <div className="container-fluid">
       <div className="row">
-        <div className="col-md-4 d-flex align-items-center justify-content-center inner-cover cover-bg">
+        <div className="col-md-4 d-none d-md-flex d-flex align-items-center justify-content-center inner-cover cover-bg">
           <div className="">
             <div className="d-flex align-items-center justify-content-center inner-logo">
               <img src={handshake} alt="Logo" className="logo" />
             </div>
-            <h2 className="inner-welcome">Welcome to {agencyData.agencyName ? agencyData.agencyName : 'Customer Relationship Management System'}</h2>
+            <h2 className="inner-welcome">
+              Welcome to{" "}
+              {agencyData.agencyName
+                ? agencyData.agencyName
+                : "Customer Relationship Management System"}
+            </h2>
             <div className="horizontal-line"></div>
             <h5 className="tag-line"></h5>
             <div>
               <div className="d-flex align-items-center justify-content-center inner-logo">
-               <div>{renderLogo()}</div>
+                <div>{renderLogo()}</div>
               </div>
               <div className="d-flex align-items-center justify-content-center">
                 <div className="dot"></div>
@@ -246,15 +256,13 @@ const Login = () => {
                           className="download-button"
                           onClick={downloadiOsApp}
                         >
-                          {/* {translations[currentLanguage].ios} */}
-                          ios
+                          {translations[currentLanguage].ios}
                         </button>
                         <button
                           className="download-button"
                           onClick={downloadAndroidApp}
                         >
-                          {/* {translations[currentLanguage].android} */}
-                          android
+                          {translations[currentLanguage].android}
                         </button>
                       </div>
                     ) : (
@@ -269,9 +277,11 @@ const Login = () => {
                   </div>
                 </div>
               </div>
-              <LanguageSelector
-                onChangeLanguage={(e) => setLanguage(e.target.value)}
-              />
+              <div>
+                <LanguageSelector
+                  onChangeLanguage={(e) => setLanguage(e.target.value)}
+                />
+              </div>
             </div>
             <h2 className="sign-in-heading">Login</h2>
             <div className="line"></div>

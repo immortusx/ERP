@@ -14,6 +14,7 @@ const cors = require("cors");
 const { tokenCheck } = require("./Auth/TokenCheck");
 const { checkUserPermission } = require("./Auth/userPermission");
 const { db } = require("./Database/dbConfig");
+const { generateTempUrl, handleTempFileRequest } = require("./Utils/fileServices");
 
 app.use(express.json());
 app.use(cors());
@@ -116,6 +117,22 @@ app.get("/api/csv", (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
+
+// Define a route for generating temporary URLs
+app.get("/api/generateTempUrl", (req, res) => {
+  try {
+    const filePath = "path/to/your/uploaded/file"; // Replace with the actual file path
+    const tempUrl = generateTempUrl(filePath);
+    res.json({ tempUrl });
+  } catch (error) {
+    console.error("Error generating temp URL", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// Define a route for handling requests for temporary files
+app.get("/api/tempfile", handleTempFileRequest);
+
 app.listen(process.env.ENV_PORT, (req, res) => {
   console.log({
     status: "success",
