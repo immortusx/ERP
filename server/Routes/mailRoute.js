@@ -18,28 +18,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-const deleteCSVFiles = (directoryPath) => {
-  fs.readdir(directoryPath, (err, files) => {
-    if (err) {
-      console.error("Error reading directory:", err);
-    } else {
-      files.forEach((file) => {
-        if (file.endsWith(".csv")) {
-          fs.unlink(path.join(directoryPath, file), (err) => {
-            if (err) {
-              console.error(`Error deleting file ${file}:`, err);
-            } else {
-              console.log(`File ${file} deleted successfully.`);
-            }
-          });
-        }
-      });
-    }
-  });
-};
-
 const generateWorkReport = async () => {
- 
   try {
     const workReportQuery = "CALL sp_get_work_report_for_currentdate()";
     const workReportDetailQuery =
@@ -85,9 +64,6 @@ const generateWorkReport = async () => {
       "no_work_report.csv"
     );
 
-    const parentPath = path.join(__dirname, "..");
-    const destinationPath = path.join(parentPath);
-
     if (workReport && workReport.data) {
       const superAdminEmailResult = await new Promise((resolve, reject) => {
         db.query(superAdminEmailQuery, (err, result) => {
@@ -102,11 +78,11 @@ const generateWorkReport = async () => {
 
       const Email = superAdminEmailResult.email;
       console.log(Email, "superAdminEmail");
-      const adminWhatsAppNumber = 919767832915;
 
       transporter.sendMail({
         from: "sales.balkrushna@gmail.com",
-        to: "laxmichaudhari203@gmail.com",
+        to: Email,
+        cc: "info@balkrushna.com",
         subject: "Work Report",
         text: "Please find the attached work report.",
         attachments: [
@@ -116,13 +92,6 @@ const generateWorkReport = async () => {
           },
         ],
       });
-
-      const payloads = {
-        adminWhatsAppNumber: adminWhatsAppNumber,
-        filename: "Task work Report",
-      };
-      sendTaskWorkReportNotification(payloads);
-
       if (workReportDetail && workReportDetail.data) {
         const superAdminEmailResult = await new Promise((resolve, reject) => {
           db.query(superAdminEmailQuery, (err, result) => {
@@ -137,10 +106,10 @@ const generateWorkReport = async () => {
         const Email = superAdminEmailResult.email;
         console.log(Email, "superAdminEmail");
 
-       const adminWhatsAppNumber = 919767832915;
         transporter.sendMail({
           from: "sales.balkrushna@gmail.com",
-          to:"laxmichaudhari203@gmail.com",
+          to: Email,
+          cc: "info@balkrushna.com",
           subject: "Work Report Detail",
           text: "Please find the attached work report detail.",
           attachments: [
@@ -150,11 +119,6 @@ const generateWorkReport = async () => {
             },
           ],
         });
-        const payloads = {
-          adminWhatsAppNumber: adminWhatsAppNumber,
-          filename: "Task work Report Detail",
-        };
-        sendTaskWorkReportDetailNotification(payloads);
       }
     } else if (noWorkReport && noWorkReport.data) {
       const superAdminEmailResult = await new Promise((resolve, reject) => {
@@ -170,7 +134,6 @@ const generateWorkReport = async () => {
 
       const Email = superAdminEmailResult.email;
       console.log(Email, "superAdminEmail");
-
       transporter.sendMail({
         from: "sales.balkrushna@gmail.com",
         to: Email,
@@ -190,136 +153,117 @@ const generateWorkReport = async () => {
   }
 };
 
-cron.schedule("20 17 * * *", async () => {
-   deleteCSVFiles(path.join(__dirname, ".."));
+cron.schedule("0 20 * * *", async () => {
   generateWorkReport();
 });
 
-const  generateTaskList =()=>{
-try {
-  const tasklist = "CALL sp_get_task_for_currentdate()";
-  db.query(tasklist, async (taskerror, tskResult) => {
-    if (taskerror) {
-      console.error(taskerror);
-    } else {
-      const taskdata = tskResult[0];
+cron.schedule("0 10 * * *", async () => {
+  try {
+    const tasklist = "CALL sp_get_task_for_currentdate()";
 
-      if (taskdata.length > 0) {
-        const taskFilename = "task_list.csv";
-        const taskStream = fs.createWriteStream(taskFilename);
-
-        fastcsv
-          .write(taskdata, { headers: true })
-          .on("finish", () => {
-            console.log("Task list CSV file created successfully.");
-
-            // Move the file to the server/upload folder
-            const parentPath = path.join(__dirname, "..");
-            const destinationPath = path.join(parentPath, taskFilename);
-
-            fs.rename(taskFilename, destinationPath, (err) => {
-              if (err) {
-                console.error("Error moving the file:", err);
-              } else {
-                console.log("File moved successfully.");
-
-                const superAdminEmailQuery = "SELECT * FROM users WHERE id = 1";
-                db.query(
-                  superAdminEmailQuery,
-                  async (superAdminEmailErr, superAdminEmailResult) => {
-                    if (superAdminEmailErr) {
-                      console.error(superAdminEmailErr);
-                    } else {
-                      const Email = superAdminEmailResult[0].email;
-                      const adminWhatsAppNumber = 919767832915;
-                      console.log(Email, "superAdminEmail");
-
-                      transporter.sendMail({
-                        from: "sales.balkrushna@gmail.com",
-                        to: "laxmichaudhari203@gmail.com",
-                        subject: "Task Work",
-                        text: "Please find the attached Task Work.",
-                        attachments: [
-                          {
-                            filename: "task_list.csv",
-                            content: fs.createReadStream(destinationPath),
-                          },
-                        ],
-                      });
-
-                      const payloads = {
-                        adminWhatsAppNumber: adminWhatsAppNumber,
-                        filename: "Task Report",
-                      };
-                      sendTaskReportNotification(payloads);
-                    }
-                  }
-                );
-              }
-            });
-          })
-          .pipe(taskStream);
+    db.query(tasklist, async (taskerror, tskResult) => {
+      if (taskerror) {
+        console.error(taskerror);
       } else {
-        const superAdminEmailQuery = "SELECT email FROM users WHERE id = 1";
-        db.query(
-          superAdminEmailQuery,
-          async (superAdminEmailErr, superAdminEmailResult) => {
-            if (superAdminEmailErr) {
-              console.error(superAdminEmailErr);
-            } else {
-              const Email = superAdminEmailResult[0].email;
-              console.log(Email, "superAdminEmail, No Task Assigned");
+        const taskdata = tskResult[0];
 
-              transporter.sendMail({
-                from: "sales.balkrushna@gmail.com",
-                to: Email,
-                cc: "info@balkrushna.com",
-                subject: "No Task Work",
-                text: "There is no task work available for today.",
+        if (taskdata.length > 0) {
+          const taskFilename = "task_list.csv";
+          const taskStream = fs.createWriteStream(taskFilename);
+
+          fastcsv
+            .write(taskdata, { headers: true })
+            .on("finish", () => {
+              console.log("Task list CSV file created successfully.");
+
+              // Move the file to the server/upload folder
+              const parentPath = path.join(__dirname, "..");
+              const destinationPath = path.join(parentPath, taskFilename);
+
+              fs.rename(taskFilename, destinationPath, (err) => {
+                if (err) {
+                  console.error("Error moving the file:", err);
+                } else {
+                  console.log("File moved successfully.");
+
+                  const superAdminEmailQuery =
+                    "SELECT * FROM users WHERE id = 1";
+                  db.query(
+                    superAdminEmailQuery,
+                    async (superAdminEmailErr, superAdminEmailResult) => {
+                      if (superAdminEmailErr) {
+                        console.error(superAdminEmailErr);
+                      } else {
+                        const Email = superAdminEmailResult[0].email;
+                        const adminWhatsAppNumber = Number(
+                          superAdminEmailResult[0].phone_number
+                        );
+                        console.log(Email, "superAdminEmail");
+
+                        transporter.sendMail({
+                          from: "sales.balkrushna@gmail.com",
+                          to: Email,
+                          cc: "info@balkrushna.com",
+                          subject: "Task Work",
+                          text: "Please find the attached Task Work.",
+                          attachments: [
+                            {
+                              filename: "task_list.csv",
+                              content: fs.createReadStream(destinationPath),
+                            },
+                          ],
+                        });
+
+                        const payloads = {
+                          adminWhatsAppNumber: adminWhatsAppNumber,
+                          filename: "Task Report",
+                          file: "https://c4.wallpaperflare.com/wallpaper/632/563/682/google-wallpaper-preview.jpg",
+                        };
+                        sendTaskReportNotification(payloads);
+                      }
+                    }
+                  );
+                }
               });
-            }
-          }
-        );
-      }
-    }
-  });
-} catch (error) {
-  console.error("Error", error);
-}
-}
+            })
+            .pipe(taskStream);
+        } else {
+          const superAdminEmailQuery = "SELECT email FROM users WHERE id = 1";
+          db.query(
+            superAdminEmailQuery,
+            async (superAdminEmailErr, superAdminEmailResult) => {
+              if (superAdminEmailErr) {
+                console.error(superAdminEmailErr);
+              } else {
+                const Email = superAdminEmailResult[0].email;
+                console.log(Email, "superAdminEmail, No Task Assigned");
 
-cron.schedule("25 17 * * *", async () => {
-  deleteCSVFiles(path.join(__dirname, ".."));
-  generateTaskList();
+                transporter.sendMail({
+                  from: "sales.balkrushna@gmail.com",
+                  to: Email,
+                  cc: "info@balkrushna.com",
+                  subject: "No Task Work",
+                  text: "There is no task work available for today.",
+                });
+              }
+            }
+          );
+        }
+      }
+    });
+  } catch (error) {
+    console.error("Error", error);
+  }
 });
 
 const sendTaskReportNotification = async (payloads) => {
   const { adminWhatsAppNumber, filename, file } = payloads;
   let message = `Task Report Here :`;
-  let link = `https://crm.balkrushna.com/api/csv`;
+  let link = "https://crm.balkrushna.com/api/csv";
   const chatPayloads = {
     phoneNumbers: [adminWhatsAppNumber],
     message: `${message}\n${link}`,
-  };
-  InstantMessagingUtils(chatPayloads);
-};
-const sendTaskWorkReportNotification = async (payloads) => {
-  const { adminWhatsAppNumber, filename, file } = payloads;
-  let message = `Task Work Report Here :`;
-  let link = `https://crm.balkrushna.com/api/csv`;
-  const chatPayloads = {
-    phoneNumbers: [adminWhatsAppNumber],
-    message: `${message}\n${link}`,
-  };
-  InstantMessagingUtils(chatPayloads);
-};
-const sendTaskWorkReportDetailNotification = async (payloads) => {
-  const { adminWhatsAppNumber, filename, file } = payloads;
-  let message = `Task Work Report Detail Here :`;
-  let link = `https://crm.balkrushna.com/api/csv`;
-  const chatPayloads = {
-    phoneNumbers: [adminWhatsAppNumber],
-    message: `${message}\n${link}`,
+    files: file,
   };
   InstantMessagingUtils(chatPayloads);
 };
