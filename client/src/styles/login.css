@@ -1,0 +1,134 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif; /* Choose a suitable font */
+    overflow-y: auto;
+}
+
+.cover-bg {
+    background: linear-gradient(#3e5367, #3e5367),
+                url('../assets/images/crmcover.png') center/cover;
+    height: 100vh; /* Set height to 100% of viewport height */
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.crm-cover {
+    max-width: 350px;
+    height: auto;
+    
+}
+.logo {
+    width: 100px;
+    height: 100px;
+}
+
+.inner-welcome {
+    color: #ffffff;
+    font-size: 1.5em;
+    font-weight: bold;
+    letter-spacing: 1px;
+    text-align: center;
+}
+
+.inner-welcome:hover {
+    transform: scale(1.05);
+    transition: transform 0.3s ease-in-out; 
+}
+
+.horizontal-line {
+    width: 50px;
+    height: 5px;
+    background-color: orange;
+    margin: 10px auto;
+    border-radius: 33px;
+}
+
+.tag-line {
+    color: #ffffff;
+    font-weight: bold;
+    letter-spacing: 1px;
+    text-align: center;
+}
+
+.signin-cover-bg {
+    background: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)),
+                url('../assets/images/signcover.png') center/cover;
+    height: 100vh; /* Set height to 100% of viewport height */
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.sign-in-heading {
+    color: #333;
+    font-size: 2em;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.line {
+    width: 50px;
+    height: 5px;
+    background-color: orange;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+.dot {
+    width: 25px;
+    height: 5px;
+    background-color: orange;
+    border-radius: 10px;
+    margin: 10px;
+}
+
+.welcome-message {
+    color: #555;
+    font-size: 1.2em;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.custom-input:hover {
+    border-color: rgb(29, 134, 200);
+    box-shadow: 0 0 10px rgba(127, 206, 255, 0.3);
+}
+
+.custom-login-button {
+    width: 100%;
+    background-color: #3e5367;
+    color: white;
+    font-weight: bold;
+  }
+
+.custom-forgot-btn {
+    width: 100%;
+    background-color: #3e5367;
+    color: white;
+}
+
+.custom-login-button:hover{
+    border-color: #3e5367;
+    border-width: 1px;
+}
+.custom-forgot-btn:hover{
+    border-color: #3e5367;
+    border-width: 1px;
+}
+
+.custom-input {
+    border: 1px solid #ced4da;
+    transition: border-color 0.3s ease;
+  }
+  
+  .custom-input:hover {
+    border-color: #3e5367;
+    box-shadow: 0 0 10px rgba(62, 83, 103, 0.7);
+  }
+
+
+

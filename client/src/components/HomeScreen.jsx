@@ -136,7 +136,7 @@ export default function HomeScreen() {
       };
       setLoading(true);
       await axios.get(url, config).then((response) => {
-        if (response && response.data) {
+        if (response && response.data && response.data.result && response.data.result.length > 0) {
           console.log(response.data.result[3].value, 'the real');
           setAgencyData({
             agencyName: response.data.result[0].value,
