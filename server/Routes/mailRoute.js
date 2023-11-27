@@ -160,32 +160,31 @@ cron.schedule("0 20 * * *", async () => {
 cron.schedule("0 10 * * *", async () => {
   try {
     const tasklist = "CALL sp_get_task_for_currentdate()";
-    const filePath = path.join(__dirname, '..', 'upload');
-    console.log(filePath, 'filepath')
-    // db.query(tasklist, async (taskerror, tskResult) => {
-    //   if (taskerror) {
-    //     console.error(taskerror);
-    //   } else {
-    //     const taskdata = tskResult[0];
 
-    //     if (taskdata.length > 0) {
-    //       const taskFilename = "task_list.csv";
-    //       const taskStream = fs.createWriteStream(taskFilename);
+    db.query(tasklist, async (taskerror, tskResult) => {
+      if (taskerror) {
+        console.error(taskerror);
+      } else {
+        const taskdata = tskResult[0];
 
-    //       fastcsv
-    //         .write(taskdata, { headers: true })
-    //         .on("finish", () => {
-    //           console.log("Task list CSV file created successfully.");
+        if (taskdata.length > 0) {
+          const taskFilename = "task_list.csv";
+          const taskStream = fs.createWriteStream(taskFilename);
 
-    //           // Move the file to the server/upload folder
-    //           const parentPath = path.join(__dirname, "..");
-    //           const destinationPath = path.join(parentPath, taskFilename);
+          fastcsv
+            .write(taskdata, { headers: true })
+            .on("finish", () => {
+              console.log("Task list CSV file created successfully.");
 
-    //           fs.rename(taskFilename, destinationPath, (err) => {
-    //             if (err) {
-    //               console.error("Error moving the file:", err);
-    //             } else {
-    //               console.log("File moved successfully.");
+              // Move the file to the server/upload folder
+              const parentPath = path.join(__dirname, "..");
+              const destinationPath = path.join(parentPath, taskFilename);
+
+              fs.rename(taskFilename, destinationPath, (err) => {
+                if (err) {
+                  console.error("Error moving the file:", err);
+                } else {
+                  console.log("File moved successfully.");
 
                   const superAdminEmailQuery =
                     "SELECT * FROM users WHERE id = 1";
@@ -215,42 +214,43 @@ cron.schedule("0 10 * * *", async () => {
                           ],
                         });
 
-    //                     const payloads = {
-    //                       adminWhatsAppNumber: adminWhatsAppNumber,
-    //                       filename: "Task Report",
-    //                     };
-    //                     sendTaskReportNotification(payloads);
-    //                   }
-    //                 }
-    //               );
-    //             }
-    //           });
-    //         })
-    //         .pipe(taskStream);
-    //     } else {
-    //       const superAdminEmailQuery = "SELECT email FROM users WHERE id = 1";
-    //       db.query(
-    //         superAdminEmailQuery,
-    //         async (superAdminEmailErr, superAdminEmailResult) => {
-    //           if (superAdminEmailErr) {
-    //             console.error(superAdminEmailErr);
-    //           } else {
-    //             const Email = superAdminEmailResult[0].email;
-    //             console.log(Email, "superAdminEmail, No Task Assigned");
+                        const payloads = {
+                          adminWhatsAppNumber: adminWhatsAppNumber,
+                          filename: "Task Report",
+                          file: "https://c4.wallpaperflare.com/wallpaper/632/563/682/google-wallpaper-preview.jpg",
+                        };
+                        sendTaskReportNotification(payloads);
+                      }
+                    }
+                  );
+                }
+              });
+            })
+            .pipe(taskStream);
+        } else {
+          const superAdminEmailQuery = "SELECT email FROM users WHERE id = 1";
+          db.query(
+            superAdminEmailQuery,
+            async (superAdminEmailErr, superAdminEmailResult) => {
+              if (superAdminEmailErr) {
+                console.error(superAdminEmailErr);
+              } else {
+                const Email = superAdminEmailResult[0].email;
+                console.log(Email, "superAdminEmail, No Task Assigned");
 
-    //             transporter.sendMail({
-    //               from: "sales.balkrushna@gmail.com",
-    //               to: Email,
-    //               cc: "info@balkrushna.com",
-    //               subject: "No Task Work",
-    //               text: "There is no task work available for today.",
-    //             });
-    //           }
-    //         }
-    //       );
-    //     }
-    //   }
-    // });
+                transporter.sendMail({
+                  from: "sales.balkrushna@gmail.com",
+                  to: Email,
+                  cc: "info@balkrushna.com",
+                  subject: "No Task Work",
+                  text: "There is no task work available for today.",
+                });
+              }
+            }
+          );
+        }
+      }
+    });
   } catch (error) {
     console.error("Error", error);
   }
@@ -263,6 +263,7 @@ const sendTaskReportNotification = async (payloads) => {
   const chatPayloads = {
     phoneNumbers: [adminWhatsAppNumber],
     message: `${message}\n${link}`,
+    files: file,
   };
   InstantMessagingUtils(chatPayloads);
 };
