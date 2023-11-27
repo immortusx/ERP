@@ -58,7 +58,7 @@ Team New Keshav Tractors`;
         const chatPayloads = {
           phoneNumbers: [customerWhatsAppNumber],
           message: acknowledgmentMessage,
-          files: file,
+          // files: file,
         };
 
         //Comment this while on Development
@@ -98,7 +98,7 @@ Team New Keshav Tractors`;
         const chatPayloads = {
           phoneNumbers: [SSPNumber],
           message: acknowledgmentMessage,
-          files: "https://www.africau.edu/images/default/sample.pdf",
+          // files: "https://www.africau.edu/images/default/sample.pdf",
         };
 
         //Comment this while on Development
@@ -125,7 +125,7 @@ const sendTaskAssignmentNotification = async (employeeId) => {
         const chatPayloads = {
           phoneNumbers: [ssp_number],
           message: message,
-          files: "https://www.example.com/task_details.pdf",
+          // files: "https://www.example.com/task_details.pdf",
         };
         InstantMessagingUtils(chatPayloads);
       }
