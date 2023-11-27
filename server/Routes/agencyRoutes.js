@@ -68,7 +68,7 @@ router.post(
 router.post(
   "/get-agency-edit",
   tokenCheck,
-  uploadFile.single("agency"),
+  uploadFile.single("logo"),
   async (req, res) => {
     console.log(">>>>>get-roles");
     const { name, contact, email } = req.body;

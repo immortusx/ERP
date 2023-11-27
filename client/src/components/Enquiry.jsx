@@ -985,7 +985,7 @@ export default function Enquiry({ workFor, villageId }) {
         break;
       case "oldTractor":
         return (
-          <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
+          <section className="d-flex mt-3 flex-column  ">
             <label className="ms-1 myLabel" htmlFor="email">
               Old Tractor Owned{" "}
             </label>
@@ -1018,7 +1018,8 @@ export default function Enquiry({ workFor, villageId }) {
             {seletedOwned === "Yes" && (
               <>
                 <p className="mt-3 mb-0"> Select Details* </p>
-                <section className="d-flex mt-3 flex-column col-lg-12 col-sm-6 col-4">
+                <div className=' row  m-0'>
+                <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
                   <select
                     onChange={changeHandlerNewEnquiry}
                     className="inpClr myInput"
@@ -1039,7 +1040,7 @@ export default function Enquiry({ workFor, villageId }) {
                       })}
                   </select>
                 </section>
-                <section className="d-flex mt-3 flex-column col-lg-12 col-sm-6 col-4">
+                <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
                   <select
                     onChange={changeHandlerNewEnquiry}
                     className="inpClr myInput"
@@ -1060,7 +1061,9 @@ export default function Enquiry({ workFor, villageId }) {
                       })}
                   </select>
                 </section>
-                <section className="d-flex mt-3 flex-column col-lg-12 col-sm-6 col-4">
+               
+               
+                <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
                   <select
                     onChange={changeHandlerNewEnquiry}
                     className="inpClr myInput"
@@ -1081,7 +1084,9 @@ export default function Enquiry({ workFor, villageId }) {
                       })}
                   </select>
                 </section>
-                <section className="d-flex mt-3 flex-column col-lg-12 col-sm-6 col-4">
+                </div>
+                <div className=' row mt-3 m-0'>
+                <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
                   <select
                     onChange={changeHandlerNewEnquiry}
                     className="inpClr myInput"
@@ -1089,7 +1094,7 @@ export default function Enquiry({ workFor, villageId }) {
                     defaultValue={newEnquiryData.modelYear}
                   >
                     <option value="0" className="myLabel">
-                      Manufacturer year :- Select year
+                      Manufacturer year
                     </option>
                     {newEnquiryList.listyears &&
                       newEnquiryList.listyears.length > 0 &&
@@ -1102,7 +1107,8 @@ export default function Enquiry({ workFor, villageId }) {
                       })}
                   </select>
                 </section>
-                <section className="d-flex mt-3 flex-column col-lg-12 col-sm-6 col-4">
+              
+                <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
                   <select
                     onChange={changeHandlerNewEnquiry}
                     className="inpClr myInput"
@@ -1123,6 +1129,7 @@ export default function Enquiry({ workFor, villageId }) {
                       })}
                   </select>
                 </section>
+                </div>
               </>
             )}
           </section>

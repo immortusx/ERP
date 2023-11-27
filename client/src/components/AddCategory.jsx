@@ -298,7 +298,7 @@ export default function AddCategory({ workFor }) {
   }, [checkField, fieldData]);
 
   function handlCancel() {
-    // navigate("/administration/configuration/category");
+    navigate("/administration/configuration/category");
     console.log(categoryData, "categoryData");
   }
   const redirectModal = () => {
