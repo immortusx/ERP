@@ -103,7 +103,7 @@ router.get("/get-village/:id", tokenCheck, async (req, res) => {
   });
 });
 router.get("/get-model/:id", tokenCheck, async (req, res) => {
-  console.log(">>>>>>>>>get-model", req.params);
+  console.log(">>>>>>>>>get-model",   req.params);
   const urlNew = `SELECT * FROM modal WHERE manufacturerId = (${req.params.id})`;
   await db.query(urlNew, async (err, result) => {
     if (err) {
@@ -118,7 +118,7 @@ router.get("/get-model/:id", tokenCheck, async (req, res) => {
 router.get("/get-enquiries", tokenCheck, async (req, res) => {
   console.log(">>>>>>>>>get-enquiries", req.myData);
   let branchId = req.myData.branchId;
-  let isSuperAdmin = req.myData.isSuperAdmin;
+  let isSuperAdmin = req.myData.isSuperAdmin;   
   let userId = req.myData.userId;
   const urlNew = `CALL sp_get_enquiries_list(${branchId},${isSuperAdmin})`;
   await db.query(urlNew, async (err, result) => {
@@ -337,6 +337,8 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
       const deliveryDate = req.body.deliveryDate || null;
       const sourceOfEnquiry = req.body.sourceOfEnquiry || null;
       const enquiryPrimarySource = req.body.enquiryPrimarySource || null;
+      const cdate=req.body.enquiryDate;
+      const newDeliveryDate =req.body.deliveryDate;
 
       const url = `INSERT INTO customers (first_name, middle_name, last_name, phone_number, whatsapp_number, email, is_active, state, district, taluka, village) VALUES ('${firstName}', '${fatherName}', '${lastName}', '${mobileNumber}', '${whatsappNumber}', '${email}', '${isActive}', '${state}', '${district}', '${tehsil}', '${village}')`;
 
@@ -349,8 +351,8 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
           const insertedId = result.insertId;
 
           // const newEnquiryDate = await getDateInFormate(enquiryDate);
-          let cdate = moment().format("YYYY-MM-DD H:m:s");
-          const newDeliveryDate = await getDateInFormate(deliveryDate);
+          // let cdate = moment().format("YYYY-MM-DD H:m:s");
+          // const newDeliveryDate = await getDateInFormate(deliveryDate);
 
           const urlNew = `INSERT INTO enquiries (branch_id, enquiry_category_id, salesperson_id, customer_id, modal_id, date, delivery_date, primary_source_id, enquiry_source_id, visitReason) VALUES ('${branchId}', '${enquiryCategoryId}', '${dsp}', '${insertedId}', '${model}', '${cdate}', '${newDeliveryDate}', '${enquiryPrimarySource}', '${sourceOfEnquiry}', '${visitReason}')`;
 
