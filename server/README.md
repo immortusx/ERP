@@ -17,6 +17,26 @@ Before you start using the app, you'll need to insert some initial data manually
 1. `branches`: Information about different branches.
 2. `departments`: Information about various departments.
 3. `roles`: Information about super admin and user roles. ---> in roles table first Insert the role as super_admin
+4. `distributionType`
+5. `district`
+6. `enquiry_fields`
+7. `enquiry_lost_reasons`
+8. `enquiry_primary_sources`
+9. `enquiry_sources`
+10. `features`
+11. `leave_type`
+12. `role_features`
+13. `state`
+14. `taluka`
+15. `task_status`
+16. `task_types`
+17. `tasks`
+18. `tasktime_period`
+19. `tax_details`
+20. `taxes`
+21. `user_types`
+22. `versions`
+23. `village`
 
 ## Getting Started
 
