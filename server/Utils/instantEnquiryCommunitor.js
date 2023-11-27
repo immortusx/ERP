@@ -47,6 +47,11 @@ Thank you for your enquiry regarding *${customerProduct}*.
 We have received your request and one of our sales representatives, *${salesPersonName}*, will contact you shortly to assist you further. 
 If you have any immediate questions, please feel free to contact us at *${SSPNumber}*.
 
+Product File :
+- [Link to Product File 1](${file})
+- [Link to Product File 2](${file})
+- [Link to Product File 3](${file})
+
 *Best regards,*
 Team New Keshav Tractors`;
 
@@ -146,7 +151,8 @@ const attachProductFile = (mappingId) => {
           const documentPath = rowDataPacket.document_path
           const isPath = path.join(__dirname, '..', 'upload');
           const filePath = path.join(isPath, documentPath);
-          const tempURL = fileUtils.generateTempURL(filePath);
+          console.log(filePath, 'thepath')
+          const tempURL = fileUtils.generateTempURL(isPath);
     
           console.log(tempURL, 'filepath')
           resolve(tempURL); // Resolve the promise with the file path
