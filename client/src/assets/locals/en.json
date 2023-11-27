@@ -2,8 +2,8 @@
     "login": "Login",
     "username": "Username",
     "password": "Password",
-    "rememberMe": "Remember my username",
-    "loginButton": "Log in",
+    "rememberMe": "Remember My Username",
+    "loginButton": "Login",
     "forgotPassword": "Forgot password?",
     "firstname":"First Name"
   }

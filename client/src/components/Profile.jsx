@@ -158,7 +158,7 @@ export default function Profile_list({ workFor }) {
     formData.append("name", aname);
     formData.append("contact", acontact);
     formData.append("email", aemail);
-    formData.append("agency", alogo);
+    formData.append("logo", alogo);
 
     if (
       aname.length > 0 &&
