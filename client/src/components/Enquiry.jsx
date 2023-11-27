@@ -13,7 +13,7 @@ import {
   clearNewEnquiryState,
 } from "../redux/slices/setNewEnquiryDataSlice";
 import { setShowMessage } from "../redux/slices/notificationSlice";
-
+import moment from "moment";
 import { useMemo } from "react";
 import { it } from "date-fns/locale";
 import State from "./singleComponents/villageCom/state";
@@ -165,8 +165,8 @@ export default function Enquiry({ workFor, villageId }) {
       condition: " ",
       enquiryPrimarySource: "",
       sourceOfEnquiry: "",
-      enquiryDate: new Date(),
-      deliveryDate: new Date(),
+      enquiryDate: "",
+      deliveryDate: "",
       cuustomerCategory: "",
       modeOfFinance: "",
       bank: "",
@@ -584,6 +584,10 @@ export default function Enquiry({ workFor, villageId }) {
   }, [editEnquiryState]);
 
   const handleSubmit = async () => {
+    const formatedEnquiryDate = moment(newEnquiryData.enquiryDate).format('YYYY-MM-DD');
+    const formatedDeliveryDate = moment(newEnquiryData.deliveryDate).format('YYYY-MM-DD');
+    console.log(formatedEnquiryDate, formatedDeliveryDate, 'Formatted Dates');
+    console.log(enquiryData, 'Enquiry Data');
     console.log(newEnquiryData.oldTractorOwned, "oldif");
     if (workFor === "editEnquiry") {
       const branchId = newEnquiryData.branchId;
@@ -599,8 +603,8 @@ export default function Enquiry({ workFor, villageId }) {
       const sourceOfEnquiry = newEnquiryData.sourceOfEnquiry;
       const modeOfFinance = newEnquiryData.modeOfFinance;
       const bank = newEnquiryData.bank;
-      const enquiryDate = newEnquiryData.enquiryDate;
-      const deliveryDate = newEnquiryData.deliveryDate;
+      const enquiryDate = formatedEnquiryDate;
+      const deliveryDate = formatedDeliveryDate;
       enquiryData.branchId = branchId;
       enquiryData.dsp = dsp;
       enquiryData.model = model;
@@ -637,8 +641,8 @@ export default function Enquiry({ workFor, villageId }) {
       const modeOfFinance = newEnquiryData.modeOfFinance;
       const bank = newEnquiryData.bank;
       const oldTractorOwned = newEnquiryData.oldTractorOwned;
-      const enquiryDate = newEnquiryData.enquiryDate;
-      const deliveryDate = newEnquiryData.deliveryDate;
+      const enquiryDate = formatedEnquiryDate;
+      const deliveryDate = formatedDeliveryDate;
       enquiryData.branchId = branchId;
       enquiryData.dsp = dsp;
       enquiryData.model = model;
