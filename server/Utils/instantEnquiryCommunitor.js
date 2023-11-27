@@ -149,9 +149,6 @@ const attachProductFile = (mappingId) => {
         if (dataResults && dataResults.length > 0) {
           const rowDataPacket = dataResults[0][0];
           const documentPath = rowDataPacket.document_path
-          const isPath = path.join(__dirname, '..', 'upload');
-          const filePath = path.join(isPath, documentPath);
-          console.log(filePath, 'thepath')
           const tempURL = fileUtils.generateTempURL(documentPath);
     
           console.log(tempURL, 'filepath')
