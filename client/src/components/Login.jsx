@@ -1,4 +1,8 @@
 import React, { useState, useEffect } from "react";
+import logo from "../assets/images/suits.png";
+import agencyCover from "../assets/images/crmcover.jpg";
+import handshake from "../assets/images/handshake.png";
+import "../styles/login.css";
 import "../styles/Registration.css";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -17,7 +21,7 @@ import downloadIcon from "../assets/images/apps.png";
 import translations from "../assets/locals/translations";
 import { Spinner } from "react-bootstrap";
 
-export default function Login() {
+const Login = () => {
   const dispatch = useDispatch();
   const loginState = useSelector((state) => state.getLoginSlice.loginState);
   const profileDataState = useSelector((state) => state.profileData.profile);
@@ -45,8 +49,16 @@ export default function Login() {
       };
       setLoading(true);
       await axios.get(url, config).then((response) => {
-        if (response && response.data) {
+        if (
+          response &&
+          response.data &&
+          response.data.result &&
+          response.data.result.length > 0
+        ) {
           console.log(response.data, "agnecyc");
+          if (response.data.result[0].value === undefined) {
+            console.log(response.data.result[0].value, "test");
+          }
           setAgencyData({
             agencyName: response.data.result[0].value,
             angencyLogo: response.data.result[3].value,
@@ -178,235 +190,197 @@ export default function Login() {
       dispatch(setShowMessage("Something is wrong"));
     }
   }, [loginState, dispatch]);
+  const renderLogo = () => {
+    if (loading) {
+      return <Spinner className="spinner-white" size={10} />;
+    } else if (agencyData.angencyLogo) {
+      return (
+        <img
+          src={`${process.env.REACT_APP_NODE_URL}/api${agencyData.angencyLogo}`}
+          alt="Logo"
+          className="logo-centered crm-cover shadow p-1 rounded"
+        />
+      );
+    } else {
+      return (
+        <img
+          src={agencyCover}
+          alt="Logo"
+          className="logo-centered crm-cover shadow p-1"
+        />
+      );
+    }
+  };
 
   return (
-    <main>
-      <div className="col-md-13">
-        <div
-          className="d-flex align-items-start justify-content-end"
-          style={{ marginRight: "20px" }}
-        >
-          <div className="image-container">
-            <div className="download-container">
-              <div
-                className="download-bar"
-                onMouseEnter={handleMouseEnter}
-                onMouseLeave={handleMouseLeave}
-              >
-                {isHovered ? (
-                  <div className="download-menu-container">
-                    <button
-                      className="download-button"
-                      onClick={downloadiOsApp}
-                    >
-                      {translations[currentLanguage].ios}
-                    </button>
-                    <button
-                      className="download-button"
-                      onClick={downloadAndroidApp}
-                    >
-                      {translations[currentLanguage].android}
-                    </button>
-                  </div>
-                ) : (
-                  <img
-                    src={downloadIcon}
-                    alt="app"
-                    height={20}
-                    width={25}
-                    style={{ marginRight: "2px", marginTop: "1px" }}
-                  />
-                )}
+    <div className="container-fluid">
+      <div className="row">
+        <div className="col-md-4 d-none d-md-flex d-flex align-items-center justify-content-center inner-cover cover-bg">
+          <div className="">
+            <div className="d-flex align-items-center justify-content-center inner-logo">
+              <img src={handshake} alt="Logo" className="logo" />
+            </div>
+            <h2 className="inner-welcome">
+              Welcome to{" "}
+              {agencyData.agencyName
+                ? agencyData.agencyName
+                : "Customer Relationship Management System"}
+            </h2>
+            <div className="horizontal-line"></div>
+            <h5 className="tag-line"></h5>
+            <div>
+              <div className="d-flex align-items-center justify-content-center inner-logo">
+                <div>{renderLogo()}</div>
+              </div>
+              <div className="d-flex align-items-center justify-content-center">
+                <div className="dot"></div>
+                <div className="dot"></div>
+                <div className="dot"></div>
               </div>
             </div>
           </div>
-          <LanguageSelector
-            onChangeLanguage={(e) => setLanguage(e.target.value)}
-          />
         </div>
-      </div>
-
-      <div className="container">
-        <div className=" d-flex flex-column align-items-center justify-content-center">
-          <div className="container">
-            <div className=" row justify-content-center">
-              <section className="col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center">
-                <div>
-                  {loading ? (
-                    <Spinner className="spinner-white" size={10} />
-                  ) : agencyData.angencyLogo ? (
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                      }}
-                    >
+        <div className="col-md-8 d-flex align-items-center justify-content-center inner-signin-cover signin-cover-bg">
+          <div className="container mx-4">
+            <div className="d-flex justify-content-end mb-4">
+              <div className="image-container">
+                <div className="download-container">
+                  <div
+                    className="download-bar"
+                    onMouseEnter={handleMouseEnter}
+                    onMouseLeave={handleMouseLeave}
+                  >
+                    {isHovered ? (
+                      <div className="download-menu-container">
+                        <button
+                          className="download-button"
+                          onClick={downloadiOsApp}
+                        >
+                          {translations[currentLanguage].ios}
+                        </button>
+                        <button
+                          className="download-button"
+                          onClick={downloadAndroidApp}
+                        >
+                          {translations[currentLanguage].android}
+                        </button>
+                      </div>
+                    ) : (
                       <img
-                        className="rounded"
-                        src={`${process.env.REACT_APP_NODE_URL}/api${agencyData.angencyLogo}`}
-                        alt="Agency"
-                        height={100}
-                        width={145}
+                        src={downloadIcon}
+                        alt="app"
+                        height={20}
+                        width={25}
+                        style={{ marginRight: "2px", marginTop: "1px" }}
                       />
-                      <p className="centered-text-with-modern-style">
-                        {agencyData.agencyName}
-                      </p>
-                    </div>
-                  ) : (
-                    <div
-                      className="alert alert-danger text-center"
-                      role="alert"
-                    >
-                      <p
-                        style={{
-                          color: "red",
-                          fontFamily: "Arial, sans-serif",
-                          fontSize: "11px",
-                          fontWeight: "bold",
-                        }}
-                      >
-                        <strong>*Please,</strong> First Create Agency.
-                      </p>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
-                <div className="mainDivRegister mt-3 bg-white p-4 login-container">
-                  <h2 className="text-left">
-                    {translations[currentLanguage].login}
-                  </h2>
-                  <section>
-                    <label
-                      htmlFor="username"
-                      style={{ fontSize: "17px", marginLeft: "5px" }}
-                    >
-                      {translations[currentLanguage].username}{" "}
-                    </label>
+              </div>
+              <div>
+                <LanguageSelector
+                  onChangeLanguage={(e) => setLanguage(e.target.value)}
+                />
+              </div>
+            </div>
+            <h2 className="sign-in-heading">Login</h2>
+            <div className="line"></div>
+            <p className="welcome-message">Welcome Back! Please Sign In.</p>
+            <div className="">
+              <div className=" mt-3 p-4">
+                <section className="mb-3">
+                  <label htmlFor="username" className="form-label">
+                    {translations[currentLanguage].username}{" "}
+                  </label>
+                  <input
+                    className="form-control custom-input"
+                    onChange={(e) => {
+                      setLoginData({
+                        ...loginData,
+                        username: e.target.value,
+                      });
+                    }}
+                    onKeyDown={handleKeyDown}
+                    type="text"
+                    id="username"
+                    name="username"
+                    placeholder="Enter Email/Mobile Number"
+                  />
+                </section>
+                <section className="mb-3">
+                  <label htmlFor="password" className="form-label login-label">
+                    {translations[currentLanguage].password}
+                  </label>
+                  <div className="input-group">
                     <input
-                      className="myInputl"
+                      className="form-control custom-input"
                       onChange={(e) => {
                         setLoginData({
                           ...loginData,
-                          username: e.target.value,
+                          password: e.target.value,
                         });
                       }}
                       onKeyDown={handleKeyDown}
-                      type="text"
-                      id="username"
-                      name="username"
-                      placeholder="Enter Email/Mobile Number"
+                      type={showPassword ? "text" : "password"}
+                      id="password"
+                      name="password"
+                      placeholder="Enter Password"
                     />
-                  </section>
-                  <section>
-                    <label
-                      htmlFor="password"
-                      style={{ fontSize: "17px", marginLeft: "5px" }}
+                    <span
+                      className="input-group-text"
+                      id="toggle-password"
+                      onClick={() => setShowPassword(!showPassword)}
                     >
-                      {translations[currentLanguage].password}
-                    </label>
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        position: "relative",
-                        width: "100%", // Ensure the container takes the full width
-                      }}
-                    >
-                      <input
-                        className="myInput"
-                        onChange={(e) => {
-                          setLoginData({
-                            ...loginData,
-                            password: e.target.value,
-                          });
-                        }}
-                        onKeyDown={handleKeyDown}
-                        type={showPassword ? "text" : "password"}
-                        id="password"
-                        name="password"
-                        placeholder="Enter Password"
-                        style={{
-                          flex: "1",
-                          display: "flex",
-                          alignItems: "center",
-                          position: "relative",
-                          width: "100%", // Make the input take the full width
-                        }}
-                      />
                       <img
                         src={showPassword ? eyeIconClose : eyeIcon}
                         alt="Toggle Password"
                         height={20}
                         width={20}
-                        onClick={() => setShowPassword(!showPassword)}
-                        style={{
-                          cursor: "pointer",
-                          position: "absolute",
-                          right: "7px",
-                          top: "50%",
-                          transform: "translateY(-50%)",
-                        }}
                       />
-                    </div>
-                  </section>
-
-                  <section
-                    className="remember-me"
-                    style={{
-                      fontSize: "14px",
-                      display: "flex",
-                      alignItems: "center",
-                      position: "relative",
-                      width: "100%",
-                    }}
-                  >
-                    <label
-                      htmlFor="rememberMe"
-                      className="checkbox-label"
-                      style={{ verticalAlign: "middle" }}
-                    >
-                      <input
-                        style={{
-                          marginRight: "7px",
-                          marginLeft: "15px",
-                          width: "18px",
-                          height: "18px",
-                          verticalAlign: "middle",
-                        }}
-                        type="checkbox"
-                        id="rememberMe"
-                        name="rememberMe"
-                        checked={rememberMe}
-                        onChange={() => setRememberMe(!rememberMe)}
-                      />
+                    </span>
+                  </div>
+                </section>
+                <section className="mb-3">
+                  <div className="form-check">
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      id="rememberMe"
+                      name="rememberMe"
+                      checked={rememberMe}
+                      onChange={() => setRememberMe(!rememberMe)}
+                    />
+                    <label className="form-check-label" htmlFor="rememberMe">
                       {translations[currentLanguage].rememberMe}
                     </label>
-                  </section>
-                  <section>
-                    <button
-                      className="myBtnl py-1"
-                      style={{ fontSize: "18px" }}
-                      onClick={handleSubmit}
-                      type="submit"
-                    >
-                      {translations[currentLanguage].loginButton}
-                    </button>
-                  </section>
-                  <section>
-                    <button
-                      className="myBtnl py-1"
-                      style={{ fontSize: "18px", marginBottom: "10px" }}
-                      type="button"
-                    >
-                      {translations[currentLanguage].forgotPassword}
-                    </button>
-                  </section>
-                </div>
-              </section>
+                  </div>
+                </section>
+                <section className="mb-3">
+                  <button
+                    className="btn btn-block custom-login-button"
+                    style={{ fontSize: "18px" }}
+                    onClick={handleSubmit}
+                    type="submit"
+                  >
+                    {translations[currentLanguage].loginButton}
+                  </button>
+                </section>
+                <section className="mb-3">
+                  <button
+                    className="btn btn-block custom-forgot-btn"
+                    style={{ fontSize: "18px" }}
+                    type="button"
+                  >
+                    {translations[currentLanguage].forgotPassword}
+                  </button>
+                </section>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </main>
+    </div>
   );
-}
+};
+
+export default Login;

@@ -6,6 +6,7 @@ const moment = require("moment");
 const { db } = require("../Database/dbConfig");
 const { InstantMessagingUtils } = require("./MessagingHelpers");
 const fileUtils = require('./fileServices');
+const path = require("path");
 const instantEnquiryMessage = async (messagePayloads) => {
   const { enquiryId } = messagePayloads;
   console.log(enquiryId, 'enquiruoisi')
@@ -143,9 +144,11 @@ const attachProductFile = (mappingId) => {
         if (dataResults && dataResults.length > 0) {
           const rowDataPacket = dataResults[0][0];
           const documentPath = rowDataPacket.document_path
-          const tempURL = fileUtils.createTempURL(documentPath);
+          const isPath = path.join(__dirname, '..', 'upload');
+          const filePath = path.join(isPath, documentPath);
+          const tempURL = fileUtils.generateTempURL(filePath);
     
-          console.log(tempURL, 'fielfk')
+          console.log(tempURL, 'filepath')
           resolve(tempURL); // Resolve the promise with the file path
         } else {
           console.log({ isSuccess: false, result: "No data found" });
