@@ -533,7 +533,16 @@ export default function Branch({ workFor }) {
     return (
         <div className='bg-white rounded p-3'>
             <main>
-                <h5 className='m-0'>{workFor === 'addBranch' ? translations[currentLanguage].newbranch : translations[currentLanguage].editbranch }</h5>
+                {workFor !== 'branch' && (
+                    <div className="col-6">
+                        <h5 className='m-0'>
+                            {workFor === 'addBranch'
+                                ? translations[currentLanguage].newbranch
+                                : translations[currentLanguage].editbranch}
+                        </h5>
+                    </div>
+                )}
+
                 <div className='row m-0'>
                     {
                         workFor === 'branch' && <div className='mb-3  d-flex align-items-end justify-content-end'>
@@ -612,7 +621,7 @@ export default function Branch({ workFor }) {
                                         redirectModal();
                                     }}
                                 >
-                                     {translations[currentLanguage].back}
+                                    {translations[currentLanguage].back}
                                 </Button>
                             </div>
                             <div className='row mt-2 m-0'>
