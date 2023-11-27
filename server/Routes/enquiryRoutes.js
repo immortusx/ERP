@@ -288,7 +288,7 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
   const fatherName = req.body.fatherName || null;
   const mobileNumber = req.body.mobileNumber || null;
   const getSSP = (callback) => {
-    let userID = req.myData.userId;
+    let userID = req.myData.userId;   
     const sql = `SELECT CONCAT(u.first_name, ' ', u.last_name) AS full_name FROM users AS u WHERE u.id = ${userID}`;
     db.query(sql, async (err, result) => {
       if (err) {

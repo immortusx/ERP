@@ -191,8 +191,8 @@ export default function AddCategory({ workFor }) {
   };
 
   useEffect(() => {
-    if (addCategory.isSuccess) {
-      if (addCategory.message.isSuccess) {
+    if (addCategory && addCategory.isSuccess) {
+      if (addCategory.isSuccess === true) {
         dispatch(setShowMessage("Category is created"));
         dispatch(clearaddCategory());
         navigate("/administration/configuration/category");
@@ -365,7 +365,7 @@ export default function AddCategory({ workFor }) {
               autoComplete="false"
               onChange={(e) => {
                 onChangeHandler(e);
-              }}
+              }} addCategory
               type="text"
               name="category_description"
             />

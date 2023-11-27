@@ -46,39 +46,14 @@ const UserProfile = () => {
               dispatch(setShowMessage("Password Changed Successfully!"));
             }
           });
-
-        // console.log("Password change response:", response.data);
-
-        // Handle any further actions or feedback based on the API response
       } catch (error) {
         console.error("Error changing password:", error);
-        // Handle error, show error message, etc.
       }
     }
-
-    // if (!validatePassword(newPassword)) {
-    //     setValidationMessage("Password must meet the criteria (e.g., at least 8 characters, uppercase, lowercase, numbers, special characters).");
-    //     return;
-    // }
     setValidationMessage("");
-
-    console.log("handleSubmit");
-    console.log("Current Password:", currentPassword);
-    console.log("New Password:", newPassword);
-    console.log("Confirm Password:", confirmPassword);
-
-    // Here you would make an API request to change the password
-    // You can use a library like Axios for this
-    // Example: axios.post('/api/change-password', { currentPassword, newPassword });
-  };
-  const validatePassword = (password) => {
-    // Implement your password validation criteria here
-    return (
-      password.length >= 8 &&
-      /[A-Z]/.test(password) &&
-      /\d/.test(password) &&
-      /[!@#$%^&*]/.test(password)
-    );
+    setCurrentPassword("");
+    setNewPassword("");
+    setConfirmPassword("");
   };
 
   useEffect(() => {
@@ -153,9 +128,8 @@ const UserProfile = () => {
                   type="email"
                   disabled={true}
                   placeholder="Enter current password"
-                  className={`input-field ${
-                    isTyping ? "hover-while-typing" : ""
-                  }`}
+                  className={`input-field ${isTyping ? "hover-while-typing" : ""
+                    }`}
                   onChange={handleInputChange}
                 />
               </form>
@@ -165,9 +139,8 @@ const UserProfile = () => {
                 <input
                   type="password"
                   placeholder="Enter current password"
-                  className={`input-field ${
-                    isTyping ? "hover-while-typing" : ""
-                  }`}
+                  className={`input-field ${isTyping ? "hover-while-typing" : ""
+                    }`}
                   value={currentPassword}
                   onChange={(e) => setCurrentPassword(e.target.value)}
                 />
@@ -177,9 +150,8 @@ const UserProfile = () => {
                 <input
                   type="password"
                   placeholder="Enter new password"
-                  className={`input-field ${
-                    isTyping ? "hover-while-typing" : ""
-                  }`}
+                  className={`input-field ${isTyping ? "hover-while-typing" : ""
+                    }`}
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                 />
@@ -189,9 +161,8 @@ const UserProfile = () => {
                 <input
                   type="password"
                   placeholder="Enter confirm password"
-                  className={`input-field ${
-                    isTyping ? "hover-while-typing" : ""
-                  }`}
+                  className={`input-field ${isTyping ? "hover-while-typing" : ""
+                    }`}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                 />

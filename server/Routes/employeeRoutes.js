@@ -138,31 +138,31 @@ router.get("/get-employee-list", tokenCheck, async (req, res) => {
   try {
     await db.query(
       `SELECT
-      f.*,
-      s.user_id,
-      s.bank_name,
-      s.bank_branch,
-      s.account_number,
-      s.account_type,
-      s.ifsc_code,
-      ddu.branch_id,
-      ddu.department_id,
-      ddu.role_id,
-      t.*
-  FROM
-      users AS f
-  INNER JOIN
-      bank_details AS s ON s.user_id = f.id
-  INNER JOIN
-      employee_detail AS ddu ON ddu.user_id = f.id
-  LEFT JOIN
-  document_details AS ed ON ed.mapping_id = f.id
-  INNER JOIN
-      documents AS t ON t.document_id = ed.document_id
-  WHERE
-      f.user_type_id = 2
-      AND f.is_delete = 0
-    
+        f.*,
+        s.user_id,
+        s.bank_name,
+        s.bank_branch,
+        s.account_number,
+        s.account_type,
+        s.ifsc_code,
+        ddu.branch_id,
+        ddu.department_id,
+        ddu.role_id,
+        t.*
+    FROM
+        users AS f
+    INNER JOIN
+        bank_details AS s ON s.user_id = f.id
+    INNER JOIN
+        employee_detail AS ddu ON ddu.user_id = f.id
+    LEFT JOIN
+    document_details AS ed ON ed.mapping_id = f.id
+    INNER JOIN
+        documents AS t ON t.document_id = ed.document_id
+    WHERE
+        f.user_type_id = 2
+        AND f.is_delete = 0
+        group by f.id
   `,
       (err, results) => {
         if (err) {
