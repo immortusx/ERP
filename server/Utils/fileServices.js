@@ -16,7 +16,7 @@ function generateTempURL(filePath) {
   tempUrls[filePath] = expirationTime;
 
   // Replace "https://crm.balkrushna.com/" with the actual URL of your live site
-  return `https://crm.balkrushna.com/api/tempfile?filePath=${encodeURIComponent(filePath)}`;
+  return `https://crm.balkrushna.com/api/upload/${encodeURIComponent(filePath)}`;
 }
 
 // Function to handle requests for temporary files

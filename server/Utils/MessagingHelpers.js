@@ -1,7 +1,7 @@
 const request = require("request");
 
-const appkey = "86906369-e91b-4772-8776-b49ce3778fd5";
-const authkey = "qZNwxpV01C58oQa1FluB24YUv3p61zuZf0Re0L795Z5UWrW3ao";
+const appkey = "05626b99-4844-4c7b-a50d-f3d099e083f8";
+const authkey = "NC7XbbbVAG9m1pQgPJZRf4UtMHwZRWmKs5moS5O8NAxsa1D3l4";
 
 const InstantMessagingUtils = async (chatPayloads) => {
   const { phoneNumbers, message, files } = chatPayloads;

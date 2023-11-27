@@ -58,7 +58,7 @@ Team New Keshav Tractors`;
         const chatPayloads = {
           phoneNumbers: [customerWhatsAppNumber],
           message: acknowledgmentMessage,
-          // files: file,
+          files: file,
         };
 
         //Comment this while on Development
@@ -152,7 +152,7 @@ const attachProductFile = (mappingId) => {
           const isPath = path.join(__dirname, '..', 'upload');
           const filePath = path.join(isPath, documentPath);
           console.log(filePath, 'thepath')
-          const tempURL = fileUtils.generateTempURL(isPath);
+          const tempURL = fileUtils.generateTempURL(documentPath);
     
           console.log(tempURL, 'filepath')
           resolve(tempURL); // Resolve the promise with the file path
