@@ -39,18 +39,13 @@ const sendMessageToCustomer = async (enquiryId) => {
         const modal = rowDataPacket.product;
         const manufacturer = rowDataPacket.manufactureName;
 
-        const file = await attachProductFile(mappingId);
-        console.log(file, "hdshsdhhdhfdfhdhjdhhfhsdhfhdhdffd")
+        // const file = await attachProductFile(mappingId);
+        // console.log(file, "hdshsdhhdhfdfhdhjdhhfhsdhfhdhdffd")
         const acknowledgmentMessage = `*Dear ${customerName},*
 
 Thank you for your enquiry regarding *${customerProduct}*. 
 We have received your request and one of our sales representatives, *${salesPersonName}*, will contact you shortly to assist you further. 
 If you have any immediate questions, please feel free to contact us at *${SSPNumber}*.
-
-Product File :
-- [Link to Product File 1](${file})
-- [Link to Product File 2](${file})
-- [Link to Product File 3](${file})
 
 *Best regards,*
 Team New Keshav Tractors`;
@@ -58,7 +53,7 @@ Team New Keshav Tractors`;
         const chatPayloads = {
           phoneNumbers: [customerWhatsAppNumber],
           message: acknowledgmentMessage,
-          files: file,
+          // files: file,
         };
 
         //Comment this while on Development
