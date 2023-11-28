@@ -825,31 +825,113 @@ router.post(
   }
 );
 
+const getStateIDFromDatabase = async (stateName) => {
+  return new Promise((resolve, reject) => {
+    db.query(
+      "SELECT state_id FROM state WHERE state_name = ?",
+      [stateName],
+      (err, results) => {
+        if (err) {
+          reject(err);
+        } else {
+          if (results.length > 0) {
+            resolve(results[0].state_id);
+          } else {
+            resolve(null); 
+          }
+        }
+      }
+    );
+  });
+};
+const getDistrictIDFromDatabase = async (distName) => {
+  return new Promise((resolve, reject) => {
+    db.query(
+      "SELECT id FROM district WHERE state_id = ?",
+      [distName],
+      (err, results) => {
+        if (err) {
+          reject(err);
+        } else {
+          if (results.length > 0) {
+            resolve(results[0].id);
+          } else {
+            resolve(null); 
+          }
+        }
+      }
+    );
+  });
+};
+const getTalukaIDFromDatabase = async (talukaName) => {
+  return new Promise((resolve, reject) => {
+    db.query(
+      "SELECT id FROM taluka WHERE district_id = ?",
+      [talukaName],
+      (err, results) => {
+        if (err) {
+          reject(err);
+        } else {
+          if (results.length > 0) {
+            resolve(results[0].id);
+          } else {
+            resolve(null); 
+          }
+        }
+      }
+    );
+  });
+};
+const getVillageIDFromDatabase = async (villageName) => {
+  return new Promise((resolve, reject) => {
+    db.query(
+      "SELECT id FROM village WHERE taluka_id = ?",
+      [villageName],
+      (err, results) => {
+        if (err) {
+          reject(err);
+        } else {
+          if (results.length > 0) {
+            resolve(results[0].id);
+          } else {
+            resolve(null); 
+          }
+        }
+      }
+    );
+  });
+};
+
+
 const uploadCSV = (path, callback) => {
   console.log(path, "functionc");
   let stream = fs.createReadStream(path);
   let csvDataColl = [];
-  let headers = []; // Store field names (header row)
+  let headers = [];
 
   let fileStream = csv
     .parse({ headers: true })
     .on("headers", (headerList) => {
-      // Save the headers (field names)
       headers = headerList;
     })
-    .on("data", (data) => {
-      const rowData = {};
+    .on("data", async(data) => {
+      console.log(data, "datadatadtatt");
+    const rowData = {};
       headers.forEach((header) => {
-        const cleanedHeader = header.trim().replace(/ /g, "_"); // Trim and replace spaces with underscores
-        const value = data[header].trim(); // Trim spaces from the value
+        const cleanedHeader = header.trim().replace(/ /g, "_"); 
+        const value = data[header].trim();
         rowData[cleanedHeader] = value;
       });
-
+      
       csvDataColl.push(rowData);
     })
     .on("end", async () => {
-      // csvDataColl.shift(); // Remove the header row
       console.log(csvDataColl, "csvData");
+      const stateID = await getStateIDFromDatabase(csvDataColl[0].State);
+      const distID = await getDistrictIDFromDatabase(csvDataColl[0].District);
+      const talukaID = await getTalukaIDFromDatabase(csvDataColl[0].Taluka);
+      const villageID = await getVillageIDFromDatabase(csvDataColl[0].Village);
+      console.log(stateID, "stateIDstateID");
       csvDataColl = csvDataColl.map((obj) => {
         console.log(obj.Email);
         return {
@@ -859,10 +941,10 @@ const uploadCSV = (path, callback) => {
           phone_number: obj.PhoneNumber,
           whatsapp_number: obj.WhatsappNumber,
           email: obj.Email,
-          state: obj.State || 2,
-          district: obj.District || 2,
-          taluka: obj.Taluka || 2,
-          village: obj.Village || 2,
+          state: stateID || 2,
+          district: distID || 2,
+          taluka: talukaID || 2,
+          village: villageID || 2,
           branch_id: obj.Branch || 1,
           enquiry_category_id: obj.EnquiryCategory || 1,
           salesperson_id: obj.SalespersonId || null,
@@ -880,7 +962,7 @@ const uploadCSV = (path, callback) => {
           old_tractor: obj.oldTractorOwned,
         };
       });
-      console.log(csvDataColl, "csvdata");
+      console.log(csvDataColl, "csvDataColl");
       let P_JSON = JSON.stringify(csvDataColl);
       console.log(P_JSON, "csvjsondata");
       insertDataUsingSP(P_JSON, callback);
