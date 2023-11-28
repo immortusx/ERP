@@ -8,6 +8,7 @@ const { InstantMessagingUtils } = require("./MessagingHelpers");
 const fileUtils = require("./fileServices");
 const path = require("path");
 const fs = require("fs");
+const cron = require("node-cron");
 
 const instantEnquiryMessage = async (messagePayloads) => {
   const { enquiryId } = messagePayloads;
@@ -40,15 +41,16 @@ const sendMessageToCustomer = async (enquiryId) => {
         const modalId = rowDataPacket.modalId;
         const modal = rowDataPacket.product;
         const manufacturer = rowDataPacket.manufactureName;
-        
 
         const makerFile = await attachProductFile(mappingId, 1);
         const modalFile = await attachProductFile(modalId, 2);
-        if(makerFile && makerProduct !== null){
+        const regardsMessage = await getRegardsMessages().catch(() => null) || 'From Our Teams';
+
+        if (makerFile && makerProduct !== null) {
           const makerProduct = await fileUtils.generateTempURL(makerFile);
           const modalProduct = await fileUtils.generateTempURL(modalFile);
-          console.log(makerProduct, modalFile, 'fileLink')
-  
+          console.log(makerProduct, modalFile, "fileLink");
+
           const acknowledgmentMessage = `*Dear ${customerName},*
   
   Thank you for your enquiry regarding *${customerProduct}*. 
@@ -62,17 +64,17 @@ const sendMessageToCustomer = async (enquiryId) => {
   - ${modalProduct}
   
   *Best regards,*
-  Team New Keshav Tractors`;
-  
+  ${regardsMessage}`;
+
           const chatPayloads = {
             phoneNumbers: [customerWhatsAppNumber],
             message: acknowledgmentMessage,
             // files: file,
           };
-  
+
           //Comment this while on Development
           InstantMessagingUtils(chatPayloads);
-        }else{
+        } else {
           const acknowledgmentMessage = `*Dear ${customerName},*
           
 Thank you for your enquiry regarding *${customerProduct}*. 
@@ -80,19 +82,17 @@ We have received your request and one of our sales representatives, *${salesPers
 If you have any immediate questions, please feel free to contact us at *${SSPNumber}*.
 
 *Best regards,*
-Team New Keshav Tractors`;
+${regardsMessage}`;
 
-  
           const chatPayloads = {
             phoneNumbers: [customerWhatsAppNumber],
             message: acknowledgmentMessage,
             // files: file,
           };
-  
+
           //Comment this while on Development
           InstantMessagingUtils(chatPayloads);
         }
-        
       } else {
         console.log({ isSuccess: false, result: "No data found." });
       }
@@ -103,7 +103,7 @@ Team New Keshav Tractors`;
 //For Sales Person Acknowledgement
 const sendMessageToSSP = async (enquiryId) => {
   const sql = `CALL sp_get_ssp_message_data(${enquiryId})`;
-  await db.query(sql, (error, dataResults) => {
+  await db.query(sql, async (error, dataResults) => {
     if (error) {
       console.log({ isSuccess: false, result: error });
     } else {
@@ -116,6 +116,8 @@ const sendMessageToSSP = async (enquiryId) => {
         const customerProduct = rowDataPacket.product;
         const SSPNumber = Number(rowDataPacket.SSPNumber);
         const salesPersonName = rowDataPacket.salesPersonName;
+        const regardsMessage = await getRegardsMessages().catch(() => null) || 'From Our Teams';
+
         console.log(SSPNumber, customerName, customerPhoneNumber, "mesashsd");
         const acknowledgmentMessage = `*Hello, ${salesPersonName}.*
 
@@ -124,7 +126,8 @@ Please contact the customer at your earliest convenience.
 For any immediate assistance, the customer's contact number is *${customerPhoneNumber}*.
 
 *Best regards,*
-Team New Keshav Tractors`;
+${regardsMessage}`;
+
         const chatPayloads = {
           phoneNumbers: [SSPNumber],
           message: acknowledgmentMessage,
@@ -184,20 +187,20 @@ const attachProductFile = (mappingId, productType) => {
         const rowDataPacket = dataResults[0][0];
         const fileName = rowDataPacket.document_path;
         console.log(fileName, "filepath");
-        const sourcePath = path.join(__dirname, '..', 'upload', fileName);
-        const destinationPath = path.join(__dirname, '..', 'public', fileName);
+        const sourcePath = path.join(__dirname, "..", "upload", fileName);
+        const destinationPath = path.join(__dirname, "..", "public", fileName);
 
         try {
           if (fs.existsSync(sourcePath)) {
             fs.copyFileSync(sourcePath, destinationPath);
-            console.log('File copied successfully');
+            console.log("File copied successfully");
             resolve(fileName);
           } else {
-            console.error('Source file does not exist:', sourcePath);
+            console.error("Source file does not exist:", sourcePath);
             resolve(null); // Resolve with null if the source file does not exist
           }
         } catch (copyError) {
-          console.error('Error copying file:', copyError);
+          console.error("Error copying file:", copyError);
           resolve(null); // Resolve with null to handle the error gracefully
         }
       } else {
@@ -205,11 +208,40 @@ const attachProductFile = (mappingId, productType) => {
         resolve(null); // Resolve with null if no data is found
       }
     } catch (error) {
-      console.error('Error during file attachment:', error);
+      console.error("Error during file attachment:", error);
       resolve(null); // Resolve with null to handle the error gracefully
     }
   });
 };
 
+const getRegardsMessages = async () => {
+  try {
+    return new Promise((resolve, reject) => {
+      db.query(
+        `SELECT * FROM configuration WHERE setting = 'agency' AND key_name = 'name'`,
+        (error, dataResults) => {
+          if (error) {
+            console.log({ isSuccess: false, result: "error" });
+            resolve(null);
+          } else {
+            console.log(dataResults, "dataResults");
+            if (dataResults && dataResults.length > 0) {
+              const rowDataPacket = dataResults[0];
+              const regardsMessage = rowDataPacket.value;
+              resolve(regardsMessage);
+              console.log(regardsMessage, 'read');
+            } else {
+              console.log({ isSuccess: false, result: "No data found" });
+              resolve(null);
+            }
+          }
+        }
+      );
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
 
 module.exports = { instantEnquiryMessage, sendTaskAssignmentNotification };
