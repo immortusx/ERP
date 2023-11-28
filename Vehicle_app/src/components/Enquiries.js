@@ -18,6 +18,8 @@ import LoadingSpinner from './subCom/LoadingSpinner';
 import CustomLoadingSpinner from './subCom/CustomLoadingSpinner';
 import { useNavigation } from '@react-navigation/native';
 import TimeAgo from './subCom/TImeAgo';
+import { PermissionsAndroid } from 'react-native';
+import CallLogs from 'react-native-call-log'
 
 const Enquiries = ({ route }) => {
   const navigation = useNavigation();
@@ -119,6 +121,35 @@ const Enquiries = ({ route }) => {
     setCallStartTime(new Date());
     Linking.openURL(`tel:${mobileNumber}`);
   };
+  const componentDidMount = async () => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.READ_CALL_LOG,
+        {
+          title: 'Call Log Example',
+          message: 'Access your call logs',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        }
+      );
+      console.log('Permission status:', granted);
+
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        CallLogs.load(5).then((callLogs) => {
+          console.log(callLogs, 'hjdhsjdslllllllllllllllllll');
+        });
+      } else {
+        console.log('Call Log permission denied');
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  useEffect(() => {
+    componentDidMount();
+  }, []);
 
   const renderIconAndData = item => {
     switch (item.phone_number) {
@@ -324,16 +355,16 @@ const Enquiries = ({ route }) => {
                     </View>
                     <View style={styles.taskIconContainer}>
                       <TouchableOpacity style={styles.greenButton}
-                      onPress={() => {
-                        makePhoneCall(item.phone_number);
-                      }}>
+                        onPress={() => {
+                          makePhoneCall(item.phone_number);
+                        }}>
                         <TouchableOpacity>
                           <Text style={styles.taskDataText}>
                             {formatPhoneNumber(item.phone_number)}
                           </Text>
                         </TouchableOpacity>
                         <TouchableOpacity
-                          >
+                        >
                           <Image
                             style={styles.iconImg}
                             source={require('../../assets/telephone.png')}
