@@ -1,22 +1,8 @@
 const path = require("path");
 const fs = require("fs");
 
-function generateTempURL(filePath) {
-  const fileExists = fs.existsSync(filePath);
-
-  if (!fileExists) {
-    throw new Error("File not found");
-  }
-
-  // Set expiration time for the temp URL (e.g., 1 hour)
-  const expirationTime = Date.now() + 60 * 60 * 1000;
-
-  // Store the expiration time (you might want to use a database for this)
-  // For simplicity, we use an in-memory object here. In a production environment, use a database.
-  tempUrls[filePath] = expirationTime;
-
-  // Replace "https://crm.balkrushna.com/" with the actual URL of your live site
-  return `https://crm.balkrushna.com/api/upload/${encodeURIComponent(filePath)}`;
+function generateTempURL(filename) {
+  return `${REACT_APP_NODE_URL}/api/public/${encodeURIComponent(filename)}`;
 }
 
 // Function to handle requests for temporary files

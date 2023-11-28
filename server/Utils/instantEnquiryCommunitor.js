@@ -5,11 +5,13 @@ const { getDateInFormate } = require("../Utils/timeFunctions");
 const moment = require("moment");
 const { db } = require("../Database/dbConfig");
 const { InstantMessagingUtils } = require("./MessagingHelpers");
-const fileUtils = require('./fileServices');
+const fileUtils = require("./fileServices");
 const path = require("path");
+const fs = require("fs");
+
 const instantEnquiryMessage = async (messagePayloads) => {
   const { enquiryId } = messagePayloads;
-  console.log(enquiryId, 'enquiruoisi')
+  console.log(enquiryId, "enquiruoisi");
   try {
     sendMessageToCustomer(enquiryId);
     sendMessageToSSP(enquiryId);
@@ -38,31 +40,59 @@ const sendMessageToCustomer = async (enquiryId) => {
         const modalId = rowDataPacket.modalId;
         const modal = rowDataPacket.product;
         const manufacturer = rowDataPacket.manufactureName;
+        
 
-        const file = await attachProductFile(mappingId);
-        console.log(file, "hdshsdhhdhfdfhdhjdhhfhsdhfhdhdffd")
-        const acknowledgmentMessage = `*Dear ${customerName},*
-
+        const makerFile = await attachProductFile(mappingId, 1);
+        const modalFile = await attachProductFile(modalId, 2);
+        if(makerFile && makerProduct !== null){
+          const makerProduct = await fileUtils.generateTempURL(makerFile);
+          const modalProduct = await fileUtils.generateTempURL(modalFile);
+          console.log(makerProduct, modalFile, 'fileLink')
+  
+          const acknowledgmentMessage = `*Dear ${customerName},*
+  
+  Thank you for your enquiry regarding *${customerProduct}*. 
+  We have received your request and one of our sales representatives, *${salesPersonName}*, will contact you shortly to assist you further. 
+  If you have any immediate questions, please feel free to contact us at *${SSPNumber}*.
+  
+  Product File :
+  - [Link to Product File (Manufacturer)]
+  - ${makerProduct}
+  - [Link to Product File (Modal)]
+  - ${modalProduct}
+  
+  *Best regards,*
+  Team New Keshav Tractors`;
+  
+          const chatPayloads = {
+            phoneNumbers: [customerWhatsAppNumber],
+            message: acknowledgmentMessage,
+            // files: file,
+          };
+  
+          //Comment this while on Development
+          InstantMessagingUtils(chatPayloads);
+        }else{
+          const acknowledgmentMessage = `*Dear ${customerName},*
+          
 Thank you for your enquiry regarding *${customerProduct}*. 
 We have received your request and one of our sales representatives, *${salesPersonName}*, will contact you shortly to assist you further. 
 If you have any immediate questions, please feel free to contact us at *${SSPNumber}*.
 
-Product File :
-- [Link to Product File 1](${file})
-- [Link to Product File 2](${file})
-- [Link to Product File 3](${file})
-
 *Best regards,*
 Team New Keshav Tractors`;
 
-        const chatPayloads = {
-          phoneNumbers: [customerWhatsAppNumber],
-          message: acknowledgmentMessage,
-          files: file,
-        };
-
-        //Comment this while on Development
-        InstantMessagingUtils(chatPayloads);
+  
+          const chatPayloads = {
+            phoneNumbers: [customerWhatsAppNumber],
+            message: acknowledgmentMessage,
+            // files: file,
+          };
+  
+          //Comment this while on Development
+          InstantMessagingUtils(chatPayloads);
+        }
+        
       } else {
         console.log({ isSuccess: false, result: "No data found." });
       }
@@ -132,37 +162,54 @@ const sendTaskAssignmentNotification = async (employeeId) => {
     }
   });
 };
-const attachProductFile = (mappingId) => {
-  console.log(mappingId, "asadkjasjd")
-  return new Promise((resolve, reject) => {
+const attachProductFile = (mappingId, productType) => {
+  console.log(mappingId, "mappingId");
+  return new Promise(async (resolve, reject) => {
+    const url = `CALL sp_get_product_documents_details(${mappingId}, ${productType})`;
 
-    const url = `CALL sp_get_product_documents_details(${mappingId}, ${1})`;
+    try {
+      const dataResults = await new Promise((queryResolve, queryReject) => {
+        db.query(url, (err, dataResults) => {
+          if (err) {
+            console.log({ isSuccess: false, result: "error" });
+            queryReject(err);
+          } else {
+            console.log(dataResults, "reiskekrerll");
+            queryResolve(dataResults);
+          }
+        });
+      });
 
-    db.query(url, (err, dataResults) => {
-      if (err) {
-        console.log({ isSuccess: false, result: "error" });
-        reject(err);
-      } else {
-        // console.log({ isSuccess: true, result: result });
-        console.log(dataResults, "reiskekrerll");
+      if (dataResults && dataResults.length > 0) {
+        const rowDataPacket = dataResults[0][0];
+        const fileName = rowDataPacket.document_path;
+        console.log(fileName, "filepath");
+        const sourcePath = path.join(__dirname, '..', 'upload', fileName);
+        const destinationPath = path.join(__dirname, '..', 'public', fileName);
 
-        if (dataResults && dataResults.length > 0) {
-          const rowDataPacket = dataResults[0][0];
-          const documentPath = rowDataPacket.document_path
-          const isPath = path.join(__dirname, '..', 'upload');
-          const filePath = path.join(isPath, documentPath);
-          console.log(filePath, 'thepath')
-          const tempURL = fileUtils.generateTempURL(documentPath);
-    
-          console.log(tempURL, 'filepath')
-          resolve(tempURL); // Resolve the promise with the file path
-        } else {
-          console.log({ isSuccess: false, result: "No data found" });
-          resolve(null); // Resolve with null if no data is found
+        try {
+          if (fs.existsSync(sourcePath)) {
+            fs.copyFileSync(sourcePath, destinationPath);
+            console.log('File copied successfully');
+            resolve(fileName);
+          } else {
+            console.error('Source file does not exist:', sourcePath);
+            resolve(null); // Resolve with null if the source file does not exist
+          }
+        } catch (copyError) {
+          console.error('Error copying file:', copyError);
+          resolve(null); // Resolve with null to handle the error gracefully
         }
+      } else {
+        console.log({ isSuccess: false, result: "No data found" });
+        resolve(null); // Resolve with null if no data is found
       }
-    });
+    } catch (error) {
+      console.error('Error during file attachment:', error);
+      resolve(null); // Resolve with null to handle the error gracefully
+    }
   });
 };
+
 
 module.exports = { instantEnquiryMessage, sendTaskAssignmentNotification };
