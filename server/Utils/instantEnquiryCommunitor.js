@@ -41,16 +41,23 @@ const sendMessageToCustomer = async (enquiryId) => {
         const modal = rowDataPacket.product;
         const manufacturer = rowDataPacket.manufactureName;
 
-        const file = await attachProductFile(mappingId);
-        console.log(file, "productFiles")
-        const fileLink = await fileUtils.generateTempURL(file);
-        console.log(fileLink, 'fileLink')
+        const makerFile = await attachProductFile(mappingId, 1);
+        const modalFile = await attachProductFile(modalId, 2);
+        const makerProduct = await fileUtils.generateTempURL(makerFile);
+        const modalProduct = await fileUtils.generateTempURL(modalFile);
+        console.log(makerProduct, modalFile, 'fileLink')
 
         const acknowledgmentMessage = `*Dear ${customerName},*
 
 Thank you for your enquiry regarding *${customerProduct}*. 
 We have received your request and one of our sales representatives, *${salesPersonName}*, will contact you shortly to assist you further. 
 If you have any immediate questions, please feel free to contact us at *${SSPNumber}*.
+
+Product File :
+- [Link to Product File (Manufacturer)]
+- ${makerProduct}
+- [Link to Product File (Modal)]
+- ${modalProduct}
 
 *Best regards,*
 Team New Keshav Tractors`;
@@ -132,10 +139,10 @@ const sendTaskAssignmentNotification = async (employeeId) => {
     }
   });
 };
-const attachProductFile = (mappingId) => {
+const attachProductFile = (mappingId, productType) => {
   console.log(mappingId, "mappingId");
   return new Promise((resolve, reject) => {
-    const url = `CALL sp_get_product_documents_details(${mappingId}, ${1})`;
+    const url = `CALL sp_get_product_documents_details(${mappingId}, ${productType})`;
 
     db.query(url, (err, dataResults) => {
       if (err) {
@@ -152,13 +159,19 @@ const attachProductFile = (mappingId) => {
           const sourcePath = path.join(__dirname, '..', 'upload', fileName);
           const destinationPath = path.join(__dirname, '..', 'public', fileName);
 
-          fs.copyFile(sourcePath, destinationPath, (err) => {
-            if (err) {
-              console.error('Error copying file:', err);
-            } else {
+          try {
+            if (fs.existsSync(sourcePath)) {
+              fs.copyFileSync(sourcePath, destinationPath);
               console.log('File copied successfully');
+              resolve(fileName);
+            } else {
+              console.error('Source file does not exist:', sourcePath);
+              reject(new Error('Source file does not exist'));
             }
-          });
+          } catch (copyError) {
+            console.error('Error copying file:', copyError);
+            reject(copyError);
+          }
           resolve(fileName); // Resolve the promise with the file path
         } else {
           console.log({ isSuccess: false, result: "No data found" });
