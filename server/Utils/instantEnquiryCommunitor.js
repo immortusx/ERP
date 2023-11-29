@@ -114,7 +114,7 @@ const sendMessageToSSP = async (enquiryId) => {
         const customerName = rowDataPacket.customerName;
         const customerPhoneNumber = rowDataPacket.phone_number;
         const customerProduct = rowDataPacket.product;
-        const SSPNumber = Number(rowDataPacket.SSPNumber);
+        const SSPNumber = Number(rowDataPacket.SSPNumber) || await getAdminPhoneNumber();
         const salesPersonName = rowDataPacket.salesPersonName;
         const regardsMessage = await getRegardsMessages().catch(() => null) || 'From Our Teams';
 
@@ -244,4 +244,8 @@ const getRegardsMessages = async () => {
   }
 };
 
+const getAdminPhoneNumber = async () => {
+  const [adminResults] = await db.query('SELECT phone_number FROM users WHERE id = 1');
+  return adminResults && adminResults[0] && adminResults[0].phone_number;
+};
 module.exports = { instantEnquiryMessage, sendTaskAssignmentNotification };
