@@ -183,10 +183,9 @@ const attachProductFile = (mappingId, productType) => {
         });
       });
 
-      if (dataResults && dataResults.length > 0) {
+      if (dataResults && dataResults.length > 0 && dataResults[0][0]) {
         const rowDataPacket = dataResults[0][0];
-        const fileName = rowDataPacket.document_path;
-        console.log(fileName, "filepath");
+        const fileName = rowDataPacket.document_path || null;
         const sourcePath = path.join(__dirname, "..", "upload", fileName);
         const destinationPath = path.join(__dirname, "..", "public", fileName);
 
