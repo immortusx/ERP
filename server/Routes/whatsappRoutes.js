@@ -76,4 +76,54 @@ Team Keshav Tractors.`;
   }
 });
 
+const getRegardsMessages = () => {
+  return new Promise((resolve, reject) => {
+    db.query(
+      'SELECT value FROM configuration WHERE setting = "agency" AND key_name = "name"',
+      (error, queryResult) => {
+        if (error) {
+          console.error('Error executing database query for regards message:', error);
+          reject(error);
+        } else {
+          if (queryResult && queryResult.length > 0) {
+            const regardsMessage = queryResult[0].value;
+            console.log('Regards Message:', regardsMessage);
+            resolve(regardsMessage);
+          } else {
+            console.log('No data found in the database for regards message.');
+            resolve(null);
+          }
+        }
+      }
+    );
+  });
+};
+
+
+router.post('/send-messagecustomer', tokenCheck, async (req, res) => {
+  try {
+    const { customerPhoneNumber, message } = req.body;
+
+    if (!customerPhoneNumber || !message) {
+      return res.status(400).json({ error: 'Invalid input. Please provide customerPhoneNumber and message.' });
+    }
+
+    const regardsMessage = await getRegardsMessages();
+    console.log(regardsMessage);
+
+
+    const finalMessage = `${message}\n\n${regardsMessage || ''}`;
+
+    const phoneNumbers = [customerPhoneNumber];
+    InstantMessagingUtils({ phoneNumbers, message: finalMessage });
+
+    console.log(`Sending message to customer ${customerPhoneNumber}: ${finalMessage}`);
+
+    res.json({ isSuccess: true, result: 'Message sent to customer successfully.' });
+  } catch (error) {
+    console.error('Error sending message to customer:', error);
+    res.status(500).json({ error: 'Internal server error.' });
+  }
+});
+
 module.exports = router;
