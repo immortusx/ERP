@@ -23,6 +23,7 @@ import WhatsAppChat from '../components/subCom/WhatsAppChat';
 import {useSelector } from 'react-redux';
 const Drawer = createDrawerNavigator();
 import translations from '../../assets/locals/translations';
+import People from '../components/People';
 const SidebarMenu = () => {
   const navigation = useNavigation();
 
@@ -141,6 +142,23 @@ const SidebarMenu = () => {
               <Image
                 style={styles.personImg}
                 source={require('../../assets/whatsapp.png')}
+              />
+            ),
+          }}
+        />
+         <Drawer.Screen
+          name={"People"}
+          component={People}
+          options={{
+            headerShown: true,
+            headerStyle: {
+              borderWidth: 0.9,
+              borderColor: 'grey',
+            },
+            drawerIcon: () => (
+              <Image
+                style={styles.personImg}
+                source={require('../../assets/people.png')}
               />
             ),
           }}

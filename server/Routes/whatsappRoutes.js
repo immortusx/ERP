@@ -64,7 +64,7 @@ Team Keshav Tractors.`;
           const chatPayloads = {
             phoneNumbers: phoneNumbers,
             message: whatsappMessage,
-            files: "https://www.africau.edu/images/default/sample.pdf",
+            // files: "https://www.africau.edu/images/default/sample.pdf",
           };
           InstantMessagingUtils(chatPayloads);
         }
@@ -83,7 +83,7 @@ const getRegardsMessages = () => {
       (error, queryResult) => {
         if (error) {
           console.error('Error executing database query for regards message:', error);
-          reject(error);
+          resolve(null);
         } else {
           if (queryResult && queryResult.length > 0) {
             const regardsMessage = queryResult[0].value;
@@ -100,28 +100,25 @@ const getRegardsMessages = () => {
 };
 
 
-router.post('/send-messagecustomer', tokenCheck, async (req, res) => {
+router.post('/send-message-customer', tokenCheck, async (req, res) => {
   try {
-    const { customerPhoneNumber, message } = req.body;
-
-    if (!customerPhoneNumber || !message) {
-      return res.status(400).json({ error: 'Invalid input. Please provide customerPhoneNumber and message.' });
-    }
-
-    const regardsMessage = await getRegardsMessages();
+    console.log('/send-message-customer', req.body);
+    const {whatsapp_message, customerPhoneNumber} = req.body;
+    const formattedPhoneNumber = customerPhoneNumber.startsWith('91')
+      ? customerPhoneNumber
+      : `91${customerPhoneNumber}`;
+    const regardsMessage = await getRegardsMessages().catch(() => null) || 'From Our Teams';
     console.log(regardsMessage);
+    const finalMessage = `${whatsapp_message}\n\n${regardsMessage || ''}`;
 
-
-    const finalMessage = `${message}\n\n${regardsMessage || ''}`;
-
-    const phoneNumbers = [customerPhoneNumber];
+    const phoneNumbers = [formattedPhoneNumber];
     InstantMessagingUtils({ phoneNumbers, message: finalMessage });
 
     console.log(`Sending message to customer ${customerPhoneNumber}: ${finalMessage}`);
 
     res.json({ isSuccess: true, result: 'Message sent to customer successfully.' });
   } catch (error) {
-    console.error('Error sending message to customer:', error);
+    console.log('Error sending message to customer:', error);
     res.status(500).json({ error: 'Internal server error.' });
   }
 });
