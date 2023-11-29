@@ -114,7 +114,7 @@ const sendMessageToSSP = async (enquiryId) => {
         const customerName = rowDataPacket.customerName;
         const customerPhoneNumber = rowDataPacket.phone_number;
         const customerProduct = rowDataPacket.product;
-        const SSPNumber = Number(rowDataPacket.SSPNumber);
+        const SSPNumber = Number(rowDataPacket.SSPNumber) || await getAdminPhoneNumber();
         const salesPersonName = rowDataPacket.salesPersonName;
         const regardsMessage = await getRegardsMessages().catch(() => null) || 'From Our Teams';
 
@@ -183,10 +183,9 @@ const attachProductFile = (mappingId, productType) => {
         });
       });
 
-      if (dataResults && dataResults.length > 0) {
+      if (dataResults && dataResults.length > 0 && dataResults[0][0]) {
         const rowDataPacket = dataResults[0][0];
-        const fileName = rowDataPacket.document_path;
-        console.log(fileName, "filepath");
+        const fileName = rowDataPacket.document_path || null;
         const sourcePath = path.join(__dirname, "..", "upload", fileName);
         const destinationPath = path.join(__dirname, "..", "public", fileName);
 
@@ -244,4 +243,8 @@ const getRegardsMessages = async () => {
   }
 };
 
+const getAdminPhoneNumber = async () => {
+  const [adminResults] = await db.query('SELECT phone_number FROM users WHERE id = 1');
+  return adminResults && adminResults[0] && adminResults[0].phone_number;
+};
 module.exports = { instantEnquiryMessage, sendTaskAssignmentNotification };
