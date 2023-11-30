@@ -48,13 +48,14 @@ const Splash = ({ navigation }) => {
         setTimeout(() => {
           setShowSpinner(false);
           setInitialCheckDone(true);
-          dispatch(getProfileData());
+         
+           dispatch(getProfileData());
         }, 2000);
       } else {
         setTimeout(() => {
           setShowSpinner(false);
           setInitialCheckDone(true);
-          navigation.navigate('Login');
+          navigation.navigate('Login'); 
         }, 2000);
       }
     };

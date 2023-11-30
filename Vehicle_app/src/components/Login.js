@@ -10,6 +10,7 @@ import {
   Keyboard,
   Image,
   ActivityIndicator,
+  FlatList
 } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -24,6 +25,9 @@ import LanguageOptions from './LanguageOptions';
 import translations from '../../assets/locals/translations'
 import LanguageSlice from '../redux/slice/LanguageSlice';
 import LinearGradient from 'react-native-linear-gradient';
+import CallLogs from 'react-native-call-log'
+import { PermissionsAndroid } from 'react-native';
+import { setLogs, setPermissionStatus } from '../redux/slice/callLogsSlice';
 
 const Login = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -49,6 +53,10 @@ const Login = ({ navigation }) => {
     username: '',
     password: '',
   });
+
+  const permissionStatus = useSelector(state => state.callLog.permissionStatus);
+  const logs = useSelector(state => state.callLog.logs);
+
   useEffect(() => {
     if (agencyData && agencyData.result) {
       const valueObj = {};
@@ -141,72 +149,108 @@ const Login = ({ navigation }) => {
     }
   };
 
+  // const componentDidMount = async () => {
+  //   try {
+  //     const granted = await PermissionsAndroid.request(
+  //       PermissionsAndroid.PERMISSIONS.READ_CALL_LOG,
+  //       {
+  //         title: 'Call Log Example',
+  //         message: 'Access your call logs',
+  //         buttonNeutral: 'Ask Me Later',
+  //         buttonNegative: 'Cancel',
+  //         buttonPositive: 'OK',
+  //       }
+  //     );
+  //     console.log('Permission status:', granted);
+
+  //     if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+  //       CallLogs.load(20).then((callLogs) => {
+  //         console.log(callLogs, 'hjdhsjdslllllllllllllllllll');
+  //       });
+  //     } else {
+  //       console.log('Call Log permission denied');
+  //     }
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  // };
+
   return (
     <>
-     <LinearGradient
-      colors={['#91b8d0','#a7c6d9']}
-      style={styles.container}
-    >
-      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-        <View style={styles.container}>
-          <View style={styles.languageIcon}>
-            <LanguageOptions modalShow={true} />
-          </View>
-          <View style={styles.centerContent}>
-            <View style={styles.logoContainer}>
-              <Image
-                source={{ uri: `${API_URL}/api${agency.agencyLogo}` }}
-                style={styles.logo}
-              />
+      <View>
+        {permissionStatus === PermissionsAndroid.RESULTS.GRANTED && (
+          <FlatList
+            data={logs.filter(item => item && item.id)}
+            keyExtractor={(item) => (item && item.id ? item.id.toString() : Math.random().toString())}
+            renderItem={({ item }) => <Text>{item.someProperty}</Text>}
+          />
+        )}
+      </View>
+
+      <LinearGradient
+        colors={['#91b8d0', '#a7c6d9']}
+        style={styles.container}
+      >
+        <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+          <View style={styles.container}>
+            <View style={styles.languageIcon}>
+              <LanguageOptions modalShow={true} />
             </View>
-            <Text style={styles.agencyName}>{agency.agencyName}</Text>
-          </View>
-          <View style={styles.bottomView}>
-            <Text style={styles.loginText}>{translations[currentLanguage]?.login || 'Login'}</Text>
-            <View style={styles.inputView}>
-              <TextInput
-                style={styles.input}
-                placeholder={translations[currentLanguage]?.emailemobile || 'Enter Email/Mobile Number'}
-                autoCapitalize="none"
-                value={loginData.username}
-                onChangeText={value => onChangeHandler(value, 'username')}
-              />
+            <View style={styles.centerContent}>
+              <View style={styles.logoContainer}>
+                <Image
+                  source={{ uri: `${API_URL}/api${agency.agencyLogo}` }}
+                  style={styles.logo}
+                />
+              </View>
+              <Text style={styles.agencyName}>{agency.agencyName}</Text>
             </View>
-            <View style={styles.inputView}>
-              <TextInput
-                style={styles.input}
-                placeholder={translations[currentLanguage]?.epassword || 'Enter Password'}
-                secureTextEntry={true}
-                autoCapitalize="none"
-                value={loginData.password}
-                onChangeText={value => onChangeHandler(value, 'password')}
-              />
-            </View>
-            <Text style={styles.fpText}>{translations[currentLanguage]?.forgotPassword || "Forgot Password?"}</Text>
-            <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-              <Text style={styles.loginButtonText}>
-                {isLoading ? (
-                  <ActivityIndicator size="large" color="white" />
-                ) : (
-                  translations[currentLanguage]?.login || "Login"
-                )}
+            <View style={styles.bottomView}>
+              <Text style={styles.loginText}>{translations[currentLanguage]?.login || 'Login'}</Text>
+              <View style={styles.inputView}>
+                <TextInput
+                  style={styles.input}
+                  placeholder={translations[currentLanguage]?.emailemobile || 'Enter Email/Mobile Number'}
+                  autoCapitalize="none"
+                  value={loginData.username}
+                  onChangeText={value => onChangeHandler(value, 'username')}
+                />
+              </View>
+              <View style={styles.inputView}>
+                <TextInput
+                  style={styles.input}
+                  placeholder={translations[currentLanguage]?.epassword || 'Enter Password'}
+                  secureTextEntry={true}
+                  autoCapitalize="none"
+                  value={loginData.password}
+                  onChangeText={value => onChangeHandler(value, 'password')}
+                />
+              </View>
+              <Text style={styles.fpText}>{translations[currentLanguage]?.forgotPassword || "Forgot Password?"}</Text>
+              <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+                <Text style={styles.loginButtonText}>
+                  {isLoading ? (
+                    <ActivityIndicator size="large" color="white" />
+                  ) : (
+                    translations[currentLanguage]?.login || "Login"
+                  )}
+                </Text>
+              </TouchableOpacity>
+              <Text style={styles.registerText}>
+                {translations[currentLanguage]?.donthanaccount || "Don't have an account ?"}
+                <Text style={{ color: '#006400', fontFamily: 'SourceSansProBold' }}>
+                  {translations[currentLanguage]?.register || "Register"}
+                </Text>
               </Text>
-            </TouchableOpacity>
-            <Text style={styles.registerText}>
-              {translations[currentLanguage]?.donthanaccount || "Don't have an account ?"}
-              <Text style={{ color: '#006400', fontFamily: 'SourceSansProBold' }}>
-                {translations[currentLanguage]?.register || "Register"}
-              </Text>
-            </Text>
+            </View>
           </View>
-        </View>
-      </TouchableWithoutFeedback>
-      <UpdatePopUp
-        isVisible={updateScreen}
-        onUpdate={handleUpdateNow}
-        onDismiss={handleUpdateDismiss}
-        updateDetails={updateDetails}
-      />
+        </TouchableWithoutFeedback>
+        <UpdatePopUp
+          isVisible={updateScreen}
+          onUpdate={handleUpdateNow}
+          onDismiss={handleUpdateDismiss}
+          updateDetails={updateDetails}
+        />
       </LinearGradient>
     </>
   );
