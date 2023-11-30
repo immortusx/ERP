@@ -318,7 +318,7 @@ export default function EnquiryList() {
       minWidth: 150,
       flex: 1,
       renderCell: (params) => {
-        const lastName = params.row.last_name || "-";
+        const lastName = params.row.last_name === "null" ? "  " : params.row.last_name;
         return (
           <div
             className="myBtnForEdit"
@@ -345,6 +345,17 @@ export default function EnquiryList() {
       type: "number",
       minWidth: 150,
       flex: 1,
+      renderCell :(params) => {
+        const email = params.row.email === "null" ? "  " : params.row.email;
+        return(
+          <div className="myBtnForEdit"
+          onClick={() =>{
+
+          }}>
+            {email}
+            </div>
+        );
+      },
     },
     {
       field: "product",
