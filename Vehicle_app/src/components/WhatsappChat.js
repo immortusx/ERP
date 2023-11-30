@@ -33,7 +33,7 @@ const WhatsappChat = () => {
     console.log(customerPhoneNumber, 'customerPhoneNumber');
 
     try {
-      const url = `${API_URL}/api/whatsapp-messages/send-whatsapp`;
+      const url = `${API_URL}/api/whatsapp-messages/send-message-customer`;
       console.log('Sending WhatsApp message to:', url);
       const token = await AsyncStorage.getItem('rbacToken');
       const config = {
@@ -41,20 +41,15 @@ const WhatsappChat = () => {
           token: token ? token : '',
         },
       };
-      const response = await axios.post(
-        url,
-        {
-          whatsapp_message: whatsappMessage,
-          c_phone_number: customerPhoneNumber,
-        },
-        config,
-      );
-
-      if (response.data.isSuccess) {
-        console.log('WhatsApp message sent successfully');
-      } else {
-        console.error('Failed to send WhatsApp message:', response.data.result);
+      const data = {
+        whatsapp_message: whatsappMessage,
+        customerPhoneNumber: customerPhoneNumber,
       }
+      await axios.post(url, data, config).then((response)=> {
+        if(response.data){
+          console.log(response.data.result, 'message send response')
+        }
+      })
     } catch (error) {
       console.error('Error sending WhatsApp message:', error);
     }
