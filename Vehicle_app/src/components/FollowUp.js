@@ -48,10 +48,16 @@ const FollowUpScreen = ({ item }) => {
   const [alertError, setAlertError] = useState(false);
   const enquiryStage = ['Follow Up', 'Booking', 'Drop', 'Invalid   '];
   const [selectedOption, setSelectedOption] = useState('Follow Up');
+  const [itemWork, setItemWork] = useState({
+    workdescription: "",
+  })
 
   useEffect(() => {
-    console.log(item, 'tekltl')
+    setItemWork({
+      workdescription: item.workDescription
+    })
   }, [item])
+
   useEffect(() => {
     if (followUpState.isSuccess && followUpState.result === 'success') {
       dispatch(clearFollowUpState());
@@ -94,9 +100,10 @@ const FollowUpScreen = ({ item }) => {
     setAlertError(true);
   };
   const handleSaveDetails = () => {
-    if (discussion.length > 0 && scheduleDate) {
+    console.log(itemWork.workdescription,'wokkkkkkkkkkkkk')
+    if (itemWork.workdescription.length > 0 && scheduleDate) {
       const formData = {
-        last_discussion: discussion,
+        last_discussion: itemWork.workdescription, // Change this line
         next_followup_date: scheduleDate,
         customer_id: item.id,
       };
@@ -108,7 +115,7 @@ const FollowUpScreen = ({ item }) => {
       }
       dispatch(setFollowUpDb(formData));
       console.log(formData, "dfssssshhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh")
-      setDiscussion('');
+      setItemWork('');
     } else {
       getSelectedDateError();
     }
@@ -181,8 +188,8 @@ const FollowUpScreen = ({ item }) => {
           <Text style={styles.label}>Discussion:</Text>
           <TextInput
             style={styles.input}
-            value={discussion}
-            onChangeText={setDiscussion}
+            value={itemWork.workdescription}
+            onChangeText={(text) => setItemWork({ ...itemWork, workdescription: text })}
             multiline
             numberOfLines={4}
           />

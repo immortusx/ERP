@@ -15,6 +15,7 @@ import SwipeScreenSlice from './slice/SwipeScreenSlice';
 import addEnquirySlice from './slice/addEnquirySlice';
 import AgencyDataSlice from './slice/AgencyDataSlice';
 import LanguageSlice from './slice/LanguageSlice';
+import callLogsSlice from './slice/callLogsSlice';
 
 export const store = configureStore({
   reducer: {
@@ -34,5 +35,6 @@ export const store = configureStore({
     swipe: SwipeScreenSlice,
     agencyData: AgencyDataSlice,
     language: LanguageSlice,
+    callLog: callLogsSlice,
   },
 });

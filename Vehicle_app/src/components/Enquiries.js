@@ -18,8 +18,9 @@ import LoadingSpinner from './subCom/LoadingSpinner';
 import CustomLoadingSpinner from './subCom/CustomLoadingSpinner';
 import { useNavigation } from '@react-navigation/native';
 import TimeAgo from './subCom/TImeAgo';
+import { useDispatch, useSelector } from 'react-redux';
 import { PermissionsAndroid } from 'react-native';
-import CallLogs from 'react-native-call-log'
+import useCallLogs from './subCom/useCallLogs';
 
 const Enquiries = ({ route }) => {
   const navigation = useNavigation();
@@ -38,44 +39,34 @@ const Enquiries = ({ route }) => {
     task_type: null,
     contact_type: null,
   });
+  const [callLogData, setCallLogData] = useState({
+    duration: "",
+    phoneNumber: "",
+    type: "",
+  })
+
+  const { loadCallLogs } = useCallLogs();
 
   useEffect(() => {
-    const handleAppStateChange = nextAppState => {
-      if (
-        appState.match(/inactive|background/) &&
-        nextAppState === 'active' &&
-        callStartTime
-      ) {
-        const callEndTime = new Date();
-        const durationInMilliseconds = callEndTime - callStartTime;
-        const durationInSeconds = Math.floor(durationInMilliseconds / 1000);
-        setCallDuration(durationInSeconds);
-        setCallStartTime(null);
+    loadCallLogs()
+  }, []);
 
-        console.log('Call Duration:', durationInSeconds, 'seconds');
+  const logs = useSelector(state => state.callLog.logs);
 
-      }
-      setAppState(nextAppState);
-    };
-
-    const appStateSubscription = AppState.addEventListener(
-      'change',
-      handleAppStateChange,
-    );
-
-    return () => {
-      appStateSubscription.remove();
-    };
-  }, [appState, callStartTime]);
   useEffect(() => {
-    if (callDuration) {
-      const hours = Math.floor(callDuration / 3600);
-      const minutes = Math.floor((callDuration % 3600) / 60);
-      const seconds = callDuration % 60;
-      const formattedDuration = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-      setSpendTime(formattedDuration);
+    if (logs.length > 0) {
+      const recentCallLogs = logs[0];
+      setCallLogData({
+        duration: recentCallLogs.duration,
+        phoneNumber: recentCallLogs.phoneNumber,
+        type: recentCallLogs.type,
+      });
     }
-  }, [callDuration]);
+  }, [logs]);
+
+  useEffect(() => {
+    console.log(itemData, "logssggggggggggg");
+  }, [itemData]);
 
   function formatPhoneNumber(phoneNumber) {
     const formattedPhoneNumber = phoneNumber.replace(
@@ -86,7 +77,7 @@ const Enquiries = ({ route }) => {
   }
   useEffect(() => {
     if (item) {
-      console.log(item, 'itekem');
+      console.log(item, 'itekemmmmmmmmmm');
       setTaskId(item.task);
       getLockedEnquiries(item.id, item.task, currentEnquiryIndex);
       const types = [{ type: 'call' }, { type: 'whatsapp' }, { type: 'sms' }];
@@ -98,7 +89,12 @@ const Enquiries = ({ route }) => {
     }
   }, [item]);
   const handleNextEnquiry = () => {
+    if (callLogData.duration < 5) {
+      return;
+    }
+    console.log(callLogData.duration,"durrrrcls")
     console.log('Next');
+    uploadcallLog(callLogData.duration);
     // setCurrentEnquiryIndex(currentEnquiryIndex + 1);
     let isRowIndex = true;
     let workDescription = `Called customer ${itemData.first_name} ${itemData.last_name} regarding ${itemData.product} enquiry`;
@@ -108,6 +104,7 @@ const Enquiries = ({ route }) => {
     itemData.workDescription = workDescription;
     itemData.taskId = taskId;
     navigation.navigate('Schedule Call', { item: itemData });
+    console.log(item,"itemkkkkkkkkkkkk")
   };
   const handleEnquirySkip = () => {
     console.log('Skip');
@@ -121,35 +118,49 @@ const Enquiries = ({ route }) => {
     setCallStartTime(new Date());
     Linking.openURL(`tel:${mobileNumber}`);
   };
-  const componentDidMount = async () => {
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.READ_CALL_LOG,
-        {
-          title: 'Call Log Example',
-          message: 'Access your call logs',
-          buttonNeutral: 'Ask Me Later',
-          buttonNegative: 'Cancel',
-          buttonPositive: 'OK',
-        }
-      );
-      console.log('Permission status:', granted);
-
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        CallLogs.load(5).then((callLogs) => {
-          console.log(callLogs, 'hjdhsjdslllllllllllllllllll');
-        });
-      } else {
-        console.log('Call Log permission denied');
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
   useEffect(() => {
-    componentDidMount();
-  }, []);
+    if (callLogData && itemData && callLogData.phoneNumber === itemData.phone_number) {
+      if (callLogData.duration >= 5 && callLogData.type === "OUTGOING") {
+        console.log(callLogData.phoneNumber, itemData.phone_number, callLogData.duration, callLogData.type, "equal");
+      }
+    }
+  }, [callLogData, itemData]);
+
+  const uploadcallLog = async durationInSeconds => {
+    const hours = Math.floor(durationInSeconds / 3600);
+    const minutes = Math.floor((durationInSeconds % 3600) / 60);
+    const seconds = durationInSeconds % 60;
+    const formattedDuration = `${String(hours).padStart(2, '0')}:${String(
+      minutes,
+    ).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    let workDescription = `Called customer ${itemData.first_name} ${itemData.last_name} regarding ${itemData.product} enquiry`;
+    const url = `${API_URL}/api/enquiry/upload-work-log`;
+    console.log('enquiry url', url);
+    const data = {
+      taskId: 1,
+      spendTime: formattedDuration,
+      workDescription: workDescription,
+    };
+    const token = await AsyncStorage.getItem('rbacToken');
+    const config = {
+      headers: {
+        token: token ? token : '',
+      },
+    };
+    console.log(config);
+    await axios.post(url, data, config).then(response => {
+      if (response) {
+        if (response.data.result === 'success') {
+          console.log(response.data, 'call log data');
+          return (
+            <SweetSuccessAlert message={'Work Log Uploaded'} modalShow={true} />
+          );
+        } else if (response.data.result === 'Task Not Assigned') {
+          console.log('Task Not Assigned');
+        }
+      }
+    });
+  };
 
   const renderIconAndData = item => {
     switch (item.phone_number) {
@@ -386,8 +397,12 @@ const Enquiries = ({ route }) => {
               <Text style={styles.skipStyle}>SKIP</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={styles.buttonContainer}
-              onPress={handleNextEnquiry}>
+              style={[
+                styles.buttonContainer,
+                { backgroundColor: callLogData.duration < 5 ? 'gray' : '#F1C40F',borderRadius: 8 },
+              ]}
+              onPress={handleNextEnquiry}
+              disabled={callLogData.duration < 5}>
               <Text style={styles.nextStyle}>DONE & NEXT</Text>
             </TouchableOpacity>
           </TouchableOpacity>
@@ -550,7 +565,6 @@ const styles = StyleSheet.create({
     paddingVertical: 7,
   },
   nextStyle: {
-    backgroundColor: '#F1C40F',
     fontSize: 16,
     fontWeight: 'bold',
     color: 'white',
