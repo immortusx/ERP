@@ -11,6 +11,9 @@ const fs = require("fs");
 const csv = require("fast-csv");
 const { sendTaskAssignmentNotification } = require("../Utils/instantEnquiryCommunitor");
 const router = express.Router();
+const moment = require("moment");
+const cron = require("node-cron");
+
 
 router.get("/get-state-list", tokenCheck, async (req, res) => {
   console.log(">>>>>get-state-list");
@@ -824,91 +827,66 @@ router.post(
     }
   }
 );
-
-const getStateIDFromDatabase = async (stateName) => {
-  return new Promise((resolve, reject) => {
-    db.query(
-      "SELECT state_id FROM state WHERE state_name = ?",
-      [stateName],
-      (err, results) => {
-        if (err) {
-          reject(err);
-        } else {
-          if (results.length > 0) {
-            resolve(results[0].state_id);
-          } else {
-            resolve(null); 
-          }
-        }
-      }
-    );
-  });
-};
-const getDistrictIDFromDatabase = async (distName) => {
-  return new Promise((resolve, reject) => {
-    db.query(
-      "SELECT id FROM district WHERE state_id = ?",
-      [distName],
-      (err, results) => {
-        if (err) {
-          reject(err);
-        } else {
-          if (results.length > 0) {
-            resolve(results[0].id);
-          } else {
-            resolve(null); 
-          }
-        }
-      }
-    );
-  });
-};
-const getTalukaIDFromDatabase = async (talukaName) => {
-  return new Promise((resolve, reject) => {
-    db.query(
-      "SELECT id FROM taluka WHERE district_id = ?",
-      [talukaName],
-      (err, results) => {
-        if (err) {
-          reject(err);
-        } else {
-          if (results.length > 0) {
-            resolve(results[0].id);
-          } else {
-            resolve(null); 
-          }
-        }
-      }
-    );
-  });
-};
 const getVillageIDFromDatabase = async (villageName) => {
   return new Promise((resolve, reject) => {
     db.query(
-      "SELECT id FROM village WHERE taluka_id = ?",
-      [villageName],
+      `SELECT * FROM village WHERE name ='${villageName}'`,
       (err, results) => {
         if (err) {
           reject(err);
         } else {
           if (results.length > 0) {
-            resolve(results[0].id);
+           
+            const villageData = results[0]; // Access the first element in the results array
+            const DataId = {
+              stateId: villageData.state_id,
+              distId: villageData.district_id,
+              talukaId: villageData.taluka_id,
+              villageId: villageData.id,
+            };
+           
+            resolve(DataId); // Resolve with the extracted data
           } else {
-            resolve(null); 
+            resolve(null);
           }
         }
       }
     );
   });
 };
-
-
+const getCategory = async(categoryNmae)=>{
+  console.log(
+    categoryNmae,
+    "categoryNmaecategoryNmaecategoryNmaecategoryNmaecategoryNmae"
+  );
+  return new Promise((resolve, reject) => {
+    db.query(
+      `SELECT id FROM enquiry_category WHERE category_name ='${categoryNmae}'`,
+      (err, results) => {
+        if (err) {
+          reject(err);
+        } else {
+          if (results.length > 0) {
+            console.log(
+              results,
+              "category*********************************************"
+            );
+            const CategoryID = results[0].id;
+            
+            resolve(CategoryID); // Resolve with the extracted data
+          } else {
+            resolve(null);
+          }
+        }
+      }
+    );
+  });
+}
 const uploadCSV = (path, callback) => {
   console.log(path, "functionc");
   let stream = fs.createReadStream(path);
   let csvDataColl = [];
   let headers = [];
-
   let fileStream = csv
     .parse({ headers: true })
     .on("headers", (headerList) => {
@@ -926,12 +904,12 @@ const uploadCSV = (path, callback) => {
       csvDataColl.push(rowData);
     })
     .on("end", async () => {
-      console.log(csvDataColl, "csvData");
-      const stateID = await getStateIDFromDatabase(csvDataColl[0].State);
-      const distID = await getDistrictIDFromDatabase(csvDataColl[0].District);
-      const talukaID = await getTalukaIDFromDatabase(csvDataColl[0].Taluka);
-      const villageID = await getVillageIDFromDatabase(csvDataColl[0].Village);
-      console.log(stateID, "stateIDstateID");
+      console.log(csvDataColl, "csvData")
+      const villageData = await getVillageIDFromDatabase(
+        csvDataColl[0].Village
+      );
+      const categoryID = await getCategory(csvDataColl[0].EnquiryCategory);
+      console.log(categoryID, "categoryDatacategoryDatacategoryData");
       csvDataColl = csvDataColl.map((obj) => {
         console.log(obj.Email);
         return {
@@ -941,16 +919,20 @@ const uploadCSV = (path, callback) => {
           phone_number: obj.PhoneNumber,
           whatsapp_number: obj.WhatsappNumber,
           email: obj.Email,
-          state: stateID || 2,
-          district: distID || 2,
-          taluka: talukaID || 2,
-          village: villageID || 2,
+          state: villageData.stateId || 2,
+          district: villageData.distId || 2,
+          taluka: villageData.talukaId || 2,
+          village: villageData.villageId || 2,
           branch_id: obj.Branch || 1,
-          enquiry_category_id: obj.EnquiryCategory || 1,
+          enquiry_category_id: categoryID || 1,
           salesperson_id: obj.SalespersonId || null,
           modal_id: obj.modal_id || 1,
-          date: obj.EnquiryDate,
-          delivery_date: obj.DeliveryDate,
+          date: moment(obj.EnquiryDate, "DD-MM-YYYY HH:mm:ss").format(
+            "YYYY-MM-DD HH:mm:ss"
+          ),
+          delivery_date: moment(obj.DeliveryDate, "DD-MM-YYYY HH:mm:ss").format(
+            "YYYY-MM-DD HH:mm:ss"
+          ),
           primary_source_id: obj.PrimarySourceId || null,
           enquiry_source_id: obj.EnquirySourceId || null,
           manufacturer: obj.Manufacturer || 1,
@@ -982,7 +964,6 @@ const insertDataUsingSP = (jsonData, callback) => {
     }
   });
 };
-
 //=======================Messages Api=========================
 
 
@@ -1040,6 +1021,7 @@ router.post("/add-messages", tokenCheck, async (req, res) => {
     console.log(err);
   }
 });
+
 
 module.exports = router;
   
