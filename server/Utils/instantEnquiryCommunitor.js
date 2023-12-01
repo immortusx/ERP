@@ -28,7 +28,7 @@ const sendMessageToCustomer = async (enquiryId) => {
     if (error) {
       console.log({ isSuccess: false, result: error });
     } else {
-      console.log(dataResults, "dataResults");
+      console.log(dataResults, "customer dataResults");
       if (dataResults && dataResults.length > 0) {
         const rowDataPacket = dataResults[0][0];
 
@@ -108,15 +108,15 @@ const sendMessageToSSP = async (enquiryId) => {
     if (error) {
       console.log({ isSuccess: false, result: error });
     } else {
-      console.log(dataResults, "dataResults");
+      console.log(dataResults, " ssp dataResults");
       if (dataResults && dataResults.length > 0) {
         const rowDataPacket = dataResults[0][0];
 
-        const customerName = rowDataPacket.customerName;
+        const customerName = rowDataPacket.customerName !== undefined ? rowDataPacket.customerName : '';
         const customerPhoneNumber = rowDataPacket.phone_number;
         const customerProduct = rowDataPacket.product;
-        const SSPNumber = Number(rowDataPacket.SSPNumber) || await getAdminPhoneNumber();
-        const salesPersonName = rowDataPacket.salesPersonName;
+        const SSPNumber = rowDataPacket.SSPNumber !== undefined ? Number(rowDataPacket.SSPNumber) : (await getAdminPhoneNumber()) ?? '';
+        const salesPersonName = rowDataPacket.salesPersonName !== undefined ? rowDataPacket.salesPersonName : '';
         const regardsMessage = await getRegardsMessages().catch(() => null) || 'From Our Teams';
 
         console.log(SSPNumber, customerName, customerPhoneNumber, "mesashsd");
@@ -238,8 +238,38 @@ const getRegardsMessages = async () => {
   }
 };
 
+// const getAdminPhoneNumber = async () => {
+//   const [adminResults] = await db.query('SELECT phone_number FROM users WHERE id = 1');
+//   return adminResults && adminResults[0] && adminResults[0].phone_number;
+// };
+
 const getAdminPhoneNumber = async () => {
-  const [adminResults] = await db.query('SELECT phone_number FROM users WHERE id = 1');
-  return adminResults && adminResults[0] && adminResults[0].phone_number;
+  try {
+    return new Promise((resolve, reject) => {
+      db.query(
+        `SELECT phone_number FROM users WHERE id = 1`,
+        (error, dataResults) => {
+          if (error) {
+            console.log({ isSuccess: false, result: "error" });
+            resolve(null);
+          } else {
+            console.log(dataResults, "dataResults");
+            if (dataResults && dataResults.length > 0) {
+              const rowDataPacket = dataResults[0];
+              const adminPhoneNumber = rowDataPacket.phone_number;
+              resolve(adminPhoneNumber);
+              console.log(adminPhoneNumber, 'adminNumber');
+            } else {
+              console.log({ isSuccess: false, result: "No data found" });
+              resolve(null);
+            }
+          }
+        }
+      );
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
 };
 module.exports = { instantEnquiryMessage, sendTaskAssignmentNotification };
