@@ -47,10 +47,10 @@ const sendMessageToCustomer = async (enquiryId) => {
         const modalFile = await attachProductFile(modalId, 2);
         const regardsMessage = await getRegardsMessages().catch(() => null) || 'From Our Teams';
 
-        if (makerFile || makerProduct !== null) {
+        if (makerFile || modalFile !== null) {
           const makerProduct = await fileUtils.generateTempURL(makerFile);
           const modalProduct = await fileUtils.generateTempURL(modalFile);
-          console.log(makerProduct, modalFile, "fileLink");
+          console.log(makerProduct, modalProduct, "fileLink");
 
           const acknowledgmentMessage = `*Dear ${customerName},*
   
