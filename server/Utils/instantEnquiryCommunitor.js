@@ -9,6 +9,7 @@ const fileUtils = require("./fileServices");
 const path = require("path");
 const fs = require("fs");
 const cron = require("node-cron");
+const fileHandler = require('../Utils/fileHandler');
 
 const instantEnquiryMessage = async (messagePayloads) => {
   const { enquiryId } = messagePayloads;
@@ -31,7 +32,7 @@ const sendMessageToCustomer = async (enquiryId) => {
       if (dataResults && dataResults.length > 0) {
         const rowDataPacket = dataResults[0][0];
 
-        const customerName = rowDataPacket.customerName;
+        const customerName = rowDataPacket.customerName !== undefined ? rowDataPacket.customerName : '';
         const customerPhoneNumber = rowDataPacket.phone_number;
         const customerWhatsAppNumber = Number(rowDataPacket.whatsapp_number);
         const customerProduct = rowDataPacket.product;
@@ -46,7 +47,7 @@ const sendMessageToCustomer = async (enquiryId) => {
         const modalFile = await attachProductFile(modalId, 2);
         const regardsMessage = await getRegardsMessages().catch(() => null) || 'From Our Teams';
 
-        if (makerFile && makerProduct !== null) {
+        if (makerFile || makerProduct !== null) {
           const makerProduct = await fileUtils.generateTempURL(makerFile);
           const modalProduct = await fileUtils.generateTempURL(modalFile);
           console.log(makerProduct, modalFile, "fileLink");
@@ -186,21 +187,15 @@ const attachProductFile = (mappingId, productType) => {
       if (dataResults && dataResults.length > 0 && dataResults[0][0]) {
         const rowDataPacket = dataResults[0][0];
         const fileName = rowDataPacket.document_path || null;
-        const sourcePath = path.join(__dirname, "..", "upload", fileName);
-        const destinationPath = path.join(__dirname, "..", "public", fileName);
+        // Use the fileHandler utility to copy the file
+        const copyResult = await fileHandler.copyFile(fileName, 'upload', 'public');
 
-        try {
-          if (fs.existsSync(sourcePath)) {
-            fs.copyFileSync(sourcePath, destinationPath);
-            console.log("File copied successfully");
-            resolve(fileName);
-          } else {
-            console.error("Source file does not exist:", sourcePath);
-            resolve(null); // Resolve with null if the source file does not exist
-          }
-        } catch (copyError) {
-          console.error("Error copying file:", copyError);
-          resolve(null); // Resolve with null to handle the error gracefully
+        if (copyResult) {
+          // File was copied successfully
+          resolve(fileName);
+        } else {
+          // Either file doesn't exist or there was an error copying
+          resolve(null);
         }
       } else {
         console.log({ isSuccess: false, result: "No data found" });
