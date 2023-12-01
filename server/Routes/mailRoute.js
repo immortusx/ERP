@@ -268,21 +268,4 @@ const sendTaskReportNotification = async (payloads) => {
   InstantMessagingUtils(chatPayloads);
 };
 
-cron.schedule("18 11 * * *", async () => {
-  try {
-    fileHandler.copyFile('1695385494122_newkeshav.png', 'upload', 'public')
-  .then((filename) => {
-    if (filename) {
-      console.log(`File ${filename} copied successfully.`);
-    } else {
-      console.log('File copy failed or source file does not exist.');
-    }
-  })
-  .catch((error) => {
-    console.error('Error:', error);
-  });
-  } catch (error) {
-    console.log(error);
-  }
-});
 module.exports = router;
