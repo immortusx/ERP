@@ -16,6 +16,8 @@ import addEnquirySlice from './slice/addEnquirySlice';
 import AgencyDataSlice from './slice/AgencyDataSlice';
 import LanguageSlice from './slice/LanguageSlice';
 import callLogsSlice from './slice/callLogsSlice';
+import getUserTaskListSlice from './slice/getUserTaskListSlice';
+
 
 export const store = configureStore({
   reducer: {
@@ -36,5 +38,6 @@ export const store = configureStore({
     agencyData: AgencyDataSlice,
     language: LanguageSlice,
     callLog: callLogsSlice,
+    getUserTaskListState:getUserTaskListSlice
   },
 });
