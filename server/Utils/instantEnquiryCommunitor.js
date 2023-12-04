@@ -36,7 +36,8 @@ const sendMessageToCustomer = async (enquiryId) => {
         const customerPhoneNumber = rowDataPacket.phone_number;
         const customerWhatsAppNumber = Number(rowDataPacket.whatsapp_number);
         const customerProduct = rowDataPacket.product;
-        const SSPNumber = Number(rowDataPacket.SSPNumber);
+        const adminPhoneNumber = await getAdminPhoneNumber();
+        const SSPNumber = rowDataPacket.SSPNumber ? Number(rowDataPacket.SSPNumber) : adminPhoneNumber; 
         const salesPersonName = rowDataPacket.salesPersonName;
         const mappingId = rowDataPacket.manufacturerId;
         const modalId = rowDataPacket.modalId;
