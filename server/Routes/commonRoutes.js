@@ -9,11 +9,12 @@ const path = require("path");
 
 const fs = require("fs");
 const csv = require("fast-csv");
-const { sendTaskAssignmentNotification } = require("../Utils/instantEnquiryCommunitor");
+const {
+  sendTaskAssignmentNotification,
+} = require("../Utils/instantEnquiryCommunitor");
 const router = express.Router();
 const moment = require("moment");
 const cron = require("node-cron");
-
 
 router.get("/get-state-list", tokenCheck, async (req, res) => {
   console.log(">>>>>get-state-list");
@@ -170,7 +171,6 @@ router.post("/addholiday-data", tokenCheck, async (req, res) => {
     }
 
     res.send({ isSuccess: true, result: "Task Add Successfully" });
-
   } catch (err) {
     console.log(err);
   }
@@ -216,7 +216,7 @@ router.post("/addtask-data", tokenCheck, async (req, res) => {
     }
 
     res.send({ isSuccess: true, result: "Task Add Successfully" });
-    sendTaskAssignmentNotification(employees)
+    sendTaskAssignmentNotification(employees);
   } catch (err) {
     console.log(err);
   }
@@ -434,7 +434,7 @@ router.get(
 
     await db.query(urlNew, async (err, result) => {
       if (err) {
-        console.log({ isSuccess: false, result: 'error' });
+        console.log({ isSuccess: false, result: "error" });
         res.send({ isSuccess: false, result: "error" });
       } else {
         console.log({ isSuccess: "success", result: urlNew });
@@ -446,25 +446,29 @@ router.get(
 
 //=====================get user-task-by-UserId========================//
 
-router.get("/get-user-task-by-UserId/:id/:startDate/:endDate", tokenCheck, async (req, res) => {
-  console.log(">>>>>>>>/get-user-task-list", req.myData);
-  const userId = req.myData.userId;
-  let isAdmin = req.myData.isSuperAdmin;
-  const startDate = req.params.startDate;
-  const endDate = req.params.endDate;
-  const id = req.params.id;
-  console.log(startDate, endDate, id, "eotjjjjjjjjjjjjjj");
-  const urlNew = `CALL sp_get_user_task_by_UserId(${id}, ${isAdmin}, '${startDate}', '${endDate}')`;
-  await db.query(urlNew, async (err, result) => {
-    if (err) {
-      console.log({ isSuccess: false, result: err });
-      res.send({ isSuccess: false, result: "error" });
-    } else {
-      console.log({ isSuccess: "success", result: urlNew });
-      res.send({ isSuccess: "success", result: result[0] }); // Send the entire result
-    }
-  });
-});
+router.get(
+  "/get-user-task-by-UserId/:id/:startDate/:endDate",
+  tokenCheck,
+  async (req, res) => {
+    console.log(">>>>>>>>/get-user-task-list", req.myData);
+    const userId = req.myData.userId;
+    let isAdmin = req.myData.isSuperAdmin;
+    const startDate = req.params.startDate;
+    const endDate = req.params.endDate;
+    const id = req.params.id;
+    console.log(startDate, endDate, id, "eotjjjjjjjjjjjjjj");
+    const urlNew = `CALL sp_get_user_task_by_UserId(${id}, ${isAdmin}, '${startDate}', '${endDate}')`;
+    await db.query(urlNew, async (err, result) => {
+      if (err) {
+        console.log({ isSuccess: false, result: err });
+        res.send({ isSuccess: false, result: "error" });
+      } else {
+        console.log({ isSuccess: "success", result: urlNew });
+        res.send({ isSuccess: "success", result: result[0] }); // Send the entire result
+      }
+    });
+  }
+);
 
 //=====================Retrieve Assigned Sale Person===================//
 router.get(
@@ -674,26 +678,30 @@ router.get("/get-old-product/:enquiryId", tokenCheck, async (req, res) => {
 });
 
 //=======================Get-User-Created-Enquiry============================//
-router.get("/get-user-created-enquiry/:categoryId", tokenCheck, async (req, res) => {
-  console.log(">>>>>//get-user-created-enquiry/:categoryId");
-  try {
-    const userId = req.myData.userId;
-    const categoryId = req.params.categoryId;
-    const url = `CALL sp_get_user_created_enquiry(${userId},${categoryId})`;
-    db.query(url, async (err, result) => {
-      if (err) {
-        console.error(err);
-        res.status(500).json({ isSuccess: false, result: "error" });
-      } else {
-        console.log({ isSuccess: true, result: result });
-        res.status(200).json({ isSuccess: true, result: result[0] });
-      }
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ isSuccess: false, result: "error" });
+router.get(
+  "/get-user-created-enquiry/:categoryId",
+  tokenCheck,
+  async (req, res) => {
+    console.log(">>>>>//get-user-created-enquiry/:categoryId");
+    try {
+      const userId = req.myData.userId;
+      const categoryId = req.params.categoryId;
+      const url = `CALL sp_get_user_created_enquiry(${userId},${categoryId})`;
+      db.query(url, async (err, result) => {
+        if (err) {
+          console.error(err);
+          res.status(500).json({ isSuccess: false, result: "error" });
+        } else {
+          console.log({ isSuccess: true, result: result });
+          res.status(200).json({ isSuccess: true, result: result[0] });
+        }
+      });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ isSuccess: false, result: "error" });
+    }
   }
-});
+);
 
 //=======================Get-Hot-Enquiry============================//
 router.get("/get-hot-enquiry/:categoryId", tokenCheck, async (req, res) => {
@@ -836,15 +844,13 @@ const getVillageIDFromDatabase = async (villageName) => {
           reject(err);
         } else {
           if (results.length > 0) {
-           
             const villageData = results[0]; // Access the first element in the results array
             const DataId = {
               stateId: villageData.state_id,
               distId: villageData.district_id,
-              talukaId: villageData.taluka_id,
               villageId: villageData.id,
             };
-           
+
             resolve(DataId); // Resolve with the extracted data
           } else {
             resolve(null);
@@ -854,11 +860,30 @@ const getVillageIDFromDatabase = async (villageName) => {
     );
   });
 };
-const getCategory = async(categoryNmae)=>{
-  console.log(
-    categoryNmae,
-    "categoryNmaecategoryNmaecategoryNmaecategoryNmaecategoryNmae"
-  );
+const getTalukaIDFromDatabase = async (talukaName) => {
+  return new Promise((resolve, reject) => {
+    db.query(
+      `SELECT * FROM taluka WHERE name ='${talukaName}'`,
+      (err, results) => {
+        if (err) {
+          reject(err);
+        } else {
+          if (results.length > 0) {
+            const talukaData = results[0]; // Access the first element in the results array
+            const DataId = {
+              talukaId: talukaData.id,
+            };
+
+            resolve(DataId); // Resolve with the extracted data
+          } else {
+            resolve(null);
+          }
+        }
+      }
+    );
+  });
+};
+const getCategory = async (categoryNmae) => {
   return new Promise((resolve, reject) => {
     db.query(
       `SELECT id FROM enquiry_category WHERE category_name ='${categoryNmae}'`,
@@ -867,12 +892,8 @@ const getCategory = async(categoryNmae)=>{
           reject(err);
         } else {
           if (results.length > 0) {
-            console.log(
-              results,
-              "category*********************************************"
-            );
             const CategoryID = results[0].id;
-            
+
             resolve(CategoryID); // Resolve with the extracted data
           } else {
             resolve(null);
@@ -881,7 +902,142 @@ const getCategory = async(categoryNmae)=>{
       }
     );
   });
-}
+};
+const getPrimaryEnquirySource = async (primaryEnquirySource) => {
+  return new Promise((resolve, reject) => {
+    db.query(
+      `SELECT * FROM enquiry_primary_sources WHERE name ='${primaryEnquirySource}'`,
+      (err, results) => {
+        if (err) {
+          reject(err);
+        } else {
+          if (results.length > 0) {
+            const primaryEnquirySource = results[0];
+            const Data = {
+              primary_source_id: primaryEnquirySource.id,
+            };
+            resolve(Data); // Resolve with the extracted data
+          } else {
+            resolve(null);
+          }
+        }
+      }
+    );
+  });
+};
+const getEnquirySource = async (EnquirySource) => {
+  return new Promise((resolve, reject) => {
+    db.query(
+      `SELECT * FROM enquiry_sources WHERE name ='${EnquirySource}'`,
+      (err, results) => {
+        if (err) {
+          reject(err);
+        } else {
+          if (results.length > 0) {
+            const enquirySource = results[0];
+            const Data = {
+              enquiry_source_id: enquirySource.id,
+            };
+            resolve(Data); // Resolve with the extracted data
+          } else {
+            resolve(null);
+          }
+        }
+      }
+    );
+  });
+};
+const getModalId = async (modal) => {
+  return new Promise((resolve, reject) => {
+    db.query(
+      `SELECT * FROM modal WHERE modalName ='${modal}'`,
+      (err, results) => {
+        if (err) {
+          reject(err);
+        } else {
+          if (results.length > 0) {
+            const modal = results[0];
+            const ModalData = {
+              modalid: modal.id,
+            };
+
+            resolve(ModalData); // Resolve with the extracted data
+          } else {
+            resolve(null);
+          }
+        }
+      }
+    );
+  });
+};
+const getmanufracturerId = async (manufacturer) => {
+  return new Promise((resolve, reject) => {
+    db.query(
+      `SELECT * FROM manufacturers WHERE name ='${manufacturer}'`,
+      (err, results) => {
+        if (err) {
+          reject(err);
+        } else {
+          if (results.length > 0) {
+            const momanufactureral = results[0];
+            const manufacturerData = {
+              manufacturerId: momanufactureral.id,
+            };
+            resolve(manufacturerData); // Resolve with the extracted data
+          } else {
+            resolve(null);
+          }
+        }
+      }
+    );
+  });
+};
+const getModalNAmeId = async (modalName) => {
+  return new Promise((resolve, reject) => {
+    db.query(
+      `SELECT * FROM modal WHERE modalName ='${modalName}'`,
+      (err, results) => {
+        if (err) {
+          reject(err);
+        } else {
+          if (results.length > 0) {
+            const modalName = results[0];
+            const Data = {
+              modalId: modalName.id,
+            };
+
+            resolve(Data); // Resolve with the extracted data
+          } else {
+            resolve(null);
+          }
+        }
+      }
+    );
+  });
+};
+const getmakerId = async (maker) => {
+  return new Promise((resolve, reject) => {
+    db.query(
+      `SELECT * FROM manufacturers WHERE name ='${maker}'`,
+      (err, results) => {
+        if (err) {
+          reject(err);
+        } else {
+          if (results.length > 0) {
+            const maker = results[0];
+            const Data = {
+              makerId: maker.id,
+            };
+            resolve(Data); // Resolve with the extracted data
+          } else {
+            resolve(null);
+          }
+        }
+      }
+    );
+  });
+};
+
 const uploadCSV = (path, callback) => {
   console.log(path, "functionc");
   let stream = fs.createReadStream(path);
@@ -892,24 +1048,38 @@ const uploadCSV = (path, callback) => {
     .on("headers", (headerList) => {
       headers = headerList;
     })
-    .on("data", async(data) => {
+    .on("data", async (data) => {
       console.log(data, "datadatadtatt");
-    const rowData = {};
+      const rowData = {};
       headers.forEach((header) => {
-        const cleanedHeader = header.trim().replace(/ /g, "_"); 
+        const cleanedHeader = header.trim().replace(/ /g, "_");
         const value = data[header].trim();
         rowData[cleanedHeader] = value;
       });
-      
+
       csvDataColl.push(rowData);
     })
     .on("end", async () => {
-      console.log(csvDataColl, "csvData")
+      console.log(csvDataColl, "csvData");
       const villageData = await getVillageIDFromDatabase(
         csvDataColl[0].Village
       );
+      const talukaData = await getTalukaIDFromDatabase(csvDataColl[0].Taluka);
       const categoryID = await getCategory(csvDataColl[0].EnquiryCategory);
-      console.log(categoryID, "categoryDatacategoryDatacategoryData");
+      const enquirySourceID = await getEnquirySource(
+        csvDataColl[0].EnquirySourceId
+      );
+      const primarySourceID = await getPrimaryEnquirySource(
+        csvDataColl[0].PrimarySourceId
+      );
+      const modalID = await getModalId(csvDataColl[0].modalId);
+      const manufracturerId = await getmanufracturerId(
+        csvDataColl[0].Manufacturer
+      );
+      console.log(modalID,"modalID");
+      const modalNameID = await getModalNAmeId(csvDataColl[0].modalName);
+      const makerID = await getmakerId(csvDataColl[0].maker);
+
       csvDataColl = csvDataColl.map((obj) => {
         console.log(obj.Email);
         return {
@@ -921,7 +1091,7 @@ const uploadCSV = (path, callback) => {
           email: obj.Email,
           state: villageData.stateId || 2,
           district: villageData.distId || 2,
-          taluka: villageData.talukaId || 2,
+          taluka: talukaData.talukaId || 2,
           village: villageData.villageId || 2,
           branch_id: obj.Branch || 1,
           enquiry_category_id: categoryID || 1,
@@ -933,14 +1103,14 @@ const uploadCSV = (path, callback) => {
           delivery_date: moment(obj.DeliveryDate, "DD-MM-YYYY HH:mm:ss").format(
             "YYYY-MM-DD HH:mm:ss"
           ),
-          primary_source_id: obj.PrimarySourceId || null,
-          enquiry_source_id: obj.EnquirySourceId || null,
-          manufacturer: obj.Manufacturer || 1,
-          modal: obj.modalId || 1,
-          maker: obj.maker || 1,
-          modalName: obj.modalName || 1,
+          primary_source_id: primarySourceID.primary_source_id || null,
+          enquiry_source_id: enquirySourceID.enquiry_source_id || null,
+          manufacturer: manufracturerId.manufacturerId || 1,
+          modal: modalID.modalid || 1,
+          maker: makerID.makerId || 1,
+          modalName: modalNameID.modalId || 1,
           year_of_manufactur: obj.modalYear || null,
-          condition_of: obj.modalCondition,
+          condition_of: 4,
           old_tractor: obj.oldTractorOwned,
         };
       });
@@ -965,7 +1135,6 @@ const insertDataUsingSP = (jsonData, callback) => {
   });
 };
 //=======================Messages Api=========================
-
 
 router.get("/get-message-action", tokenCheck, async (req, res) => {
   console.log(">>>>>/get-message-action");
@@ -1007,21 +1176,22 @@ router.post("/add-messages", tokenCheck, async (req, res) => {
     const message = req.body.message;
     const url = `INSERT INTO messages (category, action, type, message) VALUES (?,?,?,?)`;
     console.log("url", url);
-    await db.query(url, [category, messageAction, types, message], async (err, result) => {
-      if (err) {
-        console.log({ isSuccess: false, result: err });
-        res.send({ isSuccess: false, result: "error" });
+    await db.query(
+      url,
+      [category, messageAction, types, message],
+      async (err, result) => {
+        if (err) {
+          console.log({ isSuccess: false, result: err });
+          res.send({ isSuccess: false, result: "error" });
+        } else {
+          console.log({ isSuccess: true, result: url });
+          res.send({ isSuccess: true, result: result });
+        }
       }
-      else {
-        console.log({ isSuccess: true, result: url });
-        res.send({ isSuccess: true, result: result });
-      }
-    });
+    );
   } catch (err) {
     console.log(err);
   }
 });
 
-
 module.exports = router;
-  
