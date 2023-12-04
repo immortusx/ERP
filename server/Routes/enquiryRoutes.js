@@ -569,142 +569,142 @@ router.post(
         village = ?
       WHERE id = ?`;
 
-      // console.log(updateCustomerSql, "customers");
+      console.log(updateCustomerSql, "customers");
 
-      // db.query(
-      //   updateCustomerSql,
-      //   [
-      //     firstName,
-      //     fatherName,
-      //     lastName,
-      //     mobileNumber,
-      //     whatsappNumber,
-      //     email,
-      //     state,
-      //     district,
-      //     taluka,
-      //     village,
-      //     customerId,
-      //   ],
-      //   async (err, result) => {
-      //     if (err) {
-      //       console.log({ isSuccess: false, result: err });
-      //       res.send({ isSuccess: false, result: "error" });
-      //     } else {
-      //       console.log({ isSuccess: "success", result: "success" });
+      db.query(
+        updateCustomerSql,
+        [
+          firstName,
+          fatherName,
+          lastName,
+          mobileNumber,
+          whatsappNumber,
+          email,
+          state,
+          district,
+          taluka,
+          village,
+          customerId,
+        ],
+        async (err, result) => {
+          if (err) {
+            console.log({ isSuccess: false, result: err });
+            res.send({ isSuccess: false, result: "error" });
+          } else {
+            console.log({ isSuccess: "success", result: "success" });
 
-      //       const updateEnquirySql = `
-      //       UPDATE enquiries
-      //       SET
-      //         branch_id = ?,
-      //         enquiry_category_id = ?,
-      //         salesperson_id = ?,
-      //         modal_id = ?,
-      //         date = ?,
-      //         delivery_date = ?,
-      //         primary_source_id = ?,
-      //         enquiry_source_id = ?,
-      //         visitReason = ?
-      //       WHERE customer_id = ?`;
+            const updateEnquirySql = `
+            UPDATE enquiries
+            SET
+              branch_id = ?,
+              enquiry_category_id = ?,
+              salesperson_id = ?,
+              modal_id = ?,
+              date = ?,
+              delivery_date = ?,
+              primary_source_id = ?,
+              enquiry_source_id = ?,
+              visitReason = ?
+            WHERE customer_id = ?`;
 
-      //       console.log(updateEnquirySql, "enquiries");
+            console.log(updateEnquirySql, "enquiries");
 
-      //       db.query(
-      //         updateEnquirySql,
-      //         [
-      //           branchId,
-      //           enquiryCategoryId,
-      //           dsp,
-      //           model,
-      //           newEnquiryDate,
-      //           newDeliveryDate,
-      //           enquiryPrimarySource,
-      //           sourceOfEnquiry,
-      //           visitReason,
-      //           customerId,
-      //         ],
-      //         async (err, result) => {
-      //           if (err) {
-      //             console.log({ isSuccess: false, result: err });
-      //             res.send({ isSuccess: false, result: "error" });
-      //           } else {
-      //             console.log({ isSuccess: "success", result: "success" });
+            db.query(
+              updateEnquirySql,
+              [
+                branchId,
+                enquiryCategoryId,
+                dsp,
+                model,
+                newEnquiryDate,
+                newDeliveryDate,
+                enquiryPrimarySource,
+                sourceOfEnquiry,
+                visitReason,
+                customerId,
+              ],
+              async (err, result) => {
+                if (err) {
+                  console.log({ isSuccess: false, result: err });
+                  res.send({ isSuccess: false, result: "error" });
+                } else {
+                  console.log({ isSuccess: "success", result: "success" });
 
-      //             const enquiryProductSql = `UPDATE enquiry_products SET manufacturer = ?, modal = ?, variant = ? WHERE enquiry_id = ${customerId}`;
-      //             await db.query(
-      //               enquiryProductSql,
-      //               [make, product, variant],
-      //               async (err, productResult) => {
-      //                 if (err) {
-      //                   console.log(err);
-      //                 } else {
-      //                   console.log({
-      //                     isSuccess: "success",
-      //                     result: enquiryProductSql,
-      //                   });
+                  const enquiryProductSql = `UPDATE enquiry_products SET manufacturer = ?, modal = ?, variant = ? WHERE enquiry_id = ${customerId}`;
+                  await db.query(
+                    enquiryProductSql,
+                    [make, product, variant],
+                    async (err, productResult) => {
+                      if (err) {
+                        console.log(err);
+                      } else {
+                        console.log({
+                          isSuccess: "success",
+                          result: enquiryProductSql,
+                        });
 
-      //                   if (oldTractorOwned === "Yes") {
-      //                     const urlSql = `UPDATE manufactur_details SET maker = ?, modalName = ?, variantName = ?, year_of_manufactur = ?, condition_of = ?, old_tractor = ? WHERE enquiry_id = ${customerId}`;
-      //                     await db.query(
-      //                       urlSql,
-      //                       [
-      //                         manufacturers,
-      //                         product,
-      //                         variant,
-      //                         modelYear,
-      //                         condition,
-      //                         oldTractorOwned,
-      //                       ],
-      //                       (err, result) => {
-      //                         if (err) {
-      //                           console.log(err);
-      //                         } else {
-      //                           console.log({
-      //                             isSuccess: "success",
-      //                             result: urlSql,
-      //                           });
-      //                           res.send({
-      //                             isSuccess: "success",
-      //                             result: "success",
-      //                           });
-      //                         }
-      //                       }
-      //                     );
-      //                   } else if (oldTractorOwned === "No") {
-      //                     const urlSql = `UPDATE manufactur_details SET maker = ?, modalName = ?, variantName = ?, year_of_manufactur = ?, condition_of = ?, old_tractor = ? WHERE enquiry_id = ${customerId}`;
-      //                     await db.query(
-      //                       urlSql,
-      //                       [null, null, null, null, null, oldTractorOwned],
-      //                       (err, result) => {
-      //                         if (err) {
-      //                           console.log(err);
-      //                         } else {
-      //                           console.log({
-      //                             isSuccess: "success",
-      //                             result: urlSql,
-      //                           });
-      //                           res.send({
-      //                             isSuccess: "success",
-      //                             result: "success",
-      //                           });
-      //                         }
-      //                       }
-      //                     );
-      //                   } else {
-      //                     res.send({
-      //                       isSuccess: "success",
-      //                       result: "success",
-      //                     });
-      //                   }
-      //                 }
-      //               }
-      //             );
-      //           }
-      //         }
-      //       );
-      //     }
-      //   }
-      // );
+                        if (oldTractorOwned === "Yes") {
+                          const urlSql = `UPDATE manufactur_details SET maker = ?, modalName = ?, variantName = ?, year_of_manufactur = ?, condition_of = ?, old_tractor = ? WHERE enquiry_id = ${customerId}`;
+                          await db.query(
+                            urlSql,
+                            [
+                              manufacturers,
+                              product,
+                              variant,
+                              modelYear,
+                              condition,
+                              oldTractorOwned,
+                            ],
+                            (err, result) => {
+                              if (err) {
+                                console.log(err);
+                              } else {
+                                console.log({
+                                  isSuccess: "success",
+                                  result: urlSql,
+                                });
+                                res.send({
+                                  isSuccess: "success",
+                                  result: "success",
+                                });
+                              }
+                            }
+                          );
+                        } else if (oldTractorOwned === "No") {
+                          const urlSql = `UPDATE manufactur_details SET maker = ?, modalName = ?, variantName = ?, year_of_manufactur = ?, condition_of = ?, old_tractor = ? WHERE enquiry_id = ${customerId}`;
+                          await db.query(
+                            urlSql,
+                            [null, null, null, null, null, oldTractorOwned],
+                            (err, result) => {
+                              if (err) {
+                                console.log(err);
+                              } else {
+                                console.log({
+                                  isSuccess: "success",
+                                  result: urlSql,
+                                });
+                                res.send({
+                                  isSuccess: "success",
+                                  result: "success",
+                                });
+                              }
+                            }
+                          );
+                        } else {
+                          res.send({
+                            isSuccess: "success",
+                            result: "success",
+                          });
+                        }
+                      }
+                    }
+                  );
+                }
+              }
+            );
+          }
+        }
+      );
     } catch (err) {
       console.error(err);
       res.status(500).json({ isSuccess: false, result: "Error" });
