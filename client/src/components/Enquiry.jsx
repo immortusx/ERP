@@ -832,7 +832,7 @@ export default function Enquiry({ workFor, villageId }) {
         return (
           <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
             <label className="myLabel" htmlFor="email">
-              Select New Make *
+              Select Make *
             </label>
             <select
               onChange={changeHandlerNewEnquiry}
@@ -841,7 +841,7 @@ export default function Enquiry({ workFor, villageId }) {
               defaultValue={newEnquiryData.make}
             >
               <option value="0" className="myLabel">
-                select
+                select New Make
               </option>
               {newEnquiryList.listMake &&
                 newEnquiryList.listMake.length > 0 &&
@@ -1146,7 +1146,7 @@ export default function Enquiry({ workFor, villageId }) {
         return (
           <section className="d-flex mt-3 flex-column col-12 col-sm-6 col-lg-4">
             <label className="myLabel" htmlFor="email">
-              Select New Model *
+              Select Model *
             </label>
             <select
               onChange={changeHandlerNewEnquiry}
@@ -1155,7 +1155,7 @@ export default function Enquiry({ workFor, villageId }) {
               defaultValue={newEnquiryData.model}
             >
               <option value="0" className="myLabel">
-                select
+                select New Modal
               </option>
               {newEnquiryList.listModel &&
                 newEnquiryList.listModel.length > 0 &&
