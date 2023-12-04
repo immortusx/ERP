@@ -20,7 +20,7 @@ const InstantMessagingUtils = async (chatPayloads) => {
           authkey: authkey,
           to: phoneNumber,
           message: message,
-          // file: files,
+          // file: "https://crm.balkrushna.com/api/upload/1701076738457__upload_1696416072385_download%20(3).jpg",
         },
       };
   
