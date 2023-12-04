@@ -1021,17 +1021,20 @@ const DetailEnquiry = ({ route }) => {
   useEffect(() => {
     console.log(editEnquiryState, 'detail');
     if (editEnquiryState && editEnquiryState.isSuccess === true) {
+      setMessage('Enquiry Updated');
       dispatch(clearEditEnquiryState());
       dispatch(clearModalData());
-      setMessage('Enquiry Updated');
       console.log('Enquiry Updated');
-      // openModal();
       setShowMessageModal(true);
-      dispatch(getEnquiryData()).then(() => {
-        navigation.navigate('HOME');
-      });
+
+      setTimeout(() => {
+        // dispatch(getEnquiryData()).then(() => {
+          navigation.navigate('HOME');
+        // });
+      }, 2000); // Delay in milliseconds (e.g., 2000 for 2 seconds)
     }
   }, [editEnquiryState]);
+
 
   useEffect(() => {
     if (enquiryState && enquiryState.result.result === 'allready exists') {
