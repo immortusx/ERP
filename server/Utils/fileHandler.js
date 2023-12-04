@@ -3,8 +3,8 @@ const path = require('path');
 
 function copyFile(sourceFilename, sourceDirectory, destinationDirectory) {
   try {
-    const sourcePath = path.join(__dirname, '..', sourceDirectory, sourceFilename);
-    const destinationPath = path.join(__dirname, '..', destinationDirectory, sourceFilename);
+    const sourcePath = path.join(__dirname, './upload', sourceFilename);
+    const destinationPath = path.join(__dirname, './public', sourceFilename);
 
     if (fs.existsSync(sourcePath)) {
       fs.copyFileSync(sourcePath, destinationPath);
