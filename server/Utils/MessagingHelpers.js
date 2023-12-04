@@ -5,8 +5,12 @@ const authkey = "NC7XbbbVAG9m1pQgPJZRf4UtMHwZRWmKs5moS5O8NAxsa1D3l4";
 
 const InstantMessagingUtils = async (chatPayloads) => {
   const { phoneNumbers, message, files } = chatPayloads;
+  const formattedPhoneNumbers = phoneNumbers.map((phoneNumber) => {
+    // Check if the phone number starts with "91", if not, add it
+    return String(phoneNumber).startsWith("91") ? phoneNumber : `91${phoneNumber}`;
+  });
   if(files === undefined){
-    phoneNumbers.forEach(function (phoneNumber) {
+    formattedPhoneNumbers.forEach(function (phoneNumber) {
       var options = {
         method: "POST",
         url: "https://whats-api.rcsoft.in/api/create-message",
@@ -40,7 +44,7 @@ const InstantMessagingUtils = async (chatPayloads) => {
       });
     });
   }else{
-    phoneNumbers.forEach(function (phoneNumber) {
+    formattedPhoneNumbers.forEach(function (phoneNumber) {
       var options = {
         method: "POST",
         url: "https://whats-api.rcsoft.in/api/create-message",
