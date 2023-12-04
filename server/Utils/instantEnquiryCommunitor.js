@@ -36,7 +36,8 @@ const sendMessageToCustomer = async (enquiryId) => {
         const customerPhoneNumber = rowDataPacket.phone_number;
         const customerWhatsAppNumber = Number(rowDataPacket.whatsapp_number);
         const customerProduct = rowDataPacket.product;
-        const SSPNumber = Number(rowDataPacket.SSPNumber);
+        const adminPhoneNumber = await getAdminPhoneNumber();
+        const SSPNumber = rowDataPacket.SSPNumber ? Number(rowDataPacket.SSPNumber) : adminPhoneNumber; 
         const salesPersonName = rowDataPacket.salesPersonName;
         const mappingId = rowDataPacket.manufacturerId;
         const modalId = rowDataPacket.modalId;
@@ -115,7 +116,10 @@ const sendMessageToSSP = async (enquiryId) => {
         const customerName = rowDataPacket.customerName !== undefined ? rowDataPacket.customerName : '';
         const customerPhoneNumber = rowDataPacket.phone_number;
         const customerProduct = rowDataPacket.product;
-        const SSPNumber = rowDataPacket.SSPNumber !== undefined ? Number(rowDataPacket.SSPNumber) : (await getAdminPhoneNumber()) ?? '';
+        const adminPhoneNumber = await getAdminPhoneNumber();
+        console.log(adminPhoneNumber, 'adminPhone Numer')
+        const SSPNumber = rowDataPacket.SSPNumber ? rowDataPacket.SSPNumber : Number(adminPhoneNumber);
+        console.log(SSPNumber, 'SSPunwnr')
         const salesPersonName = rowDataPacket.salesPersonName !== undefined ? rowDataPacket.salesPersonName : '';
         const regardsMessage = await getRegardsMessages().catch(() => null) || 'From Our Teams';
 
@@ -238,11 +242,6 @@ const getRegardsMessages = async () => {
   }
 };
 
-// const getAdminPhoneNumber = async () => {
-//   const [adminResults] = await db.query('SELECT phone_number FROM users WHERE id = 1');
-//   return adminResults && adminResults[0] && adminResults[0].phone_number;
-// };
-
 const getAdminPhoneNumber = async () => {
   try {
     return new Promise((resolve, reject) => {
@@ -253,7 +252,7 @@ const getAdminPhoneNumber = async () => {
             console.log({ isSuccess: false, result: "error" });
             resolve(null);
           } else {
-            console.log(dataResults, "dataResults");
+            console.log(dataResults, "admin Number dataResults");
             if (dataResults && dataResults.length > 0) {
               const rowDataPacket = dataResults[0];
               const adminPhoneNumber = rowDataPacket.phone_number;
