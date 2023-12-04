@@ -12,7 +12,7 @@ import {
 import React, {useState, useEffect, useCallback} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {getEnquiryData} from '../redux/slice/getEnquirySlice';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import CustomLoadingSpinner from './subCom/CustomLoadingSpinner';
 import {Linking} from 'react-native';
 import moment from 'moment';
@@ -43,10 +43,11 @@ const WarmEnquiry = ({selectedCategory}) => {
   const getEnquiryState = useSelector(state => state.getEnquiryState);
   const {isFetching, isSuccess, isError, result} = getEnquiryState;
 
-  useEffect(() => {
-    // dispatch(getEnquiryData());
-    getWarmEnquiry();
-  }, [selectedCategory]);
+  useFocusEffect(
+    React.useCallback(() => {
+      getWarmEnquiry();
+    }, [selectedCategory]),
+  );
   const getWarmEnquiry = async () => {
     console.log('Warm ENquiry....');
     const url = `${API_URL}/api/get-Warm-enquiry/${selectedCategory}`;

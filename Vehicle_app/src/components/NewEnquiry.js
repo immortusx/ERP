@@ -47,11 +47,9 @@ const NewEnquiry = ({ selectedCategory }) => {
   useFocusEffect(
     React.useCallback(() => {
       handleNewEnquiry();
-    }, []),
+    }, [selectedCategory]),
   );
-  useEffect(() => {
-    handleNewEnquiry();
-  }, [selectedCategory]);
+
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     dispatch(setEnquiryType('New'));
