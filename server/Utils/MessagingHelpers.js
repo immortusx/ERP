@@ -1,12 +1,16 @@
 const request = require("request");
 
-const appkey = "05626b99-4844-4c7b-a50d-f3d099e083f8";
-const authkey = "NC7XbbbVAG9m1pQgPJZRf4UtMHwZRWmKs5moS5O8NAxsa1D3l4";
+const appkey = process.env.appkey;
+const authkey = process.env.authkey;
 
 const InstantMessagingUtils = async (chatPayloads) => {
   const { phoneNumbers, message, files } = chatPayloads;
+  const formattedPhoneNumbers = phoneNumbers.map((phoneNumber) => {
+    // Check if the phone number starts with "91", if not, add it
+    return String(phoneNumber).startsWith("91") ? phoneNumber : `91${phoneNumber}`;
+  });
   if(files === undefined){
-    phoneNumbers.forEach(function (phoneNumber) {
+    formattedPhoneNumbers.forEach(function (phoneNumber) {
       var options = {
         method: "POST",
         url: "https://whats-api.rcsoft.in/api/create-message",
@@ -16,7 +20,7 @@ const InstantMessagingUtils = async (chatPayloads) => {
           authkey: authkey,
           to: phoneNumber,
           message: message,
-          // file: files,
+          // file: "https://crm.balkrushna.com/api/upload/1701076738457__upload_1696416072385_download%20(3).jpg",
         },
       };
   
@@ -40,7 +44,7 @@ const InstantMessagingUtils = async (chatPayloads) => {
       });
     });
   }else{
-    phoneNumbers.forEach(function (phoneNumber) {
+    formattedPhoneNumbers.forEach(function (phoneNumber) {
       var options = {
         method: "POST",
         url: "https://whats-api.rcsoft.in/api/create-message",
