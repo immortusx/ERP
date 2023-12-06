@@ -9,6 +9,8 @@ const fileUtils = require("./fileServices");
 const path = require("path");
 const fs = require("fs");
 const cron = require("node-cron");
+const fileHandler = require("../Utils/fileHandler");
+const { getAddEnquiryMessage } = require("./messageParser");
 
 const instantEnquiryMessage = async (messagePayloads) => {
   const { enquiryId } = messagePayloads;
@@ -27,35 +29,40 @@ const sendMessageToCustomer = async (enquiryId) => {
     if (error) {
       console.log({ isSuccess: false, result: error });
     } else {
-      console.log(dataResults, "dataResults");
+      console.log(dataResults, "customer dataResults");
       if (dataResults && dataResults.length > 0) {
         const rowDataPacket = dataResults[0][0];
 
-        const customerName = rowDataPacket.customerName;
+        const customerName =
+          rowDataPacket.customerName !== undefined
+            ? rowDataPacket.customerName
+            : "";
         const customerPhoneNumber = rowDataPacket.phone_number;
         const customerWhatsAppNumber = Number(rowDataPacket.whatsapp_number);
         const customerProduct = rowDataPacket.product;
-        const SSPNumber = Number(rowDataPacket.SSPNumber);
+        const adminPhoneNumber = await getAdminPhoneNumber();
+        const SSPNumber = rowDataPacket.SSPNumber
+          ? Number(rowDataPacket.SSPNumber)
+          : adminPhoneNumber;
         const salesPersonName = rowDataPacket.salesPersonName;
         const mappingId = rowDataPacket.manufacturerId;
         const modalId = rowDataPacket.modalId;
         const modal = rowDataPacket.product;
         const manufacturer = rowDataPacket.manufactureName;
 
+        const addEnquiryMessage = await getAddEnquiryMessage(salesPersonName, SSPNumber)
         const makerFile = await attachProductFile(mappingId, 1);
         const modalFile = await attachProductFile(modalId, 2);
-        const regardsMessage = await getRegardsMessages().catch(() => null) || 'From Our Teams';
+        const regardsMessage =
+          (await getRegardsMessages().catch(() => null)) || "From Our Teams";
 
-        if (makerFile && makerProduct !== null) {
+        if (makerFile || modalFile !== null) {
           const makerProduct = await fileUtils.generateTempURL(makerFile);
           const modalProduct = await fileUtils.generateTempURL(modalFile);
-          console.log(makerProduct, modalFile, "fileLink");
+          console.log(makerProduct, modalProduct, "fileLink");
 
           const acknowledgmentMessage = `*Dear ${customerName},*
-  
-  Thank you for your enquiry regarding *${customerProduct}*. 
-  We have received your request and one of our sales representatives, *${salesPersonName}*, will contact you shortly to assist you further. 
-  If you have any immediate questions, please feel free to contact us at *${SSPNumber}*.
+  ${addEnquiryMessage}
   
   Product File :
   - [Link to Product File (Manufacturer)]
@@ -77,9 +84,7 @@ const sendMessageToCustomer = async (enquiryId) => {
         } else {
           const acknowledgmentMessage = `*Dear ${customerName},*
           
-Thank you for your enquiry regarding *${customerProduct}*. 
-We have received your request and one of our sales representatives, *${salesPersonName}*, will contact you shortly to assist you further. 
-If you have any immediate questions, please feel free to contact us at *${SSPNumber}*.
+${addEnquiryMessage}
 
 *Best regards,*
 ${regardsMessage}`;
@@ -107,16 +112,28 @@ const sendMessageToSSP = async (enquiryId) => {
     if (error) {
       console.log({ isSuccess: false, result: error });
     } else {
-      console.log(dataResults, "dataResults");
+      console.log(dataResults, " ssp dataResults");
       if (dataResults && dataResults.length > 0) {
         const rowDataPacket = dataResults[0][0];
 
-        const customerName = rowDataPacket.customerName;
+        const customerName =
+          rowDataPacket.customerName !== undefined
+            ? rowDataPacket.customerName
+            : "";
         const customerPhoneNumber = rowDataPacket.phone_number;
         const customerProduct = rowDataPacket.product;
-        const SSPNumber = Number(rowDataPacket.SSPNumber) || await getAdminPhoneNumber();
-        const salesPersonName = rowDataPacket.salesPersonName;
-        const regardsMessage = await getRegardsMessages().catch(() => null) || 'From Our Teams';
+        const adminPhoneNumber = await getAdminPhoneNumber();
+        console.log(adminPhoneNumber, "adminPhone Numer");
+        const SSPNumber = rowDataPacket.SSPNumber
+          ? rowDataPacket.SSPNumber
+          : Number(adminPhoneNumber);
+        console.log(SSPNumber, "SSPunwnr");
+        const salesPersonName =
+          rowDataPacket.salesPersonName !== undefined
+            ? rowDataPacket.salesPersonName
+            : "";
+        const regardsMessage =
+          (await getRegardsMessages().catch(() => null)) || "From Our Teams";
 
         console.log(SSPNumber, customerName, customerPhoneNumber, "mesashsd");
         const acknowledgmentMessage = `*Hello, ${salesPersonName}.*
@@ -186,21 +203,19 @@ const attachProductFile = (mappingId, productType) => {
       if (dataResults && dataResults.length > 0 && dataResults[0][0]) {
         const rowDataPacket = dataResults[0][0];
         const fileName = rowDataPacket.document_path || null;
-        const sourcePath = path.join(__dirname, "..", "upload", fileName);
-        const destinationPath = path.join(__dirname, "..", "public", fileName);
+        // Use the fileHandler utility to copy the file
+        const copyResult = await fileHandler.copyFile(
+          fileName,
+          "upload",
+          "public"
+        );
 
-        try {
-          if (fs.existsSync(sourcePath)) {
-            fs.copyFileSync(sourcePath, destinationPath);
-            console.log("File copied successfully");
-            resolve(fileName);
-          } else {
-            console.error("Source file does not exist:", sourcePath);
-            resolve(null); // Resolve with null if the source file does not exist
-          }
-        } catch (copyError) {
-          console.error("Error copying file:", copyError);
-          resolve(null); // Resolve with null to handle the error gracefully
+        if (copyResult) {
+          // File was copied successfully
+          resolve(fileName);
+        } else {
+          // Either file doesn't exist or there was an error copying
+          resolve(null);
         }
       } else {
         console.log({ isSuccess: false, result: "No data found" });
@@ -228,7 +243,7 @@ const getRegardsMessages = async () => {
               const rowDataPacket = dataResults[0];
               const regardsMessage = rowDataPacket.value;
               resolve(regardsMessage);
-              console.log(regardsMessage, 'read');
+              console.log(regardsMessage, "read");
             } else {
               console.log({ isSuccess: false, result: "No data found" });
               resolve(null);
@@ -244,7 +259,33 @@ const getRegardsMessages = async () => {
 };
 
 const getAdminPhoneNumber = async () => {
-  const [adminResults] = await db.query('SELECT phone_number FROM users WHERE id = 1');
-  return adminResults && adminResults[0] && adminResults[0].phone_number;
+  try {
+    return new Promise((resolve, reject) => {
+      db.query(
+        `SELECT phone_number FROM users WHERE id = 1`,
+        (error, dataResults) => {
+          if (error) {
+            console.log({ isSuccess: false, result: "error" });
+            resolve(null);
+          } else {
+            console.log(dataResults, "admin Number dataResults");
+            if (dataResults && dataResults.length > 0) {
+              const rowDataPacket = dataResults[0];
+              const adminPhoneNumber = rowDataPacket.phone_number;
+              resolve(adminPhoneNumber);
+              console.log(adminPhoneNumber, "adminNumber");
+            } else {
+              console.log({ isSuccess: false, result: "No data found" });
+              resolve(null);
+            }
+          }
+        }
+      );
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
 };
+
 module.exports = { instantEnquiryMessage, sendTaskAssignmentNotification };

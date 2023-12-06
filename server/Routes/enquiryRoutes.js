@@ -377,7 +377,7 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
               });
 
               if (oldTractorOwned === "Yes") {
-                const urlSql = `INSERT INTO manufactur_details (enquiry_id, maker, modalName, variantName, year_of_manufacture, condition_of, old_tractor) VALUES ('${enquiryId}', '${manufacturers}', '${product}', '${variant}', '${modelYear}', '${condition}', '${oldTractorOwned}')`;
+                const urlSql = `INSERT INTO manufactur_details (enquiry_id, maker, modalName, variantName, year_of_manufactur, condition_of, old_tractor) VALUES ('${enquiryId}', '${manufacturers}', '${product}', '${variant}', '${modelYear}', '${condition}', '${oldTractorOwned}')`;
 
                 db.query(urlSql, async (err, result) => {
                   if (err) {
