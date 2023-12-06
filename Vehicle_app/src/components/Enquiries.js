@@ -21,8 +21,9 @@ import TimeAgo from './subCom/TImeAgo';
 import { useDispatch, useSelector } from 'react-redux';
 import { PermissionsAndroid } from 'react-native';
 import useCallLogs from './subCom/useCallLogs';
+import { useFocusEffect } from '@react-navigation/native';
 import { getUserTaskList, clearUserTaskListState } from '../redux/slice/getUserTaskListSlice';
-const Enquiries = ({ route }) => {
+const Enquiries = () => {
   const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
   const [currentEnquiryIndex, setCurrentEnquiryIndex] = useState(1);
@@ -65,37 +66,46 @@ const Enquiries = ({ route }) => {
   const isFetching = useSelector((state) => state.getUserTaskListState.isFetching);
   const isError = useSelector((state) => state.getUserTaskListState.isError);
 
-const [userTaskListData, setUserTaskListData] = useState({
-  employee:"",
-  tasktype_name:"",
-  task_name:"",
-  taskCompleted:"",
-  taskcount:"",
-  category_name:"",
-  startdate:"",
-  enddate:"",
-  period_name:"",
-});
-useEffect(() => {
-  if (userTaskList.length > 0) {
-    const userTaskLists = userTaskList[0];
-    setUserTaskListData({
-      employee: userTaskLists.employee,
-      tasktype_name: userTaskLists.tasktype_name,
-      task_name: userTaskLists.task_name,
-      taskCompleted: userTaskLists.taskCompleted,
-      taskcount: userTaskLists.taskcount,
-      category_name: userTaskLists.category_name,
-      startdate: userTaskLists.startdate,
-      enddate: userTaskLists.enddate,
-      period_name: userTaskLists.period_name,
-    });
-  }
-}, [userTaskList]);
-useEffect(()=>{
-  console.log(userTaskListData,"usertakkkkkkkkkkkkgggggggg")
-},[userTaskListData])
-
+  const [userTaskListData, setUserTaskListData] = useState({
+    id: "",
+    task: "",
+    employee: "",
+    tasktype_name: "",
+    task_name: "",
+    taskCompleted: "",
+    taskcount: "",
+    category_name: "",
+    startdate: "",
+    enddate: "",
+    period_name: "",
+  });
+  useEffect(() => {
+    if (userTaskList.length > 0) {
+      const userTaskLists = userTaskList[0];
+      setUserTaskListData({
+        id: userTaskLists.id,
+        task: userTaskLists.task,
+        employee: userTaskLists.employee,
+        tasktype_name: userTaskLists.tasktype_name,
+        task_name: userTaskLists.task_name,
+        taskCompleted: userTaskLists.taskCompleted,
+        taskcount: userTaskLists.taskcount,
+        category_name: userTaskLists.category_name,
+        startdate: userTaskLists.startdate,
+        enddate: userTaskLists.enddate,
+        period_name: userTaskLists.period_name,
+      });
+    }
+  }, [userTaskList]);
+  useFocusEffect(
+    React.useCallback(() => {
+      setLoading(true);
+      dispatch(getUserTaskList());
+      return () => {
+        dispatch(clearUserTaskListState());
+      };
+    }, [dispatch])
+  );
 
   useEffect(() => {
     dispatch(getUserTaskList());
@@ -108,31 +118,37 @@ useEffect(()=>{
   }, [callLogData]);
 
   function formatPhoneNumber(phoneNumber) {
-    const formattedPhoneNumber = phoneNumber.replace(
-      /(\d{2})(\d{5})(\d{3})/,
-      '+91 $1 $2 $3',
-    );
-    return formattedPhoneNumber;
+    if (typeof phoneNumber === 'string') {
+      const formattedPhoneNumber = phoneNumber.replace(
+        /(\d{2})(\d{5})(\d{3})/,
+        '+91 $1 $2 $3',
+      );
+      return formattedPhoneNumber;
+    } else {
+      // Handle the case where phoneNumber is not a string
+      return ''; // or any default value or throw an error
+    }
   }
   useEffect(() => {
-    if (item) {
-      console.log(item, 'itekemmmmmmmmmm');
-      setTaskId(item.task);
-      getLockedEnquiries(item.id, item.task, currentEnquiryIndex);
+    if (userTaskListData) {
+      console.log(userTaskListData, 'itekemmmmmmmmmm');
+      setTaskId(userTaskListData.task);
+      getLockedEnquiries(userTaskListData.id, userTaskListData.task, currentEnquiryIndex);
       const types = [{ type: 'call' }, { type: 'whatsapp' }, { type: 'sms' }];
 
       setRenderIconData({
         task_type: types,
-        item: item,
+        userTaskListData: userTaskListData,
       });
     }
-  }, [item]);
+  }, [userTaskListData]);
   const handleNextEnquiry = () => {
     if (enquiriesList && enquiriesList.length === 0) {
       console.log('Navigating to Task screen...');
       navigation.navigate('Task');
     } else {
-      if (callLogData.duration < 5) {
+      if (callLogData.duration < 5 && callLogData.type !== "OUTGOING" && callLogData.phoneNumber !== itemData.phone_number) {
+        console.log('Button disabled: Duration < 5 or non-OUTGOING call or different phone number');
         return;
       }
       console.log('Next');
@@ -167,7 +183,7 @@ useEffect(()=>{
   };
   useEffect(() => {
     if (callLogData && itemData && callLogData.phoneNumber === itemData.phone_number) {
-      if (callLogData.duration >= 5 && callLogData.type === "OUTGOING") {
+      if (callLogData.duration >= 5 && callLogData.type === "OUTGOING" && callLogData.phoneNumber === itemData.phone_number) {
         console.log(callLogData.phoneNumber, itemData.phone_number, callLogData.duration, callLogData.type, "equal");
       }
     }
@@ -258,7 +274,7 @@ useEffect(()=>{
 
   useEffect(() => {
     if (currentEnquiryIndex) {
-      getLockedEnquiries(item.id, item.task, currentEnquiryIndex);
+      getLockedEnquiries(userTaskListData.id, userTaskListData.task, currentEnquiryIndex);
     }
   }, [currentEnquiryIndex]);
   const getLockedEnquiries = async (employeeId, taskId, indexNo) => {
@@ -292,8 +308,8 @@ useEffect(()=>{
         ) : (
           <>
             <TouchableOpacity style={styles.touchableOpacityStyle}>
-              <Text style={styles.taskListStyle}>{item.employee}</Text>
-              <Text style={styles.taskListStyle}>{item.task_name}</Text>
+              <Text style={styles.taskListStyle}>{userTaskListData.employee}</Text>
+              <Text style={styles.taskListStyle}>{userTaskListData.task_name}</Text>
             </TouchableOpacity>
             <View style={styles.contentContainer}>
               <View style={styles.dataContainer}>
@@ -309,28 +325,28 @@ useEffect(()=>{
                 </View>
                 <View style={styles.mainRightContainer}>
                   <View style={styles.rightContainer}>
-                    <Text style={styles.listStyle}>{item.employee}</Text>
-                    <Text style={styles.listStyle}>{item.tasktype_name}</Text>
-                    <Text style={styles.listStyle}>{item.task_name}</Text>
+                    <Text style={styles.listStyle}>{userTaskListData.employee}</Text>
+                    <Text style={styles.listStyle}>{userTaskListData.tasktype_name}</Text>
+                    <Text style={styles.listStyle}>{userTaskListData.task_name}</Text>
                     <TouchableOpacity
                       style={styles.perfomedTaskBtn}
                       onPress={() => {
                         // openTaskDetails(item);
                       }}>
                       <Text style={[styles.listStyle, styles.taskPerformed]}>
-                        {item.taskCompleted}/{item.taskcount}
+                        {userTaskListData.taskCompleted}/{userTaskListData.taskcount}
                       </Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.perfomedTaskBtn}>
-                      <Text style={styles.listStyle}>{item.category_name}</Text>
+                      <Text style={styles.listStyle}>{userTaskListData.category_name}</Text>
                     </TouchableOpacity>
                     <Text style={styles.listStyle}>
-                      {moment(item.startdate).format('Do MMMM, YYYY')}
+                      {moment(userTaskListData.startdate).format('Do MMMM, YYYY')}
                     </Text>
                     <Text style={styles.listStyle}>
-                      {moment(item.enddate).format('Do MMMM, YYYY')}
+                      {moment(userTaskListData.enddate).format('Do MMMM, YYYY')}
                     </Text>
-                    <Text style={styles.listStyle}>{item.period_name}</Text>
+                    <Text style={styles.listStyle}>{userTaskListData.period_name}</Text>
                   </View>
                 </View>
               </View>
@@ -454,7 +470,10 @@ useEffect(()=>{
                     { backgroundColor: callLogData.duration < 5 ? 'gray' : '#F1C40F', borderRadius: 8 },
                   ]}
                   onPress={handleNextEnquiry}
-                  disabled={callLogData.duration < 5}>
+                  disabled={
+                    callLogData.duration < 5 ||
+                    (callLogData.type !== 'OUTGOING' && callLogData.phoneNumber !== itemData.phone_number)
+                  }>
                   <Text style={styles.nextStyle}>DONE & NEXT</Text>
                 </TouchableOpacity>
               </TouchableOpacity>

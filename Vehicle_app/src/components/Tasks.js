@@ -24,7 +24,15 @@ const Tasks = () => {
   const userTaskList = useSelector((state) => state.getUserTaskListState.userTaskList);
   const isFetching = useSelector((state) => state.getUserTaskListState.isFetching);
   const isError = useSelector((state) => state.getUserTaskListState.isError);
-
+  useFocusEffect(
+    React.useCallback(() => {
+      setLoading(true);
+      dispatch(getUserTaskList());
+      return () => {
+        dispatch(clearUserTaskListState());
+      };
+    }, [dispatch])
+  );
   const [userTaskListData, setUserTaskListData] = useState({
     employee: "",
     tasktype_name: "",
@@ -50,6 +58,7 @@ const Tasks = () => {
         enddate: userTaskLists.enddate,
         period_name: userTaskLists.period_name,
       });
+      setLoading(false);
     }
   }, [userTaskList]);
   useEffect(() => {
