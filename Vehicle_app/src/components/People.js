@@ -14,6 +14,8 @@ import {API_URL} from '@env';
 import axios from 'axios';
 import {FlatList} from 'react-native-gesture-handler';
 import {requestStoragePermission} from '../permission/storagePermission';
+import RNFetchBlob from 'rn-fetch-blob';
+
 const People = () => {
   const [recipients, setRecipients] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
@@ -75,9 +77,11 @@ const People = () => {
     getPeopleList(value);
     setRecipients(value);
   };
-  const handleDownloadCSV = async () => {
+
+  const handleDownloadCSV = async peopleList => {
     // Request storage permission
     await requestStoragePermission();
+
     // Your data source (replace this with your actual data)
     // const data = [
     //   { name: 'John Doe', age: 30, city: 'New York' },
@@ -96,9 +100,19 @@ const People = () => {
 
     // Download the file
     await RNFetchBlob.fs.createFile(filePath, csvContent, 'utf8');
+    const fileExists = await RNFetchBlob.fs.exists(filePath);
+
+    if (fileExists) {
+      console.log(`CSV file saved at: ${filePath}`);
+      Alert.alert('Success', 'CSV file downloaded successfully.');
+    } else {
+      console.log('Failed to download CSV file');
+      Alert.alert('Error', 'Failed to download CSV file.');
+    }
 
     console.log(`CSV file saved at: ${filePath}`);
   };
+
   return (
     <View style={styles.container}>
       <View style={styles.mainContainer}>
