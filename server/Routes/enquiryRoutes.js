@@ -103,7 +103,7 @@ router.get("/get-village/:id", tokenCheck, async (req, res) => {
   });
 });
 router.get("/get-model/:id", tokenCheck, async (req, res) => {
-  console.log(">>>>>>>>>get-model",   req.params);
+  console.log(">>>>>>>>>get-model", req.params);
   const urlNew = `SELECT * FROM modal WHERE manufacturerId = (${req.params.id})`;
   await db.query(urlNew, async (err, result) => {
     if (err) {
@@ -118,7 +118,7 @@ router.get("/get-model/:id", tokenCheck, async (req, res) => {
 router.get("/get-enquiries", tokenCheck, async (req, res) => {
   console.log(">>>>>>>>>get-enquiries", req.myData);
   let branchId = req.myData.branchId;
-  let isSuperAdmin = req.myData.isSuperAdmin;   
+  let isSuperAdmin = req.myData.isSuperAdmin;
   let userId = req.myData.userId;
   const urlNew = `CALL sp_get_enquiries_list(${branchId},${isSuperAdmin})`;
   await db.query(urlNew, async (err, result) => {
@@ -288,7 +288,7 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
   const fatherName = req.body.fatherName || null;
   const mobileNumber = req.body.mobileNumber || null;
   const getSSP = (callback) => {
-    let userID = req.myData.userId;   
+    let userID = req.myData.userId;
     const sql = `SELECT CONCAT(u.first_name, ' ', u.last_name) AS full_name FROM users AS u WHERE u.id = ${userID}`;
     db.query(sql, async (err, result) => {
       if (err) {
@@ -300,7 +300,7 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
     });
   };
   // Add a query to check if a record with the same mobile number already exists
-  const checkMobileQuery = `SELECT * FROM customers WHERE phone_number = '${mobileNumber}'`;
+  const checkMobileQuery = `SELECT * FROM customers WHERE is_active = 1 and phone_number  = '${mobileNumber}'`;
   console.log(checkMobileQuery, "checkMobileQuery");
 
   let taskStartTime = new Date();
@@ -337,8 +337,8 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
       const deliveryDate = req.body.deliveryDate || null;
       const sourceOfEnquiry = req.body.sourceOfEnquiry || null;
       const enquiryPrimarySource = req.body.enquiryPrimarySource || null;
-      const cdate=req.body.enquiryDate;
-      const newDeliveryDate =req.body.deliveryDate;
+      const cdate = req.body.enquiryDate;
+      const newDeliveryDate = req.body.deliveryDate;
 
       const url = `INSERT INTO customers (first_name, middle_name, last_name, phone_number, whatsapp_number, email, is_active, state, district, taluka, village) VALUES ('${firstName}', '${fatherName}', '${lastName}', '${mobileNumber}', '${whatsappNumber}', '${email}', '${isActive}', '${state}', '${district}', '${tehsil}', '${village}')`;
 
@@ -404,10 +404,10 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
                         let theSpendTime = `${hours
                           .toString()
                           .padStart(2, "0")}:${minutes
-                          .toString()
-                          .padStart(2, "0")}:${seconds
-                          .toString()
-                          .padStart(2, "0")}`;
+                            .toString()
+                            .padStart(2, "0")}:${seconds
+                              .toString()
+                              .padStart(2, "0")}`;
                         console.log(theSpendTime, "spendTime");
 
                         let userID = req.myData.userId;
@@ -461,10 +461,10 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
                         let theSpendTime = `${hours
                           .toString()
                           .padStart(2, "0")}:${minutes
-                          .toString()
-                          .padStart(2, "0")}:${seconds
-                          .toString()
-                          .padStart(2, "0")}`;
+                            .toString()
+                            .padStart(2, "0")}:${seconds
+                              .toString()
+                              .padStart(2, "0")}`;
                         console.log(theSpendTime, "spendTime");
 
                         let userID = req.myData.userId;
@@ -1900,7 +1900,7 @@ router.get(
       console.log(">>>>>>>>>/get-total-new-enquiry-count");
       let isSuperAdmin = req.myData.isSuperAdmin;
       let categoryId = req.params.categoryId;
-       let userId = req.myData.userId;
+      let userId = req.myData.userId;
       const urlNew = `CALL sp_get_new_enquiry_list_total_count(${isSuperAdmin}, ${userId},${categoryId})`;
       await db.query(urlNew, async (err, result) => {
         if (err) {
@@ -2071,7 +2071,7 @@ router.get("/delete-enquiry/:id", tokenCheck, async (req, res) => {
         res.status(500).json({ isSuccess: false, result: "error" });
       } else if (customerResult.length === 1) {
         // Customer exists, mark it as deleted
-        const deleteCustomerQuery = `UPDATE customers SET is_active = 1 WHERE id = ${customerId}`;
+        const deleteCustomerQuery = `UPDATE customers SET is_active = 0 WHERE id = ${customerId}`;
         db.query(
           deleteCustomerQuery,
           [customerId],
