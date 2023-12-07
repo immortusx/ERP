@@ -15,10 +15,12 @@ import axios from 'axios';
 import {FlatList} from 'react-native-gesture-handler';
 import {requestStoragePermission} from '../permission/storagePermission';
 import RNFetchBlob from 'rn-fetch-blob';
+import CustomLoadingSpinner from './subCom/CustomLoadingSpinner';
 
 const People = () => {
   const [recipients, setRecipients] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [chatID, setChatID] = useState(null);
   const [peopleList, setPeopleList] = useState([]);
 
@@ -65,12 +67,14 @@ const People = () => {
       },
     };
     console.log(config);
+    setLoading(true);
     await axios.get(url, config).then(response => {
       if (response.data) {
         console.log(response.data.result, 'people lists');
         setPeopleList(response.data.result);
       }
     });
+    setLoading(false);
   };
   const handleSelectedRecipient = value => {
     console.log(value, 'people type');
@@ -78,7 +82,8 @@ const People = () => {
     setRecipients(value);
   };
 
-  const handleDownloadCSV = async peopleList => {
+  const handleDownloadCSV = async () => {
+    console.log("Downloading...");
     // Request storage permission
     await requestStoragePermission();
 
@@ -104,15 +109,14 @@ const People = () => {
 
     if (fileExists) {
       console.log(`CSV file saved at: ${filePath}`);
-      Alert.alert('Success', 'CSV file downloaded successfully.');
+      alert('Success', 'CSV file downloaded successfully.');
     } else {
       console.log('Failed to download CSV file');
-      Alert.alert('Error', 'Failed to download CSV file.');
+      alert('Error', 'Failed to download CSV file.');
     }
 
     console.log(`CSV file saved at: ${filePath}`);
   };
-
   return (
     <View style={styles.container}>
       <View style={styles.mainContainer}>
@@ -160,9 +164,7 @@ const People = () => {
       />
       <TouchableOpacity
         style={styles.downloadButton}
-        onPress={() => {
-          handleDownloadCSV;
-        }}>
+        onPress={handleDownloadCSV}>
         <Text style={styles.downloadButtonText}>Download CSV</Text>
       </TouchableOpacity>
     </View>
