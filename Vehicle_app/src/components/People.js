@@ -101,7 +101,7 @@ const People = () => {
     const csvContent = ['Name', ...csvData].join('\n');
 
     // Define the file path on the device
-    const filePath = `/storage/emulated/0/Download/data.csv`;
+    const filePath = `/storage/emulated/0/Download/people.csv`;
 
     // Download the file
     await RNFetchBlob.fs.createFile(filePath, csvContent, 'utf8');
