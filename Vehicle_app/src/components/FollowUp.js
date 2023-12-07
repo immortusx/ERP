@@ -50,11 +50,13 @@ const FollowUpScreen = ({ item }) => {
   const [selectedOption, setSelectedOption] = useState('Follow Up');
   const [itemWork, setItemWork] = useState({
     workdescription: "",
+    spendTime:""
   })
 
   useEffect(() => {
     setItemWork({
-      workdescription: item.workDescription
+      workdescription: item.workDescription,
+      spendTime:item.spendTime
     })
   }, [item])
 
@@ -100,12 +102,13 @@ const FollowUpScreen = ({ item }) => {
     setAlertError(true);
   };
   const handleSaveDetails = () => {
-    console.log(itemWork.workdescription,'wokkkkkkkkkkkkk')
+    console.log(itemWork.workdescription,itemWork.spendTime,'wokkkkkkkkkkkkk')
     if (itemWork.workdescription.length > 0 && scheduleDate) {
       const formData = {
         last_discussion: itemWork.workdescription, // Change this line
         next_followup_date: scheduleDate,
         customer_id: item.id,
+        spendTime:itemWork.spendTime,
       };
       if (item.isRowIndex !== undefined) {
         formData.isRowIndex = item.isRowIndex;

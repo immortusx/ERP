@@ -1,20 +1,18 @@
-import {StyleSheet, Text, View, TouchableOpacity, Image} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import moment from 'moment';
 
-const DetailTaskReport = ({route}) => {
+const DetailTaskReport = ({ route }) => {
   const [openStartDate, setOpenStartDate] = useState(false);
   const [openEndDate, setOpenEndDate] = useState(false);
   const [startDate, setstartDate] = useState('');
   const [EndDate, setEndDate] = useState('');
   const [data, setData] = useState([]);
 
-  
-
   useEffect(() => {
     if (route) {
-      const {taskreport} = route.params;
+      const { taskreport } = route.params;
       console.log(taskreport, 'taskreport');
       setData(taskreport);
       setstartDate(moment(taskreport.startdate).format('YYYY-MM-DD'));
@@ -144,11 +142,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 5,
   },
-  textStyle:{
-    backgroundColor:'white',
-    paddingVertical:5,
-flexDirection:"row",
-justifyContent:"space-evenly"
+  textStyle: {
+    backgroundColor: 'white',
+    paddingVertical: 5,
+    flexDirection: "row",
+    justifyContent: "space-evenly"
   },
   dateImg: {
     width: 20,
@@ -159,7 +157,7 @@ justifyContent:"space-evenly"
     paddingHorizontal: 20,
     paddingVertical: 5,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     elevation: 4,
     borderBottomLeftRadius: 20,

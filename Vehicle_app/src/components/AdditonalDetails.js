@@ -73,33 +73,34 @@ const AdditonalDetails = ({ route }) => {
     Linking.openURL(`tel:${mobileNumber}`);
   };
 
-  // useEffect(() => {
-  //   const handleAppStateChange = nextAppState => {
-  //     if (
-  //       appState.match(/inactive|background/) &&
-  //       nextAppState === 'active' &&
-  //       callStartTime
-  //     ) {
-  //       const callEndTime = new Date();
-  //       const durationInMilliseconds = callEndTime - callStartTime;
-  //       const durationInSeconds = Math.floor(durationInMilliseconds / 1000);
-  //       setCallDuration(durationInSeconds);
-  //       setCallStartTime(null);
+  useEffect(() => {
+    const handleAppStateChange = nextAppState => {
+      if (
+        appState.match(/inactive|background/) &&
+        nextAppState === 'active' &&
+        callStartTime
+      ) {
+        const callEndTime = new Date();
+        const durationInMilliseconds = callEndTime - callStartTime;
+        const durationInSeconds = Math.floor(durationInMilliseconds / 1000);
+        setCallDuration(durationInSeconds);
+        setCallStartTime(null);
 
-  //       console.log('Call Duration:', durationInSeconds, 'seconds');
-  //     }
-  //     setAppState(nextAppState);
-  //   };
+        console.log('Call Duration:', durationInSeconds, 'seconds');
+        uploadcallLog(durationInSeconds);
+      }
+      setAppState(nextAppState);
+    };
 
-  //   const appStateSubscription = AppState.addEventListener(
-  //     'change',
-  //     handleAppStateChange,
-  //   );
+    const appStateSubscription = AppState.addEventListener(
+      'change',
+      handleAppStateChange,
+    );
 
-  //   return () => {
-  //     appStateSubscription.remove();
-  //   };
-  // }, [appState, callStartTime]);
+    return () => {
+      appStateSubscription.remove();
+    };
+  }, [appState, callStartTime]);
 
   const getFollowUpDetils = async customerId => {
     const url = `${API_URL}/api/enquiry/get-follow-up/${customerId}`;
