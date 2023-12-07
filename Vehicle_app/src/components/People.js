@@ -1,6 +1,6 @@
 import {Dropdown} from 'react-native-element-dropdown';
 import React, {useState, useEffect} from 'react';
-import {View, StyleSheet, Platform, Text, TouchableOpacity} from 'react-native';
+import {View, StyleSheet, Platform, Text, TouchableOpacity, PermissionsAndroid, ToastAndroid} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_URL } from '@env';
 import axios from 'axios';
@@ -11,10 +11,64 @@ const People = () => {
   const [chatID, setChatID] = useState(null);
   const [peopleList, setPeopleList] = useState([]);
 
-  useEffect(()=> {
-    setRecipients(1);
-    getPeopleList(1);
-  },[])
+  useEffect(() => {
+    const requestStoragePermission = async () => {
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+          {
+            title: 'Cool Photo App Storage Permission',
+            message:
+              'Cool Photo App needs access to your storage ' +
+              'to save and retrieve files.',
+            buttonNeutral: 'Ask Me Later',
+            buttonNegative: 'Cancel',
+            buttonPositive: 'OK',
+          },
+        );
+
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          console.log('You can use storage');
+          // Do any other initialization logic here
+          ToastAndroid.showWithGravityAndOffset(
+            'Storage permission granted',
+            ToastAndroid.LONG,
+            ToastAndroid.BOTTOM,
+            25,
+            50,
+          );
+        } else {
+          console.log('Storage permission denied');
+          // You may want to display a user-friendly message here
+          ToastAndroid.showWithGravityAndOffset(
+            'Storage permission is required to save and retrieve files.',
+            ToastAndroid.LONG,
+            ToastAndroid.BOTTOM,
+            25,
+            50,
+          );
+        }
+      } catch (err) {
+        console.warn('Error while requesting storage permission:', err);
+        // Handle the error in a way that makes sense for your application
+      }
+    };
+
+    // Call the permission request function when the component mounts
+    requestStoragePermission();
+  }, []);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setRecipients(1);
+        getPeopleList(1);
+        // Continue with other actions after getting storage permission
+      } catch (error) {
+        console.error('Error requesting storage permission:', error);
+      }
+    };
+    fetchData();
+  }, []);
   const RecipientData = [
     {
       label: 'CUSTOMERS',
