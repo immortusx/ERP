@@ -28,9 +28,10 @@ import { CheckBox } from 'react-native-elements';
 import CustomCheckbox from './subCom/CustomCheckBox';
 import CustomRadioButton from './subCom/CustomRadioButton';
 import RadioButtons from './subCom/RadioButtons';
+import { useNavigation } from '@react-navigation/native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 const FollowUpScreen = ({ item }) => {
-  //   const {item} = route.params;
+  const navigation = useNavigation();
   const dispatch = useDispatch();
   const followUpState = useSelector(
     state => state.followUpSlice.followUpState.result,
@@ -50,13 +51,13 @@ const FollowUpScreen = ({ item }) => {
   const [selectedOption, setSelectedOption] = useState('Follow Up');
   const [itemWork, setItemWork] = useState({
     workdescription: "",
-    spendTime:""
+    spendTime: ""
   })
 
   useEffect(() => {
     setItemWork({
       workdescription: item.workDescription,
-      spendTime:item.spendTime
+      spendTime: item.spendTime
     })
   }, [item])
 
@@ -102,13 +103,13 @@ const FollowUpScreen = ({ item }) => {
     setAlertError(true);
   };
   const handleSaveDetails = () => {
-    console.log(itemWork.workdescription,itemWork.spendTime,'wokkkkkkkkkkkkk')
+    console.log(itemWork.workdescription, itemWork.spendTime, 'wokkkkkkkkkkkkk')
     if (itemWork.workdescription.length > 0 && scheduleDate) {
       const formData = {
         last_discussion: itemWork.workdescription, // Change this line
         next_followup_date: scheduleDate,
         customer_id: item.id,
-        spendTime:itemWork.spendTime,
+        spendTime: itemWork.spendTime,
       };
       if (item.isRowIndex !== undefined) {
         formData.isRowIndex = item.isRowIndex;
@@ -122,6 +123,7 @@ const FollowUpScreen = ({ item }) => {
     } else {
       getSelectedDateError();
     }
+    navigation.navigate('Enquiries');
   };
   const handleCalendarDate = selectedDate => {
     const formattedDate = moment(selectedDate).format('YYYY-MM-DD');

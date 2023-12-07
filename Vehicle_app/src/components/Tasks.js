@@ -65,13 +65,6 @@ const Tasks = () => {
     console.log(userTaskListData, "usertakkkkkkkkkkkkgggggggg")
   }, [userTaskListData])
 
-
-  useEffect(() => {
-    dispatch(getUserTaskList());
-    return () => {
-      dispatch(clearUserTaskListState());
-    };
-  }, [dispatch]);
   const openTaskDetails = taskDetails => {
     console.log(taskDetails, 'taskDetials');
     navigation.navigate('Task Details', { taskDetails: taskDetails });
@@ -142,7 +135,7 @@ const Tasks = () => {
                 <TouchableOpacity
                   style={styles.taskStartBtn}
                   onPress={() => {
-                    redirectEnquiriesList(userTaskListData);
+                    redirectEnquiriesList();
                   }}>
                   <Text style={styles.startText}>START TASK</Text>
                 </TouchableOpacity>
