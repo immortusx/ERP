@@ -1194,4 +1194,19 @@ router.post("/add-messages", tokenCheck, async (req, res) => {
   }
 });
 
+//===================get People List===================//
+router.get("/get-people-list/:types", tokenCheck, async (req, res) => {
+  console.log(">>>>>/get-people-list");
+  const peopleType = req.params.types;
+  const url = `call sp_get_people_list(${peopleType})`;
+  await db.query(url, async (err, result) => {
+    if (err) {
+      console.log({ isSuccess: false, result: err });
+      res.send({ isSuccess: false, result: "error" });
+    } else {
+      console.log({ isSuccess: true, result: url });
+      res.send({ isSuccess: true, result: result[0] });
+    }
+  });
+});
 module.exports = router;
