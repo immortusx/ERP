@@ -84,39 +84,49 @@ const People = () => {
 
   const handleDownloadCSV = async () => {
     console.log("Downloading...");
-    // Request storage permission
-    await requestStoragePermission();
-
-    // Your data source (replace this with your actual data)
-    // const data = [
-    //   { name: 'John Doe', age: 30, city: 'New York' },
-    //   { name: 'Jane Smith', age: 25, city: 'San Francisco' },
-    //   // Add more data items as needed
-    // ];
-
-    // Convert data to CSV format
-    const csvData = peopleList.map(item => Object.values(item).join(','));
-
-    // Join CSV headers and rows
-    const csvContent = ['Name', ...csvData].join('\n');
-
-    // Define the file path on the device
-    const filePath = `/storage/emulated/0/Download/people.csv`;
-
-    // Download the file
-    await RNFetchBlob.fs.createFile(filePath, csvContent, 'utf8');
-    const fileExists = await RNFetchBlob.fs.exists(filePath);
-
-    if (fileExists) {
-      console.log(`CSV file saved at: ${filePath}`);
-      alert('Success', 'CSV file downloaded successfully.');
-    } else {
-      console.log('Failed to download CSV file');
-      alert('Error', 'Failed to download CSV file.');
+  
+    try {
+      // Request storage permission
+      const granted = await requestStoragePermission();
+  
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        // Your data source (replace this with your actual data)
+        // const data = [
+        //   { name: 'John Doe', age: 30, city: 'New York' },
+        //   { name: 'Jane Smith', age: 25, city: 'San Francisco' },
+        //   // Add more data items as needed
+        // ];
+  
+        // Convert data to CSV format
+        const csvData = peopleList.map(item => Object.values(item).join(','));
+  
+        // Join CSV headers and rows
+        const csvContent = ['Name', ...csvData].join('\n');
+  
+        // Define the file path on the device
+        const filePath = `/storage/emulated/0/Download/people.csv`;
+  
+        // Download the file
+        await RNFetchBlob.fs.createFile(filePath, csvContent, 'utf8');
+        const fileExists = await RNFetchBlob.fs.exists(filePath);
+  
+        if (fileExists) {
+          console.log(`CSV file saved at: ${filePath}`);
+          alert('Success', 'CSV file downloaded successfully.');
+        } else {
+          console.log('Failed to download CSV file');
+          alert('Error', 'Failed to download CSV file.');
+        }
+      } else {
+        console.log('Storage permission denied');
+        alert('Error', 'Storage permission denied.');
+      }
+    } catch (err) {
+      console.warn(err);
+      alert('Error', 'An error occurred while downloading the CSV file.');
     }
-
-    console.log(`CSV file saved at: ${filePath}`);
   };
+  
   return (
     <View style={styles.container}>
       <View style={styles.mainContainer}>
