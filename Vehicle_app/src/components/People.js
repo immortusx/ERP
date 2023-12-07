@@ -1,10 +1,19 @@
 import {Dropdown} from 'react-native-element-dropdown';
 import React, {useState, useEffect} from 'react';
-import {View, StyleSheet, Platform, Text, TouchableOpacity, PermissionsAndroid, ToastAndroid} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Platform,
+  Text,
+  TouchableOpacity,
+  PermissionsAndroid,
+  ToastAndroid,
+} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { API_URL } from '@env';
+import {API_URL} from '@env';
 import axios from 'axios';
-import { FlatList } from 'react-native-gesture-handler';
+import {FlatList} from 'react-native-gesture-handler';
+import {requestStoragePermission} from '../permission/storagePermission';
 const People = () => {
   const [recipients, setRecipients] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
@@ -12,57 +21,12 @@ const People = () => {
   const [peopleList, setPeopleList] = useState([]);
 
   useEffect(() => {
-    const requestStoragePermission = async () => {
-      try {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-          {
-            title: 'Cool Photo App Storage Permission',
-            message:
-              'Cool Photo App needs access to your storage ' +
-              'to save and retrieve files.',
-            buttonNeutral: 'Ask Me Later',
-            buttonNegative: 'Cancel',
-            buttonPositive: 'OK',
-          },
-        );
-
-        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-          console.log('You can use storage');
-          // Do any other initialization logic here
-          ToastAndroid.showWithGravityAndOffset(
-            'Storage permission granted',
-            ToastAndroid.LONG,
-            ToastAndroid.BOTTOM,
-            25,
-            50,
-          );
-        } else {
-          console.log('Storage permission denied');
-          // You may want to display a user-friendly message here
-          ToastAndroid.showWithGravityAndOffset(
-            'Storage permission is required to save and retrieve files.',
-            ToastAndroid.LONG,
-            ToastAndroid.BOTTOM,
-            25,
-            50,
-          );
-        }
-      } catch (err) {
-        console.warn('Error while requesting storage permission:', err);
-        // Handle the error in a way that makes sense for your application
-      }
-    };
-
-    // Call the permission request function when the component mounts
-    requestStoragePermission();
-  }, []);
-  useEffect(() => {
     const fetchData = async () => {
       try {
         setRecipients(1);
         getPeopleList(1);
         // Continue with other actions after getting storage permission
+        await requestStoragePermission();
       } catch (error) {
         console.error('Error requesting storage permission:', error);
       }
@@ -76,6 +40,7 @@ const People = () => {
     },
     {
       label: 'SSP',
+
       value: 2,
     },
     {
@@ -88,7 +53,7 @@ const People = () => {
     value: val.value,
   }));
 
-  const getPeopleList = async (types) => {
+  const getPeopleList = async types => {
     const url = `${API_URL}/api/get-people-list/${types}`;
     console.log('get manufacturer', url);
     const token = await AsyncStorage.getItem('rbacToken');
@@ -110,9 +75,30 @@ const People = () => {
     getPeopleList(value);
     setRecipients(value);
   };
-  const handleDownloadCSV = ()=> {
-    
-  }
+  const handleDownloadCSV = async () => {
+    // Request storage permission
+    await requestStoragePermission();
+    // Your data source (replace this with your actual data)
+    // const data = [
+    //   { name: 'John Doe', age: 30, city: 'New York' },
+    //   { name: 'Jane Smith', age: 25, city: 'San Francisco' },
+    //   // Add more data items as needed
+    // ];
+
+    // Convert data to CSV format
+    const csvData = peopleList.map(item => Object.values(item).join(','));
+
+    // Join CSV headers and rows
+    const csvContent = ['Name', ...csvData].join('\n');
+
+    // Define the file path on the device
+    const filePath = `/storage/emulated/0/Download/data.csv`;
+
+    // Download the file
+    await RNFetchBlob.fs.createFile(filePath, csvContent, 'utf8');
+
+    console.log(`CSV file saved at: ${filePath}`);
+  };
   return (
     <View style={styles.container}>
       <View style={styles.mainContainer}>
@@ -140,25 +126,29 @@ const People = () => {
           />
         </View>
       </View>
-      <FlatList 
-      data={peopleList}
-      keyExtractor={(item, index) => `people_${index}`}
-      renderItem={({item, index})=> {
-        return (
-          <TouchableOpacity
-            activeOpacity={0.7}
-            onPress={() => {
-              // Handle onPress event if needed
-            }}
-            style={styles.itemContainer}
-          >
-            <Text style={styles.personName}>{index+1}   {item.personName}</Text>
-          </TouchableOpacity>
-        );
-      }}/>
-      <TouchableOpacity style={styles.downloadButton} onPress={() => {
-        handleDownloadCSV
-      }}>
+      <FlatList
+        data={peopleList}
+        keyExtractor={(item, index) => `people_${index}`}
+        renderItem={({item, index}) => {
+          return (
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => {
+                // Handle onPress event if needed
+              }}
+              style={styles.itemContainer}>
+              <Text style={styles.personName}>
+                {index + 1} {item.personName}
+              </Text>
+            </TouchableOpacity>
+          );
+        }}
+      />
+      <TouchableOpacity
+        style={styles.downloadButton}
+        onPress={() => {
+          handleDownloadCSV;
+        }}>
         <Text style={styles.downloadButtonText}>Download CSV</Text>
       </TouchableOpacity>
     </View>
@@ -243,7 +233,7 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 8,
     alignItems: 'center',
-    margin: 10
+    margin: 10,
   },
   downloadButtonText: {
     fontSize: 16,

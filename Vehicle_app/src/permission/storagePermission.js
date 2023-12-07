@@ -1,35 +1,22 @@
-import { Platform } from 'react-native';
-import * as Permissions from 'react-native-permissions';
+import { PermissionsAndroid } from 'react-native';
 
-const requestStoragePermission = async () => {
-  const storagePermission = Platform.OS === 'android'
-    ? [
-        Permissions.READ_EXTERNAL_STORAGE,
-        Permissions.WRITE_EXTERNAL_STORAGE,
-      ]
-    : [Permissions.PHOTO_LIBRARY];
+export const requestStoragePermission = async () => {
+  try {
+    const granted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+      {
+        title: 'Storage Permission',
+        message: 'App needs access to storage to download files.',
+        buttonPositive: 'OK',
+      }
+    );
 
-  const permissionStatus = await Permissions.requestMultiple(storagePermission);
-
-  const isPermissionGranted = Platform.OS === 'android'
-    ? (
-        permissionStatus.android &&
-        permissionStatus.android[Permissions.READ_EXTERNAL_STORAGE] === 'granted' &&
-        permissionStatus.android[Permissions.WRITE_EXTERNAL_STORAGE] === 'granted'
-      )
-    : (
-        permissionStatus && permissionStatus[Permissions.PHOTO_LIBRARY] === 'granted'
-      );
-
-  if (isPermissionGranted) {
-    console.log('Storage permission granted');
-    // Add your logic here after the permission is granted
-    return true;
-  } else {
-    console.log('Storage permission denied');
-    // Handle the case where permission is denied
-    return false;
+    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+      console.log('Storage permission granted');
+    } else {
+      console.log('Storage permission denied');
+    }
+  } catch (err) {
+    console.warn(err);
   }
 };
-
-export { requestStoragePermission };
