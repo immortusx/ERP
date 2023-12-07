@@ -167,37 +167,31 @@ const Enquiries = () => {
     }
   }, [userTaskListData]);
   const handleNextEnquiry = () => {
-    if (enquiriesList && enquiriesList.length === 0) {
-      console.log('Navigating to Task screen...');
-      navigation.navigate('Tasks');
-    } else {
-      if (callLogData.duration < 5 && callLogData.type !== "OUTGOING" && callLogData.phoneNumber !== itemData.phone_number) {
-        console.log('Button disabled: Duration < 5 or non-OUTGOING call or different phone number');
-        return;
-      }
-      console.log('Next');
-      let isRowIndex = true;
-      let workDescription = `Called customer ${itemData.first_name} ${itemData.last_name} regarding ${itemData.product} enquiry`;
-      let spendTime = callLogData.duration;
-      itemData.isRowIndex = isRowIndex;
-      itemData.spendTime = spendTime;
-      itemData.workDescription = workDescription;
-      itemData.taskId = taskId;
-      navigation.navigate('Schedule Call', { item: itemData });
-      setCurrentEnquiryIndex(currentEnquiryIndex + 1);
-      setDoneNextButtonVisible(true);
+    if (callLogData.duration < 5 && callLogData.type !== "OUTGOING" && callLogData.phoneNumber !== itemData.phone_number) {
+      console.log('Button disabled: Duration < 5 or non-OUTGOING call or different phone number');
+      return;
     }
-  };
-  
-  const handleEnquirySkip = () => {
-    console.log('Skip');
-    if (enquiriesList && enquiriesList.length === 0) {
-      // navigation.navigate('Tasks');
-    } else {
-      setCurrentEnquiryIndex(currentEnquiryIndex + 1);
-    }
+    console.log('Next');
+    let isRowIndex = true;
+    let workDescription = `Called customer ${itemData.first_name} ${itemData.last_name} regarding ${itemData.product} enquiry`;
+    let spendTime = callLogData.duration;
+    itemData.isRowIndex = isRowIndex;
+    itemData.spendTime = spendTime;
+    itemData.workDescription = workDescription;
+    itemData.taskId = taskId;
+    navigation.navigate('Schedule Call', { item: itemData });
+    setCurrentEnquiryIndex(currentEnquiryIndex + 1);
+    setDoneNextButtonVisible(true);
   };
 
+  const handleEnquirySkip = () => {
+    setCurrentEnquiryIndex(currentEnquiryIndex + 1);
+  };
+  const handleSaveEnquiry = () => {
+    if (enquiriesList && enquiriesList.length === 0) {
+      navigation.navigate('Tasks');
+    }
+  }
   const handleSheduleCall = item => {
     navigation.navigate('Schedule Call', { item: item });
   };
@@ -486,36 +480,45 @@ const Enquiries = () => {
                 <Text style={styles.NoTaskStyle}>Task Completed!</Text>
               )}
               <TouchableOpacity style={styles.buttonTouchableStyle}>
-                <TouchableOpacity
-                  style={styles.buttonContainer}
-                  onPress={handleEnquirySkip}>
-                  <Text style={styles.skipStyle}>SKIP</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[
-                    styles.buttonContainer,
-                    {
-                      backgroundColor:
+                {enquiriesList && enquiriesList.length === 0 ? (
+                  <TouchableOpacity
+                    style={styles.buttonContainer}
+                    onPress={handleSaveEnquiry}>
+                    <Text style={styles.skipStyle}>DONE</Text>
+                  </TouchableOpacity>
+                ) : (
+                  <React.Fragment>
+                    <TouchableOpacity
+                      style={styles.buttonContainer}
+                      onPress={handleEnquirySkip}>
+                      <Text style={styles.skipStyle}>SKIP</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={[
+                        styles.buttonContainer,
+                        {
+                          backgroundColor:
+                            callLogData.duration < 5 ||
+                              callLogData.type !== 'OUTGOING' ||
+                              (itemData && callLogData.phoneNumber !== itemData.phone_number)
+                              ? 'gray'
+                              : '#F1C40F',
+                          borderRadius: 8,
+                        },
+                      ]}
+                      onPress={handleNextEnquiry}
+                      disabled={
                         callLogData.duration < 5 ||
-                          callLogData.type !== 'OUTGOING' ||
-                          (itemData && callLogData.phoneNumber !== itemData.phone_number)
-                          ? 'gray'
-                          : '#F1C40F',
-                      borderRadius: 8,
-                    },
-                  ]}
-                  onPress={handleNextEnquiry}
-                  disabled={
-                    callLogData.duration < 5 ||
-                    callLogData.type !== 'OUTGOING' ||
-                    !(itemData && callLogData.phoneNumber === itemData.phone_number)
-                  }
-                >
-                  <Text style={styles.nextStyle}>DONE & NEXT</Text>
-                </TouchableOpacity>
-
-
+                        callLogData.type !== 'OUTGOING' ||
+                        !(itemData && callLogData.phoneNumber === itemData.phone_number)
+                      }
+                    >
+                      <Text style={styles.nextStyle}>DONE & NEXT</Text>
+                    </TouchableOpacity>
+                  </React.Fragment>
+                )}
               </TouchableOpacity>
+
             </View>
           </>
         )}
