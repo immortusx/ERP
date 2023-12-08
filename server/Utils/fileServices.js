@@ -2,7 +2,7 @@ const path = require("path");
 const fs = require("fs");
 
 function generateTempURL(filename) {
-  return `https://crm.balkrushna.com/api/public/${encodeURIComponent(filename)}`;
+  return `${REACT_APP_NODE_URL}/api/public/${encodeURIComponent(filename)}`;
 }
 
 // Function to handle requests for temporary files

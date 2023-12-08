@@ -109,7 +109,7 @@ router.post('/send-message-customer', tokenCheck, async (req, res) => {
       : `91${customerPhoneNumber}`;
     const regardsMessage = await getRegardsMessages().catch(() => null) || 'From Our Teams';
     console.log(regardsMessage);
-    const finalMessage = `${whatsapp_message}\n\n${regardsMessage || ''}`;
+    const finalMessage = `${whatsapp_message}\n${regardsMessage || ''}`;
 
     const phoneNumbers = [formattedPhoneNumber];
     InstantMessagingUtils({ phoneNumbers, message: finalMessage });
