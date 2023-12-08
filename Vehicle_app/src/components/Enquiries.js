@@ -31,6 +31,7 @@ const Enquiries = () => {
   const [callStartTime, setCallStartTime] = useState(null);
   const [callDuration, setCallDuration] = useState(null);
   const [taskId, setTaskId] = useState(null);
+  const [employeeId, setEmployeeId] = useState(null);
   const [categoryName, setCategoryName] = useState(null);
   const [itemData, setItemData] = useState(null);
   const [appState, setAppState] = useState(AppState.currentState);
@@ -38,6 +39,7 @@ const Enquiries = () => {
     task_type: null,
     contact_type: null,
   });
+  const [doneNextButtonVisible, setDoneNextButtonVisible] = useState(false);
   const [callLogData, setCallLogData] = useState({
     duration: "",
     phoneNumber: "",
@@ -100,11 +102,31 @@ const Enquiries = () => {
   useFocusEffect(
     React.useCallback(() => {
       setLoading(true);
+      loadCallLogs()
       dispatch(getUserTaskList());
+
+      const handleAppStateChange = (nextAppState) => {
+        if (appState === 'inactive' && nextAppState === 'active') {
+          // Logic to execute when the app becomes active (e.g., when coming from another app)
+          setLoading(true);
+          loadCallLogs()
+          dispatch(getUserTaskList());
+        }
+        setAppState(nextAppState);
+      };
+
+      // Subscribe to app state changes
+      const appStateSubscription = AppState.addEventListener(
+        'change',
+        handleAppStateChange
+      );
+
       return () => {
         dispatch(clearUserTaskListState());
+        // Remove the app state change subscription when the component is unmounted
+        appStateSubscription.remove();
       };
-    }, [dispatch])
+    }, [dispatch, appState])
   );
 
   useEffect(() => {
@@ -133,7 +155,9 @@ const Enquiries = () => {
     if (userTaskListData) {
       console.log(userTaskListData, 'itekemmmmmmmmmm');
       setTaskId(userTaskListData.task);
-      getLockedEnquiries(userTaskListData.id, userTaskListData.task, currentEnquiryIndex);
+      setEmployeeId(userTaskListData.id)
+
+      // getLockedEnquiries(userTaskListData.id, userTaskListData.task, currentEnquiryIndex);
       const types = [{ type: 'call' }, { type: 'whatsapp' }, { type: 'sms' }];
 
       setRenderIconData({
@@ -143,36 +167,31 @@ const Enquiries = () => {
     }
   }, [userTaskListData]);
   const handleNextEnquiry = () => {
-    if (enquiriesList && enquiriesList.length === 0) {
-      console.log('Navigating to Task screen...');
-      navigation.navigate('Task');
-    } else {
-      if (callLogData.duration < 5 && callLogData.type !== "OUTGOING" && callLogData.phoneNumber !== itemData.phone_number) {
-        console.log('Button disabled: Duration < 5 or non-OUTGOING call or different phone number');
-        return;
-      }
-      console.log('Next');
-      let isRowIndex = true;
-      let workDescription = `Called customer ${itemData.first_name} ${itemData.last_name} regarding ${itemData.product} enquiry`;
-      let spendTime = callLogData.duration;
-      itemData.isRowIndex = isRowIndex;
-      itemData.spendTime = spendTime;
-      itemData.workDescription = workDescription;
-      itemData.taskId = taskId;
-      navigation.navigate('Schedule Call', { item: itemData });
-      setCurrentEnquiryIndex(currentEnquiryIndex + 1);
+    if (callLogData.duration < 5 && callLogData.type !== "OUTGOING" && callLogData.phoneNumber !== itemData.phone_number) {
+      console.log('Button disabled: Duration < 5 or non-OUTGOING call or different phone number');
+      return;
     }
+    console.log('Next');
+    let isRowIndex = true;
+    let workDescription = `Called customer ${itemData.first_name} ${itemData.last_name} regarding ${itemData.product} enquiry`;
+    let spendTime = callLogData.duration;
+    itemData.isRowIndex = isRowIndex;
+    itemData.spendTime = spendTime;
+    itemData.workDescription = workDescription;
+    itemData.taskId = taskId;
+    navigation.navigate('Schedule Call', { item: itemData });
+    setCurrentEnquiryIndex(currentEnquiryIndex + 1);
+    setDoneNextButtonVisible(true);
   };
 
   const handleEnquirySkip = () => {
-    console.log('Skip');
-    if (enquiriesList && enquiriesList.length === 0) {
-      navigation.navigate('Task');
-    } else {
-      setCurrentEnquiryIndex(currentEnquiryIndex + 1);
-    }
+    setCurrentEnquiryIndex(currentEnquiryIndex + 1);
   };
-
+  const handleSaveEnquiry = () => {
+    if (enquiriesList && enquiriesList.length === 0) {
+      navigation.navigate('Tasks');
+    }
+  }
   const handleSheduleCall = item => {
     navigation.navigate('Schedule Call', { item: item });
   };
@@ -273,10 +292,11 @@ const Enquiries = () => {
   };
 
   useEffect(() => {
-    if (currentEnquiryIndex) {
-      getLockedEnquiries(userTaskListData.id, userTaskListData.task, currentEnquiryIndex);
+    if (userTaskListData) {
+      if (employeeId && taskId && currentEnquiryIndex)
+        getLockedEnquiries(employeeId, taskId, currentEnquiryIndex);
     }
-  }, [currentEnquiryIndex]);
+  }, [employeeId, taskId, currentEnquiryIndex, userTaskListData]);
   const getLockedEnquiries = async (employeeId, taskId, indexNo) => {
     const url = `${API_URL}/api/enquiry/getworks/${employeeId}/${taskId}/${indexNo}`;
     console.log('get enquries', url);
@@ -286,7 +306,7 @@ const Enquiries = () => {
         token: token ? token : '',
       },
     };
-    setLoading(true);
+    // setLoading(true);
     console.log(config);
     await axios.get(url, config).then(response => {
       if (response) {
@@ -295,8 +315,9 @@ const Enquiries = () => {
         const [item] = response.data.result;
         setItemData(item);
       }
-      setLoading(false);
+
     });
+    setLoading(false);
 
   };
 
@@ -459,24 +480,45 @@ const Enquiries = () => {
                 <Text style={styles.NoTaskStyle}>Task Completed!</Text>
               )}
               <TouchableOpacity style={styles.buttonTouchableStyle}>
-                <TouchableOpacity
-                  style={styles.buttonContainer}
-                  onPress={handleEnquirySkip}>
-                  <Text style={styles.skipStyle}>SKIP</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[
-                    styles.buttonContainer,
-                    { backgroundColor: callLogData.duration < 5 ? 'gray' : '#F1C40F', borderRadius: 8 },
-                  ]}
-                  onPress={handleNextEnquiry}
-                  disabled={
-                    callLogData.duration < 5 ||
-                    (callLogData.type !== 'OUTGOING' && callLogData.phoneNumber !== itemData.phone_number)
-                  }>
-                  <Text style={styles.nextStyle}>DONE & NEXT</Text>
-                </TouchableOpacity>
+                {enquiriesList && enquiriesList.length === 0 ? (
+                  <TouchableOpacity
+                    style={styles.buttonContainer}
+                    onPress={handleSaveEnquiry}>
+                    <Text style={styles.skipStyle}>DONE</Text>
+                  </TouchableOpacity>
+                ) : (
+                  <React.Fragment>
+                    <TouchableOpacity
+                      style={styles.buttonContainer}
+                      onPress={handleEnquirySkip}>
+                      <Text style={styles.skipStyle}>SKIP</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={[
+                        styles.buttonContainer,
+                        {
+                          backgroundColor:
+                            callLogData.duration < 5 ||
+                              callLogData.type !== 'OUTGOING' ||
+                              (itemData && callLogData.phoneNumber !== itemData.phone_number)
+                              ? 'gray'
+                              : '#F1C40F',
+                          borderRadius: 8,
+                        },
+                      ]}
+                      onPress={handleNextEnquiry}
+                      disabled={
+                        callLogData.duration < 5 ||
+                        callLogData.type !== 'OUTGOING' ||
+                        !(itemData && callLogData.phoneNumber === itemData.phone_number)
+                      }
+                    >
+                      <Text style={styles.nextStyle}>DONE & NEXT</Text>
+                    </TouchableOpacity>
+                  </React.Fragment>
+                )}
               </TouchableOpacity>
+
             </View>
           </>
         )}
