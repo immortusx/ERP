@@ -52,7 +52,6 @@ const AddMore = () => {
   const [isConfirmation, setIsConfiromation] = useState(false);
   const enquiryType = useSelector(state => state.enquiryType.enquiryType);
   const [isFocus, setIsFocus] = useState(false);
-  const [searchText, setSearchText] = useState(''); // State for the search input
   const [filteredEnquiries, setFilteredEnquiries] = useState([]);
   useEffect(() => {
     dispatch(setEnquiryType('New'));
