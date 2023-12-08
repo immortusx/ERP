@@ -38,6 +38,8 @@ import ColdEnquiry from './ColdEnquiry';
 import { Dropdown } from 'react-native-element-dropdown';
 import SimpleAlert from './subCom/SimpleAlert';
 import translations from '../../assets/locals/translations';
+import SearchInputText from './SearchInputText';
+import SearchEnquiryText from './SearchEnquiryText';
 const AddMore = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -257,30 +259,30 @@ const AddMore = () => {
 
 
 
-  const searchMobileNumber = async (mobileno, selectedCategory) => {
-    const url = `${API_URL}/api/get-enquiries-by-mobileno/${mobileno}/${selectedCategory}`;
-    const token = await AsyncStorage.getItem('rbacToken');
-    const config = {
-      headers: {
-        token: token ? token : '',
-      },
-    };
-    console.log(config);
-    await axios.get(url, config).then(response => {
-      if (response) {
-        console.log(response.data.result, 'Serached Data');
-        dispatch(setEnquiryType('Searched Enquiry'));
-        setNewEnquiryList(response.data.result);
-        setIsConfiromation(true);
-      }
-    });
-  };
+  // const searchMobileNumber = async (mobileno, selectedCategory) => {
+  //   const url = `${API_URL}/api/get-enquiries-by-mobileno/${mobileno}/${selectedCategory}`;
+  //   const token = await AsyncStorage.getItem('rbacToken');
+  //   const config = {
+  //     headers: {
+  //       token: token ? token : '',
+  //     },
+  //   };
+  //   console.log(config);
+  //   await axios.get(url, config).then(response => {
+  //     if (response) {
+  //       console.log(response.data.result, 'Serached Data');
+  //       dispatch(setEnquiryType('Searched Enquiry'));
+  //       setNewEnquiryList(response.data.result);
+  //       setIsConfiromation(true);
+  //     }
+  //   });
+  // };
 
-  useEffect(() => {
-    if (searchText.length > 1) {
-      searchMobileNumber(searchText, selectedCategory);
-    }
-  }, [searchText, selectedCategory]);
+  // useEffect(() => {
+  //   if (searchText.length > 1) {
+  //     searchMobileNumber(searchText, selectedCategory);
+  //   }
+  // }, [searchText, selectedCategory]);
 
   return (
     <View style={styles.container}>
@@ -316,17 +318,7 @@ const AddMore = () => {
             </View>
           </View>
         </View>
-        <View style={styles.searchBox}>
-          <TextInput
-            style={styles.searchInput}
-            placeholder={translations[currentLanguage]?.searchbymobile || "SEARCH BY MOBILE NUMBER..."}
-            value={searchText}
-            maxLength={10}
-            onChangeText={text => {
-              setSearchText(text);
-            }}
-          />
-        </View>
+        <SearchInputText selectedCategory={selectedCategory} />
       </View>
       <View style={styles.wrapper}>
         <FlatList
@@ -352,11 +344,8 @@ const AddMore = () => {
                     ]}>
                     {item.type.toLocaleUpperCase()}
                   </Text>
-                  
-                    <Text style={styles.totalCountText}>
-                       {item.total_count}
-                    </Text>
-               
+
+                  <Text style={styles.totalCountText}>{item.total_count}</Text>
                 </View>
               </TouchableOpacity>
             );
@@ -381,109 +370,9 @@ const AddMore = () => {
       {enquiryType === 'User Created' && (
         <UserCreatedEnquiry selectedCategory={selectedCategory} />
       )}
-      {/* {enquiryType === 'Followed Enquiry' && <FollowedEnquiry />} */}
-      {enquiryType === 'All' && (
-        <CategorisedEnquiry categoryId={selectedCategory} />
+      {enquiryType === 'Search' &&(
+        <SearchEnquiryText />
       )}
-      <View>
-        {enquiryType != 'All' && newEnquiryList && newEnquiryList.length > 0 ? (
-          <FlatList
-            data={newEnquiryList}
-            keyExtractor={(item, index) => `enquiry_${index}`}
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
-            renderItem={({item, index}) => {
-              return (
-                <TouchableWithoutFeedback
-                  onPress={() => {
-                    openAdditonalEnquiry(item);
-                  }}>
-                  <View key={index} style={styles.enquiryBox}>
-                    <View style={styles.dataStyle}>
-                      <View style={styles.dataContainer}>
-                        <View style={styles.iconContainer}>
-                          <Image
-                            style={styles.personImg}
-                            source={require('../../assets/person.png')}
-                          />
-                          <Image
-                            style={styles.personImg}
-                            source={require('../../assets/phone.png')}
-                          />
-                          <Image
-                            style={styles.personImg}
-                            source={require('../../assets/product.png')}
-                          />
-                          <Image
-                            style={styles.personImg}
-                            source={require('../../assets/salesperson.png')}
-                          />
-                          <Image
-                            style={styles.personImg}
-                            source={require('../../assets/location.png')}
-                          />
-                        </View>
-                        <View style={styles.detailContainer}>
-                          <Text style={styles.label}>
-                            {item.first_name +
-                              (item.last_name ? ' ' + item.last_name : '')}
-                          </Text>
-                          <TouchableOpacity
-                            onPress={() => {
-                              makePhoneCall(item.phone_number);
-                            }}>
-                            <Text style={styles.label}>
-                              {item.phone_number}
-                            </Text>
-                          </TouchableOpacity>
-                          <Text style={styles.label}>
-                            {item.product ? item.product : '-'}
-                          </Text>
-                          {item.sales_person && (
-                            <Text style={styles.salesText}>
-                              {item.sales_person}
-                            </Text>
-                          )}
-                          <Text style={styles.label}>
-                            {item.village ? item.village : '-'}
-                          </Text>
-                        </View>
-                      </View>
-                    </View>
-                    <View style={styles.rightDataStyle}>
-                      <View style={styles.daysContainer}>
-                        <TouchableOpacity style={styles.dayBack}>
-                          <Text style={styles.dateText}>
-                            {item.last_follow_up_date
-                              ? moment(item.last_follow_up_date).format('LL')
-                              : 'Not Followed'}
-                          </Text>
-                        </TouchableOpacity>
-                      </View>
-                      <TimeAgo date={item.date} />
-                      <TouchableOpacity
-                        onPress={() => {
-                          handleSheduleCall(item);
-                        }}
-                        style={styles.discussionButton}>
-                        <Text style={styles.discussionText}>Follow Up</Text>
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-                </TouchableWithoutFeedback>
-              );
-            }}
-          />
-        ) : (
-          <SimpleAlert
-            isVisible={isConfirmation}
-            text1={'Alert !'}
-            text2={'Currently, There is Enquiry Not Available'}
-            onConfirm={handleConfirm}
-          />
-        )}
-      </View>
     </View>
   );
 };
