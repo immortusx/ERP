@@ -1,20 +1,42 @@
 import {Dropdown} from 'react-native-element-dropdown';
 import React, {useState, useEffect} from 'react';
-import {View, StyleSheet, Platform, Text, TouchableOpacity} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Platform,
+  Text,
+  TouchableOpacity,
+  PermissionsAndroid,
+  ToastAndroid,
+} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { API_URL } from '@env';
+import {API_URL} from '@env';
 import axios from 'axios';
-import { FlatList } from 'react-native-gesture-handler';
+import {FlatList} from 'react-native-gesture-handler';
+import {requestStoragePermission} from '../permission/storagePermission';
+import RNFetchBlob from 'rn-fetch-blob';
+import CustomLoadingSpinner from './subCom/CustomLoadingSpinner';
+
 const People = () => {
   const [recipients, setRecipients] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [chatID, setChatID] = useState(null);
   const [peopleList, setPeopleList] = useState([]);
 
-  useEffect(()=> {
-    setRecipients(1);
-    getPeopleList(1);
-  },[])
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setRecipients(1);
+        getPeopleList(1);
+        // Continue with other actions after getting storage permission
+        await requestStoragePermission();
+      } catch (error) {
+        console.error('Error requesting storage permission:', error);
+      }
+    };
+    fetchData();
+  }, []);
   const RecipientData = [
     {
       label: 'CUSTOMERS',
@@ -22,6 +44,7 @@ const People = () => {
     },
     {
       label: 'SSP',
+
       value: 2,
     },
     {
@@ -34,7 +57,7 @@ const People = () => {
     value: val.value,
   }));
 
-  const getPeopleList = async (types) => {
+  const getPeopleList = async types => {
     const url = `${API_URL}/api/get-people-list/${types}`;
     console.log('get manufacturer', url);
     const token = await AsyncStorage.getItem('rbacToken');
@@ -44,21 +67,61 @@ const People = () => {
       },
     };
     console.log(config);
+    setLoading(true);
     await axios.get(url, config).then(response => {
       if (response.data) {
         console.log(response.data.result, 'people lists');
         setPeopleList(response.data.result);
       }
     });
+    setLoading(false);
   };
   const handleSelectedRecipient = value => {
     console.log(value, 'people type');
     getPeopleList(value);
     setRecipients(value);
   };
-  const handleDownloadCSV = ()=> {
-    
-  }
+
+  const handleDownloadCSV = async () => {
+    console.log("Downloading...");
+  
+    try {
+      // Request storage permission
+      await requestStoragePermission();
+  
+      // Your data source (replace this with your actual data)
+      // const data = [
+      //   { name: 'John Doe', age: 30, city: 'New York' },
+      //   { name: 'Jane Smith', age: 25, city: 'San Francisco' },
+      //   // Add more data items as needed
+      // ];
+  
+      // Convert data to CSV format
+      const csvData = peopleList.map(item => Object.values(item).join(','));
+  
+      // Join CSV headers and rows
+      const csvContent = ['Name,PhoneNumber', ...csvData].join('\n');
+  
+      // Define the file path on the device
+      let filePath = `/storage/emulated/0/Download/people.csv`;
+  
+      // Check if the file already exists
+      let counter = 1;
+      while (await RNFetchBlob.fs.exists(filePath)) {
+        counter++;
+        filePath = `/storage/emulated/0/Download/people (${counter}).csv`;
+      }
+  
+      // Download the file
+      await RNFetchBlob.fs.createFile(filePath, csvContent, 'utf8');
+  
+      console.log(`CSV file saved at: ${filePath}`);
+      alert(`CSV file downloaded. \n${filePath}`);
+    } catch (error) {
+      console.error('Failed to download CSV file', error);
+      alert('Download failed. Please try again.');
+    }
+  };
   return (
     <View style={styles.container}>
       <View style={styles.mainContainer}>
@@ -86,25 +149,27 @@ const People = () => {
           />
         </View>
       </View>
-      <FlatList 
-      data={peopleList}
-      keyExtractor={(item, index) => `people_${index}`}
-      renderItem={({item, index})=> {
-        return (
-          <TouchableOpacity
-            activeOpacity={0.7}
-            onPress={() => {
-              // Handle onPress event if needed
-            }}
-            style={styles.itemContainer}
-          >
-            <Text style={styles.personName}>{index+1}   {item.personName}</Text>
-          </TouchableOpacity>
-        );
-      }}/>
-      <TouchableOpacity style={styles.downloadButton} onPress={() => {
-        handleDownloadCSV
-      }}>
+      <FlatList
+        data={peopleList}
+        keyExtractor={(item, index) => `people_${index}`}
+        renderItem={({item, index}) => {
+          return (
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => {
+                // Handle onPress event if needed
+              }}
+              style={styles.itemContainer}>
+              <Text style={styles.personName}>
+                {index + 1} {item.personName}
+              </Text>
+            </TouchableOpacity>
+          );
+        }}
+      />
+      <TouchableOpacity
+        style={styles.downloadButton}
+        onPress={handleDownloadCSV}>
         <Text style={styles.downloadButtonText}>Download CSV</Text>
       </TouchableOpacity>
     </View>
@@ -189,7 +254,7 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 8,
     alignItems: 'center',
-    margin: 10
+    margin: 10,
   },
   downloadButtonText: {
     fontSize: 16,
