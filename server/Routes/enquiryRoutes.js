@@ -2064,7 +2064,7 @@ router.get("/delete-enquiry/:id", tokenCheck, async (req, res) => {
     console.log(customerId, "Customer ID");
 
     // Check if the customer exists
-    const checkCustomerQuery = `SELECT * FROM customers WHERE id = ${customerId}`;
+    const checkCustomerQuery = `SELECT * FROM customers WHERE  id = ${customerId}`;
     db.query(checkCustomerQuery, async (err, customerResult) => {
       if (err) {
         console.error(err);

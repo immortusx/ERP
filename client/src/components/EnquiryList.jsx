@@ -245,7 +245,7 @@ export default function EnquiryList() {
         if (response.data && response.data.isSuccess) {
           console.log(response.data, "delete true");
           dispatch(setShowMessage("Enquiry Deleted"));
-          dispatch(getUserListFromDb());
+          getEnquiriesFromDb();
           setDisplayConfirmationModal(false);
         } else {
           console.log(response.data, "false");
