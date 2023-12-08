@@ -1,16 +1,18 @@
 import {createSlice} from '@reduxjs/toolkit';
 
+const initialState = {
+  enquiries: [],
+};
+
 const enquiryTextSlice = createSlice({
   name: 'enquiries',
-  initialState: {
-    enquiryList: [], // Initial state for the enquiry list
-  },
+  initialState,
   reducers: {
     setEnquiryList(state, action) {
-      state.enquiryList = action.payload; // Set the enquiryList to the payload received
+      state.enquiries = action.payload; // Set the enquiryList to the payload received
     },
     clearEnquiryList(state) {
-      state.enquiryList = []; // Clear the enquiryList
+      state.enquiries = []; // Clear the enquiryList
     },
   },
 });

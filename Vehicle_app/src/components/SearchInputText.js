@@ -4,9 +4,13 @@ import translations from '../../assets/locals/translations';
 import {useDispatch, useSelector} from 'react-redux';
 import {useNavigation, useFocusEffect} from '@react-navigation/native';
 import axios from 'axios';
+const enquiryType = useSelector(state => state.enquiryType.enquiryType);
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {setEnquiryType} from '../redux/slice/enquiryTypeSlice';
-import { setEnquiryList } from '../redux/slice/searchTextEnquirySlice';
+import {
+  setEnquiryList,
+  clearEnquiryList,
+} from '../redux/slice/searchTextEnquirySlice';
 
 import {API_URL} from '@env';
 
@@ -17,8 +21,8 @@ const SearchInputText = ({selectedCategory}) => {
 
   const currentLanguage = useSelector(state => state.language.language);
 
-  const searchtext = async (mobileno, selectedCategory) => {
-    const url = `${API_URL}/api/get-enquiries-by-mobileno/${mobileno}/${selectedCategory}`;
+  const searchtext = async (text, selectedCategory) => {
+    const url = `${API_URL}/api/get-enquiries-by-mobileno/${text}/${selectedCategory}`;
     const token = await AsyncStorage.getItem('rbacToken');
     const config = {
       headers: {
@@ -36,7 +40,7 @@ const SearchInputText = ({selectedCategory}) => {
     });
   };
 
-  
+ 
 
   useFocusEffect(
     React.useCallback(() => {

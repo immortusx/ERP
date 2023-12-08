@@ -16,17 +16,20 @@ import {useNavigation} from '@react-navigation/native';
 import CustomLoadingSpinner from './subCom/CustomLoadingSpinner';
 import {Linking} from 'react-native';
 import moment from 'moment';
+import TimeAgo from './subCom/TImeAgo';
 import { clearEnquiryList,setEnquiryList } from '../redux/slice/searchTextEnquirySlice';
+import {setEnquiryType} from '../redux/slice/enquiryTypeSlice';
 
 const SearchEnquiryText = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const enquiryType = useSelector(state => state.enquiryType.enquiryType);
-  const enquireis = useSelector(state => state.setEnquiryList.enquireis);
+  const enquiries = useSelector(state => state.enquiries.enquiries);
  
 
-  console.log(enquireis,"&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
+  console.log(enquiries, '&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&');
   const handleSheduleCall = item => {
     navigation.navigate('Schedule Call', {item: item});
   };
@@ -39,15 +42,120 @@ const SearchEnquiryText = () => {
     console.log(item, '>>>>>>>>>>>>>>>.');
     navigation.navigate('Additional Details', {item: item});
   };
+  
 
   if (loading) {
     return <CustomLoadingSpinner />;
   }
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    dispatch(setEnquiryType('Search'));
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  }, []);
 
   
   return (
     <View style={styles.container}>
-     <Text>HGGHGYH</Text>
+      <View>
+        {enquiries && enquiries.length > 0 ? (
+          <FlatList
+            data={enquiries}
+            keyExtractor={(item, index) => `enquiry_${index}`}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+            renderItem={({item, index}) => {
+              return (
+                <TouchableWithoutFeedback
+                  onPress={() => {
+                    openAdditonalEnquiry(item);
+                  }}>
+                  <View key={index} style={styles.enquiryBox}>
+                    <View style={styles.dataStyle}>
+                      <View style={styles.dataContainer}>
+                        <View style={styles.iconContainer}>
+                          <Image
+                            style={styles.personImg}
+                            source={require('../../assets/person.png')}
+                          />
+                          <Image
+                            style={styles.personImg}
+                            source={require('../../assets/phone.png')}
+                          />
+                          <Image
+                            style={styles.personImg}
+                            source={require('../../assets/product.png')}
+                          />
+                          <Image
+                            style={styles.personImg}
+                            source={require('../../assets/salesperson.png')}
+                          />
+                          <Image
+                            style={styles.personImg}
+                            source={require('../../assets/location.png')}
+                          />
+                        </View>
+                        <View style={styles.detailContainer}>
+                          <Text style={styles.label}>
+                            {item.first_name +
+                              (item.last_name ? ' ' + item.last_name : '')}
+                          </Text>
+                          <TouchableOpacity
+                            onPress={() => {
+                              makePhoneCall(item.phone_number);
+                            }}>
+                            <Text style={styles.label}>
+                              {item.phone_number}
+                            </Text>
+                          </TouchableOpacity>
+                          <Text style={styles.label}>
+                            {item.product ? item.product : '-'}
+                          </Text>
+                          {item.sales_person && (
+                            <Text style={styles.salesText}>
+                              {item.sales_person}
+                            </Text>
+                          )}
+                          <Text style={styles.label}>
+                            {item.village ? item.village : '-'}
+                          </Text>
+                        </View>
+                      </View>
+                    </View>
+                    <View style={styles.rightDataStyle}>
+                      <View style={styles.daysContainer}>
+                        <TouchableOpacity style={styles.dayBack}>
+                          <Text style={styles.dateText}>
+                            {item.last_follow_up_date
+                              ? moment(item.last_follow_up_date).format('LL')
+                              : 'Not Followed'}
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                      <TimeAgo date={item.date} />
+                      <TouchableOpacity
+                        onPress={() => {
+                          handleSheduleCall(item);
+                        }}
+                        style={styles.discussionButton}>
+                        <Text style={styles.discussionText}>Follow Up</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </TouchableWithoutFeedback>
+              );
+            }}
+          />
+        ) : (
+          <View style={styles.noEnquiryContainer}>
+            <Text style={styles.NoTaskStyle}>
+              Currently, There is Search Enquiry Not Available
+            </Text>
+          </View>
+        )}
+      </View>
     </View>
   );
 };
