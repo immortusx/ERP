@@ -116,7 +116,7 @@ const People = () => {
       await RNFetchBlob.fs.createFile(filePath, csvContent, 'utf8');
   
       console.log(`CSV file saved at: ${filePath}`);
-      alert('CSV downloaded');
+      alert(`CSV file downloaded. \n${filePath}`);
     } catch (error) {
       console.error('Failed to download CSV file', error);
       alert('Download failed. Please try again.');
