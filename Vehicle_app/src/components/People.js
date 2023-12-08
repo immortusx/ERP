@@ -100,7 +100,7 @@ const People = () => {
       const csvData = peopleList.map(item => Object.values(item).join(','));
   
       // Join CSV headers and rows
-      const csvContent = ['Name,PhoneNumber', ...csvData].join('\n');
+      const csvContent = ['Name,PhoneNumber,Email', ...csvData].join('\n');
   
       // Define the file path on the device
       let filePath = `/storage/emulated/0/Download/people.csv`;
