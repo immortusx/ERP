@@ -4,7 +4,6 @@ import translations from '../../assets/locals/translations';
 import {useDispatch, useSelector} from 'react-redux';
 import {useNavigation, useFocusEffect} from '@react-navigation/native';
 import axios from 'axios';
-const enquiryType = useSelector(state => state.enquiryType.enquiryType);
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {setEnquiryType} from '../redux/slice/enquiryTypeSlice';
 import {
@@ -18,8 +17,9 @@ const SearchInputText = ({selectedCategory}) => {
   const dispatch = useDispatch();
   const [searchText, setSearchText] = useState('');
   const [isConfirmation, setIsConfiromation] = useState(false);
-
+  
   const currentLanguage = useSelector(state => state.language.language);
+  const enquiryType = useSelector(state => state.enquiryType.enquiryType);
 
   const searchtext = async (text, selectedCategory) => {
     const url = `${API_URL}/api/get-enquiries-by-mobileno/${text}/${selectedCategory}`;
@@ -40,6 +40,12 @@ const SearchInputText = ({selectedCategory}) => {
     });
   };
 
+
+  useEffect(() => {
+    if (enquiryType !== 'Search') {
+      setSearchText('');
+    }
+  }, [enquiryType]);
  
 
   useFocusEffect(
