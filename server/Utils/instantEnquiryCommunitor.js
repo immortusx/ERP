@@ -50,7 +50,10 @@ const sendMessageToCustomer = async (enquiryId) => {
         const modal = rowDataPacket.product;
         const manufacturer = rowDataPacket.manufactureName;
 
-        const addEnquiryMessage = await getAddEnquiryMessage(salesPersonName, SSPNumber)
+        const addEnquiryMessage = await getAddEnquiryMessage(
+          salesPersonName,
+          SSPNumber
+        );
         const makerFile = await attachProductFile(mappingId, 1);
         const modalFile = await attachProductFile(modalId, 2);
         const regardsMessage =
@@ -162,7 +165,7 @@ ${regardsMessage}`;
 
 const sendTaskAssignmentNotification = async (employeeId) => {
   const sql = `CALL sp_get_task_assignment_notification_data(${employeeId})`;
-  await db.query(sql, (error, dataResults) => {
+  await db.query(sql, async (error, dataResults) => {
     if (error) {
       console.log({ isSuccess: false, result: error });
     } else {
@@ -171,7 +174,9 @@ const sendTaskAssignmentNotification = async (employeeId) => {
         const rowDataPacket = dataResults[0][0];
         const sales_person = rowDataPacket.sales_person;
         const ssp_number = Number(rowDataPacket.ssp_number);
-        const message = `*Hello ${sales_person},*\n\nYou have a new task assigned. Please check your dashboard for details.\n\nBest regards,\nTeam New Keshav Tractors`;
+        const regardsMessage =
+          (await getRegardsMessages().catch(() => null)) || "From Our Teams";
+        const message = `*Hello ${sales_person},*\n\nYou have a new task assigned. Please check your dashboard for details.\n\nBest regards,\n${regardsMessage}`;
         const chatPayloads = {
           phoneNumbers: [ssp_number],
           message: message,
