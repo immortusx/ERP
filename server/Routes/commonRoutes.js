@@ -777,14 +777,22 @@ router.get("/get-Warm-enquiry/:categoryId", tokenCheck, async (req, res) => {
 
 //===========Get Enquiry By Mobile Number=============
 router.get(
-  "/get-enquiries-by-mobileno/:mobileno/:categoryId",
+  "/get-enquiries-by-text/:text/:categoryId",
   tokenCheck,
   async (req, res) => {
-    console.log(">>>>>/get-enquiries-by-mobileno/:mobileno/:categoryId");
+    console.log(req.params,">>>>>/get-enquiries-by-text/:text/:categoryId");
     try {
-      const mobileno = req.params.mobileno;
+      const text = req.params.text;
+      const mobileno  = req.params.text;
       const categoryId = req.params.categoryId;
-      const url = `CALL sp_get_enquiries_by_mobile_number(${mobileno}, ${categoryId})`;
+    let url;
+
+    if (!isNaN(text)) {
+      url = `CALL sp_get_enquiries_by_mobile_number(${mobileno}, ${categoryId})`;
+    } else {
+      url = `CALL sp_get_enquiries_by_text('${text}', ${categoryId})`;
+    }
+
       db.query(url, async (err, result) => {
         if (err) {
           console.error(err);
