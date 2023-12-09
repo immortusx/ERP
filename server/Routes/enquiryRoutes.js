@@ -521,7 +521,7 @@ router.post(
       const deliveryDate = req.body.deliveryDate || null;
       const sourceOfEnquiry = req.body.sourceOfEnquiry || null;
       const enquiryPrimarySource = req.body.enquiryPrimarySource || null;
-      const newDeliveryDate = await getDateInFormate(deliveryDate);
+      const newDeliveryDate = req.body.deliveryDate;
       const newEnquiryDate = await getDateInFormate(enquiryDate);
       const companyName = req.body.companyName;
 
@@ -571,7 +571,6 @@ router.post(
               enquiry_category_id = ?,
               salesperson_id = ?,
               modal_id = ?,
-              date = ?,
               delivery_date = ?,
               primary_source_id = ?,
               enquiry_source_id = ?,
@@ -588,7 +587,6 @@ router.post(
                 enquiryCategoryId,
                 dsp,
                 model,
-                newEnquiryDate,
                 newDeliveryDate,
                 enquiryPrimarySource,
                 sourceOfEnquiry,
@@ -2053,12 +2051,12 @@ router.get("/delete-enquiry/:id", tokenCheck, async (req, res) => {
               console.error(err);
               res.status(500).json({ isSuccess: false, result: "error" });
             } else {
-               console.log({ isSuccess: true, result: deleteCustomerQuery });
-               res.send({ isSuccess: true, result: "Success" });
+              console.log({ isSuccess: true, result: deleteCustomerQuery });
+              res.send({ isSuccess: true, result: "Success" });
             }
           }
         );
-      } 
+      }
       // else {
       //   // Customer does not exist
       //   console.log("Customer not found");
