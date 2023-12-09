@@ -22,7 +22,7 @@ const SearchInputText = ({selectedCategory}) => {
   const enquiryType = useSelector(state => state.enquiryType.enquiryType);
 
   const searchtext = async (text, selectedCategory) => {
-    const url = `${API_URL}/api/get-enquiries-by-mobileno/${text}/${selectedCategory}`;
+    const url = `${API_URL}/api/get-enquiries-by-text/${text}/${selectedCategory}`;
     const token = await AsyncStorage.getItem('rbacToken');
     const config = {
       headers: {
@@ -63,7 +63,7 @@ const SearchInputText = ({selectedCategory}) => {
         style={styles.searchInput}
         placeholder={
           translations[currentLanguage]?.searchbymobile ||
-          'SEARCH BY MOBILE NUMBER...'
+          'SEARCH ENQUIRY...'
         }
         value={searchText}
         maxLength={10}
