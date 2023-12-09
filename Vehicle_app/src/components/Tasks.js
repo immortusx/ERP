@@ -5,8 +5,9 @@ import {
   TouchableOpacity,
   FlatList,
   Button,
+  RefreshControl,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,useCallback } from 'react';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_URL } from '@env';
@@ -19,7 +20,7 @@ import { getUserTaskList, clearUserTaskListState } from '../redux/slice/getUserT
 const Tasks = () => {
   const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
-
+  const [refreshing, setRefreshing] = useState(false);
   const dispatch = useDispatch();
   const userTaskList = useSelector((state) => state.getUserTaskListState.userTaskList);
   const isFetching = useSelector((state) => state.getUserTaskListState.isFetching);
@@ -33,6 +34,14 @@ const Tasks = () => {
       };
     }, [dispatch])
   );
+  
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    dispatch(getUserTaskList());
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  }, []);
   const [userTaskListData, setUserTaskListData] = useState({
     employee: "",
     tasktype_name: "",
@@ -81,75 +90,81 @@ const Tasks = () => {
         {loading ? (
           <CustomLoadingSpinner />
         ) : userTaskList && userTaskList.length > 0 ? (
+          <FlatList
+            data={userTaskList}
+            keyExtractor={(item, index) => `userTask_${index}`}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+            renderItem={({ item }) => (
+              <View style={styles.contentContainer}>
+                <TouchableOpacity style={styles.taskStyle}>
+                  <Text style={styles.taskTitle}>{item.employee}</Text>
+                  <Text style={styles.taskTitle}>{item.task_name}</Text>
+                </TouchableOpacity>
 
-          <View style={styles.contentContainer}>
-            <TouchableOpacity style={styles.taskStyle}>
-              <Text style={styles.taskTitle}>
-                {userTaskListData.employee}
-              </Text>
-              <Text style={styles.taskTitle}>{userTaskListData.task_name}</Text>
-            </TouchableOpacity>
-            <View style={styles.dataContainer}>
-              <View style={styles.leftContainer}>
-                <Text style={styles.taskLabel}>Task Assigned:</Text>
-                <Text style={styles.taskLabel}>Task Type:</Text>
-                <Text style={styles.taskLabel}>Tasks:</Text>
-                <Text style={styles.taskLabel}>Task Performed: </Text>
-                <Text style={styles.taskLabel}>Category: </Text>
-                <Text style={styles.taskLabel}>Start Date: </Text>
-                <Text style={styles.taskLabel}>End Date: </Text>
-                <Text style={styles.taskLabel}>Task Time Period: </Text>
-              </View>
-              <View style={styles.mainRightContainer}>
-                <View style={styles.rightContainer}>
-                  <Text style={styles.listStyle}>{userTaskListData.employee}</Text>
-                  <Text style={styles.listStyle}>
-                    {userTaskListData.tasktype_name}
-                  </Text>
-                  <Text style={styles.listStyle}>{userTaskListData.task_name}</Text>
-                  <TouchableOpacity
-                    style={styles.perfomedTaskBtn}
-                    onPress={() => {
-                      openTaskDetails(userTaskListData);
-                    }}>
-                    <Text
-                      style={[styles.listStyle, styles.taskPerformed]}>
-                      {userTaskListData.taskCompleted}/{userTaskListData.taskcount}
-                    </Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.perfomedTaskBtn}>
-                    <Text style={styles.listStyle}>
-                      {userTaskListData.category_name}
-                    </Text>
-                  </TouchableOpacity>
-                  <Text style={styles.listStyle}>
-                    {moment(userTaskListData.startdate).format('Do MMMM, YYYY')}
-                  </Text>
-                  <Text style={styles.listStyle}>
-                    {moment(userTaskListData.enddate).format('Do MMMM, YYYY')}
-                  </Text>
-                  <Text style={styles.listStyle}>{userTaskListData.period_name}</Text>
+                <View style={styles.dataContainer}>
+                  <View style={styles.leftContainer}>
+                    <Text style={styles.taskLabel}>Task Assigned:</Text>
+                    <Text style={styles.taskLabel}>Task Type:</Text>
+                    <Text style={styles.taskLabel}>Tasks:</Text>
+                    <Text style={styles.taskLabel}>Task Performed: </Text>
+                    <Text style={styles.taskLabel}>Category: </Text>
+                    <Text style={styles.taskLabel}>Start Date: </Text>
+                    <Text style={styles.taskLabel}>End Date: </Text>
+                    <Text style={styles.taskLabel}>Task Time Period: </Text>
+                  </View>
+                  <View style={styles.mainRightContainer}>
+                    <View style={styles.rightContainer}>
+                      <Text style={styles.listStyle}>{item.employee}</Text>
+                      <Text style={styles.listStyle}>
+                        {item.tasktype_name}
+                      </Text>
+                      <Text style={styles.listStyle}>{item.task_name}</Text>
+                      <TouchableOpacity
+                        style={styles.perfomedTaskBtn}
+                        onPress={() => {
+                          openTaskDetails(item);
+                        }}>
+                        <Text
+                          style={[styles.listStyle, styles.taskPerformed]}>
+                          {item.taskCompleted}/{item.taskcount}
+                        </Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity style={styles.perfomedTaskBtn}>
+                        <Text style={styles.listStyle}>
+                          {item.category_name}
+                        </Text>
+                      </TouchableOpacity>
+                      <Text style={styles.listStyle}>
+                        {moment(item.startdate).format('Do MMMM, YYYY')}
+                      </Text>
+                      <Text style={styles.listStyle}>
+                        {moment(item.enddate).format('Do MMMM, YYYY')}
+                      </Text>
+                      <Text style={styles.listStyle}>{item.period_name}</Text>
+                    </View>
+                  </View>
+                  <View style={styles.startTaskContainer}>
+                    <TouchableOpacity
+                      style={styles.taskStartBtn}
+                      onPress={() => {
+                        redirectEnquiriesList();
+                      }}>
+                      <Text style={styles.startText}>START TASK</Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
               </View>
-              <View style={styles.startTaskContainer}>
-                <TouchableOpacity
-                  style={styles.taskStartBtn}
-                  onPress={() => {
-                    redirectEnquiriesList();
-                  }}>
-                  <Text style={styles.startText}>START TASK</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
+            )}
+          />
         ) : (
           <Text style={styles.NoTaskStyle}>Task Not Assigned</Text>
         )}
       </View>
     </View>
   );
-};
-
+}
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
