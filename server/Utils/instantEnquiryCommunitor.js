@@ -187,6 +187,89 @@ const sendTaskAssignmentNotification = async (employeeId) => {
     }
   });
 };
+const sendTaskAssignmentNotificationScheduleMorning = async () => {
+  const sql = "CALL sp_get_all_task_assignment_notification_data_schedule()"; // Adjust the SQL query to fetch all employees with tasks
+  await db.query(sql, (error, dataResults) => {
+    if (error) {
+      console.log({ isSuccess: false, result: error });
+    } else {
+      console.log(dataResults, "dataResults");
+      if (dataResults && dataResults.length > 0) {
+        for (const row of dataResults[0]) {
+          const sales_person = row.sales_person;
+          const ssp_number = Number(row.ssp_number);
+          const tasktype = row.tasktype_name;
+          const tasks = row.task_name;
+          const taskcount = row.taskcount;
+          const category = row.category_name;
+          const startdate = row.startdate;
+          const enddate = row.enddate;
+          const formattedStartDate = moment(startdate).format('DD-MM-YYYY');
+          const formattedEndDate = moment(enddate).format('DD-MM-YYYY');
+          const period_name = row.period_name;
+
+          const message = `*Hello ${sales_person},*\n\nYou have a new task assigned. Please check your dashboard for details. OR \n Here is your Task Detail: \n Task Type: ${tasktype} \n Tasks: ${tasks} \n Task Count: ${taskcount} \n Category: ${category} \n Start Date: ${formattedStartDate} \n End Date: ${formattedEndDate} \n Task Time Period: ${period_name} \n\nBest regards,\nTeam New Keshav Tractors`;
+
+          const chatPayloads = {
+            phoneNumbers: [ssp_number],
+            message: message,
+            // files: "https://www.example.com/task_details.pdf",
+          };
+
+          // Comment this while on Development
+          InstantMessagingUtils(chatPayloads);
+        }
+      }
+    }
+  });
+};
+const sendTaskAssignmentNotificationScheduleEvening = async () => {
+  const sql = "CALL sp_get_all_task_assignment_notification_data_schedule()"; // Adjust the SQL query to fetch all employees with tasks
+  await db.query(sql, (error, dataResults) => {
+    if (error) {
+      console.log({ isSuccess: false, result: error });
+    } else {
+      console.log(dataResults, "dataResults");
+      if (dataResults && dataResults.length > 0) {
+        for (const row of dataResults[0]) {
+          const sales_person = row.sales_person;
+          const ssp_number = Number(row.ssp_number);
+          const tasktype = row.tasktype_name;
+          const tasks = row.task_name;
+          const taskcount = row.taskcount;
+          const category = row.category_name;
+          const startdate = row.startdate;
+          const enddate = row.enddate;
+          const formattedStartDate = moment(startdate).format('DD-MM-YYYY');
+          const formattedEndDate = moment(enddate).format('DD-MM-YYYY');
+          const taskcompleted = row.taskCompleted;
+          const period_name = row.period_name;
+          const message = `*Hello ${sales_person},*\n\nYou have a new task assigned. Please check your dashboard for details. \n Here is your Task Detail: \n Task Type: ${tasktype} \n Tasks: ${tasks} \n Task Performed:  ${taskcompleted} / ${taskcount}  \n Category: ${category} \n Start Date: ${formattedStartDate} \n End Date: ${formattedEndDate} \n Task Time Period: ${period_name} \n\nBest regards,\nTeam New Keshav Tractors`;
+
+          const chatPayloads = {
+            phoneNumbers: [ssp_number],
+            message: message,
+            // files: "https://www.example.com/task_details.pdf",
+          };
+
+          // Comment this while on Development
+          InstantMessagingUtils(chatPayloads);
+        }
+      }
+    }
+  });
+};
+cron.schedule("0 5 * * *", async () => {
+  await sendTaskAssignmentNotificationScheduleMorning();
+  console.log("Task assignment notifications sent for all employees with tasks!");
+});
+
+cron.schedule("0 20 * * *", async () => {
+  await sendTaskAssignmentNotificationScheduleEvening();
+  console.log("Task assignment notifications sent for all employees with tasks!");
+});
+
+
 const attachProductFile = (mappingId, productType) => {
   console.log(mappingId, "mappingId");
   return new Promise(async (resolve, reject) => {
