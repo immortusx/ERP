@@ -21,7 +21,7 @@ const SearchInputText = ({selectedCategory}) => {
   const currentLanguage = useSelector(state => state.language.language);
   const enquiryType = useSelector(state => state.enquiryType.enquiryType);
 
-  const searchtext = async (text, selectedCategory) => {
+  const getSearchedData = async (text, selectedCategory) => {
     const url = `${API_URL}/api/get-enquiries-by-text/${text}/${selectedCategory}`;
     const token = await AsyncStorage.getItem('rbacToken');
     const config = {
@@ -34,7 +34,7 @@ const SearchInputText = ({selectedCategory}) => {
       if (response) {
         console.log(response.data.result, 'Serached Data');
         dispatch(setEnquiryType('Search'));
-        dispatch(setEnquiryList(response.data.result)); 
+        dispatch(setEnquiryList(response.data.result));
         setIsConfiromation(true);
       }
     });
@@ -51,7 +51,7 @@ const SearchInputText = ({selectedCategory}) => {
   useFocusEffect(
     React.useCallback(() => {
       if (searchText.length > 1) {
-        searchtext(searchText, selectedCategory);
+        getSearchedData(searchText, selectedCategory);
       }
     }, [searchText, selectedCategory]),
   );

@@ -2080,29 +2080,17 @@ router.get("/delete-enquiry/:id", tokenCheck, async (req, res) => {
               console.error(err);
               res.status(500).json({ isSuccess: false, result: "error" });
             } else {
-              // Now, delete related enquiries
-              const deleteEnquiriesQuery =
-                "DELETE FROM enquiries WHERE customer_id = ?";
-              db.query(
-                deleteEnquiriesQuery,
-                [customerId],
-                async (err, deleteEnquiriesResult) => {
-                  if (err) {
-                    console.error(err);
-                    res.status(500).json({ isSuccess: false, result: "error" });
-                  } else {
-                    res.json({ isSuccess: true, result: "deletesuccess" });
-                  }
-                }
-              );
+               console.log({ isSuccess: true, result: deleteCustomerQuery });
+               res.send({ isSuccess: true, result: "Success" });
             }
           }
         );
-      } else {
-        // Customer does not exist
-        console.log("Customer not found");
-        res.status(404).json({ isSuccess: false, result: "notExist" });
-      }
+      } 
+      // else {
+      //   // Customer does not exist
+      //   console.log("Customer not found");
+      //   res.status(404).json({ isSuccess: false, result: "notExist" });
+      // }
     });
   } catch (e) {
     console.error(e);
