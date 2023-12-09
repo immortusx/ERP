@@ -297,7 +297,7 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
   const village = req.body.village || null;
 
   const enquiryCategoryId = req.body.category || none;
-  const visitReason = req.body.visitReason || null;
+  const visitReason = req.body.visitReason;
   const branchId = req.body.branchId || null;
   const dsp = req.body.dsp || none;
   const model = req.body.model || none;
@@ -312,7 +312,7 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
   const enquiryPrimarySource = req.body.enquiryPrimarySource || null;
   const cdate = req.body.enquiryDate;
   const newDeliveryDate = req.body.deliveryDate;
-  const companyName = req.body.companyName || null;
+  const companyName = req.body.companyName;
 
   const getSSP = (callback) => {
     let userID = req.myData.userId;
@@ -340,7 +340,6 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
       const urlNew = `INSERT INTO enquiries (branch_id, enquiry_category_id, salesperson_id, customer_id, modal_id, date, delivery_date, primary_source_id, enquiry_source_id, visitReason, company_name) VALUES ('${branchId}', '${enquiryCategoryId}', '${dsp}', '${insertedId}', '${model}', '${cdate}', '${newDeliveryDate}', '${enquiryPrimarySource}', '${sourceOfEnquiry}', '${visitReason}', '${companyName}')`;
       db.query(urlNew, async (err, result) => {
         if (err) {
-          myData;
           console.log({ isSuccess: false, result: err });
           res.send({ isSuccess: false, result: "error" });
         } else if (result && result.insertId) {
@@ -507,7 +506,7 @@ router.post(
       const block = req.body.block || null;
       const village = req.body.village || null;
       const enquiryCategoryId = req.body.category || none;
-      const visitReason = req.body.visitReason|| null;
+      const visitReason = req.body.visitReason;
       const branchId = req.body.branchId || null;
       const dsp = req.body.dsp || none;
       const model = req.body.model || none;
@@ -524,7 +523,7 @@ router.post(
       const enquiryPrimarySource = req.body.enquiryPrimarySource || null;
       const newDeliveryDate = await getDateInFormate(deliveryDate);
       const newEnquiryDate = await getDateInFormate(enquiryDate);
-      const companyName = req.body.companyName || null;
+      const companyName = req.body.companyName;
 
       const updateCustomerSql = `
       UPDATE customers
