@@ -179,6 +179,7 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
     marginVertical: 0.9,
+    marginBottom: 50
   },
   touchableOpacityStyle: {
     backgroundColor: '#2471A3',
