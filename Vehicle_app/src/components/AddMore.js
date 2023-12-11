@@ -255,34 +255,6 @@ const AddMore = () => {
    });
    setLoading(false);
  };
-
-
-
-  // const searchMobileNumber = async (mobileno, selectedCategory) => {
-  //   const url = `${API_URL}/api/get-enquiries-by-mobileno/${mobileno}/${selectedCategory}`;
-  //   const token = await AsyncStorage.getItem('rbacToken');
-  //   const config = {
-  //     headers: {
-  //       token: token ? token : '',
-  //     },
-  //   };
-  //   console.log(config);
-  //   await axios.get(url, config).then(response => {
-  //     if (response) {
-  //       console.log(response.data.result, 'Serached Data');
-  //       dispatch(setEnquiryType('Searched Enquiry'));
-  //       setNewEnquiryList(response.data.result);
-  //       setIsConfiromation(true);
-  //     }
-  //   });
-  // };
-
-  // useEffect(() => {
-  //   if (searchText.length > 1) {
-  //     searchMobileNumber(searchText, selectedCategory);
-  //   }
-  // }, [searchText, selectedCategory]);
-
   return (
     <View style={styles.container}>
       <View style={styles.categoryContainer}>
