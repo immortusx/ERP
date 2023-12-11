@@ -130,7 +130,7 @@ const Tasks = () => {
                           {item.taskCompleted}/{item.taskcount}
                         </Text>
                       </TouchableOpacity>
-                      <TouchableOpacity style={styles.perfomedTaskBtn}>
+                      <TouchableOpacity>
                         <Text style={styles.listStyle}>
                           {item.category_name}
                         </Text>
@@ -239,9 +239,8 @@ const styles = StyleSheet.create({
   },
   perfomedTaskBtn: {
     backgroundColor: 'lightblue',
-    paddingHorizontal: 12,
+    paddingHorizontal: 10,
     borderRadius: 20,
-    marginVertical: 1.5,
   },
   NoTaskStyle: {
     fontSize: 16,
