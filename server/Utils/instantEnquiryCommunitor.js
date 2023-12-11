@@ -56,8 +56,6 @@ const sendMessageToCustomer = async (enquiryId) => {
         );
         const makerFile = await attachProductFile(mappingId, 1);
         const modalFile = await attachProductFile(modalId, 2);
-        const regardsMessage =
-          (await getRegardsMessages().catch(() => null)) || "From Our Teams";
 
         if (makerFile || modalFile !== null) {
           const makerProduct = await fileUtils.generateTempURL(makerFile);
@@ -71,10 +69,7 @@ const sendMessageToCustomer = async (enquiryId) => {
   - [Link to Product File (Manufacturer)]
   - ${makerProduct}
   - [Link to Product File (Modal)]
-  - ${modalProduct}
-  
-  *Best regards,*
-  ${regardsMessage}`;
+  - ${modalProduct}`;
 
           const chatPayloads = {
             phoneNumbers: [customerWhatsAppNumber],
@@ -88,9 +83,7 @@ const sendMessageToCustomer = async (enquiryId) => {
           const acknowledgmentMessage = `*Dear ${customerName},*
           
 ${addEnquiryMessage}
-
-*Best regards,*
-${regardsMessage}`;
+`;
 
           const chatPayloads = {
             phoneNumbers: [customerWhatsAppNumber],
@@ -135,18 +128,12 @@ const sendMessageToSSP = async (enquiryId) => {
           rowDataPacket.salesPersonName !== undefined
             ? rowDataPacket.salesPersonName
             : "";
-        const regardsMessage =
-          (await getRegardsMessages().catch(() => null)) || "From Our Teams";
-
         console.log(SSPNumber, customerName, customerPhoneNumber, "mesashsd");
         const acknowledgmentMessage = `*Hello, ${salesPersonName}.*
 
 You have a new enquiry from *${customerName}* *(${customerPhoneNumber})* regarding *${customerProduct}*. 
 Please contact the customer at your earliest convenience. 
-For any immediate assistance, the customer's contact number is *${customerPhoneNumber}*.
-
-*Best regards,*
-${regardsMessage}`;
+For any immediate assistance, the customer's contact number is *${customerPhoneNumber}*.`;
 
         const chatPayloads = {
           phoneNumbers: [SSPNumber],
@@ -174,9 +161,7 @@ const sendTaskAssignmentNotification = async (employeeId) => {
         const rowDataPacket = dataResults[0][0];
         const sales_person = rowDataPacket.sales_person;
         const ssp_number = Number(rowDataPacket.ssp_number);
-        const regardsMessage =
-          (await getRegardsMessages().catch(() => null)) || "From Our Teams";
-        const message = `*Hello ${sales_person},*\n\nYou have a new task assigned. Please check your dashboard for details.\n\nBest regards,\n${regardsMessage}`;
+        const message = `*Hello ${sales_person},*\n\nYou have a new task assigned. Please check your dashboard for details.`;
         const chatPayloads = {
           phoneNumbers: [ssp_number],
           message: message,
@@ -208,7 +193,7 @@ const sendTaskAssignmentNotificationScheduleMorning = async () => {
           const formattedEndDate = moment(enddate).format('DD-MM-YYYY');
           const period_name = row.period_name;
 
-          const message = `*Hello ${sales_person},*\n\nYou have a new task assigned. Please check your dashboard for details. OR \n Here is your Task Detail: \n Task Type: ${tasktype} \n Tasks: ${tasks} \n Task Count: ${taskcount} \n Category: ${category} \n Start Date: ${formattedStartDate} \n End Date: ${formattedEndDate} \n Task Time Period: ${period_name} \n\nBest regards,\nTeam New Keshav Tractors`;
+          const message = `*Hello ${sales_person},*\n\nYou have a new task assigned. Please check your dashboard for details. OR \n Here is your Task Detail: \n Task Type: ${tasktype} \n Tasks: ${tasks} \n Task Count: ${taskcount} \n Category: ${category} \n Start Date: ${formattedStartDate} \n End Date: ${formattedEndDate} \n Task Time Period: ${period_name}.`;
 
           const chatPayloads = {
             phoneNumbers: [ssp_number],
@@ -244,7 +229,7 @@ const sendTaskAssignmentNotificationScheduleEvening = async () => {
           const formattedEndDate = moment(enddate).format('DD-MM-YYYY');
           const taskcompleted = row.taskCompleted;
           const period_name = row.period_name;
-          const message = `*Hello ${sales_person},*\n\nYou have a new task assigned. Please check your dashboard for details. \n Here is your Task Detail: \n Task Type: ${tasktype} \n Tasks: ${tasks} \n Task Performed:  ${taskcompleted} / ${taskcount}  \n Category: ${category} \n Start Date: ${formattedStartDate} \n End Date: ${formattedEndDate} \n Task Time Period: ${period_name} \n\nBest regards,\nTeam New Keshav Tractors`;
+          const message = `*Hello ${sales_person},*\n\nYou have a new task assigned. Please check your dashboard for details. \n Here is your Task Detail: \n Task Type: ${tasktype} \n Tasks: ${tasks} \n Task Performed:  ${taskcompleted} / ${taskcount}  \n Category: ${category} \n Start Date: ${formattedStartDate} \n End Date: ${formattedEndDate} \n Task Time Period: ${period_name}.`;
 
           const chatPayloads = {
             phoneNumbers: [ssp_number],
@@ -314,36 +299,6 @@ const attachProductFile = (mappingId, productType) => {
       resolve(null); // Resolve with null to handle the error gracefully
     }
   });
-};
-
-const getRegardsMessages = async () => {
-  try {
-    return new Promise((resolve, reject) => {
-      db.query(
-        `SELECT * FROM configuration WHERE setting = 'agency' AND key_name = 'name'`,
-        (error, dataResults) => {
-          if (error) {
-            console.log({ isSuccess: false, result: "error" });
-            resolve(null);
-          } else {
-            console.log(dataResults, "dataResults");
-            if (dataResults && dataResults.length > 0) {
-              const rowDataPacket = dataResults[0];
-              const regardsMessage = rowDataPacket.value;
-              resolve(regardsMessage);
-              console.log(regardsMessage, "read");
-            } else {
-              console.log({ isSuccess: false, result: "No data found" });
-              resolve(null);
-            }
-          }
-        }
-      );
-    });
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
 };
 
 const getAdminPhoneNumber = async () => {
