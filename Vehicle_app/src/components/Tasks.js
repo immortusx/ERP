@@ -114,9 +114,8 @@ const Tasks = () => {
                     <Text style={styles.taskLabel}>End Date: </Text>
                     <Text style={styles.taskLabel}>Task Time Period: </Text>
                   </View>
-                  <View style={styles.mainRightContainer}>
-                    <View style={styles.rightContainer}>
-                      <Text style={styles.listStyle}>{item.employee}</Text>
+                  <View style={styles.middleContainer}>
+                  <Text style={styles.listStyle}>{item.employee}</Text>
                       <Text style={styles.listStyle}>
                         {item.tasktype_name}
                       </Text>
@@ -143,7 +142,6 @@ const Tasks = () => {
                         {moment(item.enddate).format('Do MMMM, YYYY')}
                       </Text>
                       <Text style={styles.listStyle}>{item.period_name}</Text>
-                    </View>
                   </View>
                   <View style={styles.startTaskContainer}>
                     <TouchableOpacity
@@ -217,17 +215,16 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   dataContainer: {
+    // flexDirection: 'row',
+    // position: 'relative',
+    // justifyContent: 'space-between',
+    // alignItems: 'flex-end',
+    // marginHorizontal: 5,
     flexDirection: 'row',
-    position: 'relative',
     justifyContent: 'space-between',
-    alignItems: 'flex-end',
-    marginHorizontal: 5,
   },
   leftContainer: {
-    alignItems: 'flex-start',
-  },
-  rightContainer: {
-    alignItems: 'flex-start',
+    // alignItems: 'flex-start',
   },
   listStyle: {
     color: '#2C3E50',
@@ -257,12 +254,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#27AE60',
     padding: 5,
     borderRadius: 5,
+    
+    
   },
-  mainRightContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginHorizontal: 2
+  middleContainer: {
+    // flexDirection: 'row',
+    // justifyContent: 'space-between',
+    // alignItems: 'center',
+    // marginHorizontal: 2
   },
   startText: {
     fontSize: 12,
@@ -270,9 +269,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   startTaskContainer: {
-    position: 'relative',
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    justifyContent: 'flex-end',
     padding: 2,
-    marginHorizontal: 10,
+    flex: 1,
+    position: 'relative',
   },
 });
 
