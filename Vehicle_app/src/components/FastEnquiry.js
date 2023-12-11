@@ -215,7 +215,7 @@ const FastEnquiry = () => {
                 iconStyle={styles.iconStyle}
                 data={talukaData}
                 search
-                maxHeight={200}
+                maxHeight={600}
                 labelField="label"
                 valueField="value"
                 placeholder={!isFocus ? 'Select Taluka' : ' '}
@@ -249,7 +249,7 @@ const FastEnquiry = () => {
                   iconStyle={styles.iconStyle}
                   data={villageData}
                   search
-                  maxHeight={200}
+                  maxHeight={600}
                   labelField="label"
                   valueField="value"
                   placeholder={!isFocus ? 'Select Village' : ' '}
@@ -569,7 +569,7 @@ const FastEnquiry = () => {
                   iconStyle={styles.iconStyle}
                   data={categoryList}
                   search
-                  maxHeight={200}
+                  maxHeight={600}
                   labelField="label"
                   valueField="value"
                   placeholder={!isFocus ? 'Select Category' : ' '}

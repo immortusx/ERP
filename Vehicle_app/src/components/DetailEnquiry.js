@@ -346,7 +346,7 @@ const DetailEnquiry = ({ route }) => {
                 iconStyle={styles.iconStyle}
                 data={talukaData}
                 search
-                maxHeight={200}
+                maxHeight={600}
                 labelField="label"
                 valueField="value"
                 placeholder={!isFocus ? 'Select Taluka' : ' '}
@@ -382,7 +382,7 @@ const DetailEnquiry = ({ route }) => {
                   iconStyle={styles.iconStyle}
                   data={villageData}
                   search
-                  maxHeight={200}
+                  maxHeight={600}
                   labelField="label"
                   valueField="value"
                   placeholder={!isFocus ? 'Select Village' : ' '}
@@ -432,7 +432,7 @@ const DetailEnquiry = ({ route }) => {
                 iconStyle={styles.iconStyle}
                 data={manufacturItem}
                 search
-                maxHeight={300}
+                maxHeight={600}
                 labelField="label"
                 valueField="value"
                 placeholder={!isFocus ? 'Select Manufactur' : ' '}
@@ -464,7 +464,7 @@ const DetailEnquiry = ({ route }) => {
                 iconStyle={styles.iconStyle}
                 data={modalsList}
                 search
-                maxHeight={300}
+                maxHeight={600}
                 labelField="label"
                 valueField="value"
                 placeholder={!isFocus ? 'Select Modal' : ' '}
@@ -499,7 +499,7 @@ const DetailEnquiry = ({ route }) => {
                 iconStyle={styles.iconStyle}
                 data={primarySourceDataItem}
                 search
-                maxHeight={300}
+                maxHeight={600}
                 labelField="label"
                 valueField="value"
                 placeholder={!isFocus ? 'Select Primary Source' : ' '}
@@ -534,7 +534,7 @@ const DetailEnquiry = ({ route }) => {
                 iconStyle={styles.iconStyle}
                 data={enquirySourceItems}
                 search
-                maxHeight={300}
+                maxHeight={600}
                 labelField="label"
                 valueField="value"
                 placeholder={!isFocus ? 'Select Source' : ' '}
@@ -604,7 +604,7 @@ const DetailEnquiry = ({ route }) => {
                         iconStyle={styles.iconStyle}
                         data={manufacturItem}
                         search
-                        maxHeight={300}
+                        maxHeight={600}
                         labelField="label"
                         valueField="value"
                         placeholder={!isFocus ? 'Select Manufactur' : ' '}
@@ -631,7 +631,7 @@ const DetailEnquiry = ({ route }) => {
                         iconStyle={styles.iconStyle}
                         data={modalItem}
                         search
-                        maxHeight={300}
+                        maxHeight={600}
                         labelField="label"
                         valueField="value"
                         placeholder={!isFocus ? 'Select Modal' : ' '}
@@ -659,7 +659,7 @@ const DetailEnquiry = ({ route }) => {
                           iconStyle={styles.iconStyle}
                           data={variantItem}
                           search
-                          maxHeight={300}
+                          maxHeight={600}
                           labelField="label"
                           valueField="value"
                           placeholder={!isFocus ? 'Select Variant' : ' '}
@@ -715,7 +715,7 @@ const DetailEnquiry = ({ route }) => {
                         iconStyle={styles.iconStyle}
                         data={conditionType}
                         search
-                        maxHeight={300}
+                        maxHeight={600}
                         labelField="label"
                         valueField="value"
                         placeholder={!isFocus ? 'Select Condition' : ' '}
