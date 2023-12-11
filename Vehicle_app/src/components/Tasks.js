@@ -114,9 +114,8 @@ const Tasks = () => {
                     <Text style={styles.taskLabel}>End Date: </Text>
                     <Text style={styles.taskLabel}>Task Time Period: </Text>
                   </View>
-                  <View style={styles.mainRightContainer}>
-                    <View style={styles.rightContainer}>
-                      <Text style={styles.listStyle}>{item.employee}</Text>
+                  <View style={styles.middleContainer}>
+                  <Text style={styles.listStyle}>{item.employee}</Text>
                       <Text style={styles.listStyle}>
                         {item.tasktype_name}
                       </Text>
@@ -131,7 +130,7 @@ const Tasks = () => {
                           {item.taskCompleted}/{item.taskcount}
                         </Text>
                       </TouchableOpacity>
-                      <TouchableOpacity style={styles.perfomedTaskBtn}>
+                      <TouchableOpacity>
                         <Text style={styles.listStyle}>
                           {item.category_name}
                         </Text>
@@ -143,7 +142,6 @@ const Tasks = () => {
                         {moment(item.enddate).format('Do MMMM, YYYY')}
                       </Text>
                       <Text style={styles.listStyle}>{item.period_name}</Text>
-                    </View>
                   </View>
                   <View style={styles.startTaskContainer}>
                     <TouchableOpacity
@@ -181,6 +179,7 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
     marginVertical: 0.9,
+    marginBottom: 50
   },
   touchableOpacityStyle: {
     backgroundColor: '#2471A3',
@@ -217,17 +216,16 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   dataContainer: {
+    // flexDirection: 'row',
+    // position: 'relative',
+    // justifyContent: 'space-between',
+    // alignItems: 'flex-end',
+    // marginHorizontal: 5,
     flexDirection: 'row',
-    position: 'relative',
     justifyContent: 'space-between',
-    alignItems: 'flex-end',
-    marginHorizontal: 5,
   },
   leftContainer: {
-    alignItems: 'flex-start',
-  },
-  rightContainer: {
-    alignItems: 'flex-start',
+    // alignItems: 'flex-start',
   },
   listStyle: {
     color: '#2C3E50',
@@ -241,9 +239,8 @@ const styles = StyleSheet.create({
   },
   perfomedTaskBtn: {
     backgroundColor: 'lightblue',
-    paddingHorizontal: 12,
+    paddingHorizontal: 10,
     borderRadius: 20,
-    marginVertical: 1.5,
   },
   NoTaskStyle: {
     fontSize: 16,
@@ -257,12 +254,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#27AE60',
     padding: 5,
     borderRadius: 5,
+    
+    
   },
-  mainRightContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginHorizontal: 2
+  middleContainer: {
+    // flexDirection: 'row',
+    // justifyContent: 'space-between',
+    // alignItems: 'center',
+    // marginHorizontal: 2
   },
   startText: {
     fontSize: 12,
@@ -270,9 +269,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   startTaskContainer: {
-    position: 'relative',
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    justifyContent: 'flex-end',
     padding: 2,
-    marginHorizontal: 10,
+    flex: 1,
+    position: 'relative',
   },
 });
 
