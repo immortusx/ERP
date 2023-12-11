@@ -244,16 +244,15 @@ const sendTaskAssignmentNotificationScheduleEvening = async () => {
     }
   });
 };
-cron.schedule("0 5 * * *", async () => {
+cron.schedule("30 4 * * *", async () => {
   await sendTaskAssignmentNotificationScheduleMorning();
-  console.log("Task assignment notifications sent for all employees with tasks!");
+  console.log("Task assignment notifications sent for all employees with tasks in the morning!");
 });
 
-cron.schedule("0 20 * * *", async () => {
+cron.schedule("30 13 * * *", async () => {
   await sendTaskAssignmentNotificationScheduleEvening();
-  console.log("Task assignment notifications sent for all employees with tasks!");
+  console.log("Task assignment notifications sent for all employees with tasks in the evening!");
 });
-
 
 const attachProductFile = (mappingId, productType) => {
   console.log(mappingId, "mappingId");
