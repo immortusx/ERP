@@ -73,68 +73,64 @@ const SearchEnquiryText = () => {
                     openAdditonalEnquiry(item);
                   }}>
                   <View key={index} style={styles.enquiryBox}>
-                    <View style={styles.dataStyle}>
+                    <View style={styles.leftDataStyle}>
                       <View style={styles.dataContainer}>
-                        <View style={styles.iconContainer}>
-                          <Image
-                            style={styles.personImg}
-                            source={require('../../assets/person.png')}
-                          />
-                          <Image
-                            style={styles.personImg}
-                            source={require('../../assets/phone.png')}
-                          />
-                          <Image
-                            style={styles.personImg}
-                            source={require('../../assets/product.png')}
-                          />
-                          <Image
-                            style={styles.personImg}
-                            source={require('../../assets/salesperson.png')}
-                          />
-                          <Image
-                            style={styles.personImg}
-                            source={require('../../assets/location.png')}
-                          />
-                        </View>
-                        <View style={styles.detailContainer}>
-                          <Text style={styles.label}>
-                            {item.first_name +
-                              (item.last_name ? ' ' + item.last_name : '')}
-                          </Text>
-                          <TouchableOpacity
-                            onPress={() => {
-                              makePhoneCall(item.phone_number);
-                            }}>
-                            <Text style={styles.label}>
-                              {item.phone_number}
+                        <View style={styles.textContainer}>
+                          <View style={styles.row}>
+                            <Image
+                              style={styles.personImg}
+                              source={require('../../assets/person.png')}
+                            />
+                            <Text style={styles.value}>
+                              {item.first_name +
+                                (item.last_name ? ' ' + item.last_name : '')}
                             </Text>
-                          </TouchableOpacity>
-                          <Text style={styles.label}>
-                            {item.product ? item.product : '-'}
-                          </Text>
-                          {item.sales_person && (
-                            <Text style={styles.salesText}>
-                              {item.sales_person}
+                          </View>
+                          <View style={styles.row}>
+                            <Image
+                              style={styles.personImg}
+                              source={require('../../assets/phone.png')}
+                            />
+                            <TouchableOpacity
+                              onPress={() => {
+                                makePhoneCall(item.phone_number);
+                              }}>
+                              <Text style={styles.value}>
+                                {item.phone_number}
+                              </Text>
+                            </TouchableOpacity>
+                          </View>
+                          <View style={styles.row}>
+                            <Image
+                              style={styles.personImg}
+                              source={require('../../assets/product.png')}
+                            />
+                            <Text style={styles.value}>
+                              {item.product ? item.product : '-'}
                             </Text>
-                          )}
-                          <Text style={styles.label}>
-                            {item.village ? item.village : '-'}
-                          </Text>
+                          </View>
+                          <View style={styles.row}>
+                            <Image
+                              style={styles.personImg}
+                              source={require('../../assets/location.png')}
+                            />
+                            <Text style={styles.value}>
+                              {item.village ? item.village : '-'}
+                            </Text>
+                          </View>
                         </View>
                       </View>
                     </View>
                     <View style={styles.rightDataStyle}>
-                      <View style={styles.daysContainer}>
-                        <TouchableOpacity style={styles.dayBack}>
-                          <Text style={styles.dateText}>
-                            {item.last_follow_up_date
-                              ? moment(item.last_follow_up_date).format('LL')
-                              : 'Not Followed'}
-                          </Text>
-                        </TouchableOpacity>
-                      </View>
-                      <TimeAgo date={item.date} />
+                      <Text style={styles.dateText}>Not Followed</Text>
+                      {item.sales_person && (
+                        <Text style={styles.salesText}>
+                          {item.sales_person}
+                        </Text>
+                      )}
+                      <TouchableOpacity style={styles.dayBack}>
+                        <TimeAgo date={item.date} />
+                      </TouchableOpacity>
                       <TouchableOpacity
                         onPress={() => {
                           handleSheduleCall(item);
@@ -149,9 +145,15 @@ const SearchEnquiryText = () => {
             }}
           />
         ) : (
+          // <SimpleAlert
+          //   isVisible={isConfirmation}
+          //   text1={'Alert !'}
+          //   text2={'Currently, There is New Enquiry Not Available'}
+          //   onConfirm={handleConfirm}
+          // />
           <View style={styles.noEnquiryContainer}>
             <Text style={styles.NoTaskStyle}>
-              Currently, There is Search Enquiry Not Available
+              Currently, There is New Enquiry Not Available
             </Text>
           </View>
         )}

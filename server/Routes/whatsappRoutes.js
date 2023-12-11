@@ -40,10 +40,7 @@ router.post("/send-whatsapp", tokenCheck, (req, res) => {
 router.post("/send-message", tokenCheck, async (req, res) => {
   try {
     const { newMessage, chatID } = req.body;
-    let whatsappMessage = `${newMessage},
-
-From, 
-Team Keshav Tractors.`;
+    let whatsappMessage = `${newMessage}`;
 
     console.log("/send-message", req.body);
     const url = `CALL sp_get_whatsapp_number(${chatID})`;
