@@ -73,45 +73,15 @@ router.post("/send-message", tokenCheck, async (req, res) => {
   }
 });
 
-const getRegardsMessages = () => {
-  return new Promise((resolve, reject) => {
-    db.query(
-      'SELECT value FROM configuration WHERE setting = "agency" AND key_name = "name"',
-      (error, queryResult) => {
-        if (error) {
-          console.error('Error executing database query for regards message:', error);
-          resolve(null);
-        } else {
-          if (queryResult && queryResult.length > 0) {
-            const regardsMessage = queryResult[0].value;
-            console.log('Regards Message:', regardsMessage);
-            resolve(regardsMessage);
-          } else {
-            console.log('No data found in the database for regards message.');
-            resolve(null);
-          }
-        }
-      }
-    );
-  });
-};
-
-
 router.post('/send-message-customer', tokenCheck, async (req, res) => {
   try {
     console.log('/send-message-customer', req.body);
     const {whatsapp_message, customerPhoneNumber} = req.body;
-    const formattedPhoneNumber = customerPhoneNumber.startsWith('91')
-      ? customerPhoneNumber
-      : `91${customerPhoneNumber}`;
-    const regardsMessage = await getRegardsMessages().catch(() => null) || 'From Our Teams';
-    console.log(regardsMessage);
-    const finalMessage = `${whatsapp_message}\n${regardsMessage || ''}`;
 
-    const phoneNumbers = [formattedPhoneNumber];
-    InstantMessagingUtils({ phoneNumbers, message: finalMessage });
+    const phoneNumbers = [customerPhoneNumber];
+    InstantMessagingUtils({ phoneNumbers, message: whatsapp_message });
 
-    console.log(`Sending message to customer ${customerPhoneNumber}: ${finalMessage}`);
+    console.log(`Sending message to customer ${customerPhoneNumber}: ${whatsapp_message}`);
 
     res.json({ isSuccess: true, result: 'Message sent to customer successfully.' });
   } catch (error) {
