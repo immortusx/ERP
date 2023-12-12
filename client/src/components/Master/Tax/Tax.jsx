@@ -217,18 +217,20 @@ const Tax = () => {
         },
         {
             field: "menu",
-            headerName: <FontAwesomeIcon icon={faEllipsisV} />,
+            headerName: (
+                <FontAwesomeIcon icon={faEllipsisV} style={{ marginRight: "15px" }} />
+            ),
             className: "bg-dark",
             sortable: false,
             filterable: false,
-            headerAlign: "center",
-            align: "center",
+            headerAlign: "right",
+            align: "right",
             disableColumnMenu: true,
-            maxWidth: 50,
+            width: 130,
             // flex: 1,
             position: "sticky",
             renderCell: (params) => (
-                <div className="d-flex justify-content-center dotHover">
+                <div className="d-flex justify-content-center dotHoverempicon ">
                     <FontAwesomeIcon icon={faEllipsisV} />
                     <div className="expandDiv">
                         <Tooltip title="Edit">

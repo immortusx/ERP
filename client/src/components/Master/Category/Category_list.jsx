@@ -50,7 +50,7 @@ export default function Category_list({ workFor }) {
     dispatch(setEdicategoryData(data));
     navigate("/administration/configuration/category/edit", { state: data });
   };
-  
+
   const [selectAll, setSelectAll] = useState(false);
   const [rowData, setRowData] = useState([]);
 
@@ -111,7 +111,7 @@ export default function Category_list({ workFor }) {
       field: "category_description",
       headerAlign: "left",
       align: "left",
-      headerName:translations[currentLanguage].description,
+      headerName: translations[currentLanguage].description,
       minWidth: 250,
       flex: 1,
       valueGetter: (params) => {
@@ -134,21 +134,23 @@ export default function Category_list({ workFor }) {
     },
     {
       field: "menu",
-      headerName: <FontAwesomeIcon icon={faEllipsisV} />,
+      headerName: (
+        <FontAwesomeIcon icon={faEllipsisV} style={{ marginRight: "15px" }} />
+      ),
       className: "bg-dark",
       sortable: false,
       filterable: false,
-      headerAlign: "center",
-      align: "center",
+      headerAlign: "right",
+      align: "right",
       disableColumnMenu: true,
-      maxWidth: 50,
+      width: 130,
       // flex: 1,
       position: "sticky",
       renderCell: (params) => (
-        <div className="d-flex justify-content-center dotHover">
+        <div className="d-flex justify-content-center dotHoverempicon ">
           <FontAwesomeIcon icon={faEllipsisV} />
           <div className="expandDiv">
-            <Tooltip title= {translations[currentLanguage].edit}>
+            <Tooltip title={translations[currentLanguage].edit}>
               <button
                 className="myActionBtn m-1"
                 onClick={() => {
@@ -169,7 +171,7 @@ export default function Category_list({ workFor }) {
                 </svg>
               </button>
             </Tooltip>
-            <Tooltip title= {translations[currentLanguage].delete}>
+            <Tooltip title={translations[currentLanguage].delete}>
               <button
                 onClick={() => {
                   deleteActionCall(params.row);
