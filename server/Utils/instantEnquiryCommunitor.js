@@ -244,12 +244,12 @@ const sendTaskAssignmentNotificationScheduleEvening = async () => {
     }
   });
 };
-cron.schedule("30 4 * * *", async () => {
+cron.schedule("30 23 * * *", async () => {
   await sendTaskAssignmentNotificationScheduleMorning();
   console.log("Task assignment notifications sent for all employees with tasks in the morning!");
 });
 
-cron.schedule("30 13 * * *", async () => {
+cron.schedule("30 14 * * *", async () => {
   await sendTaskAssignmentNotificationScheduleEvening();
   console.log("Task assignment notifications sent for all employees with tasks in the evening!");
 });
