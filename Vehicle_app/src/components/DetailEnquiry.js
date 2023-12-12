@@ -296,6 +296,7 @@ const DetailEnquiry = ({ route }) => {
               keyboardType="default"
               defaultValue={enquiryData.phone || ''}
               onChangeText={value => onChangeHandler(value, 'phone')}
+              onBlur={isPhoneNumberExist}
               maxLength={15}
             />
             {mobileNumberError ? (
@@ -345,7 +346,7 @@ const DetailEnquiry = ({ route }) => {
                 iconStyle={styles.iconStyle}
                 data={talukaData}
                 search
-                maxHeight={200}
+                maxHeight={600}
                 labelField="label"
                 valueField="value"
                 placeholder={!isFocus ? 'Select Taluka' : ' '}
@@ -381,7 +382,7 @@ const DetailEnquiry = ({ route }) => {
                   iconStyle={styles.iconStyle}
                   data={villageData}
                   search
-                  maxHeight={200}
+                  maxHeight={600}
                   labelField="label"
                   valueField="value"
                   placeholder={!isFocus ? 'Select Village' : ' '}
@@ -431,7 +432,7 @@ const DetailEnquiry = ({ route }) => {
                 iconStyle={styles.iconStyle}
                 data={manufacturItem}
                 search
-                maxHeight={300}
+                maxHeight={600}
                 labelField="label"
                 valueField="value"
                 placeholder={!isFocus ? 'Select Manufactur' : ' '}
@@ -463,7 +464,7 @@ const DetailEnquiry = ({ route }) => {
                 iconStyle={styles.iconStyle}
                 data={modalsList}
                 search
-                maxHeight={300}
+                maxHeight={600}
                 labelField="label"
                 valueField="value"
                 placeholder={!isFocus ? 'Select Modal' : ' '}
@@ -498,7 +499,7 @@ const DetailEnquiry = ({ route }) => {
                 iconStyle={styles.iconStyle}
                 data={primarySourceDataItem}
                 search
-                maxHeight={300}
+                maxHeight={600}
                 labelField="label"
                 valueField="value"
                 placeholder={!isFocus ? 'Select Primary Source' : ' '}
@@ -533,7 +534,7 @@ const DetailEnquiry = ({ route }) => {
                 iconStyle={styles.iconStyle}
                 data={enquirySourceItems}
                 search
-                maxHeight={300}
+                maxHeight={600}
                 labelField="label"
                 valueField="value"
                 placeholder={!isFocus ? 'Select Source' : ' '}
@@ -603,7 +604,7 @@ const DetailEnquiry = ({ route }) => {
                         iconStyle={styles.iconStyle}
                         data={manufacturItem}
                         search
-                        maxHeight={300}
+                        maxHeight={600}
                         labelField="label"
                         valueField="value"
                         placeholder={!isFocus ? 'Select Manufactur' : ' '}
@@ -630,7 +631,7 @@ const DetailEnquiry = ({ route }) => {
                         iconStyle={styles.iconStyle}
                         data={modalItem}
                         search
-                        maxHeight={300}
+                        maxHeight={600}
                         labelField="label"
                         valueField="value"
                         placeholder={!isFocus ? 'Select Modal' : ' '}
@@ -658,7 +659,7 @@ const DetailEnquiry = ({ route }) => {
                           iconStyle={styles.iconStyle}
                           data={variantItem}
                           search
-                          maxHeight={300}
+                          maxHeight={600}
                           labelField="label"
                           valueField="value"
                           placeholder={!isFocus ? 'Select Variant' : ' '}
@@ -714,7 +715,7 @@ const DetailEnquiry = ({ route }) => {
                         iconStyle={styles.iconStyle}
                         data={conditionType}
                         search
-                        maxHeight={300}
+                        maxHeight={600}
                         labelField="label"
                         valueField="value"
                         placeholder={!isFocus ? 'Select Condition' : ' '}
@@ -730,6 +731,38 @@ const DetailEnquiry = ({ route }) => {
               </View>
             )}
           </>
+        );
+        break;
+      }
+      case 'companyName': {
+        return (
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Company Name *</Text>
+            <TextInput
+              style={styles.inputStyle}
+              placeholder="Enter Company Name"
+              autoCapitalize="none"
+              keyboardType="default"
+              defaultValue={enquiryData.companyName || ''}
+              onChangeText={value => onChangeHandler(value, 'companyName')}
+            />
+          </View>
+        );
+        break;
+      }
+      case 'visitReason': {
+        return (
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Visit Reason *</Text>
+            <TextInput
+              style={styles.inputStyle}
+              placeholder="Enter Visit Reason"
+              autoCapitalize="none"
+              keyboardType="default"
+              defaultValue={enquiryData.visitReason || ''}
+              onChangeText={value => onChangeHandler(value, 'visitReason')}
+            />
+          </View>
         );
         break;
       }
@@ -983,7 +1016,25 @@ const DetailEnquiry = ({ route }) => {
       }
     });
   };
-
+  const isPhoneNumberExist = async () => {
+    if(enquiryData.phone && category){
+      const url = `${API_URL}/api/enquiry/get-enquiry-mobile-number-exist/${enquiryData.phone}/${category}`;
+    console.log('isPhoneNumberExists....', url);
+    const token = await AsyncStorage.getItem('rbacToken');
+    const config = {
+      headers: {
+        token: token ? token : '',
+      },
+    };
+    console.log(config);
+    await axios.get(url, config).then(response => {
+      if (response.data.result === true) {
+        console.log(response.data.result, 'isPhoneNumberExists....');
+        setMobileNumberError('*Phone Number Exists!')
+      }
+    });
+    }
+  };
   useEffect(() => {
     if (primarySource) {
       getEnquirySource(primarySource);
@@ -999,10 +1050,13 @@ const DetailEnquiry = ({ route }) => {
   const onChangeHandler = (value, field) => {
     if (field === 'phone') {
       if (value.length < 10) {
-        setMobileNumberError('Invalid mobile number.');  
+        setMobileNumberError('Invalid mobile number.');
       } else {
         setMobileNumberError('');
       }
+    } else {
+      // Clear the error message for other fields
+      setMobileNumberError('');
     }
     if (field === 'whatsappno') {
       if (value.length < 10) {
@@ -1056,12 +1110,14 @@ const DetailEnquiry = ({ route }) => {
   }, [enquiryState]);
 
   const submitEnquiry = () => {
-    const { firstname, lastname, phone, whatsappno } = enquiryData;
+    const { firstname, lastname, phone, whatsappno,  visitReason, companyName} = enquiryData;
     const formData = {
       first_name: firstname,
       last_name: lastname,
       phone_number: phone,
       whatsapp_number: whatsappno,
+      visitReason: visitReason,
+      company_name: companyName,
       taluka: taluka,
       village: village,
       category: category,
@@ -1098,6 +1154,8 @@ const DetailEnquiry = ({ route }) => {
         lastname: '',
         phone: '',
         whatsappno: '',
+        visitReason: '',
+        companyName: ''
       });
       setExpDeliveryDate('');
       setCondtion(null);
