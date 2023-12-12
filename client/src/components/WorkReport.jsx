@@ -167,24 +167,26 @@ export default function WorkReport() {
       minWidth: 200,
       flex: 1.2,
       valueGetter: (params) => {
-        return `${
-          params.row.work_description ? params.row.work_description : "-"
-        }`;
+        return `${params.row.work_description ? params.row.work_description : "-"
+          }`;
       },
     },
     {
       field: "menu",
-      headerName: <FontAwesomeIcon icon={faEllipsisV} />,
+      headerName: (
+        <FontAwesomeIcon icon={faEllipsisV} style={{ marginRight: "15px" }} />
+      ),
       className: "bg-dark",
       sortable: false,
       filterable: false,
-      headerAlign: "center",
-      align: "center",
+      headerAlign: "right",
+      align: "right",
       disableColumnMenu: true,
-      maxWidth: 50,
+      width: 130,
+      // flex: 1,
       position: "sticky",
       renderCell: (params) => (
-        <div className="d-flex justify-content-center dotHover">
+        <div className="d-flex justify-content-center dotHoverempicon ">
           <FontAwesomeIcon icon={faEllipsisV} />
           <div className="expandDiv">
             <Tooltip title="Details">
@@ -204,14 +206,14 @@ export default function WorkReport() {
   ];
 
   useEffect(() => {
-    console.log(workReport,"workReport");
+    console.log(workReport, "workReport");
     const rowsData = workReport.map((item, index) => ({
       ...item,
       rowNumber: item.EmployeeId,
       checkbox: selectAll,
     }));
     setRowData(rowsData);
-    console.log(rowsData,"item")
+    console.log(rowsData, "item")
   }, [workReport, selectAll]);
 
   const deleteActionCall = (data) => {

@@ -18,7 +18,7 @@ import LanguageSlice from './slice/LanguageSlice';
 import callLogsSlice from './slice/callLogsSlice';
 import getUserTaskListSlice from './slice/getUserTaskListSlice';
 import enquiryTextSlice from './slice/searchTextEnquirySlice';
-import taskItemSlice from './slice/taskItemSlice';
+import enquirySearchSlice from './slice/searchEnquiryFiledDataSlice';
 
 
 export const store = configureStore({
@@ -42,6 +42,6 @@ export const store = configureStore({
     callLog: callLogsSlice,
     getUserTaskListState: getUserTaskListSlice,
     enquiries: enquiryTextSlice,
-    taskItem: taskItemSlice
+    listdata: enquirySearchSlice,
   },
 });

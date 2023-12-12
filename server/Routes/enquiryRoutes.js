@@ -808,6 +808,40 @@ router.get("/get-enquiry-categories", tokenCheck, async (req, res) => {
   });
 });
 
+
+router.get("/getenquiry_search_filed", tokenCheck,async(req,res)=>{
+  console.log("/getenquiry_search_filed")
+  const url = "SELECT * FROM enquiry_search_field";
+  await db.query(url,async(err,result)=>{
+    if(err){
+      console.log({isSuccess:false,result:err});
+      res.send({isSuccess:false,result:"error"});
+    }else{
+        console.log({ isSuccess: true, result: url });
+        res.send({ isSuccess: true, result: result });
+    }
+  })
+})
+router.get(
+  "/getenquiry_search_filed_list/:id",
+  tokenCheck,
+  async (req, res) => {
+    const id = req.params.id; 
+    const url = `call sp_get_search_enquiry_by_field(${id})`; 
+    console.log("/getenquiry_search_filed_list",url);
+    await db.query(url, async (err, result) => {
+      if (err) {
+        console.log({ isSuccess: false, result: err });
+        res.send({ isSuccess: false, result: "error" });
+      } else {
+        console.log({ isSuccess: true, result: result });
+        res.send({ isSuccess: true, result: result });
+      }
+    });
+  }
+);
+
+
 //===========Add Fast Enquiry through Application=============//
 router.post("/set-new-fast-enquiry", tokenCheck, async (req, res) => {
   console.log(">>>>>/set-new-fast-enquiry", req.body);
@@ -2388,4 +2422,19 @@ router.get(
   }
 );
 
+router.get("/update-enquiry-category/:id/:newCategory", async (req, res) => {
+  console.log(">>>>>update-enquiry-category");
+  const newCategory = req.params.newCategory;
+  const id = req.params.id;
+  sql = `UPDATE enquiries SET enquiry_category_id = ${newCategory} WHERE id = ${id};`;
+  await db.query(sql, async (err, result) => {
+    if (err) {
+      console.log({ isSuccess: true, result: err });
+      res.send({ isSuccess: true, result, result: err });
+    } else {
+      console.log({ isSuccess: true, result: sql });
+      res.send({ isSuccess: true, result: "success" });
+    }
+  });
+});
 module.exports = router;
