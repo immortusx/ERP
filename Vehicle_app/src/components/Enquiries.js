@@ -10,22 +10,25 @@ import {
   AppState,
   ScrollView,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { API_URL } from '@env';
+import {API_URL} from '@env';
 import moment from 'moment';
 import LoadingSpinner from './subCom/LoadingSpinner';
 import CustomLoadingSpinner from './subCom/CustomLoadingSpinner';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import TimeAgo from './subCom/TImeAgo';
-import { useDispatch, useSelector } from 'react-redux';
-import { PermissionsAndroid } from 'react-native';
+import {useDispatch, useSelector} from 'react-redux';
+import {PermissionsAndroid} from 'react-native';
 import useCallLogs from './subCom/useCallLogs';
-import { useFocusEffect } from '@react-navigation/native';
-import { getUserTaskList, clearUserTaskListState } from '../redux/slice/getUserTaskListSlice';
+import {useFocusEffect} from '@react-navigation/native';
+import {
+  getUserTaskList,
+  clearUserTaskListState,
+} from '../redux/slice/getUserTaskListSlice';
 import AddEnquiry from './AddEnquiry';
-const Enquiries = ({ route }) => {
+const Enquiries = () => {
   const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
   const [currentEnquiryIndex, setCurrentEnquiryIndex] = useState(1);
@@ -41,17 +44,18 @@ const Enquiries = ({ route }) => {
     task_type: null,
     contact_type: null,
   });
-  const { item } = route.params || {};
+  const item = useSelector(state => state.taskItem.taskItem);
   const [doneNextButtonVisible, setDoneNextButtonVisible] = useState(false);
   const [callLogData, setCallLogData] = useState({
-    duration: "",
-    phoneNumber: "",
-    type: "",
-  })
-  const { loadCallLogs } = useCallLogs();
+    duration: '',
+    phoneNumber: '',
+    type: '',
+  });
+  const {loadCallLogs} = useCallLogs();
 
   useEffect(() => {
-    loadCallLogs()
+    loadCallLogs();
+    console.log(item, 'itememememem');
   }, []);
 
   const logs = useSelector(state => state.callLog.logs);
@@ -67,22 +71,26 @@ const Enquiries = ({ route }) => {
     }
   }, [logs]);
   const dispatch = useDispatch();
-  const userTaskList = useSelector((state) => state.getUserTaskListState.userTaskList);
-  const isFetching = useSelector((state) => state.getUserTaskListState.isFetching);
-  const isError = useSelector((state) => state.getUserTaskListState.isError);
+  const userTaskList = useSelector(
+    state => state.getUserTaskListState.userTaskList,
+  );
+  const isFetching = useSelector(
+    state => state.getUserTaskListState.isFetching,
+  );
+  const isError = useSelector(state => state.getUserTaskListState.isError);
 
   const [userTaskListData, setUserTaskListData] = useState({
-    id: "",
-    task: "",
-    employee: "",
-    tasktype_name: "",
-    task_name: "",
-    taskCompleted: "",
-    taskcount: "",
-    category_name: "",
-    startdate: "",
-    enddate: "",
-    period_name: "",
+    id: '',
+    task: '',
+    employee: '',
+    tasktype_name: '',
+    task_name: '',
+    taskCompleted: '',
+    taskcount: '',
+    category_name: '',
+    startdate: '',
+    enddate: '',
+    period_name: '',
   });
   useEffect(() => {
     if (userTaskList.length > 0) {
@@ -105,14 +113,14 @@ const Enquiries = ({ route }) => {
   useFocusEffect(
     React.useCallback(() => {
       setLoading(true);
-      loadCallLogs()
+      loadCallLogs();
       dispatch(getUserTaskList());
 
-      const handleAppStateChange = (nextAppState) => {
+      const handleAppStateChange = nextAppState => {
         if (appState === 'inactive' && nextAppState === 'active') {
           // Logic to execute when the app becomes active (e.g., when coming from another app)
           setLoading(true);
-          loadCallLogs()
+          loadCallLogs();
           dispatch(getUserTaskList());
         }
         setAppState(nextAppState);
@@ -121,7 +129,7 @@ const Enquiries = ({ route }) => {
       // Subscribe to app state changes
       const appStateSubscription = AppState.addEventListener(
         'change',
-        handleAppStateChange
+        handleAppStateChange,
       );
 
       return () => {
@@ -129,7 +137,7 @@ const Enquiries = ({ route }) => {
         // Remove the app state change subscription when the component is unmounted
         appStateSubscription.remove();
       };
-    }, [dispatch, appState])
+    }, [dispatch, appState]),
   );
 
   useEffect(() => {
@@ -139,7 +147,7 @@ const Enquiries = ({ route }) => {
     };
   }, [dispatch]);
   useEffect(() => {
-    console.log(callLogData, "logssggggggggggg");
+    console.log(callLogData, 'logssggggggggggg');
   }, [callLogData]);
 
   function formatPhoneNumber(phoneNumber) {
@@ -158,10 +166,10 @@ const Enquiries = ({ route }) => {
     if (item) {
       console.log(item, 'itekemmmmmmmmmm');
       setTaskId(item.task);
-      setEmployeeId(item.id)
+      setEmployeeId(item.id);
 
       // getLockedEnquiries(item.id, item.task, currentEnquiryIndex);
-      const types = [{ type: 'call' }, { type: 'whatsapp' }, { type: 'sms' }];
+      const types = [{type: 'call'}, {type: 'whatsapp'}, {type: 'sms'}];
 
       setRenderIconData({
         task_type: types,
@@ -170,8 +178,14 @@ const Enquiries = ({ route }) => {
     }
   }, [item]);
   const handleNextEnquiry = () => {
-    if (callLogData.duration < 5 && callLogData.type !== "OUTGOING" && callLogData.phoneNumber !== itemData.phone_number) {
-      console.log('Button disabled: Duration < 5 or non-OUTGOING call or different phone number');
+    if (
+      callLogData.duration < 5 &&
+      callLogData.type !== 'OUTGOING' &&
+      callLogData.phoneNumber !== itemData.phone_number
+    ) {
+      console.log(
+        'Button disabled: Duration < 5 or non-OUTGOING call or different phone number',
+      );
       return;
     }
     console.log('Next');
@@ -182,7 +196,7 @@ const Enquiries = ({ route }) => {
     itemData.spendTime = spendTime;
     itemData.workDescription = workDescription;
     itemData.taskId = taskId;
-    navigation.navigate('Schedule Call', { item: itemData });
+    navigation.navigate('Schedule Call', {item: itemData});
     setCurrentEnquiryIndex(currentEnquiryIndex + 1);
     setDoneNextButtonVisible(true);
   };
@@ -194,9 +208,9 @@ const Enquiries = ({ route }) => {
     if (enquiriesList && enquiriesList.length === 0) {
       navigation.navigate('Tasks');
     }
-  }
+  };
   const handleSheduleCall = item => {
-    navigation.navigate('Schedule Call', { item: item });
+    navigation.navigate('Schedule Call', {item: item});
   };
   const makePhoneCall = mobileNumber => {
     console.log('Calling...', mobileNumber);
@@ -204,9 +218,23 @@ const Enquiries = ({ route }) => {
     Linking.openURL(`tel:${mobileNumber}`);
   };
   useEffect(() => {
-    if (callLogData && itemData && callLogData.phoneNumber === itemData.phone_number) {
-      if (callLogData.duration >= 5 && callLogData.type === "OUTGOING" && callLogData.phoneNumber === itemData.phone_number) {
-        console.log(callLogData.phoneNumber, itemData.phone_number, callLogData.duration, callLogData.type, "equal");
+    if (
+      callLogData &&
+      itemData &&
+      callLogData.phoneNumber === itemData.phone_number
+    ) {
+      if (
+        callLogData.duration >= 5 &&
+        callLogData.type === 'OUTGOING' &&
+        callLogData.phoneNumber === itemData.phone_number
+      ) {
+        console.log(
+          callLogData.phoneNumber,
+          itemData.phone_number,
+          callLogData.duration,
+          callLogData.type,
+          'equal',
+        );
       }
     }
   }, [callLogData, itemData]);
@@ -291,7 +319,7 @@ const Enquiries = ({ route }) => {
   };
   const openAdditonalEnquiry = item => {
     console.log(item, '>>>>>>>>>>>>>>>.');
-    navigation.navigate('Additional Details', { item: item });
+    navigation.navigate('Additional Details', {item: item});
   };
 
   useEffect(() => {
@@ -318,231 +346,236 @@ const Enquiries = ({ route }) => {
         const [item] = response.data.result;
         setItemData(item);
       }
-
     });
     setLoading(false);
-
   };
 
   return (
     <ScrollView>
-    <View style={StyleSheet.mainContainer}>
-      <View style={styles.container}>
-        {loading ? (
-          <CustomLoadingSpinner />
-        ) : (
-          <>
-            <TouchableOpacity style={styles.touchableOpacityStyle}>
-              <Text style={styles.taskListStyle}>{item.employee}</Text>
-              <Text style={styles.taskListStyle}>{item.task_name}</Text>
-            </TouchableOpacity>
-            <View style={styles.contentContainer}>
-              <View style={styles.dataContainer}>
-                <View style={styles.leftContainer}>
-                  <Text style={styles.taskLabel}>Task Assigned:</Text>
-                  <Text style={styles.taskLabel}>Task Type:</Text>
-                  <Text style={styles.taskLabel}>Tasks:</Text>
-                  <Text style={styles.taskLabel}>Task Performed: </Text>
-                  <Text style={styles.taskLabel}>Category: </Text>
-                  <Text style={styles.taskLabel}>Start Date: </Text>
-                  <Text style={styles.taskLabel}>End Date: </Text>
-                  <Text style={styles.taskLabel}>Task Time Period: </Text>
-                </View>
-                <View style={styles.mainRightContainer}>
-                  <View style={styles.rightContainer}>
-                    <Text style={styles.listStyle}>{item.employee}</Text>
-                    <Text style={styles.listStyle}>{item.tasktype_name}</Text>
-                    <Text style={styles.listStyle}>{item.task_name}</Text>
-                    <TouchableOpacity
-                      style={styles.perfomedTaskBtn}
-                      onPress={() => {
-                        // openTaskDetails(item);
-                      }}>
-                      <Text style={[styles.listStyle, styles.taskPerformed]}>
-                        {item.taskCompleted}/{item.taskcount}
+      <View style={StyleSheet.mainContainer}>
+        <View style={styles.container}>
+          {loading ? (
+            <CustomLoadingSpinner />
+          ) : (
+            <>
+              <TouchableOpacity style={styles.touchableOpacityStyle}>
+                <Text style={styles.taskListStyle}>{item.employee}</Text>
+                <Text style={styles.taskListStyle}>{item.task_name}</Text>
+              </TouchableOpacity>
+              <View style={styles.contentContainer}>
+                <View style={styles.dataContainer}>
+                  <View style={styles.leftContainer}>
+                    <Text style={styles.taskLabel}>Task Assigned:</Text>
+                    <Text style={styles.taskLabel}>Task Type:</Text>
+                    <Text style={styles.taskLabel}>Tasks:</Text>
+                    <Text style={styles.taskLabel}>Task Performed: </Text>
+                    <Text style={styles.taskLabel}>Category: </Text>
+                    <Text style={styles.taskLabel}>Start Date: </Text>
+                    <Text style={styles.taskLabel}>End Date: </Text>
+                    <Text style={styles.taskLabel}>Task Time Period: </Text>
+                  </View>
+                  <View style={styles.mainRightContainer}>
+                    <View style={styles.rightContainer}>
+                      <Text style={styles.listStyle}>{item.employee}</Text>
+                      <Text style={styles.listStyle}>{item.tasktype_name}</Text>
+                      <Text style={styles.listStyle}>{item.task_name}</Text>
+                      <TouchableOpacity
+                        style={styles.perfomedTaskBtn}
+                        onPress={() => {
+                          // openTaskDetails(item);
+                        }}>
+                        <Text style={[styles.listStyle, styles.taskPerformed]}>
+                          {item.taskCompleted}/{item.taskcount}
+                        </Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity style={styles.perfomedTaskBtn}>
+                        <Text style={styles.listStyle}>
+                          {item.category_name}
+                        </Text>
+                      </TouchableOpacity>
+                      <Text style={styles.listStyle}>
+                        {moment(item.startdate).format('Do MMMM, YYYY')}
                       </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.perfomedTaskBtn}>
-                      <Text style={styles.listStyle}>{item.category_name}</Text>
-                    </TouchableOpacity>
-                    <Text style={styles.listStyle}>
-                      {moment(item.startdate).format('Do MMMM, YYYY')}
-                    </Text>
-                    <Text style={styles.listStyle}>
-                      {moment(item.enddate).format('Do MMMM, YYYY')}
-                    </Text>
-                    <Text style={styles.listStyle}>{item.period_name}</Text>
+                      <Text style={styles.listStyle}>
+                        {moment(item.enddate).format('Do MMMM, YYYY')}
+                      </Text>
+                      <Text style={styles.listStyle}>{item.period_name}</Text>
+                    </View>
                   </View>
                 </View>
               </View>
-            </View>
-            {item.task_name === 'Call' && (
-              <View>
-                <Text style={styles.enquiryLine}> Locked Enquiry</Text>
-                <View style={styles.line} />
-                {loading ? (
-                  <CustomLoadingSpinner />
-                ) : enquiriesList && enquiriesList.length > 0 ? (
-                  <FlatList
-                    style={{ marginBottom: 60 }}
-                    data={enquiriesList}
-                    keyExtractor={(item, index) => `task_${index}`}
-                    renderItem={({ item, index }) => {
-                      return (
-                        <>
-                          <View key={index} style={styles.enquiryBox}>
-                            <View style={styles.leftDataStyle}>
-                              <View style={styles.eDataContainer}>
-                                <View style={styles.textContainer}>
-                                  <View style={styles.row}>
-                                    <Image
-                                      style={styles.personImg}
-                                      source={require('../../assets/person.png')}
-                                    />
-                                    <Text style={styles.value}>
-                                      {item.first_name +
-                                        (item.last_name ? ' ' + item.last_name : '')}
-                                    </Text>
-                                  </View>
-                                  <View style={styles.row}>
-                                    <Image
-                                      style={styles.personImg}
-                                      source={require('../../assets/phone.png')}
-                                    />
-                                    <TouchableOpacity
-                                      onPress={() => {
-                                        makePhoneCall(item.phone_number);
-                                      }}>
+              {item.task_name === 'Call' && (
+                <View>
+                  <Text style={styles.enquiryLine}> Locked Enquiry</Text>
+                  <View style={styles.line} />
+                  {loading ? (
+                    <CustomLoadingSpinner />
+                  ) : enquiriesList && enquiriesList.length > 0 ? (
+                    <FlatList
+                      style={{marginBottom: 60}}
+                      data={enquiriesList}
+                      keyExtractor={(item, index) => `task_${index}`}
+                      renderItem={({item, index}) => {
+                        return (
+                          <>
+                            <View key={index} style={styles.enquiryBox}>
+                              <View style={styles.leftDataStyle}>
+                                <View style={styles.eDataContainer}>
+                                  <View style={styles.textContainer}>
+                                    <View style={styles.row}>
+                                      <Image
+                                        style={styles.personImg}
+                                        source={require('../../assets/person.png')}
+                                      />
                                       <Text style={styles.value}>
-                                        {item.phone_number}
+                                        {item.first_name +
+                                          (item.last_name
+                                            ? ' ' + item.last_name
+                                            : '')}
                                       </Text>
-                                    </TouchableOpacity>
-                                  </View>
-                                  <View style={styles.row}>
-                                    <Image
-                                      style={styles.personImg}
-                                      source={require('../../assets/product.png')}
-                                    />
-                                    <Text style={styles.value}>
-                                      {item.product ? item.product : '-'}
-                                    </Text>
-                                  </View>
-                                  <View style={styles.row}>
-                                    <Image
-                                      style={styles.personImg}
-                                      source={require('../../assets/location.png')}
-                                    />
-                                    <Text style={styles.value}>
-                                      {item.village ? item.village : '-'}
-                                    </Text>
+                                    </View>
+                                    <View style={styles.row}>
+                                      <Image
+                                        style={styles.personImg}
+                                        source={require('../../assets/phone.png')}
+                                      />
+                                      <TouchableOpacity
+                                        onPress={() => {
+                                          makePhoneCall(item.phone_number);
+                                        }}>
+                                        <Text style={styles.value}>
+                                          {item.phone_number}
+                                        </Text>
+                                      </TouchableOpacity>
+                                    </View>
+                                    <View style={styles.row}>
+                                      <Image
+                                        style={styles.personImg}
+                                        source={require('../../assets/product.png')}
+                                      />
+                                      <Text style={styles.value}>
+                                        {item.product ? item.product : '-'}
+                                      </Text>
+                                    </View>
+                                    <View style={styles.row}>
+                                      <Image
+                                        style={styles.personImg}
+                                        source={require('../../assets/location.png')}
+                                      />
+                                      <Text style={styles.value}>
+                                        {item.village ? item.village : '-'}
+                                      </Text>
+                                    </View>
                                   </View>
                                 </View>
                               </View>
-                            </View>
-                            <View style={styles.rightDataStyle}>
-                              <Text style={styles.dateText}>Not Followed</Text>
-                              {item.sales_person && (
-                                <Text style={styles.salesText}>
-                                  {item.sales_person}
+                              <View style={styles.rightDataStyle}>
+                                <Text style={styles.dateText}>
+                                  Not Followed
                                 </Text>
-                              )}
-                              <TouchableOpacity style={styles.dayBack}>
-                                <TimeAgo date={item.date} />
-                              </TouchableOpacity>
+                                {item.sales_person && (
+                                  <Text style={styles.salesText}>
+                                    {item.sales_person}
+                                  </Text>
+                                )}
+                                <TouchableOpacity style={styles.dayBack}>
+                                  <TimeAgo date={item.date} />
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                  onPress={() => {
+                                    handleSheduleCall(item);
+                                  }}
+                                  style={styles.discussionButton}>
+                                  <Text style={styles.discussionText}>
+                                    Follow Up
+                                  </Text>
+                                </TouchableOpacity>
+                              </View>
+                            </View>
+                            <View style={styles.taskIconContainer}>
                               <TouchableOpacity
+                                style={styles.greenButton}
                                 onPress={() => {
-                                  handleSheduleCall(item);
-                                }}
-                                style={styles.discussionButton}>
-                                <Text style={styles.discussionText}>Follow Up</Text>
+                                  makePhoneCall(item.phone_number);
+                                }}>
+                                <TouchableOpacity>
+                                  <Text style={styles.taskDataText}>
+                                    {formatPhoneNumber(item.phone_number)}
+                                  </Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity>
+                                  <Image
+                                    style={styles.iconImg}
+                                    source={require('../../assets/telephone.png')}
+                                  />
+                                </TouchableOpacity>
                               </TouchableOpacity>
                             </View>
-                          </View>
-                          <View style={styles.taskIconContainer}>
-                            <TouchableOpacity style={styles.greenButton}
-                              onPress={() => {
-                                makePhoneCall(item.phone_number);
-                              }}>
-                              <TouchableOpacity>
-                                <Text style={styles.taskDataText}>
-                                  {formatPhoneNumber(item.phone_number)}
-                                </Text>
-                              </TouchableOpacity>
-                              <TouchableOpacity
-                              >
-                                <Image
-                                  style={styles.iconImg}
-                                  source={require('../../assets/telephone.png')}
-                                />
-                              </TouchableOpacity>
-                            </TouchableOpacity>
-                          </View>
-                        </>
-                      );
-                    }}
-                  />
-                ) : (
-                  <Text style={styles.NoTaskStyle}>Task Completed!</Text>
-                )}
-                <TouchableOpacity style={styles.buttonTouchableStyle}>
-                  {enquiriesList && enquiriesList.length === 0 ? (
-                    <TouchableOpacity
-                      style={styles.buttonContainer}
-                      onPress={handleSaveEnquiry}>
-                      <Text style={styles.skipStyle}>DONE</Text>
-                    </TouchableOpacity>
+                          </>
+                        );
+                      }}
+                    />
                   ) : (
-                    <React.Fragment>
+                    <Text style={styles.NoTaskStyle}>Task Completed!</Text>
+                  )}
+                  <TouchableOpacity style={styles.buttonTouchableStyle}>
+                    {enquiriesList && enquiriesList.length === 0 ? (
                       <TouchableOpacity
                         style={styles.buttonContainer}
-                        onPress={handleEnquirySkip}>
-                        <Text style={styles.skipStyle}>SKIP</Text>
+                        onPress={handleSaveEnquiry}>
+                        <Text style={styles.skipStyle}>DONE</Text>
                       </TouchableOpacity>
-                      <TouchableOpacity
-                        style={[
-                          styles.buttonContainer,
-                          {
-                            backgroundColor:
-                              callLogData.duration < 5 ||
+                    ) : (
+                      <React.Fragment>
+                        <TouchableOpacity
+                          style={styles.buttonContainer}
+                          onPress={handleEnquirySkip}>
+                          <Text style={styles.skipStyle}>SKIP</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          style={[
+                            styles.buttonContainer,
+                            {
+                              backgroundColor:
+                                callLogData.duration < 5 ||
                                 callLogData.type !== 'OUTGOING' ||
-                                (itemData && callLogData.phoneNumber !== itemData.phone_number)
-                                ? 'gray'
-                                : '#F1C40F',
-                            borderRadius: 8,
-                          },
-                        ]}
-                        onPress={handleNextEnquiry}
-                        disabled={
-                          callLogData.duration < 5 ||
-                          callLogData.type !== 'OUTGOING' ||
-                          !(itemData && callLogData.phoneNumber === itemData.phone_number)
-                        }
-                      >
-                        <Text style={styles.nextStyle}>DONE & NEXT</Text>
-                      </TouchableOpacity>
-                    </React.Fragment>
-                  )}
-                </TouchableOpacity>
-              </View>
-            )}
+                                (itemData &&
+                                  callLogData.phoneNumber !==
+                                    itemData.phone_number)
+                                  ? 'gray'
+                                  : '#F1C40F',
+                              borderRadius: 8,
+                            },
+                          ]}
+                          onPress={handleNextEnquiry}
+                          disabled={
+                            callLogData.duration < 5 ||
+                            callLogData.type !== 'OUTGOING' ||
+                            !(
+                              itemData &&
+                              callLogData.phoneNumber === itemData.phone_number
+                            )
+                          }>
+                          <Text style={styles.nextStyle}>DONE & NEXT</Text>
+                        </TouchableOpacity>
+                      </React.Fragment>
+                    )}
+                  </TouchableOpacity>
+                </View>
+              )}
 
-            {item.task_name === 'Add Enquiry' && (
-              <>
-                <Text style={styles.enquiryLine}> Add Enquiry</Text>
-                <View style={styles.line} />
-                {loading ? (
-                  <CustomLoadingSpinner />
-                ) : (
-                  <AddEnquiry />
-                )}
-              </>
-            )}
-
-          </>
-        )}
+              {item.task_name === 'Add Enquiry' && (
+                <>
+                  <Text style={styles.enquiryLine}> Add Enquiry</Text>
+                  <View style={styles.line} />
+                  {loading ? <CustomLoadingSpinner /> : <AddEnquiry />}
+                </>
+              )}
+            </>
+          )}
+        </View>
       </View>
-    </View>
-     </ScrollView>
+    </ScrollView>
   );
 };
 
@@ -556,7 +589,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 20,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.25,
     elevation: 4,
     borderBottomLeftRadius: 20,
@@ -579,7 +612,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
     paddingVertical: 4,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.25,
     elevation: 3,
     borderRadius: 7,
