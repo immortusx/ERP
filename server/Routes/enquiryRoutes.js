@@ -381,10 +381,10 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
                         let theSpendTime = `${hours
                           .toString()
                           .padStart(2, "0")}:${minutes
-                          .toString()
-                          .padStart(2, "0")}:${seconds
-                          .toString()
-                          .padStart(2, "0")}`;
+                            .toString()
+                            .padStart(2, "0")}:${seconds
+                              .toString()
+                              .padStart(2, "0")}`;
                         console.log(theSpendTime, "spendTime");
 
                         let userID = req.myData.userId;
@@ -446,10 +446,10 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
                         let theSpendTime = `${hours
                           .toString()
                           .padStart(2, "0")}:${minutes
-                          .toString()
-                          .padStart(2, "0")}:${seconds
-                          .toString()
-                          .padStart(2, "0")}`;
+                            .toString()
+                            .padStart(2, "0")}:${seconds
+                              .toString()
+                              .padStart(2, "0")}`;
                         console.log(theSpendTime, "spendTime");
 
                         let userID = req.myData.userId;
@@ -822,6 +822,18 @@ router.post("/set-new-fast-enquiry", tokenCheck, async (req, res) => {
     const categoryId = req.body.category;
     console.log(branch_id, "branchid");
     const user_Id = req.myData.userId;
+    const getSSP = (callback) => {
+      let userID = req.myData.userId;
+      const sql = `SELECT CONCAT(u.first_name, ' ', u.last_name) AS full_name FROM users AS u WHERE u.id = ${userID}`;
+      db.query(sql, async (err, result) => {
+        if (err) {
+          console.log({ isSuccess: false, result: err });
+        } else {
+          const fullName = result[0].full_name;
+          callback(fullName);
+        }
+      });
+    };
 
     const salePersonSql = `CALL sp_get_user_sale_person(${village}, ${categoryId})`;
     await db.query(salePersonSql, async (err, salePersonDetails) => {
@@ -927,9 +939,10 @@ router.post("/set-new-fast-enquiry", tokenCheck, async (req, res) => {
   } catch (err) {
     console.log(err);
     console.log({ isSuccess: false, result: "error" });
-    // res.send({ isSuccess: false, result: "error" });
+    res.send({ isSuccess: false, result: "error" });
   }
 });
+
 
 //===========Add Detail Enquiry through Application=============//
 router.post("/set-new-detail-enquiry", tokenCheck, async (req, res) => {
