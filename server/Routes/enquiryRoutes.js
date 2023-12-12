@@ -381,10 +381,10 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
                         let theSpendTime = `${hours
                           .toString()
                           .padStart(2, "0")}:${minutes
-                          .toString()
-                          .padStart(2, "0")}:${seconds
-                          .toString()
-                          .padStart(2, "0")}`;
+                            .toString()
+                            .padStart(2, "0")}:${seconds
+                              .toString()
+                              .padStart(2, "0")}`;
                         console.log(theSpendTime, "spendTime");
 
                         let userID = req.myData.userId;
@@ -446,10 +446,10 @@ router.post("/set-new-enquiry-data", tokenCheck, async (req, res) => {
                         let theSpendTime = `${hours
                           .toString()
                           .padStart(2, "0")}:${minutes
-                          .toString()
-                          .padStart(2, "0")}:${seconds
-                          .toString()
-                          .padStart(2, "0")}`;
+                            .toString()
+                            .padStart(2, "0")}:${seconds
+                              .toString()
+                              .padStart(2, "0")}`;
                         console.log(theSpendTime, "spendTime");
 
                         let userID = req.myData.userId;
@@ -822,132 +822,158 @@ router.post("/set-new-fast-enquiry", tokenCheck, async (req, res) => {
     const categoryId = req.body.category;
     console.log(branch_id, "branchid");
     const user_Id = req.myData.userId;
+    const getSSP = (callback) => {
+      let userID = req.myData.userId;
+      const sql = `SELECT CONCAT(u.first_name, ' ', u.last_name) AS full_name FROM users AS u WHERE u.id = ${userID}`;
+      db.query(sql, async (err, result) => {
+        if (err) {
+          console.log({ isSuccess: false, result: err });
+        } else {
+          const fullName = result[0].full_name;
+          callback(fullName);
+        }
+      });
+    };
 
     // Check if the phone number already exists in the customers table
     const checkPhoneNumberSql = `SELECT phone_number FROM customers WHERE phone_number = ?`;
-    await db.query(
-      checkPhoneNumberSql,
-      [phone_number],
-      async (err, existingCustomer) => {
-        if (err) {
-          console.log({ isSuccess: false, result: err });
-          res.send({ isSuccess: false, result: "error" });
-        } else if (existingCustomer && existingCustomer.length > 0) {
-          // Phone number already exists, do not create a new enquiry
-          console.log("Phone number already exists");
-          res.send({ isSuccess: false, result: "Already Exist" });
-        } else {
-          // Phone number is unique, proceed with creating the enquiry
-          const salePersonSql = `CALL sp_get_user_sale_person(${village}, ${categoryId})`;
-          await db.query(salePersonSql, async (err, salePersonDetails) => {
-            if (err) {
-              console.log({ isSuccess: false, result: err });
-              res.send({ isSuccess: false, result: "error" });
-            } else {
-              const userData = salePersonDetails[0][0];
-              const salesperson_id = userData ? userData.userId : null;
-              console.log(salesperson_id, "userId");
+    await db.query(checkPhoneNumberSql, [phone_number], async (err, existingCustomer) => {
+      if (err) {
+        console.log({ isSuccess: false, result: err });
+        res.send({ isSuccess: false, result: "error" });
+      } else if (existingCustomer && existingCustomer.length > 0) {
+        // Phone number already exists, do not create a new enquiry
+        console.log("Phone number already exists");
+        res.send({ isSuccess: false, result: "Already Exist" });
+      } else {
+        // Phone number is unique, proceed with creating the enquiry
+        const salePersonSql = `CALL sp_get_user_sale_person(${village}, ${categoryId})`;
+        await db.query(salePersonSql, async (err, salePersonDetails) => {
+          if (err) {
+            console.log({ isSuccess: false, result: err });
+            res.send({ isSuccess: false, result: "error" });
+          } else {
+            const userData = salePersonDetails[0][0];
+            const salesperson_id = userData ? userData.userId : null;
+            console.log(salesperson_id, "userId");
+            let taskStartTime = new Date();
+            const fastSql = `INSERT INTO customers (first_name, phone_number, whatsapp_number, state, district, taluka, village) VALUES (?,?,?,?,?,?,?)`;
+            await db.query(
+              fastSql,
+              [first_name, phone_number, whatsapp_number, stateId, districtId, taluka, village],
+              async (err, fastEnquiry) => {
+                if (err) {
+                  console.log({ isSuccess: false, result: err });
+                  res.send({ isSuccess: false, result: "error" });
+                } else {
+                  console.log({ isSuccess: true, result: fastSql });
+                  const customer_id = fastEnquiry.insertId;
+                  console.log(customer_id);
+                  let cdate = moment().format("YYYY-MM-DD H:m:s");
+                  const enquirySql = `INSERT INTO enquiries (branch_id, enquiry_category_id, salesperson_id, modal_id, customer_id, date, user_created) VALUES (?,?,?,?,?,?,?)`;
+                  await db.query(
+                    enquirySql,
+                    [branch_id, categoryId, salesperson_id ? salesperson_id : null, null, customer_id, cdate, user_Id],
+                    async (err, enquiryResult) => {
+                      if (err) {
+                        console.log({ isSuccess: false, result: err });
+                        res.send({ isSuccess: false, result: "error" });
+                      } else if (enquiryResult && enquiryResult.insertId) {
+                        console.log({ isSuccess: "success", result: enquirySql });
+                        const enquiryId = enquiryResult.insertId;
+                        const enquiryProductSql = `INSERT INTO enquiry_products (enquiry_id, manufacturer, modal) VALUES (?,?,?)`;
+                        await db.query(
+                          enquiryProductSql,
+                          [enquiryId, null, null],
+                          async (err, productResult) => {
+                            if (err) {
+                              console.log(err);
+                            } else {
+                              console.log({
+                                isSuccess: "success",
+                                result: enquiryProductSql,
+                              });
+                              const urlSql = `INSERT INTO manufactur_details (enquiry_id, old_tractor) VALUES(?,?)`;
+                              await db.query(
+                                urlSql,
+                                [enquiryId, "No"],
+                                (err, result) => {
+                                  if (err) {
+                                    console.log(err);
+                                  } else {
+                                    console.log({
+                                      isSuccess: "success",
+                                      result: urlSql,
+                                    });
 
-              const fastSql = `INSERT INTO customers (first_name, phone_number, whatsapp_number, state, district, taluka, village) VALUES (?,?,?,?,?,?,?)`;
-              await db.query(
-                fastSql,
-                [
-                  first_name,
-                  phone_number,
-                  whatsapp_number,
-                  stateId,
-                  districtId,
-                  taluka,
-                  village,
-                ],
-                async (err, fastEnquiry) => {
-                  if (err) {
-                    console.log({ isSuccess: false, result: err });
-                    res.send({ isSuccess: false, result: "error" });
-                  } else {
-                    console.log({ isSuccess: true, result: fastSql });
-                    const customer_id = fastEnquiry.insertId;
-                    console.log(customer_id);
-                    let cdate = moment().format("YYYY-MM-DD H:m:s");
-                    const enquirySql = `INSERT INTO enquiries (branch_id, enquiry_category_id, salesperson_id, modal_id, customer_id, date, user_created) VALUES (?,?,?,?,?,?,?)`;
-                    await db.query(
-                      enquirySql,
-                      [
-                        branch_id,
-                        categoryId,
-                        salesperson_id ? salesperson_id : null,
-                        none,
-                        customer_id,
-                        cdate,
-                        user_Id,
-                      ],
-                      async (err, enquiryResult) => {
-                        if (err) {
-                          console.log({ isSuccess: false, result: err });
-                          res.send({ isSuccess: false, result: "error" });
-                        } else if (enquiryResult && enquiryResult.insertId) {
-                          console.log({
-                            isSuccess: "success",
-                            result: enquirySql,
-                          });
-                          const enquiryId = enquiryResult.insertId;
-                          const enquiryProductSql = `INSERT INTO enquiry_products (enquiry_id, manufacturer, modal) VALUES (?,?,?)`;
-                          await db.query(
-                            enquiryProductSql,
-                            [enquiryId, none, none],
-                            async (err, productResult) => {
-                              if (err) {
-                                console.log(err);
-                              } else {
-                                console.log({
-                                  isSuccess: "success",
-                                  result: enquiryProductSql,
-                                });
-                                const urlSql = `INSERT INTO manufactur_details (enquiry_id, old_tractor) VALUES(?,?)`;
-                                await db.query(
-                                  urlSql,
-                                  [enquiryId, "No"],
-                                  (err, result) => {
-                                    if (err) {
-                                      console.log(err);
-                                    } else {
-                                      console.log({
-                                        isSuccess: "success",
-                                        result: urlSql,
+                                    const uploadEnquiryWorklog = () => {
+                                      getSSP((salesperson) => {
+                                        console.log(salesperson, "salesperson");
+                                        let workDescription = `For Enquiry ${first_name} which phone ${phone_number} by ${salesperson}`;
+                                        let tasktype = 1;
+                                        let task = 11;
+                                        let cdate = moment().format("YYYY-MM-DD H:m:s");
+                                        let taskEndTime = new Date();
+                                        let spendTime = taskEndTime - taskStartTime;
+                                        let spendTimeSeconds = Math.floor(spendTime / 1000);
+                                        let hours = Math.floor(spendTimeSeconds / 3600);
+                                        let minutes = Math.floor((spendTimeSeconds % 3600) / 60);
+                                        let seconds = spendTimeSeconds % 60;
+                                        let theSpendTime = `${hours.toString().padStart(2, "0")}:${minutes
+                                          .toString()
+                                          .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+                                        console.log(theSpendTime, "spendTime");
+
+                                        let userID = req.myData.userId;
+                                        const workLogSql = `INSERT INTO worklog (user_id, tasktype, task, work_description, datetime, spendtime) VALUES('${userID}','${tasktype}','${task}','${workDescription}','${cdate}','${theSpendTime}')`;
+                                        db.query(workLogSql, async (err, result) => {
+                                          if (err) {
+                                            console.log({ isSuccess: false, result: err });
+                                          } else {
+                                            console.log({
+                                              isSuccess: "success",
+                                              result: "success",
+                                            });
+                                            res.send({
+                                              isSuccess: "success",
+                                              result: "success",
+                                            });
+                                          }
+                                        });
                                       });
-                                      res.send({
-                                        isSuccess: "success",
-                                        result: "success",
-                                      });
-                                      if (enquiryId) {
-                                        const messagePayloads = {
-                                          enquiryId: enquiryId,
-                                        };
-                                        instantEnquiryMessage(messagePayloads);
-                                      }
+                                    };
+
+                                    uploadEnquiryWorklog();
+
+                                    if (enquiryId) {
+                                      const messagePayloads = {
+                                        enquiryId: enquiryId,
+                                      };
+                                      instantEnquiryMessage(messagePayloads);
                                     }
                                   }
-                                );
-                              }
+                                }
+                              );
                             }
-                          );
-                        }
+                          }
+                        );
                       }
-                    );
-                  }
+                    }
+                  );
                 }
-              );
-            }
-          });
-        }
+              }
+            );
+          }
+        });
       }
-    );
+    });
   } catch (err) {
     console.log(err);
     console.log({ isSuccess: false, result: "error" });
-    // res.send({ isSuccess: false, result: "error" });
+    res.send({ isSuccess: false, result: "error" });
   }
 });
+
 
 //===========Add Detail Enquiry through Application=============//
 router.post("/set-new-detail-enquiry", tokenCheck, async (req, res) => {
@@ -988,7 +1014,18 @@ router.post("/set-new-detail-enquiry", tokenCheck, async (req, res) => {
           const old_tractor = req.body.old_tractor || null;
           const categoryId = req.body.category || null;
           const user_Id = req.myData.userId;
-
+          const getSSP = (callback) => {
+            let userID = req.myData.userId;
+            const sql = `SELECT CONCAT(u.first_name, ' ', u.last_name) AS full_name FROM users AS u WHERE u.id = ${userID}`;
+            db.query(sql, async (err, result) => {
+              if (err) {
+                console.log({ isSuccess: false, result: err });
+              } else {
+                const fullName = result[0].full_name;
+                callback(fullName);
+              }
+            });
+          };
           const salePersonSql = `CALL sp_get_user_sale_person(${village}, ${categoryId})`;
           await db.query(salePersonSql, async (err, salePersonDetails) => {
             if (err) {
@@ -1002,7 +1039,7 @@ router.post("/set-new-detail-enquiry", tokenCheck, async (req, res) => {
               const userData = salePersonDetails[0][0];
               const salesperson_id = userData ? userData.userId : null;
               console.log(salesperson_id, "userId");
-
+              let taskStartTime = new Date();
               const fastSql = `INSERT INTO customers (first_name, last_name, phone_number, whatsapp_number, state, district, taluka, village) VALUES (?,?,?,?,?,?,?,?)`;
               await db.query(
                 fastSql,
@@ -1093,6 +1130,45 @@ router.post("/set-new-detail-enquiry", tokenCheck, async (req, res) => {
                                           isSuccess: "success",
                                           result: "success",
                                         });
+                                        const uploadEnquiryWorklog = () => {
+                                          getSSP((salesperson) => {
+                                            console.log(salesperson, "salesperson");
+                                            let workDescription = `For Enquiry ${first_name} which phone ${phone_number} by ${salesperson}`;
+                                            let tasktype = 1;
+                                            let task = 11;
+                                            let cdate = moment().format("YYYY-MM-DD H:m:s");
+                                            let taskEndTime = new Date();
+                                            let spendTime = taskEndTime - taskStartTime;
+                                            let spendTimeSeconds = Math.floor(spendTime / 1000);
+                                            let hours = Math.floor(spendTimeSeconds / 3600);
+                                            let minutes = Math.floor((spendTimeSeconds % 3600) / 60);
+                                            let seconds = spendTimeSeconds % 60;
+                                            let theSpendTime = `${hours.toString().padStart(2, "0")}:${minutes
+                                              .toString()
+                                              .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+                                            console.log(theSpendTime, "spendTime");
+
+                                            let userID = req.myData.userId;
+                                            const workLogSql = `INSERT INTO worklog (user_id, tasktype, task, work_description, datetime, spendtime) VALUES('${userID}','${tasktype}','${task}','${workDescription}','${cdate}','${theSpendTime}')`;
+                                            db.query(workLogSql, async (err, result) => {
+                                              if (err) {
+                                                console.log({ isSuccess: false, result: err });
+                                              } else {
+                                                console.log({
+                                                  isSuccess: "success",
+                                                  result: "success",
+                                                });
+                                                res.send({
+                                                  isSuccess: "success",
+                                                  result: "success",
+                                                });
+                                              }
+                                            });
+                                          });
+                                        };
+
+                                        uploadEnquiryWorklog();
+
                                         if (enquiryId) {
                                           const messagePayloads = {
                                             enquiryId: enquiryId,
@@ -1121,6 +1197,44 @@ router.post("/set-new-detail-enquiry", tokenCheck, async (req, res) => {
                                           isSuccess: "success",
                                           result: "success",
                                         });
+                                        const uploadEnquiryWorklog = () => {
+                                          getSSP((salesperson) => {
+                                            console.log(salesperson, "salesperson");
+                                            let workDescription = `For Enquiry ${first_name} which phone ${phone_number} by ${salesperson}`;
+                                            let tasktype = 1;
+                                            let task = 11;
+                                            let cdate = moment().format("YYYY-MM-DD H:m:s");
+                                            let taskEndTime = new Date();
+                                            let spendTime = taskEndTime - taskStartTime;
+                                            let spendTimeSeconds = Math.floor(spendTime / 1000);
+                                            let hours = Math.floor(spendTimeSeconds / 3600);
+                                            let minutes = Math.floor((spendTimeSeconds % 3600) / 60);
+                                            let seconds = spendTimeSeconds % 60;
+                                            let theSpendTime = `${hours.toString().padStart(2, "0")}:${minutes
+                                              .toString()
+                                              .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+                                            console.log(theSpendTime, "spendTime");
+
+                                            let userID = req.myData.userId;
+                                            const workLogSql = `INSERT INTO worklog (user_id, tasktype, task, work_description, datetime, spendtime) VALUES('${userID}','${tasktype}','${task}','${workDescription}','${cdate}','${theSpendTime}')`;
+                                            db.query(workLogSql, async (err, result) => {
+                                              if (err) {
+                                                console.log({ isSuccess: false, result: err });
+                                              } else {
+                                                console.log({
+                                                  isSuccess: "success",
+                                                  result: "success",
+                                                });
+                                                res.send({
+                                                  isSuccess: "success",
+                                                  result: "success",
+                                                });
+                                              }
+                                            });
+                                          });
+                                        };
+
+                                        uploadEnquiryWorklog();
                                         if (enquiryId) {
                                           const messagePayloads = {
                                             enquiryId: enquiryId,

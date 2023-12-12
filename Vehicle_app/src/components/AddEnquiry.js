@@ -201,7 +201,7 @@ const AddEnquiry = ({navigation}) => {
     borderColor: 'blue',
   };
   return (
-    <ScrollView>
+    <ScrollView >
       <View style={styles.container}>
         <View style={styles.customerContainer}>
           <View style={styles.dateContainer}>

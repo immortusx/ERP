@@ -6,8 +6,9 @@ import {
   FlatList,
   Button,
   RefreshControl,
+  AppState,
 } from 'react-native';
-import React, { useEffect, useState,useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_URL } from '@env';
@@ -22,6 +23,7 @@ const Tasks = () => {
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const dispatch = useDispatch();
+  const [appState, setAppState] = useState(AppState.currentState);
   const userTaskList = useSelector((state) => state.getUserTaskListState.userTaskList);
   const isFetching = useSelector((state) => state.getUserTaskListState.isFetching);
   const isError = useSelector((state) => state.getUserTaskListState.isError);
@@ -34,7 +36,35 @@ const Tasks = () => {
       };
     }, [dispatch])
   );
-  
+  useFocusEffect(
+    React.useCallback(() => {
+      setLoading(true);
+      dispatch(getUserTaskList());
+
+      const handleAppStateChange = (nextAppState) => {
+        if (appState === 'inactive' && nextAppState === 'active') {
+          // Logic to execute when the app becomes active (e.g., when coming from another app)
+          setLoading(true);
+          dispatch(getUserTaskList());
+        }
+        setAppState(nextAppState);
+      };
+
+      // Subscribe to app state changes
+      const appStateSubscription = AppState.addEventListener(
+        'change',
+        handleAppStateChange
+      );
+
+      return () => {
+        dispatch(clearUserTaskListState());
+        // Remove the app state change subscription when the component is unmounted
+        appStateSubscription.remove();
+      };
+    }, [dispatch, appState])
+  );
+
+
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     dispatch(getUserTaskList());
@@ -78,8 +108,8 @@ const Tasks = () => {
     console.log(taskDetails, 'taskDetials');
     navigation.navigate('Task Details', { taskDetails: taskDetails });
   };
-  const redirectEnquiriesList = () => {
-    navigation.navigate('Enquiries');
+  const redirectEnquiriesList = item => {
+    navigation.navigate('Enquiries', { item: item });
   };
   return (
     <View style={StyleSheet.mainContainer}>
@@ -147,7 +177,7 @@ const Tasks = () => {
                     <TouchableOpacity
                       style={styles.taskStartBtn}
                       onPress={() => {
-                        redirectEnquiriesList();
+                        redirectEnquiriesList(item);
                       }}>
                       <Text style={styles.startText}>START TASK</Text>
                     </TouchableOpacity>
