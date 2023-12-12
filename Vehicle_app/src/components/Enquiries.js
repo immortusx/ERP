@@ -317,6 +317,163 @@ const Enquiries = () => {
         return null;
     }
   };
+  const renderTaskView = item => {
+    switch (item.task_name) {
+      case 'Call':
+        return (
+          <View>
+            <Text style={styles.enquiryLine}>Locked Enquiry</Text>
+            <View style={styles.line} />
+            {loading ? (
+              <CustomLoadingSpinner />
+            ) : enquiriesList && enquiriesList.length > 0 ? (
+              <>
+                {enquiriesList.map((item, index) => (
+                  <View key={index} style={styles.enquiryBox}>
+                    <View style={styles.leftDataStyle}>
+                      <View style={styles.eDataContainer}>
+                        <View style={styles.textContainer}>
+                          <View style={styles.row}>
+                            <Image
+                              style={styles.personImg}
+                              source={require('../../assets/person.png')}
+                            />
+                            <Text style={styles.value}>
+                              {item.first_name +
+                                (item.last_name ? ' ' + item.last_name : '')}
+                            </Text>
+                          </View>
+                          <View style={styles.row}>
+                            <Image
+                              style={styles.personImg}
+                              source={require('../../assets/phone.png')}
+                            />
+                            <TouchableOpacity
+                              onPress={() => {
+                                makePhoneCall(item.phone_number);
+                              }}>
+                              <Text style={styles.value}>
+                                {item.phone_number}
+                              </Text>
+                            </TouchableOpacity>
+                          </View>
+                          <View style={styles.row}>
+                            <Image
+                              style={styles.personImg}
+                              source={require('../../assets/product.png')}
+                            />
+                            <Text style={styles.value}>
+                              {item.product ? item.product : '-'}
+                            </Text>
+                          </View>
+                          <View style={styles.row}>
+                            <Image
+                              style={styles.personImg}
+                              source={require('../../assets/location.png')}
+                            />
+                            <Text style={styles.value}>
+                              {item.village ? item.village : '-'}
+                            </Text>
+                          </View>
+                        </View>
+                      </View>
+                    </View>
+                    <View style={styles.rightDataStyle}>
+                      <Text style={styles.dateText}>Not Followed</Text>
+                      {item.sales_person && (
+                        <Text style={styles.salesText}>
+                          {item.sales_person}
+                        </Text>
+                      )}
+                      <TouchableOpacity style={styles.dayBack}>
+                        <TimeAgo date={item.date} />
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={() => {
+                          handleSheduleCall(item);
+                        }}
+                        style={styles.discussionButton}>
+                        <Text style={styles.discussionText}>Follow Up</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                ))}
+              </>
+            ) : (
+              <Text style={styles.NoTaskStyle}>Task Completed!</Text>
+            )}
+            <TouchableOpacity style={styles.buttonTouchableStyle}>
+              {enquiriesList && enquiriesList.length === 0 ? (
+                <TouchableOpacity
+                  style={styles.buttonContainer}
+                  onPress={handleSaveEnquiry}>
+                  <Text style={styles.skipStyle}>DONE</Text>
+                </TouchableOpacity>
+              ) : (
+                <React.Fragment>
+                  <TouchableOpacity
+                    style={styles.buttonContainer}
+                    onPress={handleEnquirySkip}>
+                    <Text style={styles.skipStyle}>SKIP</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[
+                      styles.buttonContainer,
+                      {
+                        backgroundColor:
+                          callLogData.duration < 5 ||
+                          callLogData.type !== 'OUTGOING' ||
+                          (itemData &&
+                            callLogData.phoneNumber !== itemData.phone_number)
+                            ? 'gray'
+                            : '#F1C40F',
+                        borderRadius: 8,
+                      },
+                    ]}
+                    onPress={handleNextEnquiry}
+                    disabled={
+                      callLogData.duration < 5 ||
+                      callLogData.type !== 'OUTGOING' ||
+                      !(
+                        itemData &&
+                        callLogData.phoneNumber === itemData.phone_number
+                      )
+                    }>
+                    <Text style={styles.nextStyle}>DONE & NEXT</Text>
+                  </TouchableOpacity>
+                </React.Fragment>
+              )}
+            </TouchableOpacity>
+          </View>
+        );
+      case 'Add Enquiry':
+        return (
+          <>
+            <Text style={styles.enquiryLine}>Add Enquiry</Text>
+            <View style={styles.line} />
+            {loading ? <CustomLoadingSpinner /> : <AddEnquiry />}
+          </>
+        );
+      case 'Loan':
+        return (
+          <>
+            <Text style={styles.enquiryLine}>Visit Bank</Text>
+            <View style={styles.line} />
+            {/* {loading ? <CustomLoadingSpinner /> : <AddEnquiry />} */}
+          </>
+        );
+      case 'Reparing':
+        return (
+          <>
+            <Text style={styles.enquiryLine}>Visit Garage</Text>
+            <View style={styles.line} />
+            {/* {loading ? <CustomLoadingSpinner /> : <AddEnquiry />} */}
+          </>
+        );
+      default:
+        return null;
+    }
+  };
   const openAdditonalEnquiry = item => {
     console.log(item, '>>>>>>>>>>>>>>>.');
     navigation.navigate('Additional Details', {item: item});
@@ -351,7 +508,7 @@ const Enquiries = () => {
   };
 
   return (
-    <ScrollView>
+    <ScrollView nestedScrollEnabled>
       <View style={StyleSheet.mainContainer}>
         <View style={styles.container}>
           {loading ? (
@@ -404,7 +561,10 @@ const Enquiries = () => {
                   </View>
                 </View>
               </View>
-              {item.task_name === 'Call' && (
+
+              {renderTaskView(item)}
+
+              {/* {item.task_name === 'Call' && (
                 <View>
                   <Text style={styles.enquiryLine}> Locked Enquiry</Text>
                   <View style={styles.line} />
@@ -570,7 +730,7 @@ const Enquiries = () => {
                   <View style={styles.line} />
                   {loading ? <CustomLoadingSpinner /> : <AddEnquiry />}
                 </>
-              )}
+              )} */}
             </>
           )}
         </View>
