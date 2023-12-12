@@ -84,7 +84,7 @@ export default function Users() {
       field: "User type",
       headerAlign: "center",
       align: "center",
-      headerName:translations[currentLanguage].usertype,
+      headerName: translations[currentLanguage].usertype,
       minWidth: 100,
       flex: 1,
       renderCell: (params) => (
@@ -106,7 +106,7 @@ export default function Users() {
       field: "first_name",
       headerAlign: "left",
       align: "left",
-      headerName:translations[currentLanguage].firstname,
+      headerName: translations[currentLanguage].firstname,
       minWidth: 150,
       flex: 1,
       renderCell: (params) => {
@@ -124,7 +124,7 @@ export default function Users() {
     },
     {
       field: "last_name",
-      headerName:translations[currentLanguage].lastname,
+      headerName: translations[currentLanguage].lastname,
       minWidth: 150,
       flex: 1,
       renderCell: (params) => {
@@ -142,7 +142,7 @@ export default function Users() {
     },
     {
       field: "email",
-      headerName:translations[currentLanguage].email,
+      headerName: translations[currentLanguage].email,
       headerAlign: "left",
       align: "left",
       type: "text",
@@ -151,13 +151,13 @@ export default function Users() {
     },
     {
       field: "phone_number",
-      headerName:translations[currentLanguage].phoneno,
+      headerName: translations[currentLanguage].phoneno,
       minWidth: 200,
       flex: 1,
     },
     {
       field: "is_active",
-      headerName:translations[currentLanguage].active,
+      headerName: translations[currentLanguage].active,
       headerAlign: "center",
       align: "center",
       type: "number",
@@ -168,18 +168,20 @@ export default function Users() {
     },
     {
       field: "menu",
-      headerName: <FontAwesomeIcon icon={faEllipsisV} />,
+      headerName: (
+        <FontAwesomeIcon icon={faEllipsisV} style={{ marginRight: "15px" }} />
+      ),
       className: "bg-dark",
       sortable: false,
       filterable: false,
-      headerAlign: "center",
-      align: "center",
+      headerAlign: "right",
+      align: "right",
       disableColumnMenu: true,
-      maxWidth: 50,
+      width: 130,
       // flex: 1,
       position: "sticky",
       renderCell: (params) => (
-        <div className="d-flex justify-content-center dotHover">
+        <div className="d-flex justify-content-center dotHoverempicon ">
           <FontAwesomeIcon icon={faEllipsisV} />
           <div className="expandDiv">
             <Tooltip title="Edit">

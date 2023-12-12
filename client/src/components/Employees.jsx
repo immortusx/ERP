@@ -306,7 +306,7 @@ export default function Employees() {
       headerAlign: "right",
       align: "right",
       disableColumnMenu: true,
-      width: 130,
+      width: 150,
       // flex: 1,
       position: "sticky",
       renderCell: (params) => (

@@ -41,14 +41,83 @@ export default function EnquiryList() {
   const [newEnquiryList, setNewEnquiryList] = useState({
     listDsp: [],
   });
+  const [statusDropDown, setStatusDropDown] = useState('none');
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleMouseOver = () => {
+    setIsHovered(true);
+  };
+
+  const handleMouseOut = () => {
+    setIsHovered(false);
+  };
+  const [taskCategory, setTaskCategory] = useState(null);
   const [newEnquiryData, setNewEnquiryData] = useState({
     dsp: "",
   });
+  const [showSelectionBox, setShowSelectionBox] = useState({});
   const [selectedPerson, setSelectedPerson] = useState([]);
   const navigate = useNavigate();
   const currentBranch = localStorage.getItem("currentDealerId");
   console.log(currentBranch, "currentBranch*******");
+  const [newAddTask, setNewAddTask] = useState({
+    listTaskCategory: [],
+  });
+  async function getlisttaskCategory() {
+    const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/get-enquiry-categories`;
+    const config = {
+      headers: {
+        token: localStorage.getItem("rbacToken"),
+      },
+    };
+    await Axios.get(url, config).then((response) => {
+      if (response) {
 
+        setNewAddTask((newAddTask) => ({
+          ...newAddTask,
+          ["listTaskCategory"]: response.data.result,
+        }));
+
+      }
+    });
+  }
+  useEffect(() => {
+    getlisttaskCategory();
+
+  }, [])
+  function updateEnquiryCategory(id, newCategory) {
+    const url = `${process.env.REACT_APP_NODE_URL}/api/enquiry/update-enquiry-category/${id}/${newCategory}`;
+    const config = {
+      headers: {
+        token: localStorage.getItem("rbacToken"),
+      },
+    };
+
+    Axios.get(url, config)
+      .then((response) => {
+        if (response.data) {
+          if (response.data.result === 'success') {
+            getEnquiriesFromDb();
+            setStatusDropDown('status-dropdown');
+            dispatch(setShowMessage("Category Updated"));
+          }
+        }
+      })
+      .catch((error) => {
+        console.error("Error while updating task status:", error);
+      });
+  }
+  const onChangeTaskCategory = (e, id) => {
+    console.log(e, id, "jdbsdjsjdjsjdddddddddddddddddddddddddddddd")
+    const newCategory = e.target.value;
+    updateEnquiryCategory(id, newCategory);
+
+    // Toggle the visibility of the selection box for the corresponding row
+    setIsHovered((prevState) => ({
+      ...prevState,
+      [id]: false,
+    }));
+  }
   function editActionCall() { }
   const fileInputRef = useRef(null);
   function onChangeCSVFile(e) {
@@ -345,15 +414,15 @@ export default function EnquiryList() {
       type: "number",
       minWidth: 150,
       flex: 1,
-      renderCell :(params) => {
+      renderCell: (params) => {
         const email = params.row.email === "null" ? "  " : params.row.email;
-        return(
+        return (
           <div className="myBtnForEdit"
-          onClick={() =>{
+            onClick={() => {
 
-          }}>
+            }}>
             {email}
-            </div>
+          </div>
         );
       },
     },
@@ -442,13 +511,60 @@ export default function EnquiryList() {
       headerAlign: "right",
       align: "right",
       disableColumnMenu: true,
-      width: 130,
+      width: 180,
       // flex: 1,
       position: "sticky",
       renderCell: (params) => (
         <div className="d-flex justify-content-center dotHoverempicon">
           <FontAwesomeIcon icon={faEllipsisV} />
-          <div className="expandDiv">
+          <div className="expandDiv expandDivenq">
+            <Tooltip title="Change Category">
+              <div
+                className="icon-container"
+                onMouseOver={handleMouseOver}
+                onMouseOut={handleMouseOut}
+              >
+                {isHovered && (
+                  <select
+                    onChange={(e) => {
+                      onChangeTaskCategory(e, params.row.id);
+                      setTaskCategory(e.target.value); // Update the state here
+                    }}
+                    className={`${statusDropDown} myInput custom-select px-4 rounded-pill`}
+                    name="taskcategory"
+                    value={taskCategory}  // Update this line
+                  >
+                    <option value="" className="myLabel" disabled>
+                      Select Category
+                    </option>
+                    {newAddTask.listTaskCategory &&
+                      newAddTask.listTaskCategory.length > 0 &&
+                      newAddTask.listTaskCategory.map((i) => {
+                        const taskcategory = `${i.category_name}`;
+                        return (
+                          <option key={i.id} value={i.id} className="myLabel">
+                            {taskcategory}
+                          </option>
+                        );
+                      })}
+                  </select>
+
+                )}
+                <button className="myActionBtn m-1">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    fill="currentColor"
+                    className="bi bi-arrow-left-right "
+                    viewBox="0 0 16 16"
+                  >
+                    <path fill-rule="evenodd" d="M1 11.5a.5.5 0 0 0 .5.5h11.793l-3.147 3.146a.5.5 0 0 0 .708.708l4-4a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 11H1.5a.5.5 0 0 0-.5.5m14-7a.5.5 0 0 1-.5.5H2.707l3.147 3.146a.5.5 0 1 1-.708.708l-4-4a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 4H14.5a.5.5 0 0 1 .5.5" />
+                  </svg>
+                </button>
+
+              </div>
+            </Tooltip>
             <Tooltip title="Work Assign">
               <button
                 className="myActionBtn m-1"
@@ -507,8 +623,8 @@ export default function EnquiryList() {
                 <LabelImportantIcon />
               </button>
             </Tooltip>
-          </div>
-        </div>
+          </div >
+        </div >
       ),
     },
   ];
@@ -586,38 +702,55 @@ export default function EnquiryList() {
               </button>
             </div>
             <div className="d-flex col-md-5 justify-content-end align-items-center mt-1 mt-md-0">
-              <div
-                onClick={() => {
-                  navigate("/sale/enquiries/enquiry");
-                }}
-                className="d-flex align-items-center px-1"
-                type="button"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
-                  fill="currentColor"
-                  className="bi bi-plus-circle"
-                  viewBox="0 0 16 16"
+              <Tooltip title={translations[currentLanguage].addenq}>
+                <div
+                  onClick={() => {
+                    navigate("/sale/enquiries/enquiry");
+                  }}
+                  className="d-flex align-items-center myActionBtnicon"
+                  type="button"
                 >
-                  <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
-                  <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
-                </svg>
-                <h6 className="m-0 ps-1">
-                  {translations[currentLanguage].addenq}
-                </h6>
-              </div>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="22"
+                    height="22"
+                    fill="currentColor"
+                    className="bi bi-plus-circle"
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
+                  </svg>
+                </div>
+              </Tooltip>
               <div
                 onClick={handleworkAssign}
-                className="d-flex align-items-center px-1"
+                className="d-flex align-items-center myActionBtnicon"
                 type="button"
               >
-                <PersonIcon />
-                <h6 className="m-0 ps-1">
-                  {translations[currentLanguage].workassign}
-                </h6>
+
+                <Tooltip title={translations[currentLanguage].workassign}>
+                  <PersonIcon />
+                </Tooltip>
               </div>
+              <Tooltip title="Change Category">
+                <div
+                  onClick={onChangeTaskCategory}
+                  className="d-flex align-items-center myActionBtnicon"
+                  type="button"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="22"
+                    height="22"
+                    fill="currentColor"
+                    className="bi bi-arrow-left-right "
+                    viewBox="0 0 16 16"
+                  >
+                    <path fill-rule="evenodd" d="M1 11.5a.5.5 0 0 0 .5.5h11.793l-3.147 3.146a.5.5 0 0 0 .708.708l4-4a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 11H1.5a.5.5 0 0 0-.5.5m14-7a.5.5 0 0 1-.5.5H2.707l3.147 3.146a.5.5 0 1 1-.708.708l-4-4a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 4H14.5a.5.5 0 0 1 .5.5" />
+                  </svg>
+                </div>
+              </Tooltip>
             </div>
           </div>
 

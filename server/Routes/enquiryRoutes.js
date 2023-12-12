@@ -2388,4 +2388,19 @@ router.get(
   }
 );
 
+router.get("/update-enquiry-category/:id/:newCategory", async (req, res) => {
+  console.log(">>>>>update-enquiry-category");
+  const newCategory = req.params.newCategory;
+  const id = req.params.id;
+  sql = `UPDATE enquiries SET enquiry_category_id = ${newCategory} WHERE id = ${id};`;
+  await db.query(sql, async (err, result) => {
+    if (err) {
+      console.log({ isSuccess: true, result: err });
+      res.send({ isSuccess: true, result, result: err });
+    } else {
+      console.log({ isSuccess: true, result: sql });
+      res.send({ isSuccess: true, result: "success" });
+    }
+  });
+});
 module.exports = router;
