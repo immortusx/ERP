@@ -329,74 +329,95 @@ const Enquiries = () => {
             ) : enquiriesList && enquiriesList.length > 0 ? (
               <>
                 {enquiriesList.map((item, index) => (
-                  <View key={index} style={styles.enquiryBox}>
-                    <View style={styles.leftDataStyle}>
-                      <View style={styles.eDataContainer}>
-                        <View style={styles.textContainer}>
-                          <View style={styles.row}>
-                            <Image
-                              style={styles.personImg}
-                              source={require('../../assets/person.png')}
-                            />
-                            <Text style={styles.value}>
-                              {item.first_name +
-                                (item.last_name ? ' ' + item.last_name : '')}
-                            </Text>
-                          </View>
-                          <View style={styles.row}>
-                            <Image
-                              style={styles.personImg}
-                              source={require('../../assets/phone.png')}
-                            />
-                            <TouchableOpacity
-                              onPress={() => {
-                                makePhoneCall(item.phone_number);
-                              }}>
+                  <>
+                    <View key={index} style={styles.enquiryBox}>
+                      <View style={styles.leftDataStyle}>
+                        <View style={styles.eDataContainer}>
+                          <View style={styles.textContainer}>
+                            <View style={styles.row}>
+                              <Image
+                                style={styles.personImg}
+                                source={require('../../assets/person.png')}
+                              />
                               <Text style={styles.value}>
-                                {item.phone_number}
+                                {item.first_name +
+                                  (item.last_name ? ' ' + item.last_name : '')}
                               </Text>
-                            </TouchableOpacity>
-                          </View>
-                          <View style={styles.row}>
-                            <Image
-                              style={styles.personImg}
-                              source={require('../../assets/product.png')}
-                            />
-                            <Text style={styles.value}>
-                              {item.product ? item.product : '-'}
-                            </Text>
-                          </View>
-                          <View style={styles.row}>
-                            <Image
-                              style={styles.personImg}
-                              source={require('../../assets/location.png')}
-                            />
-                            <Text style={styles.value}>
-                              {item.village ? item.village : '-'}
-                            </Text>
+                            </View>
+                            <View style={styles.row}>
+                              <Image
+                                style={styles.personImg}
+                                source={require('../../assets/phone.png')}
+                              />
+                              <TouchableOpacity
+                                onPress={() => {
+                                  makePhoneCall(item.phone_number);
+                                }}>
+                                <Text style={styles.value}>
+                                  {item.phone_number}
+                                </Text>
+                              </TouchableOpacity>
+                            </View>
+                            <View style={styles.row}>
+                              <Image
+                                style={styles.personImg}
+                                source={require('../../assets/product.png')}
+                              />
+                              <Text style={styles.value}>
+                                {item.product ? item.product : '-'}
+                              </Text>
+                            </View>
+                            <View style={styles.row}>
+                              <Image
+                                style={styles.personImg}
+                                source={require('../../assets/location.png')}
+                              />
+                              <Text style={styles.value}>
+                                {item.village ? item.village : '-'}
+                              </Text>
+                            </View>
                           </View>
                         </View>
                       </View>
+                      <View style={styles.rightDataStyle}>
+                        <Text style={styles.dateText}>Not Followed</Text>
+                        {item.sales_person && (
+                          <Text style={styles.salesText}>
+                            {item.sales_person}
+                          </Text>
+                        )}
+                        <TouchableOpacity style={styles.dayBack}>
+                          <TimeAgo date={item.date} />
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          onPress={() => {
+                            handleSheduleCall(item);
+                          }}
+                          style={styles.discussionButton}>
+                          <Text style={styles.discussionText}>Follow Up</Text>
+                        </TouchableOpacity>
+                      </View>
                     </View>
-                    <View style={styles.rightDataStyle}>
-                      <Text style={styles.dateText}>Not Followed</Text>
-                      {item.sales_person && (
-                        <Text style={styles.salesText}>
-                          {item.sales_person}
-                        </Text>
-                      )}
-                      <TouchableOpacity style={styles.dayBack}>
-                        <TimeAgo date={item.date} />
-                      </TouchableOpacity>
+                    <View style={styles.taskIconContainer}>
                       <TouchableOpacity
+                        style={styles.greenButton}
                         onPress={() => {
-                          handleSheduleCall(item);
-                        }}
-                        style={styles.discussionButton}>
-                        <Text style={styles.discussionText}>Follow Up</Text>
+                          makePhoneCall(item.phone_number);
+                        }}>
+                        <TouchableOpacity>
+                          <Text style={styles.taskDataText}>
+                            {formatPhoneNumber(item.phone_number)}
+                          </Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity>
+                          <Image
+                            style={styles.iconImg}
+                            source={require('../../assets/telephone.png')}
+                          />
+                        </TouchableOpacity>
                       </TouchableOpacity>
                     </View>
-                  </View>
+                  </>
                 ))}
               </>
             ) : (
