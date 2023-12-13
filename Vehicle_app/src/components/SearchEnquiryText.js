@@ -82,8 +82,7 @@ const SearchEnquiryText = () => {
                               source={require('../../assets/person.png')}
                             />
                             <Text style={styles.value}>
-                              {item.first_name +
-                                (item.last_name ? ' ' + item.last_name : '')}
+                              {item.name}
                             </Text>
                           </View>
                           <View style={styles.row}>

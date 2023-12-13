@@ -106,9 +106,11 @@ const SearchInputText = ({selectedCategory}) => {
                 handleFieldChange(item.value);
               }}
             />
-            </View>
-            </View>
-            {selectedField && <SearchEnquiryFieldList />}
+          </View>
+        </View>
+        {selectedField && (
+          <SearchEnquiryFieldList selectedCategory={selectedCategory} />
+        )}
       </View>
     </>
   );
