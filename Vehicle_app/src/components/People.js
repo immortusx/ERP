@@ -103,13 +103,15 @@ const People = () => {
       const csvContent = ['Name,PhoneNumber,Email', ...csvData].join('\n');
   
       // Define the file path on the device
-      let filePath = `/storage/emulated/0/Download/people.csv`;
+      const downloadDir = RNFetchBlob.fs.dirs.DownloadDir;
+      console.log(downloadDir, 'downalodPair')
+      let filePath = `${downloadDir}/people.csv`;
   
       // Check if the file already exists
       let counter = 1;
       while (await RNFetchBlob.fs.exists(filePath)) {
         counter++;
-        filePath = `/storage/emulated/0/Download/people (${counter}).csv`;
+        filePath = `${downloadDir}/people (${counter}).csv`;
       }
   
       // Download the file
@@ -122,6 +124,7 @@ const People = () => {
       alert('Download failed. Please try again.');
     }
   };
+  
   return (
     <View style={styles.container}>
       <View style={styles.mainContainer}>
