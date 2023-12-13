@@ -8,25 +8,33 @@ import {
   RefreshControl,
   AppState,
 } from 'react-native';
-import React, { useEffect, useState, useCallback } from 'react';
+import React, {useEffect, useState, useCallback} from 'react';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { API_URL } from '@env';
+import {API_URL} from '@env';
 import moment from 'moment';
 import LoadingSpinner from './subCom/LoadingSpinner';
 import CustomLoadingSpinner from './subCom/CustomLoadingSpinner';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { useSelector, useDispatch } from 'react-redux';
-import { getUserTaskList, clearUserTaskListState } from '../redux/slice/getUserTaskListSlice';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {useSelector, useDispatch} from 'react-redux';
+import {
+  getUserTaskList,
+  clearUserTaskListState,
+} from '../redux/slice/getUserTaskListSlice';
+import {setTaskItem} from '../redux/slice/taskItemSlice';
 const Tasks = () => {
   const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const dispatch = useDispatch();
   const [appState, setAppState] = useState(AppState.currentState);
-  const userTaskList = useSelector((state) => state.getUserTaskListState.userTaskList);
-  const isFetching = useSelector((state) => state.getUserTaskListState.isFetching);
-  const isError = useSelector((state) => state.getUserTaskListState.isError);
+  const userTaskList = useSelector(
+    state => state.getUserTaskListState.userTaskList,
+  );
+  const isFetching = useSelector(
+    state => state.getUserTaskListState.isFetching,
+  );
+  const isError = useSelector(state => state.getUserTaskListState.isError);
   useFocusEffect(
     React.useCallback(() => {
       setLoading(true);
@@ -34,14 +42,14 @@ const Tasks = () => {
       return () => {
         dispatch(clearUserTaskListState());
       };
-    }, [dispatch])
+    }, [dispatch]),
   );
   useFocusEffect(
     React.useCallback(() => {
       setLoading(true);
       dispatch(getUserTaskList());
 
-      const handleAppStateChange = (nextAppState) => {
+      const handleAppStateChange = nextAppState => {
         if (appState === 'inactive' && nextAppState === 'active') {
           // Logic to execute when the app becomes active (e.g., when coming from another app)
           setLoading(true);
@@ -53,7 +61,7 @@ const Tasks = () => {
       // Subscribe to app state changes
       const appStateSubscription = AppState.addEventListener(
         'change',
-        handleAppStateChange
+        handleAppStateChange,
       );
 
       return () => {
@@ -61,9 +69,8 @@ const Tasks = () => {
         // Remove the app state change subscription when the component is unmounted
         appStateSubscription.remove();
       };
-    }, [dispatch, appState])
+    }, [dispatch, appState]),
   );
-
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -73,15 +80,15 @@ const Tasks = () => {
     }, 2000);
   }, []);
   const [userTaskListData, setUserTaskListData] = useState({
-    employee: "",
-    tasktype_name: "",
-    task_name: "",
-    taskCompleted: "",
-    taskcount: "",
-    category_name: "",
-    startdate: "",
-    enddate: "",
-    period_name: "",
+    employee: '',
+    tasktype_name: '',
+    task_name: '',
+    taskCompleted: '',
+    taskcount: '',
+    category_name: '',
+    startdate: '',
+    enddate: '',
+    period_name: '',
   });
   useEffect(() => {
     if (userTaskList.length > 0) {
@@ -101,15 +108,17 @@ const Tasks = () => {
     }
   }, [userTaskList]);
   useEffect(() => {
-    console.log(userTaskListData, "usertakkkkkkkkkkkkgggggggg")
-  }, [userTaskListData])
+    console.log(userTaskListData, 'usertakkkkkkkkkkkkgggggggg');
+  }, [userTaskListData]);
 
   const openTaskDetails = taskDetails => {
     console.log(taskDetails, 'taskDetials');
-    navigation.navigate('Task Details', { taskDetails: taskDetails });
+    navigation.navigate('Task Details', {taskDetails: taskDetails});
   };
   const redirectEnquiriesList = item => {
-    navigation.navigate('Enquiries', { item: item });
+    console.log(item, 'itemmmmmm');
+    dispatch(setTaskItem(item));
+    navigation.navigate('Enquiries');
   };
   return (
     <View style={StyleSheet.mainContainer}>
@@ -126,7 +135,7 @@ const Tasks = () => {
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }
-            renderItem={({ item }) => (
+            renderItem={({item}) => (
               <View style={styles.contentContainer}>
                 <TouchableOpacity style={styles.taskStyle}>
                   <Text style={styles.taskTitle}>{item.employee}</Text>
@@ -145,33 +154,28 @@ const Tasks = () => {
                     <Text style={styles.taskLabel}>Task Time Period: </Text>
                   </View>
                   <View style={styles.middleContainer}>
-                  <Text style={styles.listStyle}>{item.employee}</Text>
-                      <Text style={styles.listStyle}>
-                        {item.tasktype_name}
+                    <Text style={styles.listStyle}>{item.employee}</Text>
+                    <Text style={styles.listStyle}>{item.tasktype_name}</Text>
+                    <Text style={styles.listStyle}>{item.task_name}</Text>
+                    <TouchableOpacity
+                      style={styles.perfomedTaskBtn}
+                      onPress={() => {
+                        openTaskDetails(item);
+                      }}>
+                      <Text style={[styles.listStyle, styles.taskPerformed]}>
+                        {item.taskCompleted}/{item.taskcount}
                       </Text>
-                      <Text style={styles.listStyle}>{item.task_name}</Text>
-                      <TouchableOpacity
-                        style={styles.perfomedTaskBtn}
-                        onPress={() => {
-                          openTaskDetails(item);
-                        }}>
-                        <Text
-                          style={[styles.listStyle, styles.taskPerformed]}>
-                          {item.taskCompleted}/{item.taskcount}
-                        </Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity>
-                        <Text style={styles.listStyle}>
-                          {item.category_name}
-                        </Text>
-                      </TouchableOpacity>
-                      <Text style={styles.listStyle}>
-                        {moment(item.startdate).format('Do MMMM, YYYY')}
-                      </Text>
-                      <Text style={styles.listStyle}>
-                        {moment(item.enddate).format('Do MMMM, YYYY')}
-                      </Text>
-                      <Text style={styles.listStyle}>{item.period_name}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity>
+                      <Text style={styles.listStyle}>{item.category_name}</Text>
+                    </TouchableOpacity>
+                    <Text style={styles.listStyle}>
+                      {moment(item.startdate).format('Do MMMM, YYYY')}
+                    </Text>
+                    <Text style={styles.listStyle}>
+                      {moment(item.enddate).format('Do MMMM, YYYY')}
+                    </Text>
+                    <Text style={styles.listStyle}>{item.period_name}</Text>
                   </View>
                   <View style={styles.startTaskContainer}>
                     <TouchableOpacity
@@ -192,7 +196,7 @@ const Tasks = () => {
       </View>
     </View>
   );
-}
+};
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
@@ -203,13 +207,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 20,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.25,
     elevation: 4,
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
     marginVertical: 0.9,
-    marginBottom: 50
+    marginBottom: 50,
   },
   touchableOpacityStyle: {
     backgroundColor: '#2471A3',
@@ -226,7 +230,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
     paddingVertical: 4,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.25,
     elevation: 3,
     borderRadius: 7,
@@ -284,8 +288,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#27AE60',
     padding: 5,
     borderRadius: 5,
-    
-    
   },
   middleContainer: {
     // flexDirection: 'row',
